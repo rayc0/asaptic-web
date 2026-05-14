@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asaptic Labs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <div class="nav-logo">ASAPTIC LABS</div>
+      <div class="nav-links">
+        <a href="#crossings" data-key="nav_crossings"></a>
+        <a href="#work" data-key="nav_work"></a>
+        <a href="#contact" data-key="nav_contact"></a>
+        <a href="#contact" class="nav-cta" data-key="nav_cta"></a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-live">
+      <span class="hero-live-dot"></span>
+      <span class="hero-live-label">SYSTEMS ACTIVE</span>
+    </div>
+    <div class="container">
+      <p class="hero-eyebrow" data-key="hero_eyebrow"></p>
+      <h1 class="hero-title">
+        <span data-key="hero_title"></span><span class="hero-cursor">|</span>
+      </h1>
+      <p class="hero-sub" data-key="hero_sub"></p>
+      <a href="#crossings" class="hero-cta" data-key="hero_cta"></a>
+    </div>
+  </section>
+
+  <section class="crossings" id="crossings">
+    <div class="container">
+      <p class="section-label" data-key="crossings_label"></p>
+      <div class="cards-grid">
+
+        <div class="card fade-in">
+          <div class="card-accent"></div>
+          <span class="card-tag" data-key="card1_tag"></span>
+          <h2 class="card-heading" data-key="card1_heading"></h2>
+          <p class="card-body" data-key="card1_body"></p>
+        </div>
+
+        <div class="card fade-in">
+          <div class="card-accent"></div>
+          <span class="card-tag" data-key="card2_tag"></span>
+          <h2 class="card-heading" data-key="card2_heading"></h2>
+          <p class="card-body" data-key="card2_body"></p>
+        </div>
+
+        <div class="card fade-in">
+          <div class="card-accent"></div>
+          <span class="card-tag" data-key="card3_tag"></span>
+          <h2 class="card-heading" data-key="card3_heading"></h2>
+          <p class="card-body" data-key="card3_body"></p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="thread">
+    <div class="container fade-in">
+      <hr class="thread-rule" />
+      <h2 class="thread-heading" data-key="thread_heading"></h2>
+      <p class="thread-body" data-key="thread_body"></p>
+    </div>
+  </section>
+
+  <section class="ops">
+    <div class="container">
+      <span class="section-label" data-key="ops_label"></span>
+      <div class="ops-content fade-in">
+        <div class="ops-statement">
+          <h2 class="ops-heading" data-key="ops_heading"></h2>
+          <p class="ops-body" data-key="ops_body"></p>
+        </div>
+        <div class="ops-roles">
+          <div class="ops-role">
+            <span class="ops-role-title" data-key="ops_coo"></span>
+            <p class="ops-role-desc" data-key="ops_coo_desc"></p>
+          </div>
+          <div class="ops-role">
+            <span class="ops-role-title" data-key="ops_cto"></span>
+            <p class="ops-role-desc" data-key="ops_cto_desc"></p>
+          </div>
+          <div class="ops-role">
+            <span class="ops-role-title" data-key="ops_operator"></span>
+            <p class="ops-role-desc" data-key="ops_operator_desc"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-logo">Asaptic Labs</div>
+        <div class="footer-links">
+          <a href="#crossings" data-key="nav_crossings"></a>
+          <a href="#work" data-key="nav_work"></a>
+          <a href="#contact" data-key="nav_contact"></a>
+          <a href="#privacy" data-key="footer_privacy"></a>
+        </div>
+        <p class="footer-tagline" data-key="footer_tagline"></p>
+      </div>
+      <div class="footer-bottom">
+        <p data-key="footer_copy"></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="content.js"></script>
+  <script>
+    // ─── Language Switching ───────────────────────────────────────────────────
+    async function detectLang() {
+      // Check localStorage first (user preference)
+      const stored = localStorage.getItem('asaptic-lang');
+      if (stored && ['en','zh','zht'].includes(stored)) return stored;
+
+      // Try Cloudflare geo detection
+      try {
+        const res = await fetch('https://workers.asaptic.com/geo', { signal: AbortSignal.timeout(2000) });
+        if (res.ok) {
+          const { country } = await res.json();
+          if (['HK','MO','TW'].includes(country)) return 'zht';
+          if (country === 'CN') return 'zh';
+          return 'en';
+        }
+      } catch {}
+
+      // Fallback: browser language
+      const lang = (navigator.language || '').toLowerCase();
+      if (lang.startsWith('zh-tw') || lang.startsWith('zh-hk') || lang.startsWith('zh-mo')) return 'zht';
+      if (lang.startsWith('zh')) return 'zh';
+      return 'en';
+    }
+
+    function applyLang(lang) {
+      if (!CONTENT[lang]) lang = 'en';
+      const dict = CONTENT[lang];
+
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (dict[key] !== undefined) {
+          el.textContent = dict[key];
+        }
+      });
+
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+      });
+
+      document.documentElement.lang =
+        lang === 'zht' ? 'zh-TW' : lang === 'zh' ? 'zh-CN' : 'en';
+
+      localStorage.setItem('asaptic-lang', lang);
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        applyLang(btn.getAttribute('data-lang'));
+      });
+    });
+
+    // ─── Blinking Cursor ──────────────────────────────────────────────────────
+    const cursor = document.querySelector('.hero-cursor');
+    if (cursor) {
+      setInterval(() => {
+        cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0';
+      }, 530);
+    }
+
+    // ─── IntersectionObserver — fade-in + thread-rule ─────────────────────────
+    const fadeObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            fadeObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+
+    const threadRule = document.querySelector('.thread-rule');
+    if (threadRule) {
+      const ruleObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              threadRule.classList.add('visible');
+              ruleObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.5 }
+      );
+      ruleObserver.observe(threadRule);
+    }
+
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    (async () => {
+      const lang = await detectLang();
+      applyLang(lang);
+    })();
+  </script>
+
+</body>
+</html>
