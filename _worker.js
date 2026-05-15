@@ -14,7 +14,7 @@ export default {
       });
     }
 
-    // Pass everything else through
-    return fetch(request);
+    // Serve static assets from Pages
+    return env.ASSETS.fetch(request);
   },
 };
