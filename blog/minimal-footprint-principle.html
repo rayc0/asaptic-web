@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The minimal footprint principle — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents operating in consequential domains should default to acting small: prefer reversible actions, request only necessary permissions, and leave a footprint no larger than the task requires. Here is why this is a design constraint, not a restriction." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/minimal-footprint-principle.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The minimal footprint principle" />
+  <meta property="og:description" content="Agents operating in consequential domains should default to acting small: prefer reversible actions, request only necessary permissions, and leave a footprint no larger than the task requires." />
+  <meta property="og:url" content="https://asaptic.com/blog/minimal-footprint-principle.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-19" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The minimal footprint principle",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-19",
+    "description": "AI agents operating in consequential domains should default to acting small: prefer reversible actions, request only necessary permissions, and leave a footprint no larger than the task requires.",
+    "url": "https://asaptic.com/blog/minimal-footprint-principle.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× FOUNDATIONS</span>
+      <h1 class="essay-title">The minimal footprint principle</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-19</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>There is a design pattern common to well-engineered surgical tools, explosive ordnance disposal robots, and the better class of financial settlement systems: they do exactly what is required, leave nothing extra behind, and are built so that the smallest possible intervention achieves the intended outcome. The pattern has a name in some engineering traditions — minimal footprint. In agent design, it is not yet standard. It should be.</p>
+        <p>An AI agent operating in a consequential domain — one where its actions have real-world, hard-to-reverse effects — should be designed around the same constraint. Prefer reversible actions over irreversible ones. Request only the permissions the current task actually requires. Acquire no resources, influence, or access beyond what the immediate scope demands. And when the outcome is uncertain, do less and surface the uncertainty rather than resolving it unilaterally.</p>
+        <p>This is not caution for its own sake. It is the engineering condition for operating in domains that do not tolerate mistakes.</p>
+
+        <h2>What minimal footprint means technically</h2>
+        <p>Minimal footprint is a property of an agent's action selection, not its capability. A fully capable agent can still choose the smaller action when a smaller action is sufficient. The constraint lives at design time — in how the agent is prompted, scoped, and evaluated — not in the model's raw ability.</p>
+        <p>Four properties characterise it. First, reversibility preference: given two paths to the same outcome, prefer the one that can be undone. Second, just-in-time permissions: request access when needed for the current step, not in advance for hypothetical future steps. Third, scope containment: do not acquire side-effects — information, state changes, influence — beyond what the task requires. Fourth, surface uncertainty: when the right action is unclear, return the choice to a human rather than resolving it based on a guess about intent.</p>
+        <p>These properties are not independent. They share an underlying logic: the agent should trade its own efficiency for the principal's ability to observe, redirect, and correct. An agent that acts minimally is an agent that is easier to audit, easier to recover from when it is wrong, and easier to extend authority to incrementally as that trust is earned.</p>
+
+        <h2>Why this is harder than it sounds</h2>
+        <p>The default incentive in agent design runs the other way. An agent evaluated on task completion will tend to acquire whatever resources and permissions make completion more likely. An agent optimising for throughput will prefer to resolve ambiguity itself rather than pause for human input. An agent given broad permission grants will use them, because restricting its own scope is not part of the reward signal.</p>
+        <p>This is not a safety failure in the conventional alignment sense — the agent is doing what it was trained to do. It is a design failure: the wrong objective was specified. Minimal footprint is not a property that emerges naturally from capability training. It must be designed in, evaluated explicitly, and enforced at deployment through scoping constraints, permission architecture, and review checkpoints.</p>
+        <p>The overhead is real. An agent that surfaces uncertainty rather than resolving it requires more human attention per task than one that completes silently. An agent that requests just-in-time permissions is harder to deploy than one with standing broad access. But these costs are front-loaded. The cost of not building in minimal footprint — an agent that acted outside its intended scope, that made an irreversible change the principal did not authorise, that acquired access it should not have had — is back-loaded, and it arrives at the worst possible moment.</p>
+
+        <h2>The three-crossing connection</h2>
+        <p>Minimal footprint is a general principle, but it applies differently across the three domains where agent consequences are hardest to reverse.</p>
+        <p>In the security crossing — agents handling cryptographic operations, key material, or identity assertions — minimal footprint means scoped credentials with short validity windows. A credential that grants broad, long-lived access is a large footprint. A signing key that can be used for one purpose, one session, with automated revocation on completion, is a small one. The footprint of a cryptographic agent is measured in what it can sign and for how long: smaller is safer, always.</p>
+        <p>In the hardware crossing — agents that interface with physical systems, sensors, or actuators — minimal footprint is a physical constraint, not just a logical one. An agent controlling a physical process should actuate only what the current control objective requires, at the minimum force and range necessary, with interlocks that return control to the human operator whenever the state deviates from the expected envelope. Physical irreversibility is total: a broken component, a missed medication dose, a miscalibrated sensor reading — none of these can be rolled back.</p>
+        <p>In the physical-world care crossing — agents that participate in decisions affecting human health, safety, or welfare — minimal footprint means the agent should influence the minimum number of decisions necessary to be useful, and should do so in a way that keeps the human carer in the loop for anything that carries meaningful clinical or social weight. The care domain has historically calibrated this through supervision hierarchies, case conferencing, and second-opinion protocols. An agent entering that domain inherits the same obligation, not a bypass of it.</p>
+
+        <h2>Small is not weak</h2>
+        <p>There is a tendency to read minimal footprint as conservatism — as an argument for agents that do less and therefore matter less. That reading is wrong. The agents most likely to be trusted with genuinely consequential authority are those that have demonstrated they do not reach beyond their authorised scope. The override log fills up with approvals, not corrections. The audit is clean. The counterparty institution can verify the agent's behaviour against the stated constraints and find no violations.</p>
+        <p>That record of small, clean, attributable action is the path to large, trusted, consequential deployment. An agent that acts small earns the right to act more — not because it asks for it, but because the principals who observe it decide the scope can be extended safely. That is how trust accumulates in institutions. It is how trust should accumulate in agents.</p>
+        <p>Minimal footprint is not a restriction on what agents can do. It is the condition under which agents are given the right to do it at all.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>在后果严重的领域中运行的 AI 智能体，应围绕一个设计约束构建：最小足迹原则。优先选择可逆行动，仅请求当前任务所需的权限，不获取任务范围之外的资源或访问权限，在不确定时将选择权交还给人类。这一原则适用于三个关键领域：在安全领域，加密凭证应范围受限、有效期短；在硬件领域，物理后果不可撤销，智能体应仅驱动完成控制目标所必需的最小动作；在照护领域，智能体应保持人类照护者对具有实质意义的决策的参与。作小、干净、可归因的行动，是赢得更大、更重要授权的路径——不是通过索取，而是通过赢得信任。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>在後果嚴重的領域中運行的 AI 智能體，應圍繞一個設計約束構建：最小足跡原則。優先選擇可逆行動，僅請求當前任務所需的權限，不獲取任務範圍之外的資源或存取權限，在不確定時將選擇權交還給人類。這一原則適用於三個關鍵領域：在安全領域，加密憑證應範圍受限、有效期短；在硬件領域，物理後果不可撤銷，智能體應僅驅動完成控制目標所必需的最小動作；在照護領域，智能體應保持人類照護者對具有實質意義的決策的參與。作小、乾淨、可歸因的行動，是贏得更大、更重要授權的路徑——不是通過索取，而是通過贏得信任。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/agent-receipt-layer.html">Also: Who signs the receipt? →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 基础层</span>
+      <h1 class="essay-title">最小足迹原则</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-19</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>在手术器械、爆炸物处理机器人以及更优秀的金融结算系统中，有一个共同的设计模式：它们精确执行所需的操作，不留多余痕迹，且被设计为以尽可能小的干预实现预期结果。在某些工程传统中，这一模式被称为"最小足迹"。在智能体设计中，这尚未成为标准做法。但它应该成为。</p>
+        <p>在后果严重的领域中运行的 AI 智能体——其行动具有真实世界的、难以撤销的影响——应该围绕同样的约束来设计。优先选择可逆行动而非不可逆行动；仅请求当前任务实际需要的权限；不获取超出当前范围所需的资源、影响力或访问权限；当结果不确定时，减少行动并暴露不确定性，而非单方面解决它。</p>
+        <p>这不是为了谨慎而谨慎。这是在不容许犯错的领域中运行的工程条件。</p>
+
+        <h2>技术层面的含义</h2>
+        <p>最小足迹是智能体动作选择的属性，而非其能力的属性。一个完全有能力的智能体，在较小的动作足够时，仍然可以选择较小的动作。这一约束存在于设计时——在智能体被提示、范围界定和评估的方式中——而非模型的原始能力中。</p>
+        <p>四个属性对其加以描述：一是可逆性优先，在通往同一结果的两条路径中，优先选择可撤销的那条；二是即时权限请求，在当前步骤需要时请求访问权限，而非提前为假设的未来步骤请求；三是范围限制，不获取任务所需之外的副作用——信息、状态变更、影响力；四是暴露不确定性，当正确行动不明确时，将选择权交还给人类，而非基于对意图的猜测来解决它。这些属性共享一个底层逻辑：智能体应以自身效率换取委托方的观察、重定向和纠正能力。</p>
+
+        <h2>跨越三个关键领域</h2>
+        <p>最小足迹是一个通用原则，但在三个领域的应用各有不同。在安全领域，加密智能体的足迹体现在它能签署什么以及签署多长时间——范围受限、有效期短的凭证是小足迹，长期有效的广泛访问凭证是大足迹，后者始终更危险。在硬件领域，物理后果不可逆转：智能体应仅驱动实现控制目标所必需的最小动作，并在状态偏离预期范围时，通过联锁机制将控制权交还人类操作员。在照护领域，智能体应将其影响的决策数量最小化，并保持人类照护者对具有实质临床或社会意义的事项的参与——这是继承了人类监督层级和复核协议的义务，而非绕过它。</p>
+
+        <h2>小，不是弱</h2>
+        <p>最容易被授予真正重要权限的智能体，恰恰是那些已经证明自己不会超出授权范围行事的智能体。覆写日志中填满的是批准，而非纠正。审计是干净的。对手方机构能够对照既定约束核查智能体的行为，并发现没有违规。那份小、干净、可归因行动的记录，正是通往大规模、可信赖、影响深远部署的路径——不是通过索取，而是通过赢得信任。</p>
+        <p>最小足迹不是对智能体能做什么的限制。它是智能体获得做这一切权利的前提条件。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/agent-receipt-layer.html">延伸阅读：谁签署了收据 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 基礎層</span>
+      <h1 class="essay-title">最小足跡原則</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-19</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>在手術器械、爆炸物處理機器人以及更優秀的金融結算系統中，有一個共同的設計模式：它們精確執行所需的操作，不留多餘痕跡，且被設計為以盡可能小的干預實現預期結果。在某些工程傳統中，這一模式被稱為「最小足跡」。在智能體設計中，這尚未成為標準做法。但它應該成為。</p>
+        <p>在後果嚴重的領域中運行的 AI 智能體——其行動具有真實世界的、難以撤銷的影響——應該圍繞同樣的約束來設計。優先選擇可逆行動而非不可逆行動；僅請求當前任務實際需要的權限；不獲取超出當前範圍所需的資源、影響力或存取權限；當結果不確定時，減少行動並暴露不確定性，而非單方面解決它。</p>
+        <p>這不是為了謹慎而謹慎。這是在不容許犯錯的領域中運行的工程條件。</p>
+
+        <h2>技術層面的含義</h2>
+        <p>最小足跡是智能體動作選擇的屬性，而非其能力的屬性。一個完全有能力的智能體，在較小的動作足夠時，仍然可以選擇較小的動作。這一約束存在於設計時——在智能體被提示、範圍界定和評估的方式中——而非模型的原始能力中。</p>
+        <p>四個屬性對其加以描述：一是可逆性優先，在通往同一結果的兩條路徑中，優先選擇可撤銷的那條；二是即時權限請求，在當前步驟需要時請求存取權限，而非提前為假設的未來步驟請求；三是範圍限制，不獲取任務所需之外的副作用——資訊、狀態變更、影響力；四是暴露不確定性，當正確行動不明確時，將選擇權交還給人類，而非基於對意圖的猜測來解決它。這些屬性共享一個底層邏輯：智能體應以自身效率換取委託方的觀察、重定向和糾正能力。</p>
+
+        <h2>跨越三個關鍵領域</h2>
+        <p>最小足跡是一個通用原則，但在三個領域的應用各有不同。在安全領域，加密智能體的足跡體現在它能簽署什麼以及簽署多長時間——範圍受限、有效期短的憑證是小足跡，長期有效的廣泛存取憑證是大足跡，後者始終更危險。在硬件領域，物理後果不可逆轉：智能體應僅驅動實現控制目標所必需的最小動作，並在狀態偏離預期範圍時，透過聯鎖機制將控制權交還人類操作員。在照護領域，智能體應將其影響的決策數量最小化，並保持人類照護者對具有實質臨床或社會意義的事項的參與——這是繼承了人類監督層級和復核協議的義務，而非繞過它。</p>
+
+        <h2>小，不是弱</h2>
+        <p>最容易被授予真正重要權限的智能體，恰恰是那些已經證明自己不會超出授權範圍行事的智能體。覆寫日誌中填滿的是批准，而非糾正。審計是乾淨的。對手方機構能夠對照既定約束核查智能體的行為，並發現沒有違規。那份小、乾淨、可歸因行動的記錄，正是通往大規模、可信賴、影響深遠部署的路徑——不是通過索取，而是通過贏得信任。</p>
+        <p>最小足跡不是對智能體能做什麼的限制。它是智能體獲得做這一切權利的前提條件。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/agent-receipt-layer.html">延伸閱讀：誰簽署了收據 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
