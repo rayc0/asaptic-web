@@ -3,6 +3,8 @@ const CONTENT = {
     // Nav
     nav_crossings: "Crossings",
     nav_demo: "Demo",
+    nav_engage: "Engage",
+    nav_blog: "Blog",
     nav_contact: "Contact",
     nav_cta: "Talk to us",
     // Hero
@@ -49,6 +51,8 @@ const CONTENT = {
     // Nav
     nav_crossings: "关键领域",
     nav_demo: "演示",
+    nav_engage: "合作接触",
+    nav_blog: "博客",
     nav_contact: "联系我们",
     nav_cta: "与我们交流",
     // Hero
@@ -95,6 +99,8 @@ const CONTENT = {
     // Nav
     nav_crossings: "關鍵領域",
     nav_demo: "試用",
+    nav_engage: "合作接觸",
+    nav_blog: "網誌",
     nav_contact: "聯絡我們",
     nav_cta: "與我們傾談",
     // Hero
