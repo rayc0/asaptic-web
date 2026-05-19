@@ -2,6 +2,7 @@ const CONTENT = {
   en: {
     // Nav
     nav_crossings: "Crossings",
+    nav_demo: "Demo",
     nav_contact: "Contact",
     nav_cta: "Talk to us",
     // Hero
@@ -47,6 +48,7 @@ const CONTENT = {
   zh: {
     // Nav
     nav_crossings: "关键领域",
+    nav_demo: "演示",
     nav_contact: "联系我们",
     nav_cta: "与我们交流",
     // Hero
@@ -92,6 +94,7 @@ const CONTENT = {
   zht: {
     // Nav
     nav_crossings: "關鍵領域",
+    nav_demo: "試用",
     nav_contact: "聯絡我們",
     nav_cta: "與我們傾談",
     // Hero
