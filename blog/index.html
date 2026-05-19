@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asaptic Labs — Notes from the Crossings</title>
+
+  <meta name="description" content="Short-form essays from Asaptic Labs on the trust primitives, deployment surfaces, and accountability architecture that AI agents need when their decisions touch the real world." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Asaptic Labs — Notes from the Crossings" />
+  <meta property="og:description" content="Essays on AI agents at the points of irreversible consequence." />
+  <meta property="og:url" content="https://asaptic.com/blog/" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <style>
+    .bl-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .bl-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .bl-back:hover { color: var(--accent); }
+    .bl-page-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .bl-page-title {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .bl-page-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .bl-intro {
+      font-size: 15px;
+      color: var(--gray-dim);
+      line-height: 1.8;
+      margin-bottom: 64px;
+      border-left: 2px solid var(--border);
+      padding-left: 16px;
+    }
+    .bl-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .bl-card {
+      padding: 36px 0;
+      border-top: 1px solid var(--border);
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: opacity 0.2s;
+    }
+    .bl-card:last-child {
+      border-bottom: 1px solid var(--border);
+    }
+    .bl-card:hover { opacity: 0.85; }
+    .bl-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .bl-card-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: var(--cyan);
+    }
+    .bl-card-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .bl-card-readtime {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .bl-card-title {
+      font-size: clamp(19px, 2.5vw, 24px);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+    .bl-card-excerpt {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .bl-card-cta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+    }
+    .bl-footer-note {
+      margin-top: 56px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--gray-dim);
+      font-style: italic;
+      text-align: center;
+    }
+    .bl-lang { display: none; }
+    .bl-lang.active { display: block; }
+    .bl-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .bl-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/crossings.html">Crossings</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="bl-wrap">
+    <a href="/" class="bl-back">&larr; Asaptic Labs</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="bl-lang" data-lang-content="en">
+      <span class="bl-page-label">NOTES FROM THE CROSSINGS</span>
+      <h1 class="bl-page-title">Writing on AI agents at the points of irreversible consequence</h1>
+      <p class="bl-page-subtitle">Short-form essays from Asaptic Labs on the trust primitives, deployment surfaces, and accountability architecture that AI agents need when their decisions touch the real world.</p>
+      <p class="bl-intro">We publish notes from the working bench: short essays on the questions we keep returning to when we build agents for domains where a wrong decision cannot be redone. The cadence is deliberate, the tone is technical, and the byline is the lab. Every piece is public-safe and venture-neutral by design.</p>
+
+      <div class="bl-grid">
+        <a href="/blog/override-log-as-moat.html" class="bl-card">
+          <div class="bl-card-meta">
+            <span class="bl-card-topic">× Foundations</span>
+            <span class="bl-card-date">2026-05-19</span>
+            <span class="bl-card-readtime">5 min read</span>
+          </div>
+          <h2 class="bl-card-title">Why the moat in AI is the override log</h2>
+          <p class="bl-card-excerpt">Model size and data scale are commodities on a known curve. What compounds, and what cannot be copied, is the calibrated record of every time a human said no — and why.</p>
+          <span class="bl-card-cta">Read essay →</span>
+        </a>
+
+        <a href="/blog/quantum-agent-identity.html" class="bl-card">
+          <div class="bl-card-meta">
+            <span class="bl-card-topic">× Quantum security</span>
+            <span class="bl-card-date">2026-05-19</span>
+            <span class="bl-card-readtime">5 min read</span>
+          </div>
+          <h2 class="bl-card-title">What the quantum transition means for agent identity</h2>
+          <p class="bl-card-excerpt">Once agents start signing irreversible cross-institutional actions, classical cryptography stops being a research topic and becomes a counterparty risk. Post-quantum signatures belong on the deployment checklist, not the reading list.</p>
+          <span class="bl-card-cta">Read essay →</span>
+        </a>
+
+        <a href="/blog/physical-care-hardest-crossing.html" class="bl-card">
+          <div class="bl-card-meta">
+            <span class="bl-card-topic">× Physical-world care</span>
+            <span class="bl-card-date">2026-05-19</span>
+            <span class="bl-card-readtime">5 min read</span>
+          </div>
+          <h2 class="bl-card-title">Why physical-world care is the hardest crossing</h2>
+          <p class="bl-card-excerpt">The dataset that matters is built only by being inside the room. Regulated human domains do not yield to scraping or scale — they yield to relationship, calibration, and supervised decisions logged with care.</p>
+          <span class="bl-card-cta">Read essay →</span>
+        </a>
+      </div>
+
+      <p class="bl-footer-note">Asaptic Labs publishes on its own cadence. No subscriber funnel, no lead capture — the work earns its own audience.</p>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="bl-lang" data-lang-content="zh">
+      <span class="bl-page-label">关键领域札记</span>
+      <h1 class="bl-page-title">关于智能体在不可逆后果节点上的思考</h1>
+      <p class="bl-page-subtitle">Asaptic Labs 关于信任原语、部署界面与问责架构的短篇文章——这些是 AI 智能体在其决策触及真实世界时所必需的基础。</p>
+      <p class="bl-intro">我们在此发布工作台上的札记：当我们为那些一旦决策错误便无法重来的领域构建智能体时，反复回到的问题——这些短篇文章便是回应。节奏经过深思，语调偏向技术，署名归于实验室。每一篇皆按公开发布标准撰写，与具体业务无涉。</p>
+
+      <div class="bl-grid">
+        <a href="/blog/override-log-as-moat.html" class="bl-card">
+          <div class="bl-card-meta">
+            <span class="bl-card-topic">× 基础层</span>
+            <span class="bl-card-date">2026-05-19</span>
+            <span class="bl-card-readtime">5 分钟阅读</span>
+          </div>
+          <h2 class="bl-card-title">AI 的真正护城河，是覆写日志</h2>
+          <p class="bl-card-excerpt">模型规模与数据体量，皆走在一条可见的曲线上，终将商品化。真正能够累积、且无法复制的，是每一次人类说「不」时所留下的、经过校准的记录——以及背后的原因。</p>
+          <span class="bl-card-cta">阅读全文 →</span>
+        </a>
+
+        <a href="/blog/quantum-agent-identity.html" class="bl-card">
+          <div class="bl-card-meta">
+            <span class="bl-card-topic">× 量子安全</span>
+            <span class="bl-card-date">2026-05-19</span>
+            <span class="bl-card-readtime">5 分钟阅读</span>
+          </div>
+          <h2 class="bl-card-title">量子转型对智能体身份意味着什么</h2>
+          <p class="bl-card-excerpt">当智能体开始签署不可逆的跨机构行为，经典密码学便不再是研究课题，而成为对手方风险。后量子签名应列入部署清单，而非阅读清单。</p>
+          <span class="bl-card-cta">阅读全文 →</span>
+        </a>
+
+        <a href="/blog/physical-care-hardest-crossing.html" class="bl-card">
+          <div class="bl-card-meta">
+            <span class="bl-card-topic">× 物理世界照护</span>
+            <span class="bl-card-date">2026-05-19</span>
+            <span class="bl-card-readtime">5 分钟阅读</span>
+          </div>
+          <h2 class="bl-card-title">为何物理世界的照护，是最艰难的关键领域</h2>
+          <p class="bl-card-excerpt">真正重要的数据集，只能在房间之内一手累积。受监管的人类领域，不会向爬取与规模屈服——它们只回应关系、校准，以及被仔细记录的、人类督导下的每一个决策。</p>
+          <span class="bl-card-cta">阅读全文 →</span>
+        </a>
+      </div>
+
+      <p class="bl-footer-note">Asaptic Labs 按自身节奏发布。无订阅漏斗，无线索收集——内容自有其读者。</p>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="bl-lang" data-lang-content="zht">
+      <span class="bl-page-label">關鍵領域札記</span>
+      <h1 class="bl-page-title">關於智能體在不可逆後果節點上的思考</h1>
+      <p class="bl-page-subtitle">Asaptic Labs 關於信任原語、部署界面與問責架構的短篇文章——這些是 AI 智能體在其決策觸及真實世界時所必需的基礎。</p>
+      <p class="bl-intro">我們在此發布工作檯上的札記：當我們為那些一旦決策錯誤便無法重來的領域構建智能體時，反覆回到的問題——這些短篇文章便是回應。節奏經過深思，語調偏向技術，署名歸於實驗室。每一篇皆按公開發布標準撰寫，與具體業務無涉。</p>
+
+      <div class="bl-grid">
+        <a href="/blog/override-log-as-moat.html" class="bl-card">
+          <div class="bl-card-meta">
+            <span class="bl-card-topic">× 基礎層</span>
+            <span class="bl-card-date">2026-05-19</span>
+            <span class="bl-card-readtime">5 分鐘閱讀</span>
+          </div>
+          <h2 class="bl-card-title">AI 的真正護城河，是覆寫日誌</h2>
+          <p class="bl-card-excerpt">模型規模與數據體量，皆走在一條可見的曲線上，終將商品化。真正能夠累積、且無法複製的，是每一次人類說「不」時所留下的、經過校準的記錄——以及背後的原因。</p>
+          <span class="bl-card-cta">閱讀全文 →</span>
+        </a>
+
+        <a href="/blog/quantum-agent-identity.html" class="bl-card">
+          <div class="bl-card-meta">
+            <span class="bl-card-topic">× 量子安全</span>
+            <span class="bl-card-date">2026-05-19</span>
+            <span class="bl-card-readtime">5 分鐘閱讀</span>
+          </div>
+          <h2 class="bl-card-title">量子轉型對智能體身份意味著什麼</h2>
+          <p class="bl-card-excerpt">當智能體開始簽署不可逆的跨機構行為，傳統密碼學便不再是研究課題，而成為對手方風險。後量子簽名應列入部署清單，而非閱讀清單。</p>
+          <span class="bl-card-cta">閱讀全文 →</span>
+        </a>
+
+        <a href="/blog/physical-care-hardest-crossing.html" class="bl-card">
+          <div class="bl-card-meta">
+            <span class="bl-card-topic">× 物理世界照護</span>
+            <span class="bl-card-date">2026-05-19</span>
+            <span class="bl-card-readtime">5 分鐘閱讀</span>
+          </div>
+          <h2 class="bl-card-title">為何物理世界的照護，是最艱難的關鍵領域</h2>
+          <p class="bl-card-excerpt">真正重要的數據集，只能在房間之內一手累積。受監管的人類領域，不會向爬取與規模屈服——它們只回應關係、校準，以及被仔細記錄的、人類督導下的每一個決策。</p>
+          <span class="bl-card-cta">閱讀全文 →</span>
+        </a>
+      </div>
+
+      <p class="bl-footer-note">Asaptic Labs 按自身節奏發布。無訂閱漏斗，無線索收集——內容自有其讀者。</p>
+    </div>
+  </main>
+
+  <footer class="bl-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/crossings.html">Crossings</a> &nbsp;·&nbsp;
+    <a href="/thesis.html">Thesis</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/press.html">Press</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.bl-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
