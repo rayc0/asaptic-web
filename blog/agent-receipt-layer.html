@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>When an agent acts, who signs the receipt? — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents are acting on behalf of institutions without leaving attributable signed receipts. The delegation chain breaks at the agent boundary. Here is why identity is the missing primitive." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/agent-receipt-layer.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="When an agent acts, who signs the receipt?" />
+  <meta property="og:description" content="AI agents are acting on behalf of institutions without leaving attributable signed receipts. The delegation chain breaks at the agent boundary. Here is why identity is the missing primitive." />
+  <meta property="og:url" content="https://asaptic.com/blog/agent-receipt-layer.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-19" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "When an agent acts, who signs the receipt?",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-19",
+    "description": "AI agents are acting on behalf of institutions without leaving attributable signed receipts. The delegation chain breaks at the agent boundary. Here is why identity is the missing primitive.",
+    "url": "https://asaptic.com/blog/agent-receipt-layer.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× ACCOUNTABILITY</span>
+      <h1 class="essay-title">When an agent acts, who signs the receipt?</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-19</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>An employee who books a flight on a company card is traceable. The booking is attributed, the authority is documented, and if something goes wrong there is a clear record of who delegated what to whom. This is not bureaucracy for its own sake — it is the basic infrastructure of institutional accountability. Every consequential action in a governed system leaves a receipt.</p>
+        <p>AI agents are now booking flights. They are also routing payments, enrolling patients, rejecting claims, and signing on behalf of institutions that have not thought carefully about what "signing" actually means in this context. The receipts, when they exist at all, are logs — not signatures. The difference matters more than it appears.</p>
+        <p>A log entry says "this happened at this time." A signed receipt says "this entity, with this authority, caused this to happen, and is cryptographically bound to that claim." The first is a record. The second is accountability. Regulated environments, counterparty institutions, and future auditors need the second kind. What they are largely getting is the first.</p>
+
+        <h2>The delegation chain problem</h2>
+        <p>When a human delegates to an agent, a chain of authority is created. The human principal authorises the agent to act within a defined scope. The agent acts. Downstream systems, people, or institutions are affected. For that chain to be auditable, each link needs to be attributable: who authorised whom, to do what, within what constraints, at what time.</p>
+        <p>Today that chain usually breaks at the agent boundary. The system might record that "the AI suggested this action" or "the automation completed this step," but the record rarely carries a formal delegation structure — who scoped the authority, what the limits were, and whether the agent acted within them. When something goes wrong, the answer to "who signed the receipt" is, structurally, nobody.</p>
+        <p>This is not a new kind of problem. It is the classic problem of agency, now operating at the speed and scale of software. What is new is that the failure mode — an agent acting outside its authorised scope with no attributable trail — is fast, cheap, and likely to be common.</p>
+
+        <h2>Identity is the missing primitive</h2>
+        <p>The conversation about agent safety has focused largely on alignment: making agents do what humans intend. This is necessary. It is not sufficient. Alignment addresses what the agent will do. Attribution addresses who bears responsibility when it does.</p>
+        <p>For attribution to work technically, agents need persistent, scoped identities. Not accounts. Not API keys. Identities that carry delegation provenance — traceable back to the human or institutional principal that created them, with the scope and limits of authority embedded in the credential. An agent should present a signed claim that says, in effect: I am authorised to act on behalf of Entity X, within scope Y, until condition Z, and this claim is signed by X in a way X cannot later repudiate.</p>
+        <p>That is a cryptographic structure. And it implies a key management and signature architecture that most current agent deployments do not have, because most agent deployments were not designed to produce institutional-grade receipts. They were designed to produce results.</p>
+
+        <h2>Why scale makes this urgent</h2>
+        <p>The pressure to audit agent actions grows with the scale and consequence of those actions. A single agent booking one flight is tractable with manual review. A thousand agents, acting continuously across regulated domains — payments, healthcare, legal execution — requires institutional-grade receipt infrastructure, not manual review.</p>
+        <p>The organisations building agent deployments now will set the architecture that operates at that scale. If that architecture does not include identity, delegation chains, and signed receipts, it will need to be retrofitted later — under regulatory pressure, after incidents, and at far higher cost than building it in at the start. The signature layer is not the bottleneck on agent capability. It is the condition under which agent capability earns the right to operate in consequential domains.</p>
+
+        <h2>The receipt layer is the trust layer</h2>
+        <p>The agent economy will be built on what agents can be trusted to do without a human watching every step. That trust is not granted by capability benchmarks. It is earned by the record — an accumulation of signed, attributed, auditable actions that institutions, regulators, and counterparties can inspect.</p>
+        <p>Building that record requires the same infrastructure that any responsible institution uses to prove it acted within authorised scope: identity, delegation, signature, and audit. Not because regulators will eventually demand it — though they will — but because the alternative is an agent economy built on unaccountable action. And unaccountable action, at scale, is not progress. It is liability dressed as capability.</p>
+        <p>The receipt layer is how the agent economy pays for its right to act in the world.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>当 AI 智能体代表机构行动时，一项关键基础设施常被忽视：谁签署了收据？日志条目记录的是"发生了什么"，而签名收据记录的是"哪个实体、凭何授权、使这件事发生了"。委托链在智能体边界处断裂——权限由谁划定、限制是什么、智能体是否在此范围内行动，这些通常无迹可查。真正的解决方案是智能体身份：携带委托溯源的加密凭证，可追溯至授权它的委托方，且权限范围内嵌于凭证之中。收据层，正是智能体经济赢得在现实世界中行动资格的方式。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>當 AI 智能體代表機構行動時，一項關鍵基礎設施常被忽視：誰簽署了收據？日誌條目記錄的是「發生了什麼」，而簽名收據記錄的是「哪個實體、憑何授權、使這件事發生了」。委託鏈在智能體邊界處斷裂——權限由誰劃定、限制是什麼、智能體是否在此範圍內行動，這些通常無跡可查。真正的解決方案是智能體身份：攜帶委託溯源的加密憑證，可追溯至授權它的委託方，且權限範圍內嵌於憑證之中。收據層，正是智能體經濟贏得在現實世界中行動資格的方式。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/override-log-as-moat.html">Also: The override log moat →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 问责架构</span>
+      <h1 class="essay-title">当智能体行动时，谁签署了收据？</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-19</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>当 AI 智能体代表机构行动时，一项关键基础设施常被忽视：谁签署了收据？日志条目记录的是"发生了什么"，而签名收据记录的是"哪个实体、凭何授权、使这件事发生了，并对此具有加密绑定的责任"。前者是记录，后者是问责。受监管环境所需要的是后者，而目前大多数智能体部署提供的是前者。</p>
+        <p>委托链问题在于：当人类将权限委托给智能体，一条授权链随之创建。要使这条链可审计，每个环节都需要可归因——谁授权了谁，做了什么，在什么约束下，在什么时间。然而今天，这条链通常在智能体边界处断裂。记录往往只显示"AI 建议了此行动"，却不携带正式的委托结构——谁划定了权限范围、限制是什么、智能体是否在此范围内行动。当出现问题时，"谁签署了收据"这个问题在结构上没有答案。</p>
+        <p>解决这一问题的关键原语是智能体身份：不只是账户或 API 密钥，而是携带委托溯源的身份凭证——可追溯至创建它的人类或机构委托方，且权限范围与约束内嵌于凭证之中。这是一种加密结构，意味着大多数现有智能体部署所缺失的密钥管理与签名架构。对于现在构建智能体部署的机构，若架构中不包含身份、委托链与签名收据，日后将不得不在监管压力下、在事故之后，以远高于最初就内置它的代价来进行改造。收据层，正是智能体经济赢得在现实世界中行动资格的方式。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/override-log-as-moat.html">延伸阅读：覆写日志护城河 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 問責架構</span>
+      <h1 class="essay-title">當智能體行動時，誰簽署了收據？</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-19</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>當 AI 智能體代表機構行動時，一項關鍵基礎設施常被忽視：誰簽署了收據？日誌條目記錄的是「發生了什麼」，而簽名收據記錄的是「哪個實體、憑何授權、使這件事發生了，並對此具有加密綁定的責任」。前者是記錄，後者是問責。受監管環境所需要的是後者，而目前大多數智能體部署提供的是前者。</p>
+        <p>委託鏈問題在於：當人類將權限委託給智能體，一條授權鏈隨之建立。要使這條鏈可審計，每個環節都需要可歸因——誰授權了誰、做了什麼、在什麼限制下、在什麼時間。然而今天，這條鏈通常在智能體邊界處斷裂。記錄往往只顯示「AI 建議了此行動」，卻不攜帶正式的委託結構——誰劃定了權限範圍、限制是什麼、智能體是否在此範圍內行動。當出現問題時，「誰簽署了收據」這個問題在結構上沒有答案。</p>
+        <p>解決這一問題的關鍵原語是智能體身份：不只是帳戶或 API 金鑰，而是攜帶委託溯源的身份憑證——可追溯至建立它的人類或機構委託方，且權限範圍與約束內嵌於憑證之中。這是一種加密結構，意味著大多數現有智能體部署所缺失的金鑰管理與簽名架構。對於現在構建智能體部署的機構，若架構中不包含身份、委託鏈與簽名收據，日後將不得不在監管壓力下、在事故之後，以遠高於最初就內置它的代價來進行改造。收據層，正是智能體經濟贏得在現實世界中行動資格的方式。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/override-log-as-moat.html">延伸閱讀：覆寫日誌護城河 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
