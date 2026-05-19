@@ -38,6 +38,7 @@ const CONTENT = {
     ops_operator: "AI Operator",
     ops_operator_desc: "Cross-session memory, briefings, and task continuity maintained by persistent AI agents.",
     // Footer
+    footer_thesis: "Thesis",
     footer_privacy: "Privacy",
     footer_tagline: "AI agents built for decisions that matter.",
     footer_copy: "© 2026 Asaptic Labs"
@@ -81,6 +82,7 @@ const CONTENT = {
     ops_operator: "AI 运营官",
     ops_operator_desc: "跨会话记忆、简报及任务连续性由持久化AI智能体维护。",
     // Footer
+    footer_thesis: "核心论点",
     footer_privacy: "隐私政策",
     footer_tagline: "为真正重要的决策而构建的AI智能体。",
     footer_copy: "© 2026 Asaptic Labs"
@@ -124,6 +126,7 @@ const CONTENT = {
     ops_operator: "AI 運營官",
     ops_operator_desc: "跨對話記憶、簡報及任務連續性由持久化AI智能體維護。",
     // Footer
+    footer_thesis: "核心論點",
     footer_privacy: "私隱政策",
     footer_tagline: "為真正重要的決策而構建的AI智能體。",
     footer_copy: "© 2026 Asaptic Labs"
