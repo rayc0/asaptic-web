@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The delegation chain — Asaptic Labs</title>
+
+  <meta name="description" content="When an AI agent delegates to sub-agents, authority cannot be inherited implicitly. Explicit, signed, scoped delegation tokens are the accountability primitive that multi-agent pipelines require." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/delegation-chain.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The delegation chain: how authority should flow through multi-agent pipelines" />
+  <meta property="og:description" content="In multi-agent systems, authority cannot be inherited implicitly. Explicit delegation tokens — signed, scoped, time-bound — are the accountability primitive that prevents authority expansion, attribution dilution, and revocation lag." />
+  <meta property="og:url" content="https://asaptic.com/blog/delegation-chain.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-20" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The delegation chain: how authority should flow through multi-agent pipelines",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-20",
+    "description": "In multi-agent systems, authority cannot be inherited implicitly. Explicit delegation tokens are the accountability primitive that prevents authority expansion, attribution dilution, and revocation lag.",
+    "url": "https://asaptic.com/blog/delegation-chain.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× SECURITY × HARDWARE × HUMAN CARE</span>
+      <h1 class="essay-title">The delegation chain: how authority should flow through multi-agent pipelines</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-20</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>A single AI agent taking a single action is a simple accountability picture: the agent acted, the log shows what it did, the principal who authorized it is identifiable. Multi-agent pipelines are not that simple. When an orchestrating agent spawns sub-agents — to gather information, take intermediate actions, or interact with external systems on its behalf — the question of whose authority each sub-agent is acting under becomes genuinely hard.</p>
+
+        <p>The default answer, in most deployed multi-agent systems today, is: the sub-agent inherits the orchestrator's session credentials. Whatever token the orchestrator was given, the sub-agent uses too. This is the engineering path of least resistance. It is also, in safety-critical contexts, an accountability gap that compounds with every hop.</p>
+
+        <h2>Why implicit inheritance fails</h2>
+        <p>The first problem is authority expansion. When a sub-agent inherits the orchestrator's full credentials, it can do anything the orchestrator can do. But the sub-agent was created for a specific purpose — information retrieval, format conversion, a domain-specific lookup — and that purpose does not require the full scope of the orchestrator's authority. Implicit inheritance grants authority that was never intended and never audited.</p>
+
+        <p>The second problem is accountability dilution. If the orchestrator's token is reused by five sub-agents operating in parallel, and one of them takes an action that causes harm, the audit log shows five agents using the same credentials. Reconstructing which sub-agent took the harmful action, under which specific delegated scope, in response to which orchestrator instruction, requires inference rather than inspection. The accountability chain breaks at precisely the point where it is most needed.</p>
+
+        <p>The third problem is revocation lag. If the orchestrator's authority is revoked — because a user withdrew consent, a session expired, or a security event was detected — sub-agents using inherited tokens may continue operating. Implicit inheritance creates a shadow authority that persists past its authorization horizon.</p>
+
+        <h2>What explicit delegation requires</h2>
+        <p>The alternative is explicit delegation: when an orchestrator creates a sub-agent, it issues a delegation token that specifies the sub-agent's authorized scope, the actions it may take, and the time window in which it may take them. The token is signed by the orchestrator's credentials, creating a cryptographically verifiable link between the delegating authority and the delegated scope. When the sub-agent acts, it acts under its own token, not the orchestrator's — and the action can be attributed to that specific delegation.</p>
+
+        <p>This is not a novel security concept. Capability systems and token-chaining authorization schemes have explored this territory for decades. What is new is the need to apply it at the multi-agent layer, where the entities are AI agents with probabilistic behavior, operating in domains where the consequences of unauthorized action can be immediate and physical.</p>
+
+        <h2>The three crossings of the delegation chain</h2>
+        <p>In post-quantum security contexts, every link in the delegation chain is a signature. When a sub-agent signs an action on behalf of an orchestrator, that signature is an attestation of delegated authority. Classical cryptographic signatures on those attestations are potentially vulnerable as the quantum transition proceeds. The delegation chain needs to be constructed with quantum-resistant key material at each hop — not as a future hardening task, but as a present design requirement for any multi-agent system taking actions whose consequences persist over years.</p>
+
+        <p>In hardware contexts, the delegation chain has an additional integrity requirement: the hardware on which each sub-agent runs. A delegation token issued to a sub-agent is only meaningful if the receiving agent is running in an attested environment. A sub-agent operating on unverified hardware can be spoofed, replayed, or substituted. Hardware attestation at each delegation hop closes the class of attacks that compromise delegation tokens by compromising the receiving environment rather than the token itself.</p>
+
+        <p>In physical-world care contexts, the delegation chain intersects with consent. A patient consents to a specific agent performing a specific function — not to an arbitrary chain of sub-agents that may invoke that consent transitively. If a care orchestrator delegates to a data-retrieval sub-agent, and that sub-agent further delegates to an analysis sub-agent whose output influences a care decision, the patient's consent needs to attach to each step explicitly. The delegation chain is the mechanism by which consent travels through the pipeline — and if the chain is implicit and untracked, the consent architecture collapses into a legal fiction.</p>
+
+        <h2>What good delegation architecture makes possible</h2>
+        <p>When delegation is explicit, signed, and scoped, a different class of accountability becomes possible: for any consequential action in a multi-agent pipeline, the full delegation path from the original authorizing principal to the acting sub-agent is reconstructable. What authority was delegated? By whom? Under what constraints? Were those constraints honored?</p>
+
+        <p>That reconstruction capability is the precondition for meaningful post-incident review of multi-agent systems. It is also the precondition for the kind of trust that allows multi-agent pipelines to operate in domains where the stakes are high enough that authority matters. An orchestration system that cannot show the delegation chain for any action it takes is not auditable — and an inauditable system should not be operating in consequential territory.</p>
+
+        <p>Delegation is not a plumbing detail. In multi-agent systems taking actions at the crossings of security, hardware, and human care, it is a first-class accountability primitive — and designing it as anything less is a choice whose costs compound with scale.</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/principal-hierarchy.html">Also: The principal hierarchy →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 安全 × 硬件 × 人文关怀</span>
+      <h1 class="essay-title">委托链：权限如何在多智能体流水线中流转</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-20</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>单个AI智能体执行单个操作，是一幅简单的问责图景：智能体行动了，日志记录了它的所作所为，授权委托人可被识别。多智能体流水线则大不相同。当一个编排智能体派生出子智能体——用于信息收集、中间操作，或代表其与外部系统交互——每个子智能体究竟在谁的权限下行事，这个问题变得真正复杂。</p>
+
+        <p>在今天大多数已部署的多智能体系统中，默认答案是：子智能体继承编排智能体的会话凭证。编排智能体拿到的令牌，子智能体也使用。这是阻力最小的工程路径。然而在安全关键场景中，这是一个随每一次"跳"而成比例扩大的问责缺口。</p>
+
+        <h2>为何隐式继承会失效</h2>
+        <p>第一个问题是权限扩张。当子智能体继承编排智能体的完整凭证时，它可以做任何编排智能体能做的事。但子智能体是为特定目的而创建的——信息检索、格式转换、特定域的查询——而这些目的并不需要编排智能体的完整权限范围。隐式继承授予了从未有人打算授予、也从未被审计的权限。</p>
+
+        <p>第二个问题是问责稀释。如果编排智能体的令牌被五个并行运行的子智能体复用，而其中一个采取了造成伤害的行动，审计日志将显示五个智能体使用了相同的凭证。要重建哪个子智能体在哪个特定委托范围内、响应哪条编排指令执行了有害操作，需要推断而非检查。问责链正是在最需要它的地方断裂了。</p>
+
+        <p>第三个问题是撤销滞后。如果编排智能体的权限被撤销——因为用户撤回了同意、会话过期，或检测到安全事件——使用继承令牌的子智能体可能仍在继续运行。隐式继承创造了一种超越其授权边界而持续存在的影子权限。</p>
+
+        <h2>显式委托要求什么</h2>
+        <p>替代方案是显式委托：当编排智能体创建子智能体时，它签发一个委托令牌，指定子智能体的授权范围、允许执行的操作，以及执行操作的时间窗口。该令牌由编排智能体的凭证签名，在委托权限与被委托范围之间建立起可通过密码学验证的链接。当子智能体行动时，它在自己的令牌下行事，而非编排智能体的令牌——该操作可被归因于这一特定委托。</p>
+
+        <p>这不是什么新颖的安全概念。能力系统和令牌链式授权方案在这一领域探索了数十年。真正新的，是在多智能体层应用这一概念的需求——这里的实体是具有概率性行为的AI智能体，在后果可能直接且物理的领域中运行。</p>
+
+        <h2>委托链的三个关键领域</h2>
+        <p>在后量子安全语境中，委托链的每一个环节都是一个签名。当子智能体代表编排智能体对某一操作签名时，该签名是对委托权限的证明。这些证明上的经典密码学签名，在量子转型推进的过程中存在潜在漏洞。委托链需要在每一跳都使用抗量子密钥材料来构建——这不是一项未来加固任务，而是任何执行具有长期影响操作的多智能体系统的当下设计要求。</p>
+
+        <p>在硬件语境中，委托链有一个额外的完整性要求：每个子智能体运行所在的硬件。向子智能体签发的委托令牌，只有在接收智能体运行在经证明的环境中时才有意义。运行在未经验证硬件上的子智能体可能被欺骗、重放或替换。在每个委托跳处进行硬件证明，关闭了那类通过损害接收环境而非令牌本身来攻击委托令牌的漏洞类别。</p>
+
+        <p>在物理世界照护语境中，委托链与同意相交。患者同意特定智能体执行特定功能——而非同意一个可能传递性援引该同意的任意子智能体链。如果照护编排者委托给数据检索子智能体，后者进一步委托给分析子智能体，而该分析子智能体的输出影响了护理决策，患者的同意需要显式地附着于每一步。委托链是同意在流水线中传递的机制——如果链是隐式且未被追踪的，同意架构便会崩溃为一种法律虚构。</p>
+
+        <h2>良好委托架构能带来什么</h2>
+        <p>当委托是显式的、被签名的且有范围限制时，一类不同的问责成为可能：对于多智能体流水线中的任何具有实质影响的操作，从原始授权委托人到执行子智能体的完整委托路径是可重建的。委托了什么权限？由谁委托？在什么约束下？这些约束是否被遵守？</p>
+
+        <p>这种重建能力是对多智能体系统进行有意义的事后审查的前提，也是信任的前提——信任使多智能体流水线能够在高风险、权限至关重要的领域中运行。一个无法展示其任何操作委托链的编排系统，是不可审计的——而不可审计的系统不应在具有实质影响的领域中运行。</p>
+
+        <p>委托不是管道细节。在安全、硬件与人文关怀的关键领域中执行操作的多智能体系统里，它是一项一等问责原语——将其设计为任何低于此的东西，是一个成本随规模成比例增加的选择。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/principal-hierarchy.html">延伸阅读：委托人层级 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 安全 × 硬體 × 人文關懷</span>
+      <h1 class="essay-title">委託鏈：權限如何在多智能體流水線中流轉</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-20</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>單個AI智能體執行單個操作，是一幅簡單的問責圖景：智能體行動了，日誌記錄了它的所作所為，授權委託人可被識別。多智能體流水線則大不相同。當一個協調智能體派生出子智能體——用於資訊收集、中間操作，或代表其與外部系統互動——每個子智能體究竟在誰的權限下行事，這個問題變得真正複雜。</p>
+
+        <p>在今天大多數已部署的多智能體系統中，預設答案是：子智能體繼承協調智能體的會話憑證。協調智能體拿到的令牌，子智能體也使用。這是阻力最小的工程路徑。然而在安全關鍵場景中，這是一個隨每一次「跳」而成比例擴大的問責缺口。</p>
+
+        <h2>為何隱式繼承會失效</h2>
+        <p>第一個問題是權限擴張。當子智能體繼承協調智能體的完整憑證時，它可以做任何協調智能體能做的事。但子智能體是為特定目的而創建的——資訊檢索、格式轉換、特定域的查詢——而這些目的並不需要協調智能體的完整權限範圍。隱式繼承授予了從未有人打算授予、也從未被審計的權限。</p>
+
+        <p>第二個問題是問責稀釋。如果協調智能體的令牌被五個並行運行的子智能體複用，而其中一個採取了造成傷害的行動，審計日誌將顯示五個智能體使用了相同的憑證。要重建哪個子智能體在哪個特定委託範圍內、回應哪條協調指令執行了有害操作，需要推斷而非檢查。問責鏈正是在最需要它的地方斷裂了。</p>
+
+        <p>第三個問題是撤銷滯後。如果協調智能體的權限被撤銷——因為用戶撤回了同意、會話過期，或偵測到安全事件——使用繼承令牌的子智能體可能仍在繼續運行。隱式繼承創造了一種超越其授權邊界而持續存在的影子權限。</p>
+
+        <h2>顯式委託要求什麼</h2>
+        <p>替代方案是顯式委託：當協調智能體創建子智能體時，它簽發一個委託令牌，指定子智能體的授權範圍、允許執行的操作，以及執行操作的時間窗口。該令牌由協調智能體的憑證簽名，在委託權限與被委託範圍之間建立起可通過密碼學驗證的鏈接。當子智能體行動時，它在自己的令牌下行事，而非協調智能體的令牌——該操作可被歸因於這一特定委託。</p>
+
+        <p>這不是什麼新穎的安全概念。能力系統和令牌鏈式授權方案在這一領域探索了數十年。真正新的，是在多智能體層應用這一概念的需求——這裡的實體是具有概率性行為的AI智能體，在後果可能直接且物理的領域中運行。</p>
+
+        <h2>委託鏈的三個關鍵領域</h2>
+        <p>在後量子安全語境中，委託鏈的每一個環節都是一個簽名。當子智能體代表協調智能體對某一操作簽名時，該簽名是對委託權限的證明。這些證明上的傳統密碼學簽名，在量子轉型推進的過程中存在潛在漏洞。委託鏈需要在每一跳都使用抗量子密鑰材料來構建——這不是一項未來加固任務，而是任何執行具有長期影響操作的多智能體系統的當下設計要求。</p>
+
+        <p>在硬體語境中，委託鏈有一個額外的完整性要求：每個子智能體運行所在的硬體。向子智能體簽發的委託令牌，只有在接收智能體運行在經證明的環境中時才有意義。運行在未經驗證硬體上的子智能體可能被欺騙、重放或替換。在每個委託跳處進行硬體證明，關閉了那類通過損害接收環境而非令牌本身來攻擊委託令牌的漏洞類別。</p>
+
+        <p>在物理世界照護語境中，委託鏈與同意相交。患者同意特定智能體執行特定功能——而非同意一個可能傳遞性援引該同意的任意子智能體鏈。如果照護協調者委託給資料檢索子智能體，後者進一步委託給分析子智能體，而該分析子智能體的輸出影響了護理決策，患者的同意需要顯式地附著於每一步。委託鏈是同意在流水線中傳遞的機制——如果鏈是隱式且未被追蹤的，同意架構便會崩潰為一種法律虛構。</p>
+
+        <h2>良好委託架構能帶來什麼</h2>
+        <p>當委託是顯式的、被簽名的且有範圍限制時，一類不同的問責成為可能：對於多智能體流水線中的任何具有實質影響的操作，從原始授權委託人到執行子智能體的完整委託路徑是可重建的。委託了什麼權限？由誰委託？在什麼約束下？這些約束是否被遵守？</p>
+
+        <p>這種重建能力是對多智能體系統進行有意義的事後審查的前提，也是信任的前提——信任使多智能體流水線能夠在高風險、權限至關重要的領域中運行。一個無法展示其任何操作委託鏈的協調系統，是不可審計的——而不可審計的系統不應在具有實質影響的領域中運行。</p>
+
+        <p>委託不是管道細節。在安全、硬體與人文關懷的關鍵領域中執行操作的多智能體系統裡，它是一項一等問責原語——將其設計為任何低於此的東西，是一個成本隨規模成比例增加的選擇。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/principal-hierarchy.html">延伸閱讀：委託人層級 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
