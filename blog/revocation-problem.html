@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The revocation problem — Asaptic Labs</title>
+
+  <meta name="description" content="An authority system that cannot reliably revoke is not a safe system. Why withdrawing an AI agent's authority is harder than granting it — and what good revocation architecture requires." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/revocation-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The revocation problem: why withdrawing an AI agent's authority is harder than granting it" />
+  <meta property="og:description" content="An authority system that cannot reliably revoke is not a safe system. The revocation problem is systematically underengineered in AI agent deployments — and the consequences are sharpest at the crossings of security, hardware, and care." />
+  <meta property="og:url" content="https://asaptic.com/blog/revocation-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-20" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The revocation problem: why withdrawing an AI agent's authority is harder than granting it",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-20",
+    "description": "An authority system that cannot reliably revoke is not a safe system. The revocation problem is systematically underengineered in AI agent deployments.",
+    "url": "https://asaptic.com/blog/revocation-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× SECURITY × HARDWARE × HUMAN CARE</span>
+      <h1 class="essay-title">The revocation problem: why withdrawing an AI agent's authority is harder than granting it</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-20</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>When we design authority systems for AI agents, the mental model defaults to the granting direction: issuing tokens, assigning roles, configuring permissions. The inverse — withdrawing authority that has already been granted — receives far less architectural attention. That asymmetry is a liability. An authority system that cannot reliably revoke is not a safe system. It is an authority system with a one-way valve.</p>
+
+        <p>The problem of revocation is not new to computing. Certificate revocation, session invalidation, and permission withdrawal are well-studied territory. What makes it newly hard in the context of AI agents is a combination of properties that do not appear together in traditional software authorization: probabilistic behavior, distributed operation, multi-layer delegation, and real-time action in consequential domains.</p>
+
+        <h2>Why revocation lags in agent systems</h2>
+        <p>When an AI agent is authorized to act, it typically receives credentials it holds in memory, or that are embedded in session state across the services it operates in. Revoking that authorization requires reaching not just the agent's credential store, but every downstream session it has opened, every cached token it holds, and every sub-agent it may have spawned.</p>
+
+        <p>In multi-agent pipelines, the problem compounds. If an orchestrating agent has delegated authority to sub-agents — even well-designed, explicitly scoped delegation — revocation of the orchestrator's credentials does not automatically cascade. Each delegation hop is a potential revocation gap: a place where authority that has been withdrawn continues to operate under inherited credentials the revocation event never reached.</p>
+
+        <p>In-flight operations add a third layer of complexity. An agent that has already initiated an action when a revocation event arrives faces a decision the architecture must have pre-answered: complete the action or abort? If the system has no explicit revocation-aware execution model, the answer defaults to completion — which means the agent continues acting under authority that has already been withdrawn.</p>
+
+        <h2>The three crossings of the revocation problem</h2>
+        <p>In post-quantum security contexts, revocation has particular urgency. Classical certificate infrastructure — CRL endpoints, OCSP responders — was designed for web PKI, where revocation latency measured in hours was a known limitation accepted as a trade-off. For AI agents taking real-time, irreversible actions on behalf of institutions, that tolerance does not hold. A revocation event that takes four hours to propagate to all credential-checking points is not a revocation — it is a grace period during which harm can continue to accumulate.</p>
+
+        <p>Post-quantum signature schemes, which must replace classical cryptographic keys on a forward-looking timeline, need to be co-designed with revocation mechanisms from the start. The migration to quantum-resistant key material is an opportunity to build revocation as a first-class property — not an afterthought bolted onto the infrastructure that came before.</p>
+
+        <p>In hardware contexts, the hardware root of trust cuts both ways on revocation. Credentials anchored to hardware security modules or trusted platform modules are harder to steal — but they are also harder to revoke remotely, because the credential store is physically protected. The right design treats hardware attestation as the authoritative revocation surface: a hardware-bound credential whose revocation is signaled at the attestation layer, so that any system verifying the credential receives the revocation status in the same attestation handshake rather than a separate, easily-stale lookup.</p>
+
+        <p>In physical-world care contexts, revocation is a patient safety property. A patient withdrawing consent from a care agent is not making a configuration preference — they are withdrawing authorization for a specific agent to act on their body, their data, and their care decisions. The care agent must stop acting immediately and completely. Revocation latency in this context is not a performance metric. It is the interval during which an agent is acting without authority in a domain where the consequences are clinical.</p>
+
+        <p>Care architectures that rely on token expiry as the primary revocation mechanism — waiting for a session to lapse rather than signaling revocation actively — treat patient consent withdrawal as eventually consistent. Eventually consistent consent is not consent.</p>
+
+        <h2>Revocation as a deployment gate</h2>
+        <p>The practical implication of taking the revocation problem seriously is that it becomes a gate on deployment scope. An AI agent operating in a low-stakes, easily reversible domain can tolerate revocation latency. An agent operating in a safety-critical, high-consequence domain cannot. The requirement is not a universal solution — it is a matching of revocation capability to the actual stakes of the deployment.</p>
+
+        <p>What that matching requires: short-lived tokens as the default, to reduce the window of unintended authority before expiry provides a natural stop; push-based revocation events rather than pull-based polling, so agents are notified of revocation rather than discovering it at next credential check; explicit revocation propagation through delegation chains, so orchestrator revocation cascades to sub-agents; and pre-defined abort semantics for in-flight operations, so the behavior under revocation is specified before it is needed.</p>
+
+        <p>An agent that cannot be reliably stopped is not ready to act in domains where stopping matters. Revocation architecture is not a security hygiene task to address after the functionality works. It is the functionality — because the ability to withdraw authority is what makes granting authority safe in the first place.</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/delegation-chain.html">Also: The delegation chain →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 安全 × 硬件 × 人文关怀</span>
+      <h1 class="essay-title">撤销问题：为何收回AI智能体的权限比授予更难</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-20</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>当我们为AI智能体设计权限系统时，思维模型默认指向授权方向：签发令牌、分配角色、配置权限。反向操作——撤销已授予的权限——在架构层面获得的关注远远不够。这种不对称是一种隐患。一个无法可靠撤销的权限系统，不是安全系统——它是一个只有单向阀的权限系统。</p>
+
+        <p>撤销问题对计算机系统并不陌生。证书撤销、会话失效和权限撤回都是研究充分的领域。但在AI智能体语境下，这一问题变得全新地困难——因为一组在传统软件授权中不会并存的属性同时出现了：概率性行为、分布式操作、多层委托，以及在后果严重的领域中的实时行动。</p>
+
+        <h2>为何智能体系统中的撤销会滞后</h2>
+        <p>当AI智能体被授权行动时，它通常会在内存中持有凭证，或将其嵌入到所操作各服务的会话状态中。撤销该授权，不仅需要触达智能体的凭证存储，还需要触达它已打开的每一个下游会话、持有的每一个缓存令牌，以及它可能派生的每一个子智能体。</p>
+
+        <p>在多智能体流水线中，问题成倍扩大。如果编排智能体已将权限委托给子智能体——即便是设计良好的显式委托——撤销编排智能体的凭证也不会自动级联。每一次委托跳都是一个潜在的撤销缺口：在那里，已被撤回的权限在撤销事件从未抵达的继承凭证下继续运行。</p>
+
+        <p>进行中的操作又增加了第三层复杂性。当撤销事件到来时，一个已经发起某个操作的智能体面临一个架构必须预先回答的问题：继续完成操作还是中止？如果系统没有明确的撤销感知执行模型，答案默认为继续完成——意味着智能体在已被撤回的权限下继续行动。</p>
+
+        <h2>撤销问题的三个关键领域</h2>
+        <p>在后量子安全语境中，撤销具有特殊的紧迫性。传统证书基础设施——CRL端点、OCSP响应器——是为Web PKI设计的，其中以小时计的撤销延迟是可接受的权衡。对于代表机构采取实时、不可逆行动的AI智能体，这种容忍度不成立。一个需要四小时才能传播到所有凭证检查点的撤销事件，不是撤销——它是一个伤害可以继续积累的宽限期。</p>
+
+        <p>后量子签名方案必须在前瞻性时间轴上取代传统密码学密钥，这需要从一开始就与撤销机制共同设计。迁移到抗量子密钥材料，是将撤销构建为一等属性的机会——而非附加在之前基础设施上的事后补丁。</p>
+
+        <p>在硬件语境中，硬件信任根对撤销具有两面性。锚定在硬件安全模块或可信平台模块中的凭证更难被盗——但远程撤销也更难，因为凭证存储受到物理保护。正确的设计将硬件证明视为权威撤销界面：一个在证明层发出撤销信号的硬件绑定凭证，使得验证该凭证的任何系统在同一次证明握手中接收撤销状态——而非通过一个容易过时的独立查询。</p>
+
+        <p>在物理世界照护语境中，撤销是患者安全属性。患者撤回对照护智能体的同意，不是在表达配置偏好——他们是在撤回特定智能体对其身体、数据和护理决策采取行动的授权。照护智能体必须立即、彻底地停止行动。在这一语境下，撤销延迟不是性能指标——它是智能体在无权限下于临床领域采取行动的间隔时长。</p>
+
+        <p>依赖令牌过期作为主要撤销机制的照护架构——等待会话失效而非主动发出撤销信号——是将患者同意撤回视为最终一致的。最终一致的同意，不是同意。</p>
+
+        <h2>撤销作为部署门槛</h2>
+        <p>认真对待撤销问题的实际含义是：它成为部署范围的门槛。在低风险、易于可逆领域运行的AI智能体，可以容忍撤销延迟。在安全关键、高后果领域运行的智能体，则不能。要求不是通用解决方案——而是将撤销能力与部署的实际风险相匹配。</p>
+
+        <p>这种匹配需要：短生命周期令牌作为默认，以减少在过期自然停止前意外权限的窗口；推送式撤销事件而非拉取式轮询，使智能体收到撤销通知而非在下次凭证检查时发现；委托链中的显式撤销传播，使编排者撤销级联到子智能体；以及对进行中操作预定义的中止语义，使撤销状态下的行为在被需要之前已被明确规定。</p>
+
+        <p>一个无法被可靠停止的智能体，尚未准备好在停止至关重要的领域中行动。撤销架构不是功能运作之后再处理的安全卫生任务——它本身就是功能，因为撤销权限的能力，才是首先使授权权限变得安全的基础。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/delegation-chain.html">延伸阅读：委托链 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 安全 × 硬體 × 人文關懷</span>
+      <h1 class="essay-title">撤銷問題：為何收回AI智能體的權限比授予更難</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-20</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>當我們為AI智能體設計權限系統時，思維模型預設指向授權方向：簽發令牌、分配角色、配置權限。反向操作——撤銷已授予的權限——在架構層面獲得的關注遠遠不夠。這種不對稱是一種隱患。一個無法可靠撤銷的權限系統，不是安全系統——它是一個只有單向閥的權限系統。</p>
+
+        <p>撤銷問題對電腦系統並不陌生。憑證撤銷、會話失效和權限撤回都是研究充分的領域。但在AI智能體語境下，這一問題變得全新地困難——因為一組在傳統軟體授權中不會並存的屬性同時出現了：概率性行為、分散式操作、多層委託，以及在後果嚴重的領域中的即時行動。</p>
+
+        <h2>為何智能體系統中的撤銷會滯後</h2>
+        <p>當AI智能體被授權行動時，它通常會在記憶體中持有憑證，或將其嵌入到所操作各服務的會話狀態中。撤銷該授權，不僅需要觸及智能體的憑證存儲，還需要觸及它已開啟的每一個下游會話、持有的每一個快取令牌，以及它可能派生的每一個子智能體。</p>
+
+        <p>在多智能體流水線中，問題成倍擴大。如果協調智能體已將權限委託給子智能體——即便是設計良好的顯式委託——撤銷協調智能體的憑證也不會自動級聯。每一次委託跳都是一個潛在的撤銷缺口：在那裡，已被撤回的權限在撤銷事件從未抵達的繼承憑證下繼續運行。</p>
+
+        <p>進行中的操作又增加了第三層複雜性。當撤銷事件到來時，一個已經發起某個操作的智能體面臨一個架構必須預先回答的問題：繼續完成操作還是中止？如果系統沒有明確的撤銷感知執行模型，答案預設為繼續完成——意味著智能體在已被撤回的權限下繼續行動。</p>
+
+        <h2>撤銷問題的三個關鍵領域</h2>
+        <p>在後量子安全語境中，撤銷具有特殊的緊迫性。傳統憑證基礎設施——CRL端點、OCSP回應器——是為Web PKI設計的，其中以小時計的撤銷延遲是可接受的權衡。對於代表機構採取即時、不可逆行動的AI智能體，這種容忍度不成立。一個需要四小時才能傳播到所有憑證檢查點的撤銷事件，不是撤銷——它是一個傷害可以繼續積累的寬限期。</p>
+
+        <p>後量子簽名方案必須在前瞻性時間軸上取代傳統密碼學金鑰，這需要從一開始就與撤銷機制共同設計。遷移到抗量子金鑰材料，是將撤銷構建為一等屬性的機會——而非附加在之前基礎設施上的事後補丁。</p>
+
+        <p>在硬體語境中，硬體信任根對撤銷具有兩面性。錨定在硬體安全模組或可信平台模組中的憑證更難被盜——但遠端撤銷也更難，因為憑證存儲受到實體保護。正確的設計將硬體證明視為權威撤銷界面：一個在證明層發出撤銷訊號的硬體綁定憑證，使得驗證該憑證的任何系統在同一次證明握手中接收撤銷狀態——而非通過一個容易過時的獨立查詢。</p>
+
+        <p>在物理世界照護語境中，撤銷是患者安全屬性。患者撤回對照護智能體的同意，不是在表達配置偏好——他們是在撤回特定智能體對其身體、資料和護理決策採取行動的授權。照護智能體必須立即、徹底地停止行動。在這一語境下，撤銷延遲不是效能指標——它是智能體在無權限下於臨床領域採取行動的間隔時長。</p>
+
+        <p>依賴令牌過期作為主要撤銷機制的照護架構——等待會話失效而非主動發出撤銷訊號——是將患者同意撤回視為最終一致的。最終一致的同意，不是同意。</p>
+
+        <h2>撤銷作為部署門檻</h2>
+        <p>認真對待撤銷問題的實際含義是：它成為部署範圍的門檻。在低風險、易於可逆領域運行的AI智能體，可以容忍撤銷延遲。在安全關鍵、高後果領域運行的智能體，則不能。要求不是通用解決方案——而是將撤銷能力與部署的實際風險相匹配。</p>
+
+        <p>這種匹配需要：短生命週期令牌作為預設，以減少在過期自然停止前意外權限的窗口；推送式撤銷事件而非拉取式輪詢，使智能體收到撤銷通知而非在下次憑證檢查時發現；委託鏈中的顯式撤銷傳播，使協調者撤銷級聯到子智能體；以及對進行中操作預定義的中止語義，使撤銷狀態下的行為在被需要之前已被明確規定。</p>
+
+        <p>一個無法被可靠停止的智能體，尚未準備好在停止至關重要的領域中行動。撤銷架構不是功能運作之後再處理的安全衛生任務——它本身就是功能，因為撤銷權限的能力，才是首先使授權權限變得安全的基礎。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/delegation-chain.html">延伸閱讀：委託鏈 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
