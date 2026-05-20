@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The attestation gap — Asaptic Labs</title>
+
+  <meta name="description" content="Most deployed AI agents can present a credential but cannot prove they are what they claim to be, running where they claim to run. This gap — the attestation gap — matters most precisely where agents are most consequential." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/attestation-gap.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The attestation gap: why AI agents need hardware-rooted identity" />
+  <meta property="og:description" content="Most deployed AI agents can present a credential but cannot prove they are what they claim to be. Hardware attestation closes that gap — and is essential at every crossing where agent decisions are hard to reverse." />
+  <meta property="og:url" content="https://asaptic.com/blog/attestation-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-20" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The attestation gap: why AI agents need hardware-rooted identity",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-20",
+    "description": "Most deployed AI agents can present a credential but cannot prove they are what they claim to be, running where they claim to run. Hardware attestation closes that gap.",
+    "url": "https://asaptic.com/blog/attestation-gap.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× SECURITY × HARDWARE</span>
+      <h1 class="essay-title">The attestation gap: why AI agents need hardware-rooted identity</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-20</span>
+        <span class="essay-date">6 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Most deployed AI agents have an identity problem that is not well named. They can present a credential — an API key, a session token, a signed assertion — but that credential proves only that someone who possessed the signing material issued the request. It does not prove that the software running the agent is the software it claims to be. It does not prove that the hardware the software runs on has not been tampered with. It does not prove that the execution environment matches what was evaluated, approved, and trusted. The gap between "I hold a valid credential" and "I am what I claim to be, running where I claim to run, in the state that was authorised" is the attestation gap. Most agent deployments today sit inside that gap and do not know it.</p>
+
+        <h2>What hardware attestation actually provides</h2>
+        <p>Hardware attestation is the engineering response to this gap. A hardware attestation mechanism — a Trusted Platform Module, a secure enclave, a hardware security module with a measured boot chain — produces a cryptographically signed statement that a specific piece of software, with a specific configuration hash, is running on a specific piece of hardware, with a specific firmware state. The statement is signed by a key stored in the hardware itself, in a way that the software running on top cannot extract. If the attestation chain is intact, the relying party has strong grounds to believe what it is told about the agent's execution context. If the chain is broken — because software was modified, because firmware was rolled back, because the hardware is not what it presents itself as — the break is detectable.</p>
+        <p>This is categorically different from software-only identity claims. A JWT signed with a secret key proves that someone who knew the key signed it. A hardware attestation report proves that a specific binary, with a specific measured configuration, is running on specific hardware that has a verifiable chain of custody back to a known manufacturer. The difference matters because the threat model for agents in consequential domains includes both credential theft and supply-chain compromise — and hardware attestation addresses the second class of threats in a way that no software-only approach can.</p>
+
+        <h2>Why agents in consequential domains need this more than most software</h2>
+        <p>Most software does not need hardware attestation. A web server serving static content makes decisions that are easily verified from their outputs; the question of exactly which hardware it ran on is rarely consequential. An AI agent making decisions in a domain where mistakes are hard to reverse is different in two important ways.</p>
+        <p>First, the action-to-observation latency is long. A web server returns a response immediately; the response can be checked. An agent may be authorised to act in a system over minutes, hours, or days, and the effects of its actions may accumulate well before they are visible in any audit log. By the time something looks wrong, many actions may have been taken under conditions that cannot be reconstructed. Attestation provides a basis for trusting the agent's stated context at the time of each action — not just its credentials, but the state of the system it ran in.</p>
+        <p>Second, agent decisions are difficult to replay. If a conventional application is compromised, you can often reconstruct what happened from deterministic execution traces. If an agent operating in a care setting or a security-critical context makes a sequence of decisions under compromised conditions, the reconstruction problem is much harder — because the decisions emerged from a reasoning process that is not deterministically replayable. Attestation does not make agent reasoning transparent, but it does give the relying party evidence about whether the conditions under which reasoning happened were the conditions that were authorised.</p>
+
+        <h2>The hardware × security crossing</h2>
+        <p>Hardware attestation sits at the exact intersection of two of the three crossings that define the domains where agent deployment is hardest. The × hardware crossing concerns agents that interface with physical systems — sensors, actuators, embedded devices in infrastructure and care settings. The × security crossing concerns the cryptographic underpinnings of agent identity, credential delegation, and audit integrity. Hardware attestation is the mechanism that lets a relying party trust that a specific agent, in a specific configuration, on specific hardware, was the thing that acted. Without it, the agent's identity claim is a software assertion, and software assertions are always weaker than hardware-rooted ones.</p>
+        <p>The implication for the × physical-world care crossing is direct. A care institution that accepts agent-assisted decision support has an obligation to know that the agent it is running is the agent it evaluated, approved, and has accountability for — not a version that was updated since the evaluation, not a configuration that diverges from what was tested. Hardware attestation, combined with configuration management and a measured boot chain, is the mechanism that makes that assurance possible at deployment time rather than only at evaluation time.</p>
+
+        <h2>The quantum dimension</h2>
+        <p>Current attestation schemes rely on classical asymmetric cryptography — RSA or elliptic curve signatures from keys that live in hardware. Those schemes will need to migrate as the post-quantum transition progresses. This migration is harder for attestation than for most cryptographic applications, because the relevant signing keys live in hardware that cannot be simply re-keyed in software. Attestation infrastructure that is not designed with algorithm agility will be difficult to migrate on any realistic schedule. The time to build agility into attestation infrastructure is before the migration pressure arrives — not after the window for orderly transition has closed.</p>
+
+        <h2>Closing the gap</h2>
+        <p>Hardware attestation is not a research project. The standards exist — TCG specifications, DICE attestation architectures, IETF remote attestation standards. The hardware exists — TPMs are widely deployed, secure enclaves are standard in most data-centre and edge platforms. The tooling exists. What is missing, in most agent deployments today, is the discipline of requiring attestation as a precondition for operational trust rather than treating software credentials as sufficient.</p>
+        <p>That discipline is not technically exotic. It is the same discipline that well-run critical infrastructure has applied to hardware identity for decades. What is new is applying it to the layer above the hardware — to the agent, its configuration, and the context in which it reasons. Closing the attestation gap does not require new science. It requires treating agent identity with the same seriousness that security-critical infrastructure has always treated hardware identity: not as a nice-to-have after deployment, but as the minimum condition for trusting what you are told before anything consequential happens.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>大多数已部署的 AI 智能体存在一个未被充分命名的身份问题：它们可以出示凭证，但无法证明自身就是所声称的软件、运行在所声称的硬件上、处于被授权的状态。硬件验证（attestation）填补了这一差距：通过硬件中存储的密钥签署的声明，证明特定软件以特定配置运行在特定硬件上。这对后果严重的领域尤为重要——在这些领域，行动到观测的延迟较长，决策难以事后重现。当前的验证方案依赖经典密码学，需要在后量子过渡中迁移，而迁移灵活性必须提前构建。关闭验证差距不需要新的研究，而需要对智能体身份抱有与关键基础设施对硬件身份同等的认真态度。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>大多數已部署的 AI 智能體存在一個未被充分命名的身份問題：它們可以出示憑證，但無法證明自身就是所聲稱的軟體、運行在所聲稱的硬體上、處於被授權的狀態。硬體驗證（attestation）填補了這一差距：透過硬體中存儲的金鑰簽署的聲明，證明特定軟體以特定配置運行在特定硬體上。這對後果嚴重的領域尤為重要——在這些領域，行動到觀測的延遲較長，決策難以事後重現。當前的驗證方案依賴傳統密碼學，需要在後量子過渡中遷移，而遷移靈活性必須提前構建。關閉驗證差距不需要新的研究，而需要對智能體身份抱有與關鍵基礎設施對硬體身份同等的認真態度。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/quantum-agent-identity.html">Also: Agent identity in the quantum transition →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 安全 × 硬件</span>
+      <h1 class="essay-title">验证差距：AI 智能体为何需要硬件根身份</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-20</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>大多数已部署的 AI 智能体存在一个命名不当的身份问题。它们可以出示凭证——API 密钥、会话令牌、签名断言——但这些凭证只能证明持有签名材料的人发出了请求。它无法证明运行智能体的软件就是其所声称的软件，无法证明软件所在的硬件未被篡改，也无法证明执行环境与被评估、批准和信任的状态相符。从"我持有有效凭证"到"我就是所声称的，运行在所声称的地方，处于被授权的状态"之间的差距，就是验证差距。今天大多数智能体部署都落在这个差距之中，且不自知。</p>
+
+        <h2>硬件验证真正提供了什么</h2>
+        <p>硬件验证是对这一差距的工程回应。硬件验证机制——可信平台模块、安全飞地、带有度量启动链的硬件安全模块——生成一个经密码学签名的声明：特定软件以特定配置哈希运行在特定硬件上，处于特定固件状态。该声明由存储在硬件本身中的密钥签名，运行于其上的软件无法提取该密钥。如果验证链完整，依赖方有充分理由相信关于智能体执行上下文的陈述；如果验证链断裂——因为软件被修改、固件被回滚、或硬件并非其所声称——该断裂是可检测的。</p>
+        <p>这与仅凭软件的身份声明有本质区别。JWT 只证明知道密钥的人签署了它；硬件验证报告则证明特定二进制文件以特定度量配置运行在特定硬件上，该硬件具有可追溯到已知制造商的可验证监管链。这一差异至关重要，因为在后果严重领域中，智能体面临的威胁模型既包括凭证盗窃，也包括供应链攻击——而硬件验证能以纯软件方法无法做到的方式应对后者。</p>
+
+        <h2>与三个关键领域的交叉</h2>
+        <p>硬件验证恰好处于两个关键领域的交叉点：× 硬件领域涉及与物理系统接口的智能体；× 安全领域涉及智能体身份、凭证委托和审计完整性的密码学基础。没有硬件验证，智能体的身份声明只是软件断言，而软件断言永远弱于硬件根断言。</p>
+        <p>对于 × 物理世界照护领域，这一影响更为直接。接受智能体辅助决策支持的照护机构有义务知道其运行的智能体就是经过评估、批准并承担责任的智能体——而非评估后更新的版本，也非与测试版本存在偏差的配置。硬件验证结合配置管理和度量启动链，使这种保证在部署时而非仅在评估时成为可能。</p>
+
+        <h2>量子维度与关闭差距</h2>
+        <p>当前的验证方案依赖经典非对称密码学——RSA 或椭圆曲线签名，密钥存储在硬件中。随着后量子过渡的推进，这些方案需要迁移。由于相关签名密钥存在于无法通过软件简单重新生成的硬件中，这一迁移比大多数密码学应用更为困难。未针对算法敏捷性设计的验证基础设施将难以在合理时间内完成迁移。在迁移压力到来之前构建敏捷性，是现在就应着手的工作。</p>
+        <p>硬件验证不是研究项目——标准已存在，硬件已存在，工具链已存在。缺失的是将验证作为运营信任前提条件的规范，而非将软件凭证视为充分条件。关闭验证差距不需要新科学，而需要以关键基础设施对待硬件身份的同等严肃态度对待智能体身份：不是部署后的锦上添花，而是任何后果发生之前信任所依赖的最低条件。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/quantum-agent-identity.html">延伸阅读：量子转型中的智能体身份 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 安全 × 硬件</span>
+      <h1 class="essay-title">驗證差距：AI 智能體為何需要硬件根身份</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-20</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>大多數已部署的 AI 智能體存在一個命名不當的身份問題。它們可以出示憑證——API 金鑰、會話令牌、簽名斷言——但這些憑證只能證明持有簽名材料的人發出了請求。它無法證明運行智能體的軟體就是其所聲稱的軟體，無法證明軟體所在的硬體未被篡改，也無法證明執行環境與被評估、批准和信任的狀態相符。從「我持有有效憑證」到「我就是所聲稱的，運行在所聲稱的地方，處於被授權的狀態」之間的差距，就是驗證差距。今天大多數智能體部署都落在這個差距之中，且不自知。</p>
+
+        <h2>硬件驗證真正提供了什麼</h2>
+        <p>硬件驗證是對這一差距的工程回應。硬件驗證機制——可信平台模塊、安全飛地、帶有度量啟動鏈的硬件安全模塊——生成一個經密碼學簽名的聲明：特定軟體以特定配置雜湊值運行在特定硬體上，處於特定韌體狀態。該聲明由存儲在硬體本身中的金鑰簽名，運行於其上的軟體無法提取該金鑰。如果驗證鏈完整，依賴方有充分理由相信關於智能體執行上下文的陳述；如果驗證鏈斷裂——因為軟體被修改、韌體被回滾、或硬體並非其所聲稱——該斷裂是可檢測的。</p>
+        <p>這與僅憑軟體的身份聲明有本質區別。JWT 只證明知道金鑰的人簽署了它；硬件驗證報告則證明特定二進位文件以特定度量配置運行在特定硬體上，該硬體具有可追溯到已知製造商的可驗證監管鏈。這一差異至關重要，因為在後果嚴重領域中，智能體面臨的威脅模型既包括憑證盜竊，也包括供應鏈攻擊——而硬件驗證能以純軟體方法無法做到的方式應對後者。</p>
+
+        <h2>與三個關鍵領域的交叉</h2>
+        <p>硬件驗證恰好處於兩個關鍵領域的交叉點：× 硬件領域涉及與物理系統接口的智能體；× 安全領域涉及智能體身份、憑證委派和審計完整性的密碼學基礎。沒有硬件驗證，智能體的身份聲明只是軟體斷言，而軟體斷言永遠弱於硬件根斷言。</p>
+        <p>對於 × 物理世界照護領域，這一影響更為直接。接受智能體輔助決策支持的照護機構有義務知道其運行的智能體就是經過評估、批准並承擔責任的智能體——而非評估後更新的版本，也非與測試版本存在偏差的配置。硬件驗證結合配置管理和度量啟動鏈，使這種保證在部署時而非僅在評估時成為可能。</p>
+
+        <h2>量子維度與關閉差距</h2>
+        <p>當前的驗證方案依賴傳統非對稱密碼學——RSA 或橢圓曲線簽名，金鑰存儲在硬體中。隨著後量子過渡的推進，這些方案需要遷移。由於相關簽名金鑰存在於無法通過軟體簡單重新生成的硬體中，這一遷移比大多數密碼學應用更為困難。未針對演算法敏捷性設計的驗證基礎設施將難以在合理時間內完成遷移。在遷移壓力到來之前構建敏捷性，是現在就應著手的工作。</p>
+        <p>硬件驗證不是研究項目——標準已存在，硬體已存在，工具鏈已存在。缺失的是將驗證作為營運信任前提條件的規範，而非將軟體憑證視為充分條件。關閉驗證差距不需要新科學，而需要以關鍵基礎設施對待硬體身份的同等嚴肅態度對待智能體身份：不是部署後的錦上添花，而是任何後果發生之前信任所依賴的最低條件。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/quantum-agent-identity.html">延伸閱讀：量子轉型中的智能體身份 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
