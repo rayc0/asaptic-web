@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The principal hierarchy — Asaptic Labs</title>
+
+  <meta name="description" content="When an AI agent receives conflicting instructions from multiple authorities — patient, clinician, institution, protocol — which one commands? The principal hierarchy problem is not a coordination detail. It is a safety question." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/principal-hierarchy.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The principal hierarchy: who commands an AI agent when authorities conflict?" />
+  <meta property="og:description" content="AI agents in safety-critical domains receive instructions from multiple sources — developers, operators, users, protocols. When those instructions conflict, the answer cannot be 'undefined'. The principal hierarchy must be explicit, auditable, and cryptographically grounded." />
+  <meta property="og:url" content="https://asaptic.com/blog/principal-hierarchy.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-20" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The principal hierarchy: who commands an AI agent when authorities conflict?",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-20",
+    "description": "AI agents in safety-critical domains receive instructions from multiple sources. When those instructions conflict, the answer cannot be undefined. The principal hierarchy must be explicit, auditable, and cryptographically grounded.",
+    "url": "https://asaptic.com/blog/principal-hierarchy.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× SECURITY × HARDWARE × HUMAN CARE</span>
+      <h1 class="essay-title">The principal hierarchy: who commands an AI agent when authorities conflict?</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-20</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>An AI agent operating in a safety-critical domain does not have one principal. It has several. The developer who trained it set certain inviolable behaviors. The operator who deployed it configured a scope and a set of permissions. The user interacting with it has immediate preferences and pressing needs. And in regulated domains — care environments, critical infrastructure, financially supervised settings — there are also protocols, regulations, and institutional policies that exert authority over the agent's behavior regardless of what any individual user requests.</p>
+
+        <p>Most of the time, these authorities align. The configured scope is consistent with the regulation; the user's request is within the permitted scope; the agent's trained behaviors are compatible with all of the above. But most of the time is not all of the time. And the cases that fall outside "most of the time" are precisely the high-stakes cases where the wrong resolution of a conflict between principals can cause irreversible harm.</p>
+
+        <h2>Why the implicit hierarchy fails</h2>
+        <p>The common engineering response to this problem is to establish an implicit priority ordering: developer constraints > operator configuration > user instruction. That ordering is reasonable as a starting point, but it is not sufficient for deployment in domains where agent decisions touch the real world.</p>
+
+        <p>The first problem is that implicit orderings are invisible to the parties subject to them. If an agent in a care setting silently deprioritizes a nurse's instruction because it conflicts with an operator-level policy, neither the nurse nor the patient knows that the conflict occurred, that a resolution was applied, or what the resolution was. The agent acted. The action is logged. But the authority conflict that drove the action is not surfaced — and cannot be reviewed, challenged, or corrected.</p>
+
+        <p>The second problem is that implicit orderings cannot handle the case where a lower-ranked principal has time-critical information that a higher-ranked principal's configuration did not anticipate. Operator configuration is written in advance, under assumptions that may not hold at the moment the agent acts. A bedside clinician observing a patient's deterioration has information that no configuration panel captured. A static hierarchy that silences the clinician in favor of the prior configuration is not a safety feature — it is a brittleness.</p>
+
+        <h2>Making the hierarchy explicit and auditable</h2>
+        <p>The design requirement that follows is not to flatten the hierarchy — some form of authority ordering is necessary — but to make it explicit, documented, and auditable at the moment of conflict. When an authority conflict occurs and the agent applies a resolution, that resolution should be: surfaced in the agent's output, not hidden; logged with the conflict structure and the resolution rule that was applied; and reviewable by the relevant principals after the fact.</p>
+
+        <p>This is a different design target than simply having a priority ordering. It requires the agent to recognize when a conflict has occurred, represent the conflict structure, apply the resolution, and record all three steps in a way that supports accountability. An agent that silently resolves authority conflicts is an agent whose behavior cannot be fully audited — and that audit gap compounds in proportion to how often conflicts arise.</p>
+
+        <h2>The cryptographic dimension</h2>
+        <p>In post-quantum security contexts, the principal hierarchy problem acquires a harder edge. When an agent operates across institutional boundaries — and physical-world deployments often do — the identities of the principals must be cryptographically attested, not assumed. A care institution's policy authority is only meaningful if the agent can verify that the instruction it is receiving actually originates from an authorized source, not from a spoofed or replayed message claiming to speak for that institution.</p>
+
+        <p>Post-quantum key infrastructure changes the ground rules for how those attestations are constructed and verified. The agent's trust chain — the ordered sequence of principals whose authority it defers to — needs to be grounded in key material that will survive the cryptographic transition. And that trust chain needs to be stored and managed with the same integrity guarantees as the agent's authorization model itself: tamper-evident, auditable, and bound to the hardware environment in which the agent operates.</p>
+
+        <h2>What explicit hierarchy enables</h2>
+        <p>A properly constructed principal hierarchy does more than prevent conflict errors. It enables a class of accountability that implicit systems cannot support: the ability to reconstruct, for any consequential agent action, the full authority state at the moment the action was taken. Which principals were active? Were any in conflict? What resolution rule was applied? Was the resolution appropriate given the context?</p>
+
+        <p>That reconstruction capability is the precondition for meaningful post-incident review. It is also the precondition for the kind of trust that regulated environments require before extending meaningful operational scope to an AI agent. The agent that can show its work — not just what it did, but whose authority it was acting under, and how it resolved the cases where authorities diverged — is the agent that earns the right to operate at greater depth in the domains where the stakes are highest.</p>
+
+        <p>The principal hierarchy is not a configuration detail. It is a first-class architectural commitment. In the domains where AI agents are crossing into consequential territory, getting it right is not optional.</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/consent-layer.html">Also: The consent layer →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 安全 × 硬件 × 人文关怀</span>
+      <h1 class="essay-title">委托人层级：当权威冲突时，谁来指挥AI智能体？</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-20</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>在安全关键领域运行的AI智能体并不只有一个委托人，而是同时面对多方。训练它的开发者设定了不可逾越的行为边界；部署它的运营方配置了权限范围；与之交互的用户有即时的偏好和迫切的需求；在受监管的领域——照护环境、关键基础设施、受金融监管的场景——还存在着协议、法规和机构政策，无论个别用户提出何种请求，这些规范都对智能体的行为拥有权威。</p>
+
+        <p>大多数情况下，这些权威是一致的。但"大多数情况下"并非全部。而那些落在"大多数情况下"之外的案例，恰恰是高风险场景——在这些场景中，对委托人冲突的错误处置可能造成不可逆的伤害。</p>
+
+        <h2>为何隐式层级会失效</h2>
+        <p>对这一问题的常见工程应对是建立隐式优先序：开发者约束 > 运营方配置 > 用户指令。这一排序作为起点是合理的，但对于智能体决策涉及真实世界的部署场景而言，远远不够。</p>
+
+        <p>第一个问题是：隐式排序对受其约束的各方是不可见的。如果照护场景中的智能体因护士的指令与运营方级别的政策冲突而悄然降低其优先级，护士和患者都不知道冲突的发生、解决方案的应用，也不知道解决方案的内容。智能体行动了，行动被记录了，但驱动这一行动的权威冲突未被浮现——无法被审查、质疑或纠正。</p>
+
+        <p>第二个问题是：隐式排序无法处理低级别委托人拥有高级别委托人的配置未曾预见的时效性关键信息的情况。运营方配置是提前写好的，基于的假设在智能体实际行动时可能已不成立。床边临床医生观察到患者病情恶化时，拥有任何配置面板都未曾捕获的信息。一个静态层级将临床医生的判断压制于此前配置之下，这不是安全特性，而是脆弱性。</p>
+
+        <h2>使层级显式且可审计</h2>
+        <p>由此产生的设计要求，不是扁平化层级——某种形式的权威排序是必要的——而是在冲突时刻使其显式、有文档、可审计。当权威冲突发生且智能体应用了某种解决方案时，该解决方案应当：在智能体的输出中被浮现而非隐藏；连同冲突结构和所应用的解决规则一并记录；并可供相关委托人事后审查。</p>
+
+        <p>这与仅仅拥有一个优先序列是不同的设计目标。它要求智能体识别冲突的发生、表示冲突结构、应用解决方案，并以支持问责的方式记录这三个步骤。悄然解决权威冲突的智能体，其行为无法被完整审计——而该审计缺口随冲突频率的增加而成比例地扩大。</p>
+
+        <h2>密码学维度</h2>
+        <p>在后量子安全语境中，委托人层级问题呈现出更硬的边缘。当智能体跨机构边界运行时——物理世界部署通常如此——委托人的身份必须经过密码学证明，而非假定。照护机构的政策权威只有在智能体能够验证其收到的指令确实来自经授权的来源时，才具有实际意义。</p>
+
+        <p>后量子密钥基础设施改变了这些证明如何被构建和验证的基本规则。智能体的信任链——其权威委托的有序序列——需要建立在能够经受密码学转型的密钥材料之上，并存储在与智能体运行硬件环境绑定的可审计、防篡改的基础设施中。</p>
+
+        <h2>显式层级带来什么</h2>
+        <p>构建良好的委托人层级不仅能防止冲突错误，还使一类隐式系统无法支持的问责成为可能：对任何具有实质影响的智能体行动，能够重建行动发生时刻的完整权威状态。哪些委托人处于活跃状态？是否存在冲突？应用了哪条解决规则？解决方案在该情境下是否恰当？</p>
+
+        <p>这种重建能力是有意义的事后审查的前提，也是受监管环境在向AI智能体扩展实质性操作权限之前所要求的信任基础。能够展示工作过程的智能体——不仅是做了什么，而且是基于谁的权威行事、以及在权威分歧时如何解决——才是赢得在高风险领域更深入运营资格的智能体。</p>
+
+        <p>委托人层级不是一个配置细节，而是一项一等架构承诺。在AI智能体正在跨入具有实质影响领域的当下，做好这一点不是可选项。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/consent-layer.html">延伸阅读：同意层 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 安全 × 硬件 × 人文關懷</span>
+      <h1 class="essay-title">委託人層級：當權威衝突時，誰來指揮AI智能體？</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-20</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>在安全關鍵領域運行的AI智能體並不只有一個委託人，而是同時面對多方。訓練它的開發者設定了不可逾越的行為邊界；部署它的營運方配置了權限範圍；與之互動的用戶有即時的偏好和迫切的需求；在受監管的領域——照護環境、關鍵基礎設施、受金融監管的場景——還存在著協議、法規和機構政策，無論個別用戶提出何種請求，這些規範都對智能體的行為擁有權威。</p>
+
+        <p>大多數情況下，這些權威是一致的。但「大多數情況下」並非全部。而那些落在「大多數情況下」之外的案例，恰恰是高風險場景——在這些場景中，對委託人衝突的錯誤處置可能造成不可逆的傷害。</p>
+
+        <h2>為何隱式層級會失效</h2>
+        <p>對這一問題的常見工程應對是建立隱式優先序：開發者約束 > 營運方配置 > 用戶指令。這一排序作為起點是合理的，但對於智能體決策涉及真實世界的部署場景而言，遠遠不夠。</p>
+
+        <p>第一個問題是：隱式排序對受其約束的各方是不可見的。如果照護場景中的智能體因護士的指令與營運方級別的政策衝突而悄然降低其優先級，護士和患者都不知道衝突的發生、解決方案的應用，也不知道解決方案的內容。智能體行動了，行動被記錄了，但驅動這一行動的權威衝突未被浮現——無法被審查、質疑或糾正。</p>
+
+        <p>第二個問題是：隱式排序無法處理低級別委託人擁有高級別委託人的配置未曾預見的時效性關鍵信息的情況。營運方配置是提前寫好的，基於的假設在智能體實際行動時可能已不成立。床邊臨床醫生觀察到患者病情惡化時，擁有任何配置面板都未曾捕獲的信息。一個靜態層級將臨床醫生的判斷壓制於此前配置之下，這不是安全特性，而是脆弱性。</p>
+
+        <h2>使層級顯式且可審計</h2>
+        <p>由此產生的設計要求，不是扁平化層級——某種形式的權威排序是必要的——而是在衝突時刻使其顯式、有文件、可審計。當權威衝突發生且智能體應用了某種解決方案時，該解決方案應當：在智能體的輸出中被浮現而非隱藏；連同衝突結構和所應用的解決規則一併記錄；並可供相關委託人事後審查。</p>
+
+        <p>這與僅僅擁有一個優先序列是不同的設計目標。它要求智能體識別衝突的發生、表示衝突結構、應用解決方案，並以支持問責的方式記錄這三個步驟。悄然解決權威衝突的智能體，其行為無法被完整審計——而該審計缺口隨衝突頻率的增加而成比例地擴大。</p>
+
+        <h2>密碼學維度</h2>
+        <p>在後量子安全語境中，委託人層級問題呈現出更硬的邊緣。當智能體跨機構邊界運行時——物理世界部署通常如此——委託人的身份必須經過密碼學證明，而非假定。照護機構的政策權威只有在智能體能夠驗證其收到的指令確實來自經授權的來源時，才具有實際意義。</p>
+
+        <p>後量子密鑰基礎設施改變了這些證明如何被構建和驗證的基本規則。智能體的信任鏈——其權威委託的有序序列——需要建立在能夠經受密碼學轉型的密鑰材料之上，並存儲在與智能體運行硬件環境綁定的可審計、防篡改的基礎設施中。</p>
+
+        <h2>顯式層級帶來什麼</h2>
+        <p>構建良好的委託人層級不僅能防止衝突錯誤，還使一類隱式系統無法支持的問責成為可能：對任何具有實質影響的智能體行動，能夠重建行動發生時刻的完整權威狀態。哪些委託人處於活躍狀態？是否存在衝突？應用了哪條解決規則？解決方案在該情境下是否恰當？</p>
+
+        <p>這種重建能力是有意義的事後審查的前提，也是受監管環境在向AI智能體擴展實質性操作權限之前所要求的信任基礎。能夠展示工作過程的智能體——不僅是做了什麼，而且是基於誰的權威行事、以及在權威分歧時如何解決——才是贏得在高風險領域更深入運營資格的智能體。</p>
+
+        <p>委託人層級不是一個配置細節，而是一項一等架構承諾。在AI智能體正在跨入具有實質影響領域的當下，做好這一點不是可選項。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/consent-layer.html">延伸閱讀：同意層 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
