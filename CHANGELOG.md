@@ -4,3 +4,4 @@
 2026-05-19 16:13 UTC · blog: add essay 'When an agent acts, who signs the receipt?' (EN+ZH+ZH-HK) · 3e70e81
 2026-05-19 20:15 UTC · blog: add essay 'The minimal footprint principle' (EN+ZH+ZH-HK) · e2aaf97
 2026-05-20 00:15 UTC · blog: add essay 'The attestation gap — hardware-rooted agent identity' (EN+ZH+ZH-HK) · 1c8d3f1
+2026-05-20 04:15 UTC · blog: add essay 'The consent layer — care consent architecture' + sitemap completeness (EN+ZH+ZH-HK) · 09dc934
