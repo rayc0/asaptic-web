@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The liability gap — Asaptic Labs</title>
+
+  <meta name="description" content="When an AI agent causes harm, who is responsible? The causal chain in agentic AI is distributed across developers, operators, users, and protocols — and the standard liability frameworks were not built for this." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/liability-gap.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The liability gap: when an AI agent causes harm, who is responsible?" />
+  <meta property="og:description" content="AI agents are taking consequential actions in care, finance, and critical infrastructure. When those actions cause harm, liability needs to be assignable — but the architecture of distributed agency makes that harder than it looks." />
+  <meta property="og:url" content="https://asaptic.com/blog/liability-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-20" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The liability gap: when an AI agent causes harm, who is responsible?",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-20",
+    "description": "AI agents are taking consequential actions across care, finance, and critical infrastructure. When those actions cause harm, the distributed causal chain — developer, operator, user, protocol — makes liability allocation genuinely hard. Hardware-attested audit trails are the accountability primitive the gap requires.",
+    "url": "https://asaptic.com/blog/liability-gap.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× ACCOUNTABILITY × SECURITY × HUMAN CARE</span>
+      <h1 class="essay-title">The liability gap: when an AI agent causes harm, who is responsible?</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-20</span>
+        <span class="essay-date">6 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>AI agents are taking consequential actions. They are executing care protocols, approving financial transactions, routing resources in critical infrastructure. When those actions cause harm — and some will — someone bears responsibility. But the architecture of agentic AI distributes the causal chain across multiple parties in a way that existing liability frameworks were not designed to handle. The liability gap is not a theoretical concern for a future regulator to resolve. It is a practical engineering problem that agent builders are either solving now or deferring until a worse moment.</p>
+
+        <h2>The distributed action problem</h2>
+        <p>Traditional liability law assumes a responsible actor. When a human professional causes harm, the accountability path is identifiable: the professional, their employer, the institution, the standard of care they were trained to follow. The delegation chain has nodes, and the nodes have names. But when an AI agent causes harm, the causal chain is distributed simultaneously across the developer who trained the model and shaped its dispositions, the operator who configured and deployed it within a specific environment, the user or institution whose instruction triggered the action, and the regulatory framework or institutional policy the agent was following. Each party contributed; none was the proximate actor in the way a professional is proximate when they act. The liability question — which party bears responsibility, in what proportion, under what legal theory — cannot be answered cleanly by applying frameworks built for human actors.</p>
+
+        <p>This is not an abstract puzzle. In a care environment where an agent escalates or deprioritizes a clinical alert and harm results, the causal contributions of model training, operator configuration, user context, and institutional protocol are entangled. A court or regulator attempting to assign responsibility after the fact will be working from incomplete information unless the agent's architecture was built to record what happened and under whose authority.</p>
+
+        <h2>The limits of "I followed my configuration"</h2>
+        <p>The implicit liability posture of most deployed agents is: the operator configured the system, so the operator owns the outcome. This is reasonable as a first approximation but fails in the cases that matter most. A configuration is written in advance under assumptions that may not hold at the moment the agent acts. An agent that correctly executed its configured behavior while ignoring available context that a reasonable human in the same position would have acted on — deteriorating patient indicators, anomalous transaction patterns, environmental signals outside the training distribution — may have caused harm through a failure of judgment that neither the developer nor the operator explicitly authorized, and that neither party intended.</p>
+
+        <p>Neither the developer nor the operator can straightforwardly say "that was within the parameters we set." And the agent cannot say "I used my judgment" — it says "I followed my parameters." Both attributions are incomplete. The liability gap lives in the space between them.</p>
+
+        <h2>The audit trail as liability anchor</h2>
+        <p>What closes the gap — partially — is a complete and trustworthy record. If an agent produces, for each consequential action: a timestamped log of the instruction it received, the principal from whom it came, the authority chain it resolved, the contextual inputs it had access to at the moment of action, and the action it took — then liability can be allocated with evidence rather than inference. This is why the override log is not merely a product moat: it is a legal artefact. Its absence makes liability allocation a guessing game conducted after the fact with degraded information. Its presence creates accountability surfaces that allow the four parties in the distributed causal chain to understand, and demonstrate, what role each played.</p>
+
+        <p>The essay on the override log argued that the calibrated record of every human override compounds into a competitive advantage. The liability argument is its mirror: the calibrated record of every agent action, taken under identifiable authority and logged with recoverable context, is also the foundation on which regulated operation can eventually rest. These are not different motivations for the same record — they are reinforcing ones.</p>
+
+        <h2>Hardware attestation and the evidentiary chain</h2>
+        <p>There is a harder problem beneath the audit trail: the trail's own provenance. A log entry produced by software can be disputed. It can be altered, selectively omitted, or fabricated by a compromised system. The liability usefulness of an audit record depends entirely on the integrity of that record — and software-only logs do not provide integrity guarantees that will satisfy a serious evidentiary challenge.</p>
+
+        <p>This is where the hardware crossing meets the accountability crossing. Agent logs that are produced inside a trusted execution environment and signed by a hardware-rooted attestation key — a key whose presence and integrity the hardware itself can attest — carry evidentiary weight that software logs do not. The agent's actions are not merely recorded; they are recorded in a way that cannot be silently falsified after the fact. That distinction will matter in any serious liability dispute. It will also matter in regulatory audits, institutional reviews, and insurance assessments that precede any dispute. A hardware-attested audit trail is evidence. A software-only log is a claim. Designing for the former is a prerequisite for operating in domains where the difference will eventually be tested.</p>
+
+        <h2>Building liability-ready from the start</h2>
+        <p>Liability-ready architecture cannot be bolted on after a deployment proves consequential. The accountability infrastructure must be present before the first action with real-world impact — because the events that will be scrutinized most closely are the early ones, the edge cases, the moments when the agent behaved in ways nobody anticipated. Those moments cannot be reconstructed after the fact if the record was not built into the system from the beginning.</p>
+
+        <p>What liability-ready architecture requires is not a new compliance checklist. It requires the primitives that have been examined across this series of essays: explicit principal hierarchies rather than implicit priority rules; structured consent and authorization records rather than configuration comments; hardware-attested audit logs rather than software-only event records; cryptographic signing of actions at the agent boundary using key material that will survive the post-quantum transition. Each of these is independently defensible on trust and safety grounds. Taken together, they constitute the evidentiary substrate that regulators, institutional partners, and legal processes will need when an agent's action is scrutinized.</p>
+
+        <p>The agents that enter regulated domains with this infrastructure in place are the ones that earn extended operational scope over time. The ones that do not will encounter liability risk as a forcing function — at the worst possible moment, under the worst possible conditions for remediation. The liability gap is real. It is also closeable. But only by the builders who treat accountability architecture as a first deployment requirement, not a retrospective one.</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/principal-hierarchy.html">Also: The principal hierarchy →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 问责架构 × 安全 × 人文关怀</span>
+      <h1 class="essay-title">责任缺口：当AI智能体造成伤害时，谁来负责？</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-20</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>AI智能体正在采取具有实质影响的行动：执行照护协议、批准金融交易、在关键基础设施中路由资源。当这些行动造成伤害时——这早晚会发生——必须有人承担责任。但智能化AI的架构将因果链分散到多个参与方，而现有的责任框架并非为此而设计。责任缺口不是留待未来监管机构解决的理论问题，而是智能体构建者现在就在解决——或推迟到更糟糕时刻才面对——的实际工程问题。</p>
+
+        <h2>分散行动的问题</h2>
+        <p>传统责任法假设存在一个可识别的责任主体。当人类专业人员造成伤害时，问责路径是清晰的：专业人员本人、其所在机构、其所受的职业训练标准。但当AI智能体造成伤害时，因果链同时分散于：训练模型并塑造其行为倾向的开发者；在特定环境中配置并部署它的运营方；其指令触发行动的用户或机构；以及智能体所遵循的监管框架或机构政策。每一方都作出了贡献，但没有一方像专业人员行动时那样是直接的行动者。哪一方应承担责任、以何种比例、依据何种法律理论——这些问题无法套用为人类行动者构建的框架来干净地回答。</p>
+
+        <p>这不是抽象难题。在照护环境中，如果智能体对临床警报进行了升级处理或降低优先级，且由此造成了伤害，那么模型训练、运营方配置、用户情境与机构协议各自的因果贡献是相互交织的。事后尝试分配责任的法院或监管机构，将面对不完整的信息——除非智能体的架构本就被设计为记录发生了什么、以及在谁的权威下发生的。</p>
+
+        <h2>"我遵循了配置"的局限</h2>
+        <p>大多数已部署智能体的隐式责任立场是：运营方配置了系统，因此运营方对结果负责。这作为初步近似是合理的，但在最重要的案例中会失效。配置是提前写就的，基于的假设在智能体实际行动时可能已不成立。一个正确执行了配置行为、但忽视了理性人在相同处境下本应采取行动的可用情境信息的智能体——如恶化的患者指标、异常的交易模式——可能因判断失误而造成了开发者和运营方都未曾明确授权、也未曾预期的伤害。</p>
+
+        <p>开发者和运营方都无法直接说"这在我们设定的参数范围内"；智能体也无法说"我运用了判断"，它只能说"我遵循了参数"。两种归因都是不完整的。责任缺口就存在于两者之间的空白处。</p>
+
+        <h2>审计追踪作为责任锚点</h2>
+        <p>能够（部分）弥合这一缺口的，是完整且可信的记录。如果智能体为每一个具有实质影响的行动生成：一条带时间戳的日志——记录其收到的指令、来自哪位委托人、它所解析的权威链、行动时刻可访问的上下文输入，以及它采取的行动——那么责任就可以凭证据而非推断来分配。这就是为什么覆写日志不仅仅是产品护城河：它是一份法律文件。其缺失使责任分配沦为事后以降解信息进行的猜谜游戏；其存在则为分散因果链中的四个参与方创造了问责界面，使各方能够理解并展示自己所扮演的角色。</p>
+
+        <h2>硬件证明与证据链</h2>
+        <p>审计追踪之下还有一个更难的问题：追踪记录本身的来源可靠性。由软件生成的日志条目可能遭到质疑——被篡改、选择性省略，或由被入侵的系统伪造。审计记录的责任价值完全取决于该记录的完整性，而纯软件日志无法提供能够经受严肃证据质疑的完整性保证。</p>
+
+        <p>这正是硬件关键领域与问责架构关键领域交汇之处。在可信执行环境内生成、并由硬件根密钥签名的智能体日志——硬件本身可以证明该密钥的存在与完整性——具备纯软件日志所不具备的证据效力。智能体的行动不仅被记录；记录方式使其无法在事后被悄然篡改。这一区别在任何严肃的责任争议中都将举足轻重，在监管审计、机构审查和保险评估中亦然。硬件证明的审计追踪是证据；纯软件日志是主张。为前者而设计，是在那些迟早会检验这一差异的领域运营的前提条件。</p>
+
+        <h2>从一开始就构建具备责任能力的架构</h2>
+        <p>具备责任能力的架构无法在部署被证明具有实质影响后再行补加。问责基础设施必须在第一个具有现实影响的行动发生之前就已就位——因为将受到最严格审视的，恰恰是那些早期事件、边缘案例、智能体以无人预见的方式行动的时刻。如果记录未从一开始就内置于系统中，那些时刻便无法事后重建。</p>
+
+        <p>具备责任能力的架构所需要的，不是一份新的合规清单，而是本系列文章反复审视的那些原语：显式的委托人层级而非隐式的优先规则；结构化的同意与授权记录而非配置注释；硬件证明的审计日志而非纯软件事件记录；在智能体边界处使用能够经受后量子转型的密钥材料对行动进行密码学签名。这些要素各自都有独立的信任与安全理由，合在一起则构成了监管机构、机构合作伙伴和法律程序在审查智能体行动时所需的证据基底。</p>
+
+        <p>携带这一基础设施进入受监管领域的智能体，才能随时间获得扩展的操作权限。没有这一基础设施的智能体，将在最糟糕的时刻、以最不利于补救的条件，将责任风险作为驱动力来面对。责任缺口是真实存在的，也是可以弥合的——但只有将问责架构视为首要部署要求而非事后补救的构建者，才能做到这一点。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/principal-hierarchy.html">延伸阅读：委托人层级 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 問責架構 × 安全 × 人文關懷</span>
+      <h1 class="essay-title">責任缺口：當AI智能體造成傷害時，誰來負責？</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-20</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>AI智能體正在採取具有實質影響的行動：執行照護協議、批准金融交易、在關鍵基礎設施中路由資源。當這些行動造成傷害時——這早晚會發生——必須有人承擔責任。但智能化AI的架構將因果鏈分散到多個參與方，而現有的責任框架並非為此而設計。責任缺口不是留待未來監管機構解決的理論問題，而是智能體構建者現在就在解決——或推遲到更糟糕時刻才面對——的實際工程問題。</p>
+
+        <h2>分散行動的問題</h2>
+        <p>傳統責任法假設存在一個可識別的責任主體。當人類專業人員造成傷害時，問責路徑是清晰的：專業人員本人、其所在機構、其所受的職業訓練標準。但當AI智能體造成傷害時，因果鏈同時分散於：訓練模型並塑造其行為傾向的開發者；在特定環境中配置並部署它的營運方；其指令觸發行動的用戶或機構；以及智能體所遵循的監管框架或機構政策。每一方都作出了貢獻，但沒有一方像專業人員行動時那樣是直接的行動者。哪一方應承擔責任、以何種比例、依據何種法律理論——這些問題無法套用為人類行動者構建的框架來乾淨地回答。</p>
+
+        <p>這不是抽象難題。在照護環境中，如果智能體對臨床警報進行了升級處理或降低優先級，且由此造成了傷害，那麼模型訓練、營運方配置、用戶情境與機構協議各自的因果貢獻是相互交織的。事後嘗試分配責任的法院或監管機構，將面對不完整的資訊——除非智能體的架構本就被設計為記錄發生了什麼、以及在誰的權威下發生的。</p>
+
+        <h2>「我遵循了配置」的局限</h2>
+        <p>大多數已部署智能體的隱式責任立場是：營運方配置了系統，因此營運方對結果負責。這作為初步近似是合理的，但在最重要的案例中會失效。配置是提前寫就的，基於的假設在智能體實際行動時可能已不成立。一個正確執行了配置行為、但忽視了理性人在相同處境下本應採取行動的可用情境資訊的智能體——如惡化的患者指標、異常的交易模式——可能因判斷失誤而造成了開發者和營運方都未曾明確授權、也未曾預期的傷害。</p>
+
+        <p>開發者和營運方都無法直接說「這在我們設定的參數範圍內」；智能體也無法說「我運用了判斷」，它只能說「我遵循了參數」。兩種歸因都是不完整的。責任缺口就存在於兩者之間的空白處。</p>
+
+        <h2>審計追蹤作為責任錨點</h2>
+        <p>能夠（部分）彌合這一缺口的，是完整且可信的記錄。如果智能體為每一個具有實質影響的行動生成：一條帶時間戳的日誌——記錄其收到的指令、來自哪位委託人、它所解析的權威鏈、行動時刻可存取的上下文輸入，以及它採取的行動——那麼責任就可以憑證據而非推斷來分配。這就是為什麼覆寫日誌不僅僅是產品護城河：它是一份法律文件。其缺失使責任分配淪為事後以降解資訊進行的猜謎遊戲；其存在則為分散因果鏈中的四個參與方創造了問責界面，使各方能夠理解並展示自己所扮演的角色。</p>
+
+        <h2>硬件證明與證據鏈</h2>
+        <p>審計追蹤之下還有一個更難的問題：追蹤記錄本身的來源可靠性。由軟體生成的日誌條目可能遭到質疑——被篡改、選擇性省略，或由被入侵的系統偽造。審計記錄的責任價值完全取決於該記錄的完整性，而純軟體日誌無法提供能夠經受嚴肅證據質疑的完整性保證。</p>
+
+        <p>這正是硬件關鍵領域與問責架構關鍵領域交匯之處。在可信執行環境內生成、並由硬件根密鑰簽名的智能體日誌——硬件本身可以證明該密鑰的存在與完整性——具備純軟體日誌所不具備的證據效力。智能體的行動不僅被記錄；記錄方式使其無法在事後被悄然篡改。這一區別在任何嚴肅的責任爭議中都將舉足輕重，在監管審計、機構審查和保險評估中亦然。硬件證明的審計追蹤是證據；純軟體日誌是主張。為前者而設計，是在那些遲早會檢驗這一差異的領域營運的前提條件。</p>
+
+        <h2>從一開始就構建具備責任能力的架構</h2>
+        <p>具備責任能力的架構無法在部署被證明具有實質影響後再行補加。問責基礎設施必須在第一個具有現實影響的行動發生之前就已就位——因為將受到最嚴格審視的，恰恰是那些早期事件、邊緣案例、智能體以無人預見的方式行動的時刻。如果記錄未從一開始就內置於系統中，那些時刻便無法事後重建。</p>
+
+        <p>具備責任能力的架構所需要的，不是一份新的合規清單，而是本系列文章反覆審視的那些原語：顯式的委託人層級而非隱式的優先規則；結構化的同意與授權記錄而非配置注釋；硬件證明的審計日誌而非純軟體事件記錄；在智能體邊界處使用能夠經受後量子轉型的密鑰材料對行動進行密碼學簽名。這些要素各自都有獨立的信任與安全理由，合在一起則構成了監管機構、機構合作夥伴和法律程序在審查智能體行動時所需的證據基底。</p>
+
+        <p>攜帶這一基礎設施進入受監管領域的智能體，才能隨時間獲得擴展的操作權限。沒有這一基礎設施的智能體，將在最糟糕的時刻、以最不利於補救的條件，將責任風險作為驅動力來面對。責任缺口是真實存在的，也是可以彌合的——但只有將問責架構視為首要部署要求而非事後補救的構建者，才能做到這一點。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/principal-hierarchy.html">延伸閱讀：委託人層級 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
