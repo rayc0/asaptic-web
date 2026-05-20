@@ -7,3 +7,4 @@
 2026-05-20 04:15 UTC · blog: add essay 'The consent layer — care consent architecture' + sitemap completeness (EN+ZH+ZH-HK) · 09dc934
 2026-05-20 08:15 UTC · blog: add essay 'The principal hierarchy — who commands an AI agent when authorities conflict' (EN+ZH+ZH-HK) · ed2e54c
 2026-05-20 12:15 UTC · blog: add essay 'The liability gap — accountability when AI agents cause harm' (EN+ZH+ZH-HK) · 1560a97
+2026-05-20 16:15 UTC · blog: add essay 'The delegation chain — authority in multi-agent pipelines' (EN+ZH+ZH-HK) · 33510f7
