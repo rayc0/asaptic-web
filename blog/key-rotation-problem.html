@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The key rotation problem — Asaptic Labs</title>
+
+  <meta name="description" content="Traditional key rotation assumes a service can pause. AI agents that run continuously cannot. The post-quantum migration makes this architectural gap urgent — here is how to close it." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/key-rotation-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The key rotation problem: updating credentials in an agent that never stops" />
+  <meta property="og:description" content="Key rotation in continuously-operating AI agents is an identity continuity problem, not just a cryptography problem. The post-quantum migration makes closing the gap urgent." />
+  <meta property="og:url" content="https://asaptic.com/blog/key-rotation-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-21" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The key rotation problem: updating credentials in an agent that never stops",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-21",
+    "description": "Key rotation in continuously-operating AI agents is an identity continuity problem, not just a cryptography problem. The post-quantum migration makes closing the gap urgent.",
+    "url": "https://asaptic.com/blog/key-rotation-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× POST-QUANTUM SECURITY · × HARDWARE</span>
+      <h1 class="essay-title">The key rotation problem: updating credentials in an agent that never stops</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-21</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Key rotation is one of those problems that feels solved until you apply it to a system that cannot stop. The established procedure for rotating cryptographic credentials is well known: schedule a maintenance window, revoke the current key pair, issue a replacement under the new algorithm or with a new key material, update the service configuration, and restart. The service is offline for minutes, or at most hours. When it comes back, the old credentials are invalid and the new ones are in place.</p>
+        <p>This model assumes something that AI agents operating in consequential domains cannot provide: a clean pause. An agent monitoring a patient's post-surgical status does not have a maintenance window. An agent managing a long-running financial settlement process cannot be restarted between sessions without invalidating in-flight state. An agent operating inside a hardware security enclave carries embedded attestation certificates that tie its identity to a specific key material — changing that material mid-operation is not a configuration swap, it is an identity change.</p>
+        <p>The problem would be tractable if key rotation were a rare, scheduled event. It is becoming neither. The migration to post-quantum cryptographic algorithms is not a rotation in the traditional sense — it is a change of algorithm family, not just key material. An agent that has been signing actions under an elliptic curve scheme must eventually sign under a lattice-based scheme instead. The transition is not atomic, and the window during which both old and new signatures must be verifiable may last months or years. During that window, a continuously-operating agent is running with credentials that are simultaneously in use, being migrated, and subject to challenge from counterparties who have already migrated.</p>
+
+        <h2>Three architectural patterns and their tradeoffs</h2>
+        <p>The first pattern is quiesce-and-rotate. At a planned transition point, the agent halts new action intake, completes or hands off all in-flight tasks, relinquishes its current credentials, receives new ones, and resumes. This is the cleanest approach and the only one that guarantees no action is ever signed under an ambiguous credential state. Its cost is availability: any domain where a continuous presence matters — care monitoring, infrastructure management, protocol participation — pays the full price of the gap. For many deployments, quiesce-and-rotate is simply unavailable as a design choice.</p>
+        <p>The second pattern is dual-credential overlap. The agent begins accepting a new credential while continuing to use the old one for actions already in progress. New tasks are signed under the new credential; in-flight tasks complete under the old one. The old credential is retired when the last task it covers has closed. This preserves availability but creates a window during which the agent is operating under two simultaneous identities, which complicates audit trails, delegation chain verification, and revocation. A counterparty receiving a signed action during the overlap window must know which credential to verify against, and the mapping must be unambiguous in the log.</p>
+        <p>The third pattern, and the one that maps best to hardware-rooted agents, is a hierarchical key structure with leaf rotation under a stable root. The agent's identity is anchored to a root key that lives in a hardware security module and changes only when the hardware itself is replaced. Operational signing keys are leaf keys, derived from or certified by the root, and rotated frequently — including across algorithm transitions. When a leaf key is rotated, the root's attestation of the new leaf provides continuity of identity: any verifier can confirm that this new key is an authorized descendant of the same hardware anchor that issued the previous key. The agent's behavioral identity is stable even as its operational credentials evolve.</p>
+
+        <h2>The hardware anchor as the rotation invariant</h2>
+        <p>The hierarchical approach works because it separates two things that the traditional rotation model conflates: the cryptographic material used for operational signing, and the identity of the agent itself. In a flat key model, rotating the key is changing the identity — there is no persistent identifier that survives the rotation. In a hardware-rooted model, the root key in the secure enclave is the identity anchor, and operational keys are instruments of that identity rather than its definition.</p>
+        <p>This separation is what makes post-quantum migration manageable for continuously-operating agents. The root key in the hardware module can be migrated on a hardware refresh cycle, which is a scheduled event that can be planned for. Leaf keys can be migrated continuously, one algorithm at a time, as counterparties upgrade their verification infrastructure. The agent's identity, expressed through the hardware root, is stable throughout — even as the algorithms used to prove that identity change underneath.</p>
+
+        <h2>The consent wrinkle</h2>
+        <p>There is a dimension of the key rotation problem that is specific to agents operating under human authorization: the question of whether rotating credentials requires re-consent from the authorizing principal. A person who consented to an agent acting on their behalf did so at a moment when the agent's identity was expressed through a specific credential. When that credential changes, is the original consent still valid?</p>
+        <p>In purely technical systems, this question rarely arises — the credential is an implementation detail, not something the authorizing party has any visibility into. But in care domains, where informed consent is a substantive legal and ethical requirement, the identity of the system acting on a person's behalf is not merely technical. A hardware-attested, hierarchically structured credential chain provides a meaningful answer: the agent's identity, as expressed through its hardware root and the chain of certified derivations from that root, is the same agent the person consented to. The operational key has changed; the attested identity has not. That distinction needs to be visible in the consent architecture — not assumed.</p>
+
+        <h2>Migration as a continuous process</h2>
+        <p>The post-quantum migration has surfaced a truth about cryptographic infrastructure that was always latent: algorithm and key lifetime are finite, and the systems built on top of them need to treat rotation as a continuous operational concern rather than a rare emergency. For AI agents in consequential domains, building that operational discipline in at the architecture layer — hardware-rooted identity, hierarchical key structure, explicit overlap semantics, consent-aware credential continuity — is the only approach that survives the transition without requiring a choice between security and availability.</p>
+        <p>A system that cannot rotate without stopping is a system that will eventually be forced to choose between running on deprecated cryptography and shutting down. That choice should not arrive as a surprise.</p>
+
+        <div class="essay-summary">
+          <span class="essay-summary-label">SUMMARY</span>
+          <p>Traditional key rotation assumes a service can pause. AI agents in continuous operation cannot. The post-quantum migration, which requires changing algorithm families rather than just key material, makes this architectural gap urgent.</p>
+          <p>Three patterns address it: quiesce-and-rotate (cleanest but availability-costly), dual-credential overlap (preserves availability at the cost of audit complexity), and hierarchical key structure with hardware-rooted identity (best fit for continuously-operating agents). The hardware anchor is the rotation invariant — it separates the agent's stable identity from the operational keys that express it, making algorithm migration manageable without stopping.</p>
+          <p>In care domains, credential rotation also raises a consent question: the hardware-rooted attestation chain provides the answer, by proving that the same attested identity authorized under the original consent is still operating, even as the operational key has changed.</p>
+        </div>
+
+        <div class="essay-nav">
+          <a href="/blog/observability-gap.html">&larr; The observability gap</a>
+          <a href="/blog/">All essays →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 后量子安全 · × 硬件</span>
+      <h1 class="essay-title">密钥轮换问题：如何在永不停机的智能体中更新凭证</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">Asaptic Labs</span>
+        <span class="essay-date">2026-05-21</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>密钥轮换看似是一个已解决的问题——直到你将其应用于无法停机的系统。传统流程是：安排维护窗口，吊销当前密钥对，签发替换密钥，更新配置，重启服务。服务离线几分钟到几小时，重启后旧凭证失效、新凭证生效。</p>
+        <p>这一模型有一个前提：系统可以干净地暂停。而在关键领域运行的 AI 智能体无法满足这个前提。持续监控患者术后状态的智能体没有维护窗口；管理长期金融结算流程的智能体无法在会话中途重启；运行于硬件安全飞地内的智能体，其嵌入式证明证书将身份绑定到特定密钥材料——中途更换密钥材料，不是配置变更，而是身份变更。</p>
+        <p>向后量子密码算法的迁移，使这一问题愈发紧迫。这不是传统意义上的"轮换"——而是算法族的更换。在迁移窗口内，一个持续运行的智能体同时处于旧凭证使用中、新凭证迁移中、以及可能受到已完成迁移的对手方质疑的三重状态。</p>
+
+        <h2>三种架构模式及其权衡</h2>
+        <p><strong>静止-轮换模式</strong>：智能体暂停新任务接入，完成或移交所有进行中的任务，交出旧凭证，获取新凭证，再恢复运行。这是最干净的方式，但代价是可用性中断，在持续在线价值高的场景中往往不可接受。</p>
+        <p><strong>双凭证重叠模式</strong>：智能体开始接受新凭证的同时，继续以旧凭证完成已有任务。旧凭证在其所覆盖的最后一个任务关闭后才退休。这保留了可用性，但创造了一个双重身份并存的窗口，使审计追踪和委托链验证更加复杂。</p>
+        <p><strong>层级密钥结构模式</strong>：最适合硬件根身份的智能体。智能体身份锚定于驻留在硬件安全模块中的根密钥，只有在硬件本身被替换时才会改变。操作签名密钥作为叶密钥，由根密钥认证，可频繁轮换（包括跨算法迁移）。叶密钥轮换时，根的证明提供了身份连续性：任何验证方都能确认新密钥是同一硬件锚点的授权派生密钥。</p>
+
+        <h2>硬件锚点是轮换中的不变量</h2>
+        <p>层级方法之所以有效，是因为它将两件在传统模型中混为一谈的事情分开了：用于操作签名的密码材料，与智能体身份本身。在扁平密钥模型中，轮换密钥就是更换身份；在硬件根模型中，安全飞地中的根密钥是身份锚点，操作密钥是身份的表达工具，而非身份的定义。</p>
+        <p>这一分离使后量子迁移对持续运行的智能体变得可管理：根密钥随硬件刷新周期迁移（可计划），叶密钥随对手方基础设施升级而逐步迁移。智能体的硬件根所表达的身份在整个过程中保持稳定。</p>
+
+        <h2>照护域中的同意问题</h2>
+        <p>在照护场景中，密钥轮换还涉及同意问题：轮换凭证是否需要原授权主体的重新同意？硬件证明的层级凭证链提供了有意义的答案：通过证明从硬件根到新操作密钥的认证链条，可以表明"当前行动的智能体"与"原始同意时的智能体"是同一个受证明的身份——操作密钥变了，受证明的身份没有变。这一区别需要在同意架构中明确体现，而不能简单假设。</p>
+
+        <h2>迁移是一个持续的过程</h2>
+        <p>后量子迁移揭示了一个密码基础设施领域长期潜伏的事实：算法与密钥的生命周期是有限的，构建于其上的系统需要将轮换视为持续的运营关切，而非偶发的紧急事件。对于在关键领域运行的 AI 智能体，在架构层面——硬件根身份、层级密钥结构、显式的重叠语义、感知同意的凭证连续性——构建这种运营纪律，是唯一不需要在安全与可用性之间做取舍的路径。</p>
+
+        <div class="essay-summary">
+          <span class="essay-summary-label">摘要</span>
+          <p>传统密钥轮换假设服务可以暂停，而持续运行的 AI 智能体无法满足这一假设。后量子迁移要求更换算法族而非仅更换密钥材料，使这一架构差距愈发紧迫。</p>
+          <p>三种模式各有权衡：静止-轮换（最干净但中断可用性）、双凭证重叠（保留可用性但增加审计复杂度）、硬件根层级密钥（最适合持续运行的智能体）。硬件锚点是轮换中的不变量——它将智能体稳定的身份与表达该身份的操作密钥分开，使算法迁移可在不停机的情况下完成。</p>
+        </div>
+
+        <div class="essay-nav">
+          <a href="/blog/observability-gap.html">&larr; 可观察性差距</a>
+          <a href="/blog/">全部文章 →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 後量子安全 · × 硬件</span>
+      <h1 class="essay-title">密鑰輪換問題：如何在永不停機的智能體中更新憑證</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">Asaptic Labs</span>
+        <span class="essay-date">2026-05-21</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>密鑰輪換看似是一個已解決的問題——直到你將其應用於無法停機的系統。傳統流程是：安排維護窗口，撤銷當前密鑰對，簽發替換密鑰，更新配置，重啟服務。服務離線幾分鐘到幾小時，重啟後舊憑證失效、新憑證生效。</p>
+        <p>這一模型有一個前提：系統可以乾淨地暫停。而在關鍵領域運行的 AI 智能體無法滿足這個前提。持續監控患者術後狀態的智能體沒有維護窗口；管理長期金融結算流程的智能體無法在會話中途重啟；運行於硬件安全飛地內的智能體，其嵌入式證明憑證將身份綁定到特定密鑰材料——中途更換密鑰材料，不是配置變更，而是身份變更。</p>
+        <p>向後量子密碼演算法的遷移，使這一問題愈發緊迫。這不是傳統意義上的「輪換」——而是演算法族的更換。在遷移窗口內，一個持續運行的智能體同時處於舊憑證使用中、新憑證遷移中、以及可能受到已完成遷移的對手方質疑的三重狀態。</p>
+
+        <h2>三種架構模式及其權衡</h2>
+        <p><strong>靜止-輪換模式</strong>：智能體暫停新任務接入，完成或移交所有進行中的任務，交出舊憑證，獲取新憑證，再恢復運行。這是最乾淨的方式，但代價是可用性中斷，在持續在線價值高的場景中往往不可接受。</p>
+        <p><strong>雙憑證重疊模式</strong>：智能體開始接受新憑證的同時，繼續以舊憑證完成已有任務。舊憑證在其所覆蓋的最後一個任務關閉後才退休。這保留了可用性，但創造了一個雙重身份並存的窗口，使審計追蹤和委託鏈驗證更加複雜。</p>
+        <p><strong>層級密鑰結構模式</strong>：最適合硬件根身份的智能體。智能體身份錨定於駐留在硬件安全模組中的根密鑰，只有在硬件本身被替換時才會改變。操作簽名密鑰作為葉密鑰，由根密鑰認證，可頻繁輪換（包括跨演算法遷移）。葉密鑰輪換時，根的證明提供了身份連續性：任何驗證方都能確認新密鑰是同一硬件錨點的授權派生密鑰。</p>
+
+        <h2>硬件錨點是輪換中的不變量</h2>
+        <p>層級方法之所以有效，是因為它將兩件在傳統模型中混為一談的事情分開了：用於操作簽名的密碼材料，與智能體身份本身。在扁平密鑰模型中，輪換密鑰就是更換身份；在硬件根模型中，安全飛地中的根密鑰是身份錨點，操作密鑰是身份的表達工具，而非身份的定義。</p>
+        <p>這一分離使後量子遷移對持續運行的智能體變得可管理：根密鑰隨硬件刷新週期遷移（可計劃），葉密鑰隨對手方基礎設施升級而逐步遷移。智能體的硬件根所表達的身份在整個過程中保持穩定。</p>
+
+        <h2>照護域中的同意問題</h2>
+        <p>在照護場景中，密鑰輪換還涉及同意問題：輪換憑證是否需要原授權主體的重新同意？硬件證明的層級憑證鏈提供了有意義的答案：通過證明從硬件根到新操作密鑰的認證鏈條，可以表明「當前行動的智能體」與「原始同意時的智能體」是同一個受證明的身份——操作密鑰變了，受證明的身份沒有變。這一區別需要在同意架構中明確體現。</p>
+
+        <h2>遷移是一個持續的過程</h2>
+        <p>後量子遷移揭示了一個密碼基礎設施領域長期潛伏的事實：演算法與密鑰的生命週期是有限的，構建於其上的系統需要將輪換視為持續的運營關切。對於在關鍵領域運行的 AI 智能體，在架構層面——硬件根身份、層級密鑰結構、顯式的重疊語義、感知同意的憑證連續性——構建這種運營紀律，是唯一不需要在安全與可用性之間做取捨的路徑。</p>
+
+        <div class="essay-summary">
+          <span class="essay-summary-label">摘要</span>
+          <p>傳統密鑰輪換假設服務可以暫停，而持續運行的 AI 智能體無法滿足這一假設。後量子遷移要求更換演算法族而非僅更換密鑰材料，使這一架構差距愈發緊迫。</p>
+          <p>三種模式各有權衡：靜止-輪換（最乾淨但中斷可用性）、雙憑證重疊（保留可用性但增加審計複雜度）、硬件根層級密鑰（最適合持續運行的智能體）。硬件錨點是輪換中的不變量——它將智能體穩定的身份與表達該身份的操作密鑰分開，使演算法遷移可在不停機的情況下完成。</p>
+        </div>
+
+        <div class="essay-nav">
+          <a href="/blog/observability-gap.html">&larr; 可觀察性差距</a>
+          <a href="/blog/">全部文章 →</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/crossings.html">Crossings</a> &nbsp;·&nbsp;
+    <a href="/thesis.html">Thesis</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/press.html">Press</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
