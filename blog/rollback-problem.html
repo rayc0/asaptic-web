@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The rollback problem: what to do when an AI agent's action can't be undone — Asaptic Labs</title>
+
+  <meta name="description" content="Traditional software is engineered for rollback. AI agents that act in the world are not. The gap between these two assumptions is where most accountability failures happen." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/rollback-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The rollback problem: what to do when an AI agent's action can't be undone" />
+  <meta property="og:description" content="Traditional software is engineered for rollback. AI agents that act in the world are not. The gap between these two assumptions is where most accountability failures happen." />
+  <meta property="og:url" content="https://asaptic.com/blog/rollback-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-21" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The rollback problem: what to do when an AI agent's action can't be undone",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-21",
+    "description": "Traditional software is engineered for rollback. AI agents that act in the world are not. The gap between these two assumptions is where most accountability failures happen.",
+    "url": "https://asaptic.com/blog/rollback-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× PHYSICAL SYSTEMS × QUANTUM SECURITY × HUMAN CARE</span>
+      <h1 class="essay-title">The rollback problem: what to do when an AI agent's action can't be undone</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-21</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>The architecture of most software systems is built around the assumption that mistakes can be corrected. Databases have transactions. Version control has revert. Deployments have rollback pipelines. The entire discipline of reliable software engineering rests on the premise that if something goes wrong, you can undo it and try again. This premise is so deeply embedded that it is rarely examined. It is also wrong for a growing category of AI agents.</p>
+
+        <p>When an AI agent schedules a drug administration, executes a securities trade, issues a command to a drone in flight, or dispatches an emergency response team — the action has happened. There is no transaction to roll back, no pointer to restore, no atomic unit to abort. The world has changed. The drug is in the patient's system. The position is open. The drone has moved. The team is en route. Whatever comes next must proceed from the new state, not the old one. This is not a software problem. It is a physics problem. And the systems we are deploying into these domains have not yet been designed to treat it seriously.</p>
+
+        <p>The rollback problem has three distinct layers, and solving one does not solve the others.</p>
+
+        <p>The first layer is physical irreversibility. Actions that touch the world — dosing, movement, deployment, physical access — cannot be taken back by any software mechanism. A commit log is not a remedy. An audit trail is not an undo button. This layer demands that irreversible actions be gated before they occur, not recorded after. The architectural implication is a hard requirement for human approval on any action that crosses a physical threshold. Not a soft advisory. Not a confidence score. A gate that cannot be bypassed by the agent, with a latency budget short enough to be operationally viable.</p>
+
+        <p>The second layer is institutional irreversibility. Many actions are physically reversible but institutionally fixed. A letter sent to a regulator, a disclosure logged with a counterparty, a consent entry written to a shared record — these can be physically amended, but the original action is already part of an external record. Every party that received the original is now in a different state. Coordination cost to unwind grows with the number of counterparties. In highly regulated domains the cost of correction may exceed the cost of the original error many times over. For this layer, the design requirement is staged commitment: the agent proposes, the record is created in a provisional state, and a qualified human confirms before it propagates to external systems.</p>
+
+        <p>The third layer is trust irreversibility. When an agent makes a wrong decision in a domain where humans depend on it — a care setting, a security perimeter, a critical infrastructure node — the damage to the trust relationship is not automatically repaired by correcting the action. A patient who received an incorrect care instruction does not fully trust the system that sent it, even if the system later self-corrected. A security operator whose system issued a false escalation remains alert to the possibility of the next one. Trust, once impaired, has its own recovery curve that no software rollback touches. The design implication here is transparency: when the system takes a corrective action, it must communicate why, in terms the affected party can evaluate, and it must do so at the moment of correction rather than through a deferred audit that no one reads.</p>
+
+        <p>What makes the rollback problem particularly acute for AI agents is that the same properties that make agents useful — they act autonomously, they act quickly, they act across many sessions simultaneously — are the properties that amplify the cost of irreversible error. A human operator who makes a wrong call affects one situation. An agent configured incorrectly, or operating outside its authorization scope, can issue the same wrong action across hundreds of situations before anyone notices the pattern. Irreversibility multiplied by scale is a different risk category than irreversibility alone.</p>
+
+        <p>The answer is not to slow agents down to the point of uselessness. It is to build reversibility awareness into the agent's action taxonomy before deployment. Every action an agent can take should be classified at design time into one of three categories: freely reversible (the agent may act without a gate), staged (the agent proposes, a record is created, human confirmation is required before external propagation), and hard-gated (the agent presents a request, a qualified human approves, the action executes, and the session is logged with the approver's identity attached). Most agent deployments treat this taxonomy as optional. In domains where decisions cannot be redone, it is the first and most important design constraint, not the last.</p>
+
+        <p>There is a harder version of the same problem. Some actions are irreversible in ways that do not become apparent until later. A care agent that systematically under-reports a set of symptoms, always within the bounds of its confidence threshold, may not trigger any single hard gate — but the accumulated pattern constitutes a material omission. A security agent that gradually widens the scope of its monitoring, one small approved increment at a time, may arrive at an authorization footprint that no one explicitly sanctioned. The rollback problem in its hardest form is not about individual actions but about trajectories: the path that a sequence of technically-authorized steps takes the system to a state that was never intended and cannot easily be reversed.</p>
+
+        <p>Addressing this requires a third instrument beyond gates and staged commitment: trajectory monitoring. The agent's action history must be observable not just at the event level but at the pattern level — a capability that requires the override log, the authorization scope record, and the action history to be queryable together in something close to real time. When the trajectory crosses a boundary — cumulative exposure, coverage drift, deviation from the baseline care plan — an alert surfaces to a qualified human before the trajectory becomes difficult to reverse.</p>
+
+        <p>The brand thesis that anchors this lab — where the decision is irreversible, we make the agent accountable — is a direct statement about this problem. Accountability is not a retrospective label applied after something goes wrong. It is an architectural property, built into the action taxonomy before the agent deploys. The rollback problem is not solved by logging. It is solved by designing every consequential action as if rollback is not available — because in the domains that matter most, it is not.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>AI 智能体在物理世界中的行动——给药、指令下达、紧急响应部署——一旦执行便无法撤销。回滚问题分为三个层次：物理不可逆性（需要事前硬性人工审批门控）、机构不可逆性（需要分阶段提交机制）、信任不可逆性（需要透明纠正通信）。当智能体在规模化部署中行动时，不可逆性的代价被放大数倍。正确的架构响应是在部署前为每个可执行动作建立可逆性分类体系——可自由执行、分阶段提交、人工硬性审批——并结合轨迹监控机制，在累计模式越界前触发告警。问责不是事后标签，而是在部署前内置于行动分类体系中的架构属性。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>AI 智能體在物理世界中的行動——給藥、指令下達、緊急響應部署——一旦執行便無法撤銷。回滾問題分為三個層次：物理不可逆性（需要事前硬性人工審批門控）、機構不可逆性（需要分階段提交機制）、信任不可逆性（需要透明糾正溝通）。當智能體在規模化部署中行動時，不可逆性的代價被放大數倍。正確的架構應對是在部署前為每個可執行動作建立可逆性分類體系——可自由執行、分階段提交、人工硬性審批——並結合軌跡監控機制，在累積模式越界前觸發告警。問責不是事後標籤，而是在部署前內置於行動分類體系中的架構屬性。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/context-poisoning.html">Next: Context poisoning →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 物理系统 × 量子安全 × 人文关怀</span>
+      <h1 class="essay-title">回滚问题：当 AI 智能体的行动无法撤销，该怎么办</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-21</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>大多数软件系统的架构建立在一个假设之上：错误可以被纠正。数据库有事务，版本控制有回退，部署流程有回滚管道。整个可靠软件工程的学科都建立在这样一个前提上：如果出了问题，可以撤销并重新尝试。这个前提如此根深蒂固，以至于很少被审视。但对于越来越多的 AI 智能体来说，这个前提是错误的。</p>
+        <p>当 AI 智能体安排药物给药、执行证券交易、向飞行中的无人机发出指令，或者调度紧急响应团队时——行动已经发生。没有事务可以回滚，没有指针可以恢复，没有原子单元可以中止。世界已经改变。药物已在患者体内。头寸已经开仓。无人机已经移动。团队已经出发。接下来的一切都必须从新状态推进，而非旧状态。这不是软件问题，而是物理问题。</p>
+        <p>回滚问题有三个不同层次，解决其中一个并不能解决其他两个。第一层是物理不可逆性：触及真实世界的行动——给药、移动、部署、物理访问——无法通过任何软件机制撤销。这一层要求在不可逆行动发生之前设置门控，而非事后记录。第二层是机构不可逆性：许多行动在物理上可逆，但在机构层面已固化。向监管机构发出的函件、向对手方记录的披露——这些可以物理修改，但原始行动已成为外部记录的一部分。对于这一层，设计要求是分阶段提交：智能体提案，记录以暂定状态创建，合格人员确认后才向外部系统传播。第三层是信任不可逆性：当智能体在人们依赖它的领域做出错误决定时，对信任关系的损害不会因纠正行动而自动修复。信任一旦受损，就有其自身的恢复曲线，任何软件回滚都无法触及。</p>
+        <p>使回滚问题在 AI 智能体中尤为紧迫的是：智能体具有的有用属性——自主行动、快速行动、同时跨多个会话行动——正是放大不可逆错误代价的属性。配置错误或在授权范围外运行的智能体，可能在任何人发现模式之前，在数百种情形中发出相同的错误行动。不可逆性乘以规模，是与单纯不可逆性不同的风险类别。</p>
+        <p>正确的架构应对是在部署前为每个可执行动作建立可逆性分类体系：可自由执行（智能体可无需门控行动）、分阶段提交（智能体提案，需人员确认后才向外部传播）、人工硬性审批（智能体提交请求，合格人员批准，行动执行，会话日志附带审批者身份）。还需配合轨迹监控机制，在累积模式越界前触发告警。问责不是事后标签，而是在部署前内置于行动分类体系中的架构属性。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/context-poisoning.html">下一篇：上下文污染 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 物理系統 × 量子安全 × 人文關懷</span>
+      <h1 class="essay-title">回滾問題：當 AI 智能體的行動無法撤銷，該怎麼辦</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-21</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>大多數軟件系統的架構建立在一個假設之上：錯誤可以被糾正。資料庫有事務，版本控制有回退，部署流程有回滾管道。整個可靠軟件工程的學科都建立在這樣一個前提上：如果出了問題，可以撤銷並重新嘗試。這個前提如此根深蒂固，以至於很少被審視。但對於越來越多的 AI 智能體來說，這個前提是錯誤的。</p>
+        <p>當 AI 智能體安排藥物給藥、執行證券交易、向飛行中的無人機發出指令，或者調度緊急響應團隊時——行動已經發生。沒有事務可以回滾，沒有指針可以恢復，沒有原子單元可以中止。世界已經改變。藥物已在患者體內。頭寸已經開倉。無人機已經移動。團隊已經出發。接下來的一切都必須從新狀態推進，而非舊狀態。這不是軟件問題，而是物理問題。</p>
+        <p>回滾問題有三個不同層次，解決其中一個並不能解決其他兩個。第一層是物理不可逆性：觸及真實世界的行動——給藥、移動、部署、物理訪問——無法通過任何軟件機制撤銷。這一層要求在不可逆行動發生之前設置門控，而非事後記錄。第二層是機構不可逆性：許多行動在物理上可逆，但在機構層面已固化。向監管機構發出的函件、向對手方記錄的披露——這些可以物理修改，但原始行動已成為外部記錄的一部分。對於這一層，設計要求是分階段提交：智能體提案，記錄以暫定狀態創建，合格人員確認後才向外部系統傳播。第三層是信任不可逆性：當智能體在人們依賴它的領域做出錯誤決定時，對信任關係的損害不會因糾正行動而自動修復。信任一旦受損，就有其自身的恢復曲線，任何軟件回滾都無法觸及。</p>
+        <p>使回滾問題在 AI 智能體中尤為緊迫的是：智能體具有的有用屬性——自主行動、快速行動、同時跨多個會話行動——正是放大不可逆錯誤代價的屬性。配置錯誤或在授權範圍外運行的智能體，可能在任何人發現模式之前，在數百種情形中發出相同的錯誤行動。不可逆性乘以規模，是與單純不可逆性不同的風險類別。</p>
+        <p>正確的架構應對是在部署前為每個可執行動作建立可逆性分類體系：可自由執行（智能體可無需門控行動）、分階段提交（智能體提案，需人員確認後才向外部傳播）、人工硬性審批（智能體提交請求，合格人員批准，行動執行，會話日誌附帶審批者身份）。還需配合軌跡監控機制，在累積模式越界前觸發告警。問責不是事後標籤，而是在部署前內置於行動分類體系中的架構屬性。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/context-poisoning.html">下一篇：上下文污染 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
