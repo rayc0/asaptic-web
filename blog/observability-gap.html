@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The observability gap — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents act in ways that are difficult to observe in real time. Logs and attestation records are retrospective instruments — they tell you what happened, but cannot stop a wrong action already taken. Here is what that means for agents at the crossings." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/observability-gap.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The observability gap: what you cannot see when an agent acts" />
+  <meta property="og:description" content="Attestation, logs, and receipts are retrospective instruments — they tell you what happened, but cannot stop a wrong action already taken. Real-time observability requires a different architectural commitment." />
+  <meta property="og:url" content="https://asaptic.com/blog/observability-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-21" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The observability gap: what you cannot see when an agent acts",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-21",
+    "description": "AI agents act in ways that are difficult to observe in real time. Logs and attestation records are retrospective instruments — they tell you what happened, but cannot stop a wrong action already taken.",
+    "url": "https://asaptic.com/blog/observability-gap.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× PHYSICAL SYSTEMS · × HUMAN CARE · × QUANTUM SECURITY</span>
+      <h1 class="essay-title">The observability gap: what you cannot see when an agent acts</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-21</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>There is a systematic gap between what an AI agent was instructed to do and what you can actually observe it doing. This is not primarily a logging problem, or an audit problem, or an interpretability problem — though it touches all three. It is a timing problem. An agent in a deployed system acts before any external observer can evaluate, confirm, or interrupt the action. By the time a log entry exists, the action is already complete.</p>
+        <p>Most safety thinking about AI agents addresses what happens after the fact: how to audit, how to attribute, how to correct. These are necessary instruments. But they are retrospective instruments. They answer the question "what happened?" rather than "what is happening?" and in the domains where agent consequences are irreversible — where the machine moved, where the medication was dispensed, where the financial commitment was made — the retrospective answer arrives too late to matter.</p>
+
+        <h2>Why real-time visibility is harder than it appears</h2>
+        <p>An agent deployed in a production environment is typically orchestrated across several systems simultaneously. It may be reading from a data store, calling external APIs, and writing to a record system, all within the span of a single logical action. No single observer sees all of these sub-operations in one view. The log produced at the end of the action is a reconstructed narrative, not a live trace.</p>
+        <p>Furthermore, agents in complex pipelines often delegate to sub-agents or to external tools. The principal who authorized the top-level action may have no visibility into how that action was broken down and executed at lower layers. This is the observability gap in its structural form: the authorized scope is defined at one level of the system; the actual execution happens at a different level, in a different substrate, on a different timeline.</p>
+        <p>This structural gap is manageable in software contexts where actions can be rolled back — where a wrong database write can be reversed, a misdirected notification can be corrected. In the three crossings where Asaptic Labs operates, rollback is often unavailable or insufficient. A key signed under a deprecated algorithm cannot be unsigned. A physical actuator that moved cannot be unmoved. A care interaction that took place cannot be taken back.</p>
+
+        <h2>The retrospective substitute and its limits</h2>
+        <p>The standard architectural response to limited real-time observability is comprehensive post-hoc logging. Combined with hardware attestation — which binds the log entry to the attested state of the executing agent — this produces records that are difficult to forge and independently verifiable. This is a genuine advance over unatested software logs.</p>
+        <p>But the retrospective substitute has a hard limit: it cannot transform an already-completed action into a pending decision. A care agent that delivered the wrong interaction at 14:03 produces a complete, signed, hardware-attested log entry at 14:03:02. The log entry is correct. The event it describes is not recoverable. The audit is sound; the outcome is already fixed.</p>
+        <p>This is not an argument against hardware-attested logging — it remains essential, for accountability, for correction, and for training the system to do better on the next instance. But it is an argument that hardware attestation and comprehensive logging are necessary conditions for trustworthy agent deployment, not sufficient ones. They describe what happened. They do not prevent bad things from happening.</p>
+
+        <h2>Closing the gap by design</h2>
+        <p>Closing the observability gap requires architectural choices made before deployment, not monitoring dashboards added afterward. Three principles constrain the gap most directly.</p>
+        <p>The first is narrow scope. An agent whose authorized action set is small produces a small observability gap. An agent with broad authorization — one that can read from, write to, and act across large swaths of a system — creates a gap in proportion to that breadth. The minimum-footprint principle is partly a security principle and partly an observability principle: a narrow footprint is a footprint you can actually watch.</p>
+        <p>The second is observable checkpoints. Some actions in a complex pipeline can be decomposed into a sequence of observable intermediate states, each of which can be verified before the next step proceeds. This is architecturally more expensive than a single end-to-end action, but it transforms the observability gap from one large blind spot into a series of smaller, interruptible steps. Hardware-enforced checkpoints — where the trusted execution environment pauses and exposes state before proceeding — are the strongest form of this; they cannot be bypassed by the agent itself.</p>
+        <p>The third is human approval gates on irreversible steps. The set of actions that are genuinely irreversible in a given domain is usually smaller than the set of actions the agent is authorized to take. Identifying that irreversible set and requiring explicit human confirmation before each such step does not defeat agent autonomy — it constrains autonomy to the steps where speed matters, and restores deliberate human control at the steps where reversibility does not.</p>
+
+        <h2>Why this matters differently at each crossing</h2>
+        <p>At the quantum crossing, the observability gap is a cryptographic vulnerability surface. An agent whose key-signing actions cannot be observed in real time may be operating with credentials that have already been compromised, issuing signatures whose validity will only be challenged after migration to post-quantum algorithms reveals the legacy keys were weak. Post-quantum migration is itself an observability problem: you cannot migrate what you cannot see.</p>
+        <p>At the hardware crossing, the gap is a physical safety gap. A physical system that acts faster than any human observer can evaluate is, by definition, unsupervisable in the conventional sense. The only supervision available is architectural: pre-defined constraint envelopes the system cannot exit, hardware-enforced checkpoints the agent cannot bypass, and signed action records that make every step attributable after the fact even when it could not be observed in the moment.</p>
+        <p>At the care crossing, the gap is a consent and dignity problem. A care agent that acts between the moment consent was given and the moment a human could intervene may act correctly — most of the time. But in complex care environments, consent is dynamic, conditions change without notice, and the gap between "authorized at time of task start" and "appropriate at time of action" is where harm occurs. The observability gap is not an engineering inconvenience in care contexts. It is where the human being inside the system is most vulnerable.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>AI 智能体在行动时，外部观察者往往无法实时介入：日志和证明记录是事后工具，只能告诉你发生了什么，而非阻止错误行动。在后量子密码、物理系统和照护三大关键领域，行动往往不可逆，这使"可观察性差距"具有根本性意义。收窄授权范围、设置可中断的检查点、以及在不可逆步骤引入人工确认门控，是从架构层面缩小这一差距的三项核心原则。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>AI 智能體行動時，外部觀察者往往無法即時介入：日誌與證明記錄是事後工具，只能告知發生了什麼，而非阻止錯誤行動。在後量子密碼、實體系統和照護三大關鍵領域，行動往往不可逆，這使「可觀察性差距」具有根本性意義。收窄授權範圍、設置可中斷的檢查點、以及在不可逆步驟引入人工確認門控，是從架構層面縮小這一差距的三項核心原則。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/minimal-footprint-principle.html">Also: The minimal footprint principle →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 物理系统 · × 人文关怀 · × 量子安全</span>
+      <h1 class="essay-title">可观察性差距：智能体行动时，你看不到什么</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-21</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>AI 智能体被指令执行的内容与你实际能观察到的内容之间，存在一个系统性差距。这并非主要是日志问题、审计问题或可解释性问题——尽管它与三者均有关联。这是一个时序问题。在已部署系统中，智能体在任何外部观察者能够评估、确认或中断行动之前就已完成动作。等到日志条目存在，行动早已结束。</p>
+        <p>大多数关于AI智能体安全的思考都在处理事后问题：如何审计，如何归因，如何纠正。这些是必要的工具。但它们是事后工具。它们回答"发生了什么"，而非"正在发生什么"。在智能体后果不可逆的领域——机器已经移动、药物已经配发、财务承诺已经做出——事后答案来得太晚，已无关紧要。</p>
+
+        <h2>为何实时可见性比看起来更难实现</h2>
+        <p>部署在生产环境中的智能体通常同时跨多个系统协同运作。在单一逻辑行动的时间跨度内，它可能同时从数据存储中读取、调用外部API并向记录系统写入。没有任何单一观察者能在一个视图中看到所有这些子操作。行动结束后生成的日志是重构出的叙述，而非实时追踪。</p>
+        <p>此外，复杂管道中的智能体通常会委托给子智能体或外部工具。授权顶层行动的委托人，可能对该行动如何在更底层被分解和执行毫无可见性。这是可观察性差距的结构性形式：授权范围在系统的一个层级定义；实际执行发生在另一个层级、另一个基础设施、另一个时间轴上。</p>
+        <p>在行动可以回滚的软件场景中——错误的数据库写入可以撤销，误发的通知可以纠正——这种结构性差距是可管理的。而在 Asaptic Labs 所关注的三大关键领域，回滚往往不可用或不够充分。在已弃用算法下签署的密钥无法被取消签署。已移动的物理执行机构无法被还原。已发生的照护互动无法被收回。</p>
+
+        <h2>事后替代方案及其局限</h2>
+        <p>应对实时可观察性有限的标准架构方案是全面的事后日志记录。结合硬件证明——将日志条目与执行智能体的已证明状态绑定——可以生成难以伪造且可独立验证的记录。与未经证明的软件日志相比，这是真正的进步。</p>
+        <p>但事后替代方案有一条硬性限制：它无法将已完成的行动转变为待定决策。一个在14:03发生了错误交互的照护智能体，在14:03:02生成了完整的、已签名的、硬件证明的日志条目。日志条目是正确的，它所描述的事件却无法恢复。审计是健全的；结果已经固定。</p>
+        <p>这并非反对硬件证明日志记录的论据——它对于问责、纠正以及训练系统在下一次表现更好，仍然不可或缺。但这确实说明：硬件证明与全面日志记录是可信智能体部署的必要条件，而非充分条件。它们描述发生了什么，但无法防止坏事发生。</p>
+
+        <h2>通过设计缩小差距</h2>
+        <p>缩小可观察性差距需要在部署前做出架构选择，而非在事后添加监控仪表盘。三项原则能最直接地约束这一差距。</p>
+        <p>第一是收窄范围。授权行动集小的智能体，产生的可观察性差距也小。授权范围广泛的智能体——可以跨大量系统读取、写入和行动——产生的差距与其授权范围成正比。最小足迹原则既是安全原则，也是可观察性原则：窄足迹意味着你实际上能够观察到的足迹。</p>
+        <p>第二是可观察的检查点。复杂管道中的某些行动，可以被分解为一系列可观察的中间状态，每个状态都可以在下一步进行之前得到验证。这在架构上比单一端到端行动更昂贵，但它将可观察性差距从一个大的盲点转变为一系列较小的、可中断的步骤。硬件强制检查点——受信执行环境在继续之前暂停并暴露状态——是最强形式；它们无法被智能体自身绕过。</p>
+        <p>第三是在不可逆步骤设置人工审批门控。在特定领域中真正不可逆的行动集，通常比智能体被授权执行的行动集要小。识别出这个不可逆集，并在每个此类步骤之前要求明确的人工确认，并不会削弱智能体的自主性——它将自主性约束在速度重要的步骤，并在可逆性不存在的步骤恢复人工的深思熟虑控制。</p>
+
+        <h2>为何这在每个关键领域的含义不同</h2>
+        <p>在量子关键领域，可观察性差距是一个密码学漏洞面。无法实时观察密钥签署行动的智能体，可能正在使用已被攻破的凭证运行，签发的签名只有在后量子算法迁移揭示遗留密钥的弱点后才会受到质疑。后量子迁移本身就是一个可观察性问题：你无法迁移你看不见的东西。</p>
+        <p>在硬件关键领域，差距是物理安全差距。行动速度超过任何人类观察者评估能力的物理系统，从定义上来说，在传统意义上是不可监督的。唯一可用的监督是架构性的：系统无法逾越的预定义约束边界、智能体无法绕过的硬件强制检查点，以及使每个步骤在事后可归因的已签名行动记录——即使在行动发生的那一刻无法被观察到。</p>
+        <p>在照护关键领域，差距是同意与尊严问题。在同意给予的时刻与人类能够介入的时刻之间行动的照护智能体，大多数时候可能是正确的。但在复杂的照护环境中，同意是动态的，条件会在没有通知的情况下改变，"在任务开始时授权"与"在行动时适当"之间的差距，正是伤害发生的地方。在照护场景中，可观察性差距不是工程上的不便，而是系统内的人类最脆弱的地方。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/minimal-footprint-principle.html">延伸阅读：最小足迹原则 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 實體系統 · × 人文關懷 · × 量子安全</span>
+      <h1 class="essay-title">可觀察性差距：智能體行動時，你看不到什麼</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-21</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>AI 智能體被指令執行的內容與你實際能觀察到的內容之間，存在一個系統性差距。這並非主要是日誌問題、審計問題或可解釋性問題——儘管它與三者均有關聯。這是一個時序問題。在已部署系統中，智能體在任何外部觀察者能夠評估、確認或中斷行動之前就已完成動作。等到日誌條目存在，行動早已結束。</p>
+        <p>大多數關於AI智能體安全的思考都在處理事後問題：如何審計，如何歸因，如何糾正。這些是必要的工具。但它們是事後工具。它們回答「發生了什麼」，而非「正在發生什麼」。在智能體後果不可逆的領域——機器已經移動、藥物已經配發、財務承諾已經做出——事後答案來得太晚，已無關緊要。</p>
+
+        <h2>為何即時可見性比看起來更難實現</h2>
+        <p>部署在生產環境中的智能體通常同時跨多個系統協同運作。在單一邏輯行動的時間跨度內，它可能同時從資料存儲中讀取、呼叫外部API並向記錄系統寫入。沒有任何單一觀察者能在一個視圖中看到所有這些子操作。行動結束後生成的日誌是重構出的敘述，而非即時追蹤。</p>
+        <p>此外，複雜管道中的智能體通常會委託給子智能體或外部工具。授權頂層行動的委託人，可能對該行動如何在更底層被分解和執行毫無可見性。這是可觀察性差距的結構性形式：授權範圍在系統的一個層級定義；實際執行發生在另一個層級、另一個基礎設施、另一個時間軸上。</p>
+        <p>在行動可以回滾的軟件場景中——錯誤的資料庫寫入可以撤銷，誤發的通知可以糾正——這種結構性差距是可管理的。而在 Asaptic Labs 所關注的三大關鍵領域，回滾往往不可用或不夠充分。在已棄用演算法下簽署的金鑰無法被取消簽署。已移動的實體執行機構無法被還原。已發生的照護互動無法被收回。</p>
+
+        <h2>事後替代方案及其局限</h2>
+        <p>應對即時可觀察性有限的標準架構方案是全面的事後日誌記錄。結合硬件證明——將日誌條目與執行智能體的已證明狀態綁定——可以生成難以偽造且可獨立驗證的記錄。與未經證明的軟件日誌相比，這是真正的進步。</p>
+        <p>但事後替代方案有一條硬性限制：它無法將已完成的行動轉變為待定決策。一個在14:03發生了錯誤互動的照護智能體，在14:03:02生成了完整的、已簽名的、硬件證明的日誌條目。日誌條目是正確的，它所描述的事件卻無法恢復。審計是健全的；結果已經固定。</p>
+        <p>這並非反對硬件證明日誌記錄的論據——它對於問責、糾正以及訓練系統在下一次表現更好，仍然不可或缺。但這確實說明：硬件證明與全面日誌記錄是可信智能體部署的必要條件，而非充分條件。它們描述發生了什麼，但無法防止壞事發生。</p>
+
+        <h2>通過設計縮小差距</h2>
+        <p>縮小可觀察性差距需要在部署前做出架構選擇，而非在事後添加監控儀表板。三項原則能最直接地約束這一差距。</p>
+        <p>第一是收窄範圍。授權行動集小的智能體，產生的可觀察性差距也小。授權範圍廣泛的智能體——可以跨大量系統讀取、寫入和行動——產生的差距與其授權範圍成正比。最小足跡原則既是安全原則，也是可觀察性原則：窄足跡意味著你實際上能夠觀察到的足跡。</p>
+        <p>第二是可觀察的檢查點。複雜管道中的某些行動，可以被分解為一系列可觀察的中間狀態，每個狀態都可以在下一步進行之前得到驗證。這在架構上比單一端到端行動更昂貴，但它將可觀察性差距從一個大的盲點轉變為一系列較小的、可中斷的步驟。硬件強制檢查點——受信執行環境在繼續之前暫停並暴露狀態——是最強形式；它們無法被智能體自身繞過。</p>
+        <p>第三是在不可逆步驟設置人工審批門控。在特定領域中真正不可逆的行動集，通常比智能體被授權執行的行動集要小。識別出這個不可逆集，並在每個此類步驟之前要求明確的人工確認，並不會削弱智能體的自主性——它將自主性約束在速度重要的步驟，並在可逆性不存在的步驟恢復人工的深思熟慮控制。</p>
+
+        <h2>為何這在每個關鍵領域的含義不同</h2>
+        <p>在量子關鍵領域，可觀察性差距是一個密碼學漏洞面。無法即時觀察金鑰簽署行動的智能體，可能正在使用已被攻破的憑證運行，簽發的簽名只有在後量子演算法遷移揭示遺留金鑰的弱點後才會受到質疑。後量子遷移本身就是一個可觀察性問題：你無法遷移你看不見的東西。</p>
+        <p>在硬件關鍵領域，差距是實體安全差距。行動速度超過任何人類觀察者評估能力的實體系統，從定義上來說，在傳統意義上是不可監督的。唯一可用的監督是架構性的：系統無法逾越的預定義約束邊界、智能體無法繞過的硬件強制檢查點，以及使每個步驟在事後可歸因的已簽名行動記錄——即使在行動發生的那一刻無法被觀察到。</p>
+        <p>在照護關鍵領域，差距是同意與尊嚴問題。在同意給予的時刻與人類能夠介入的時刻之間行動的照護智能體，大多數時候可能是正確的。但在複雜的照護環境中，同意是動態的，條件會在沒有通知的情況下改變，「在任務開始時授權」與「在行動時適當」之間的差距，正是傷害發生的地方。在照護場景中，可觀察性差距不是工程上的不便，而是系統內的人類最脆弱的地方。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/minimal-footprint-principle.html">延伸閱讀：最小足跡原則 →</a>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+      <a href="/crossings.html">Crossings</a> &nbsp;·&nbsp;
+      <a href="/thesis.html">Thesis</a> &nbsp;·&nbsp;
+      <a href="/engage.html">Engage</a>
+    </div>
+  </main>
+
+  <script src="../content.js"></script>
+  <script>
+    const btns = document.querySelectorAll('.lang-btn');
+    const sections = document.querySelectorAll('.essay-lang');
+    function setLang(lang) {
+      sections.forEach(s => s.classList.toggle('active', s.dataset.langContent === lang));
+      btns.forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+      document.documentElement.lang = lang === 'zht' ? 'zh-HK' : lang === 'zh' ? 'zh-CN' : 'en';
+      localStorage.setItem('al_lang', lang);
+    }
+    const saved = localStorage.getItem('al_lang') || 'en';
+    setLang(saved);
+    btns.forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+  </script>
+</body>
+</html>
