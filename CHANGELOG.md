@@ -13,3 +13,4 @@
 2026-05-21 04:15 UTC · blog: add essay 'The observability gap — what you cannot see when an agent acts' (EN+ZH+ZH-HK) · f43f9d4
 2026-05-21 08:15 UTC · blog: add essay 'The key rotation problem — credentials in agents that never stop' (EN+ZH+ZH-HK) · 394638d
 2026-05-21 12:15 UTC · blog: add essay 'The context poisoning problem — adversarial inputs in agentic systems' (EN+ZH+ZH-HK) · 8ea38ca
+2026-05-21 16:15 UTC · blog: add essay 'The rollback problem — irreversibility in AI agents' (EN+ZH+ZH-HK) · b5f08d3
