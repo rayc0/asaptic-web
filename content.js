@@ -14,11 +14,11 @@ const CONTENT = {
     hero_cta: "See our work →",
     // Crossings
     crossings_label: "FOUR CROSSINGS",
-    // Card 1 — Quantum Computing (PQSafe)
+    // Card 1 — Quantum Computing
     card1_tag: "× QUANTUM COMPUTING",
     card1_heading: "Quantum Computing",
-    card1_body: "AI agents now move money, sign mandates, and act with delegated authority — yet every signature today uses cryptography that quantum computers will break. We build the post-quantum trust layer underneath the agent economy, so a mandate signed in 2026 is still uncounterfeitable in 2035. Our open-source project PQSafe ships the missing primitive: quantum-safe agent identity and payment authorization, neutral to any LLM or payment rail.",
-    card1_link: "Open project: PQSafe →",
+    card1_body: "AI agents now move money, sign mandates, and act with delegated authority — yet every signature today uses cryptography that quantum computers will break. We build the post-quantum trust layer underneath the agent economy, so a mandate signed in 2026 is still uncounterfeitable in 2035. Our open-source post-quantum project ships the missing primitive: quantum-safe agent identity and payment authorization, neutral to any LLM or payment rail.",
+    card1_link: "Open-source project →",
     // Card 2 — Physical AI (kinaite)
     card2_tag: "× PHYSICAL AI",
     card2_heading: "Physical AI",
@@ -26,7 +26,7 @@ const CONTENT = {
     // Card 3 — Autonomous Enterprise (CompanyForge)
     card3_tag: "× AUTONOMOUS ENTERPRISE",
     card3_heading: "Autonomous Enterprise",
-    card3_body: "Agents don't just help workers — they ARE the workforce. The CompanyForge engine takes a regulated vertical and turns it into a one-operator AI business. First implementation: Kangleling eldercare franchise. Next vertical: PierForge cross-border supply chain.",
+    card3_body: "Agents don't just help workers — they ARE the workforce. The CompanyForge engine takes a regulated vertical and turns it into a one-operator AI business. First implementation: an eldercare franchise network. Next vertical: PierForge cross-border supply chain.",
     // Card 4 — Care AI (CareEZ)
     card4_tag: "× CARE AI",
     card4_heading: "Care AI",
@@ -66,11 +66,11 @@ const CONTENT = {
     hero_cta: "查看我们的工作 →",
     // Crossings
     crossings_label: "四大关键领域",
-    // Card 1 — Quantum Computing (PQSafe)
+    // Card 1 — Quantum Computing
     card1_tag: "× 量子计算",
     card1_heading: "量子计算",
-    card1_body: "量子计算将击穿现有加密——PQSafe 在窗口关闭之前，为代理式 AI 建立后量子信任基础设施。AI 智能体已能代为支付、签署授权、行使委托权——我们的开源项目 PQSafe 提供缺失的原语：量子安全的智能体身份与支付授权，与任何 LLM 或支付通道中立兼容。",
-    card1_link: "开源项目：PQSafe →",
+    card1_body: "量子计算将击穿现有加密——我们的开源后量子项目在窗口关闭之前，为代理式 AI 建立后量子信任基础设施。AI 智能体已能代为支付、签署授权、行使委托权——我们的开源后量子项目提供缺失的原语：量子安全的智能体身份与支付授权，与任何 LLM 或支付通道中立兼容。",
+    card1_link: "开源项目 →",
     // Card 2 — Physical AI (kinaite)
     card2_tag: "× 物理 AI",
     card2_heading: "物理 AI",
@@ -78,7 +78,7 @@ const CONTENT = {
     // Card 3 — Autonomous Enterprise (CompanyForge)
     card3_tag: "× 智能原生企业",
     card3_heading: "智能原生企业",
-    card3_body: "代理式 AI 不只是辅助员工，它本身就是运营主体。CompanyForge 引擎将受监管行业转化为单人运营的 AI 企业。首个落地实施：Kangleling 长者照护加盟体系。下一个垂直方向：PierForge 跨境供应链。",
+    card3_body: "代理式 AI 不只是辅助员工，它本身就是运营主体。CompanyForge 引擎将受监管行业转化为单人运营的 AI 企业。首个落地实施：长者照护加盟网络。下一个垂直方向：PierForge 跨境供应链。",
     // Card 4 — Care AI (CareEZ)
     card4_tag: "× 照护 AI",
     card4_heading: "照护 AI",
@@ -118,11 +118,11 @@ const CONTENT = {
     hero_cta: "查看我們的工作 →",
     // Crossings
     crossings_label: "四大關鍵領域",
-    // Card 1 — Quantum Computing (PQSafe)
+    // Card 1 — Quantum Computing
     card1_tag: "× 量子計算",
     card1_heading: "量子計算",
-    card1_body: "量子計算將擊穿現有加密——PQSafe 在窗口關閉之前，為智能體 AI 建立後量子信任基礎設施。AI 智能體已能代為支付、簽署授權、行使委託權——我們的開源項目 PQSafe 提供缺失的原語：量子安全的智能體身份與支付授權，與任何 LLM 或支付通道中立兼容。",
-    card1_link: "開源項目：PQSafe →",
+    card1_body: "量子計算將擊穿現有加密——我們的開源後量子項目在窗口關閉之前，為智能體 AI 建立後量子信任基礎設施。AI 智能體已能代為支付、簽署授權、行使委託權——我們的開源後量子項目提供缺失的原語：量子安全的智能體身份與支付授權，與任何 LLM 或支付通道中立兼容。",
+    card1_link: "開源項目 →",
     // Card 2 — Physical AI (kinaite)
     card2_tag: "× 物理 AI",
     card2_heading: "物理 AI",
@@ -130,7 +130,7 @@ const CONTENT = {
     // Card 3 — Autonomous Enterprise (CompanyForge)
     card3_tag: "× AI原生企業",
     card3_heading: "AI原生企業",
-    card3_body: "智能體 AI 不只是輔助員工，它本身就是運營主體。CompanyForge 引擎將受監管行業轉化為單人運營的 AI 企業。首個落地實施：Kangleling 長者照護加盟體系。下一個垂直方向：PierForge 跨境供應鏈。",
+    card3_body: "智能體 AI 不只是輔助員工，它本身就是運營主體。CompanyForge 引擎將受監管行業轉化為單人運營的 AI 企業。首個落地實施：長者照護加盟網絡。下一個垂直方向：PierForge 跨境供應鏈。",
     // Card 4 — Care AI (CareEZ)
     card4_tag: "× 護理 AI",
     card4_heading: "護理 AI",
