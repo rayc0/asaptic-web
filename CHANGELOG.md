@@ -11,3 +11,4 @@
 2026-05-20 20:15 UTC · blog: add essay 'The revocation problem — withdrawing AI agent authority' (EN+ZH+ZH-HK) · 9166604
 2026-05-21 00:15 UTC · blog: add essay 'The ephemeral credential — why AI agents should never hold standing authority' + sitemap fixes (EN+ZH+ZH-HK) · 245ac57
 2026-05-21 04:15 UTC · blog: add essay 'The observability gap — what you cannot see when an agent acts' (EN+ZH+ZH-HK) · f43f9d4
+2026-05-21 08:15 UTC · blog: add essay 'The key rotation problem — credentials in agents that never stop' (EN+ZH+ZH-HK) · 394638d
