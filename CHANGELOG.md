@@ -10,3 +10,4 @@
 2026-05-20 16:15 UTC · blog: add essay 'The delegation chain — authority in multi-agent pipelines' (EN+ZH+ZH-HK) · 33510f7
 2026-05-20 20:15 UTC · blog: add essay 'The revocation problem — withdrawing AI agent authority' (EN+ZH+ZH-HK) · 9166604
 2026-05-21 00:15 UTC · blog: add essay 'The ephemeral credential — why AI agents should never hold standing authority' + sitemap fixes (EN+ZH+ZH-HK) · 245ac57
+2026-05-21 04:15 UTC · blog: add essay 'The observability gap — what you cannot see when an agent acts' (EN+ZH+ZH-HK) · f43f9d4
