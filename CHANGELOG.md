@@ -9,3 +9,4 @@
 2026-05-20 12:15 UTC · blog: add essay 'The liability gap — accountability when AI agents cause harm' (EN+ZH+ZH-HK) · 1560a97
 2026-05-20 16:15 UTC · blog: add essay 'The delegation chain — authority in multi-agent pipelines' (EN+ZH+ZH-HK) · 33510f7
 2026-05-20 20:15 UTC · blog: add essay 'The revocation problem — withdrawing AI agent authority' (EN+ZH+ZH-HK) · 9166604
+2026-05-21 00:15 UTC · blog: add essay 'The ephemeral credential — why AI agents should never hold standing authority' + sitemap fixes (EN+ZH+ZH-HK) · 245ac57
