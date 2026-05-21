@@ -8,28 +8,32 @@ const CONTENT = {
     nav_contact: "Contact",
     nav_cta: "Talk to us",
     // Hero
-    hero_eyebrow: "AI AGENTS AT THE CROSSINGS",
+    hero_eyebrow: "AGENTIC AI AT THE CROSSINGS",
     hero_title: "Where the decision is irreversible, we make the agent accountable.",
-    hero_sub: "Quantum security. Physical systems. Human care.",
+    hero_sub: "Quantum Computing. Physical AI. Autonomous Enterprise. Care.",
     hero_cta: "See our work →",
     // Crossings
-    crossings_label: "THREE CROSSINGS",
-    // Card 1 — Quantum (PQSafe)
-    card1_tag: "× QUANTUM SECURITY",
-    card1_heading: "Quantum Security",
-    card1_body: "AI agents now move money, sign mandates, and act with delegated authority — yet every signature today uses cryptography that quantum computers will break by 2030. We build the post-quantum trust layer underneath the agent economy, so a mandate signed in 2026 is still uncounterfeitable in 2035. Our open-source project PQSafe ships the missing primitive: quantum-safe agent payment authorization, neutral to any LLM or payment rail.",
+    crossings_label: "FOUR CROSSINGS",
+    // Card 1 — Quantum Computing (PQSafe)
+    card1_tag: "× QUANTUM COMPUTING",
+    card1_heading: "Quantum Computing",
+    card1_body: "AI agents now move money, sign mandates, and act with delegated authority — yet every signature today uses cryptography that quantum computers will break. We build the post-quantum trust layer underneath the agent economy, so a mandate signed in 2026 is still uncounterfeitable in 2035. Our open-source project PQSafe ships the missing primitive: quantum-safe agent identity and payment authorization, neutral to any LLM or payment rail.",
     card1_link: "Open project: PQSafe →",
-    // Card 2 — Physical Systems
-    card2_tag: "× PHYSICAL SYSTEMS",
-    card2_heading: "Physical Systems",
-    card2_body: "Drones, robots, and autonomous machines act in the real world. There is no undo. We build agents with embedded decision logic and hard constraints — so when the system acts, it acts with accountability baked in.",
-    // Card 3 — Human Care
-    card3_tag: "× HUMAN CARE",
-    card3_heading: "Human Care",
-    card3_body: "We operate inside hundreds of eldercare and clinical settings. These environments are regulated, trust-constrained, and unforgiving of errors. Our agents support care workers without replacing their judgment — and every interaction is auditable.",
+    // Card 2 — Physical AI (kinaite)
+    card2_tag: "× PHYSICAL AI",
+    card2_heading: "Physical AI",
+    card2_body: "kinaite puts AI agents into the eldercare physical-AI stack: humanoid companions, rehab robotics, clinical food, and a clinical data flywheel. Agents embodied in atoms, not pixels. There is no undo when the system acts in the physical world — accountability is designed in from day one.",
+    // Card 3 — Autonomous Enterprise (CompanyForge)
+    card3_tag: "× AUTONOMOUS ENTERPRISE",
+    card3_heading: "Autonomous Enterprise",
+    card3_body: "Agents don't just help workers — they ARE the workforce. The CompanyForge engine takes a regulated vertical and turns it into a one-operator AI business. First implementation: Kangleling eldercare franchise. Next vertical: PierForge cross-border supply chain.",
+    // Card 4 — Care AI (CareEZ)
+    card4_tag: "× CARE AI",
+    card4_heading: "Care AI",
+    card4_body: "CareEZ brings AI agents into regulated human care — multilingual swallowing-safety screening for frontline carers in residential care homes. Every interaction is auditable. Every correction teaches the next deployment.",
     // Thread
     thread_heading: "Every correction teaches the next deployment.",
-    thread_body: "Every decision our agents make is logged. When a human overrides it — in a security audit, a field operation, or a care round — that correction becomes training data. The system learns from the crossing, not from a benchmark. Across quantum, hardware, and care, one principle holds: the agent gets smarter where the stakes are highest.",
+    thread_body: "Every decision our agents make is logged. When a human overrides it — in a security audit, a field operation, or a care round — that correction becomes training data. The system learns from the crossing, not from a benchmark. Across quantum, physical, enterprise, and care, one principle holds: the agent gets smarter where the stakes are highest.",
     // Ops
     ops_label: "HOW WE OPERATE",
     ops_heading: "We run on what we build.",
@@ -44,7 +48,7 @@ const CONTENT = {
     footer_thesis: "Thesis",
     footer_engage: "Engage",
     footer_privacy: "Privacy",
-    footer_tagline: "AI agents built for decisions that matter.",
+    footer_tagline: "Agentic AI at the crossings.",
     footer_copy: "© 2026 Asaptic Labs"
   },
   zh: {
@@ -56,28 +60,32 @@ const CONTENT = {
     nav_contact: "联系我们",
     nav_cta: "与我们交流",
     // Hero
-    hero_eyebrow: "关键决策中的AI智能体",
+    hero_eyebrow: "代理式 AI，在前沿的交叉口",
     hero_title: "在不可逆的决策节点，我们让智能体承担问责。",
-    hero_sub: "量子安全。物理系统。人文关怀。",
+    hero_sub: "量子计算。物理 AI。智能原生企业。照护 AI。",
     hero_cta: "查看我们的工作 →",
     // Crossings
-    crossings_label: "三大关键领域",
-    // Card 1 — Quantum (PQSafe)
-    card1_tag: "× 量子安全",
-    card1_heading: "量子安全",
-    card1_body: "AI 智能体已能代为支付、签署授权、行使委托权——但今天的每一次签名都依赖将在 2030 年被量子计算机破解的密码学。我们在智能体经济之下构建后量子信任层，让 2026 年签发的授权到 2035 年仍无法被伪造。我们开源的项目 PQSafe 提供这一缺失的原语：量子安全的智能体支付授权，与任何 LLM 或支付通道中立兼容。",
+    crossings_label: "四大关键领域",
+    // Card 1 — Quantum Computing (PQSafe)
+    card1_tag: "× 量子计算",
+    card1_heading: "量子计算",
+    card1_body: "量子计算将击穿现有加密——PQSafe 在窗口关闭之前，为代理式 AI 建立后量子信任基础设施。AI 智能体已能代为支付、签署授权、行使委托权——我们的开源项目 PQSafe 提供缺失的原语：量子安全的智能体身份与支付授权，与任何 LLM 或支付通道中立兼容。",
     card1_link: "开源项目：PQSafe →",
-    // Card 2 — Physical Systems
-    card2_tag: "× 物理系统",
-    card2_heading: "物理系统",
-    card2_body: "无人机、机器人和自主机器在现实世界中行动，没有撤销的机会。我们构建嵌入决策逻辑与硬性约束的智能体——让系统的每一次行动都内置问责机制。",
-    // Card 3 — Human Care
-    card3_tag: "× 人文关怀",
-    card3_heading: "人文关怀",
-    card3_body: "我们在数百家养老及临床机构中运营。这些环境受到严格监管，信任边界清晰，对错误零容忍。我们的智能体协助护理人员，而非取代其判断——每一次交互均可审计。",
+    // Card 2 — Physical AI (kinaite)
+    card2_tag: "× 物理 AI",
+    card2_heading: "物理 AI",
+    card2_body: "kinaite 将代理式 AI 植入长者照护的物理 AI 技术栈：陪护机器人、康复辅助、临床特医食品、临床数据飞轮。智能体在原子层面具化，而非停留于像素。物理世界没有撤销选项——问责从第一天起便内置于系统之中。",
+    // Card 3 — Autonomous Enterprise (CompanyForge)
+    card3_tag: "× 智能原生企业",
+    card3_heading: "智能原生企业",
+    card3_body: "代理式 AI 不只是辅助员工，它本身就是运营主体。CompanyForge 引擎将受监管行业转化为单人运营的 AI 企业。首个落地实施：Kangleling 长者照护加盟体系。下一个垂直方向：PierForge 跨境供应链。",
+    // Card 4 — Care AI (CareEZ)
+    card4_tag: "× 照护 AI",
+    card4_heading: "照护 AI",
+    card4_body: "CareEZ（× 照护 AI 旗下品牌）将代理式 AI 带入受监管的人工照护场景：为安老院前线护理人员提供多语言吞咽安全筛查。每一次交互均可审计，每一次纠正都在教会下一次部署。",
     // Thread
     thread_heading: "每一次纠正，都在教会下一次部署。",
-    thread_body: "智能体的每一个决策都有记录。当人工干预覆盖它——无论是在安全审计、现场操作还是护理巡查中——这次纠正就会转化为训练数据。系统从真实的关键领域中学习，而非从基准测试中学习。跨越量子、硬件与关怀三大领域，一个原则始终成立：风险越高，智能体越聪明。",
+    thread_body: "智能体的每一个决策都有记录。当人工干预覆盖它——无论是在安全审计、现场操作还是护理巡查中——这次纠正就会转化为训练数据。系统从真实的关键领域中学习，而非从基准测试中学习。跨越量子、物理、企业与照护四大领域，一个原则始终成立：风险越高，智能体越聪明。",
     // Ops
     ops_label: "我们如何运营",
     ops_heading: "我们在自己构建的系统上运行。",
@@ -92,7 +100,7 @@ const CONTENT = {
     footer_thesis: "核心论点",
     footer_engage: "合作参与",
     footer_privacy: "隐私政策",
-    footer_tagline: "为真正重要的决策而构建的AI智能体。",
+    footer_tagline: "代理式 AI，在前沿的交叉口。",
     footer_copy: "© 2026 Asaptic Labs"
   },
   zht: {
@@ -104,28 +112,32 @@ const CONTENT = {
     nav_contact: "聯絡我們",
     nav_cta: "與我們傾談",
     // Hero
-    hero_eyebrow: "關鍵決策中的AI智能體",
+    hero_eyebrow: "智能體 AI，在前沿的交叉口",
     hero_title: "在不可逆的決策節點，我們讓智能體承擔問責。",
-    hero_sub: "量子安全。實體系統。人文關懷。",
+    hero_sub: "量子計算。物理 AI。AI原生企業。護理 AI。",
     hero_cta: "查看我們的工作 →",
     // Crossings
-    crossings_label: "三大關鍵領域",
-    // Card 1 — Quantum (PQSafe)
-    card1_tag: "× 量子安全",
-    card1_heading: "量子安全",
-    card1_body: "AI 智能體已能代為支付、簽署授權、行使委託權——但今天的每一次簽名都依賴將在 2030 年被量子電腦破解的密碼學。我們在智能體經濟之下構建後量子信任層，讓 2026 年簽發的授權到 2035 年仍無法被偽造。我們的開源項目 PQSafe 提供這一缺失的原語：量子安全的智能體支付授權，與任何 LLM 或支付通道中立兼容。",
+    crossings_label: "四大關鍵領域",
+    // Card 1 — Quantum Computing (PQSafe)
+    card1_tag: "× 量子計算",
+    card1_heading: "量子計算",
+    card1_body: "量子計算將擊穿現有加密——PQSafe 在窗口關閉之前，為智能體 AI 建立後量子信任基礎設施。AI 智能體已能代為支付、簽署授權、行使委託權——我們的開源項目 PQSafe 提供缺失的原語：量子安全的智能體身份與支付授權，與任何 LLM 或支付通道中立兼容。",
     card1_link: "開源項目：PQSafe →",
-    // Card 2 — Physical Systems
-    card2_tag: "× 實體系統",
-    card2_heading: "實體系統",
-    card2_body: "無人機、機械人及自主機器在現實世界中行動，沒有撤銷的機會。我們構建內嵌決策邏輯與硬性限制的智能體——讓系統每一次行動都具備問責機制。",
-    // Card 3 — Human Care
-    card3_tag: "× 人文關懷",
-    card3_heading: "人文關懷",
-    card3_body: "我們於數百間安老及臨床機構中運作。這些環境受嚴格監管，信任邊界清晰，對錯誤零容忍。我們的智能體輔助護理人員，而非取代其判斷——每一次互動均可審計。",
+    // Card 2 — Physical AI (kinaite)
+    card2_tag: "× 物理 AI",
+    card2_heading: "物理 AI",
+    card2_body: "kinaite 將智能體 AI 植入長者照護的物理 AI 技術棧：陪護機器人、康復輔助、臨床特醫食品、臨床數據飛輪。智能體在原子層面具化，而非停留於像素。物理世界沒有撤銷選項——問責從第一天起便內置於系統之中。",
+    // Card 3 — Autonomous Enterprise (CompanyForge)
+    card3_tag: "× AI原生企業",
+    card3_heading: "AI原生企業",
+    card3_body: "智能體 AI 不只是輔助員工，它本身就是運營主體。CompanyForge 引擎將受監管行業轉化為單人運營的 AI 企業。首個落地實施：Kangleling 長者照護加盟體系。下一個垂直方向：PierForge 跨境供應鏈。",
+    // Card 4 — Care AI (CareEZ)
+    card4_tag: "× 護理 AI",
+    card4_heading: "護理 AI",
+    card4_body: "CareEZ（× 護理 AI 旗下品牌）將智能體 AI 帶入受監管的人工護理場景：為安老院前線護理人員提供多語言吞嚥安全篩查。每一次互動均可審計，每一次糾正都在教會下一次部署。",
     // Thread
     thread_heading: "每一次糾正，都在教會下一次部署。",
-    thread_body: "智能體的每一個決策均有記錄。當人工介入覆蓋它——無論是在安全審計、現場行動還是護理巡查中——這次糾正便會轉化為訓練數據。系統從真實的關鍵領域中學習，而非從基準測試中學習。橫跨量子、硬件與關懷三大領域，一個原則始終成立：風險愈高，智能體愈聰明。",
+    thread_body: "智能體的每一個決策均有記錄。當人工介入覆蓋它——無論是在安全審計、現場行動還是護理巡查中——這次糾正便會轉化為訓練數據。系統從真實的關鍵領域中學習，而非從基準測試中學習。橫跨量子、物理、企業與護理四大領域，一個原則始終成立：風險愈高，智能體愈聰明。",
     // Ops
     ops_label: "我們如何運營",
     ops_heading: "我們在自己構建的系統上運行。",
@@ -140,7 +152,7 @@ const CONTENT = {
     footer_thesis: "核心論點",
     footer_engage: "合作參與",
     footer_privacy: "私隱政策",
-    footer_tagline: "為真正重要的決策而構建的AI智能體。",
+    footer_tagline: "智能體 AI，在前沿的交叉口。",
     footer_copy: "© 2026 Asaptic Labs"
   }
 };
