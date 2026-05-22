@@ -17,8 +17,8 @@ const CONTENT = {
     // Card 1 — Quantum Computing
     card1_tag: "× QUANTUM COMPUTING",
     card1_heading: "Quantum Computing",
-    card1_body: "Today's crypto will break under quantum computing. PQSafe builds the post-quantum trust layer that AI agents need to sign and authenticate trillions of times in the next decade — so a mandate signed in 2026 stays uncounterfeitable in 2035.",
-    card1_link: "Open project: PQSafe →",
+    card1_body: "Today's crypto will break under quantum computing. We are building the post-quantum trust layer that AI agents need to sign and authenticate trillions of times in the next decade — so a mandate signed in 2026 stays uncounterfeitable in 2035.",
+    card1_link: "Explore this crossing →",
     // Card 2 — Physical AI (kinaite)
     card2_tag: "× PHYSICAL AI",
     card2_heading: "Physical AI",
@@ -27,7 +27,7 @@ const CONTENT = {
     // Card 3 — Autonomous Enterprise (CompanyForge)
     card3_tag: "× AUTONOMOUS ENTERPRISE",
     card3_heading: "Autonomous Enterprise",
-    card3_body: "Agents don't just help workers — they ARE the workforce. Our CompanyForge engine takes a regulated vertical and turns it into a one-operator AI business. First implementation: Kangleling eldercare franchise. Next vertical: PierForge cross-border supply chain.",
+    card3_body: "Agents don't just help workers — they ARE the workforce. Our CompanyForge engine takes a regulated vertical and turns it into a one-operator AI business. First implementation: an eldercare franchise network. Next vertical: PierForge cross-border supply chain.",
     card3_link: "companyforge.ai →",
     // Card 4 — Care AI (CareEZ)
     card4_tag: "× CARE AI",
@@ -72,8 +72,8 @@ const CONTENT = {
     // Card 1 — Quantum Computing
     card1_tag: "× 量子计算",
     card1_heading: "量子计算",
-    card1_body: "现有加密体系在量子计算面前终将失效。PQSafe 在窗口关闭之前，为代理式 AI 构建后量子信任层——让 2026 年签署的授权在 2035 年依然不可伪造。",
-    card1_link: "开源项目：PQSafe →",
+    card1_body: "现有加密体系在量子计算面前终将失效。我们在窗口关闭之前，为代理式 AI 构建后量子信任层——让 2026 年签署的授权在 2035 年依然不可伪造。",
+    card1_link: "探索此关键领域 →",
     // Card 2 — Physical AI (kinaite)
     card2_tag: "× 物理 AI",
     card2_heading: "物理 AI",
@@ -82,7 +82,7 @@ const CONTENT = {
     // Card 3 — Autonomous Enterprise (CompanyForge)
     card3_tag: "× 智能原生企业",
     card3_heading: "智能原生企业",
-    card3_body: "代理式 AI 不只是辅助员工，它本身就是运营主体。CompanyForge 引擎将受监管行业转化为单人运营的 AI 企业。首个落地实施：Kangleling 长者照护加盟体系。下一个垂直方向：PierForge 跨境供应链。",
+    card3_body: "代理式 AI 不只是辅助员工，它本身就是运营主体。CompanyForge 引擎将受监管行业转化为单人运营的 AI 企业。首个落地实施：一个长者照护加盟网络。下一个垂直方向：PierForge 跨境供应链。",
     card3_link: "companyforge.ai →",
     // Card 4 — Care AI (CareEZ)
     card4_tag: "× 照护 AI",
@@ -127,8 +127,8 @@ const CONTENT = {
     // Card 1 — Quantum Computing
     card1_tag: "× 量子計算",
     card1_heading: "量子計算",
-    card1_body: "現有加密體系在量子計算面前終將失效。PQSafe 在窗口關閉之前，為智能體 AI 構建後量子信任層——讓 2026 年簽署的授權在 2035 年依然不可偽造。",
-    card1_link: "開源項目：PQSafe →",
+    card1_body: "現有加密體系在量子計算面前終將失效。我們在窗口關閉之前，為智能體 AI 構建後量子信任層——讓 2026 年簽署的授權在 2035 年依然不可偽造。",
+    card1_link: "探索此關鍵領域 →",
     // Card 2 — Physical AI (kinaite)
     card2_tag: "× 物理 AI",
     card2_heading: "物理 AI",
@@ -137,7 +137,7 @@ const CONTENT = {
     // Card 3 — Autonomous Enterprise (CompanyForge)
     card3_tag: "× AI原生企業",
     card3_heading: "AI原生企業",
-    card3_body: "智能體 AI 不只是輔助員工，它本身就是運營主體。CompanyForge 引擎將受監管行業轉化為單人運營的 AI 企業。首個落地實施：Kangleling 長者照護加盟體系。下一個垂直方向：PierForge 跨境供應鏈。",
+    card3_body: "智能體 AI 不只是輔助員工，它本身就是運營主體。CompanyForge 引擎將受監管行業轉化為單人運營的 AI 企業。首個落地實施：一個長者照護加盟網絡。下一個垂直方向：PierForge 跨境供應鏈。",
     card3_link: "companyforge.ai →",
     // Card 4 — Care AI (CareEZ)
     card4_tag: "× 護理 AI",
