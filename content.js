@@ -23,14 +23,17 @@ const CONTENT = {
     card2_tag: "× PHYSICAL AI",
     card2_heading: "Physical AI",
     card2_body: "kinaite puts AI agents into the eldercare physical-AI stack: humanoid companions, rehab robotics, clinical food, and a clinical data flywheel. Agents embodied in atoms, not pixels. There is no undo when the system acts in the physical world — accountability is designed in from day one.",
+    card2_link: "kinaite.com →",
     // Card 3 — Autonomous Enterprise (CompanyForge)
     card3_tag: "× AUTONOMOUS ENTERPRISE",
     card3_heading: "Autonomous Enterprise",
     card3_body: "Agents don't just help workers — they ARE the workforce. The CompanyForge engine takes a regulated vertical and turns it into a one-operator AI business. First implementation: an eldercare franchise network. Next vertical: PierForge cross-border supply chain.",
+    card3_link: "companyforge.ai →",
     // Card 4 — Care AI (CareEZ)
     card4_tag: "× CARE AI",
     card4_heading: "Care AI",
     card4_body: "CareEZ brings AI agents into regulated human care — multilingual swallowing-safety screening for frontline carers in residential care homes. Every interaction is auditable. Every correction teaches the next deployment.",
+    card4_link: "careez.org →",
     // Thread
     thread_heading: "Every correction teaches the next deployment.",
     thread_body: "Every decision our agents make is logged. When a human overrides it — in a security audit, a field operation, or a care round — that correction becomes training data. The system learns from the crossing, not from a benchmark. Across quantum, physical, enterprise, and care, one principle holds: the agent gets smarter where the stakes are highest.",
@@ -75,14 +78,17 @@ const CONTENT = {
     card2_tag: "× 物理 AI",
     card2_heading: "物理 AI",
     card2_body: "kinaite 将代理式 AI 植入长者照护的物理 AI 技术栈：陪护机器人、康复辅助、临床特医食品、临床数据飞轮。智能体在原子层面具化，而非停留于像素。物理世界没有撤销选项——问责从第一天起便内置于系统之中。",
+    card2_link: "kinaite.com →",
     // Card 3 — Autonomous Enterprise (CompanyForge)
     card3_tag: "× 智能原生企业",
     card3_heading: "智能原生企业",
     card3_body: "代理式 AI 不只是辅助员工，它本身就是运营主体。CompanyForge 引擎将受监管行业转化为单人运营的 AI 企业。首个落地实施：长者照护加盟网络。下一个垂直方向：PierForge 跨境供应链。",
+    card3_link: "companyforge.ai →",
     // Card 4 — Care AI (CareEZ)
     card4_tag: "× 照护 AI",
     card4_heading: "照护 AI",
     card4_body: "CareEZ（× 照护 AI 旗下品牌）将代理式 AI 带入受监管的人工照护场景：为安老院前线护理人员提供多语言吞咽安全筛查。每一次交互均可审计，每一次纠正都在教会下一次部署。",
+    card4_link: "careez.org →",
     // Thread
     thread_heading: "每一次纠正，都在教会下一次部署。",
     thread_body: "智能体的每一个决策都有记录。当人工干预覆盖它——无论是在安全审计、现场操作还是护理巡查中——这次纠正就会转化为训练数据。系统从真实的关键领域中学习，而非从基准测试中学习。跨越量子、物理、企业与照护四大领域，一个原则始终成立：风险越高，智能体越聪明。",
@@ -127,14 +133,17 @@ const CONTENT = {
     card2_tag: "× 物理 AI",
     card2_heading: "物理 AI",
     card2_body: "kinaite 將智能體 AI 植入長者照護的物理 AI 技術棧：陪護機器人、康復輔助、臨床特醫食品、臨床數據飛輪。智能體在原子層面具化，而非停留於像素。物理世界沒有撤銷選項——問責從第一天起便內置於系統之中。",
+    card2_link: "kinaite.com →",
     // Card 3 — Autonomous Enterprise (CompanyForge)
     card3_tag: "× AI原生企業",
     card3_heading: "AI原生企業",
     card3_body: "智能體 AI 不只是輔助員工，它本身就是運營主體。CompanyForge 引擎將受監管行業轉化為單人運營的 AI 企業。首個落地實施：長者照護加盟網絡。下一個垂直方向：PierForge 跨境供應鏈。",
+    card3_link: "companyforge.ai →",
     // Card 4 — Care AI (CareEZ)
     card4_tag: "× 護理 AI",
     card4_heading: "護理 AI",
     card4_body: "CareEZ（× 護理 AI 旗下品牌）將智能體 AI 帶入受監管的人工護理場景：為安老院前線護理人員提供多語言吞嚥安全篩查。每一次互動均可審計，每一次糾正都在教會下一次部署。",
+    card4_link: "careez.org →",
     // Thread
     thread_heading: "每一次糾正，都在教會下一次部署。",
     thread_body: "智能體的每一個決策均有記錄。當人工介入覆蓋它——無論是在安全審計、現場行動還是護理巡查中——這次糾正便會轉化為訓練數據。系統從真實的關鍵領域中學習，而非從基準測試中學習。橫跨量子、物理、企業與護理四大領域，一個原則始終成立：風險愈高，智能體愈聰明。",
