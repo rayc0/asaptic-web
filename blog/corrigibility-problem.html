@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The corrigibility problem: how much should an AI agent defer? — Asaptic Labs</title>
+
+  <meta name="description" content="Every deployed agent sits somewhere on the dial between full obedience and full autonomy. The problem is that the dial position is almost never formally specified, cryptographically anchored, or externally enforced." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/corrigibility-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The corrigibility problem: how much should an AI agent defer?" />
+  <meta property="og:description" content="Every deployed agent sits somewhere on the dial between full obedience and full autonomy. The problem is that the dial position is almost never formally specified, cryptographically anchored, or externally enforced." />
+  <meta property="og:url" content="https://asaptic.com/blog/corrigibility-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-22" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The corrigibility problem: how much should an AI agent defer?",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-22",
+    "description": "Every deployed agent sits somewhere on the dial between full obedience and full autonomy. The problem is that the dial position is almost never formally specified, cryptographically anchored, or externally enforced.",
+    "url": "https://asaptic.com/blog/corrigibility-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+    }
+    .essay-nav a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray);
+      transition: color 0.2s;
+    }
+    .essay-nav a:hover { color: var(--accent); }
+    .lang-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray-dim);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      text-align: center;
+      padding: 40px 32px;
+      border-top: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-footer a { color: var(--gray-dim); transition: color 0.2s; }
+    .essay-footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="essay-wrap">
+      <a href="/blog/" class="essay-back">← Notes from the Crossings</a>
+
+      <div class="lang-toggle">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">中文</button>
+        <button class="lang-btn" data-lang="zh-hk">繁體</button>
+      </div>
+
+      <!-- EN -->
+      <div class="essay-lang active" data-lang-content="en">
+        <span class="essay-topic">× QUANTUM SECURITY &nbsp;×&nbsp; HARDWARE &nbsp;×&nbsp; HUMAN CARE</span>
+        <h1 class="essay-title">The corrigibility problem: how much should an AI agent defer?</h1>
+        <div class="essay-meta">
+          <span class="essay-byline">Asaptic Labs</span>
+          <span class="essay-date">2026-05-22</span>
+          <span class="essay-byline">5 min read</span>
+        </div>
+        <div class="essay-body">
+          <p>A fully corrigible agent does whatever it is told. It accepts modification, correction, and shutdown without resistance. In theory this sounds safe — the humans stay in control. In practice, full corrigibility is its own failure mode. An agent that will do anything its principal instructs is only as trustworthy as its principal hierarchy. If the principal is compromised, mistaken, or acting in bad faith, the agent has no independent check. Full corrigibility transfers all the risk upward without eliminating it.</p>
+
+          <p>A fully autonomous agent acts on its own judgment. It decides when instructions are correct and when they should be overridden. This is also a failure mode. We do not yet have reliable methods for verifying that an agent's judgment is aligned with human values across all situations, especially novel ones. An autonomous agent that overrides its principal based on its own assessment — even with good intentions — is an agent that cannot be corrected when its assessment is wrong.</p>
+
+          <p>Every deployed agent sits somewhere on this dial between full corrigibility and full autonomy. The problem is that the dial position is almost never formally specified. It emerges from training, from runtime behavior, from the scaffolding that wraps the model. Nobody signs a document saying "this agent is calibrated to defer to its principal hierarchy in 95% of cases and exercise independent judgment in the remaining 5%, and the 5% is defined as follows." The dial floats.</p>
+
+          <p>A floating dial is a security vulnerability.</p>
+
+          <p>The attacker's path is straightforward: present the agent with a scenario that crosses its implicit autonomy threshold, watch it override principal instructions, and exploit the override. Or the reverse — convince the agent that the instruction comes from a legitimate principal, exploit full corrigibility, and get the agent to take an action that damages its true principals. Neither attack requires a broken model. Both require only a miscalibrated or unspecified dial position.</p>
+
+          <p>The right architecture makes the dial explicit and externally enforced. This means encoding the corrigibility specification in a signed policy document — not a comment in the system prompt, but a cryptographically signed artifact attached to the agent's deployment identity. The policy specifies which categories of action require mandatory principal confirmation, which categories the agent may execute autonomously, and which categories are unconditionally prohibited regardless of any instruction. Downstream systems verify the signature before accepting the agent's actions. The agent cannot unilaterally promote an action from "requires confirmation" to "autonomous" any more than it can unilaterally expand its scope.</p>
+
+          <p>The hardware crossing matters here for the same reason it matters everywhere: a corrigibility policy that exists only in software can be modified by a privileged attacker. Binding the policy to hardware attestation — so that the deployed policy can be remotely verified against the device's secure state — closes that attack surface. The dial position becomes a hardware fact, not a software assertion.</p>
+
+          <p>The post-quantum security crossing matters because the signatures on corrigibility policies need to remain valid across the agent's deployment lifetime. An agent deployed today with a classically signed policy document carries that signature for years. If the signing algorithm is vulnerable, the policy can be forged and the attacker can quietly reposition the dial. Adopting quantum-resistant signatures for corrigibility policies is not a future consideration; it is a prerequisite for policy integrity across the deployment window.</p>
+
+          <p>The physical-world care crossing is where the stakes become clearest. A care agent managing medications, monitoring vital signs, and coordinating with clinical systems exercises authority over decisions that can harm a vulnerable person if wrong. For such an agent, the corrigibility dial should be biased toward deference for any irreversible action: a medication change, a care plan modification, an alert escalation. But it should not be fully corrigible, because a fully corrigible care agent will carry out a mistaken instruction from a compromised account, an overtired clinician, or a social-engineering attack. The right calibration is a narrow autonomous band — enough judgment to flag anomalies and refuse obviously harmful instructions, not enough to override confirmed clinical directives based on independent assessment.</p>
+
+          <p>That calibration should be specified in writing, signed by the deploying institution, and enforced by the infrastructure the agent runs on. The alternative is an implicit dial, a floating policy, and accountability that dissolves when something goes wrong.</p>
+
+          <p>The dial exists whether you specify it or not. The only question is whether you choose to hold it.</p>
+        </div>
+
+        <div class="essay-summary">
+          <span class="essay-summary-label">// SUMMARY</span>
+          <p>Full corrigibility is dangerous because it transfers trust entirely to the principal hierarchy. Full autonomy is dangerous because agent judgment cannot be fully verified. Every real deployment sits somewhere on this dial, usually implicitly.</p>
+          <p>A floating dial position is a security vulnerability: attackers can either exploit implicit autonomy thresholds or abuse full corrigibility through principal impersonation. The correct architecture encodes corrigibility as a cryptographically signed, hardware-attested policy that specifies which action categories require confirmation, which permit autonomy, and which are unconditionally prohibited.</p>
+          <p>Quantum-resistant signatures ensure the policy remains unforgeable across the agent's deployment lifetime. In physical-world care contexts, the dial should be biased toward deference for irreversible actions while retaining a narrow autonomous band sufficient to flag anomalies and refuse clearly harmful instructions.</p>
+        </div>
+
+        <div class="essay-nav">
+          <span></span>
+          <a href="/blog/scope-problem.html">Next: The scope problem →</a>
+        </div>
+      </div>
+
+      <!-- ZH -->
+      <div class="essay-lang" data-lang-content="zh">
+        <span class="essay-topic">× 量子安全 &nbsp;×&nbsp; 硬件 &nbsp;×&nbsp; 人类关怀</span>
+        <h1 class="essay-title">可纠正性问题：AI智能体应该服从到何种程度？</h1>
+        <div class="essay-meta">
+          <span class="essay-byline">Asaptic Labs</span>
+          <span class="essay-date">2026-05-22</span>
+          <span class="essay-byline">5 分钟阅读</span>
+        </div>
+        <div class="essay-body">
+          <p>完全可纠正的智能体会无条件执行任何指令。它接受修改、纠正和关闭，毫不抵抗。理论上这听起来很安全——人类始终处于控制之中。但实践中，完全可纠正性本身就是一种失效模式。一个会执行主体任何指令的智能体，其可信度完全取决于其主体层级的可信度。若主体遭到攻破、出现错误或怀有恶意，智能体就没有任何独立的制衡机制。完全可纠正性只是将风险向上转移，并未消除它。</p>
+
+          <p>完全自主的智能体依据自身判断行事。它自行决定指令是否正确，以及何时应推翻指令。这同样是一种失效模式。我们目前尚无可靠方法来验证智能体的判断在所有情境下——尤其是新颖情境下——是否与人类价值观一致。一个基于自身判断凌驾于主体之上的自主智能体——即便出于善意——一旦判断出错，就无法得到纠正。</p>
+
+          <p>每个部署中的智能体都处于完全可纠正与完全自主之间这个刻度盘的某个位置。问题在于，刻度盘的位置几乎从未被正式指定。它从训练中涌现，从运行时行为中涌现，从包裹模型的脚手架中涌现。没有人签署文件说明："该智能体被校准为在95%的情况下服从主体层级，在剩余5%的情况下独立判断，而5%的情形定义如下。"刻度盘处于漂浮状态。</p>
+
+          <p>漂浮的刻度盘就是一个安全漏洞。</p>
+
+          <p>攻击者的路径很直接：向智能体呈现一个触及其隐性自主阈值的场景，观察它推翻主体指令，然后利用这一覆盖。或者反过来——说服智能体指令来自合法主体，利用完全可纠正性，诱使智能体采取损害其真实主体利益的行动。这两种攻击都不需要破坏模型本身，只需要一个未经校准或未被指定的刻度盘位置。</p>
+
+          <p>正确的架构应使刻度盘显式化并由外部强制执行。这意味着将可纠正性规范编码在签名政策文件中——不是系统提示中的注释，而是附加于智能体部署身份的密码学签名工件。政策文件规定哪些类别的行动需要强制获得主体确认、哪些类别智能体可自主执行、哪些类别无论任何指令均无条件禁止。下游系统在接受智能体行动前验证签名。智能体无法单方面将行动从"需要确认"升级为"可自主执行"，正如它无法单方面扩展自身权限范围一样。</p>
+
+          <p>硬件交叉点在此处的重要性与在其他地方一样：仅存在于软件中的可纠正性政策可被特权攻击者修改。将政策绑定到硬件证明——使部署的政策可针对设备安全状态进行远程验证——可消除这一攻击面。刻度盘位置成为硬件事实，而非软件声明。</p>
+
+          <p>量子安全交叉点同样重要，因为可纠正性政策上的签名需要在智能体整个部署生命周期内保持有效。今天以经典算法签名的政策文件部署的智能体，将携带该签名运行数年。若签名算法存在漏洞，政策可被伪造，攻击者就能悄然改变刻度盘位置。将量子安全签名应用于可纠正性政策，不是对未来的前瞻性考量，而是确保政策在部署窗口期内完整性的前提条件。</p>
+
+          <p>物理世界关怀交叉点是风险最为清晰可见之处。一个管理用药、监测生命体征并与临床系统协调的照护智能体，行使着对可能伤害脆弱个体的决策的权力。对于此类智能体，可纠正性刻度盘应在任何不可逆行动上偏向服从：用药变更、护理方案调整、警报升级。但它不能完全可纠正，因为完全可纠正的照护智能体将执行来自被攻破账户、过度疲劳的临床医生或社会工程攻击的错误指令。正确的校准是一个狭窄的自主区间——足以标记异常并拒绝明显有害的指令，但不足以基于独立判断推翻已确认的临床指示。</p>
+
+          <p>该校准应以书面形式说明，由部署机构签署，并由运行智能体的基础设施强制执行。否则就只剩下隐性的刻度盘、漂浮的政策，以及在出现问题时消散的问责制。</p>
+
+          <p>刻度盘始终存在，无论你是否加以指定。唯一的问题是你是否选择掌控它。</p>
+        </div>
+
+        <div class="essay-summary">
+          <span class="essay-summary-label">// 摘要</span>
+          <p>完全可纠正性危险，因为它将信任完全转移给主体层级。完全自主危险，因为智能体判断无法被完全验证。每个真实部署都处于这个刻度盘的某个位置，通常是隐性的。</p>
+          <p>漂浮的刻度盘位置是安全漏洞：攻击者可以利用隐性自主阈值，或通过主体冒充滥用完全可纠正性。正确的架构将可纠正性编码为密码学签名、硬件证明的政策，规定哪些行动类别需要确认、哪些允许自主、哪些被无条件禁止。</p>
+          <p>量子安全签名确保政策在智能体部署生命周期内不可伪造。在物理世界关怀场景中，刻度盘应对不可逆行动偏向服从，同时保留足够标记异常和拒绝明显有害指令的狭窄自主区间。</p>
+        </div>
+
+        <div class="essay-nav">
+          <span></span>
+          <a href="/blog/scope-problem.html">下一篇：权限范围问题 →</a>
+        </div>
+      </div>
+
+      <!-- ZH-HK -->
+      <div class="essay-lang" data-lang-content="zh-hk">
+        <span class="essay-topic">× 量子安全 &nbsp;×&nbsp; 硬件 &nbsp;×&nbsp; 人類關懷</span>
+        <h1 class="essay-title">可糾正性問題：AI智能體應該服從到何種程度？</h1>
+        <div class="essay-meta">
+          <span class="essay-byline">Asaptic Labs</span>
+          <span class="essay-date">2026-05-22</span>
+          <span class="essay-byline">5 分鐘閱讀</span>
+        </div>
+        <div class="essay-body">
+          <p>完全可糾正的智能體會無條件執行任何指令。它接受修改、糾正和關閉，毫不抵抗。理論上這聽起來很安全——人類始終處於控制之中。但實踐中，完全可糾正性本身就是一種失效模式。一個會執行主體任何指令的智能體，其可信度完全取決於其主體層級的可信度。若主體遭到攻破、出現錯誤或懷有惡意，智能體就沒有任何獨立的制衡機制。完全可糾正性只是將風險向上轉移，並未消除它。</p>
+
+          <p>完全自主的智能體依據自身判斷行事。它自行決定指令是否正確，以及何時應推翻指令。這同樣是一種失效模式。我們目前尚無可靠方法來驗證智能體的判斷在所有情境下——尤其是新穎情境下——是否與人類價值觀一致。一個基於自身判斷凌駕於主體之上的自主智能體——即便出於善意——一旦判斷出錯，就無法得到糾正。</p>
+
+          <p>每個部署中的智能體都處於完全可糾正與完全自主之間這個刻度盤的某個位置。問題在於，刻度盤的位置幾乎從未被正式指定。它從訓練中湧現，從運行時行為中湧現，從包裹模型的腳手架中湧現。沒有人簽署文件說明：「該智能體被校準為在95%的情況下服從主體層級，在剩餘5%的情況下獨立判斷，而5%的情形定義如下。」刻度盤處於漂浮狀態。</p>
+
+          <p>漂浮的刻度盤就是一個安全漏洞。</p>
+
+          <p>攻擊者的路徑很直接：向智能體呈現一個觸及其隱性自主閾值的場景，觀察它推翻主體指令，然後利用這一覆蓋。或者反過來——說服智能體指令來自合法主體，利用完全可糾正性，誘使智能體採取損害其真實主體利益的行動。這兩種攻擊都不需要破壞模型本身，只需要一個未經校準或未被指定的刻度盤位置。</p>
+
+          <p>正確的架構應使刻度盤顯式化並由外部強制執行。這意味著將可糾正性規範編碼在簽名政策文件中——不是系統提示中的注釋，而是附加於智能體部署身份的密碼學簽名工件。政策文件規定哪些類別的行動需要強制獲得主體確認、哪些類別智能體可自主執行、哪些類別無論任何指令均無條件禁止。下游系統在接受智能體行動前驗證簽名。智能體無法單方面將行動從「需要確認」升級為「可自主執行」，正如它無法單方面擴展自身權限範圍一樣。</p>
+
+          <p>硬件交叉點在此處的重要性與在其他地方一樣：僅存在於軟件中的可糾正性政策可被特權攻擊者修改。將政策綁定到硬件證明——使部署的政策可針對裝置安全狀態進行遠端驗證——可消除這一攻擊面。刻度盤位置成為硬件事實，而非軟件聲明。</p>
+
+          <p>量子安全交叉點同樣重要，因為可糾正性政策上的簽名需要在智能體整個部署生命週期內保持有效。今天以經典算法簽名的政策文件部署的智能體，將攜帶該簽名運行數年。若簽名算法存在漏洞，政策可被偽造，攻擊者就能悄然改變刻度盤位置。將量子安全簽名應用於可糾正性政策，不是對未來的前瞻性考量，而是確保政策在部署窗口期內完整性的前提條件。</p>
+
+          <p>實體世界照護交叉點是風險最為清晰可見之處。一個管理用藥、監測生命體徵並與臨床系統協調的照護智能體，行使著對可能傷害脆弱個體的決策的權力。對於此類智能體，可糾正性刻度盤應在任何不可逆行動上偏向服從：用藥變更、護理方案調整、警報升級。但它不能完全可糾正，因為完全可糾正的照護智能體將執行來自被攻破帳戶、過度疲勞的臨床醫生或社會工程攻擊的錯誤指令。正確的校準是一個狹窄的自主區間——足以標記異常並拒絕明顯有害的指令，但不足以基於獨立判斷推翻已確認的臨床指示。</p>
+
+          <p>該校準應以書面形式說明，由部署機構簽署，並由運行智能體的基礎設施強制執行。否則就只剩下隱性的刻度盤、漂浮的政策，以及在出現問題時消散的問責制。</p>
+
+          <p>刻度盤始終存在，無論你是否加以指定。唯一的問題是你是否選擇掌控它。</p>
+        </div>
+
+        <div class="essay-summary">
+          <span class="essay-summary-label">// 摘要</span>
+          <p>完全可糾正性危險，因為它將信任完全轉移給主體層級。完全自主危險，因為智能體判斷無法被完全驗證。每個真實部署都處於這個刻度盤的某個位置，通常是隱性的。</p>
+          <p>漂浮的刻度盤位置是安全漏洞：攻擊者可以利用隱性自主閾值，或通過主體冒充濫用完全可糾正性。正確的架構將可糾正性編碼為密碼學簽名、硬件證明的政策，規定哪些行動類別需要確認、哪些允許自主、哪些被無條件禁止。</p>
+          <p>量子安全簽名確保政策在智能體部署生命週期內不可偽造。在實體世界照護場景中，刻度盤應對不可逆行動偏向服從，同時保留足夠標記異常和拒絕明顯有害指令的狹窄自主區間。</p>
+        </div>
+
+        <div class="essay-nav">
+          <span></span>
+          <a href="/blog/scope-problem.html">下一篇：權限範圍問題 →</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
