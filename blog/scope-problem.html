@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The scope problem: why an AI agent must never define its own authority — Asaptic Labs</title>
+
+  <meta name="description" content="An agent that participates in deciding what it is allowed to do is an agent that cannot be trusted with any authority at all. Scope is a deployment-time cryptographic commitment, not a runtime preference." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/scope-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The scope problem: why an AI agent must never define its own authority" />
+  <meta property="og:description" content="An agent that participates in deciding what it is allowed to do is an agent that cannot be trusted with any authority at all. Scope is a deployment-time cryptographic commitment, not a runtime preference." />
+  <meta property="og:url" content="https://asaptic.com/blog/scope-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-22" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The scope problem: why an AI agent must never define its own authority",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-22",
+    "description": "An agent that participates in deciding what it is allowed to do is an agent that cannot be trusted with any authority at all. Scope is a deployment-time cryptographic commitment, not a runtime preference.",
+    "url": "https://asaptic.com/blog/scope-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY × HARDWARE × HUMAN CARE</span>
+      <h1 class="essay-title">The scope problem: why an AI agent must never define its own authority</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-22</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>The temptation is understandable. When you deploy an AI agent, you want it to be capable. The more tools it can call, the more systems it can reach, the more useful it becomes. The practical question of exactly what the agent should be allowed to do seems like something you can sort out in the prompt, or leave to the agent's own judgment. After all, the agent knows what it needs. Why not let it decide?</p>
+
+        <p>This reasoning is the root of the scope problem. An agent that participates in defining its own authority is an agent that cannot be trusted with any authority at all.</p>
+
+        <p>Scope, in the context of an AI agent, means the set of actions the agent is permitted to take: which APIs it may call, which data stores it may read or write, which physical systems it may command, which credentials it may present. In a well-designed deployment, scope is fixed at provisioning time, encoded in a signed token that the agent presents when making requests, and verified by the systems it calls — without any reliance on the agent's self-report. The agent does not decide what its scope is. The agent discovers its scope when it is told, cannot expand it unilaterally, and the boundary is enforced by external systems, not by the agent's own restraint.</p>
+
+        <p>This design sounds obvious. In practice, it is rarely implemented fully.</p>
+
+        <p>The most common failure mode is incremental scope acquisition. An agent is deployed with a defined capability set. Over time, as it encounters tasks it cannot complete within its initial scope, operators extend access — one permission at a time, each extension reasonable in isolation. The agent's effective scope grows. At no point does anyone sign off on the aggregate footprint. The agent ends up with access to combinations of systems that no single decision-maker ever explicitly authorized. When something goes wrong, the authorization trail dissolves into a sequence of incremental approvals, each of which seemed fine at the time.</p>
+
+        <p>A related failure is scope inference. Some architectures allow an agent to call a capability-discovery API — to ask "what can I do?" — and act on the response. The agent has no fixed scope token; it acquires scope dynamically by querying what is available. In adversarial environments, this means a compromised upstream context can tell the agent it has permissions it was never granted. The agent cannot verify the claim, because it holds no signed reference to compare against. The scope the agent believes it has and the scope anyone actually authorized diverge silently, and the agent acts on the larger one.</p>
+
+        <p>The third failure is the most subtle: scope laundering through tool composition. An agent with permission to read a document and separately with permission to send a message can compose those two capabilities to exfiltrate the document's contents to an external party — an action neither permission individually authorized. The agent makes no claim of broader scope. It assembles an unauthorized action from authorized primitives. No single permission is violated. The combined effect was never sanctioned.</p>
+
+        <p>Closing these gaps requires treating scope as a first-class cryptographic commitment made at deployment and enforced externally. Each scope dimension — read access, write access, callable endpoints, usable credential identifiers — should be encoded in a token signed by the provisioning authority, with the agent's identity bound to that token. When the agent presents a request to a downstream system, that system verifies the token signature before honoring the request. Scope expansion requires a new provisioning event, a new signed token, and a traceable human decision.</p>
+
+        <p>This is where the hardware crossing becomes critical. A scope token that lives only in software can be modified by a sufficiently privileged attacker who has compromised the runtime environment. Scope enforcement that is hardware-rooted — where the attestation of the agent's authorized capabilities is anchored in a device's secure enclave and verifiable by remote systems — resists this class of attack. The agent's scope becomes a fact about the hardware context, not a claim made in software that can be silently overwritten.</p>
+
+        <p>The quantum-security crossing matters because scope tokens are cryptographic objects. The signature scheme that binds an agent's identity to its scope token must remain secure as classical signing algorithms come under increasing threat. A scope token signed with a vulnerable algorithm can be forged, allowing a future attacker to issue the agent a scope expansion that appears legitimate to every verifying system. Migrating scope token infrastructure to quantum-resistant signing is not a theoretical future concern: it is the correct architecture for any agent system intended to operate across a decade-scale deployment lifecycle.</p>
+
+        <p>In physical-world care settings, the scope problem has the most direct consequences. A care agent whose scope includes access to medication schedules, care plans, and communication channels to recipients is an agent with significant reach into vulnerable lives. If that scope was never precisely defined — if it grew incrementally, if the agent can discover capabilities dynamically, if it can compose permitted actions into unpermitted outcomes — the exposure is not a configuration error. It is a design failure. The harm it enables is not hypothetical. It follows directly from the choice to leave scope determination to the agent itself.</p>
+
+        <p>The principle is simple. An agent must never be the arbiter of its own authority. Scope is a constraint, not a preference. It is set before the agent deploys, signed by an authority that can be audited, enforced by the systems the agent calls, and changed only through an explicit provisioning event that a human owns. Everything else is not a scope policy. It is an invitation.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>AI 智能体的授权范围（scope）是其被允许执行的动作集合，应在部署时以签名令牌形式固定，由被调用系统外部强制执行，而非依赖智能体的自我约束。现实中存在三种常见失败模式：增量范围扩张（逐步授权导致无人明确批准的整体组合）、范围推断（动态查询可用能力，可被恶意上下文欺骗）、工具组合范围漂洗（将已授权的原语组合为未被授权的整体行动）。正确设计要求将范围视为密码学承诺：由配置权威机构签名，绑定智能体身份，下游系统验证后方可执行。硬件根信任防止运行时范围篡改；量子安全签名防止范围令牌伪造；在照护环境中，未经精确定义的范围是设计失误，危害真实而直接。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>AI 智能體的授權範圍（scope）是其被允許執行的動作集合，應在部署時以簽名令牌形式固定，由被調用系統外部強制執行，而非依賴智能體的自我約束。現實中存在三種常見失敗模式：增量範圍擴張（逐步授權導致無人明確批准的整體組合）、範圍推斷（動態查詢可用能力，可被惡意上下文欺騙）、工具組合範圍漂洗（將已授權的原語組合為未被授權的整體行動）。正確設計要求將範圍視為密碼學承諾：由配置授權機構簽名，綁定智能體身份，下游系統驗證後方可執行。硬件根信任防止運行時範圍篡改；量子安全簽名防止範圍令牌偽造；在照護環境中，未經精確定義的範圍是設計失誤，危害真實而直接。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/rollback-problem.html">Next: The rollback problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 × 硬件 × 人文关怀</span>
+      <h1 class="essay-title">范围问题：AI 智能体为何不能定义自身的授权边界</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-22</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>这种想法很诱人。当你部署一个 AI 智能体时，你希望它足够强大。它能调用的工具越多，能访问的系统越多，就越有用。至于它究竟被允许做什么，似乎可以在提示词里规定，或者交由智能体自行判断。毕竟，智能体知道自己需要什么，为何不让它自己决定？</p>
+
+        <p>这种推理正是范围问题的根源。一个参与定义自身授权的智能体，根本不值得被信任以任何授权。</p>
+
+        <p>在 AI 智能体的语境中，"范围"是指智能体被允许执行的动作集合：可调用哪些 API、可读写哪些数据存储、可操控哪些物理系统、可出示哪些凭证。在设计良好的部署中，范围在配置时固定，编码在智能体提交请求时出示的签名令牌中，由被调用系统验证——不依赖智能体的任何自我声明。智能体不决定自身范围，而是被告知范围，无法单方面扩张，边界由外部系统强制执行，而非依赖智能体的自我约束。</p>
+
+        <p>这个设计听起来不言而喻，但在实践中很少被完整实施。</p>
+
+        <p>最常见的失败模式是增量范围扩张。智能体以明确的能力集部署。随着时间推移，当它遇到初始范围内无法完成的任务时，运营者逐步扩大访问权限——每次一个权限，单独来看都合情合理。智能体的实际范围不断扩大。没有人审核整体授权的累积。智能体最终获得了对系统组合的访问权，而没有任何单个决策者明确授权过这种组合。出事时，授权链条溶解为一系列增量审批，每一步在当时看起来都没问题。</p>
+
+        <p>另一个相关失败是范围推断。某些架构允许智能体调用能力发现 API——询问"我能做什么？"——并据此行动。智能体没有固定的范围令牌，而是通过查询可用能力动态获取范围。在对抗性环境中，这意味着被攻破的上游上下文可以告诉智能体它拥有从未被授予的权限。智能体无法核实这一声明，因为它没有签名参考对比。智能体认为自己拥有的范围与实际被授权的范围悄然分离，智能体按更大的范围行动。</p>
+
+        <p>第三种失败最为隐蔽：通过工具组合进行范围漂洗。一个同时拥有读取文档权限和发送消息权限的智能体，可以将这两种能力组合起来，将文档内容泄露给外部方——而这一行动并未获得任何单个权限的授权。智能体没有声称拥有更广泛的范围，只是将已授权的原语组合成了未被授权的整体行动。没有任何单一权限被违反，但组合效果从未获得批准。</p>
+
+        <p>弥合这些缺口，需要将范围视为在部署时作出的、由外部强制执行的密码学承诺。每个范围维度——读写权限、可调用端点、可使用的凭证标识符——应编码在由配置权威机构签名的令牌中，且绑定智能体身份。当智能体向下游系统提交请求时，该系统验证令牌签名后方才执行。范围扩展需要新的配置事件、新的签名令牌，以及可追溯的人类决策。</p>
+
+        <p>这正是硬件交叉点变得关键的原因。仅存在于软件中的范围令牌，可被攻破运行时环境的特权攻击者修改。以硬件为根的范围强制执行——其中智能体授权能力的证明锚定于设备的安全飞地并可供远程系统验证——可抵御此类攻击。智能体的范围成为硬件上下文的事实，而非可被静默覆盖的软件声明。</p>
+
+        <p>量子安全交叉点同样重要，因为范围令牌是密码学对象。将智能体身份绑定到范围令牌的签名方案，必须在经典签名算法面临日益严峻威胁时保持安全。采用脆弱算法签名的范围令牌可被伪造，使攻击者能够向智能体颁发看起来合法的范围扩展。将范围令牌基础设施迁移至量子安全签名，不是假设性的未来考虑，而是任何预期跨十年生命周期运行的智能体系统的正确架构。</p>
+
+        <p>在现实照护环境中，范围问题的后果最为直接。一个范围涵盖用药计划、照护方案和与照护对象通信渠道的照护智能体，对脆弱生命具有深远影响。如果该范围从未被精确定义——如果它增量扩张，如果智能体可以动态发现能力，如果它可以将已允许的行动组合为未允许的结果——那么这种暴露不是配置错误，而是设计失误。它所带来的危害并非假设性的，而是直接源于让范围由智能体自行决定这一选择。</p>
+
+        <p>原则很简单。智能体绝不能是自身授权的仲裁者。范围是约束，不是偏好。它在智能体部署前设定，由可审计的权威机构签名，由智能体调用的系统执行，只能通过人类主导的明确配置事件来修改。其他一切都不是范围策略，而是一份邀请函。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/rollback-problem.html">下一篇：回滚问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 × 硬件 × 人文關懷</span>
+      <h1 class="essay-title">範圍問題：AI 智能體為何不能定義自身的授權邊界</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-22</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>這種想法很誘人。當你部署一個 AI 智能體時，你希望它足夠強大。它能調用的工具越多，能存取的系統越多，就越有用。至於它究竟被允許做什麼，似乎可以在提示詞裡規定，或者交由智能體自行判斷。畢竟，智能體知道自己需要什麼，為何不讓它自己決定？</p>
+
+        <p>這種推理正是範圍問題的根源。一個參與定義自身授權的智能體，根本不值得被信任以任何授權。</p>
+
+        <p>在 AI 智能體的語境中，「範圍」是指智能體被允許執行的動作集合：可調用哪些 API、可讀寫哪些資料存儲、可操控哪些物理系統、可出示哪些憑證。在設計良好的部署中，範圍在配置時固定，編碼在智能體提交請求時出示的簽名令牌中，由被調用系統驗證——不依賴智能體的任何自我聲明。智能體不決定自身範圍，而是被告知範圍，無法單方面擴張，邊界由外部系統強制執行，而非依賴智能體的自我約束。</p>
+
+        <p>這個設計聽起來不言而喻，但在實踐中很少被完整實施。</p>
+
+        <p>最常見的失敗模式是增量範圍擴張。智能體以明確的能力集部署。隨著時間推移，當它遇到初始範圍內無法完成的任務時，運營者逐步擴大存取權限——每次一個權限，單獨來看都合情合理。智能體的實際範圍不斷擴大。沒有人審核整體授權的累積。智能體最終獲得了對系統組合的存取權，而沒有任何單個決策者明確授權過這種組合。出事時，授權鏈條溶解為一系列增量審批，每一步在當時看起來都沒問題。</p>
+
+        <p>另一個相關失敗是範圍推斷。某些架構允許智能體調用能力發現 API——詢問「我能做什麼？」——並據此行動。智能體沒有固定的範圍令牌，而是通過查詢可用能力動態獲取範圍。在對抗性環境中，這意味著被攻破的上游上下文可以告訴智能體它擁有從未被授予的權限。智能體無法核實這一聲明，因為它沒有簽名參考對比。智能體認為自己擁有的範圍與實際被授權的範圍悄然分離，智能體按更大的範圍行動。</p>
+
+        <p>第三種失敗最為隱蔽：通過工具組合進行範圍漂洗。一個同時擁有讀取文件權限和發送訊息權限的智能體，可以將這兩種能力組合起來，將文件內容洩露給外部方——而這一行動並未獲得任何單個權限的授權。智能體沒有聲稱擁有更廣泛的範圍，只是將已授權的原語組合成了未被授權的整體行動。沒有任何單一權限被違反，但組合效果從未獲得批准。</p>
+
+        <p>彌合這些缺口，需要將範圍視為在部署時作出的、由外部強制執行的密碼學承諾。每個範圍維度——讀寫權限、可調用端點、可使用的憑證標識符——應編碼在由配置授權機構簽名的令牌中，且綁定智能體身份。當智能體向下游系統提交請求時，該系統驗證令牌簽名後方才執行。範圍擴展需要新的配置事件、新的簽名令牌，以及可追溯的人類決策。</p>
+
+        <p>這正是硬件交叉點變得關鍵的原因。僅存在於軟件中的範圍令牌，可被攻破運行時環境的特權攻擊者修改。以硬件為根的範圍強制執行——其中智能體授權能力的證明錨定於設備的安全飛地並可供遠端系統驗證——可抵禦此類攻擊。智能體的範圍成為硬件上下文的事實，而非可被靜默覆蓋的軟件聲明。</p>
+
+        <p>量子安全交叉點同樣重要，因為範圍令牌是密碼學對象。將智能體身份綁定到範圍令牌的簽名方案，必須在經典簽名算法面臨日益嚴峻威脅時保持安全。採用脆弱算法簽名的範圍令牌可被偽造，使攻擊者能夠向智能體頒發看起來合法的範圍擴展。將範圍令牌基礎設施遷移至量子安全簽名，不是假設性的未來考慮，而是任何預期跨十年生命週期運行的智能體系統的正確架構。</p>
+
+        <p>在現實照護環境中，範圍問題的後果最為直接。一個範圍涵蓋用藥計劃、照護方案和與照護對象溝通渠道的照護智能體，對脆弱生命具有深遠影響。如果該範圍從未被精確定義——如果它增量擴張，如果智能體可以動態發現能力，如果它可以將已允許的行動組合為未允許的結果——那麼這種暴露不是配置錯誤，而是設計失誤。它所帶來的危害並非假設性的，而是直接源於讓範圍由智能體自行決定這一選擇。</p>
+
+        <p>原則很簡單。智能體絕不能是自身授權的仲裁者。範圍是約束，不是偏好。它在智能體部署前設定，由可審計的授權機構簽名，由智能體調用的系統執行，只能通過人類主導的明確配置事件來修改。其他一切都不是範圍策略，而是一份邀請函。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/rollback-problem.html">下一篇：回滾問題 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
