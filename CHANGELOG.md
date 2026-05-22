@@ -1,3 +1,4 @@
+2026-05-22 20:15 UTC · blog: add essay 'The specification gap — accountability starts with intent' (EN+ZH+ZH-HK) · 9cba0cf
 2026-05-22 16:15 UTC · blog: add essay 'The identity continuity problem — accountability when an AI agent is updated' (EN+ZH+ZH-HK) · 94591d9
 2026-05-22 12:15 UTC · firewall: remove forbidden tokens re-introduced by G1 brand-domain commit from content.js, index.html, llms.txt, agent.json · 46ba6e1
 2026-05-22 08:15 UTC · blog: add essay 'The human-in-the-loop paradox — oversight architecture for AI agents at scale' (EN+ZH+ZH-HK) · b72790e
