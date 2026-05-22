@@ -14,7 +14,19 @@ export default {
       });
     }
 
-    // Serve static assets from Pages
+    // Static assets and well-known files: always pass through to ASSETS
+    // (prevents SPA catch-all from serving text/html for these paths)
+    if (
+      url.pathname.startsWith('/.well-known/') ||
+      url.pathname === '/llms.txt' ||
+      url.pathname === '/robots.txt' ||
+      url.pathname === '/sitemap.xml' ||
+      /\.(json|txt|xml|png|svg|ico|jpg|jpeg|gif|webp|pdf|webmanifest|css|js|woff2|woff|ttf|otf)$/i.test(url.pathname)
+    ) {
+      return env.ASSETS.fetch(request);
+    }
+
+    // Serve static assets from Pages (SPA fallback)
     return env.ASSETS.fetch(request);
   },
 };
