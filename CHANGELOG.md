@@ -1,3 +1,4 @@
+2026-05-22 04:15 UTC · blog: add essay 'The corrigibility problem — how much should an AI agent defer?' (EN+ZH+ZH-HK) · a9e9aa1
 2026-05-22 00:15 UTC · blog: add essay 'The scope problem — why AI agents must never define their own authority' (EN+ZH+ZH-HK) · a8fc7c4
 2026-05-21 20:15 UTC · firewall: purge forbidden tokens (pqsafe, kangleling) from all public files · 307876e
 2026-05-19 00:15 UTC · crossings: add /crossings.html deep page (EN+ZH+ZH-HK) · c32869b
