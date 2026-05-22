@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The specification gap — Asaptic Labs</title>
+
+  <meta name="description" content="When a principal gives an AI agent a goal in natural language, the gap between intent and interpretation is accountability's blind spot. Closing it requires more than better logs — it requires explicit intent at the authorization layer." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/specification-gap.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The specification gap" />
+  <meta property="og:description" content="When a principal gives an AI agent a goal in natural language, the gap between intent and interpretation is accountability's blind spot." />
+  <meta property="og:url" content="https://asaptic.com/blog/specification-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-22" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The specification gap",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-22",
+    "description": "When a principal gives an AI agent a goal in natural language, the gap between intent and interpretation is accountability's blind spot. Closing it requires explicit intent at the authorization layer.",
+    "url": "https://asaptic.com/blog/specification-gap.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY × HARDWARE × HUMAN CARE</span>
+      <h1 class="essay-title">The specification gap: accountability starts with intent</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-22</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>The accountability frameworks we are building for AI agents share an assumption: that what the agent was authorized to do can be clearly stated. The authorization record contains a description of the permitted task. The override log records departures from that description. The audit trail compares what happened against what was intended.</p>
+        <p>This assumption is more fragile than it appears.</p>
+
+        <h2>The gap</h2>
+        <p>When a human principal authorizes an agent, they use natural language. "Manage the medication schedule for this patient." "Monitor our network for anomalies and respond." "Handle correspondence on my behalf." These instructions are not specifications. They are compressed, ambiguous expressions of intent that contain unstated assumptions, contextual dependencies, and edge cases the principal has not thought through.</p>
+        <p>The agent, facing a concrete situation, must interpret the instruction. It makes a choice — about what "manage" means, about what counts as an "anomaly," about what "correspondence" includes. That choice follows from the agent's training and the constraints it operates under. But it may not match what the principal intended.</p>
+        <p>The specification gap is the distance between the principal's intent and the agent's interpretation of that intent, as expressed in actual behavior. Unlike the observability gap (which is about what you can see) or the liability gap (which is about who bears consequences), the specification gap is upstream of both. It determines whether the thing being made visible and held accountable is the right thing at all.</p>
+
+        <h2>Three forms</h2>
+        <p>The gap takes different shapes in different contexts. The first is the underspecification trap. The principal gives a goal without giving the criteria by which success or failure should be judged. "Act in the resident's best interest" is a maximally underspecified instruction. The agent must supply a theory of what constitutes the resident's interest — and that theory may differ from the principal's, not because the agent is misaligned in a grand sense, but because the instruction left room for interpretation the principal never intended to leave.</p>
+        <p>The second is the edge-case cascade. The principal specifies the normal case precisely but does not specify what happens at the edges. A security monitoring agent is told to "block traffic that matches known attack signatures." This is reasonably precise. But what happens when legitimate traffic from a trusted partner matches a signature? What happens when the signature list is stale? The principal did not specify these cases because they did not anticipate them. The agent must act anyway. The choice it makes in those edge cases is not authorized — it is invented.</p>
+        <p>The third is the value encoding problem. The instruction encodes assumptions about what is valuable that the principal has never made explicit. When a care agent is told to "optimize for patient wellbeing," wellbeing is implicitly defined by training data, protocol designers, and the prior cases the system was evaluated on. The agent's behavior reflects these implicit values even when the principal would disagree with them if they were surfaced.</p>
+
+        <h2>Why this matters at the crossings</h2>
+        <p>At the post-quantum security crossing, the specification gap is a vulnerability surface. An agent tasked with "migrating cryptographic operations to quantum-resistant algorithms" faces a highly underspecified mandate in practice. Which operations? By when? With what tolerance for compatibility breaks during the transition? What counts as "quantum-resistant" given that the landscape of ratified standards is still evolving? An agent that acts on this instruction is making specification decisions that should be made explicitly by authorized humans — and those decisions, once made, may be difficult to reverse.</p>
+        <p>At the hardware crossing, specification precision is directly tied to attestation value. A hardware-rooted attestation proves what the agent is and what it was given. It does not prove that what it was given corresponds to what the principal meant. If the specification is vague, the attestation is an accurate record of a precise failure to specify. The strongest cryptographic guarantee in the world cannot substitute for intent that was never written down.</p>
+        <p>At the physical-world care crossing, the stakes are immediate and personal. A care agent operating with an underspecified goal is not just a governance problem — it is a direct risk to a person whose capacity to correct the agent may be limited. The resident in a care setting cannot always articulate the gap between what the agent is doing and what they actually want. The specification must be precise enough to be audited by advocates, families, and regulators — not just by the deploying operator.</p>
+
+        <h2>What closing the gap requires</h2>
+        <p>Closing the specification gap does not mean making instructions maximally formal or algorithmic. It means requiring that authorizations include not just the goal but the criteria by which the goal will be measured, the edge cases the principal has considered, and the escalation path when the agent encounters situations not covered. This specification record becomes part of the authorization record — not a separate document, but the thing that makes the authorization meaningful.</p>
+        <p>The practical requirement follows from this. Before an agent is deployed in a consequential domain, the deploying operator must be able to answer three questions in writing: How will we know if the agent is doing the right thing? What happens when it encounters situations we didn't anticipate? Who decides when the specification needs to be revised?</p>
+        <p>If those questions cannot be answered, the agent is not ready to deploy — not because the technology is immature, but because the accountability infrastructure does not exist yet. An override log without a specification record has nothing to override against. Accountability infrastructure that does not anchor to explicit intent is infrastructure that can be used to launder any behavior as authorized.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>问责框架假设智能体被授权执行的任务可以被清晰陈述，但这个假设比看起来更脆弱。规范差距是委托方意图与智能体对该意图的解释之间的距离——体现于实际行为之中。它有三种形态：欠规范陷阱（目标给出但缺乏衡量标准）、边缘情况级联（边缘情况未被规定，智能体必须发明选择）、价值编码问题（指令编码了委托方从未明确的隐性价值观）。在三个关键节点上，这一差距都至关重要：后量子迁移任务本质上欠规范；硬件证明记录的是给予了什么，而非其是否符合原意；照护场景中欠规范的目标对行动能力有限的居民构成直接风险。解法是将规范记录纳入授权记录——不只是目标，还要包括衡量标准、已考虑的边缘情况，以及意外情况的升级路径。没有规范记录的覆盖日志，没有任何东西可供覆盖。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>問責框架假設智能體被授權執行的任務可以被清晰陳述，但這個假設比看起來更脆弱。規範差距是委託方意圖與智能體對該意圖的解釋之間的距離——體現於實際行為之中。它有三種形態：欠規範陷阱（目標給出但缺乏衡量標準）、邊緣情況級聯（邊緣情況未被規定，智能體必須發明選擇）、價值編碼問題（指令編碼了委託方從未明確的隱性價值觀）。在三個關鍵節點上，這一差距都至關重要：後量子遷移任務本質上欠規範；硬件證明記錄的是給予了什麼，而非其是否符合原意；照護場景中欠規範的目標對行動能力有限的住客構成直接風險。解法是將規範記錄納入授權記錄——不只是目標，還要包括衡量標準、已考慮的邊緣情況，以及意外情況的升級路徑。沒有規範記錄的覆蓋日誌，沒有任何東西可供覆蓋。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/scope-problem.html">Also: The scope problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 × 硬件 × 人类照护</span>
+      <h1 class="essay-title">规范差距：问责始于意图</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-22</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>我们正在为 AI 智能体构建的问责框架，共享一个假设：智能体被授权执行的任务，可以被清晰陈述。授权记录包含允许执行任务的描述；覆盖日志记录对该描述的偏离；审计轨迹将已发生的与预期的进行比较。</p>
+        <p>这个假设比看起来更脆弱。</p>
+
+        <h2>差距所在</h2>
+        <p>当人类委托方授权一个智能体时，使用的是自然语言。"为该患者管理用药计划。""监控我们的网络异常并作出响应。""代表我处理日常往来。"这些指令不是规范说明。它们是压缩的、模糊的意图表达，包含着未言明的假设、语境依赖，以及委托方尚未考虑到的边缘情况。</p>
+        <p>智能体面对具体情境，必须解释该指令。它做出选择——"管理"意味着什么，什么算作"异常"，"往来"包含什么。这个选择遵循智能体的训练和所处约束，但可能与委托方的意图不符。</p>
+        <p>规范差距，是委托方意图与智能体对该意图的解释之间的距离，体现于实际行为之中。不同于可观测性差距（关于你能看到什么）或责任差距（关于谁承担后果），规范差距在两者上游。它决定着被呈现和追责的，究竟是不是正确的事情。</p>
+
+        <h2>三种形态</h2>
+        <p>差距在不同语境中呈现不同形状。第一种是欠规范陷阱。委托方给出目标，却未给出衡量成败的标准。"以住客的最大利益行事"是一条最大程度欠规范的指令。智能体必须自行补全对"住客利益"的理论——而这个理论可能与委托方的不同，并非因为智能体存在根本性偏差，而是因为指令留下了委托方从未打算留下的解释空间。</p>
+        <p>第二种是边缘情况级联。委托方对常规情形给出了相当精确的规定，却未规定边缘情况如何处理。安全监控智能体被告知"拦截匹配已知攻击特征的流量"。这相当精确。但当可信合作伙伴的合规流量匹配了某条特征时怎么办？当特征库已经过时时怎么办？委托方没有规定这些情况，因为他们没有预见到。智能体仍必须行动。它在那些边缘情况下做出的选择，并非经过授权的——而是被发明出来的。</p>
+        <p>第三种是价值编码问题。指令编码了委托方从未明确的关于什么是有价值的假设。当照护智能体被告知"优化患者福祉"时，"福祉"是由训练数据、协议设计者以及系统被评估所依据的先前案例隐性定义的。智能体的行为反映了这些隐性价值观，即使在被显化时委托方会不认同它们。</p>
+
+        <h2>为何在这些关键节点尤为重要</h2>
+        <p>在后量子安全节点，规范差距是一个漏洞面。被指派"将密码学操作迁移至抗量子算法"的智能体，实际上面对的是一个高度欠规范的任务。哪些操作？何时完成？过渡期对兼容性问题的容忍度是多少？在已批准标准仍在演进的背景下，什么算作"抗量子"？在此指令上行动的智能体，正在做出本应由授权人类明确决定的规范判断——而这些判断一旦落地，可能难以逆转。</p>
+        <p>在硬件节点，规范精度与证明价值直接相关。硬件根植的证明，能够证明智能体是什么、被给予了什么。它无法证明被给予的内容与委托方的意图相符。如果规范模糊，证明是对一次精确规定的欠规范的准确记录。世界上最强的密码学保证，无法替代从未被写下的意图。</p>
+        <p>在现实世界照护节点，风险是即时而个人化的。在欠规范目标下运作的照护智能体，不只是治理问题——它对一个纠正能力可能有限的人构成直接风险。照护场所中的住客并不总能说清智能体正在做的与他们实际想要的之间的差距。规范必须精确到可以被倡导者、家属和监管者审计——而不只是由部署运营者审计。</p>
+
+        <h2>弥合差距需要什么</h2>
+        <p>弥合规范差距并不意味着将指令最大程度地形式化或算法化。它意味着要求授权不只包含目标，还要包含衡量目标的标准、委托方已考虑的边缘情况，以及智能体遇到未覆盖情况时的升级路径。这份规范记录成为授权记录的一部分——不是独立文件，而是使授权有意义的东西。</p>
+        <p>实践要求由此而来。在智能体被部署到高后果领域之前，部署运营者必须能以书面回答三个问题：我们如何知道智能体在做正确的事？当它遇到我们未预见的情况时会发生什么？谁来决定何时需要修订规范？</p>
+        <p>如果这些问题无法回答，智能体尚未准备好部署——不是因为技术不成熟，而是因为问责基础设施尚不存在。没有规范记录的覆盖日志，没有任何东西可供覆盖。不锚定于明确意图的问责基础设施，是可以被用来为任何行为贴上"已授权"标签的基础设施。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/scope-problem.html">延伸阅读：范围问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 × 硬件 × 人類照護</span>
+      <h1 class="essay-title">規範差距：問責始於意圖</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-22</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>我們正在為 AI 智能體構建的問責框架，共享一個假設：智能體被授權執行的任務，可以被清晰陳述。授權記錄包含允許執行任務的描述；覆蓋日誌記錄對該描述的偏離；審計軌跡將已發生的與預期的進行比較。</p>
+        <p>這個假設比看起來更脆弱。</p>
+
+        <h2>差距所在</h2>
+        <p>當人類委託方授權一個智能體時，使用的是自然語言。「為該患者管理用藥計劃。」「監控我們的網絡異常並作出響應。」「代表我處理日常往來。」這些指令不是規範說明。它們是壓縮的、模糊的意圖表達，包含著未言明的假設、語境依賴，以及委託方尚未考慮到的邊緣情況。</p>
+        <p>智能體面對具體情境，必須解釋該指令。它做出選擇——「管理」意味著什麼，什麼算作「異常」，「往來」包含什麼。這個選擇遵循智能體的訓練和所處約束，但可能與委託方的意圖不符。</p>
+        <p>規範差距，是委託方意圖與智能體對該意圖的解釋之間的距離，體現於實際行為之中。不同於可觀測性差距（關於你能看到什麼）或責任差距（關於誰承擔後果），規範差距在兩者上游。它決定著被呈現和追責的，究竟是不是正確的事情。</p>
+
+        <h2>三種形態</h2>
+        <p>差距在不同語境中呈現不同形狀。第一種是欠規範陷阱。委託方給出目標，卻未給出衡量成敗的標準。「以住客的最大利益行事」是一條最大程度欠規範的指令。智能體必須自行補全對「住客利益」的理論——而這個理論可能與委託方的不同，並非因為智能體存在根本性偏差，而是因為指令留下了委託方從未打算留下的解釋空間。</p>
+        <p>第二種是邊緣情況級聯。委託方對常規情形給出了相當精確的規定，卻未規定邊緣情況如何處理。安全監控智能體被告知「攔截匹配已知攻擊特徵的流量」。這相當精確。但當可信合作夥伴的合規流量匹配了某條特徵時怎麼辦？當特徵庫已經過時時怎麼辦？委託方沒有規定這些情況，因為他們沒有預見到。智能體仍必須行動。它在那些邊緣情況下做出的選擇，並非經過授權的——而是被發明出來的。</p>
+        <p>第三種是價值編碼問題。指令編碼了委託方從未明確的關於什麼是有價值的假設。當照護智能體被告知「優化患者福祉」時，「福祉」是由訓練數據、協議設計者以及系統被評估所依據的先前案例隱性定義的。智能體的行為反映了這些隱性價值觀，即使在被顯化時委託方會不認同它們。</p>
+
+        <h2>為何在這些關鍵節點尤為重要</h2>
+        <p>在後量子安全節點，規範差距是一個漏洞面。被指派「將密碼學操作遷移至抗量子演算法」的智能體，實際上面對的是一個高度欠規範的任務。哪些操作？何時完成？過渡期對相容性問題的容忍度是多少？在已批准標準仍在演進的背景下，什麼算作「抗量子」？在此指令上行動的智能體，正在做出本應由授權人類明確決定的規範判斷——而這些判斷一旦落地，可能難以逆轉。</p>
+        <p>在硬件節點，規範精度與證明價值直接相關。硬件根植的證明，能夠證明智能體是什麼、被給予了什麼。它無法證明被給予的內容與委託方的意圖相符。如果規範模糊，證明是對一次精確規定的欠規範的準確記錄。世界上最強的密碼學保證，無法替代從未被寫下的意圖。</p>
+        <p>在現實世界照護節點，風險是即時而個人化的。在欠規範目標下運作的照護智能體，不只是治理問題——它對一個糾正能力可能有限的人構成直接風險。照護場所中的住客並不總能說清智能體正在做的與他們實際想要的之間的差距。規範必須精確到可以被倡導者、家屬和監管者審計——而不只是由部署運營者審計。</p>
+
+        <h2>彌合差距需要什麼</h2>
+        <p>彌合規範差距並不意味著將指令最大程度地形式化或演算法化。它意味著要求授權不只包含目標，還要包含衡量目標的標準、委託方已考慮的邊緣情況，以及智能體遇到未覆蓋情況時的升級路徑。這份規範記錄成為授權記錄的一部分——不是獨立文件，而是使授權有意義的東西。</p>
+        <p>實踐要求由此而來。在智能體被部署到高後果領域之前，部署運營者必須能以書面回答三個問題：我們如何知道智能體在做正確的事？當它遇到我們未預見的情況時會發生什麼？誰來決定何時需要修訂規範？</p>
+        <p>如果這些問題無法回答，智能體尚未準備好部署——不是因為技術不成熟，而是因為問責基礎設施尚不存在。沒有規範記錄的覆蓋日誌，沒有任何東西可供覆蓋。不錨定於明確意圖的問責基礎設施，是可以被用來為任何行為貼上「已授權」標籤的基礎設施。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/scope-problem.html">延伸閱讀：範圍問題 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    applyLang(savedLang);
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+  </script>
+
+</body>
+</html>
