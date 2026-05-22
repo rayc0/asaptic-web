@@ -17,22 +17,22 @@ const CONTENT = {
     // Card 1 — Quantum Computing
     card1_tag: "× QUANTUM COMPUTING",
     card1_heading: "Quantum Computing",
-    card1_body: "AI agents now move money, sign mandates, and act with delegated authority — yet every signature today uses cryptography that quantum computers will break. We build the post-quantum trust layer underneath the agent economy, so a mandate signed in 2026 is still uncounterfeitable in 2035. Our open-source post-quantum project ships the missing primitive: quantum-safe agent identity and payment authorization, neutral to any LLM or payment rail.",
-    card1_link: "Open-source project →",
+    card1_body: "Today's crypto will break under quantum computing. PQSafe builds the post-quantum trust layer that AI agents need to sign and authenticate trillions of times in the next decade — so a mandate signed in 2026 stays uncounterfeitable in 2035.",
+    card1_link: "Open project: PQSafe →",
     // Card 2 — Physical AI (kinaite)
     card2_tag: "× PHYSICAL AI",
     card2_heading: "Physical AI",
-    card2_body: "kinaite puts AI agents into the eldercare physical-AI stack: humanoid companions, rehab robotics, clinical food, and a clinical data flywheel. Agents embodied in atoms, not pixels. There is no undo when the system acts in the physical world — accountability is designed in from day one.",
+    card2_body: "AI agents embodied in the eldercare physical-AI stack — humanoid companion robots, rehabilitation hardware, clinical food, and the clinical data flywheel that ties them together. We put agents into atoms, not just screens.",
     card2_link: "kinaite.com →",
     // Card 3 — Autonomous Enterprise (CompanyForge)
     card3_tag: "× AUTONOMOUS ENTERPRISE",
     card3_heading: "Autonomous Enterprise",
-    card3_body: "Agents don't just help workers — they ARE the workforce. The CompanyForge engine takes a regulated vertical and turns it into a one-operator AI business. First implementation: an eldercare franchise network. Next vertical: PierForge cross-border supply chain.",
+    card3_body: "Agents don't just help workers — they ARE the workforce. Our CompanyForge engine takes a regulated vertical and turns it into a one-operator AI business. First implementation: Kangleling eldercare franchise. Next vertical: PierForge cross-border supply chain.",
     card3_link: "companyforge.ai →",
     // Card 4 — Care AI (CareEZ)
     card4_tag: "× CARE AI",
     card4_heading: "Care AI",
-    card4_body: "CareEZ brings AI agents into regulated human care — multilingual swallowing-safety screening for frontline carers in residential care homes. Every interaction is auditable. Every correction teaches the next deployment.",
+    card4_body: "AI agents in regulated human care delivery — multilingual swallowing-safety screening for frontline carers in residential care settings (Cantonese / EN / Tagalog / Bahasa Indonesia). CareEZ is the deployment surface where agents meet human care.",
     card4_link: "careez.org →",
     // Thread
     thread_heading: "Every correction teaches the next deployment.",
@@ -72,22 +72,22 @@ const CONTENT = {
     // Card 1 — Quantum Computing
     card1_tag: "× 量子计算",
     card1_heading: "量子计算",
-    card1_body: "量子计算将击穿现有加密——我们的开源后量子项目在窗口关闭之前，为代理式 AI 建立后量子信任基础设施。AI 智能体已能代为支付、签署授权、行使委托权——我们的开源后量子项目提供缺失的原语：量子安全的智能体身份与支付授权，与任何 LLM 或支付通道中立兼容。",
-    card1_link: "开源项目 →",
+    card1_body: "现有加密体系在量子计算面前终将失效。PQSafe 在窗口关闭之前，为代理式 AI 构建后量子信任层——让 2026 年签署的授权在 2035 年依然不可伪造。",
+    card1_link: "开源项目：PQSafe →",
     // Card 2 — Physical AI (kinaite)
     card2_tag: "× 物理 AI",
     card2_heading: "物理 AI",
-    card2_body: "kinaite 将代理式 AI 植入长者照护的物理 AI 技术栈：陪护机器人、康复辅助、临床特医食品、临床数据飞轮。智能体在原子层面具化，而非停留于像素。物理世界没有撤销选项——问责从第一天起便内置于系统之中。",
+    card2_body: "代理式 AI 具化于长者照护的物理 AI 技术栈——陪护机器人、康复硬件、临床特医食品，以及贯通各层的临床数据飞轮。我们将智能体植入原子，而非仅仅停留于屏幕。",
     card2_link: "kinaite.com →",
     // Card 3 — Autonomous Enterprise (CompanyForge)
     card3_tag: "× 智能原生企业",
     card3_heading: "智能原生企业",
-    card3_body: "代理式 AI 不只是辅助员工，它本身就是运营主体。CompanyForge 引擎将受监管行业转化为单人运营的 AI 企业。首个落地实施：长者照护加盟网络。下一个垂直方向：PierForge 跨境供应链。",
+    card3_body: "代理式 AI 不只是辅助员工，它本身就是运营主体。CompanyForge 引擎将受监管行业转化为单人运营的 AI 企业。首个落地实施：Kangleling 长者照护加盟体系。下一个垂直方向：PierForge 跨境供应链。",
     card3_link: "companyforge.ai →",
     // Card 4 — Care AI (CareEZ)
     card4_tag: "× 照护 AI",
     card4_heading: "照护 AI",
-    card4_body: "CareEZ（× 照护 AI 旗下品牌）将代理式 AI 带入受监管的人工照护场景：为安老院前线护理人员提供多语言吞咽安全筛查。每一次交互均可审计，每一次纠正都在教会下一次部署。",
+    card4_body: "代理式 AI 进入受监管的人工照护场景——为安老院前线护理人员提供多语言吞咽安全筛查（粤语 / 英语 / 塔加洛语 / 印度尼西亚语）。CareEZ 是智能体与人工照护相遇的部署界面。",
     card4_link: "careez.org →",
     // Thread
     thread_heading: "每一次纠正，都在教会下一次部署。",
@@ -127,22 +127,22 @@ const CONTENT = {
     // Card 1 — Quantum Computing
     card1_tag: "× 量子計算",
     card1_heading: "量子計算",
-    card1_body: "量子計算將擊穿現有加密——我們的開源後量子項目在窗口關閉之前，為智能體 AI 建立後量子信任基礎設施。AI 智能體已能代為支付、簽署授權、行使委託權——我們的開源後量子項目提供缺失的原語：量子安全的智能體身份與支付授權，與任何 LLM 或支付通道中立兼容。",
-    card1_link: "開源項目 →",
+    card1_body: "現有加密體系在量子計算面前終將失效。PQSafe 在窗口關閉之前，為智能體 AI 構建後量子信任層——讓 2026 年簽署的授權在 2035 年依然不可偽造。",
+    card1_link: "開源項目：PQSafe →",
     // Card 2 — Physical AI (kinaite)
     card2_tag: "× 物理 AI",
     card2_heading: "物理 AI",
-    card2_body: "kinaite 將智能體 AI 植入長者照護的物理 AI 技術棧：陪護機器人、康復輔助、臨床特醫食品、臨床數據飛輪。智能體在原子層面具化，而非停留於像素。物理世界沒有撤銷選項——問責從第一天起便內置於系統之中。",
+    card2_body: "智能體 AI 具化於長者照護的物理 AI 技術棧——陪護機器人、康復硬件、臨床特醫食品，以及貫通各層的臨床數據飛輪。我們將智能體植入原子，而非僅僅停留於螢幕。",
     card2_link: "kinaite.com →",
     // Card 3 — Autonomous Enterprise (CompanyForge)
     card3_tag: "× AI原生企業",
     card3_heading: "AI原生企業",
-    card3_body: "智能體 AI 不只是輔助員工，它本身就是運營主體。CompanyForge 引擎將受監管行業轉化為單人運營的 AI 企業。首個落地實施：長者照護加盟網絡。下一個垂直方向：PierForge 跨境供應鏈。",
+    card3_body: "智能體 AI 不只是輔助員工，它本身就是運營主體。CompanyForge 引擎將受監管行業轉化為單人運營的 AI 企業。首個落地實施：Kangleling 長者照護加盟體系。下一個垂直方向：PierForge 跨境供應鏈。",
     card3_link: "companyforge.ai →",
     // Card 4 — Care AI (CareEZ)
     card4_tag: "× 護理 AI",
     card4_heading: "護理 AI",
-    card4_body: "CareEZ（× 護理 AI 旗下品牌）將智能體 AI 帶入受監管的人工護理場景：為安老院前線護理人員提供多語言吞嚥安全篩查。每一次互動均可審計，每一次糾正都在教會下一次部署。",
+    card4_body: "智能體 AI 進入受監管的人工護理場景——為安老院前線護理人員提供多語言吞嚥安全篩查（粵語 / 英語 / 他加祿語 / 印度尼西亞語）。CareEZ 是智能體與人工護理相遇的部署界面。",
     card4_link: "careez.org →",
     // Thread
     thread_heading: "每一次糾正，都在教會下一次部署。",
