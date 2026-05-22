@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The identity continuity problem — Asaptic Labs</title>
+
+  <meta name="description" content="When an AI agent is fine-tuned, retrained, or migrated to a new model version, is it the same agent? The accountability answer is: only if the system can prove it — cryptographically, at the hardware level." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/identity-continuity-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The identity continuity problem" />
+  <meta property="og:description" content="When an AI agent is fine-tuned, retrained, or migrated to a new model version, is it the same agent? The accountability answer is: only if the system can prove it." />
+  <meta property="og:url" content="https://asaptic.com/blog/identity-continuity-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-22" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The identity continuity problem",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-22",
+    "description": "When an AI agent is fine-tuned, retrained, or migrated to a new model version, accountability requires the system to prove continuity — cryptographically, at the hardware level.",
+    "url": "https://asaptic.com/blog/identity-continuity-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY × HARDWARE × HUMAN CARE</span>
+      <h1 class="essay-title">The identity continuity problem: what makes an AI agent the same agent after an update?</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-22</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Software systems are updated. Models are fine-tuned, retrained, and migrated as better architectures arrive. In conventional software, identity continuity is solved: the service has a name, a version number, and a deployment record. When version 2.3 replaces 2.2, the changelog records what changed and the rollback path is defined.</p>
+        <p>AI agents introduce a harder version of this problem. The model is not just a component of the agent — it is constitutive of how the agent reasons, what it judges as safe, and how it interprets authority. A fine-tuned version of the same base model may exhibit different threshold sensitivities, different refusal patterns, and different confidence distributions over identical inputs. The update may not look like a software version change. It may not be announced. And the downstream parties — users, regulators, the institutions that granted authority to the agent — may have no mechanism to detect it.</p>
+        <p>This is the identity continuity problem: an agent that was authorized for a task was authorized as a specific configuration of reasoning. If that configuration changes, the authorization may no longer apply. But the systems through which authority flows — API keys, service accounts, delegated credentials — are blind to model identity. They authenticate the endpoint, not the mind behind it.</p>
+
+        <h2>Three failure modes</h2>
+        <p>The first is silent behavioral drift. A model is fine-tuned on new operational data to improve performance on a particular task. The operator considers this a routine improvement. But fine-tuning changes more than the targeted capability — it shifts the entire distribution of model behavior, including safety-adjacent behaviors that were never deliberately targeted. A care agent fine-tuned to improve medication name recognition may emerge with subtly different thresholds for flagging clinical risk. The agent carries the same name and credentials; the reasoning it applies has changed.</p>
+        <p>The second is shadow deployment. A new model version is run in shadow mode alongside the production version, and then gradually or abruptly promoted to production. From the credential layer's perspective, nothing changed — the same service account calls the same endpoint. But the agent making consequential decisions for real users is a different configuration from the one that was originally evaluated and authorized. The authorization record is retrospectively wrong, and there is no mechanism to detect or surface this.</p>
+        <p>The third is algorithm migration. In the post-quantum transition, agents that use classical cryptographic algorithms for signing, attestation, and identity operations must migrate to lattice-based or hash-based successors. This migration changes the cryptographic identity of the agent at the lowest level. An agent's signing key, its attestation certificate chain, and its identity proofs all change simultaneously. Without a formalized continuity protocol, the migrated agent is — from an accountability standpoint — a new agent, even if the model weights and the operator are identical.</p>
+
+        <h2>Why this matters at the crossings</h2>
+        <p>The problem is sharpest at the three points where Asaptic Labs focuses its work. At the post-quantum security crossing, the algorithm migration from classical to quantum-resistant cryptography is not a software version bump — it is a change of cryptographic identity at the root. Without a structured handoff protocol, continuity of accountability is broken at the moment of greatest transition pressure.</p>
+        <p>At the hardware crossing, the only reliable way to anchor model identity is to bind it to hardware attestation: a TPM or secure enclave signs a measurement of the model's weights, and that measurement is part of the agent's verifiable identity claim. When the model changes, the measurement changes, and any verifying party can detect the change. This is the architectural pattern that makes identity continuity verifiable rather than asserted.</p>
+        <p>At the physical-world care crossing, the stakes are personal in a way that makes the problem especially concrete. A care agent that has built a calibrated interaction history with a resident — tracking preferences, flagging anomalies, adapting communication style — is not interchangeable with a different model configuration, even if both operate under the same service name. The care relationship involves continuity of judgment, not just continuity of access. If the model changes and nobody tells the resident or their family, the care record attributes outcomes to a configuration that no longer exists.</p>
+
+        <h2>What identity continuity requires</h2>
+        <p>The architectural answer has three components. First, model identity must be cryptographically bound to a hardware-rooted measurement at deployment. This measurement must be verifiable by parties outside the deploying operator — not simply recorded internally where it can be altered. The measurement is not the model name or version string; it is a cryptographic hash of the weights and configuration, signed by hardware the operator does not fully control.</p>
+        <p>Second, any material change to that measurement must trigger a new authorization event. The deployment of a fine-tuned model is not an in-place update — it is a new agent that must be evaluated against the same criteria as the original. Delegated authority does not transfer automatically across a measurement boundary. The principal hierarchy decides whether to re-authorize, with a new record attached to the new measurement.</p>
+        <p>Third, continuity claims must be explicitly formalized when an update is genuinely continuous. If an operator can demonstrate that a model update changes only a narrow, evaluated capability — that safety-adjacent behaviors are within a verified tolerance band of the prior version — then a continuity attestation can be issued. That attestation is itself signed and hardware-rooted, so verifying parties can inspect the claim, not just accept it.</p>
+
+        <h2>The continuity record is accountability</h2>
+        <p>What an agent is, at any given moment, must be a matter of verifiable record. Not a version label in a service registry, but a cryptographic commitment to the specific configuration that was authorized to act. When that configuration changes, the record must change, and the change must be visible to the parties who granted authority.</p>
+        <p>Without this, accountability is fiction. Investigations after a consequential failure reach into the record and find an authorization for a configuration that may not match what was running when the failure occurred. The agent that acted and the agent that was authorized are the same in name only.</p>
+        <p>Identity continuity is not a feature to add after deployment. It is the structural precondition for accountability in any domain where the consequence of an agent's decision cannot be undone.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>AI 智能体在经历微调、再训练或算法迁移后，是否仍是同一个智能体？这是身份连续性问题：凭证层对模型身份是盲目的，它验证的是端点，而非背后的推理配置。三种失效模式清晰展示了风险：静默行为漂移（微调改变了安全边界行为，但凭证未变）；影子部署（新版本无声切换至生产环境，原有授权失效）；算法迁移（后量子密码迁移从根本上改变了密码学身份）。解法需要三个要素：将模型身份以硬件证明的方式密码学绑定到权重测量值；任何测量值的实质变更都触发新的授权事件；以及在更新真正连续时发布经过签名的连续性声明。身份的连续性不是功能——它是高后果领域中问责制的结构性前提。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>AI 智能體在經歷微調、再訓練或演算法遷移後，是否仍是同一個智能體？這是身份連續性問題：憑證層對模型身份是盲目的，它驗證的是端點，而非背後的推理配置。三種失效模式清晰展示了風險：靜默行為漂移（微調改變了安全邊界行為，但憑證未變）；影子部署（新版本無聲切換至生產環境，原有授權失效）；演算法遷移（後量子密碼遷移從根本上改變了密碼學身份）。解法需要三個要素：將模型身份以硬件證明的方式密碼學綁定到權重測量值；任何測量值的實質變更都觸發新的授權事件；以及在更新真正連續時發佈經過簽名的連續性聲明。身份的連續性不是功能——它是高後果領域中問責制的結構性前提。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/attestation-gap.html">Also: The attestation gap →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 × 硬件 × 人类照护</span>
+      <h1 class="essay-title">身份连续性问题：AI 智能体在更新后还是同一个智能体吗？</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-22</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>软件系统会被更新。随着更好架构的出现，模型会被微调、再训练和迁移。在传统软件中，身份连续性问题已被解决：服务有名称、版本号和部署记录。当 2.3 版本取代 2.2 时，变更日志记录了变更内容，回滚路径也已定义。</p>
+        <p>AI 智能体引入了这个问题的更难版本。模型不只是智能体的一个组件——它构成了智能体的推理方式、对安全的判断，以及对权限的解释方式。同一基础模型的微调版本可能在相同输入上展现出不同的阈值敏感性、不同的拒绝模式和不同的置信分布。这次更新可能看起来不像软件版本变更，可能没有公告。而下游方——用户、监管机构、向智能体授予权限的机构——可能没有任何机制来检测它。</p>
+        <p>这就是身份连续性问题：被授权执行任务的智能体，是作为一种特定推理配置被授权的。如果该配置改变，授权可能不再适用。但权限流动所经过的系统——API 密钥、服务账户、委托凭证——对模型身份是盲目的。它们验证的是端点，而非背后的推理。</p>
+
+        <h2>三种失效模式</h2>
+        <p>第一种是静默行为漂移。模型在新的运营数据上进行微调以提升特定任务表现。运营者将此视为常规改进。但微调改变的不仅是目标能力——它改变了模型行为的整体分布，包括从未被刻意针对的安全边界行为。一个经过微调以提升药物名称识别能力的照护智能体，可能在临床风险标记阈值上发生微妙变化。智能体携带着相同的名称和凭证，但其应用的推理已然改变。</p>
+        <p>第二种是影子部署。新版本模型以影子模式与生产版本并行运行，然后逐步或突然切换至生产环境。从凭证层的角度来看，什么都没有改变——同一个服务账户调用同一个端点。但为真实用户做出重要决策的智能体，已是与最初被评估和授权的配置不同的另一个配置。授权记录在事后是错误的，且没有机制来检测或呈现这一点。</p>
+        <p>第三种是算法迁移。在后量子过渡期，使用经典密码算法进行签名、证明和身份操作的智能体必须迁移到基于格的或基于哈希的后继算法。这一迁移从最底层改变了智能体的密码学身份。智能体的签名密钥、证明证书链和身份证明同时发生变化。没有正式的连续性协议，从问责角度看，迁移后的智能体是一个新智能体——即使模型权重和运营者完全相同。</p>
+
+        <h2>为什么在这些交叉点上此问题尤为重要</h2>
+        <p>在 Asaptic Labs 工作聚焦的三个交叉点上，这一问题最为尖锐。在后量子安全交叉点，从经典到抗量子密码学的算法迁移不是软件版本升级——它是根层面密码学身份的变更。没有结构化的交接协议，问责连续性在转型压力最大的时刻就已断裂。</p>
+        <p>在硬件交叉点，锚定模型身份的唯一可靠方式是将其绑定到硬件证明：可信平台模块或安全飞地对模型权重的测量值进行签名，该测量值成为智能体可验证身份声明的一部分。当模型改变时，测量值改变，任何验证方都能检测到这一变化。这是让身份连续性可被验证而非仅被断言的架构模式。</p>
+        <p>在现实世界照护交叉点，风险以一种尤为具体的方式体现在个人层面。一个已与住客建立校准互动历史的照护智能体——追踪偏好、标记异常、调适沟通风格——无法与不同的模型配置互换，即使两者都在相同服务名称下运行。照护关系涉及判断的连续性，而不仅是访问权限的连续性。如果模型改变而住客或其家属一无所知，照护记录就会将结果归因于一个已不复存在的配置。</p>
+
+        <h2>身份连续性的要求</h2>
+        <p>架构层面的解法包含三个要素。首先，模型身份必须在部署时以硬件根植测量值的方式进行密码学绑定。该测量值必须能被部署运营者以外的各方验证——而不仅是在可被修改的内部系统中记录。测量值不是模型名称或版本字符串，而是权重和配置的密码学哈希，由运营者无法完全控制的硬件签名。</p>
+        <p>其次，该测量值的任何实质性变更都必须触发新的授权事件。微调模型的部署不是就地更新——它是一个必须按照与原始版本相同标准进行评估的新智能体。委托权限不会自动跨越测量值边界转移。委托人层级决定是否重新授权，并将新记录附加到新的测量值上。</p>
+        <p>第三，当更新确实是连续的时，必须对连续性声明进行正式化。如果运营者能证明模型更新仅改变了经过评估的特定能力——安全边界行为在经过验证的容差范围内与前版本一致——则可以发出连续性证明。该证明本身经过签名并植根于硬件，因此验证方可以审查该声明，而非仅仅接受它。</p>
+
+        <h2>连续性记录即是问责</h2>
+        <p>在任何给定时刻，智能体是什么，必须是可验证记录的事项。不是服务注册表中的版本标签，而是对被授权采取行动的特定配置的密码学承诺。当该配置改变时，记录必须改变，且该变更必须对授权方可见。</p>
+        <p>没有这一机制，问责就是虚构。在重大失败事件后的调查会深入记录，却发现授权的配置可能与故障发生时实际运行的配置不符。采取行动的智能体与被授权的智能体，仅在名称上相同。</p>
+        <p>身份连续性不是部署后可以添加的功能。它是在任何无法撤销智能体决策后果的领域中，问责制的结构性前提。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/attestation-gap.html">延伸阅读：证明间隙 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 × 硬件 × 人類照護</span>
+      <h1 class="essay-title">身份連續性問題：AI 智能體在更新後還是同一個智能體嗎？</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-22</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>軟件系統會被更新。隨著更好架構的出現，模型會被微調、再訓練和遷移。在傳統軟件中，身份連續性問題已被解決：服務有名稱、版本號和部署記錄。當 2.3 版本取代 2.2 時，變更日誌記錄了變更內容，回滾路徑也已定義。</p>
+        <p>AI 智能體引入了這個問題的更難版本。模型不只是智能體的一個組件——它構成了智能體的推理方式、對安全的判斷，以及對權限的解釋方式。同一基礎模型的微調版本可能在相同輸入上展現出不同的閾值敏感性、不同的拒絕模式和不同的置信分佈。這次更新可能看起來不像軟件版本變更，可能沒有公告。而下游方——用戶、監管機構、向智能體授予權限的機構——可能沒有任何機制來檢測它。</p>
+        <p>這就是身份連續性問題：被授權執行任務的智能體，是作為一種特定推理配置被授權的。如果該配置改變，授權可能不再適用。但權限流動所經過的系統——API 金鑰、服務帳戶、委託憑證——對模型身份是盲目的。它們驗證的是端點，而非背後的推理。</p>
+
+        <h2>三種失效模式</h2>
+        <p>第一種是靜默行為漂移。模型在新的運營數據上進行微調以提升特定任務表現。運營者將此視為常規改進。但微調改變的不僅是目標能力——它改變了模型行為的整體分佈，包括從未被刻意針對的安全邊界行為。一個經過微調以提升藥物名稱識別能力的照護智能體，可能在臨床風險標記閾值上發生微妙變化。智能體攜帶著相同的名稱和憑證，但其應用的推理已然改變。</p>
+        <p>第二種是影子部署。新版本模型以影子模式與生產版本並行運行，然後逐步或突然切換至生產環境。從憑證層的角度來看，什麼都沒有改變——同一個服務帳戶調用同一個端點。但為真實用戶做出重要決策的智能體，已是與最初被評估和授權的配置不同的另一個配置。授權記錄在事後是錯誤的，且沒有機制來檢測或呈現這一點。</p>
+        <p>第三種是演算法遷移。在後量子過渡期，使用經典密碼演算法進行簽名、證明和身份操作的智能體必須遷移到基於格的或基於雜湊的後繼演算法。這一遷移從最底層改變了智能體的密碼學身份。智能體的簽名金鑰、證明憑證鏈和身份證明同時發生變化。沒有正式的連續性協議，從問責角度看，遷移後的智能體是一個新智能體——即使模型權重和運營者完全相同。</p>
+
+        <h2>為什麼在這些交叉點上此問題尤為重要</h2>
+        <p>在 Asaptic Labs 工作聚焦的三個交叉點上，這一問題最為尖銳。在後量子安全交叉點，從經典到抗量子密碼學的演算法遷移不是軟件版本升級——它是根層面密碼學身份的變更。沒有結構化的交接協議，問責連續性在轉型壓力最大的時刻就已斷裂。</p>
+        <p>在硬件交叉點，錨定模型身份的唯一可靠方式是將其綁定到硬件證明：可信平台模組或安全飛地對模型權重的測量值進行簽名，該測量值成為智能體可驗證身份聲明的一部分。當模型改變時，測量值改變，任何驗證方都能檢測到這一變化。這是讓身份連續性可被驗證而非僅被斷言的架構模式。</p>
+        <p>在現實世界照護交叉點，風險以一種尤為具體的方式體現在個人層面。一個已與住客建立校準互動歷史的照護智能體——追蹤偏好、標記異常、調適溝通風格——無法與不同的模型配置互換，即使兩者都在相同服務名稱下運行。照護關係涉及判斷的連續性，而不僅是訪問權限的連續性。如果模型改變而住客或其家屬一無所知，照護記錄就會將結果歸因於一個已不復存在的配置。</p>
+
+        <h2>身份連續性的要求</h2>
+        <p>架構層面的解法包含三個要素。首先，模型身份必須在部署時以硬件根植測量值的方式進行密碼學綁定。該測量值必須能被部署運營者以外的各方驗證——而不僅是在可被修改的內部系統中記錄。測量值不是模型名稱或版本字串，而是權重和配置的密碼學雜湊，由運營者無法完全控制的硬件簽名。</p>
+        <p>其次，該測量值的任何實質性變更都必須觸發新的授權事件。微調模型的部署不是就地更新——它是一個必須按照與原始版本相同標準進行評估的新智能體。委託權限不會自動跨越測量值邊界轉移。委託人層級決定是否重新授權，並將新記錄附加到新的測量值上。</p>
+        <p>第三，當更新確實是連續的時，必須對連續性聲明進行正式化。如果運營者能證明模型更新僅改變了經過評估的特定能力——安全邊界行為在經過驗證的容差範圍內與前版本一致——則可以發出連續性證明。該證明本身經過簽名並植根於硬件，因此驗證方可以審查該聲明，而非僅僅接受它。</p>
+
+        <h2>連續性記錄即是問責</h2>
+        <p>在任何給定時刻，智能體是什麼，必須是可驗證記錄的事項。不是服務註冊表中的版本標籤，而是對被授權採取行動的特定配置的密碼學承諾。當該配置改變時，記錄必須改變，且該變更必須對授權方可見。</p>
+        <p>沒有這一機制，問責就是虛構。在重大失敗事件後的調查會深入記錄，卻發現授權的配置可能與故障發生時實際運行的配置不符。採取行動的智能體與被授權的智能體，僅在名稱上相同。</p>
+        <p>身份連續性不是部署後可以添加的功能。它是在任何無法撤銷智能體決策後果的領域中，問責制的結構性前提。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/attestation-gap.html">延伸閱讀：證明間隙 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    applyLang(savedLang);
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+  </script>
+</body>
+</html>
