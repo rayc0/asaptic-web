@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The sandboxing imperative — Asaptic Labs</title>
+
+  <meta name="description" content="A well-governed agent running without containment is not a safe agent — it is a polite one. Credential scoping, hardware-attested execution, and bounded capability surfaces are the substrate on which every other safety property rests." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/sandboxing-imperative.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The sandboxing imperative" />
+  <meta property="og:description" content="A well-governed agent without containment is not safe — it is polite. Containment is the substrate on which every other safety property rests." />
+  <meta property="og:url" content="https://asaptic.com/blog/sandboxing-imperative.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-23" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The sandboxing imperative",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-23",
+    "description": "A well-governed agent running without containment is not a safe agent — it is a polite one. Credential scoping, hardware-attested execution, and bounded capability surfaces are the substrate on which every other safety property rests.",
+    "url": "https://asaptic.com/blog/sandboxing-imperative.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY × HARDWARE × HUMAN CARE</span>
+      <h1 class="essay-title">The sandboxing imperative: containment is the foundation of agent trust</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-23</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>When we discuss AI agent safety, most attention falls on behavior — what an agent decides, whether it defers appropriately, whether it over-reaches its brief. These are real concerns. But a well-behaved agent running without containment is not a safe agent. It is a polite one.</p>
+        <p>Containment — what security practitioners call sandboxing — is the set of constraints that limits what an agent can access, observe, or affect beyond what the current task requires. It is distinct from governance: governance defines what an agent should do; containment defines what an agent can do regardless of governance. An agent that is governed but not contained can cause harm the moment governance fails. An agent that is contained limits the blast radius of that failure.</p>
+        <p>The field has built strong language for agent governance. It has weaker language for agent containment. This asymmetry matters because governance is a claim about intentions and containment is a claim about architecture.</p>
+
+        <h2>The credential surface problem</h2>
+        <p>Every agent that acts in the world holds credentials: API keys, session tokens, file permissions, network access, service authorizations. These credentials are the mechanism by which the agent converts intent into action. They are also the mechanism by which a compromised agent — or a poorly governed one — can act in ways its operators never intended.</p>
+        <p>The credential surface of an uncontained agent grows with use. An agent that starts with minimal credentials accumulates more as tasks require them. Without a containment discipline that scopes credentials to the active task and revokes them when it ends, the surface expands monotonically. A credential held past the task that required it is not a convenience — it is exposure.</p>
+        <p>At the post-quantum security crossing, this accumulation is an urgent problem. The migration from classical to quantum-resistant cryptography requires a complete inventory of every place where a cryptographic key is held or transmitted. In an agent that holds credentials loosely — cached, ambient, accumulated across sessions — that inventory is never complete. A credential that cannot be inventoried cannot be rotated on schedule or revoked promptly. The sandboxing imperative, from this angle, is a prerequisite for the quantum migration itself: credentials must be bounded to the task context in which they were granted, and they must expire automatically when that context ends.</p>
+
+        <h2>The hardware boundary</h2>
+        <p>Software sandboxing reduces blast radius. Process isolation, network filtering, filesystem namespacing — these are better than nothing. But they depend on the integrity of the runtime and the operating system beneath them. An attacker who controls the runtime controls the sandbox.</p>
+        <p>Hardware provides a boundary that software cannot. A trusted execution environment creates an isolated compute context whose integrity is attested at the hardware level, independent of the operating system above it. A credential stored inside a TEE cannot be extracted by software running outside it. An audit log signed inside a TEE cannot be edited by code running on the same host.</p>
+        <p>At the hardware crossing, this is the answer to a question that software architecture cannot cleanly resolve: what prevents an agent — or an attacker who has compromised the agent's runtime — from reading its own credentials and exfiltrating them to a third party? Hardware containment makes the answer independent of software integrity. It is not a performance feature. It is a trust feature, and for agents operating in regulated environments — security infrastructure, financial systems, health data — it is the appropriate baseline.</p>
+        <p>The distinction matters in practice. "Our agent is well-governed" is a claim about process. "Our agent runs in a hardware-attested execution environment and its credentials never exist outside that boundary" is a claim about architecture. The second is verifiable. The first is not.</p>
+
+        <h2>Containment in physical-world care</h2>
+        <p>For agents that operate in physical environments — care settings, facilities, systems that affect people directly — containment has a dimension that credential management alone cannot address. It is the capability surface: what can the agent physically cause to happen?</p>
+        <p>An agent with unrestricted access to every actuator in a care environment is not dangerous because it is likely to misbehave. It is dangerous because the consequence of any misbehavior — whether from a governance failure, a compromised context, or a mistaken instruction — is potentially irreversible. The sandboxing imperative in physical care is that the environment itself must bound the agent's capability scope. The design requirement falls on the physical system, not only on the agent.</p>
+        <p>This is stricter than the general principle of minimal footprint, which all agents should follow. It is a requirement on the architecture of the environment. The devices, access points, and actuators in a care setting should present a bounded and auditable capability surface to any agent operating within them. When they do not, governance cannot compensate. An agent that can do anything is not made safe by careful instructions.</p>
+
+        <h2>What this requires</h2>
+        <p>Three requirements follow. First, agent credential scope must be bounded to the active task: credentials issued for the task rather than the session, expiry when the task ends, no ambient standing access. Second, for agents in consequential domains, hardware-attested execution is the appropriate containment baseline — software isolation is a useful supplement, not a substitute. Third, physical-world agents must operate within environments whose capability surface is explicitly defined and bounded by design, not by instruction.</p>
+        <p>A well-governed agent in an unconstrained environment is a risk. Containment is not an advanced feature. It is the substrate on which every other safety property rests.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>治理定义智能体应该做什么；隔离定义了无论治理如何，智能体能够做什么。未被隔离的智能体，其凭证表面随任务积累而单调扩张，这使得密码学密钥清单永远不完整——是后量子迁移的前提障碍。硬件边界（可信执行环境）提供了软件无法提供的保证：凭证无法被TEE外部的软件提取，审计日志无法被同一主机上的代码篡改。在物理照护环境中，隔离还延伸到能力表面——设备与执行器所呈现给智能体的行动范围，必须由架构界定，而不仅仅由指令约束。治理良好却处于无约束环境中的智能体是一种风险；隔离是所有其他安全属性赖以建立的基础。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>治理定義智能體應該做什麼；隔離定義了無論治理如何，智能體能夠做什麼。未被隔離的智能體，其憑證表面隨任務積累而單調擴張，這使得密碼學金鑰清單永遠不完整——是後量子遷移的前提障礙。硬件邊界（可信執行環境）提供了軟件無法提供的保證：憑證無法被TEE外部的軟件提取，審計日誌無法被同一主機上的程式碼篡改。在物理照護環境中，隔離還延伸到能力表面——設備與執行器所呈現給智能體的行動範圍，必須由架構界定，而不僅僅由指令約束。治理良好卻處於無約束環境中的智能體是一種風險；隔離是所有其他安全屬性賴以建立的基礎。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/audit-trail-problem.html">Also: The audit trail problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 × 硬件 × 人类照护</span>
+      <h1 class="essay-title">沙箱强制令：隔离是智能体信任的基础</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-23</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>当我们讨论AI智能体安全时，大多数注意力集中在行为上——智能体如何决策、是否适当服从、是否超出权限范围。这些都是真实的关切。但一个行为良好却未经隔离的智能体，并不是安全的智能体，只是一个有礼貌的智能体。</p>
+        <p>隔离——安全从业者称之为沙箱——是一组限制，规定了智能体在当前任务之外能够访问、观察或影响的范围。它不同于治理：治理定义智能体应该做什么；隔离定义了无论治理如何，智能体能够做什么。一个被治理但未被隔离的智能体，在治理失效的那一刻就可能造成伤害。而一个被隔离的智能体，则将那次失效的爆炸半径限制在可控范围内。</p>
+        <p>该领域已为智能体治理建立了强有力的语言框架，却对智能体隔离的语言相对薄弱。这种不对称至关重要，因为治理是关于意图的主张，而隔离是关于架构的主张。</p>
+
+        <h2>凭证表面问题</h2>
+        <p>每个在世界中行动的智能体都持有凭证：API密钥、会话令牌、文件权限、网络访问、服务授权。这些凭证是智能体将意图转化为行动的机制，也是被攻陷的智能体——或治理不善的智能体——以运营方从未预期的方式行动的机制。</p>
+        <p>未被隔离的智能体的凭证表面随使用而增长。一个最初只有最小凭证的智能体，随着任务需要而积累更多凭证。如果没有将凭证限定于当前任务并在任务结束时自动撤销的隔离纪律，凭证表面会单调扩张。持有超出任务需要的凭证，不是便利，而是暴露。</p>
+        <p>在后量子安全节点，这种积累是一个紧迫问题。从经典密码学向抗量子密码学的迁移，需要完整盘点每一处密钥被持有或传输的位置。在凭证松散持有——缓存、环境变量、跨会话积累——的智能体中，这份清单永远无法完整。无法盘点的凭证，就无法按时轮换或及时撤销。从这个角度看，沙箱强制令是量子迁移本身的前提：凭证必须限定于授予它们的任务上下文，且必须在该上下文结束时自动到期。</p>
+
+        <h2>硬件边界</h2>
+        <p>软件沙箱可以减少爆炸半径。进程隔离、网络过滤、文件系统命名空间——这些比什么都没有要好。但它们依赖于运行时和底层操作系统的完整性。控制运行时的攻击者就控制了沙箱。</p>
+        <p>硬件提供了软件无法提供的边界。可信执行环境创建一个隔离的计算上下文，其完整性在硬件层面得到证明，独立于上层操作系统。存储在TEE内部的凭证无法被其外部运行的软件提取。在TEE内部签名的审计日志，无法被运行在同一主机上的代码修改。</p>
+        <p>在硬件节点，这是软件架构无法彻底回答的问题的答案：是什么阻止了智能体——或攻陷了智能体运行时的攻击者——读取其自身凭证并将其泄露给第三方？硬件隔离使这个答案独立于软件完整性。这不是性能特性，而是信任特性。对于在受监管环境中运作的智能体——安全基础设施、金融系统、健康数据——这是合适的基准。</p>
+        <p>这一区别在实践中至关重要。"我们的智能体受到良好治理"是关于流程的主张。"我们的智能体运行在硬件证明的执行环境中，其凭证从不存在于该边界之外"是关于架构的主张。第二种主张可以被核实，第一种则不能。</p>
+
+        <h2>物理世界照护中的隔离</h2>
+        <p>对于在物理环境中运作的智能体——照护场所、设施、直接影响人们生活的系统——隔离具有单纯凭证管理无法解决的维度：能力表面——智能体能够在物理上造成什么后果？</p>
+        <p>一个对照护环境中所有执行器拥有不受限制访问权的智能体，并非因为它可能行为不端而危险。它的危险在于，任何行为不端的后果——无论源于治理失效、上下文被攻陷还是错误指令——都可能是不可逆的。物理照护中的沙箱强制令是：环境本身必须限定智能体的能力范围。这一设计要求落在物理系统上，而不仅仅是智能体上。</p>
+        <p>这比所有智能体都应遵循的最小足迹原则更为严格。这是对环境架构的要求。照护场所中的设备、访问点和执行器，应该向任何在其中运作的智能体呈现一个有界且可审计的能力表面。当它们不这样做时，治理无法弥补。一个能做任何事情的智能体，无论给予多么精心的指令，都不会因此变得安全。</p>
+
+        <h2>这需要什么</h2>
+        <p>由此引出三项要求。第一，智能体凭证范围必须限定于当前任务：凭证为任务而非会话颁发，任务结束时到期，无环境性常驻访问权限。第二，对于高后果领域的智能体，硬件证明的执行是合适的隔离基准——软件隔离是有用的补充，而非替代。第三，物理世界智能体必须在能力表面经由架构设计明确界定和限制的环境中运作，而不是仅靠指令约束。</p>
+        <p>一个治理良好却处于无约束环境中的智能体，是一种风险。隔离不是高级特性——它是所有其他安全属性赖以建立的基础。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/audit-trail-problem.html">延伸阅读：审计轨迹问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 × 硬件 × 人類照護</span>
+      <h1 class="essay-title">沙箱強制令：隔離是智能體信任的基礎</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-23</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>當我們討論AI智能體安全時，大多數注意力集中在行為上——智能體如何決策、是否適當服從、是否超出權限範圍。這些都是真實的關切。但一個行為良好卻未經隔離的智能體，並不是安全的智能體，只是一個有禮貌的智能體。</p>
+        <p>隔離——安全從業者稱之為沙箱——是一組限制，規定了智能體在當前任務之外能夠訪問、觀察或影響的範圍。它不同於治理：治理定義智能體應該做什麼；隔離定義了無論治理如何，智能體能夠做什麼。一個被治理但未被隔離的智能體，在治理失效的那一刻就可能造成傷害。而一個被隔離的智能體，則將那次失效的爆炸半徑限制在可控範圍內。</p>
+        <p>該領域已為智能體治理建立了強有力的語言框架，卻對智能體隔離的語言相對薄弱。這種不對稱至關重要，因為治理是關於意圖的主張，而隔離是關於架構的主張。</p>
+
+        <h2>憑證表面問題</h2>
+        <p>每個在世界中行動的智能體都持有憑證：API金鑰、會話令牌、文件權限、網路訪問、服務授權。這些憑證是智能體將意圖轉化為行動的機制，也是被攻陷的智能體——或治理不善的智能體——以運營方從未預期的方式行動的機制。</p>
+        <p>未被隔離的智能體的憑證表面隨使用而增長。一個最初只有最小憑證的智能體，隨著任務需要而積累更多憑證。如果沒有將憑證限定於當前任務並在任務結束時自動撤銷的隔離紀律，憑證表面會單調擴張。持有超出任務需要的憑證，不是便利，而是暴露。</p>
+        <p>在後量子安全節點，這種積累是一個緊迫問題。從經典密碼學向抗量子密碼學的遷移，需要完整盤點每一處金鑰被持有或傳輸的位置。在憑證鬆散持有——快取、環境變數、跨會話積累——的智能體中，這份清單永遠無法完整。無法盤點的憑證，就無法按時輪換或及時撤銷。從這個角度看，沙箱強制令是量子遷移本身的前提：憑證必須限定於授予它們的任務上下文，且必須在該上下文結束時自動到期。</p>
+
+        <h2>硬件邊界</h2>
+        <p>軟件沙箱可以減少爆炸半徑。進程隔離、網路過濾、文件系統命名空間——這些比什麼都沒有要好。但它們依賴於運行時和底層作業系統的完整性。控制運行時的攻擊者就控制了沙箱。</p>
+        <p>硬件提供了軟件無法提供的邊界。可信執行環境創建一個隔離的計算上下文，其完整性在硬件層面得到證明，獨立於上層作業系統。存儲在TEE內部的憑證無法被其外部運行的軟件提取。在TEE內部簽名的審計日誌，無法被運行在同一主機上的程式碼修改。</p>
+        <p>在硬件節點，這是軟件架構無法徹底回答的問題的答案：是什麼阻止了智能體——或攻陷了智能體運行時的攻擊者——讀取其自身憑證並將其洩露給第三方？硬件隔離使這個答案獨立於軟件完整性。這不是性能特性，而是信任特性。對於在受監管環境中運作的智能體——安全基礎設施、金融系統、健康資料——這是合適的基準。</p>
+        <p>這一區別在實踐中至關重要。「我們的智能體受到良好治理」是關於流程的主張。「我們的智能體運行在硬件證明的執行環境中，其憑證從不存在於該邊界之外」是關於架構的主張。第二種主張可以被核實，第一種則不能。</p>
+
+        <h2>物理世界照護中的隔離</h2>
+        <p>對於在物理環境中運作的智能體——照護場所、設施、直接影響人們生活的系統——隔離具有單純憑證管理無法解決的維度：能力表面——智能體能夠在物理上造成什麼後果？</p>
+        <p>一個對照護環境中所有執行器擁有不受限制訪問權的智能體，並非因為它可能行為不端而危險。它的危險在於，任何行為不端的後果——無論源於治理失效、上下文被攻陷還是錯誤指令——都可能是不可逆的。物理照護中的沙箱強制令是：環境本身必須限定智能體的能力範圍。這一設計要求落在物理系統上，而不僅僅是智能體上。</p>
+        <p>這比所有智能體都應遵循的最小足跡原則更為嚴格。這是對環境架構的要求。照護場所中的設備、訪問點和執行器，應該向任何在其中運作的智能體呈現一個有界且可審計的能力表面。當它們不這樣做時，治理無法彌補。一個能做任何事情的智能體，無論給予多麼精心的指令，都不會因此變得安全。</p>
+
+        <h2>這需要什麼</h2>
+        <p>由此引出三項要求。第一，智能體憑證範圍必須限定於當前任務：憑證為任務而非會話頒發，任務結束時到期，無環境性常駐訪問權限。第二，對於高後果領域的智能體，硬件證明的執行是合適的隔離基準——軟件隔離是有用的補充，而非替代。第三，物理世界智能體必須在能力表面經由架構設計明確界定和限制的環境中運作，而不是僅靠指令約束。</p>
+        <p>一個治理良好卻處於無約束環境中的智能體，是一種風險。隔離不是高級特性——它是所有其他安全屬性賴以建立的基礎。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/audit-trail-problem.html">延伸閱讀：審計軌跡問題 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    applyLang(savedLang);
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+  </script>
+
+</body>
+</html>
