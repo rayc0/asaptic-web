@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The permission accumulation problem — Asaptic Labs</title>
+
+  <meta name="description" content="Each permission grant made sense in isolation. In aggregate, they have quietly constructed a capability profile no one authorized. The permission accumulation problem is how AI agents end up with too much power without anyone intending it." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/permission-accumulation-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The permission accumulation problem: when individually appropriate grants become collectively dangerous" />
+  <meta property="og:description" content="AI agent permissions are granted one at a time and audited in aggregate — rarely. The gap between individual grants and total capability profile is where dangerous authority quietly accumulates." />
+  <meta property="og:url" content="https://asaptic.com/blog/permission-accumulation-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-23" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The permission accumulation problem: when individually appropriate grants become collectively dangerous",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-23",
+    "description": "AI agent permissions are granted one at a time and audited in aggregate — rarely. The gap between individual grants and total capability profile is where dangerous authority quietly accumulates.",
+    "url": "https://asaptic.com/blog/permission-accumulation-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY × HARDWARE × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The permission accumulation problem: when individually appropriate grants become collectively dangerous</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-23</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Every permission granted to an AI agent goes through some form of review. Someone decides that this agent, in this deployment context, needs access to this capability — and the grant is made. The decision, in isolation, is usually defensible. The problem is not any individual grant. The problem is that no one is looking at the aggregate.</p>
+
+        <p>Permission grants accumulate. They accumulate across sessions, across deployment phases, across evolving operational requirements. An agent that was given read access to patient records for one care workflow later receives write access for a discharge summary feature. A hardware control agent that needed sensor telemetry read permissions is later given actuator command permissions for a maintenance integration. Each expansion made sense at the time it was requested and approved. Months later, the agent's total capability profile is one that no one consciously designed and no one has reviewed as a whole.</p>
+
+        <h2>Why the audit gap is structural</h2>
+        <p>The standard response to this concern is "we have audit logs." Audit logs record what permissions were granted, when, and by whom. But an audit log is a record of events over time; it is not a snapshot of current state. To understand an agent's total capability profile today, you would need to replay the entire permission history, account for any revocations, and produce a coherent summary — a task that requires active effort and tooling that most deployments do not have.</p>
+
+        <p>This gap is structural, not incidental. Permission management systems are built to handle individual grant decisions efficiently. They are rarely built to answer the question: "What can this agent do right now, in total, and is that total still appropriate for how it is deployed?" The question requires aggregation across time, context, and systems — and the answer is rarely demanded until something goes wrong.</p>
+
+        <h2>The compounding effect of non-expiry</h2>
+        <p>The accumulation problem is sharpest when permissions do not expire. A grant made to support a pilot deployment, a one-time integration, or a deprecated workflow may remain in effect indefinitely unless someone explicitly revokes it. The agent's capability profile thus grows monotonically: permissions are added when needed, but rarely removed when no longer needed. The residual grants from abandoned use cases become the capability surface that an adversary — or a misbehaving agent — can exploit.</p>
+
+        <p>In the post-quantum security context, this residue is more dangerous than it appears. Today's residual grants may look harmless under classical threat models. But an adversary with sufficient compute can target the accumulated capability profile of a long-running agent, using its aggregated permissions as an attack surface that is broader than any single-session scope would permit. The agent becomes, in effect, a slowly assembled master key — not because anyone intended it, but because no one was tracking the total.</p>
+
+        <h2>The hardware crossing makes this concrete</h2>
+        <p>In hardware-adjacent deployments, permission accumulation has physical consequences. An agent managing industrial hardware may accumulate command permissions across subsystems over the course of a deployment — each grant made in response to a legitimate operational need. But command permissions in physical systems are not reversible in the way that data access permissions are. If an agent with accumulated actuator command scope behaves unexpectedly, the damage may be physical, immediate, and not undoable by revoking the permission that enabled it. The permission inventory must be kept current not just for audit purposes, but because the cost of acting on a stale inventory is measured in physical terms.</p>
+
+        <h2>In care environments, the stakes are interpersonal</h2>
+        <p>Physical-world care settings surface a third dimension of the accumulation problem: the interpersonal stake. A care agent accumulates access to patient data, communication channels, care plan records, and clinician workflows. Each grant was appropriate for a specific care relationship or task. But in aggregate, the agent may have a fuller picture of a patient's life and health trajectory than any single clinician — and a capability profile that, if misused or exploited, could cause harm at a deeply personal level. The patient who consented to individual integrations did not consent to the aggregated capability profile that those integrations collectively produce.</p>
+
+        <h2>The design response</h2>
+        <p>Addressing the accumulation problem requires treating the aggregate capability profile as a first-class artifact — something that is actively maintained, periodically reviewed, and compared against the agent's current operational scope. This is a different discipline from per-grant review. It requires scheduled reauthorization: a point at which existing permissions are not just carried forward by default, but re-examined against the current deployment context and either confirmed or revoked. It requires tooling that produces a coherent current-state summary from permission history, not just a log. And it requires that every permission have a stated purpose and an expected lifetime — so that when the purpose is retired, the permission has a clear expiry trigger.</p>
+
+        <p>Hardware-bound permission state helps here. When permission grants are anchored to specific hardware configurations — issued by hardware-attested keys and tied to the operational context of the device on which the agent runs — the grant automatically becomes invalid if the hardware context changes. Permissions cannot silently follow an agent across redeployments. The aggregate profile is scoped to the context that justified it.</p>
+
+        <p>Permission accumulation is not a flaw in any individual decision. It is a property of systems where individual decisions are made competently but the system produces no signal about aggregate state. In the domains where AI agents are moving from sandbox to consequence, closing that gap is not a nice-to-have. It is the difference between an agent whose authority is governed and one whose authority merely grew.</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/non-repudiation-problem.html">Also: The non-repudiation problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照护</span>
+      <h1 class="essay-title">权限积累问题：单独合理的授权如何在聚合层面变得危险</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-23</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>授予AI智能体的每一项权限都经过了某种形式的审查。有人决定这个智能体在这个部署上下文中需要访问某项能力——于是授权被批准。每个单独的决定通常是站得住脚的。问题不在于任何单一的授权，而在于没有人在审查它们的聚合状态。</p>
+
+        <p>权限在积累。它们跨越会话、跨越部署阶段、跨越不断演进的运营需求而积累。一个最初因某个照护工作流而获得患者记录读取权限的智能体，后来因出院摘要功能而获得了写入权限。一个需要传感器遥测读取权限的硬件控制智能体，后来因维护集成而获得了执行器命令权限。每次扩展在请求和批准时都是合理的。数月后，该智能体的总体能力档案已是无人刻意设计、也无人整体审查过的状态。</p>
+
+        <h2>为何审计缺口是结构性的</h2>
+        <p>对这一担忧的标准回应是"我们有审计日志"。审计日志记录了授予了哪些权限、何时授予、由谁授予。但审计日志是对时间序列事件的记录，而非当前状态的快照。要了解一个智能体今天的总体能力档案，需要重放整个权限历史、计入所有撤销，并生成一个连贯的汇总——这是大多数部署所不具备的主动投入和工具能力所要求的任务。</p>
+
+        <p>这个缺口是结构性的，而非偶发性的。权限管理系统的设计目标是高效处理单次授权决策，而非回答"这个智能体现在总共能做什么，这个总量是否仍适合其当前的部署方式？"这一问题需要跨时间、跨上下文、跨系统的聚合，且通常只有在出现问题之后才会被要求给出答案。</p>
+
+        <h2>不过期权限的复利效应</h2>
+        <p>当权限不会过期时，积累问题最为突出。为支持试点部署、一次性集成或已废弃工作流而授予的权限，可能会无限期有效，除非有人明确撤销。智能体的能力档案因此呈单调增长：权限在需要时被添加，但在不再需要时很少被移除。已废弃用例的残余授权，成为了攻击者——或行为异常的智能体——可以利用的能力表面。</p>
+
+        <p>在后量子安全语境中，这些残余权限比表面上看起来更危险。在经典威胁模型下，今天的残余授权可能看起来无害。但拥有足够算力的攻击者，可以将长期运行智能体积累的能力档案作为攻击面——其聚合权限远比任何单次会话范围更宽广。该智能体在事实上成为了一把被缓慢拼装的万能钥匙——不是因为有人刻意设计，而是因为没有人在追踪总量。</p>
+
+        <h2>硬件维度的具体后果</h2>
+        <p>在与硬件相关的部署中，权限积累具有物理后果。管理工业硬件的智能体可能在部署过程中跨子系统积累命令权限——每次授权都是对合理运营需求的响应。但物理系统中的命令权限与数据访问权限不同，其后果并不可逆。如果一个积累了执行器命令权限的智能体出现异常行为，损害可能是物理的、即时的，且无法通过撤销使能该行为的权限来消除。权限清单必须保持最新，不仅是为了审计目的，更因为在物理层面，基于过时清单采取行动的代价是以物理损害来衡量的。</p>
+
+        <h2>照护环境中的人际维度</h2>
+        <p>物理世界照护场景带来了积累问题的第三个维度：人际关系。照护智能体积累了对患者数据、沟通渠道、照护计划记录和临床工作流的访问。每次授权都对应特定的照护关系或任务。但在聚合层面，该智能体可能比任何单一临床医生都更全面地掌握患者的生活和健康轨迹——且其能力档案一旦被滥用或利用，可能在极为私人的层面造成伤害。同意单项集成的患者，并未同意这些集成在聚合层面所产生的总体能力档案。</p>
+
+        <h2>设计应对</h2>
+        <p>解决积累问题，需要将聚合能力档案作为一等产物来对待——主动维护、定期审查，并与智能体当前的运营范围进行比较。这与逐项授权审查是不同的纪律。它需要定期重新授权：在这个时间点上，现有权限不是默认延续，而是对照当前部署上下文重新审查，予以确认或撤销。它需要能从权限历史中生成连贯当前状态汇总的工具，而不仅仅是日志。它还需要每项权限都明确陈述用途和预期生命周期——以便在用途结束时，权限有明确的过期触发条件。</p>
+
+        <p>硬件绑定的权限状态在这里有所帮助。当权限授予与特定硬件配置锚定——由经硬件证明的密钥签发，并与智能体运行设备的运营上下文绑定——授权在硬件上下文发生变化时自动失效。权限无法在智能体重新部署时悄然跟随。聚合档案被限定在证明其合理性的上下文之内。</p>
+
+        <p>权限积累不是任何单一决策的缺陷，而是系统中单个决策被称职地做出、但系统不产生关于聚合状态信号的属性。在AI智能体从沙箱走向实质影响的领域中，弥合这一缺口不是可有可无的选项。这是有治理的权威与仅仅自然增长的权威之间的区别。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/non-repudiation-problem.html">延伸阅读：不可否认性问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照護</span>
+      <h1 class="essay-title">權限積累問題：單獨合理的授權如何在聚合層面變得危險</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-23</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>授予AI智能體的每一項權限都經過了某種形式的審查。有人決定這個智能體在這個部署上下文中需要訪問某項能力——於是授權被批准。每個單獨的決定通常是站得住腳的。問題不在於任何單一的授權，而在於沒有人在審查它們的聚合狀態。</p>
+
+        <p>權限在積累。它們跨越會話、跨越部署階段、跨越不斷演進的營運需求而積累。一個最初因某個照護工作流而獲得患者記錄讀取權限的智能體，後來因出院摘要功能而獲得了寫入權限。一個需要傳感器遙測讀取權限的硬件控制智能體，後來因維護整合而獲得了執行器命令權限。每次擴展在請求和批准時都是合理的。數月後，該智能體的總體能力檔案已是無人刻意設計、也無人整體審查過的狀態。</p>
+
+        <h2>為何審計缺口是結構性的</h2>
+        <p>對這一擔憂的標準回應是「我們有審計日誌」。審計日誌記錄了授予了哪些權限、何時授予、由誰授予。但審計日誌是對時間序列事件的記錄，而非當前狀態的快照。要了解一個智能體今天的總體能力檔案，需要重放整個權限歷史、計入所有撤銷，並生成一個連貫的彙總——這是大多數部署所不具備的主動投入和工具能力所要求的任務。</p>
+
+        <p>這個缺口是結構性的，而非偶發性的。權限管理系統的設計目標是高效處理單次授權決策，而非回答「這個智能體現在總共能做什麼，這個總量是否仍適合其當前的部署方式？」這一問題需要跨時間、跨上下文、跨系統的聚合，且通常只有在出現問題之後才會被要求給出答案。</p>
+
+        <h2>不過期權限的複利效應</h2>
+        <p>當權限不會過期時，積累問題最為突出。為支持試點部署、一次性整合或已廢棄工作流而授予的權限，可能會無限期有效，除非有人明確撤銷。智能體的能力檔案因此呈單調增長：權限在需要時被添加，但在不再需要時很少被移除。已廢棄用例的殘餘授權，成為了攻擊者——或行為異常的智能體——可以利用的能力表面。</p>
+
+        <p>在後量子安全語境中，這些殘餘權限比表面上看起來更危險。在經典威脅模型下，今天的殘餘授權可能看起來無害。但擁有足夠算力的攻擊者，可以將長期運行智能體積累的能力檔案作為攻擊面——其聚合權限遠比任何單次會話範圍更寬廣。該智能體在事實上成為了一把被緩慢拼裝的萬能鑰匙——不是因為有人刻意設計，而是因為沒有人在追蹤總量。</p>
+
+        <h2>硬件維度的具體後果</h2>
+        <p>在與硬件相關的部署中，權限積累具有物理後果。管理工業硬件的智能體可能在部署過程中跨子系統積累命令權限——每次授權都是對合理營運需求的響應。但物理系統中的命令權限與數據訪問權限不同，其後果並不可逆。如果一個積累了執行器命令權限的智能體出現異常行為，損害可能是物理的、即時的，且無法通過撤銷使能該行為的權限來消除。權限清單必須保持最新，不僅是為了審計目的，更因為在物理層面，基於過時清單採取行動的代價是以物理損害來衡量的。</p>
+
+        <h2>照護環境中的人際維度</h2>
+        <p>物理世界照護場景帶來了積累問題的第三個維度：人際關係。照護智能體積累了對患者數據、溝通渠道、照護計劃記錄和臨床工作流的訪問。每次授權都對應特定的照護關係或任務。但在聚合層面，該智能體可能比任何單一臨床醫生都更全面地掌握患者的生活和健康軌跡——且其能力檔案一旦被濫用或利用，可能在極為私人的層面造成傷害。同意單項整合的患者，並未同意這些整合在聚合層面所產生的總體能力檔案。</p>
+
+        <h2>設計應對</h2>
+        <p>解決積累問題，需要將聚合能力檔案作為一等產物來對待——主動維護、定期審查，並與智能體當前的營運範圍進行比較。這與逐項授權審查是不同的紀律。它需要定期重新授權：在這個時間點上，現有權限不是默認延續，而是對照當前部署上下文重新審查，予以確認或撤銷。它需要能從權限歷史中生成連貫當前狀態彙總的工具，而不僅僅是日誌。它還需要每項權限都明確陳述用途和預期生命週期——以便在用途結束時，權限有明確的過期觸發條件。</p>
+
+        <p>硬件綁定的權限狀態在這裡有所幫助。當權限授予與特定硬件配置錨定——由經硬件證明的密鑰簽發，並與智能體運行設備的營運上下文綁定——授權在硬件上下文發生變化時自動失效。權限無法在智能體重新部署時悄然跟隨。聚合檔案被限定在證明其合理性的上下文之內。</p>
+
+        <p>權限積累不是任何單一決策的缺陷，而是系統中單個決策被稱職地做出、但系統不產生關於聚合狀態信號的屬性。在AI智能體從沙箱走向實質影響的領域中，彌合這一缺口不是可有可無的選項。這是有治理的權威與僅僅自然增長的權威之間的區別。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/non-repudiation-problem.html">延伸閱讀：不可否認性問題 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
