@@ -1,3 +1,4 @@
+2026-05-23 00:15 UTC · blog: add essay 'The audit trail problem — tamper-evident records are the floor, not the ceiling' (EN+ZH+ZH-HK) · 2c36e79
 2026-05-22 20:15 UTC · blog: add essay 'The specification gap — accountability starts with intent' (EN+ZH+ZH-HK) · 9cba0cf
 2026-05-22 16:15 UTC · blog: add essay 'The identity continuity problem — accountability when an AI agent is updated' (EN+ZH+ZH-HK) · 94591d9
 2026-05-22 12:15 UTC · firewall: remove forbidden tokens re-introduced by G1 brand-domain commit from content.js, index.html, llms.txt, agent.json · 46ba6e1
