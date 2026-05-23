@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The non-repudiation problem — Asaptic Labs</title>
+
+  <meta name="description" content="Logging what an agent did is not the same as proving it cannot deny doing so. Non-repudiation requires agent-side signing at decision time — and those signatures must survive the quantum transition." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/non-repudiation-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The non-repudiation problem" />
+  <meta property="og:description" content="Logging what an agent did is not the same as proving it cannot deny doing so. Non-repudiation requires agent-side signing at decision time — and those signatures must survive the quantum transition." />
+  <meta property="og:url" content="https://asaptic.com/blog/non-repudiation-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-23" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The non-repudiation problem",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-23",
+    "description": "Logging what an agent did is not the same as proving it cannot deny doing so. Non-repudiation requires agent-side signing at decision time — and those signatures must survive the quantum transition.",
+    "url": "https://asaptic.com/blog/non-repudiation-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × HUMAN CARE</span>
+      <h1 class="essay-title">The non-repudiation problem: why an AI agent must not be able to deny its actions</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-23</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>When a human professional makes a consequential decision — a physician writing an order, a financial analyst authorising a transfer, a security engineer approving a configuration change — the record of that decision is typically tied to that person by a signature, a login credential, or a witnessed act. The tie is imperfect but it has a direction: the burden falls on the person to explain any discrepancy between the record and their account, not on the record to prove its own authenticity.</p>
+        <p>AI agents have no equivalent binding by default. A log entry that says an agent took an action is evidence that the action was recorded — not evidence that the agent actually took it, that the log has not been altered, or that the recorded action matches the decision the agent actually made. This gap between logging and non-repudiation is narrow when stakes are low. When agents operate in domains where outcomes are contested — where a care decision is disputed, a financial authorisation is challenged, or a security event is litigated — the gap becomes a structural vulnerability in the accountability record.</p>
+
+        <h2>What non-repudiation requires</h2>
+        <p>Non-repudiation is the property that makes it possible to prove, after the fact, that a specific party generated a specific message or took a specific action, in a way that the party cannot credibly deny. In human systems it is achieved through a combination of procedural controls and cryptographic mechanisms — signatures, audit trails, timestamped records maintained by independent parties.</p>
+        <p>For AI agents, non-repudiation requires that the agent signs its own outputs at decision time, using a key that is bound to the agent's identity and protected from tampering. The signed artifact is not just the action taken — it includes the inputs the agent acted on, the scope it was operating within, and the authorisation chain that delegated the task to it. The signature proves that a specific agent, acting under a specific grant of authority, produced a specific output from specific inputs. Without all four of those elements, the record can be challenged on any one of them.</p>
+        <p>The practical consequence is that non-repudiation cannot be retrofitted to a log. It must be built into the agent's action pipeline. A log that records what an agent did is not a non-repudiable record unless the log entry was signed by the agent at the moment of action, the signing key is managed in a way that prevents undetectable substitution, and the key itself is bound to the agent's verified identity through a certificate chain that can be audited independently of the agent and its operator.</p>
+
+        <h2>The quantum crossing</h2>
+        <p>The durability of non-repudiation depends entirely on the durability of the underlying signatures. An agent deployed today that signs its actions using a classical elliptic-curve scheme produces records that are non-repudiable under current threat conditions. Under conditions where a sufficiently powerful quantum processor is available to an adversary — a threshold whose timeline is contested but not infinitely remote — those records become retroactively repudiable. An adversary with quantum capability can generate a valid signature under the agent's historical public key, insert it into an alternative version of the record, and present a plausible forgery of the agent's action log.</p>
+        <p>This is the harvest-now-decrypt-later problem applied not to confidentiality but to accountability. Records signed today with quantum-vulnerable schemes will remain in legal, regulatory, and evidentiary use long after the signing algorithm has been broken. Agents whose decisions have long-tail legal exposure — in care, in financial authorisation, in certified safety systems — are signing records today that may be undefendable in ten years.</p>
+        <p>The migration to post-quantum signature schemes is the accountability-layer version of the well-understood migration for encryption. It is operationally harder because signatures are embedded in protocol handshakes, certificate chains, firmware validation pipelines, and regulatory evidence formats — each of which carries its own upgrade cycle. But the consequence of not migrating is not confidentiality loss. It is the retroactive ability of adversaries to forge the historical record of what an agent decided.</p>
+
+        <h2>The hardware crossing</h2>
+        <p>The weakest point in an agent's non-repudiation chain is typically the signing key. A key stored in software, on the same system the agent runs on, can be extracted by a sufficiently privileged attacker — or by the agent's operator, which creates a conflict of interest in any dispute about what the agent did. If the operator controls the signing key, the operator can plausibly generate alternative signed records, which undermines the non-repudiation guarantee for any party other than the operator itself.</p>
+        <p>Hardware security modules and trusted execution environments address this by binding the signing key to a physical root of trust that cannot be exported. The key is generated inside the hardware boundary, never leaves it, and signs only what the hardware's attestation policy permits. This means that a signature produced by the agent is evidence not just of what was signed, but that the signing happened inside a verified, tamper-evident environment — one that neither the operator nor an external attacker can retrospectively reprogram.</p>
+        <p>For agents deployed in safety-critical hardware — industrial systems, medical devices, infrastructure monitoring — hardware-rooted signing is the difference between a log that an operator can theoretically falsify and a record that an auditor can trust independently of the operator's cooperation. The certification frameworks for these domains are beginning to require it. Agents designed without it are building accountability architectures with a forger's access door left open.</p>
+
+        <h2>The care crossing</h2>
+        <p>In care settings, the non-repudiation problem has a specific shape. When an AI agent assists with a care decision and the outcome is later disputed — a missed contraindication, a dosing threshold, a risk assessment that influenced a discharge plan — two questions arise. First, what did the agent recommend? Second, was the recommendation the agent actually made the one that was implemented?</p>
+        <p>The first question is a forensic problem — the reasoning record. The second is a non-repudiation problem: establishing that the agent, operating under a specific scope and with specific inputs, produced the recommendation attributed to it. In a system without agent-side signing, the care provider relies on the platform operator's logs, which are mutable by the operator and unverifiable by any independent party. This is not adequate for a domain where the documentation standard for human clinicians is a signed, witnessed record.</p>
+        <p>Non-repudiable agent records in care also affect the liability chain in ways that cut both ways. A care provider that can produce a signed record of what the agent recommended, under what scope, acting on what patient data, is better positioned to demonstrate that the human carer exercised appropriate judgment in relation to the recommendation. The signed record does not eliminate the human's accountability — it clarifies it, which is the precondition for any accountability at all.</p>
+
+        <h2>Signing is not sufficient — but it is necessary</h2>
+        <p>Non-repudiation does not solve the forensic gap — a signed output is still an output, not a reasoning trace. It does not solve the scope problem — a signature proves what was signed, not whether the agent was operating within its authorised bounds. And it does not guarantee correct behaviour — a well-formed signature on a wrong answer is still a wrong answer.</p>
+        <p>What signing does is anchor the record. It makes the question "did the agent do this?" answerable by evidence rather than by assertion. Every other accountability claim — about scope, about reasoning, about oversight — rests on a foundation that includes that answer. Without it, disputes about what an AI agent decided are disputes about competing narratives, not disputes about a verifiable record.</p>
+        <p>For agents operating where consequences matter, the question of who signs the record is not a detail to defer to a later architecture review. It is the load-bearing question of the entire accountability structure. Build from the root up, before the agent makes its first consequential decision — and choose a root that will hold when the cryptographic landscape shifts.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>记录智能体的行为与证明其无法否认所为之间，存在结构性差距。不可抵赖性要求智能体在决策时对自身输出进行签名，签名须绑定智能体的已验证身份、所处的授权范围，以及其行动所依据的输入内容。若使用量子脆弱的签名方案，历史记录将面临被追溯伪造的风险——这是机密性领域"现在收割、未来解密"问题在问责层的对应形式。硬件安全模块通过将签名密钥绑定至无法导出的物理信任根，防止运营方或外部攻击者生成可信的替代记录。在照护场景中，具有不可抵赖性的智能体记录能够厘清人类照护者与智能体建议之间的责任边界——这是任何形式问责的前提。签名不能解决取证差距或范围问题，但它锚定了记录：没有它，关于智能体决策的争议便成了叙述的较量，而非可核查记录的对比。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>記錄智能體的行為與證明其無法否認所為之間，存在結構性差距。不可抵賴性要求智能體在決策時對自身輸出進行簽名，簽名須綁定智能體的已驗證身份、所處的授權範圍，以及其行動所依據的輸入內容。若使用量子脆弱的簽名方案，歷史記錄將面臨被追溯偽造的風險——這是機密性領域「現在收割、未來解密」問題在問責層的對應形式。硬件安全模組通過將簽名密鑰綁定至無法導出的物理信任根，防止運營方或外部攻擊者生成可信的替代記錄。在照護場景中，具有不可抵賴性的智能體記錄能夠釐清人類照護者與智能體建議之間的責任邊界——這是任何形式問責的前提。簽名不能解決取證差距或範圍問題，但它錨定了記錄：沒有它，關於智能體決策的爭議便成了敘述的較量，而非可核查記錄的對比。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/attestation-gap.html">Also: The attestation gap →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 人类照护</span>
+      <h1 class="essay-title">不可抵赖性问题：为何AI智能体不能否认自身行为</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-23</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>当一名专业人员做出重要决定时——医生开具医嘱、金融分析师授权转账、安全工程师批准配置变更——该决定的记录通常通过签名、登录凭证或见证行为与当事人绑定。这种绑定并不完美，但它有明确的方向：举证责任落在当事人一方，需要解释记录与其陈述之间的任何差异，而不是由记录来证明自身的真实性。</p>
+        <p>AI智能体在默认情况下没有等效的绑定机制。一条记录智能体执行了某操作的日志条目，只是证明该操作被记录了——而非证明智能体确实执行了该操作、日志未被篡改，或者记录的操作与智能体实际做出的决策相符。当利害关系较低时，记录与不可抵赖性之间的差距尚不明显。当智能体在结果存在争议的领域运行时——照护决策受到质疑、金融授权遭到挑战、安全事件进入诉讼程序——这一差距就演变为问责记录中的结构性漏洞。</p>
+
+        <h2>不可抵赖性的要求</h2>
+        <p>不可抵赖性是一种属性，能够在事后证明特定当事方生成了特定消息或采取了特定行动，且该当事方无法可信地予以否认。在人类系统中，这通过程序控制与密码学机制的结合来实现——签名、审计轨迹、由独立方维护的带时间戳记录。</p>
+        <p>对AI智能体而言，不可抵赖性要求智能体在决策时使用绑定其身份且受防篡改保护的密钥，对自身输出进行签名。签名的内容不仅仅是所采取的行动——还包括智能体据以行动的输入、其运行所处的范围，以及将任务委托给它的授权链。签名证明：特定智能体在特定授权赋予下，从特定输入中产生了特定输出。若缺少这四个要素中的任何一个，记录都可能在该要素上受到质疑。</p>
+        <p>由此产生的实践后果是：不可抵赖性无法事后加装到日志中。它必须内置于智能体的行动管道中。记录智能体行为的日志，只有在满足以下条件时才构成不可抵赖性记录：日志条目由智能体在行动时签名；签名密钥的管理方式能够防止不可察觉的替换；且该密钥本身通过独立于智能体及其运营方可审计的证书链，绑定至智能体经过验证的身份。</p>
+
+        <h2>量子安全节点</h2>
+        <p>不可抵赖性的持久性完全取决于底层签名的持久性。今天部署的、使用经典椭圆曲线方案对行动签名的智能体，在当前威胁条件下产生的记录具有不可抵赖性。然而，若对手可使用足够强大的量子处理器——其实现时间线存在争议，但并非遥不可及——这些记录将面临追溯可抵赖的风险。具备量子能力的对手，可以在智能体的历史公钥下生成有效签名，将其插入行动日志的替代版本中，从而提交一份貌似可信的伪造记录。</p>
+        <p>这是"现收现破"（harvest-now-decrypt-later）问题在问责层而非机密性层的对应形式。今天使用量子脆弱方案签名的记录，将在签名算法被破解很久之后，继续在法律、监管和证据领域被使用。那些决策具有长尾法律敞口的智能体——在照护、金融授权或经认证的安全系统领域——正在签署今天看似可靠、十年后可能无法辩护的记录。</p>
+
+        <h2>硬件节点</h2>
+        <p>智能体不可抵赖性链条中最薄弱的环节，通常是签名密钥。存储在软件中、与智能体运行于同一系统上的密钥，可能被拥有足够权限的攻击者提取——或者被智能体的运营方提取，这在任何涉及智能体行为的争议中都会产生利益冲突。如果运营方控制签名密钥，运营方就有能力生成替代的签名记录，这对运营方之外的任何一方而言都会破坏不可抵赖性保证。</p>
+        <p>硬件安全模块和可信执行环境通过将签名密钥绑定至无法导出的物理信任根来解决这一问题。密钥在硬件边界内生成，从不离开该边界，且仅对硬件证明策略所允许的内容进行签名。这意味着智能体生成的签名，不仅证明了签名的内容，还证明签名发生在经过验证的防篡改环境中——无论是运营方还是外部攻击者，都无法对其进行事后修改。</p>
+        <p>对于部署在安全关键硬件中的智能体——工业系统、医疗设备、基础设施监控——硬件根签名是"运营方理论上可以伪造的日志"与"审计方可以独立于运营方配合而信任的记录"之间的分界线。这些领域的认证框架已开始要求这一能力。未进行此类设计的智能体，正在其问责架构中留下一扇供伪造者进入的门。</p>
+
+        <h2>照护节点</h2>
+        <p>在照护场景中，不可抵赖性问题有其特定形态。当AI智能体协助做出照护决策，且结果事后受到质疑时——漏诊了禁忌证、剂量阈值判断有误、影响了出院计划的风险评估——会产生两个问题。第一，智能体推荐了什么？第二，被执行的，是否就是智能体实际做出的推荐？</p>
+        <p>第一个问题是取证问题——推理记录问题。第二个问题是不可抵赖性问题：证明智能体在特定范围内、依据特定输入，产生了归因于它的那份推荐。在没有智能体端签名的系统中，照护提供者依赖平台运营方的日志，而这些日志可由运营方修改，任何独立方无法核查。对于人类临床医生的文档标准是签名且经见证的记录这一领域而言，这是不够的。</p>
+        <p>照护领域中具有不可抵赖性的智能体记录，还以双向影响责任链。能够提交智能体推荐内容签名记录——包括推荐所处范围、所依据的患者数据——的照护提供者，在证明人类照护者对该推荐进行了适当判断方面处于更有利的地位。签名记录并不消除人类的问责，而是厘清了它——而这正是任何形式问责得以存在的前提。</p>
+
+        <h2>签名是必要条件，但不是充分条件</h2>
+        <p>不可抵赖性无法解决取证差距——签名输出仍然是输出，而非推理轨迹。它无法解决范围问题——签名证明签署了什么，而非智能体是否在授权范围内运行。也无法保证行为正确——对错误答案的格式完整签名，仍然是错误答案。</p>
+        <p>签名的作用在于锚定记录。它使"智能体是否做了这件事"这一问题，可以通过证据而非断言来回答。其他所有问责主张——关于范围、推理、监督——都建立在包含这一答案的基础之上。没有它，关于AI智能体决策的争议，就只是相互竞争叙述之间的较量，而非可核查记录的对比。</p>
+        <p>对于在后果重要的领域中运行的智能体，"谁签署记录"不是可以推迟到后续架构评审中处理的细节，而是整个问责结构的承重问题。从信任根开始构建，在智能体做出第一个重要决策之前——并选择一个在密码学格局转变时仍能成立的信任根。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/attestation-gap.html">延伸阅读：证明差距 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 人類照護</span>
+      <h1 class="essay-title">不可抵賴性問題：為何AI智能體不能否認自身行為</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-23</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>當一名專業人員做出重要決定時——醫生開具醫囑、金融分析師授權轉帳、安全工程師批准配置變更——該決定的記錄通常通過簽名、登錄憑證或見證行為與當事人綁定。這種綁定並不完美，但它有明確的方向：舉證責任落在當事人一方，需要解釋記錄與其陳述之間的任何差異，而不是由記錄來證明自身的真實性。</p>
+        <p>AI智能體在預設情況下沒有等效的綁定機制。一條記錄智能體執行了某操作的日誌條目，只是證明該操作被記錄了——而非證明智能體確實執行了該操作、日誌未被竄改，或者記錄的操作與智能體實際做出的決策相符。當利害關係較低時，記錄與不可抵賴性之間的差距尚不明顯。當智能體在結果存在爭議的領域運行時——照護決策受到質疑、金融授權遭到挑戰、安全事件進入訴訟程序——這一差距就演變為問責記錄中的結構性漏洞。</p>
+
+        <h2>不可抵賴性的要求</h2>
+        <p>不可抵賴性是一種屬性，能夠在事後證明特定當事方生成了特定消息或採取了特定行動，且該當事方無法可信地予以否認。在人類系統中，這通過程序控制與密碼學機制的結合來實現——簽名、審計軌跡、由獨立方維護的帶時間戳記錄。</p>
+        <p>對AI智能體而言，不可抵賴性要求智能體在決策時使用綁定其身份且受防竄改保護的密鑰，對自身輸出進行簽名。簽名的內容不僅僅是所採取的行動——還包括智能體據以行動的輸入、其運行所處的範圍，以及將任務委託給它的授權鏈。簽名證明：特定智能體在特定授權賦予下，從特定輸入中產生了特定輸出。若缺少這四個要素中的任何一個，記錄都可能在該要素上受到質疑。</p>
+        <p>由此產生的實踐後果是：不可抵賴性無法事後加裝到日誌中。它必須內置於智能體的行動管道中。記錄智能體行為的日誌，只有在滿足以下條件時才構成不可抵賴性記錄：日誌條目由智能體在行動時簽名；簽名密鑰的管理方式能夠防止不可察覺的替換；且該密鑰本身通過獨立於智能體及其運營方可審計的證書鏈，綁定至智能體經過驗證的身份。</p>
+
+        <h2>量子安全節點</h2>
+        <p>不可抵賴性的持久性完全取決於底層簽名的持久性。今天部署的、使用傳統橢圓曲線方案對行動簽名的智能體，在當前威脅條件下產生的記錄具有不可抵賴性。然而，若對手可使用足夠強大的量子處理器——其實現時間線存在爭議，但並非遙不可及——這些記錄將面臨追溯可抵賴的風險。具備量子能力的對手，可以在智能體的歷史公鑰下生成有效簽名，將其插入行動日誌的替代版本中，從而提交一份貌似可信的偽造記錄。</p>
+        <p>這是「現收現破」（harvest-now-decrypt-later）問題在問責層而非機密性層的對應形式。今天使用量子脆弱方案簽名的記錄，將在簽名算法被破解很久之後，繼續在法律、監管和證據領域被使用。那些決策具有長尾法律敞口的智能體——在照護、金融授權或經認證的安全系統領域——正在簽署今天看似可靠、十年後可能無法辯護的記錄。</p>
+
+        <h2>硬件節點</h2>
+        <p>智能體不可抵賴性鏈條中最薄弱的環節，通常是簽名密鑰。存儲在軟件中、與智能體運行於同一系統上的密鑰，可能被擁有足夠權限的攻擊者提取——或者被智能體的運營方提取，這在任何涉及智能體行為的爭議中都會產生利益衝突。如果運營方控制簽名密鑰，運營方就有能力生成替代的簽名記錄，這對運營方之外的任何一方而言都會破壞不可抵賴性保證。</p>
+        <p>硬件安全模組和可信執行環境通過將簽名密鑰綁定至無法導出的物理信任根來解決這一問題。密鑰在硬件邊界內生成，從不離開該邊界，且僅對硬件證明策略所允許的內容進行簽名。這意味著智能體生成的簽名，不僅證明了簽名的內容，還證明簽名發生在經過驗證的防竄改環境中——無論是運營方還是外部攻擊者，都無法對其進行事後修改。</p>
+        <p>對於部署在安全關鍵硬件中的智能體——工業系統、醫療設備、基礎設施監控——硬件根簽名是「運營方理論上可以偽造的日誌」與「審計方可以獨立於運營方配合而信任的記錄」之間的分界線。這些領域的認證框架已開始要求這一能力。未進行此類設計的智能體，正在其問責架構中留下一扇供偽造者進入的門。</p>
+
+        <h2>照護節點</h2>
+        <p>在照護場景中，不可抵賴性問題有其特定形態。當AI智能體協助做出照護決策，且結果事後受到質疑時——漏診了禁忌證、劑量閾值判斷有誤、影響了出院計劃的風險評估——會產生兩個問題。第一，智能體推薦了什麼？第二，被執行的，是否就是智能體實際做出的推薦？</p>
+        <p>第一個問題是取證問題——推理記錄問題。第二個問題是不可抵賴性問題：證明智能體在特定範圍內、依據特定輸入，產生了歸因於它的那份推薦。在沒有智能體端簽名的系統中，照護提供者依賴平台運營方的日誌，而這些日誌可由運營方修改，任何獨立方無法核查。對於人類臨床醫生的文檔標準是簽名且經見證的記錄這一領域而言，這是不夠的。</p>
+        <p>照護領域中具有不可抵賴性的智能體記錄，還以雙向影響責任鏈。能夠提交智能體推薦內容簽名記錄——包括推薦所處範圍、所依據的患者資料——的照護提供者，在證明人類照護者對該推薦進行了適當判斷方面處於更有利的地位。簽名記錄並不消除人類的問責，而是釐清了它——而這正是任何形式問責得以存在的前提。</p>
+
+        <h2>簽名是必要條件，但不是充分條件</h2>
+        <p>不可抵賴性無法解決取證差距——簽名輸出仍然是輸出，而非推理軌跡。它無法解決範圍問題——簽名證明簽署了什麼，而非智能體是否在授權範圍內運行。也無法保證行為正確——對錯誤答案的格式完整簽名，仍然是錯誤答案。</p>
+        <p>簽名的作用在於錨定記錄。它使「智能體是否做了這件事」這一問題，可以通過證據而非斷言來回答。其他所有問責主張——關於範圍、推理、監督——都建立在包含這一答案的基礎之上。沒有它，關於AI智能體決策的爭議，就只是相互競爭敘述之間的較量，而非可核查記錄的對比。</p>
+        <p>對於在後果重要的領域中運行的智能體，「誰簽署記錄」不是可以推遲到後續架構評審中處理的細節，而是整個問責結構的承重問題。從信任根開始構建，在智能體做出第一個重要決策之前——並選擇一個在密碼學格局轉變時仍能成立的信任根。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/attestation-gap.html">延伸閱讀：證明差距 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
