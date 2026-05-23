@@ -1,3 +1,4 @@
+2026-05-23 12:15 UTC · blog: add essay 'The forensic gap — why reconstructing AI agent reasoning after the fact is harder than it looks' (EN+ZH+ZH-HK) · dbed198
 2026-05-23 04:15 UTC · blog: add essay 'The sandboxing imperative — containment is the foundation of agent trust' (EN+ZH+ZH-HK) · 4d6c0f1
 2026-05-23 00:15 UTC · blog: add essay 'The audit trail problem — tamper-evident records are the floor, not the ceiling' (EN+ZH+ZH-HK) · 2c36e79
 2026-05-22 20:15 UTC · blog: add essay 'The specification gap — accountability starts with intent' (EN+ZH+ZH-HK) · 9cba0cf
