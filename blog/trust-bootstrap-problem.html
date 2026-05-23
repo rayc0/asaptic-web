@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The trust bootstrap problem — Asaptic Labs</title>
+
+  <meta name="description" content="Every trust model assumes a trust root. For AI agents in consequential domains, the enrollment moment — when the agent receives its first credential — is where the entire subsequent accountability chain is either rooted or assumed." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/trust-bootstrap-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The trust bootstrap problem" />
+  <meta property="og:description" content="Before an agent can be trusted, someone must trust the first link in the chain. The architecture of that first link determines whether every subsequent claim is verifiable or merely asserted." />
+  <meta property="og:url" content="https://asaptic.com/blog/trust-bootstrap-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-23" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The trust bootstrap problem",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-23",
+    "description": "Every trust model assumes a trust root. For AI agents in consequential domains, the enrollment moment — when the agent receives its first credential — is where the entire subsequent accountability chain is either rooted or assumed.",
+    "url": "https://asaptic.com/blog/trust-bootstrap-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY × HARDWARE × HUMAN CARE</span>
+      <h1 class="essay-title">The trust bootstrap problem: before an agent can be trusted, someone must trust the first link</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-23</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Every security model assumes a trust root. A certificate chain terminates in a root CA that browsers trust because a human decision placed it there. A key exchange works because both parties share a pre-established secret or trust a common third party. These bootstraps are so routine that practitioners rarely examine them. But for AI agents deployed in consequential domains, the bootstrap problem resurfaces with new urgency: before an agent can be trusted, someone must trust the first link in the chain. And the architecture of that first link determines whether every subsequent claim about the agent is verifiable or merely asserted.</p>
+
+        <h2>The enrollment moment</h2>
+        <p>The moment an agent receives its first credential is the enrollment moment. It is the highest-risk point in the agent's lifecycle: no prior track record, no attestation of behavior, no history of decisions to examine. In conventional systems, enrollment is treated as an administrative step — a provisioning task that someone handles before the system goes live.</p>
+        <p>For AI agents, this framing is insufficient. The credential an agent receives at enrollment defines its initial scope of authority. If that credential is issued too broadly — because the provisioner erred toward convenience — the agent enters the world with standing access it cannot yet justify. If the enrollment channel itself is compromised, the agent's entire credential history is poisoned from the first moment.</p>
+        <p>At the post-quantum security crossing, the enrollment moment is where algorithm choices crystallize. An agent enrolled with classical cryptographic credentials into a system undergoing a quantum-resistant migration carries a brittle identity from day one. The enrollment credential is the starting node of a cryptographic lineage: if the starting node uses a deprecated algorithm, remediation is not a patch — it is re-enrollment. Getting the enrollment credential right, with quantum-resistant primitives from the start, is the only way to avoid a brittle root. Every subsequent key rotation, every credential update, every audit log entry is only as strong as the first link permits.</p>
+
+        <h2>Hardware as the first trust anchor</h2>
+        <p>The enrollment problem is most cleanly resolved when the first trust relationship is rooted in hardware. A Trusted Platform Module or a hardware security module can attest at enrollment time that the agent is running on a specific, measurable software configuration. The attestation is signed by the hardware itself — not by a software process that could be compromised before the enrollment credential is even issued.</p>
+        <p>Hardware attestation at enrollment answers a question that process controls cannot: is this the agent the operator intended to deploy? A software attestation is a claim the agent makes about itself. A hardware attestation is a claim the platform makes about what the platform is running. For an agent with no prior history, the hardware attestation is the only form of identity claim that does not depend on prior trust in the agent itself.</p>
+        <p>The implication is practical. For agents deployed in consequential domains — security infrastructure, health data systems, financial authorization pipelines — hardware attestation at enrollment is not an advanced option. It is the mechanism by which the entire subsequent trust relationship acquires a verifiable root. Without it, an operator's confidence in the deployed agent rests entirely on process controls they cannot audit after the fact. The question "how do I know this is the agent I approved?" has no satisfying answer if the enrollment was purely software-mediated.</p>
+        <p>There is also a composability argument. Agents increasingly operate in multi-agent pipelines, where one agent calls another and passes along derived authority. In such a pipeline, a trust root that cannot be verified at enrollment cannot be verified anywhere downstream. The bootstrap problem is not confined to the first agent in a chain — it propagates through every subsequent delegation. Hardware-rooted enrollment at the first node is what makes the downstream trust claims coherent rather than circular.</p>
+
+        <h2>Trust bootstrap in care settings</h2>
+        <p>In care settings, the trust bootstrap problem has a human dimension that hardware alone cannot resolve. When an agent is deployed to assist in care — scheduling, record access, environment management, medication prompting — the people affected by its decisions must have some grounded basis for believing that the agent is what the deployer claims it to be.</p>
+        <p>This is not purely a technical credential problem. It is a consent architecture problem. The care recipient, or their legal representative, must be informed of the agent's initial scope, its authorization chain, and the mechanism by which that scope is bounded. The bootstrap is not only a matter of issuing the right cryptographic credential — it is a matter of making the credential's meaning legible to non-technical participants in the care relationship.</p>
+        <p>An agent whose initial authority is opaque to the people it affects cannot satisfy care-domain informed consent requirements, regardless of how correctly the cryptography is done. The trust bootstrap in care is complete only when the technical enrollment and the human consent are aligned: the agent's actual scope at enrollment matches what was explained and accepted. Care-domain deployers who treat enrollment as a purely technical step leave the consent layer empty. That gap does not close on its own — and in regulated care environments, it is precisely the gap that audit procedures look for first.</p>
+
+        <h2>What this requires</h2>
+        <p>Trust must be rooted before it can be extended. The enrollment moment — when an agent receives its first credential in a new context — is the point at which the chain either begins verifiably or begins on assumption. Assumption compounds: a trust root that cannot be verified cannot be audited, and a trust root that cannot be audited cannot be repudiated when things go wrong.</p>
+        <p>Three requirements follow. First, enrollment credentials must use quantum-resistant primitives from the start — retrofitting the root is re-enrollment, not a patch. Second, for agents in consequential domains, the enrollment must include hardware attestation of the running configuration, so that the identity claim is not self-asserted. Third, in care settings, the technical enrollment and the human consent process must be designed together, not sequentially — the agent's scope must be legible to the people it affects, not only to the operators who deployed it.</p>
+        <p>For agents operating where mistakes are consequential, the trust bootstrap is not a deployment detail. It is the architectural decision on which every subsequent accountability claim depends.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>每个信任模型都假设一个信任根。智能体的注册时刻——它获得首个凭证的瞬间——是整个后续问责链要么有根可查、要么仅凭假设的节点。在后量子安全节点，注册凭证是密码学谱系的起点：若起点采用已废弃的算法，补救措施不是打补丁，而是重新注册。硬件证明（可信平台模块或硬件安全模块）在注册时提供的保证，是软件无法给出的答案——"这真的是运营方批准部署的那个智能体吗？"。在多智能体流水线中，无法在首个节点验证的信任根，在所有下游委托环节同样无法验证。在照护场景中，信任引导还有一个人的维度：技术注册与人的知情同意必须共同设计，而非依次进行，智能体的权限范围必须能让受其影响的人看懂，而不只是对部署它的运营方透明。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>每個信任模型都假設一個信任根。智能體的注冊時刻——它獲得首個憑證的瞬間——是整個後續問責鏈要麼有根可查、要麼僅憑假設的節點。在後量子安全節點，注冊憑證是密碼學譜系的起點：若起點採用已廢棄的演算法，補救措施不是打補丁，而是重新注冊。硬件證明（可信平台模組或硬件安全模組）在注冊時提供的保證，是軟件無法給出的答案——「這真的是營運方批准部署的那個智能體嗎？」。在多智能體流水線中，無法在首個節點驗證的信任根，在所有下游委托環節同樣無法驗證。在照護場景中，信任引導還有一個人的維度：技術注冊與人的知情同意必須共同設計，而非依次進行，智能體的權限範圍必須能讓受其影響的人看懂，而不只是對部署它的營運方透明。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/sandboxing-imperative.html">Also: The sandboxing imperative →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 × 硬件 × 人类照护</span>
+      <h1 class="essay-title">信任引导问题：在智能体被信任之前，必须有人先信任链条的第一环</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-23</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>每个安全模型都假设存在一个信任根。证书链终止于一个根CA，浏览器信任它，是因为某个人的决定将它安置在那里。密钥交换能够成立，是因为双方共享了预先建立的秘密，或共同信任某个第三方。这些引导过程如此惯常，以至于从业者鲜少审视它们。但对于部署在高后果领域的AI智能体，引导问题以新的紧迫性重新浮现：在智能体被信任之前，必须有人先信任链条的第一环。而那第一环的架构，决定了关于该智能体的所有后续主张究竟是可验证的，还是仅凭断言。</p>
+
+        <h2>注册时刻</h2>
+        <p>智能体获得首个凭证的那一刻，是注册时刻。这是智能体生命周期中风险最高的节点：没有既往记录，没有行为证明，没有可供审查的决策历史。在常规系统中，注册被视为一项行政步骤——一个有人在系统上线前处理的配置任务。</p>
+        <p>对于AI智能体，这种框架是不够的。智能体在注册时获得的凭证，定义了它初始的权限范围。如果该凭证因配置者偏向便利而颁发过宽，智能体便带着尚未被证明合理的常驻访问权限进入世界。如果注册渠道本身被攻陷，智能体整个凭证历史从第一刻起就已被污染。</p>
+        <p>在后量子安全节点，注册时刻是算法选择固化之处。一个以经典密码学凭证注册、进入正在进行抗量子迁移的系统的智能体，从第一天起就携带着脆弱的身份。注册凭证是密码学谱系的起点节点：若起点使用了已废弃的算法，补救措施不是打补丁，而是重新注册。从一开始就以抗量子原语正确完成注册，是避免脆弱根源的唯一方式。之后的每一次密钥轮换、每一次凭证更新、每一条审计日志条目，其强度都不超过第一环所允许的上限。</p>
+
+        <h2>硬件作为首个信任锚点</h2>
+        <p>当第一个信任关系根植于硬件时，注册问题得到了最为清晰的解决。可信平台模块或硬件安全模块，可以在注册时证明智能体正在特定的、可测量的软件配置上运行。这一证明由硬件本身签署——而非由可能在注册凭证颁发之前就已被攻陷的软件进程签署。</p>
+        <p>注册时的硬件证明，回答了流程控制无法回答的问题：这是运营方意图部署的那个智能体吗？软件证明是智能体关于自身的主张。硬件证明是平台关于其正在运行什么的主张。对于没有既往历史的智能体，硬件证明是唯一不依赖于对智能体本身的既有信任的身份主张形式。</p>
+        <p>其含义是实际的。对于部署在高后果领域的智能体——安全基础设施、健康数据系统、金融授权流水线——注册时的硬件证明不是高级选项，而是整个后续信任关系获得可验证根源的机制。没有它，运营方对已部署智能体的信心完全依赖于事后无法审计的流程控制。"我怎么知道这就是我批准的那个智能体？"这个问题，在注册完全由软件中介时，没有令人满意的答案。</p>
+        <p>还有一个可组合性论点。智能体越来越多地在多智能体流水线中运作，一个智能体调用另一个智能体并传递派生权限。在这样的流水线中，无法在注册时验证的信任根，在任何下游节点也无法验证。引导问题不局限于链条中的第一个智能体——它在每一次后续委托中传播。在首个节点进行硬件根源注册，是使下游信任主张连贯而非循环的前提。</p>
+
+        <h2>照护场景中的信任引导</h2>
+        <p>在照护场景中，信任引导问题有一个硬件单独无法解决的人的维度。当一个智能体被部署以协助照护——排班、病历访问、环境管理、用药提醒——受其决策影响的人，必须有某种有根据的理由相信该智能体就是部署方所声称的那样。</p>
+        <p>这不是纯粹的技术凭证问题，而是知情同意架构问题。护理对象或其法定代表人，必须被告知智能体的初始权限范围、其授权链，以及该范围被约束的机制。引导不仅是颁发正确密码学凭证的问题，还是使凭证含义对护理关系中的非技术参与者可理解的问题。</p>
+        <p>一个初始权限对受影响者不透明的智能体，无论密码学实现多么正确，都无法满足照护领域的知情同意要求。照护场景中的信任引导，只有在技术注册与人的知情同意对齐时才算完成：注册时智能体的实际权限范围，与被解释并被接受的范围一致。将注册视为纯技术步骤的照护领域部署方，留下了空白的同意层。这个缺口不会自行弥合——在受监管的照护环境中，这恰恰是审计程序首先寻找的缺口。</p>
+
+        <h2>这需要什么</h2>
+        <p>信任必须先被锚定，才能被延伸。注册时刻——智能体在新环境中获得首个凭证的节点——是链条要么可验证地开始，要么凭假设开始的地方。假设会复利累积：无法验证的信任根无法被审计，无法被审计的信任根在出错时无法被否认。</p>
+        <p>由此引出三项要求。第一，注册凭证必须从一开始就使用抗量子原语——对根源的改造是重新注册，不是补丁。第二，对于高后果领域的智能体，注册必须包含对运行配置的硬件证明，使身份主张不再是自我断言。第三，在照护场景中，技术注册与人的知情同意流程必须共同设计，而非依次进行——智能体的权限范围必须对受其影响的人可读，而不只是对部署它的运营方透明。</p>
+        <p>对于在高后果环境中运作的智能体，信任引导不是部署细节，而是所有后续问责主张赖以成立的架构决策。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 所有文章</a>
+        <a href="/blog/sandboxing-imperative.html">另见：沙箱强制令 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 × 硬件 × 人類照護</span>
+      <h1 class="essay-title">信任引導問題：在智能體被信任之前，必須有人先信任鏈條的第一環</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-23</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>每個安全模型都假設存在一個信任根。憑證鏈終止於一個根CA，瀏覽器信任它，是因為某個人的決定將它安置在那裡。金鑰交換能夠成立，是因為雙方共享了預先建立的秘密，或共同信任某個第三方。這些引導過程如此慣常，以至於從業者鮮少審視它們。但對於部署在高後果領域的AI智能體，引導問題以新的緊迫性重新浮現：在智能體被信任之前，必須有人先信任鏈條的第一環。而那第一環的架構，決定了關於該智能體的所有後續主張究竟是可驗證的，還是僅憑斷言。</p>
+
+        <h2>注冊時刻</h2>
+        <p>智能體獲得首個憑證的那一刻，是注冊時刻。這是智能體生命週期中風險最高的節點：沒有既往記錄，沒有行為證明，沒有可供審查的決策歷史。在常規系統中，注冊被視為一項行政步驟——一個有人在系統上線前處理的配置任務。</p>
+        <p>對於AI智能體，這種框架是不夠的。智能體在注冊時獲得的憑證，定義了它初始的權限範圍。如果該憑證因配置者偏向便利而頒發過寬，智能體便帶著尚未被證明合理的常駐訪問權限進入世界。如果注冊渠道本身被攻陷，智能體整個憑證歷史從第一刻起就已被污染。</p>
+        <p>在後量子安全節點，注冊時刻是演算法選擇固化之處。一個以經典密碼學憑證注冊、進入正在進行抗量子遷移的系統的智能體，從第一天起就攜帶著脆弱的身份。注冊憑證是密碼學譜系的起點節點：若起點使用了已廢棄的演算法，補救措施不是打補丁，而是重新注冊。從一開始就以抗量子原語正確完成注冊，是避免脆弱根源的唯一方式。之後的每一次金鑰輪換、每一次憑證更新、每一條審計日誌條目，其強度都不超過第一環所允許的上限。</p>
+
+        <h2>硬件作為首個信任錨點</h2>
+        <p>當第一個信任關係根植於硬件時，注冊問題得到了最為清晰的解決。可信平台模組或硬件安全模組，可以在注冊時證明智能體正在特定的、可測量的軟件配置上運行。這一證明由硬件本身簽署——而非由可能在注冊憑證頒發之前就已被攻陷的軟件進程簽署。</p>
+        <p>注冊時的硬件證明，回答了流程控制無法回答的問題：這是營運方意圖部署的那個智能體嗎？軟件證明是智能體關於自身的主張。硬件證明是平台關於其正在運行什麼的主張。對於沒有既往歷史的智能體，硬件證明是唯一不依賴於對智能體本身的既有信任的身份主張形式。</p>
+        <p>其含義是實際的。對於部署在高後果領域的智能體——安全基礎設施、健康數據系統、金融授權流水線——注冊時的硬件證明不是高級選項，而是整個後續信任關係獲得可驗證根源的機制。沒有它，營運方對已部署智能體的信心完全依賴於事後無法審計的流程控制。「我怎麼知道這就是我批准的那個智能體？」這個問題，在注冊完全由軟件中介時，沒有令人滿意的答案。</p>
+        <p>還有一個可組合性論點。智能體越來越多地在多智能體流水線中運作，一個智能體調用另一個智能體並傳遞派生權限。在這樣的流水線中，無法在注冊時驗證的信任根，在任何下游節點也無法驗證。引導問題不局限於鏈條中的第一個智能體——它在每一次後續委托中傳播。在首個節點進行硬件根源注冊，是使下游信任主張連貫而非循環的前提。</p>
+
+        <h2>照護場景中的信任引導</h2>
+        <p>在照護場景中，信任引導問題有一個硬件單獨無法解決的人的維度。當一個智能體被部署以協助照護——排班、病歷訪問、環境管理、用藥提醒——受其決策影響的人，必須有某種有根據的理由相信該智能體就是部署方所聲稱的那樣。</p>
+        <p>這不是純粹的技術憑證問題，而是知情同意架構問題。護理對象或其法定代理人，必須被告知智能體的初始權限範圍、其授權鏈，以及該範圍被約束的機制。引導不僅是頒發正確密碼學憑證的問題，還是使憑證含義對護理關係中的非技術參與者可理解的問題。</p>
+        <p>一個初始權限對受影響者不透明的智能體，無論密碼學實現多麼正確，都無法滿足照護領域的知情同意要求。照護場景中的信任引導，只有在技術注冊與人的知情同意對齊時才算完成：注冊時智能體的實際權限範圍，與被解釋並被接受的範圍一致。將注冊視為純技術步驟的照護領域部署方，留下了空白的同意層。這個缺口不會自行彌合——在受監管的照護環境中，這恰恰是審計程序首先尋找的缺口。</p>
+
+        <h2>這需要什麼</h2>
+        <p>信任必須先被錨定，才能被延伸。注冊時刻——智能體在新環境中獲得首個憑證的節點——是鏈條要麼可驗證地開始，要麼憑假設開始的地方。假設會複利累積：無法驗證的信任根無法被審計，無法被審計的信任根在出錯時無法被否認。</p>
+        <p>由此引出三項要求。第一，注冊憑證必須從一開始就使用抗量子原語——對根源的改造是重新注冊，不是補丁。第二，對於高後果領域的智能體，注冊必須包含對運行配置的硬件證明，使身份主張不再是自我斷言。第三，在照護場景中，技術注冊與人的知情同意流程必須共同設計，而非依次進行——智能體的權限範圍必須對受其影響的人可讀，而不只是對部署它的營運方透明。</p>
+        <p>對於在高後果環境中運作的智能體，信任引導不是部署細節，而是所有後續問責主張賴以成立的架構決策。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 所有文章</a>
+        <a href="/blog/sandboxing-imperative.html">另見：沙箱強制令 →</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="essay-footer">
+    <p>&copy; 2026 Asaptic Labs &nbsp;·&nbsp; <a href="/privacy.html" style="color:inherit;">Privacy</a></p>
+  </footer>
+
+  <script>
+    const btns = document.querySelectorAll('.lang-btn');
+    const sections = document.querySelectorAll('[data-lang-content]');
+    function setLang(lang) {
+      sections.forEach(s => {
+        s.classList.toggle('active', s.dataset.langContent === lang);
+      });
+      btns.forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+      localStorage.setItem('al-lang', lang);
+    }
+    const saved = localStorage.getItem('al-lang') || 'en';
+    setLang(saved);
+    btns.forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+  </script>
+</body>
+</html>
