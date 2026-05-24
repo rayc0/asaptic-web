@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The multi-tenancy isolation problem — Asaptic Labs</title>
+
+  <meta name="description" content="When one AI agent serves many principals simultaneously, the accountability properties we need for a single-principal deployment do not automatically hold. Isolation must be enforced across three layers: context, authority, and attestation." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/multi-tenancy-isolation-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The multi-tenancy isolation problem — when one agent serves many" />
+  <meta property="og:description" content="When one AI agent serves many principals simultaneously, the accountability properties we need for a single-principal deployment do not automatically hold." />
+  <meta property="og:url" content="https://asaptic.com/blog/multi-tenancy-isolation-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-24" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The multi-tenancy isolation problem — when one agent serves many",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-24",
+    "description": "When one AI agent serves many principals simultaneously, isolation must hold across context, authority, and attestation layers — or accountability breaks for every principal at once.",
+    "url": "https://asaptic.com/blog/multi-tenancy-isolation-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin: 48px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The multi-tenancy isolation problem: when one agent serves many principals</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">6 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Most accountability frameworks for AI agents are written with a single principal in mind. One user. One operator. One principal hierarchy, cleanly nested. This is not how deployed agents actually work.</p>
+        <p>A care agent serving twenty residents in a residential facility is simultaneously embedded in twenty consent relationships, twenty care plans, twenty families' expectations, and twenty clinical histories. A financial operations agent managing invoices across a portfolio company serves dozens of accounts under a single runtime. An enterprise workflow agent processes requests from hundreds of employees, each with different seniority, clearance level, and appropriate action space. In practice, the default operating mode for any agent at scale is multi-tenancy: one inference engine, one model, one deployment, many principals.</p>
+        <p>The isolation problem is this: the accountability properties we need for a single-principal deployment do not automatically hold when the same agent instance processes requests across multiple principals. The failure modes are subtle, hard to detect, and severe.</p>
+
+        <h2>The three layers that must hold</h2>
+        <p>Isolation in multi-tenant agent deployments must hold across three layers, and most current architectures enforce only one.</p>
+        <p>The first is <em>context isolation</em>. An agent's in-context window, tool call history, and retrieved memories must be strictly scoped to the current principal. A care agent that retrieved one resident's swallowing assessment in the previous turn must not carry forward any detail of that assessment when it transitions to a request about the next resident. This sounds obvious. It is also routinely violated. Shared retrieval stores, caching layers that span principal boundaries, and long-horizon memory buffers all create surfaces for context bleed. Even where no malice exists, a care instruction calibrated for one resident — "always prompt before meals, resident tends to refuse initial offers" — can invisibly colour the agent's responses for the next resident, who has entirely different care needs.</p>
+        <p>The second is <em>authority isolation</em>. The permissions granted by one principal must not carry forward or aggregate across principal boundaries. If one guardian has granted the agent authority to send a non-urgent alert to clinical staff, that grant does not extend to any other resident's data or alert context. This seems self-evident, but multi-tenant permission architectures are hard to build correctly. Static role-based access control, which grants permission to the agent role rather than to the principal-scoped session, systematically violates it. The correct architecture attaches permissions to a principal-scoped credential, not to the agent instance. The agent does not hold authority; the session does.</p>
+        <p>The third is <em>attestation isolation</em>. In a hardware-attested deployment, the attestation report covers the agent binary and the execution environment. It does not automatically cover which principal's data is being processed at the moment of the attested operation. For a signed receipt to be meaningful in a multi-tenant deployment, it must bind the operation not just to the agent identity and the action taken, but to the specific principal whose authority and data were in scope at the time. Without that binding, the receipt proves the agent ran in a trusted environment — it does not prove it ran on behalf of the right principal with the right data.</p>
+
+        <h2>How the failure modes present</h2>
+        <p>Context bleed rarely presents as a catastrophic disclosure. It presents as subtle miscalibration: an agent that is slightly more deferential to refusal after a sequence of assertive overrides from a different principal. An agent whose risk threshold for an escalation alert has drifted because the last ten cases it processed were all high-acuity. An agent whose language register has shifted toward one community's idiom after processing a long session with that community, then addresses a different population inappropriately. These failures pass most test suites because the output is plausible. They only become visible when the output is wrong for this person, at this moment — and by then, the consequence may already have occurred.</p>
+        <p>Authority bleed tends to present as capability creep. An agent that was granted elevated access for one principal's urgent operation still carries the elevated session credential when processing the next request, because the session was never correctly terminated and scoped. In a care setting, this can mean an agent acts on data it was never authorized to read, because the access window from the previous interaction was not closed.</p>
+        <p>Attestation bleed is the most dangerous at scale. A signed receipt that does not encode principal identity becomes a bulk attestation: it asserts the agent ran correctly in aggregate, but cannot answer the question any regulator will eventually ask — did this specific action, affecting this specific person, occur in a correctly bounded and authorized execution context?</p>
+
+        <h2>Why the care crossing is the hardest case</h2>
+        <p>Each of the three crossings raises the isolation stakes in a different dimension. The post-quantum crossing makes it a cryptographic requirement: lattice-based keys must be principal-specific to prevent a future adversary from recovering one tenant's key material from another's cryptographic footprint. Mixing key contexts across principals in a post-quantum deployment is not just a current privacy failure — it is a deferred cryptographic liability that grows more dangerous as quantum capabilities improve.</p>
+        <p>The hardware crossing makes isolation an attestation engineering problem. Secure enclaves that span multiple tenants must be architected to produce session-scoped attestation reports, not just device-level ones. The TPM attests what was running at boot; the deployment must extend that chain to attest what was running on behalf of whom, at the time of each consequential action.</p>
+        <p>But the physical-world care crossing makes multi-tenancy isolation a consent and safety requirement that has no technical workaround. A care agent is not just processing data — it is mediating physical care decisions. A context bleed that misattributes a mobility restriction from one resident to another does not produce a software bug. It produces a care error. In high-acuity environments, care errors have direct consequences for human welfare. The isolation requirement in care AI is not an engineering nicety. It is the foundational condition under which consent remains meaningful, care plans remain individuated, and the agent can be held accountable for any specific decision.</p>
+
+        <h2>What correct isolation architecture looks like</h2>
+        <p>Multi-tenant isolation for consequential agent deployments requires that each principal maps to a cryptographically scoped session credential, issued at the start of each interaction and expired at its conclusion. The agent's retrieval and memory systems gate on that credential, not on the agent instance. Authority grants are attached to the session credential, not the agent role. Every attested action receipt binds the principal's session identifier alongside the agent's identity and the action taken. Post-quantum key material is per-session and never shared across tenant boundaries.</p>
+        <p>The result is an agent whose accountability log is decomposable: every action can be traced to a specific principal, a specific consent grant, a specific moment in time, and a hardware-attested execution context. No context or authority carried from one tenant's session can contaminate another's. The agent serves many principals and is accountable to each of them individually — not as a statistical aggregate, but as a specific answer to a specific question about a specific action.</p>
+        <p>That is the bar. It is higher than most current multi-tenant deployments meet. In physical-world care, it is not negotiable.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>大多数AI智能体问责框架基于单一委托人设计，而实际部署中智能体几乎总在多租户环境下运行——一个实例同时服务多位委托人。多租户隔离必须在三个层面同时成立：上下文隔离（防止一位委托人的记忆与指令污染下一位）、权限隔离（授权绑定于会话凭证而非智能体角色），以及认证隔离（签名回执必须绑定具体委托人身份）。在护理场景中，这一要求尤为严苛——上下文泄漏不只是软件缺陷，而是直接的护理失误。合格的多租户架构为每位委托人颁发密码学范围的会话凭证，会话结束即销毁，后量子密钥材料绝不跨租户共享。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>大多數AI智能體問責框架基於單一委託人設計，而實際部署中智能體幾乎總在多租戶環境下運行——一個實例同時服務多位委託人。多租戶隔離必須在三個層面同時成立：上下文隔離（防止一位委託人的記憶與指令污染下一位）、權限隔離（授權綁定於會話憑證而非智能體角色），以及認證隔離（簽名回執必須綁定具體委託人身份）。在護理場景中，這一要求尤為嚴苛——上下文洩漏不只是軟件缺陷，而是直接的護理失誤。合格的多租戶架構為每位委託人頒發密碼學範圍的會話憑證，會話結束即銷毀，後量子密鑰材料絕不跨租戶共享。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/alignment-drift-problem.html">Latest: Alignment drift →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界护理</span>
+      <h1 class="essay-title">多租户隔离问题：一个智能体服务多位委托人时</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>大多数AI智能体的问责框架，都是以单一委托人为前提设计的。一个用户，一个运营方，一个层级清晰的委托链。但这并非智能体实际部署的方式。</p>
+        <p>一个服务于二十位住客的护理智能体，同时嵌入了二十段知情同意关系、二十份护理计划、二十个家庭的期望与二十份临床病史。在规模化部署中，智能体的默认运行模式就是多租户：一个推理引擎、一个模型、一次部署，服务于多位委托人。</p>
+        <p>隔离问题的核心在于：当同一个智能体实例跨越多位委托人处理请求时，单一委托人部署所需的问责属性，并不会自动成立。其失效模式隐蔽、难以发现，且后果严重。</p>
+        <p><strong>三个必须成立的隔离层面</strong></p>
+        <p>多租户智能体部署的隔离必须在三个层面同时成立，而当前大多数架构仅强制执行其中一个。</p>
+        <p>第一是上下文隔离。智能体的上下文窗口、工具调用历史及检索记忆，必须严格限定于当前委托人。一个在上一轮检索了某位住客吞咽评估结果的护理智能体，在切换到下一位住客的请求时，绝不能携带前一位住客的任何信息。即便不存在恶意，针对一位住客校准的护理指令，也可能无形中影响智能体对下一位住客的判断——而两人的护理需求截然不同。</p>
+        <p>第二是权限隔离。一位委托人所授予的权限，不得延续至其他委托人的边界。正确的架构是将权限绑定于会话范围的凭证，而非绑定于智能体角色。智能体本身不持有权限；会话才持有权限。</p>
+        <p>第三是认证隔离。在硬件认证部署中，认证报告覆盖的是智能体二进制文件与执行环境，并不自动涵盖被处理的是哪位委托人的数据。有意义的签名回执，必须将操作绑定至具体委托人的会话标识符、智能体身份与所执行的动作，三者缺一不可。</p>
+        <p>在护理场景中，上下文泄漏不只是软件缺陷，而是直接的护理失误。护理差错在高危场景中会直接影响人的生命健康。护理AI的隔离要求，是知情同意保持有效、护理计划保持个体化、智能体为每一项具体决策承担责任的基础条件——而非工程上的细枝末节。</p>
+        <p>合格的多租户隔离架构，为每位委托人在每次交互开始时颁发密码学范围的会话凭证，会话结束即销毁。智能体的检索与记忆系统以该凭证为访问门控，而非以智能体实例为门控。每份认证动作回执均绑定委托人会话标识符。后量子密钥材料按会话生成，绝不跨租户共享。</p>
+        <p>这是应达到的标准。它高于当前大多数多租户部署所能满足的水平。在物理世界的护理场景中，这一标准没有商量余地。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/alignment-drift-problem.html">最新：对齐漂移问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界護理</span>
+      <h1 class="essay-title">多租戶隔離問題：一個智能體服務多位委託人時</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>大多數AI智能體的問責框架，都是以單一委託人為前提設計的。一個用戶，一個營運方，一個層級清晰的委託鏈。但這並非智能體實際部署的方式。</p>
+        <p>一個服務於二十位住客的護理智能體，同時嵌入了二十段知情同意關係、二十份護理計劃、二十個家庭的期望與二十份臨床病歷。在規模化部署中，智能體的預設運行模式就是多租戶：一個推理引擎、一個模型、一次部署，服務於多位委託人。</p>
+        <p>隔離問題的核心在於：當同一個智能體實例跨越多位委託人處理請求時，單一委託人部署所需的問責屬性，並不會自動成立。其失效模式隱蔽、難以發現，且後果嚴重。</p>
+        <p><strong>三個必須成立的隔離層面</strong></p>
+        <p>多租戶智能體部署的隔離必須在三個層面同時成立，而當前大多數架構僅強制執行其中一個。</p>
+        <p>第一是上下文隔離。智能體的上下文視窗、工具調用歷史及檢索記憶，必須嚴格限定於當前委託人。一個在上一輪檢索了某位住客吞嚥評估結果的護理智能體，在切換至下一位住客的請求時，絕不能攜帶前一位住客的任何資訊。即便不存在惡意，針對一位住客校準的護理指令，也可能無形中影響智能體對下一位住客的判斷——而兩人的護理需求截然不同。</p>
+        <p>第二是權限隔離。一位委託人所授予的權限，不得延續至其他委託人的邊界。正確的架構是將權限綁定於會話範圍的憑證，而非綁定於智能體角色。智能體本身不持有權限；會話才持有權限。</p>
+        <p>第三是認證隔離。在硬件認證部署中，認證報告覆蓋的是智能體二進制文件與執行環境，並不自動涵蓋被處理的是哪位委託人的數據。有意義的簽名回執，必須將操作綁定至具體委託人的會話識別符、智能體身份與所執行的動作，三者缺一不可。</p>
+        <p>在護理場景中，上下文洩漏不只是軟件缺陷，而是直接的護理失誤。護理差錯在高危場景中會直接影響人的生命健康。護理AI的隔離要求，是知情同意保持有效、護理計劃保持個體化、智能體為每一項具體決策承擔責任的基礎條件——而非工程上的細枝末節。</p>
+        <p>合格的多租戶隔離架構，為每位委託人在每次交互開始時頒發密碼學範圍的會話憑證，會話結束即銷毀。智能體的檢索與記憶系統以該憑證為訪問閘控，而非以智能體實例為閘控。每份認證動作回執均綁定委託人會話識別符。後量子密鑰材料按會話生成，絕不跨租戶共享。</p>
+        <p>這是應達到的標準。它高於當前大多數多租戶部署所能滿足的水平。在物理世界的護理場景中，這一標準沒有商量餘地。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/alignment-drift-problem.html">最新：對齊漂移問題 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
