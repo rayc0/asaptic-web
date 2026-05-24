@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The replay attack problem — Asaptic Labs</title>
+
+  <meta name="description" content="A valid credential presented to an AI agent does not prove it is being used for the first time, by the right party, in the right context. Replay resistance is not a protocol detail — it is an accountability prerequisite." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/replay-attack-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The replay attack problem: why AI agents cannot verify a credential is being used for the first time" />
+  <meta property="og:description" content="A valid credential presented to an AI agent does not prove it is being used for the first time, by the right party, in the right context. Replay resistance is not a protocol detail — it is an accountability prerequisite." />
+  <meta property="og:url" content="https://asaptic.com/blog/replay-attack-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-24" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The replay attack problem: why AI agents cannot verify a credential is being used for the first time",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-24",
+    "description": "A valid credential presented to an AI agent does not prove it is being used for the first time, by the right party, in the right context. Replay resistance is not a protocol detail — it is an accountability prerequisite.",
+    "url": "https://asaptic.com/blog/replay-attack-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      line-height: 1.8;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 48px 0 18px;
+      color: var(--text);
+    }
+    .essay-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+    .essay-nav a { color: var(--accent); }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-footer a { color: var(--gray); margin: 0 8px; }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+      .essay-nav { flex-direction: column; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/crossings.html">Crossings</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY × HARDWARE × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The replay attack problem: why AI agents cannot verify a credential is being used for the first time</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>An AI agent that receives a valid credential has learned one thing: the credential was validly issued at some point in the past. It has not learned that the credential is being used now by the party it was issued to, in the context for which it was intended, for the first time. Validity and freshness are different properties. Most agent credential stacks conflate them.</p>
+
+        <p>A replay attack exploits this gap. An adversary captures a legitimate credential — an authorization token, a signed consent record, an attestation report, a session cookie — and presents it later, or in a different context, to obtain access the original credential was never meant to convey repeatedly or unconditionally. The signature checks out. The issuer is legitimate. The credential is simply old, or being used by the wrong party, or being used a second time after it should have expired. The agent cannot tell.</p>
+
+        <h2>Why AI agents are particularly vulnerable</h2>
+        <p>Traditional network protocols have accumulated decades of replay resistance engineering: TLS session tickets with short lifetimes, challenge-response nonces, OAuth token rotation, TOTP windows. These protections work because the protocol layer enforces them before the application layer ever sees the credential.</p>
+
+        <p>AI agents introduce a new attack surface. They consume credentials not only from network protocols but from documents, emails, memory stores, API responses, and tool outputs. When an agent retrieves a file that says "Patient has consented to procedure X," or a tool returns an authorization record signed last Tuesday, the agent does not automatically ask whether that assertion is still current or whether the credential's original channel enforced replay resistance. It reads the content as data and incorporates it into its reasoning. Replay resistance, if it exists at all, must now be enforced at the agent's decision layer — not assumed from the transport.</p>
+
+        <h2>The post-quantum dimension</h2>
+        <p>The replay problem becomes acute as cryptographic transitions approach. Today's RSA and elliptic-curve signatures that protect credentials against forgery will become breakable by sufficiently capable quantum adversaries. An attacker harvesting signed credentials now can store them and later forge new credentials that are signature-valid but entirely fabricated, or replay old valid credentials whose context has long since expired.</p>
+
+        <p>Post-quantum cryptographic algorithms — the lattice-based and hash-based signature schemes now being standardized — address forgery resistance. They do not automatically address replay. A PQ-signed credential presented to an agent is still just a credential with a valid signature. Unless the signature scheme binds the credential to a freshness nonce, a specific session, and a specific intended use, a quantum-era adversary can replay an old valid credential just as easily as a classical adversary can today.</p>
+
+        <p>The architectural response is to include a challenge-response nonce in every credential exchange: the relying agent issues a nonce; the credential is only valid if it is signed over that nonce. This binds the credential to the specific transaction and makes replay useless. PQ signature schemes must be deployed with this binding enforced, not treated as optional.</p>
+
+        <h2>The hardware attestation dimension</h2>
+        <p>Hardware attestation is one of the trust anchors that agentic systems depend on most. An attestation report from a secure enclave certifies that a specific software configuration is running on a specific device. These reports are themselves signed — which means they are also potentially replayable.</p>
+
+        <p>An adversary who captures a legitimate attestation report can present it as if it were a live attestation from the current moment. If the relying agent accepts the report without a freshness binding — a nonce it issued, or a timestamp within a narrow validity window, or both — it accepts the claim that the software is running in the trusted configuration at this moment when in fact it is accepting a report from a previous moment, on a device that may no longer exist or may no longer be uncompromised.</p>
+
+        <p>Properly constructed attestation protocols issue a challenge nonce before requesting an attestation report, require the attestation to cover the nonce, and reject reports that do not. This is not exotic; it is the design pattern in the hardware security specifications. But it requires that the agent-side software that requests and validates attestations implements the challenge correctly — and that the implementation is not itself replayable.</p>
+
+        <h2>The physical-world care dimension</h2>
+        <p>In care AI deployments, the replay problem arrives in a form that is less obviously adversarial but equally dangerous: authorized-but-stale. A care AI agent may be presented with a consent record signed by a patient. The signature is valid. The patient did sign it. But they signed it before a change in their condition that would have led them to withdraw or modify their consent. The record is not forged. It is simply being used in a context its signer did not intend and for a clinical moment it does not represent.</p>
+
+        <p>Analogous cases: a medication authorization issued before a contraindicated drug was prescribed; an advance directive recorded before new preferences were expressed; a care plan signed before a deterioration in functional status. Each is a valid credential being replayed into a clinical context for which it was not current authorization. The harm is not from an external adversary — it is from the agent accepting a credential as timeless when it is temporally bounded.</p>
+
+        <p>The design implication is that care-relevant authorizations must carry expiry windows calibrated to the volatility of the underlying clinical state. Consent for a stable chronic condition might have a longer validity window than consent for an acute intervention. The agent must check both the signature and the expiry before acting — and must require re-authorization rather than accepting a cached assertion when the window has elapsed.</p>
+
+        <h2>The design response</h2>
+        <p>Replay resistance in agentic systems requires three things that are individually known but not consistently applied together. First, every authorization credential must carry a freshness component — a nonce, a tight expiry, or both — bound into the signature. Second, agents must issue challenges before accepting attestations, not trust cached attestation reports. Third, care-relevant authorizations must have expiry windows calibrated to clinical volatility, with mandatory re-authorization when windows lapse.</p>
+
+        <p>The underlying principle is that a valid credential is a claim about the past. An AI agent acting in the present needs a valid credential plus evidence that the past it describes is still the present. Replay resistance is the mechanism that makes that evidence hard to fake. Without it, the credential layer is a record of historical authorizations, not a live assertion of current permission — and agents acting on historical authorization are not accountable agents. They are agents that think they have permission they no longer do.</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/state-sync-problem.html">Also: The state synchronization problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照护</span>
+      <h1 class="essay-title">重放攻击问题：为何AI智能体无法验证凭证是否被首次使用</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>收到有效凭证的AI智能体只了解到一件事：该凭证在过去某个时间点被合法签发。它无从得知该凭证现在是否正由其签发对象使用、是否处于预期的使用场景中、是否属于首次使用。有效性与新鲜度是不同的属性，但大多数智能体凭证体系将二者混为一谈。</p>
+
+        <p>重放攻击正是利用了这一空白。攻击者捕获一个合法凭证——授权令牌、签名同意记录、认证报告或会话令牌——然后在稍后时刻或不同场景中重新提交，以获取原始凭证从未打算反复或无条件授予的访问权限。签名验证通过，签发方合法，凭证只是过期了，或正被错误方使用，或在应该失效后被二次使用。智能体无从辨别。</p>
+
+        <h2>为何AI智能体尤其脆弱</h2>
+        <p>传统网络协议经过数十年的抗重放工程积累：有效期极短的TLS会话令牌、挑战-响应随机数、OAuth令牌轮换、TOTP时间窗口。这些保护措施之所以有效，是因为协议层在应用层看到凭证之前就已完成强制执行。</p>
+
+        <p>AI智能体引入了新的攻击面。它们不仅从网络协议中消费凭证，还从文档、电子邮件、记忆存储、API响应和工具输出中获取凭证。当智能体检索到一个写有"患者已同意X手术"的文件，或工具返回上周二签名的授权记录时，智能体不会自动追问该断言是否仍然有效，或该凭证的原始传输通道是否执行了抗重放保护。它将内容作为数据读取并纳入推理。抗重放保护如果存在，现在必须在智能体的决策层强制执行，而不能依赖传输层的隐性保障。</p>
+
+        <h2>后量子维度</h2>
+        <p>随着密码学转型临近，重放问题愈加紧迫。当前保护凭证免遭伪造的RSA和椭圆曲线签名，将在能力足够强大的量子对手面前变得可破解。现在囤积签名凭证的攻击者，未来可以伪造签名有效但完全捏造的新凭证，或重放背景早已过期的旧有效凭证。</p>
+
+        <p>后量子密码算法——目前正在标准化的基于格和基于哈希的签名方案——解决的是抗伪造性，而非自动解决抗重放性。提交给智能体的后量子签名凭证依然只是带有有效签名的凭证。除非签名方案将凭证绑定到新鲜度随机数、特定会话和特定预期用途，量子时代的对手同样可以像当今的经典对手一样轻松重放旧的有效凭证。</p>
+
+        <p>架构应对方案是在每次凭证交换中引入挑战-响应随机数：依赖方智能体签发一个随机数；凭证仅在对该随机数进行签名后才有效。这将凭证绑定到特定交易，使重放失去意义。后量子签名方案必须在强制执行此绑定的前提下部署，而非将其视为可选项。</p>
+
+        <h2>硬件认证维度</h2>
+        <p>硬件认证是智能体系统最依赖的信任锚点之一。来自安全飞地的认证报告证明，特定软件配置正运行在特定设备上。这些报告本身经过签名，这意味着它们同样可能被重放。</p>
+
+        <p>捕获合法认证报告的攻击者可以将其作为当前时刻的实时认证提交。如果依赖方智能体接受该报告时未进行新鲜度绑定——即其签发的随机数、或窄有效期时间戳、或二者兼备——它实际上是在接受"软件此刻正以受信配置运行"的声明，而这一声明来自过去某个时刻，对应的设备可能早已不存在或已被攻破。</p>
+
+        <p>正确构建的认证协议会在请求认证报告前签发一个挑战随机数，要求认证覆盖该随机数，并拒绝不包含随机数的报告。这并非罕见做法，而是硬件安全规范中的设计模式。但这要求请求和验证认证的智能体端软件正确实现挑战——且实现本身不可重放。</p>
+
+        <h2>物理世界照护维度</h2>
+        <p>在照护AI部署中，重放问题以一种不那么明显具有对抗性、却同样危险的形式出现：已授权但已过期。照护AI智能体可能收到一份由患者签名的同意书。签名有效，患者确实签署了该文件。但签署时间在患者状况发生变化之前，而这一变化本会促使其撤销或修改同意。该记录并非伪造，只是被用于签署者未预期的场景、代表着其不再适用的临床时刻。</p>
+
+        <p>类似情形包括：在开具有禁忌症药物之前签发的用药授权；在患者表达新意愿之前记录的预立医疗指示；在功能状态恶化之前签署的护理计划。每种情形都是有效凭证被重放到一个它并非有效当下授权的临床场景中。危害不来自外部对手，而来自智能体将一份有时间限制的凭证视为无时效性声明加以接受。</p>
+
+        <p>设计含义是：照护相关授权必须设定与基础临床状态波动性相匹配的有效期。稳定慢性病的同意书有效期可能长于急性干预的同意书。智能体在行动前必须同时验证签名和有效期——当有效期已过，必须要求重新授权，而非接受缓存断言。</p>
+
+        <h2>设计应对</h2>
+        <p>智能体系统的抗重放性需要三个各自已知但尚未一贯综合应用的要素。第一，每个授权凭证必须在签名中绑定新鲜度组件——随机数、严格有效期或二者兼备。第二，智能体在接受认证之前必须签发挑战，而不是信任缓存的认证报告。第三，照护相关授权必须设定与临床波动性相匹配的有效期，有效期届满时强制要求重新授权。</p>
+
+        <p>基本原则在于：有效凭证是关于过去的声明。在当下行动的AI智能体需要的是有效凭证加上它所描述的过去仍是当下现实的证明。抗重放性正是使这一证明难以伪造的机制。缺乏抗重放性，凭证层只是历史授权的记录，而非对当前许可的实时断言——基于历史授权行动的智能体不是可问责的智能体，而是自以为拥有实已失效权限的智能体。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/state-sync-problem.html">延伸阅读：状态同步问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照護</span>
+      <h1 class="essay-title">重放攻擊問題：為何AI智能體無法驗證憑證是否被首次使用</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>收到有效憑證的AI智能體只了解到一件事：該憑證在過去某個時間點被合法簽發。它無從得知該憑證現在是否正由其簽發對象使用、是否處於預期的使用場景中、是否屬於首次使用。有效性與新鮮度是不同的屬性，但大多數智能體憑證體系將二者混為一談。</p>
+
+        <p>重放攻擊正是利用了這一空白。攻擊者捕獲一個合法憑證——授權令牌、簽名同意記錄、認證報告或會話令牌——然後在稍後時刻或不同場景中重新提交，以獲取原始憑證從未打算反覆或無條件授予的存取權限。簽名驗證通過，簽發方合法，憑證只是過期了，或正被錯誤方使用，或在應該失效後被二次使用。智能體無從辨別。</p>
+
+        <h2>為何AI智能體尤其脆弱</h2>
+        <p>傳統網路協議經過數十年的抗重放工程積累：有效期極短的TLS會話令牌、挑戰-回應隨機數、OAuth令牌輪換、TOTP時間窗口。這些保護措施之所以有效，是因為協議層在應用層看到憑證之前就已完成強制執行。</p>
+
+        <p>AI智能體引入了新的攻擊面。它們不僅從網路協議中消費憑證，還從文件、電子郵件、記憶儲存、API回應和工具輸出中取得憑證。當智能體檢索到一個寫有「患者已同意X手術」的文件，或工具回傳上週二簽名的授權記錄時，智能體不會自動追問該斷言是否仍然有效，或該憑證的原始傳輸通道是否執行了抗重放保護。它將內容作為數據讀取並納入推理。抗重放保護如果存在，現在必須在智能體的決策層強制執行，而不能依賴傳輸層的隱性保障。</p>
+
+        <h2>後量子維度</h2>
+        <p>隨著密碼學轉型臨近，重放問題愈加緊迫。當前保護憑證免遭偽造的RSA和橢圓曲線簽名，將在能力足夠強大的量子對手面前變得可破解。現在囤積簽名憑證的攻擊者，未來可以偽造簽名有效但完全捏造的新憑證，或重放背景早已過期的舊有效憑證。</p>
+
+        <p>後量子密碼算法——目前正在標準化的基於格和基於哈希的簽名方案——解決的是抗偽造性，而非自動解決抗重放性。提交給智能體的後量子簽名憑證依然只是帶有有效簽名的憑證。除非簽名方案將憑證綁定到新鮮度隨機數、特定會話和特定預期用途，量子時代的對手同樣可以像當今的經典對手一樣輕鬆重放舊的有效憑證。</p>
+
+        <p>架構應對方案是在每次憑證交換中引入挑戰-回應隨機數：依賴方智能體簽發一個隨機數；憑證僅在對該隨機數進行簽名後才有效。這將憑證綁定到特定交易，使重放失去意義。後量子簽名方案必須在強制執行此綁定的前提下部署，而非將其視為可選項。</p>
+
+        <h2>硬件認證維度</h2>
+        <p>硬件認證是智能體系統最依賴的信任錨點之一。來自安全飛地的認證報告證明，特定軟件配置正運行在特定設備上。這些報告本身經過簽名，這意味著它們同樣可能被重放。</p>
+
+        <p>捕獲合法認證報告的攻擊者可以將其作為當前時刻的實時認證提交。如果依賴方智能體接受該報告時未進行新鮮度綁定——即其簽發的隨機數、或窄有效期時間戳、或二者兼備——它實際上是在接受「軟件此刻正以受信配置運行」的聲明，而這一聲明來自過去某個時刻，對應的設備可能早已不存在或已被攻破。</p>
+
+        <p>正確構建的認證協議會在請求認證報告前簽發一個挑戰隨機數，要求認證覆蓋該隨機數，並拒絕不包含隨機數的報告。這並非罕見做法，而是硬件安全規範中的設計模式。但這要求請求和驗證認證的智能體端軟件正確實現挑戰——且實現本身不可重放。</p>
+
+        <h2>物理世界照護維度</h2>
+        <p>在照護AI部署中，重放問題以一種不那麼明顯具有對抗性、卻同樣危險的形式出現：已授權但已過期。照護AI智能體可能收到一份由患者簽名的同意書。簽名有效，患者確實簽署了該文件。但簽署時間在患者狀況發生變化之前，而這一變化本會促使其撤銷或修改同意。該記錄並非偽造，只是被用於簽署者未預期的場景、代表著其不再適用的臨床時刻。</p>
+
+        <p>類似情形包括：在開具有禁忌症藥物之前簽發的用藥授權；在患者表達新意願之前記錄的預立醫療指示；在功能狀態惡化之前簽署的護理計劃。每種情形都是有效憑證被重放到一個它並非有效當下授權的臨床場景中。危害不來自外部對手，而來自智能體將一份有時間限制的憑證視為無時效性聲明加以接受。</p>
+
+        <p>設計含義是：照護相關授權必須設定與基礎臨床狀態波動性相匹配的有效期。穩定慢性病的同意書有效期可能長於急性干預的同意書。智能體在行動前必須同時驗證簽名和有效期——當有效期已過，必須要求重新授權，而非接受緩存斷言。</p>
+
+        <h2>設計應對</h2>
+        <p>智能體系統的抗重放性需要三個各自已知但尚未一貫綜合應用的要素。第一，每個授權憑證必須在簽名中綁定新鮮度組件——隨機數、嚴格有效期或二者兼備。第二，智能體在接受認證之前必須簽發挑戰，而不是信任緩存的認證報告。第三，照護相關授權必須設定與臨床波動性相匹配的有效期，有效期屆滿時強制要求重新授權。</p>
+
+        <p>基本原則在於：有效憑證是關於過去的聲明。在當下行動的AI智能體需要的是有效憑證加上它所描述的過去仍是當下現實的證明。抗重放性正是使這一證明難以偽造的機制。缺乏抗重放性，憑證層只是歷史授權的記錄，而非對當前許可的實時斷言——基於歷史授權行動的智能體不是可問責的智能體，而是自以為擁有實已失效權限的智能體。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/state-sync-problem.html">延伸閱讀：狀態同步問題 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
