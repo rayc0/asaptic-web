@@ -1,3 +1,4 @@
+2026-05-24 12:15 UTC · blog: add essay 'The data provenance problem — tracing data origin as an accountability prerequisite' (EN+ZH+ZH-HK) · 3aef2d0
 2026-05-24 08:15 UTC · blog: add essay 'The replay attack problem — why AI agents cannot verify a credential is being used for the first time' (EN+ZH+ZH-HK) · fb0bae4
 2026-05-24 00:15 UTC · blog: add essay 'The composition problem — why safety properties don't automatically stack in multi-agent pipelines' (EN+ZH+ZH-HK) · cc2de71
 2026-05-23 20:12 UTC · blog: add essay 'The permission accumulation problem — when individually appropriate grants become collectively dangerous' (EN+ZH+ZH-HK) · 20831c1
