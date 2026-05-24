@@ -1,3 +1,4 @@
+2026-05-24 00:15 UTC · blog: add essay 'The composition problem — why safety properties don't automatically stack in multi-agent pipelines' (EN+ZH+ZH-HK) · cc2de71
 2026-05-23 20:12 UTC · blog: add essay 'The permission accumulation problem — when individually appropriate grants become collectively dangerous' (EN+ZH+ZH-HK) · 20831c1
 2026-05-23 16:15 UTC · blog: add essay 'The non-repudiation problem — signing at decision time, surviving the quantum transition' (EN+ZH+ZH-HK) · 3ebb127
 2026-05-23 12:15 UTC · blog: add essay 'The forensic gap — why reconstructing AI agent reasoning after the fact is harder than it looks' (EN+ZH+ZH-HK) · dbed198
