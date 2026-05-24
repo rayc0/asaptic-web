@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The data provenance problem — Asaptic Labs</title>
+
+  <meta name="description" content="An AI agent that cannot trace the origin of the data it reasons on cannot make accountable decisions. Provenance is not a metadata nicety — it is an accountability prerequisite at the point where agent decisions become irreversible." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/data-provenance-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The data provenance problem: an AI agent that cannot trace its data cannot justify its decisions" />
+  <meta property="og:description" content="An AI agent that cannot trace the origin of the data it reasons on cannot make accountable decisions. Provenance is not a metadata nicety — it is an accountability prerequisite at the point where agent decisions become irreversible." />
+  <meta property="og:url" content="https://asaptic.com/blog/data-provenance-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-24" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The data provenance problem: an AI agent that cannot trace its data cannot justify its decisions",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-24",
+    "description": "An AI agent that cannot trace the origin of the data it reasons on cannot make accountable decisions. Provenance is not a metadata nicety — it is an accountability prerequisite at the point where agent decisions become irreversible.",
+    "url": "https://asaptic.com/blog/data-provenance-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      line-height: 1.8;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 48px 0 18px;
+      color: var(--text);
+    }
+    .essay-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+    .essay-nav a { color: var(--accent); }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-footer a { color: var(--gray); margin: 0 8px; }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+      .essay-nav { flex-direction: column; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/crossings.html">Crossings</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY × HARDWARE × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The data provenance problem: an AI agent that cannot trace its data cannot justify its decisions</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>When a judge asks a witness how they know what they claim to know, the answer is not optional. Origin matters in legal reasoning because it determines whether a claim can be trusted, challenged, or excluded. An AI agent that acts on data it cannot trace is in a structurally identical position to a witness who cannot name their source: their output may be correct, but it is not accountable. And in domains where agent decisions carry real consequence — clinical settings, secure hardware, post-quantum trust infrastructure — unaccountable is not acceptable.</p>
+
+        <p>Data provenance is the capacity to trace, for any piece of information that influenced a decision, where it came from, by what path it arrived, what transformations it underwent, and who or what vouched for its accuracy at each step. In traditional software, this problem is tractable because inputs are bounded and explicit: a function receives parameters, a query returns rows, an API returns a response. The origin of each datum is either known at call time or irrelevant because the code's logic is deterministic and auditable. AI agents break these assumptions in both directions.</p>
+
+        <h2>Why agents have a provenance problem traditional software does not</h2>
+        <p>An AI agent operating at scale does not receive clean, bounded inputs. It draws from tool calls, web retrievals, memory stores, documents, emails, outputs from other agents, and sensor readings — all of which arrive as natural language or structured data with no mandatory provenance annotation. The agent synthesizes these sources into a working model of the situation and derives decisions from that synthesis. At the moment of decision, the reasoning trace typically exists inside the agent's context window, not in a signed, externally verifiable record. The data's origin is implicit rather than proven.</p>
+
+        <p>Three failure modes follow from this. Contaminated provenance occurs when data enters the agent's reasoning from an unauthorized or adversarial source — an injected document, a manipulated tool response, a poisoned memory entry — and the agent has no mechanism to distinguish it from trusted input. Broken chain occurs when data passes through an intermediate — another agent, a summarization step, a cached retrieval — that does not preserve origin metadata, so the downstream agent cannot verify the original source even if it wants to. Unattested provenance occurs when origin is asserted in the data itself ("this reading comes from sensor unit 7") but the assertion is not cryptographically bound to anything that makes it hard to spoof.</p>
+
+        <h2>The post-quantum dimension</h2>
+        <p>Provenance chains are built on digital signatures: a sensor signs its reading, a database signs its export, an agent signs its output before passing it downstream. The security of these chains depends entirely on the signature schemes being hard to forge. As the cryptographic transition to post-quantum algorithms progresses, provenance records signed with classical algorithms become retrospectively vulnerable. An adversary who harvests current provenance signatures can, in a future with sufficient quantum capability, forge insertion of fabricated data into historical provenance chains — making it appear that a given decision was based on legitimate input when it was not.</p>
+
+        <p>The architectural response is to begin signing provenance records with post-quantum algorithms now, for data whose provenance will need to be verifiable beyond the quantum transition window. This is particularly acute for long-lived records — clinical histories, security audit logs, infrastructure attestation chains — where the provenance claim may need to hold up for decades. The cost of retrofitting a provenance chain whose signatures have been broken by quantum adversaries is higher than the cost of signing with hybrid classical-plus-quantum schemes from the start.</p>
+
+        <h2>The hardware attestation dimension</h2>
+        <p>Hardware attestation is the strongest provenance anchor available to agentic systems. A reading, decision, or credential whose provenance is rooted in a hardware-measured enclave inherits the attestation's guarantees: the data was produced by a specific software configuration running in a verified hardware environment at a specific time. This is not provenance by assertion — it is provenance by construction, where the hardware itself is party to the claim.</p>
+
+        <p>The implication for agent architecture is that inputs from hardware-attested sources should be treated as a higher trust tier than inputs from software-only sources, and this distinction should be carried through the provenance manifest. An agent that needs to make a high-consequence decision should, where possible, prefer attested inputs and degrade gracefully when they are unavailable — flagging the lower provenance confidence to the principal rather than silently proceeding as if all inputs were equivalent.</p>
+
+        <p>The corollary is that attestation chains must themselves be protected against insertion attacks. A provenance record claiming hardware attestation is only valuable if the attestation cannot be forged or replayed. The replay dimension here intersects directly with the freshness requirements discussed in the replay attack problem: a hardware attestation whose freshness binding has not been verified is a weaker provenance anchor than it appears.</p>
+
+        <h2>The physical-world care dimension</h2>
+        <p>In care AI deployments, data provenance carries regulatory and clinical weight that makes the abstract problem concrete. A decision about medication dosage, care plan modification, or discharge timing may be valid or invalid depending entirely on whether the data driving it came from an authoritative clinical source. A reading from the patient's primary record is not equivalent to a reading from an unverified third-party application. A care plan signed by the responsible clinician is not equivalent to a summary generated by a prior AI agent step. The distinction is not pedantic — it determines liability, clinical validity, and in some jurisdictions, legal enforceability.</p>
+
+        <p>Care AI systems therefore need a provenance manifest as part of every consequential decision record: a structured accounting of which data sources were used, what their claimed origin was, whether that origin was cryptographically verified, and what the provenance confidence level of the decision therefore is. This manifest is not primarily a technical artifact — it is the answer to the accountability question: "On what basis did the agent decide?" Without it, the audit trail records what was decided but not whether the decision was made on grounds that can be defended.</p>
+
+        <h2>The design response</h2>
+        <p>Provenance-aware agent architecture requires three things working together. First, agents must maintain a provenance manifest throughout their reasoning context — every input that influences a consequential decision must be tagged with its source, the verification status of that source, and the chain of custody since acquisition. Second, inputs with unverifiable provenance must be treated as lower-trust and handled accordingly: disclosed in the audit record, flagged to the principal, or excluded from high-consequence decisions unless explicitly approved. Third, the provenance manifest must itself be signed and tamper-evident, and the signatures must use algorithms that will survive the cryptographic transition.</p>
+
+        <p>The underlying principle is that an agent's justification for a decision is only as strong as the provenance of the data that decision rested on. Accountability is not just a question of what the agent did and whether it had authority — it is also a question of whether the agent's picture of the world was built from sources that can be verified. An agent that cannot answer the latter question is not accountable, whatever its authorization credentials say. Provenance is how an agent earns the right to act on the information it has been given.</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/replay-attack-problem.html">Also: The replay attack problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照护</span>
+      <h1 class="essay-title">数据溯源问题：无法追溯数据来源的AI智能体，无法为其决策提供正当依据</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>当法官询问证人如何得知其所声称之事时，回答不是可选项。来源在法律推理中至关重要，因为它决定了一项主张能否被信任、质疑或排除。一个基于无法追溯来源的数据行动的AI智能体，与无法说明信息来源的证人处于结构上完全相同的处境：其输出可能正确，但不具备可问责性。而在智能体决策带有真实后果的领域——临床环境、安全硬件、后量子信任基础设施——不可问责是不可接受的。</p>
+
+        <p>数据溯源是这样一种能力：对于影响某一决策的任何信息，能够追溯其来源、到达路径、经历的变换，以及在每个环节对其准确性进行背书的主体或实体。在传统软件中，这一问题尚属可控，因为输入是有界且显式的：函数接收参数，查询返回行，API返回响应。每条数据的来源要么在调用时已知，要么因代码逻辑是确定性且可审计的而无关紧要。AI智能体从两个方向打破了这些假设。</p>
+
+        <h2>为何智能体面临传统软件所没有的溯源问题</h2>
+        <p>大规模运行的AI智能体接收的并非整洁、有界的输入。它从工具调用、网络检索、记忆存储、文档、电子邮件、其他智能体的输出以及传感器读数中汲取信息——所有这些均以自然语言或结构化数据形式到达，且没有强制性的溯源标注。智能体将这些来源综合为对当前情境的工作模型，并从该综合中推导出决策。在决策时刻，推理轨迹通常存在于智能体的上下文窗口内，而非以签名的、外部可验证的记录形式存在。数据来源是隐式推断的，而非经过证明的。</p>
+
+        <p>由此产生三种失效模式。污染溯源发生于数据从未经授权或对抗性来源进入智能体推理——注入的文档、被篡改的工具响应、被污染的记忆条目——而智能体缺乏将其与可信输入区分的机制。链条断裂发生于数据经过中间环节传递——另一个智能体、摘要步骤、缓存检索——该环节未保留来源元数据，导致下游智能体即便有意也无法核实原始来源。未经认证的溯源发生于来源仅在数据中自我声明（"此读数来自传感器单元7"），但该声明未加密绑定到任何使其难以伪造的依据。</p>
+
+        <h2>后量子维度</h2>
+        <p>溯源链建立在数字签名之上：传感器对读数签名，数据库对导出签名，智能体在向下游传递前对输出签名。这些链条的安全性完全取决于签名方案在计算上的抗伪造性。随着向后量子算法的密码学转型推进，以经典算法签名的溯源记录在回溯上变得脆弱。具备足够量子能力的攻击者可以伪造将捏造数据插入历史溯源链的痕迹——使某一决策看似基于合法输入，而实际并非如此。</p>
+
+        <p>架构应对方案是：对于溯源声明需要在量子转型窗口之后仍可验证的数据，即刻开始使用后量子算法对溯源记录签名。这对长期留存的记录尤为关键——临床病历、安全审计日志、基础设施认证链——其溯源声明可能需要在数十年后仍然有效。相较于事后修复签名已被量子对手破解的溯源链，从一开始就采用经典与量子混合签名方案的成本要低得多。</p>
+
+        <h2>硬件认证维度</h2>
+        <p>硬件认证是智能体系统可用的最强溯源锚点。其溯源根植于硬件度量飞地的读数、决策或凭证，继承了认证的保证：数据由在特定时间、经验证的硬件环境中运行的特定软件配置产生。这不是声明式溯源——而是构造式溯源，硬件本身是该声明的当事方。</p>
+
+        <p>对智能体架构的含义是：来自硬件认证来源的输入应被视为比仅软件来源的输入更高的信任层级，且这一区分应贯穿溯源清单。需要做出高后果决策的智能体，应在可能的情况下优先选用经认证的输入，并在无法获取时优雅降级——向主体表明溯源置信度降低，而非默默继续，仿佛所有输入等价。</p>
+
+        <p>推论是认证链本身必须防范插入攻击。声称具有硬件认证的溯源记录只有在认证不可被伪造或重放时才有价值。此处的重放维度与重放攻击问题中讨论的新鲜度要求直接交叉：未经新鲜度绑定验证的硬件认证，是一个比表面上更弱的溯源锚点。</p>
+
+        <h2>物理世界照护维度</h2>
+        <p>在照护AI部署中，数据溯源承载着使抽象问题具体化的监管与临床分量。关于用药剂量、护理计划调整或出院时机的决策，是否有效，可能完全取决于驱动该决策的数据是否来自权威临床来源。来自患者主记录的读数与来自未经验证第三方应用的读数并不等价。由责任临床医生签署的护理计划与由先前AI智能体步骤生成的摘要并不等价。这一区别并非吹毛求疵——它决定了责任归属、临床有效性，以及在某些司法管辖区的法律可执行性。</p>
+
+        <p>因此，照护AI系统需要将溯源清单作为每个重要决策记录的一部分：对所使用的数据来源、其声称来源、该来源是否经加密验证，以及决策因此所具备的溯源置信度水平进行结构化说明。这份清单不主要是技术工件——它是对可问责性问题的回答："智能体基于何种依据做出决策？"缺乏它，审计轨迹仅记录了决策内容，而未记录该决策是否建立在可辩护的基础之上。</p>
+
+        <h2>设计应对</h2>
+        <p>溯源感知的智能体架构需要三个协同运作的要素。第一，智能体必须在其推理上下文中维护溯源清单——影响重要决策的每个输入必须标注其来源、该来源的验证状态，以及自获取以来的保管链。第二，溯源无法验证的输入必须被视为较低信任度并相应处理：在审计记录中披露、向主体标记，或在未获明确批准的情况下排除在高后果决策之外。第三，溯源清单本身必须经过签名且防篡改，且签名必须使用能够经受密码学转型的算法。</p>
+
+        <p>基本原则在于：智能体对某一决策的正当依据，仅与该决策所依赖数据的溯源同样可靠。可问责性不仅是智能体做了什么、是否具有权限的问题——也是智能体对世界的认知图景是否建立在可验证来源之上的问题。无法回答后一问题的智能体，无论其授权凭证如何，都不具备可问责性。溯源是智能体赢得基于所给予信息行动之权利的方式。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/replay-attack-problem.html">延伸阅读：重放攻击问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照護</span>
+      <h1 class="essay-title">數據溯源問題：無法追溯數據來源的AI智能體，無法為其決策提供正當依據</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>當法官詢問證人如何得知其所聲稱之事時，回答不是可選項。來源在法律推理中至關重要，因為它決定了一項主張能否被信任、質疑或排除。一個基於無法追溯來源的數據行動的AI智能體，與無法說明信息來源的證人處於結構上完全相同的處境：其輸出可能正確，但不具備可問責性。而在智能體決策帶有真實後果的領域——臨床環境、安全硬件、後量子信任基礎設施——不可問責是不可接受的。</p>
+
+        <p>數據溯源是這樣一種能力：對於影響某一決策的任何信息，能夠追溯其來源、到達路徑、經歷的變換，以及在每個環節對其準確性進行背書的主體或實體。在傳統軟件中，這一問題尚屬可控，因為輸入是有界且顯式的：函數接收參數，查詢返回行，API返回響應。每條數據的來源要麼在調用時已知，要麼因代碼邏輯是確定性且可審計的而無關緊要。AI智能體從兩個方向打破了這些假設。</p>
+
+        <h2>為何智能體面臨傳統軟件所沒有的溯源問題</h2>
+        <p>大規模運行的AI智能體接收的並非整潔、有界的輸入。它從工具調用、網絡檢索、記憶儲存、文件、電子郵件、其他智能體的輸出以及傳感器讀數中汲取信息——所有這些均以自然語言或結構化數據形式到達，且沒有強制性的溯源標注。智能體將這些來源綜合為對當前情境的工作模型，並從該綜合中推導出決策。在決策時刻，推理軌跡通常存在於智能體的上下文窗口內，而非以簽名的、外部可驗證的記錄形式存在。數據來源是隱式推斷的，而非經過證明的。</p>
+
+        <p>由此產生三種失效模式。污染溯源發生於數據從未經授權或對抗性來源進入智能體推理——注入的文件、被篡改的工具響應、被污染的記憶條目——而智能體缺乏將其與可信輸入區分的機制。鏈條斷裂發生於數據經過中間環節傳遞——另一個智能體、摘要步驟、緩存檢索——該環節未保留來源元數據，導致下游智能體即便有意也無法核實原始來源。未經認證的溯源發生於來源僅在數據中自我聲明（「此讀數來自傳感器單元7」），但該聲明未加密綁定到任何使其難以偽造的依據。</p>
+
+        <h2>後量子維度</h2>
+        <p>溯源鏈建立在數字簽名之上：傳感器對讀數簽名，數據庫對導出簽名，智能體在向下游傳遞前對輸出簽名。這些鏈條的安全性完全取決於簽名方案在計算上的抗偽造性。隨著向後量子算法的密碼學轉型推進，以經典算法簽名的溯源記錄在回溯上變得脆弱。具備足夠量子能力的攻擊者可以偽造將捏造數據插入歷史溯源鏈的痕跡——使某一決策看似基於合法輸入，而實際並非如此。</p>
+
+        <p>架構應對方案是：對於溯源聲明需要在量子轉型窗口之後仍可驗證的數據，即刻開始使用後量子算法對溯源記錄簽名。這對長期留存的記錄尤為關鍵——臨床病歷、安全審計日誌、基礎設施認證鏈——其溯源聲明可能需要在數十年後仍然有效。相較於事後修復簽名已被量子對手破解的溯源鏈，從一開始就採用經典與量子混合簽名方案的成本要低得多。</p>
+
+        <h2>硬件認證維度</h2>
+        <p>硬件認證是智能體系統可用的最強溯源錨點。其溯源根植於硬件度量飛地的讀數、決策或憑證，繼承了認證的保證：數據由在特定時間、經驗證的硬件環境中運行的特定軟件配置產生。這不是聲明式溯源——而是構造式溯源，硬件本身是該聲明的當事方。</p>
+
+        <p>對智能體架構的含義是：來自硬件認證來源的輸入應被視為比僅軟件來源的輸入更高的信任層級，且這一區分應貫穿溯源清單。需要做出高後果決策的智能體，應在可能的情況下優先選用經認證的輸入，並在無法獲取時優雅降級——向主體表明溯源置信度降低，而非默默繼續，彷彿所有輸入等價。</p>
+
+        <p>推論是認證鏈本身必須防範插入攻擊。聲稱具有硬件認證的溯源記錄只有在認證不可被偽造或重放時才有價值。此處的重放維度與重放攻擊問題中討論的新鮮度要求直接交叉：未經新鮮度綁定驗證的硬件認證，是一個比表面上更弱的溯源錨點。</p>
+
+        <h2>物理世界照護維度</h2>
+        <p>在照護AI部署中，數據溯源承載著使抽象問題具體化的監管與臨床分量。關於用藥劑量、護理計劃調整或出院時機的決策，是否有效，可能完全取決於驅動該決策的數據是否來自權威臨床來源。來自患者主記錄的讀數與來自未經驗證第三方應用的讀數並不等價。由責任臨床醫生簽署的護理計劃與由先前AI智能體步驟生成的摘要並不等價。這一區別並非吹毛求疵——它決定了責任歸屬、臨床有效性，以及在某些司法管轄區的法律可執行性。</p>
+
+        <p>因此，照護AI系統需要將溯源清單作為每個重要決策記錄的一部分：對所使用的數據來源、其聲稱來源、該來源是否經加密驗證，以及決策因此所具備的溯源置信度水平進行結構化說明。這份清單不主要是技術工件——它是對可問責性問題的回答：「智能體基於何種依據做出決策？」缺乏它，審計軌跡僅記錄了決策內容，而未記錄該決策是否建立在可辯護的基礎之上。</p>
+
+        <h2>設計應對</h2>
+        <p>溯源感知的智能體架構需要三個協同運作的要素。第一，智能體必須在其推理上下文中維護溯源清單——影響重要決策的每個輸入必須標注其來源、該來源的驗證狀態，以及自獲取以來的保管鏈。第二，溯源無法驗證的輸入必須被視為較低信任度並相應處理：在審計記錄中披露、向主體標記，或在未獲明確批准的情況下排除在高後果決策之外。第三，溯源清單本身必須經過簽名且防篡改，且簽名必須使用能夠經受密碼學轉型的算法。</p>
+
+        <p>基本原則在於：智能體對某一決策的正當依據，僅與該決策所依賴數據的溯源同樣可靠。可問責性不僅是智能體做了什麼、是否具有權限的問題——也是智能體對世界的認知圖景是否建立在可驗證來源之上的問題。無法回答後一問題的智能體，無論其授權憑證如何，都不具備可問責性。溯源是智能體贏得基於所給予信息行動之權利的方式。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/replay-attack-problem.html">延伸閱讀：重放攻擊問題 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
