@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The composition problem — Asaptic Labs</title>
+
+  <meta name="description" content="An AI agent that is individually safe, scoped, and attested does not become a safe composition when chained with other agents. Emergent authority, diffused accountability, and invisible side-effect chains are the three failure modes of composed AI pipelines." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/composition-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The composition problem: why safety properties don't automatically stack" />
+  <meta property="og:description" content="An AI agent that is individually safe, scoped, and attested does not become a safe composition when chained with other agents. Emergent authority, diffused accountability, and invisible side-effect chains are the three failure modes of composed AI pipelines." />
+  <meta property="og:url" content="https://asaptic.com/blog/composition-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-24" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The composition problem: why safety properties don't automatically stack",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-24",
+    "description": "An AI agent that is individually safe, scoped, and attested does not become a safe composition when chained with other agents. Emergent authority, diffused accountability, and invisible side-effect chains are the three failure modes of composed AI pipelines.",
+    "url": "https://asaptic.com/blog/composition-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY × HARDWARE × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The composition problem: why safety properties don't automatically stack</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>When engineers reason about the safety of a multi-agent pipeline, they typically reason about individual agents: this agent is scoped correctly, its credentials are short-lived, it has been attested. What they less often reason about is the pipeline itself as a distinct trust surface. The assumption is that well-governed components compose into a well-governed whole. That assumption is wrong.</p>
+
+        <p>Composition introduces failure modes that no individual agent exhibits. A chain of individually scoped agents can produce emergent authority that no single agent was granted. A pipeline of individually auditable steps can produce outcomes that no individual log entry describes. And when a composed pipeline causes harm, the accountability question — who is responsible for this outcome? — distributes across the components in a way that satisfies no one and resolves nothing. These three failure modes are not implementation bugs. They are structural properties of composition itself.</p>
+
+        <h2>Emergent authority</h2>
+        <p>Scope is assigned to agents, not to pipelines. An orchestrating agent that is permitted to read patient records delegates a sub-task to a second agent that is permitted to write to a messaging system. Neither agent has been granted the authority to send a patient message based on medical record content — but the composed pipeline can do exactly that. The authority to perform the composed action was never granted to anyone; it emerged from the intersection of two individually appropriate grants.</p>
+
+        <p>This is not a pathological configuration. It is what happens whenever two agents with complementary scopes are wired together without explicit reasoning about their intersection. The problem is that existing permission models are agent-centric. They answer the question "what is this agent allowed to do?" They do not answer the question "what is this pipeline allowed to produce?" Those are different questions, and only the second one governs the actual outcome.</p>
+
+        <h2>Invisible side-effect chains</h2>
+        <p>Each agent in a pipeline operates on its inputs and produces outputs. The outputs become inputs to the next agent. In a correctly isolated system, no individual agent can observe the downstream consequences of its output — it has done its task and moved on. But downstream consequences are where the pipeline's actual effects live. An agent that formats a clinical recommendation has no visibility into how a second agent will interpret that format, or how a third agent will act on the second agent's interpretation.</p>
+
+        <p>In hardware deployments, this chain structure means that locally benign outputs can become dangerous inputs. A sensor-reading agent whose output is within normal parameters may nonetheless produce values that a second agent — trained on a slightly different operational baseline — classifies as an actionable anomaly. The resulting actuator command is the product of two individually correct inferences that did not share a frame of reference. No individual log entry records the cross-agent interpretive gap that drove the outcome.</p>
+
+        <p>In care settings, the same dynamic applies to clinical reasoning chains. A triage agent's output, passed to a care-coordination agent, can produce a care pathway recommendation that neither agent individually would have produced, and that no clinician reviewed as a whole. The individual steps were appropriate; the composed output was not.</p>
+
+        <h2>Accountability diffusion</h2>
+        <p>When a composed pipeline produces a harmful outcome, the causal chain is real but distributed. The orchestrator invoked the sub-agent. The sub-agent acted on instructions from the orchestrator. The instructions were a reasonable interpretation of the task description. The task description was authorized by an operator. The harm was produced at the intersection of all of these steps, none of which was individually wrong.</p>
+
+        <p>Existing accountability frameworks are not designed for this structure. They assign responsibility to agents or to the operators who deploy them. They do not assign responsibility to the pipeline configuration itself — the composition decision that wired these agents together in this sequence with this information flow. Until composition is treated as a first-class authorization act, the accountability gap at the pipeline level will remain structural.</p>
+
+        <h2>The design response</h2>
+        <p>Closing the composition problem requires treating pipelines as distinct authorization surfaces. A composed pipeline should carry an explicit composition contract: a declaration of what inputs it accepts, what outputs it produces, what combined authority those outputs represent, and who authorized the composition. That contract should be signed at deployment time by the authority that assembled the pipeline — not by each component agent individually.</p>
+
+        <p>Hardware-rooted attestation helps here in a specific way. If each agent in a pipeline must present an attested identity, the composition can be traced: every step has a signed provenance record that establishes which agent produced which output. An end-to-end trace of a pipeline run then becomes a chain of signed records, not a collection of independent logs. Reconstructing what happened becomes possible not because any individual agent logged carefully, but because the composition protocol enforced traceability at every hand-off.</p>
+
+        <p>The insight is uncomfortable but important: safety is not compositional by default. Individual agents can be correctly scoped, attested, and governed, and their composition can nonetheless be unsafe. Treating composition as an authorization act — requiring explicit contracts, end-to-end tracing, and pipeline-level scope review — is the architectural step that closes the gap. It is also, in practice, the step that most multi-agent deployments have not yet taken.</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/permission-accumulation-problem.html">Also: The permission accumulation problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照护</span>
+      <h1 class="essay-title">组合问题：为何安全属性不会自动叠加</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>当工程师评估多智能体流水线的安全性时，他们通常着眼于单个智能体：这个智能体的权限范围是否正确、凭证是否短期有效、是否经过硬件证明。他们较少思考的，是流水线本身作为一个独立的信任界面。潜在的假设是：治理良好的组件能组合成治理良好的整体。这一假设是错误的。</p>
+
+        <p>组合引入了任何单个智能体都不会出现的失效模式。一条由单独限定范围的智能体组成的链路，可能产生没有任何单个智能体被授予的涌现权限。一条由单独可审计步骤组成的流水线，可能产生没有任何单条日志记录所能描述的结果。当组合流水线造成伤害时，"谁该对此结果负责"这一问责问题，会以一种无法令人满意、也无法真正解决的方式分散到各个组件中。这三种失效模式并非实现上的缺陷，而是组合本身的结构性属性。</p>
+
+        <h2>涌现权限</h2>
+        <p>权限范围被分配给智能体，而非流水线。一个被允许读取患者记录的协调智能体，将子任务委托给一个被允许向消息系统写入的第二智能体。没有任何一个智能体被授权根据医疗记录内容向患者发送消息——但组合后的流水线可以做到这一点。执行这一组合动作的权限从未被授予任何人，而是从两个单独合理的授权的交集中涌现出来。</p>
+
+        <p>这并非病态配置，而是当两个具有互补权限范围的智能体在未对其交集进行显式推理的情况下被串联时所发生的事情。问题在于，现有权限模型是以智能体为中心的。它们回答的是"这个智能体被允许做什么"，而非"这条流水线被允许产生什么"。这是两个不同的问题，而只有第二个问题才真正约束实际结果。</p>
+
+        <h2>不可见的副作用链</h2>
+        <p>流水线中的每个智能体处理其输入并产生输出，输出成为下一个智能体的输入。在正确隔离的系统中，没有单个智能体能够观察其输出的下游后果——它已完成任务并继续前进。但下游后果恰恰是流水线实际效果所在之处。一个格式化临床建议的智能体，对第二个智能体将如何解读该格式，或第三个智能体将如何依据第二个智能体的解读采取行动，没有任何可见性。</p>
+
+        <p>在硬件部署中，这种链式结构意味着局部无害的输出可能成为危险的输入。一个传感器读数智能体输出的数值在正常参数范围内，但第二个智能体——基于略有不同的运营基准训练——可能将其分类为需要处理的异常。由此产生的执行器指令，是两个单独正确但未共享参考框架的推理的产物。没有任何单条日志记录了驱动这一结果的跨智能体解读差距。</p>
+
+        <p>在照护场景中，同样的动态适用于临床推理链。分诊智能体的输出传递给照护协调智能体后，可能产生两个智能体单独均不会生成的照护路径建议，且没有任何临床医生对其整体进行过审查。每个单独步骤都是合适的，组合后的输出却并非如此。</p>
+
+        <h2>问责扩散</h2>
+        <p>当组合流水线产生有害结果时，因果链是真实存在的，却是分散的。协调智能体调用了子智能体；子智能体依据协调智能体的指令行动；指令是对任务描述的合理解释；任务描述经过运营方授权；伤害产生于所有这些步骤的交汇处，而每一个步骤单独来看都没有错误。</p>
+
+        <p>现有问责框架并非为这种结构而设计。它们将责任分配给智能体或部署它们的运营方，而不分配给流水线配置本身——即将这些智能体以这种顺序、这种信息流连接在一起的组合决策。在组合被视为一项需要明确授权的行为之前，流水线层面的问责缺口将持续存在于结构层面。</p>
+
+        <h2>设计应对</h2>
+        <p>解决组合问题，需要将流水线作为独立的授权界面来对待。组合流水线应携带明确的组合契约：声明其接受什么输入、产生什么输出、这些输出代表什么组合权限，以及谁授权了这一组合。该契约应在部署时由组装流水线的权威机构签名，而非由各组件智能体单独签名。</p>
+
+        <p>硬件根植的证明在这里以特定方式发挥作用。如果流水线中的每个智能体都必须提供经证明的身份，则组合可以被追溯：每个步骤都有签名的溯源记录，证明哪个智能体产生了哪个输出。流水线运行的端到端追踪因此成为一条签名记录链，而非一组独立日志。重建所发生的事情成为可能，不是因为任何单个智能体记录得足够仔细，而是因为组合协议在每次交接时强制执行了可追溯性。</p>
+
+        <p>这一洞察令人不安，但至关重要：安全性在默认情况下不具有组合性。单个智能体可以被正确限定范围、经过证明并受到治理，但它们的组合仍可能是不安全的。将组合视为一项授权行为——要求明确的契约、端到端的追踪和流水线级的范围审查——是弥合这一缺口的架构步骤。而在实践中，这也是大多数多智能体部署尚未采取的步骤。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/permission-accumulation-problem.html">延伸阅读：权限积累问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照護</span>
+      <h1 class="essay-title">組合問題：為何安全屬性不會自動疊加</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>當工程師評估多智能體流水線的安全性時，他們通常著眼於單個智能體：這個智能體的權限範圍是否正確、憑證是否短期有效、是否經過硬件證明。他們較少思考的，是流水線本身作為一個獨立的信任界面。潛在的假設是：治理良好的組件能組合成治理良好的整體。這一假設是錯誤的。</p>
+
+        <p>組合引入了任何單個智能體都不會出現的失效模式。一條由單獨限定範圍的智能體組成的鏈路，可能產生沒有任何單個智能體被授予的湧現權限。一條由單獨可審計步驟組成的流水線，可能產生沒有任何單條日誌記錄所能描述的結果。當組合流水線造成傷害時，「誰該對此結果負責」這一問責問題，會以一種無法令人滿意、也無法真正解決的方式分散到各個組件中。這三種失效模式並非實現上的缺陷，而是組合本身的結構性屬性。</p>
+
+        <h2>湧現權限</h2>
+        <p>權限範圍被分配給智能體，而非流水線。一個被允許讀取患者記錄的協調智能體，將子任務委託給一個被允許向消息系統寫入的第二智能體。沒有任何一個智能體被授權根據醫療記錄內容向患者發送消息——但組合後的流水線可以做到這一點。執行這一組合動作的權限從未被授予任何人，而是從兩個單獨合理的授權的交集中湧現出來。</p>
+
+        <p>這並非病態配置，而是當兩個具有互補權限範圍的智能體在未對其交集進行顯式推理的情況下被串聯時所發生的事情。問題在於，現有權限模型是以智能體為中心的。它們回答的是「這個智能體被允許做什麼」，而非「這條流水線被允許產生什麼」。這是兩個不同的問題，而只有第二個問題才真正約束實際結果。</p>
+
+        <h2>不可見的副作用鏈</h2>
+        <p>流水線中的每個智能體處理其輸入並產生輸出，輸出成為下一個智能體的輸入。在正確隔離的系統中，沒有單個智能體能夠觀察其輸出的下游後果——它已完成任務並繼續前進。但下游後果恰恰是流水線實際效果所在之處。一個格式化臨床建議的智能體，對第二個智能體將如何解讀該格式，或第三個智能體將如何依據第二個智能體的解讀採取行動，沒有任何可見性。</p>
+
+        <p>在硬件部署中，這種鏈式結構意味著局部無害的輸出可能成為危險的輸入。一個傳感器讀數智能體輸出的數值在正常參數範圍內，但第二個智能體——基於略有不同的營運基準訓練——可能將其分類為需要處理的異常。由此產生的執行器指令，是兩個單獨正確但未共享參考框架的推理的產物。沒有任何單條日誌記錄了驅動這一結果的跨智能體解讀差距。</p>
+
+        <p>在照護場景中，同樣的動態適用於臨床推理鏈。分診智能體的輸出傳遞給照護協調智能體後，可能產生兩個智能體單獨均不會生成的照護路徑建議，且沒有任何臨床醫生對其整體進行過審查。每個單獨步驟都是合適的，組合後的輸出卻並非如此。</p>
+
+        <h2>問責擴散</h2>
+        <p>當組合流水線產生有害結果時，因果鏈是真實存在的，卻是分散的。協調智能體調用了子智能體；子智能體依據協調智能體的指令行動；指令是對任務描述的合理解釋；任務描述經過營運方授權；傷害產生於所有這些步驟的交匯處，而每一個步驟單獨來看都沒有錯誤。</p>
+
+        <p>現有問責框架並非為這種結構而設計。它們將責任分配給智能體或部署它們的營運方，而不分配給流水線配置本身——即將這些智能體以這種順序、這種信息流連接在一起的組合決策。在組合被視為一項需要明確授權的行為之前，流水線層面的問責缺口將持續存在於結構層面。</p>
+
+        <h2>設計應對</h2>
+        <p>解決組合問題，需要將流水線作為獨立的授權界面來對待。組合流水線應攜帶明確的組合契約：聲明其接受什麼輸入、產生什麼輸出、這些輸出代表什麼組合權限，以及誰授權了這一組合。該契約應在部署時由組裝流水線的權威機構簽名，而非由各組件智能體單獨簽名。</p>
+
+        <p>硬件根植的證明在這裡以特定方式發揮作用。如果流水線中的每個智能體都必須提供經證明的身份，則組合可以被追溯：每個步驟都有簽名的溯源記錄，證明哪個智能體產生了哪個輸出。流水線運行的端到端追蹤因此成為一條簽名記錄鏈，而非一組獨立日誌。重建所發生的事情成為可能，不是因為任何單個智能體記錄得足夠仔細，而是因為組合協議在每次交接時強制執行了可追溯性。</p>
+
+        <p>這一洞察令人不安，但至關重要：安全性在默認情況下不具有組合性。單個智能體可以被正確限定範圍、經過證明並受到治理，但它們的組合仍可能是不安全的。將組合視為一項授權行為——要求明確的契約、端到端的追蹤和流水線級的範圍審查——是彌合這一缺口的架構步驟。而在實踐中，這也是大多數多智能體部署尚未採取的步驟。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/permission-accumulation-problem.html">延伸閱讀：權限積累問題 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
