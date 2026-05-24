@@ -28,3 +28,4 @@
 2026-05-21 12:15 UTC · blog: add essay 'The context poisoning problem — adversarial inputs in agentic systems' (EN+ZH+ZH-HK) · 8ea38ca
 2026-05-21 16:15 UTC · blog: add essay 'The rollback problem — irreversibility in AI agents' (EN+ZH+ZH-HK) · b5f08d3
 2026-05-23 08:13 UTC · blog: add essay 'The trust bootstrap problem — the enrollment moment roots every subsequent accountability claim' (EN+ZH+ZH-HK) · 1925bb0
+2026-05-24 04:10 UTC · blog: 'The state synchronization problem' essay · 4e96e74
