@@ -1,3 +1,4 @@
+2026-05-25 12:15 UTC · blog: add essay 'The multiplicity problem — accountability when one AI agent runs as many simultaneous instances' (EN+ZH+ZH-HK) · 486e1c3
 2026-05-25 08:15 UTC · blog: add essay 'The measurement problem — governance metrics for AI agents' (EN+ZH+ZH-HK) · bbbbe2f
 2026-05-25 04:15 UTC · blog: add essay 'The graceful degradation problem — what an AI agent owes you when it cannot deliver' (EN+ZH+ZH-HK) · 7caa053
 2026-05-24 20:15 UTC · blog: add essay 'The multi-tenancy isolation problem — when one agent serves many principals' (EN+ZH+ZH-HK) · 9613943
