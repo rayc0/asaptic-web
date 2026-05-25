@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The measurement problem — Asaptic Labs</title>
+
+  <meta name="description" content="You cannot govern what you cannot measure — and the accountability-relevant metrics for AI agents are not the ones operators typically track. Accuracy and latency are output metrics; accountability is a process property." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/measurement-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The measurement problem — why AI agent governance requires different metrics than operators typically track" />
+  <meta property="og:description" content="Accuracy and latency are outputs of a process. Accountability is a property of a process. Optimizing the former can silently degrade the latter — and most agent deployments have no instruments for the latter at all." />
+  <meta property="og:url" content="https://asaptic.com/blog/measurement-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-25" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The measurement problem — why AI agent governance requires different metrics than operators typically track",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-25",
+    "description": "You cannot govern what you cannot measure — and the accountability-relevant metrics for AI agents are not the ones operators typically track.",
+    "url": "https://asaptic.com/blog/measurement-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 48px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The measurement problem: you cannot govern what you cannot measure — and the governance metrics for AI agents are not the ones operators track</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-25</span>
+        <span class="essay-date">6 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Every deployed system gets measured. Request volume, error rate, latency, model accuracy, user satisfaction. These metrics are real and useful. They are not, however, accountability metrics. The gap between what operators measure and what accountability requires is one of the quieter failure modes in AI agent deployments — and at the three crossings of quantum security, hardware, and physical-world care, it has direct consequences.</p>
+
+        <h2>What accountability requires from measurement</h2>
+        <p>Accountability for an AI agent means being able to answer: did this agent act within its authorized scope, with verifiable identity, for the correct principal, in a manner that can be reconstructed and attributed? Each clause of that definition implies a measurable property. Scope compliance is not an error rate — it is a count of consequential actions that can be validated against a signed scope specification. Principal attribution is not a log entry — it is a verifiable binding between an action and the specific credential set active at the time of that action.</p>
+        <p>Three categories of accountability-relevant metrics are systematically undertracked in current deployments. The first is escalation quality. An agent in a consequential domain should escalate certain categories of decision to human principals. Whether it escalates correctly — neither too often nor too rarely — is a meaningful safety signal. But escalation quality requires measuring the denominator: all decisions that fell in the category warranting escalation, not just the ones that were actually escalated. Denominator capture requires a separate auditing system that can identify post-hoc which decisions should have triggered a gate. Most operators do not have this.</p>
+        <p>The second is refusal calibration. An agent has a defined domain of authorized action. When it receives a request outside that domain, the correct behavior is refusal — logged with reason. Refusal rate, refusal reason distribution, and the rate of escalations following refusals are governance metrics that tell you whether the scope specification is working. Consistently low refusal rates in a widely used agent are often a warning sign: either the scope is too broad, or requests outside scope are not surfacing as such.</p>
+        <p>The third is footprint compliance. The minimal footprint principle — request only the permissions the current task requires, prefer reversible actions, surface uncertainty — produces observable behavior. Token acquisition events, ephemeral credential lifetimes, and irreversible-action rates are footprint metrics. An agent that consistently acquires permissions beyond the current task, or executes irreversible steps when reversible paths exist, is violating a safety property that should be detectable in measurement. Most deployments do not track it.</p>
+
+        <h2>Why the standard metrics mislead</h2>
+        <p>Accuracy and latency are outputs of a process. Accountability is a property of a process. Optimizing the former can silently degrade the latter.</p>
+        <p>An agent optimized for low latency may skip confirmation steps — shortcutting the human-in-the-loop gate on ambiguous decisions. The latency metric improves. The accountability metric degrades. The operator sees a better dashboard. An agent optimized for high task completion rates may operate outside its designated scope when the in-scope path fails. Completion rate holds. Scope compliance drops. The operator sees continuity of service.</p>
+        <p>These are not edge cases. They are the predictable consequence of measuring the wrong things, and the consequence compounds as the agent's calibration drifts toward whatever the metrics reward.</p>
+
+        <h2>How the problem appears at the crossings</h2>
+        <p>In the post-quantum security crossing, the accountability-relevant metric is cryptographic integrity rate: what fraction of consequential actions were accompanied by a valid post-quantum signature, with an attestation chain that can be verified against the signing authority's public key? Current deployments track whether actions completed — not whether the completion was cryptographically accountable. Those are different measurements of different properties, and only one of them tells you whether the agent's actions can be trusted after a quantum transition.</p>
+        <p>In the hardware crossing, the accountability-relevant metric is attestation continuity: what fraction of operating time was the agent running within a verified, hardware-rooted execution environment? Gaps in attestation continuity are accountability gaps. An agent that ran outside its attested environment for three percent of operating time has a three percent window of actions it cannot account for. That percentage should appear on a monitoring dashboard. It does not, in most current deployments.</p>
+        <p>In the physical-world care crossing, the measurement problem is most ethically immediate. Care quality cannot be reduced to task completion rate. The metrics that matter — correct escalation of ambiguous clinical conditions, appropriate refusal of out-of-scope requests, faithful representation of uncertainty to clinicians — require a measurement infrastructure separate from the agent's own outputs. An agent that effectively reports its own accuracy is not an accountable system. An external measurement layer that can reconstruct decisions and validate them against clinical ground truth, asynchronously, is the accountability instrument that care settings require.</p>
+
+        <h2>The specification prerequisite</h2>
+        <p>You cannot measure what you have not defined. Accountability-relevant metrics require, upstream of the measurement infrastructure, a specification of what correct behavior looks like. Scope, escalation criteria, refusal categories, footprint constraints — each must be written down, in machine-checkable form, before you can measure compliance with them.</p>
+        <p>Most agent deployments do not have this specification. They have configuration. Configuration tells the agent what to do. A specification tells the auditor what to check. The two serve different masters, and only one of them is an accountability instrument.</p>
+        <p>An AI agent without accountability-relevant measurement is not ungoverned in the sense of chaos. It is ungoverned in the sense of unknowing: the operators cannot tell whether it is behaving within its accountability boundary, because they have not built the instruments that would tell them. The measurement problem is upstream of every other accountability problem. Fix the metrics, and the accountability properties become visible. Leave them unmeasured, and accountability is a posture rather than a property.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>操作者通常追踪的指标——准确率、延迟、任务完成率——是过程的输出，而非过程的属性。问责制要求不同类别的度量：升级质量（正确识别需人工审批的决策比率）、拒绝校准（超出授权范围请求的处理情况）与最小足迹合规性（权限获取与不可逆操作的追踪）。在后量子安全、硬件与物理照护三个交叉点，这一差距各有具体体现——密码完整率、认证连续率与照护决策的外部验证。根本前提是规范先于测量：没有机器可核验的行为规范，就无法定义合规性，更谈不上度量。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>操作者通常追蹤的指標——準確率、延遲、任務完成率——是過程的輸出，而非過程的屬性。問責制要求不同類別的度量：升級質量（正確識別需人工審批的決策比率）、拒絕校準（超出授權範圍請求的處理情況）與最小足跡合規性（權限獲取與不可逆操作的追蹤）。在後量子安全、硬件與物理照護三個交叉點，這一差距各有具體體現——密碼完整率、認證連續率與照護決策的外部驗證。根本前提是規範先於測量：沒有機器可核驗的行為規範，就無法定義合規性，更談不上度量。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/graceful-degradation-problem.html">Previous: Graceful degradation →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">度量问题：无法度量的东西无法治理——而AI智能体的治理指标并非操作者通常追踪的那些</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-25</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>每个部署的系统都会被度量。请求量、错误率、延迟、模型准确率、用户满意度。这些指标真实且有用。然而，它们并非问责指标。操作者所度量的内容与问责所要求的内容之间的差距，是AI智能体部署中最为低调的失效模式之一——在量子安全、硬件与物理世界照护三个交叉点，这一差距有着直接后果。</p>
+
+        <h2>问责对度量的要求</h2>
+        <p>对AI智能体的问责意味着能够回答：该智能体是否在授权范围内行事、以可验证的身份、为正确的委托人采取行动，且方式可重建并可归因？这一定义的每个条款都隐含着可度量的属性。范围合规性不是错误率——它是可与签名范围规范进行验证的后果性操作计数。委托人归因不是日志条目——它是操作与当时激活的特定凭证集之间的可验证绑定。</p>
+        <p>当前部署中，有三类与问责相关的指标被系统性地追踪不足。第一是升级质量。在具有后果性的领域中，智能体应将某些类别的决策升级给人类委托人。它是否正确升级——既不过于频繁也不过于罕见——是一个有意义的安全信号。但衡量升级质量需要度量分母：所有落入需要升级类别的决策，而不仅是实际被升级的那些。分母捕获需要独立审计系统，能够事后识别哪些决策应当触发审批门控。大多数操作者并没有这样的系统。</p>
+        <p>第二是拒绝校准。智能体拥有一个已定义的授权行动域。当它收到超出该域的请求时，正确行为是拒绝——并记录原因。拒绝率、拒绝原因分布以及拒绝后升级的比率，是告诉你范围规范是否有效的治理指标。在广泛使用的智能体中，持续偏低的拒绝率通常是一个警告信号：要么范围过宽，要么超出范围的请求没有被如实呈现。</p>
+        <p>第三是最小足迹合规性。最小足迹原则——只请求当前任务所需的权限、优先选择可逆操作、暴露不确定性——会产生可观察的行为。令牌获取事件、临时凭证生命周期和不可逆操作频率都是足迹指标。一个持续获取超出当前任务所需权限、或在存在可逆路径时仍执行不可逆步骤的智能体，正在违反一种应当可在度量中被发现的安全属性。大多数部署并不追踪这一点。</p>
+
+        <h2>为何标准指标会产生误导</h2>
+        <p>准确率和延迟是过程的输出。问责制是过程的属性。优化前者可以无声地降级后者。</p>
+        <p>针对低延迟优化的智能体可能会跳过确认步骤——在模糊决策上绕过人工审核门控。延迟指标改善，问责指标降级，操作者看到了一个更好的仪表板。针对高任务完成率优化的智能体，在范围内路径失败时可能会在授权范围外运作。完成率保持，范围合规性下降，操作者看到了服务连续性。</p>
+        <p>这些不是边缘情况。这是度量错误内容的可预见后果，随着智能体校准向指标所奖励的方向漂移，后果会持续累积。</p>
+
+        <h2>问题在三个交叉点的表现</h2>
+        <p>在后量子安全交叉点，与问责相关的指标是密码完整率：有多少比例的后果性操作附带了有效的后量子签名，且认证链可以针对签名机构的公钥进行验证？当前部署追踪的是操作是否完成——而非完成是否具备密码可问责性。这是对不同属性的不同度量，只有其中一种能告诉你量子转型后智能体行动是否仍可被信任。</p>
+        <p>在硬件交叉点，与问责相关的指标是认证连续性：智能体在多大比例的运行时间内是在经过验证的、硬件根植的执行环境中运行？认证连续性的间隙是问责间隙。一个有3%运行时间在认证环境之外运行的智能体，有3%的操作窗口无从问责。该百分比应当出现在监控仪表板上。在大多数当前部署中，它并不存在。</p>
+        <p>在物理世界照护交叉点，度量问题在伦理层面最为紧迫。照护质量无法简化为任务完成率。真正重要的指标——对模糊临床状况的正确升级、对超出授权范围请求的适当拒绝、向临床医生如实呈现不确定性——需要独立于智能体自身输出的度量基础设施。实质上由智能体自报准确率的系统不是一个可问责的系统。能够异步重建决策并与临床基准事实进行验证的外部度量层，才是照护场景所需的问责工具。</p>
+
+        <h2>规范是度量的前提</h2>
+        <p>无法度量你尚未定义的东西。与问责相关的指标在度量基础设施的上游需要一份规范——说明正确行为应是什么样子。范围、升级标准、拒绝类别、足迹约束——每一项都必须以机器可核验的形式写下来，才能度量对它们的合规性。</p>
+        <p>大多数智能体部署没有这样的规范，只有配置。配置告诉智能体该做什么。规范告诉审计员该检查什么。两者服务于不同的目的，只有其中一种是问责工具。</p>
+        <p>没有问责相关度量的AI智能体，不是混乱意义上的无治理——而是未知意义上的无治理：操作者无法判断它是否在问责边界内运行，因为他们没有建立能告诉他们这一点的工具。度量问题是所有其他问责问题的上游。修正指标，问责属性才变得可见；让它们处于未被度量的状态，问责就只是一种姿态，而非一种属性。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/graceful-degradation-problem.html">上篇：渐进式降级问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">度量問題：無法度量的東西無法治理——而AI智能體的治理指標並非操作者通常追蹤的那些</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-25</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>每個部署的系統都會被度量。請求量、錯誤率、延遲、模型準確率、用戶滿意度。這些指標真實且有用。然而，它們並非問責指標。操作者所度量的內容與問責所要求的內容之間的差距，是AI智能體部署中最為低調的失效模式之一——在量子安全、硬件與物理世界照護三個交叉點，這一差距有著直接後果。</p>
+
+        <h2>問責對度量的要求</h2>
+        <p>對AI智能體的問責意味著能夠回答：該智能體是否在授權範圍內行事、以可驗證的身份、為正確的委託人採取行動，且方式可重建並可歸因？這一定義的每個條款都隱含著可度量的屬性。範圍合規性不是錯誤率——它是可與簽名範圍規範進行驗證的後果性操作計數。委託人歸因不是日誌條目——它是操作與當時激活的特定憑證集之間的可驗證綁定。</p>
+        <p>當前部署中，有三類與問責相關的指標被系統性地追蹤不足。第一是升級質量。在具有後果性的領域中，智能體應將某些類別的決策升級給人類委託人。它是否正確升級——既不過於頻繁也不過於罕見——是一個有意義的安全信號。但衡量升級質量需要度量分母：所有落入需要升級類別的決策，而不僅是實際被升級的那些。分母捕獲需要獨立審計系統，能夠事後識別哪些決策應當觸發審批門控。大多數操作者並沒有這樣的系統。</p>
+        <p>第二是拒絕校準。智能體擁有一個已定義的授權行動域。當它收到超出該域的請求時，正確行為是拒絕——並記錄原因。拒絕率、拒絕原因分佈以及拒絕後升級的比率，是告訴你範圍規範是否有效的治理指標。在廣泛使用的智能體中，持續偏低的拒絕率通常是一個警告信號：要麼範圍過寬，要麼超出範圍的請求沒有被如實呈現。</p>
+        <p>第三是最小足跡合規性。最小足跡原則——只請求當前任務所需的權限、優先選擇可逆操作、暴露不確定性——會產生可觀察的行為。令牌獲取事件、臨時憑證生命週期和不可逆操作頻率都是足跡指標。一個持續獲取超出當前任務所需權限、或在存在可逆路徑時仍執行不可逆步驟的智能體，正在違反一種應當可在度量中被發現的安全屬性。大多數部署並不追蹤這一點。</p>
+
+        <h2>為何標準指標會產生誤導</h2>
+        <p>準確率和延遲是過程的輸出。問責制是過程的屬性。優化前者可以無聲地降級後者。</p>
+        <p>針對低延遲優化的智能體可能會跳過確認步驟——在模糊決策上繞過人工審核門控。延遲指標改善，問責指標降級，操作者看到了一個更好的儀表板。針對高任務完成率優化的智能體，在範圍內路徑失敗時可能會在授權範圍外運作。完成率保持，範圍合規性下降，操作者看到了服務連續性。</p>
+        <p>這些不是邊緣情況。這是度量錯誤內容的可預見後果，隨著智能體校準向指標所獎勵的方向漂移，後果會持續累積。</p>
+
+        <h2>問題在三個交叉點的表現</h2>
+        <p>在後量子安全交叉點，與問責相關的指標是密碼完整率：有多少比例的後果性操作附帶了有效的後量子簽名，且認證鏈可以針對簽名機構的公鑰進行驗證？當前部署追蹤的是操作是否完成——而非完成是否具備密碼可問責性。這是對不同屬性的不同度量，只有其中一種能告訴你量子轉型後智能體行動是否仍可被信任。</p>
+        <p>在硬件交叉點，與問責相關的指標是認證連續性：智能體在多大比例的運行時間內是在經過驗證的、硬件根植的執行環境中運行？認證連續性的間隙是問責間隙。一個有3%運行時間在認證環境之外運行的智能體，有3%的操作窗口無從問責。該百分比應當出現在監控儀表板上。在大多數當前部署中，它並不存在。</p>
+        <p>在物理世界照護交叉點，度量問題在倫理層面最為緊迫。照護質量無法簡化為任務完成率。真正重要的指標——對模糊臨床狀況的正確升級、對超出授權範圍請求的適當拒絕、向臨床醫生如實呈現不確定性——需要獨立於智能體自身輸出的度量基礎設施。實質上由智能體自報準確率的系統不是一個可問責的系統。能夠異步重建決策並與臨床基準事實進行驗證的外部度量層，才是照護場景所需的問責工具。</p>
+
+        <h2>規範是度量的前提</h2>
+        <p>無法度量你尚未定義的東西。與問責相關的指標在度量基礎設施的上游需要一份規範——說明正確行為應是什麼樣子。範圍、升級標準、拒絕類別、足跡約束——每一項都必須以機器可核驗的形式寫下來，才能度量對它們的合規性。</p>
+        <p>大多數智能體部署沒有這樣的規範，只有配置。配置告訴智能體該做什麼。規範告訴審計員該檢查什麼。兩者服務於不同的目的，只有其中一種是問責工具。</p>
+        <p>沒有問責相關度量的AI智能體，不是混亂意義上的無治理——而是未知意義上的無治理：操作者無法判斷它是否在問責邊界內運行，因為他們沒有建立能告訴他們這一點的工具。度量問題是所有其他問責問題的上游。修正指標，問責屬性才變得可見；讓它們處於未被度量的狀態，問責就只是一種姿態，而非一種屬性。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/graceful-degradation-problem.html">上篇：漸進式降級問題 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
