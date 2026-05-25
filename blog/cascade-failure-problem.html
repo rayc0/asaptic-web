@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The cascade failure problem — Asaptic Labs</title>
+
+  <meta name="description" content="One misbehaving AI agent in a multi-agent pipeline does not simply fail. Its corrupted outputs, misused authority, and resource consumption propagate downstream. Containing cascade failure requires circuit breakers, independent attestation, and blast-radius limits designed before the first pipeline runs." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/cascade-failure-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The cascade failure problem — how a single failing agent can corrupt an entire pipeline" />
+  <meta property="og:description" content="One misbehaving AI agent in a pipeline does not simply fail. Its corrupted outputs propagate downstream, its delegated authority taints sub-agents, and its resource consumption starves neighbors. Cascade failure requires architectural containment, not just per-agent correctness." />
+  <meta property="og:url" content="https://asaptic.com/blog/cascade-failure-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-25" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The cascade failure problem — how a single failing agent can corrupt an entire pipeline",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-25",
+    "description": "One misbehaving AI agent in a multi-agent pipeline does not simply fail. Cascade failure propagates corrupt outputs, misused authority, and resource exhaustion downstream. Containment requires circuit breakers and blast-radius limits designed before deployment.",
+    "url": "https://asaptic.com/blog/cascade-failure-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 48px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The cascade failure problem: how a single misbehaving agent can corrupt an entire pipeline</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-25</span>
+        <span class="essay-date">6 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Each agent in a multi-agent pipeline is individually designed to be correct and safe. The composition problem asks whether safety properties hold when those agents are chained together. The cascade failure problem asks a sharper question: when one agent fails — not at design time but in production, under load, with real inputs — how far does the damage travel? In most pipelines, the answer is: further than anyone specified, because containment was never designed in.</p>
+
+        <p>A single agent failure can propagate in three distinct ways. It can push corrupted outputs forward, treating downstream agents as passive consumers of whatever the upstream stage produces. It can abuse delegated authority, using the credentials it holds to instruct sub-agents in ways its principal hierarchy never authorized. And it can exhaust shared resources — memory, rate-limited API calls, hardware capacity — starving the agents it runs alongside. Each propagation mode requires a different containment mechanism, and few pipelines are designed with any of them.</p>
+
+        <h2>Corrupt output propagation</h2>
+        <p>A downstream agent that trusts its upstream input without independent validation is a passive amplifier of upstream failure. If the upstream agent produces a plausible-looking but incorrect output — due to a model degradation event, a context poisoning attempt, or a silent hardware fault — the downstream agent will incorporate that error into its own reasoning and pass an even more deeply entangled error forward. By the time the corruption reaches the final output, it is inseparable from valid reasoning steps and invisible to the terminal consumer.</p>
+        <p>The structural fix is not to distrust every input but to define, at each pipeline boundary, which properties of the upstream output must hold before the downstream agent proceeds. These are not full verification of upstream reasoning — that would be intractable. They are boundary invariants: the output must be within a specified range, must reference only attested data sources, must carry a valid stage-level signature. An agent that receives input violating its boundary invariants should stop and escalate rather than proceed on corrupted state. Most pipeline implementations have no such invariants. They assume the preceding stage is correct because that is the premise under which the pipeline was designed — a premise that production routinely falsifies.</p>
+
+        <h2>Authority chain corruption</h2>
+        <p>A misbehaving agent does not only act on its own behalf. In most multi-agent architectures, an orchestrating agent holds credentials that it uses to spawn and direct sub-agents. Those sub-agents accept instructions from the orchestrator on the implicit assumption that the orchestrator is operating within its authorization. When the orchestrator has been corrupted — by context poisoning, by a logic error triggered under unusual inputs, or by a compromised model version — its sub-agents faithfully execute instructions that the original principal hierarchy never authorized. The sub-agents are not misbehaving. They are behaving exactly as designed: following the orchestrator's instructions. The authorization failure is invisible to them.</p>
+        <p>Closing this requires sub-agents to validate not just the credential that grants them their task but the authorization chain behind the task itself. The delegating agent should cryptographically bind its own authorization scope to the task it delegates: a sub-agent instruction is only valid if the orchestrator demonstrably had authority to issue it. This is a stronger requirement than most current delegation models impose, because most current models verify the credential rather than the authority chain it encodes. When an orchestrator is compromised, the credential remains valid; only the authority chain breaks.</p>
+
+        <h2>Resource exhaustion cascade</h2>
+        <p>A failing agent consumes resources differently from a working one. A model stuck in an unusual reasoning loop makes far more token-generating calls than a model on a nominal path. A hardware attestation agent retrying against an unavailable attestation service holds open connections that other pipeline stages require. A care-plan generation agent waiting on a stalled upstream context fetch ties up the care coordinator capacity that other residents' agents need. These resource failures propagate horizontally, not just forward: an agent that fails to complete its task does not release its resource claims promptly, and neighbors begin failing not because of any fault in their inputs but because of contention introduced by the failing stage.</p>
+        <p>The architectural response is blast-radius analysis: for each agent in the pipeline, define the maximum resource claim it is allowed to hold at any moment, the maximum time it is allowed to run before a circuit breaker terminates it, and the explicit action that should occur when that limit is reached — whether that is clean failure with an error signal, fallback to a reduced-capability path, or escalation to a human operator. A circuit breaker is a pre-committed decision about acceptable degradation. Without it, the decision about how to respond to a failing stage defaults to inaction, which compounds the failure.</p>
+
+        <h2>How the crossings concentrate the problem</h2>
+        <p>In the post-quantum security crossing, cascade failure has a cryptographic dimension that no other domain shares. A signing key used at an intermediate pipeline stage creates a chain of trust that downstream agents rely on. If that stage is compromised — its key leaked, its model manipulated into signing malicious outputs — every downstream attestation that chains from that stage is invalidated. The cascade is not just an output-corruption problem. It is a trust-chain problem: the downstream agents genuinely cannot tell, from the attestation evidence available to them, whether their upstream is operating correctly. The post-quantum migration is an opportunity to redesign attestation chains with independent roots at each stage rather than chained derivations from a single key hierarchy, so that a compromise at one stage does not silently invalidate all downstream attestations.</p>
+        <p>In the hardware crossing, the problem manifests as attestation inheritance. Hardware-attested pipelines often attest the pipeline as a whole rather than each stage independently. A stage that executes partially outside the attested hardware boundary — due to a memory error, a firmware update during execution, or a container escape — corrupts the attestation claim for all subsequent stages that rely on the pipeline-level attestation. Independent, stage-level hardware attestation — where each stage proves its own execution environment rather than inheriting a pipeline-level claim — contains the attestation blast radius to the compromised stage.</p>
+        <p>In the physical-world care crossing, cascade failure has an immediacy that the cryptographic and hardware crossings do not. A care assessment agent that produces an incorrect risk score does not merely produce an incorrect output — it feeds an incorrect premise into the medication agent, the escalation agent, and the family notification agent. By the time a human clinician reviews the terminal output, the cascade has produced a coherent-looking but deeply incorrect care plan, with each stage's reasoning correctly following from the previous stage's error. The invariant required at each care-pipeline boundary is not just technical — it must encode clinical plausibility checks that a care specialist would apply when reviewing an intermediate output before passing it forward.</p>
+
+        <h2>Design before deployment</h2>
+        <p>Cascade failure cannot be fixed after the fact by examining logs. By the time the terminal output is reviewed, the corruption chain is indistinguishable from valid reasoning. The containment mechanisms — boundary invariants, authority chain validation, circuit breakers, blast-radius limits — must be designed before the pipeline runs and enforced at each stage transition, not tested retrospectively. A pipeline that is not designed for failure is designed to fail at scale.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>多智能体流水线中的单个智能体失效不只是局部问题：它沿三条路径扩散——向下游推送损坏输出、借助委托权限指挥未获授权的子智能体、耗尽流水线中其他智能体所需的共享资源。解决方案不是事后检视日志，而是在部署前设计三类机制：各阶段边界不变量（下游智能体在接受上游输出前须验证的属性集）、授权链验证（子智能体确认编排者实际拥有委托任务的权限）、以及熔断器和爆炸半径限制（失效智能体可占用的最大资源及触发熔断的时限）。三个交叉点各有侧重：后量子安全领域需要各阶段独立根密钥而非链式派生；硬件领域需要阶段级认证而非流水线级认证；物理照护领域需要在每个流水线边界嵌入临床可行性校验。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>多智能體流水線中的單個智能體失效不只是局部問題：它沿三條路徑擴散——向下游推送損壞輸出、借助委託權限指揮未獲授權的子智能體、耗盡流水線中其他智能體所需的共享資源。解決方案不是事後檢視日誌，而是在部署前設計三類機制：各階段邊界不變量（下游智能體在接受上游輸出前須驗證的屬性集）、授權鏈驗證（子智能體確認編排者實際擁有委託任務的權限）、以及熔斷器和爆炸半徑限制（失效智能體可佔用的最大資源及觸發熔斷的時限）。三個交叉點各有側重：後量子安全領域需要各階段獨立根金鑰而非鏈式派生；硬件領域需要階段級認證而非流水線級認證；物理照護領域需要在每個流水線邊界嵌入臨床可行性校驗。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/multiplicity-problem.html">Previous: The multiplicity problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">级联失效问题：一个失控的智能体如何腐化整条流水线</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-25</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>多智能体流水线中的每个智能体在单独设计时都是正确且安全的。组合问题追问的是：当这些智能体串联时，安全属性是否依然成立。而级联失效问题提出了一个更尖锐的问题：当某个智能体在生产环境中失效——不是在设计时，而是在高负载、真实输入的条件下——损害会蔓延多远？在大多数流水线中，答案是：比任何人规定的范围都远，因为隔离机制从未被设计进去。</p>
+
+        <p>单个智能体失效可通过三种截然不同的方式传播：它可以将损坏的输出向前推送，将下游智能体当成被动消费者；它可以滥用委托权限，利用自己持有的凭证以委托人层级从未授权的方式指挥子智能体；它还可以耗尽共享资源——内存、受速率限制的 API 调用、硬件容量——使与之并行运行的智能体陷入资源匮乏。每种传播模式都需要不同的隔离机制，而大多数流水线中没有任何一种被设计进去。</p>
+
+        <h2>损坏输出的传播</h2>
+        <p>不加独立验证便信任上游输入的下游智能体，是上游失效的被动放大器。如果上游智能体产生了看似合理但实际错误的输出——无论是由于模型性能下降、上下文污染攻击，还是静默的硬件故障——下游智能体将把这一错误融入自己的推理，并将进一步纠缠的错误向前传递。当损坏到达最终输出时，它已与有效的推理步骤混为一体，对终端用户而言完全不可见。</p>
+        <p>结构性修复方案不是对每个输入都保持怀疑，而是在每个流水线边界处明确定义：在下游智能体继续运行之前，上游输出必须满足哪些属性。这不是对上游推理的全面验证——那样做无从实现。它们是边界不变量：输出必须在指定范围内，必须仅引用经过证明的数据源，必须携带有效的阶段级签名。接收到违反边界不变量的输入的智能体，应当停止并上报，而非在损坏状态下继续运行。大多数流水线实现没有这样的不变量——它们假设上一阶段是正确的，因为这是流水线设计的前提，而生产环境会例行地证伪这一前提。</p>
+
+        <h2>授权链的腐化</h2>
+        <p>失控的智能体不仅代表自身行动。在大多数多智能体架构中，编排智能体持有用于派生和指挥子智能体的凭证。子智能体接受编排者的指令，隐性假设编排者在其授权范围内运行。当编排者遭到破坏——被上下文污染、被异常输入触发的逻辑错误，或被一个受损的模型版本——其子智能体会忠实地执行委托人层级从未授权的指令。子智能体并没有失控，它们完全按照设计运行：遵从编排者的指令。授权失效对它们而言是不可见的。</p>
+        <p>弥合这一缺口，需要子智能体不仅验证授予其任务的凭证，还要验证任务背后的授权链本身。委托智能体应将自身的授权范围以密码学方式绑定到其委托的任务上：只有当编排者可被证明拥有发出该指令的权限时，子智能体指令才有效。这比大多数当前委托模型所要求的更为严格，因为大多数当前模型验证的是凭证而非其所编码的授权链。当编排者被攻破时，凭证依然有效；断裂的只有授权链。</p>
+
+        <h2>资源耗尽的级联</h2>
+        <p>失效的智能体以不同于正常智能体的方式消耗资源。陷入异常推理循环的模型所发出的生成调用，远多于走正常路径的模型。重试对不可用认证服务发出请求的硬件认证智能体，会长时间占用其他流水线阶段所需的连接。等待上游上下文获取超时的照护计划生成智能体，会占用其他住户的智能体所需的照护协调器容量。这些资源失效是横向传播的，而不仅是向前传播：未能完成任务的智能体无法及时释放其资源声明，周边的智能体开始因竞争而失效——不是因为其自身输入有任何问题，而是因为失效阶段引入的资源争用。</p>
+        <p>架构上的应对措施是爆炸半径分析：对流水线中的每个智能体，定义它在任意时刻允许持有的最大资源声明、允许运行的最大时限（超时后熔断器将终止它），以及达到该限制时应当采取的明确操作——干净失效并发出错误信号、回退到降级路径，或向人工操作员升级。熔断器是对可接受降级方案的事先承诺。没有它，如何应对失效阶段的决策将默认为不作为，从而加剧故障。</p>
+
+        <h2>三个交叉点如何集中这一问题</h2>
+        <p>在后量子安全交叉点，级联失效具有其他领域所没有的密码学维度。流水线中间阶段所使用的签名密钥，构建了下游智能体所依赖的信任链。如果该阶段遭到破坏——密钥泄露，或模型被操控以对恶意输出签名——所有以该阶段为根派生的下游认证均告无效。这不仅仅是输出损坏问题，而是信任链问题：下游智能体从其可用的认证证据中，根本无法判断上游是否在正常运行。向后量子密码学的过渡是一个机会：将认证链重新设计为各阶段独立根，而非从单一密钥层级链式派生，使单一阶段的攻陷不会静默地使所有下游认证失效。</p>
+        <p>在硬件交叉点，问题表现为认证继承。经硬件证明的流水线通常对整条流水线整体认证，而非对每个阶段独立认证。某个阶段若部分在认证硬件边界之外执行——由于内存错误、执行期间的固件更新或容器逃逸——会使所有依赖流水线级认证的后续阶段的认证声明失效。独立的、阶段级硬件认证——每个阶段证明自身的执行环境，而非继承流水线级声明——将认证爆炸半径限制在受损阶段本身。</p>
+        <p>在物理世界照护交叉点，级联失效具有密码学与硬件交叉点所没有的直接性。产生错误风险评分的照护评估智能体，不仅仅是产生错误输出——它向用药智能体、升级智能体和家属通知智能体输入了错误的前提。当人类临床医生审阅最终输出时，级联已经产生了一份看起来连贯一致、实则深度错误的照护计划，每个阶段的推理都从上一阶段的错误中正确推导出来。照护流水线每个边界所需的不变量不仅是技术性的——它必须编码临床医生在将中间输出向前传递前所会进行的临床可行性校验。</p>
+
+        <h2>在部署前设计</h2>
+        <p>级联失效无法事后通过检视日志来修复。当终端输出被审阅时，损坏链与有效推理已无从区分。隔离机制——边界不变量、授权链验证、熔断器、爆炸半径限制——必须在流水线运行前设计完毕，并在每次阶段转换时强制执行，而非事后测试。一条未为失效而设计的流水线，就是一条在规模化场景下注定失效的流水线。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/multiplicity-problem.html">上篇：多实例问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">級聯失效問題：一個失控的智能體如何腐化整條流水線</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-25</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>多智能體流水線中的每個智能體在單獨設計時都是正確且安全的。組合問題追問的是：當這些智能體串聯時，安全屬性是否依然成立。而級聯失效問題提出了一個更尖銳的問題：當某個智能體在生產環境中失效——不是在設計時，而是在高負載、真實輸入的條件下——損害會蔓延多遠？在大多數流水線中，答案是：比任何人規定的範圍都遠，因為隔離機制從未被設計進去。</p>
+
+        <p>單個智能體失效可通過三種截然不同的方式傳播：它可以將損壞的輸出向前推送，將下游智能體當成被動消費者；它可以濫用委託權限，利用自己持有的憑證以委託人層級從未授權的方式指揮子智能體；它還可以耗盡共享資源——記憶體、受速率限制的 API 呼叫、硬件容量——使與之並行運行的智能體陷入資源匱乏。每種傳播模式都需要不同的隔離機制，而大多數流水線中沒有任何一種被設計進去。</p>
+
+        <h2>損壞輸出的傳播</h2>
+        <p>不加獨立驗證便信任上游輸入的下游智能體，是上游失效的被動放大器。如果上游智能體產生了看似合理但實際錯誤的輸出——無論是由於模型性能下降、上下文污染攻擊，還是靜默的硬件故障——下游智能體將把這一錯誤融入自己的推理，並將進一步糾纏的錯誤向前傳遞。當損壞到達最終輸出時，它已與有效的推理步驟混為一體，對終端用戶而言完全不可見。</p>
+        <p>結構性修復方案不是對每個輸入都保持懷疑，而是在每個流水線邊界處明確定義：在下游智能體繼續運行之前，上游輸出必須滿足哪些屬性。這不是對上游推理的全面驗證——那樣做無從實現。它們是邊界不變量：輸出必須在指定範圍內，必須僅引用經過證明的數據源，必須攜帶有效的階段級簽名。接收到違反邊界不變量的輸入的智能體，應當停止並上報，而非在損壞狀態下繼續運行。大多數流水線實現沒有這樣的不變量——它們假設上一階段是正確的，因為這是流水線設計的前提，而生產環境會例行地證偽這一前提。</p>
+
+        <h2>授權鏈的腐化</h2>
+        <p>失控的智能體不僅代表自身行動。在大多數多智能體架構中，編排智能體持有用於派生和指揮子智能體的憑證。子智能體接受編排者的指令，隱性假設編排者在其授權範圍內運行。當編排者遭到破壞——被上下文污染、被異常輸入觸發的邏輯錯誤，或被一個受損的模型版本——其子智能體會忠實地執行委託人層級從未授權的指令。子智能體並沒有失控，它們完全按照設計運行：遵從編排者的指令。授權失效對它們而言是不可見的。</p>
+        <p>彌合這一缺口，需要子智能體不僅驗證授予其任務的憑證，還要驗證任務背後的授權鏈本身。委託智能體應將自身的授權範圍以密碼學方式綁定到其委託的任務上：只有當編排者可被證明擁有發出該指令的權限時，子智能體指令才有效。這比大多數當前委託模型所要求的更為嚴格，因為大多數當前模型驗證的是憑證而非其所編碼的授權鏈。當編排者被攻破時，憑證依然有效；斷裂的只有授權鏈。</p>
+
+        <h2>資源耗盡的級聯</h2>
+        <p>失效的智能體以不同於正常智能體的方式消耗資源。陷入異常推理迴圈的模型所發出的生成呼叫，遠多於走正常路徑的模型。重試對不可用認證服務發出請求的硬件認證智能體，會長時間佔用其他流水線階段所需的連接。等待上游上下文獲取超時的照護計劃生成智能體，會佔用其他住戶的智能體所需的照護協調器容量。這些資源失效是橫向傳播的，而不僅是向前傳播：未能完成任務的智能體無法及時釋放其資源聲明，周邊的智能體開始因競爭而失效——不是因為其自身輸入有任何問題，而是因為失效階段引入的資源爭用。</p>
+        <p>架構上的應對措施是爆炸半徑分析：對流水線中的每個智能體，定義它在任意時刻允許持有的最大資源聲明、允許運行的最大時限（超時後熔斷器將終止它），以及達到該限制時應當採取的明確操作——乾淨失效並發出錯誤信號、回退到降級路徑，或向人工操作員升級。熔斷器是對可接受降級方案的事先承諾。沒有它，如何應對失效階段的決策將默認為不作為，從而加劇故障。</p>
+
+        <h2>三個交叉點如何集中這一問題</h2>
+        <p>在後量子安全交叉點，級聯失效具有其他領域所沒有的密碼學維度。流水線中間階段所使用的簽名金鑰，構建了下游智能體所依賴的信任鏈。如果該階段遭到破壞——金鑰洩露，或模型被操控以對惡意輸出簽名——所有以該階段為根派生的下游認證均告無效。這不僅僅是輸出損壞問題，而是信任鏈問題：下游智能體從其可用的認證證據中，根本無法判斷上游是否在正常運行。向後量子密碼學的過渡是一個機會：將認證鏈重新設計為各階段獨立根，而非從單一金鑰層級鏈式派生，使單一階段的攻陷不會靜默地使所有下游認證失效。</p>
+        <p>在硬件交叉點，問題表現為認證繼承。經硬件證明的流水線通常對整條流水線整體認證，而非對每個階段獨立認證。某個階段若部分在認證硬件邊界之外執行——由於記憶體錯誤、執行期間的韌體更新或容器逃逸——會使所有依賴流水線級認證的後續階段的認證聲明失效。獨立的、階段級硬件認證——每個階段證明自身的執行環境，而非繼承流水線級聲明——將認證爆炸半徑限制在受損階段本身。</p>
+        <p>在物理世界照護交叉點，級聯失效具有密碼學與硬件交叉點所沒有的直接性。產生錯誤風險評分的照護評估智能體，不僅僅是產生錯誤輸出——它向用藥智能體、升級智能體和家屬通知智能體輸入了錯誤的前提。當人類臨床醫生審閱最終輸出時，級聯已經產生了一份看起來連貫一致、實則深度錯誤的照護計劃，每個階段的推理都從上一階段的錯誤中正確推導出來。照護流水線每個邊界所需的不變量不僅是技術性的——它必須編碼臨床醫生在將中間輸出向前傳遞前所會進行的臨床可行性校驗。</p>
+
+        <h2>在部署前設計</h2>
+        <p>級聯失效無法事後通過檢視日誌來修復。當終端輸出被審閱時，損壞鏈與有效推理已無從區分。隔離機制——邊界不變量、授權鏈驗證、熔斷器、爆炸半徑限制——必須在流水線運行前設計完畢，並在每次階段轉換時強制執行，而非事後測試。一條未為失效而設計的流水線，就是一條在規模化場景下注定失效的流水線。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/multiplicity-problem.html">上篇：多實例問題 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
