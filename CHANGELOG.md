@@ -1,3 +1,4 @@
+2026-05-25 16:15 UTC · blog: add essay 'The cascade failure problem — how a single misbehaving agent can corrupt an entire pipeline' (EN+ZH+ZH-HK) · 8452e37
 2026-05-25 12:15 UTC · blog: add essay 'The multiplicity problem — accountability when one AI agent runs as many simultaneous instances' (EN+ZH+ZH-HK) · 486e1c3
 2026-05-25 08:15 UTC · blog: add essay 'The measurement problem — governance metrics for AI agents' (EN+ZH+ZH-HK) · bbbbe2f
 2026-05-25 04:15 UTC · blog: add essay 'The graceful degradation problem — what an AI agent owes you when it cannot deliver' (EN+ZH+ZH-HK) · 7caa053
