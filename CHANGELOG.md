@@ -1,3 +1,4 @@
+2026-05-25 04:15 UTC · blog: add essay 'The graceful degradation problem — what an AI agent owes you when it cannot deliver' (EN+ZH+ZH-HK) · 7caa053
 2026-05-24 20:15 UTC · blog: add essay 'The multi-tenancy isolation problem — when one agent serves many principals' (EN+ZH+ZH-HK) · 9613943
 2026-05-24 16:15 UTC · blog: add essay 'The alignment drift problem — when AI agent alignment erodes in the field' (EN+ZH+ZH-HK) · e36b40d
 2026-05-24 12:15 UTC · blog: add essay 'The data provenance problem — tracing data origin as an accountability prerequisite' (EN+ZH+ZH-HK) · 3aef2d0
