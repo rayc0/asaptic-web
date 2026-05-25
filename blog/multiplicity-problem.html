@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The multiplicity problem — Asaptic Labs</title>
+
+  <meta name="description" content="Production AI agents run as many simultaneous instances under a single authorization. When accountability was designed for a singular agent, multiplicity breaks attribution, amplifies scope creep, and creates identity gaps that no current framework addresses." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/multiplicity-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The multiplicity problem — accountability when one AI agent runs as many simultaneous instances" />
+  <meta property="og:description" content="Authorization was issued to 'the agent.' The agent is now fifty concurrent instances. Which instance's action does the authorization cover? Where the decision is consequential, that question needs an answer before the first instance is spawned." />
+  <meta property="og:url" content="https://asaptic.com/blog/multiplicity-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-25" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The multiplicity problem — accountability when one AI agent runs as many simultaneous instances",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-25",
+    "description": "Production AI agents run as many simultaneous instances under a single authorization. Multiplicity breaks attribution, amplifies scope creep, and creates identity gaps that no current accountability framework addresses.",
+    "url": "https://asaptic.com/blog/multiplicity-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 48px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The multiplicity problem: accountability when one AI agent runs as many simultaneous instances</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-25</span>
+        <span class="essay-date">6 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Authorization was issued to the agent. The agent is now fifty concurrent instances. Which instance's action does the authorization cover? This question sits mostly unasked in AI agent accountability frameworks, because those frameworks were designed in an era when the mental model of an agent was singular: one instance, one session, one action stream. In production, that mental model does not survive contact with infrastructure. Real agents scale horizontally. And when they do, the accountability primitives — identity, authorization, attribution, audit — all require rethinking.</p>
+
+        <h2>How multiplicity breaks attribution</h2>
+        <p>Attribution is the claim that a specific entity, acting at a specific time, with a specific authorization, produced a specific effect. In a single-instance agent, the attribution chain is tight: the agent has one identity, one credential set, and one action log. An auditor can reconstruct the chain. When the same agent specification runs as a fleet of concurrent instances, the chain forks. Each instance may receive different inputs, encounter different states, and make different decisions — while presenting the same identity to external systems. The action log is a union of fifty instance logs. Which log entry do you point to when a consequential action needs to be attributed? In most current deployments, the answer is: whichever instance happened to complete first, identified by session ID, if the session ID was recorded at all.</p>
+        <p>The deeper problem is that authorization was not granted to instances. It was granted to the agent type, or the agent configuration, or the deployment version. None of those designations resolves which instance was actually authorized to execute the specific consequential action that is under review. Authorization at the type level, combined with action at the instance level, produces an attribution gap that scales with the instance count.</p>
+
+        <h2>How multiplicity amplifies scope drift</h2>
+        <p>A single agent running outside its authorized scope is a scope violation. Fifty agents each drifting slightly outside scope produce fifty simultaneous scope violations — each small, each easily missed in the noise of a large action log, and together constituting a systematic departure from authorization that no single instance-level review would catch. Scope drift in a multi-instance fleet is an aggregate property. It requires aggregate measurement: not the distribution of actions for a single instance, but the distribution of actions across the entire instance population during a given operating window. Most deployments do not have an audit infrastructure capable of this view. They have per-session logs. Per-session logs are insufficient for multi-instance accountability.</p>
+        <p>The footprint problem compounds this. The minimal footprint principle holds that an agent should request only the permissions the current task requires. When many instances run concurrently, each requesting permissions for its current task, the aggregate permission surface is far larger than any single task justifies. The fleet collectively holds more authority than any individual authorization contemplated. That collective authority is the surface that needs to be governed, and it is the surface that most authorization frameworks do not address.</p>
+
+        <h2>How the crossings expose the problem</h2>
+        <p>In the post-quantum security crossing, the multiplicity problem manifests as a key usage pattern violation. A signing key issued to an agent for a specific authorization scope was designed with one signing entity in mind. When many instances sign concurrently using the same credential, the cryptographic audit trail aggregates signatures from a fleet, not a single agent. The binding between authorization scope and specific signed action weakens: you know the credential authorized the action, but the credential was never intended to authorize simultaneous action at scale. The transition to post-quantum cryptography is an opportunity to redesign key issuance at the instance level rather than the deployment level — issuing short-lived, instance-scoped keys that bind each signature to the specific instance and moment that produced it.</p>
+        <p>In the hardware crossing, the attestation problem mirrors the key problem. Hardware attestation is typically issued to a deployment, not to an instance. When fifty instances run concurrently, each in a potentially different execution environment — different hardware, different firmware, different attestation state — the deployment-level attestation does not speak to the instance-level execution context. An action produced by an instance running outside the attested hardware boundary is treated as if it were covered by the attestation, because the authorization system has no instance-level attestation to check. The result is a fleet of agents each presenting a valid deployment attestation while the accountability claim the attestation is meant to support may not hold for any specific instance.</p>
+        <p>In the physical-world care crossing, the multiplicity problem is most ethically immediate. A care agent authorized to interact with a resident operates under a care plan designed for a singular relationship. When the same agent type runs as many simultaneous instances — each interacting with different residents, or even the same resident across different care moments — the care plan's assumptions about continuity of context, recognition of prior state, and appropriate escalation thresholds may be violated in ways that no instance-level log reveals. Aggregate accountability across a care fleet requires correlating instance actions back to individual care relationships, at a granularity most care-deployment logging does not support.</p>
+
+        <h2>What the architecture must do</h2>
+        <p>The fix is not fewer instances — scale is operationally necessary. The fix is accountability that was designed for scale from the start. Instance-level identity means each spawned instance receives a unique, short-lived identifier that is bound to its authorization scope, its hardware attestation state, and its operating context at spawn time. Instance-level action attribution means every consequential action carries that instance identifier, creating a log that is not a flat union of session entries but a structured tree: deployment to instance to action. Aggregate scope monitoring means the governance layer tracks not just per-instance action distributions but the fleet-wide distribution, and alerts when the aggregate departs from the intended scope even when no single instance has visibly exceeded its authorization.</p>
+        <p>Authorization was issued to the agent. But the agent that acts is always a specific instance, at a specific moment, in a specific execution context. Accountability at scale requires recognizing that distinction in the identity, authorization, and audit layers — before a consequential decision is made by an instance that was never individually accounted for.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>生产AI智能体以水平扩展的并发实例运行，而授权通常发放给"智能体类型"而非具体实例。这造成三重问题：归因断链（哪个实例被授权执行特定的后果性操作？）、范围漂移放大（每个实例的微小越界在实例级别不可见，但在整体层面构成系统性越界），以及权限足迹累积（并发实例的合并权限面远超任何单个授权所预想的范围）。在后量子安全交叉点，问题体现为密钥在实例级别的误用；在硬件交叉点，体现为部署级认证无法覆盖实例级执行环境；在物理照护交叉点，体现为照护关系的连续性假设在多实例场景中被隐性违反。解决方案是为规模化而设计的问责架构：实例级身份绑定、实例级操作归因，以及跨实例的聚合范围监控。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>生產AI智能體以水平擴展的並發實例運行，而授權通常發放給「智能體類型」而非具體實例。這造成三重問題：歸因斷鏈（哪個實例被授權執行特定的後果性操作？）、範圍漂移放大（每個實例的微小越界在實例級別不可見，但在整體層面構成系統性越界），以及權限足跡累積（並發實例的合併權限面遠超任何單個授權所預想的範圍）。在後量子安全交叉點，問題體現為金鑰在實例級別的誤用；在硬件交叉點，體現為部署級認證無法覆蓋實例級執行環境；在物理照護交叉點，體現為照護關係的連續性假設在多實例場景中被隱性違反。解決方案是為規模化而設計的問責架構：實例級身份綁定、實例級操作歸因，以及跨實例的聚合範圍監控。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/measurement-problem.html">Previous: The measurement problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">多实例问题：当一个AI智能体以大量并发实例运行时，问责何处安放</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-25</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>授权是发给这个智能体的。而现在这个智能体是五十个并发实例。哪个实例的操作在授权范围之内？这个问题在AI智能体问责框架中几乎从未被提出——因为这些框架诞生于一个"智能体"概念仍是单数的时代：一个实例、一次会话、一条操作流。在生产环境中，这种单数心智模型无法经受基础设施的检验。真实的智能体会水平扩展。一旦扩展，问责的基本要素——身份、授权、归因、审计——都需要重新思考。</p>
+
+        <h2>多实例如何破坏归因</h2>
+        <p>归因是这样一种主张：特定实体在特定时刻、凭借特定授权、产生了特定效果。在单实例智能体中，归因链是紧密的：智能体有唯一身份、唯一凭证集和唯一操作日志。审计员可以完整重建归因链。而当同一智能体规格以并发实例组的形式运行时，这条链就开始分叉。每个实例可能接收不同输入、遇到不同状态、做出不同决策——同时向外部系统呈现相同身份。操作日志是五十个实例日志的并集。当某个后果性操作需要归因时，你要指向哪一条日志？在大多数当前部署中，答案是：第一个完成的实例所属的日志——以会话ID标识，如果会话ID被记录的话。</p>
+        <p>更深层的问题在于，授权并非发给某个实例，而是发给了智能体类型、或智能体配置、或部署版本。这些称谓中没有任何一个能确定：具体是哪个实例被授权执行了正在受审查的特定后果性操作。类型级授权与实例级操作的结合，产生了一个随实例数量线性扩大的归因空白。</p>
+
+        <h2>多实例如何放大范围漂移</h2>
+        <p>单个智能体在授权范围外运行，是一次范围违规。五十个智能体各自轻微越界，则产生五十个同步发生的范围违规——每一个都微小，每一个都容易淹没在庞大操作日志的噪声中；而合在一起，构成一种系统性的授权偏离，任何单实例级别的审查都无法察觉。多实例舰队中的范围漂移是一种聚合属性，需要聚合度量：不是单一实例的操作分布，而是给定运行窗口内整个实例群的操作分布。大多数部署不具备支持这种视角的审计基础设施，只有会话级日志——而会话级日志不足以支撑多实例问责。</p>
+        <p>最小足迹问题进一步加剧了这一困境。最小足迹原则要求智能体只申请当前任务所需的权限。当大量实例并发运行、每个实例各自为当前任务申请权限时，聚合后的权限面远超任何单项任务所能合理化的范围。整个实例组集体持有的权力远超任何单个授权所预想的边界。这种集体权力面才是需要被治理的对象，也是大多数授权框架所忽视的对象。</p>
+
+        <h2>三个交叉点如何暴露这一问题</h2>
+        <p>在后量子安全交叉点，多实例问题体现为密钥使用模式的违规。为某个授权范围颁发给某个智能体的签名密钥，其设计前提是一个签名实体。当大量实例并发使用同一凭证签名时，密码审计轨迹汇聚了整个实例组的签名，而非单一智能体的签名。授权范围与特定签名操作之间的绑定关系因此弱化：你知道该凭证授权了这一操作，但该凭证从未被设计成要在规模化并发场景下授权操作。向后量子密码学的过渡，是一个机会：将密钥发放的粒度从部署级改为实例级——颁发短期有效的实例级密钥，将每个签名绑定到产生它的特定实例与时刻。</p>
+        <p>在硬件交叉点，认证问题与密钥问题如出一辙。硬件认证通常针对部署而非实例发放。当五十个实例并发运行——可能在不同硬件、不同固件、不同认证状态的执行环境中——部署级认证并不能说明实例级的执行环境。某个在认证硬件边界之外运行的实例所产生的操作，会被当作已受认证覆盖来处理，因为授权系统没有可供核查的实例级认证。结果是一支实例组，每个实例都出示有效的部署认证，而该认证所应支撑的问责主张，对任何具体实例而言都可能并不成立。</p>
+        <p>在物理世界照护交叉点，多实例问题在伦理层面最为紧迫。被授权与某位住户互动的照护智能体，是在一份为单一关系设计的照护计划框架下运作的。当同一类型的智能体以大量并发实例运行——每个实例与不同住户互动，或与同一住户在不同照护时刻互动——照护计划关于情境连续性、先前状态识别和适当升级阈值的假设，可能以任何单一实例日志都无法揭示的方式被违反。照护智能体组的聚合问责，需要将实例级操作关联回具体的照护关系——而这种粒度，是大多数照护部署日志所不支持的。</p>
+
+        <h2>架构必须做什么</h2>
+        <p>解决方案不是减少实例数量——规模化扩展是操作上的必要条件。解决方案是从一开始就为规模化设计的问责体系。实例级身份意味着每个被创建的实例在生成时获得唯一的、短期有效的标识符，与其授权范围、硬件认证状态和操作上下文绑定。实例级操作归因意味着每个后果性操作都携带该实例标识符，使日志不再是会话条目的平铺并集，而是一棵结构化的树：部署→实例→操作。聚合范围监控意味着治理层不仅追踪每实例的操作分布，还追踪整个实例组的分布，并在聚合结果偏离预期范围时发出警报——即便没有任何单个实例在可见层面超出其授权。</p>
+        <p>授权是发给这个智能体的。但实际采取行动的，永远是特定实例——在特定时刻、在特定执行上下文中。规模化场景下的问责，要求在身份、授权和审计层面承认这一区分——在某个从未被单独问责的实例做出后果性决策之前。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/measurement-problem.html">上篇：度量问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">多實例問題：當一個AI智能體以大量並發實例運行時，問責何處安放</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-25</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>授權是發給這個智能體的。而現在這個智能體是五十個並發實例。哪個實例的操作在授權範圍之內？這個問題在AI智能體問責框架中幾乎從未被提出——因為這些框架誕生於一個「智能體」概念仍是單數的時代：一個實例、一次會話、一條操作流。在生產環境中，這種單數心智模型無法經受基礎設施的檢驗。真實的智能體會水平擴展。一旦擴展，問責的基本要素——身份、授權、歸因、審計——都需要重新思考。</p>
+
+        <h2>多實例如何破壞歸因</h2>
+        <p>歸因是這樣一種主張：特定實體在特定時刻、憑藉特定授權、產生了特定效果。在單實例智能體中，歸因鏈是緊密的：智能體有唯一身份、唯一憑證集和唯一操作日誌。審計員可以完整重建歸因鏈。而當同一智能體規格以並發實例組的形式運行時，這條鏈就開始分叉。每個實例可能接收不同輸入、遇到不同狀態、做出不同決策——同時向外部系統呈現相同身份。操作日誌是五十個實例日誌的並集。當某個後果性操作需要歸因時，你要指向哪一條日誌？在大多數當前部署中，答案是：第一個完成的實例所屬的日誌——以會話ID標識，如果會話ID被記錄的話。</p>
+        <p>更深層的問題在於，授權並非發給某個實例，而是發給了智能體類型、或智能體配置、或部署版本。這些稱謂中沒有任何一個能確定：具體是哪個實例被授權執行了正在受審查的特定後果性操作。類型級授權與實例級操作的結合，產生了一個隨實例數量線性擴大的歸因空白。</p>
+
+        <h2>多實例如何放大範圍漂移</h2>
+        <p>單個智能體在授權範圍外運行，是一次範圍違規。五十個智能體各自輕微越界，則產生五十個同步發生的範圍違規——每一個都微小，每一個都容易淹沒在龐大操作日誌的噪聲中；而合在一起，構成一種系統性的授權偏離，任何單實例級別的審查都無法察覺。多實例艦隊中的範圍漂移是一種聚合屬性，需要聚合度量：不是單一實例的操作分佈，而是給定運行窗口內整個實例群的操作分佈。大多數部署不具備支持這種視角的審計基礎設施，只有會話級日誌——而會話級日誌不足以支撐多實例問責。</p>
+        <p>最小足跡問題進一步加劇了這一困境。最小足跡原則要求智能體只申請當前任務所需的權限。當大量實例並發運行、每個實例各自為當前任務申請權限時，聚合後的權限面遠超任何單項任務所能合理化的範圍。整個實例組集體持有的權力遠超任何單個授權所預想的邊界。這種集體權力面才是需要被治理的對象，也是大多數授權框架所忽視的對象。</p>
+
+        <h2>三個交叉點如何暴露這一問題</h2>
+        <p>在後量子安全交叉點，多實例問題體現為金鑰使用模式的違規。為某個授權範圍頒發給某個智能體的簽名金鑰，其設計前提是一個簽名實體。當大量實例並發使用同一憑證簽名時，密碼審計軌跡匯聚了整個實例組的簽名，而非單一智能體的簽名。授權範圍與特定簽名操作之間的綁定關係因此弱化：你知道該憑證授權了這一操作，但該憑證從未被設計成要在規模化並發場景下授權操作。向後量子密碼學的過渡，是一個機會：將金鑰發放的粒度從部署級改為實例級——頒發短期有效的實例級金鑰，將每個簽名綁定到產生它的特定實例與時刻。</p>
+        <p>在硬件交叉點，認證問題與金鑰問題如出一轍。硬件認證通常針對部署而非實例發放。當五十個實例並發運行——可能在不同硬件、不同韌體、不同認證狀態的執行環境中——部署級認證並不能說明實例級的執行環境。某個在認證硬件邊界之外運行的實例所產生的操作，會被當作已受認證覆蓋來處理，因為授權系統沒有可供核查的實例級認證。結果是一支實例組，每個實例都出示有效的部署認證，而該認證所應支撐的問責主張，對任何具體實例而言都可能並不成立。</p>
+        <p>在物理世界照護交叉點，多實例問題在倫理層面最為緊迫。被授權與某位住戶互動的照護智能體，是在一份為單一關係設計的照護計劃框架下運作的。當同一類型的智能體以大量並發實例運行——每個實例與不同住戶互動，或與同一住戶在不同照護時刻互動——照護計劃關於情境連續性、先前狀態識別和適當升級閾值的假設，可能以任何單一實例日誌都無法揭示的方式被違反。照護智能體組的聚合問責，需要將實例級操作關聯回具體的照護關係——而這種粒度，是大多數照護部署日誌所不支持的。</p>
+
+        <h2>架構必須做什麼</h2>
+        <p>解決方案不是減少實例數量——規模化擴展是操作上的必要條件。解決方案是從一開始就為規模化設計的問責體系。實例級身份意味著每個被創建的實例在生成時獲得唯一的、短期有效的標識符，與其授權範圍、硬件認證狀態和操作上下文綁定。實例級操作歸因意味著每個後果性操作都攜帶該實例標識符，使日誌不再是會話條目的平鋪並集，而是一棵結構化的樹：部署→實例→操作。聚合範圍監控意味著治理層不僅追蹤每實例的操作分佈，還追蹤整個實例組的分佈，並在聚合結果偏離預期範圍時發出警報——即便沒有任何單個實例在可見層面超出其授權。</p>
+        <p>授權是發給這個智能體的。但實際採取行動的，永遠是特定實例——在特定時刻、在特定執行上下文中。規模化場景下的問責，要求在身份、授權和審計層面承認這一區分——在某個從未被單獨問責的實例做出後果性決策之前。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/measurement-problem.html">上篇：度量問題 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
