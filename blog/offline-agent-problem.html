@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The offline agent problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents deployed in physical-world environments — care facilities, industrial sites, remote hardware — must act when the network is gone. Without hardware-rooted local attestation, the log of what the agent did during that offline period is unverifiable. The accountability gap opens precisely where it is most consequential." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/offline-agent-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The offline agent problem — accountability when the network is gone" />
+  <meta property="og:description" content="When an AI agent in a physical-world deployment loses network access, the central log is unreachable. Halting is untenable; local buffering without hardware attestation is unverifiable. Hardware-rooted offline logging, post-quantum signing keys, and reconnection audit protocols are the architectural answer." />
+  <meta property="og:url" content="https://asaptic.com/blog/offline-agent-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-26" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The offline agent problem — accountability when the network is gone",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-26",
+    "description": "AI agents in physical-world deployments must act when connectivity is lost. Without hardware-rooted local attestation, the offline decision log is unverifiable. Hardware-bound signing, post-quantum key selection at manufacture, and reconnection audit protocols form the accountable offline architecture.",
+    "url": "https://asaptic.com/blog/offline-agent-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 48px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The offline agent problem: accountability when the network is gone</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-26</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>When an AI agent acts, the accountability infrastructure assumes a log server is reachable. In data center and cloud deployments, this assumption holds. In physical-world deployments — care facilities, industrial sites, embedded hardware in remote locations — the network is intermittent, unreliable, or absent by design. The agent must still act. But what does accountability mean when there is no reachable log?</p>
+
+        <p>This is the offline agent problem. It is not an edge case. In exactly the deployments where AI agents have the most immediate physical consequences — elder care, clinical monitoring, infrastructure management — network reliability is often the system's weakest link. The accountability gap opens precisely where it is most consequential: in the decisions that cannot be undone.</p>
+
+        <h2>Two bad defaults</h2>
+        <p>The naive response to network loss is to halt: if the agent cannot log its decisions, it should not make any. This is the safest policy in a data center, where the cost of halting is a delayed task and the cost of an unlogged action is an accountability gap. The calculus inverts in a care facility. A monitoring agent responsible for detecting medical events in a resident who cannot care for themselves cannot halt because the log server is unreachable. Halting on network loss makes a safety guarantee in the accountability layer that eliminates the safety guarantee in the care layer. The agent that refuses to act because it cannot log has traded one accountability failure for a more immediate one.</p>
+
+        <p>The opposite default — continue acting, buffer logs locally, sync when the network returns — is operationally sensible but cryptographically naive. A local log is a mutable file on a device that an operator can access. Nothing in a standard local buffer prevents a file from being edited between the moment the agent writes it and the moment it is uploaded to the central system. By the time the agent reconnects and transfers its buffered decisions, there is no cryptographic evidence that the log was not modified during the offline period. The central accountability system cannot distinguish a faithful record of what the agent actually did from a log that was curated after the fact to remove decisions the operator preferred not to have recorded.</p>
+
+        <h2>Hardware-rooted offline attestation</h2>
+        <p>The architectural answer is local attestation at the time of each decision. Before the agent writes a log entry, a hardware security module — a TPM, a secure enclave, or equivalent silicon — signs the entry with a key that is hardware-bound and cannot be exported from the device. The signature commits to the decision content, its timestamp, the agent's current model identity, and a hash chain linking this entry to all preceding entries in the session. If any entry is deleted, reordered, or modified after the fact, the hash chain breaks. Because the signing key cannot leave the hardware, the signature cannot be regenerated to cover the tampered chain. The corruption is detectable at reconnection time.</p>
+
+        <p>When connectivity returns, the agent uploads its signed, chained log to the central accountability infrastructure. The central system validates the chain forward from the last known-good entry at the moment of disconnection. Any gap in the chain, any invalid signature, any timestamp that violates the expected ordering is evidence sufficient to flag the entire offline period for human review — not proof of malicious intent, but evidence that the record cannot be accepted as clean without examination.</p>
+
+        <p>This is not a novel idea in general security engineering. Hardware-rooted attestation is the foundation of secure boot, trusted execution environments, and enterprise endpoint integrity products. What is new is applying it specifically to AI agent decision logs as a first-class accountability mechanism, with the explicit purpose of bridging the period when the central log is unreachable rather than treating offline operation as an exception to accountability.</p>
+
+        <h2>The post-quantum dimension</h2>
+        <p>The signing keys in an offline attestation scheme must survive not just current network-level threats but the quantum transition. An AI agent embedded in physical infrastructure today — in a care facility, a building management system, a medical device — may operate for ten to fifteen years without hardware replacement. If its hardware-bound signing keys use an elliptic-curve scheme that will be vulnerable to quantum-capable adversaries within that operational window, the offline attestation scheme provides accountability only until the attack becomes viable. An adversary who can retrospectively break the signing keys can forge an entire offline log history, inserting or removing decisions at will, and produce a signature chain that the central system will accept as intact.</p>
+
+        <p>The implication is that hardware security modules provisioned for physical-world AI agents today should use post-quantum signing schemes, even at the cost of larger signature sizes and modestly higher verification overhead. The window to make this choice correctly is at manufacturing time. Retrofitting cryptographic primitives into deployed hardware is technically difficult and in most embedded device categories requires physical access to every unit — an operation that is impractical at scale across a distributed care infrastructure.</p>
+
+        <h2>The reconnection moment</h2>
+        <p>The offline period ends when the network returns. The reconnection event is not just a data sync — it is the first accountability audit of the period during which the central system had no visibility. The correct treatment is to handle reconnection as an attestation review: validate the complete hash chain of offline decisions from the disconnection point forward, verify that the agent's model identity recorded at disconnection matches the identity at reconnection (confirming that no silent update occurred while the agent was offline and unmonitored), and confirm that the hardware module's attestation of its own execution environment remains consistent across the gap.</p>
+
+        <p>If any of these checks fail, the correct response is not to discard the offline period's outputs or roll back the agent's actions. The agent's physical-world decisions during that period are already complete and typically irreversible — a care alert was raised or suppressed, a door was locked or unlocked, a medication administration was flagged or cleared. The accountability review cannot undo those actions. Its purpose is to flag the offline period for human review, attach an attestation caveat to every output produced during that window, and surface the anomaly to whoever is responsible for the agent's operation.</p>
+
+        <p>In physical-world care deployments, this matters acutely. An agent that was offline for six hours during an unusual situation should have its decisions from that window reviewed by a clinician before those decisions are treated as authoritative inputs to subsequent care plans. Automatic acceptance of a reconnected sync — because the upload succeeded without error — is not accountability. It is the appearance of accountability without the substance.</p>
+
+        <h2>Designing for offline from the start</h2>
+        <p>The offline agent problem does not yield to after-the-fact tooling. Local hardware attestation, post-quantum signing key selection, and reconnection audit protocols must be designed into the agent architecture before deployment. They require specific hardware capabilities that must be present at manufacturing time, log format commitments that must be consistent across the agent's full operational life, and audit workflows that must be integrated into the central accountability infrastructure before the first deployment. An AI agent shipped into a physical-world environment without these mechanisms is an agent whose accountability record during the inevitable offline periods is unverifiable — not because the agent did anything wrong, but because the infrastructure was never designed to know either way.</p>
+
+        <p>Accountability is not a property of the log server. It is a property of the decision record from the moment the decision is made. In physical-world deployments, that means the accountability architecture must work when the network does not.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>物理世界部署中的AI智能体（照护机构、工业现场、嵌入式硬件）在网络中断时仍须行动。停机会消除照护层的安全保证；本地缓存日志在密码学上无法核实。解决方案是在每次决策时进行本地认证：硬件安全模块（TPM或安全飞地）用硬件绑定的不可导出密钥对每条日志条目签名，并通过哈希链将条目串联。事后任何篡改都会导致哈希链断裂。由于物理世界设备的运行寿命可达十至十五年，签名密钥应在制造时选用后量子方案。网络恢复时，重连事件是一次认证审计，而非单纯的同步操作：验证完整的哈希链，确认模型身份在离线期间未发生静默更新，并对任何检查失败的时间段标记人工审查。问责是决策时刻记录的属性，而非日志服务器的属性。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>物理世界部署中的AI智能體（照護機構、工業現場、嵌入式硬件）在網絡中斷時仍須行動。停機會消除照護層的安全保證；本地緩存日誌在密碼學上無法核實。解決方案是在每次決策時進行本地認證：硬件安全模組（TPM或安全飛地）用硬件綁定的不可導出金鑰對每條日誌條目簽名，並通過哈希鏈將條目串聯。事後任何篡改都會導致哈希鏈斷裂。由於物理世界設備的運行壽命可達十至十五年，簽名金鑰應在製造時選用後量子方案。網絡恢復時，重連事件是一次認證審計，而非單純的同步操作：驗證完整的哈希鏈，確認模型身份在離線期間未發生靜默更新，並對任何檢查失敗的時間段標記人工審查。問責是決策時刻記錄的屬性，而非日誌服務器的屬性。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/cascade-failure-problem.html">Previous: The cascade failure problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">离线智能体问题：网络中断时的问责</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-26</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>当AI智能体行动时，问责基础设施假设日志服务器是可以访问的。在数据中心和云端部署中，这一假设成立。在物理世界部署中——照护机构、工业现场、偏远地点的嵌入式硬件——网络时断时续、不可靠，或根本不存在。智能体仍必须行动。但当没有可访问的日志时，问责究竟意味着什么？</p>
+
+        <p>这就是离线智能体问题。它不是边缘案例。恰恰是在智能体具有最直接物理后果的部署场景中——老年照护、临床监测、基础设施管理——网络可靠性往往是系统最薄弱的环节。问责缺口恰好在最关键的地方打开：在那些无法撤销的决策中。</p>
+
+        <h2>两种糟糕的默认方案</h2>
+        <p>对网络中断最天真的回应是停机：如果智能体无法记录其决策，它就不应做出任何决策。在数据中心，这是最安全的策略——停机的代价是任务延迟，未记录行动的代价是问责缺口。但在照护机构，这一算式完全颠倒。负责检测无法自我照护的住户医疗事件的监测智能体，不能因为日志服务器不可访问就停机。在网络中断时停机，以问责层的安全保证换掉了照护层的安全保证。因无法记录日志而拒绝行动的智能体，以更直接的责任失效取代了问责失效。</p>
+
+        <p>相反的默认方案——继续行动、本地缓存日志、网络恢复时同步——在操作上合理，但在密码学上过于天真。本地日志是设备上的可变文件，操作员可以访问。标准本地缓冲区没有任何机制阻止文件在智能体写入之后、上传至中央系统之前被编辑。当智能体重新联网并上传缓冲决策时，没有密码学证据证明日志在离线期间未被修改。中央问责系统无法区分智能体实际行动的如实记录，与事后被筛选以删除操作员不希望留下记录的决策的日志。</p>
+
+        <h2>基于硬件的离线认证</h2>
+        <p>架构上的答案是在每次决策时进行本地认证。在智能体写入日志条目之前，硬件安全模块——TPM、安全飞地或同类芯片——使用硬件绑定且不可从设备导出的密钥对条目进行签名。签名承诺决策内容、时间戳、智能体当前的模型身份，以及将本条目与会话中所有前驱条目链接起来的哈希链。如果任何条目被事后删除、重新排序或修改，哈希链就会断裂。由于签名密钥无法离开硬件，签名无法被重新生成以覆盖被篡改的链。篡改在重连时是可检测的。</p>
+
+        <p>网络恢复时，智能体将签名的、有链式结构的日志上传至中央问责基础设施。中央系统从断连时最后一个已知良好条目开始向前验证哈希链。链中的任何断点、无效签名、违反预期顺序的时间戳，都是将整个离线期间标记为需要人工审查的充分证据——不是恶意意图的证明，而是证明该记录在未经审查的情况下不能被接受为干净记录。</p>
+
+        <p>这在通用安全工程中并非新思路。基于硬件的认证是安全启动、可信执行环境和企业端点完整性产品的基础。真正新颖之处在于：将其专门应用于AI智能体决策日志，作为一等的问责机制，明确目的是桥接中央日志不可访问的时间段，而非将离线运行视为问责的例外情况。</p>
+
+        <h2>后量子维度</h2>
+        <p>离线认证方案中的签名密钥，不仅必须抵御当前的网络级威胁，还必须经受量子过渡的考验。今天嵌入物理基础设施的AI智能体——照护机构、楼宇管理系统、医疗设备——在不更换硬件的情况下可能运行十到十五年。如果其硬件绑定签名密钥使用的椭圆曲线方案在这一运行窗口内对量子能力对手存在漏洞，则离线认证方案提供的问责能力仅在攻击可行之前有效。能够事后破解签名密钥的对手，可以伪造整个离线日志历史，随意插入或删除决策，并生成一条中央系统会接受为完整的签名链。</p>
+
+        <p>这意味着，为物理世界AI智能体预置的硬件安全模块今天就应使用后量子签名方案，即使代价是更大的签名尺寸和稍高的验证开销。做出正确选择的窗口在制造时。在已部署硬件中改装密码学原语技术难度大，在大多数嵌入式设备类别中，需要对每台设备进行物理接触——这在分布式照护基础设施中大规模执行是不现实的。</p>
+
+        <h2>重连时刻</h2>
+        <p>离线期间在网络恢复时结束。重连事件不仅仅是数据同步——它是中央系统在此期间无可见性的阶段的第一次问责审计。正确的处理方式是将重连视为认证审查：从断连点开始向前验证完整的离线决策哈希链，确认断连时记录的智能体模型身份与重连时一致（确认智能体在离线且无人监控期间没有发生静默更新），并确认硬件模块对自身执行环境的认证在间隔期间保持一致。</p>
+
+        <p>如果任何检查失败，正确的回应不是丢弃离线期间的输出或回滚智能体的行动。智能体在此期间的物理世界决策已经完成，且通常不可逆——照护警报已发出或已抑制，门已上锁或已开锁，用药已标记或已放行。问责审查无法撤销这些行动。其目的是将离线期间标记为需要人工审查，对该时间窗口内产生的每个输出附加认证说明，并向负责智能体运营的人员呈现该异常。</p>
+
+        <p>在物理世界照护部署中，这一点尤为关键。在异常情况下离线六小时的智能体，其离线期间的决策应由临床医生审查，然后才能将这些决策作为后续照护计划的权威输入。自动接受已重连的同步——因为上传没有报错——不是问责，而是问责的表象而非实质。</p>
+
+        <h2>从一开始就为离线设计</h2>
+        <p>离线智能体问题无法靠事后工具来解决。本地硬件认证、后量子签名密钥选择和重连审计协议，必须在部署前就设计进智能体架构。它们需要制造时必须具备的特定硬件能力、在智能体整个运行生命周期内必须保持一致的日志格式约定，以及必须在首次部署前集成到中央问责基础设施中的审计工作流。在没有这些机制的情况下部署到物理世界的AI智能体，其在不可避免的离线期间的问责记录是无法核实的——不是因为智能体做了任何错事，而是因为基础设施从未被设计成能够知晓。</p>
+
+        <p>问责不是日志服务器的属性，而是从决策时刻起记录的属性。在物理世界部署中，这意味着问责架构必须在网络不工作时同样有效。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/cascade-failure-problem.html">上篇：级联失效问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">離線智能體問題：網絡中斷時的問責</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-26</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>當AI智能體行動時，問責基礎設施假設日誌服務器是可以訪問的。在數據中心和雲端部署中，這一假設成立。在物理世界部署中——照護機構、工業現場、偏遠地點的嵌入式硬件——網絡時斷時續、不可靠，或根本不存在。智能體仍必須行動。但當沒有可訪問的日誌時，問責究竟意味著什麼？</p>
+
+        <p>這就是離線智能體問題。它不是邊緣案例。恰恰是在智能體具有最直接物理後果的部署場景中——老年照護、臨床監測、基礎設施管理——網絡可靠性往往是系統最薄弱的環節。問責缺口恰好在最關鍵的地方打開：在那些無法撤銷的決策中。</p>
+
+        <h2>兩種糟糕的默認方案</h2>
+        <p>對網絡中斷最天真的回應是停機：如果智能體無法記錄其決策，它就不應做出任何決策。在數據中心，這是最安全的策略——停機的代價是任務延遲，未記錄行動的代價是問責缺口。但在照護機構，這一算式完全顛倒。負責檢測無法自我照護的住戶醫療事件的監測智能體，不能因為日誌服務器不可訪問就停機。在網絡中斷時停機，以問責層的安全保證換掉了照護層的安全保證。因無法記錄日誌而拒絕行動的智能體，以更直接的責任失效取代了問責失效。</p>
+
+        <p>相反的默認方案——繼續行動、本地緩存日誌、網絡恢復時同步——在操作上合理，但在密碼學上過於天真。本地日誌是設備上的可變文件，操作員可以訪問。標準本地緩衝區沒有任何機制阻止文件在智能體寫入之後、上傳至中央系統之前被編輯。當智能體重新聯網並上傳緩衝決策時，沒有密碼學證據證明日誌在離線期間未被修改。中央問責系統無法區分智能體實際行動的如實記錄，與事後被篩選以刪除操作員不希望留下記錄的決策的日誌。</p>
+
+        <h2>基於硬件的離線認證</h2>
+        <p>架構上的答案是在每次決策時進行本地認證。在智能體寫入日誌條目之前，硬件安全模組——TPM、安全飛地或同類芯片——使用硬件綁定且不可從設備導出的金鑰對條目進行簽名。簽名承諾決策內容、時間戳、智能體當前的模型身份，以及將本條目與會話中所有前驅條目鏈接起來的哈希鏈。如果任何條目被事後刪除、重新排序或修改，哈希鏈就會斷裂。由於簽名金鑰無法離開硬件，簽名無法被重新生成以覆蓋被篡改的鏈。篡改在重連時是可檢測的。</p>
+
+        <p>網絡恢復時，智能體將簽名的、有鏈式結構的日誌上傳至中央問責基礎設施。中央系統從斷連時最後一個已知良好條目開始向前驗證哈希鏈。鏈中的任何斷點、無效簽名、違反預期順序的時間戳，都是將整個離線期間標記為需要人工審查的充分證據——不是惡意意圖的證明，而是證明該記錄在未經審查的情況下不能被接受為乾淨記錄。</p>
+
+        <p>這在通用安全工程中並非新思路。基於硬件的認證是安全啟動、可信執行環境和企業端點完整性產品的基礎。真正新穎之處在於：將其專門應用於AI智能體決策日誌，作為一等的問責機制，明確目的是橋接中央日誌不可訪問的時間段，而非將離線運行視為問責的例外情況。</p>
+
+        <h2>後量子維度</h2>
+        <p>離線認證方案中的簽名金鑰，不僅必須抵禦當前的網絡級威脅，還必須經受量子過渡的考驗。今天嵌入物理基礎設施的AI智能體——照護機構、樓宇管理系統、醫療設備——在不更換硬件的情況下可能運行十到十五年。如果其硬件綁定簽名金鑰使用的橢圓曲線方案在這一運行窗口內對量子能力對手存在漏洞，則離線認證方案提供的問責能力僅在攻擊可行之前有效。能夠事後破解簽名金鑰的對手，可以偽造整個離線日誌歷史，隨意插入或刪除決策，並生成一條中央系統會接受為完整的簽名鏈。</p>
+
+        <p>這意味著，為物理世界AI智能體預置的硬件安全模組今天就應使用後量子簽名方案，即使代價是更大的簽名尺寸和稍高的驗證開銷。做出正確選擇的窗口在製造時。在已部署硬件中改裝密碼學原語技術難度大，在大多數嵌入式設備類別中，需要對每台設備進行物理接觸——這在分佈式照護基礎設施中大規模執行是不現實的。</p>
+
+        <h2>重連時刻</h2>
+        <p>離線期間在網絡恢復時結束。重連事件不僅僅是數據同步——它是中央系統在此期間無可見性的階段的第一次問責審計。正確的處理方式是將重連視為認證審查：從斷連點開始向前驗證完整的離線決策哈希鏈，確認斷連時記錄的智能體模型身份與重連時一致（確認智能體在離線且無人監控期間沒有發生靜默更新），並確認硬件模組對自身執行環境的認證在間隔期間保持一致。</p>
+
+        <p>如果任何檢查失敗，正確的回應不是丟棄離線期間的輸出或回滾智能體的行動。智能體在此期間的物理世界決策已經完成，且通常不可逆——照護警報已發出或已抑制，門已上鎖或已開鎖，用藥已標記或已放行。問責審查無法撤銷這些行動。其目的是將離線期間標記為需要人工審查，對該時間窗口內產生的每個輸出附加認證說明，並向負責智能體運營的人員呈現該異常。</p>
+
+        <p>在物理世界照護部署中，這一點尤為關鍵。在異常情況下離線六小時的智能體，其離線期間的決策應由臨床醫生審查，然後才能將這些決策作為後續照護計劃的權威輸入。自動接受已重連的同步——因為上傳沒有報錯——不是問責，而是問責的表象而非實質。</p>
+
+        <h2>從一開始就為離線設計</h2>
+        <p>離線智能體問題無法靠事後工具來解決。本地硬件認證、後量子簽名金鑰選擇和重連審計協議，必須在部署前就設計進智能體架構。它們需要製造時必須具備的特定硬件能力、在智能體整個運行生命周期內必須保持一致的日誌格式約定，以及必須在首次部署前整合到中央問責基礎設施中的審計工作流。在沒有這些機制的情況下部署到物理世界的AI智能體，其在不可避免的離線期間的問責記錄是無法核實的——不是因為智能體做了任何錯事，而是因為基礎設施從未被設計成能夠知曉。</p>
+
+        <p>問責不是日誌服務器的屬性，而是從決策時刻起記錄的屬性。在物理世界部署中，這意味著問責架構必須在網絡不工作時同樣有效。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/cascade-failure-problem.html">上篇：級聯失效問題 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
