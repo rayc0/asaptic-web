@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The time-of-check to time-of-use problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents verify authorization at one moment and act at another. In long-running workflows with physical-world consequences, the gap between check and use is where accountability breaks down." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/toctou-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The time-of-check to time-of-use problem: when authorization goes stale before the agent acts" />
+  <meta property="og:description" content="TOCTOU is one of the oldest vulnerabilities in computer security. AI agents make it structurally worse: the gap between authorization check and consequential action can span minutes, dozens of intermediate steps, and irreversible physical-world events." />
+  <meta property="og:url" content="https://asaptic.com/blog/toctou-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-26" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The time-of-check to time-of-use problem: when authorization goes stale before the agent acts",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-26",
+    "description": "AI agents verify authorization at one moment and act at another. In long-running workflows with physical-world consequences, the gap between check and use is where accountability breaks down.",
+    "url": "https://asaptic.com/blog/toctou-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 48px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The time-of-check to time-of-use problem: when authorization goes stale before the agent acts</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-26</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Time-of-check to time-of-use (TOCTOU) is one of the oldest vulnerabilities in computer security. The pattern is simple: a system verifies a condition, a window of time passes, then the system acts on the assumption that the condition still holds. Between check and use, the world changes. The system acts on a stale snapshot.</p>
+
+        <p>In classical operating-system security, TOCTOU appears at the scheduler boundary — a program checks file permissions, a context switch occurs, another process moves the file, and the original program writes to the wrong location with permissions that no longer apply. The window is measured in microseconds. The consequences are usually recoverable.</p>
+
+        <p>AI agents make this problem structurally worse on both dimensions. The gap between check and use is not microseconds — it is minutes, hours, or the full duration of a multi-step workflow. And when those workflows intersect with the physical world, the consequences are not recoverable. The combination is an accountability architecture problem that faster hardware cannot solve.</p>
+
+        <h2>The anatomy of an agent TOCTOU failure</h2>
+        <p>An agent is assigned to manage medication schedules for residents in a care facility. At 08:00 it verifies its authorization: the attending physician has approved the current protocol, pharmacy supply is confirmed, and the morning care team has signed off on the round. The agent begins its workflow.</p>
+
+        <p>At 09:45, ninety minutes later, the agent prepares to dispatch a scheduled medication reminder. It acts on the authorization verified at 08:00. What it does not know: at 09:20, the physician updated the order to hold all scheduled medications pending an incoming diagnostic result. The update was entered through the correct clinical channel. The authorization the agent is acting on is eighty-five minutes stale.</p>
+
+        <p>This is not a permission failure — the agent was correctly authorized at check time. It is not an operator error — the physician updated the order through the prescribed workflow. It is a TOCTOU failure: authorization was verified at one moment and acted upon at another, with no mechanism in the agent's execution to detect that the authorization state had changed in between.</p>
+
+        <h2>Physical-world irreversibility removes the safety net</h2>
+        <p>TOCTOU failures in software systems typically produce recoverable outcomes. A file written to the wrong location can be moved. A database transaction executed on stale state can be rolled back. The cost is overhead and inconsistency, rarely lasting harm.</p>
+
+        <p>Physical-world AI agents remove this safety net entirely. A care intervention delivered is not recoverable. A door unlocked by an agent acting on stale access permission cannot be re-locked for the seconds it stood open. A medication reminder sent to a resident is already in their awareness; the message cannot be recalled from human memory after the fact.</p>
+
+        <p>The combination of agentic latency — long workflows with many intermediate steps, each potentially triggering external state changes — and physical-world irreversibility means TOCTOU failures in these deployments are not operational inconveniences. They are accountability events: something happened in the physical world that was not authorized at the moment of action, even if it was authorized when the agent started. The log shows an action that was, at the time it occurred, unauthorized. The accountability record is broken.</p>
+
+        <h2>Hardware binding narrows the window but does not close it</h2>
+        <p>Hardware attestation — TPM-rooted execution environments, secure enclaves — addresses the question of whether the correct agent is running. It does not address whether the authorization that agent holds is still current. An agent executing in a fully verified hardware environment can still act on a permission that was revoked three minutes ago. The hardware tells you who is acting; it says nothing about whether the authority to act still exists.</p>
+
+        <p>The direct response is to re-verify authorization immediately before each consequential action. This is correct in principle and faces two structural barriers. First, agents deployed in intermittently connected physical environments may not be able to reach the authorization service at the moment re-verification is needed. The offline agent problem and the TOCTOU problem have overlapping failure modes: the same network gap that disrupts log continuity also disrupts real-time authorization checks. Second, even with reliable connectivity, re-verification immediately before action still produces a TOCTOU window. The check completes; a revocation is processed on the authorization server 200 milliseconds later; the action executes 400 milliseconds after the check. Narrowing the window reduces exposure; it does not eliminate the structural vulnerability.</p>
+
+        <h2>The post-quantum dimension compounds the latency</h2>
+        <p>Post-quantum cryptographic operations carry higher computational overhead than their classical equivalents. Verifying a post-quantum signature takes longer than verifying an elliptic-curve signature by a factor that varies by scheme but is not negligible in aggregate. For an agent that re-verifies authorization before each of many actions per minute — across many simultaneous instances — this overhead widens each individual TOCTOU window by exactly the time required for the re-verification round-trip.</p>
+
+        <p>One response is to use short-lived authorization tokens that can be verified locally against cached keys, limiting the re-verification overhead to periodic token refresh rather than a full authorization query before every action. This reduces aggregate latency meaningfully. But it reintroduces TOCTOU exposure at every token refresh boundary: the window between the last token's expiry and the next token's issuance is precisely the moment when a revocation most needs to propagate, and precisely the moment when the agent may be mid-action on the assumption that its current token is still valid.</p>
+
+        <h2>Authorization as a continuous property, not a precondition</h2>
+        <p>The design principle that follows from TOCTOU analysis is that authorization cannot be treated as a precondition checked once at workflow start and then assumed to hold. It must be treated as a continuous property of the agent's execution state — one that can change at any moment and that the agent must be architecturally capable of receiving and acting on mid-workflow.</p>
+
+        <p>Operationally, this means authorization infrastructure must support streaming revocation: the ability to push a revocation signal to an agent that is already mid-workflow, not just mark a permission as expired for future checks. Agents must be designed to receive those signals and to treat them as immediate execution constraints — pausing, escalating, or halting rather than completing the workflow on authorization that was valid when the workflow started but is not valid now.</p>
+
+        <p>In physical-world care, the difference between these two architectures is the difference between an agent interrupted before delivering a stale action and an agent interrupted after. Both architectures detect the revocation. Only one can act on it in time.</p>
+
+        <p>The authorization that was valid at check time is not the authorization that matters. The authorization that is valid at use time is the one the agent is obligated to hold. Closing the gap between those two moments is not a performance optimization. It is the condition under which physical-world AI agents can be trusted to act at all.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>检查时间到使用时间（TOCTOU）是计算机安全中最古老的漏洞之一。AI智能体使这一问题在结构上更为严重：授权检查与实际行动之间的间隔不是微秒，而是数分钟乃至整个多步骤工作流的持续时间。当工作流与物理世界交汇时，后果不可逆转。硬件认证解决了"谁在行动"的问题，却无法解决"授权是否仍然有效"的问题。后量子密码操作的额外开销进一步扩大了每次重新验证的TOCTOU窗口。正确的架构原则是：将授权视为智能体执行状态的持续属性，而非仅在工作流启动时检查一次的前提条件；授权基础设施必须支持流式撤销——能够将撤销信号推送给正在执行中的智能体。检查时有效的授权不是重要的那个；使用时有效的授权才是智能体必须持有的。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>檢查時間到使用時間（TOCTOU）是電腦安全中最古老的漏洞之一。AI智能體使這一問題在結構上更為嚴重：授權檢查與實際行動之間的間隔不是微秒，而是數分鐘乃至整個多步驟工作流的持續時間。當工作流與物理世界交匯時，後果不可逆轉。硬件認證解決了「誰在行動」的問題，卻無法解決「授權是否仍然有效」的問題。後量子密碼操作的額外開銷進一步擴大了每次重新驗證的TOCTOU窗口。正確的架構原則是：將授權視為智能體執行狀態的持續屬性，而非僅在工作流啟動時檢查一次的前提條件；授權基礎設施必須支持流式撤銷——能夠將撤銷信號推送給正在執行中的智能體。檢查時有效的授權不是重要的那個；使用時有效的授權才是智能體必須持有的。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/model-weight-integrity.html">Previous: The model weight integrity problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">检查时间到使用时间问题：授权在智能体行动前已过期</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-26</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>检查时间到使用时间（TOCTOU）是计算机安全中最古老的漏洞之一。模式很简单：系统验证一个条件，经过一段时间后，系统假设该条件仍然成立并采取行动。在检查与使用之间，世界已经发生变化。系统对一个过时的快照采取了行动。</p>
+
+        <p>在经典的操作系统安全中，TOCTOU出现在调度器边界——程序检查文件权限，发生上下文切换，另一个进程移动了该文件，而原程序以不再适用的权限写入了错误位置。这个窗口以微秒计量，后果通常可以恢复。</p>
+
+        <p>AI智能体在两个维度上都使这一问题在结构上更为严重。检查与使用之间的间隔不是微秒，而是数分钟、数小时，或整个多步骤工作流的完整持续时间。当这些工作流与物理世界交汇时，后果无法恢复。这种组合是一个问责架构问题，更快的硬件无法解决。</p>
+
+        <h2>智能体TOCTOU失效的解剖</h2>
+        <p>一个智能体被分配管理照护机构住户的用药计划。早上8点，它验证授权：主治医生已批准当前方案，药房供应已确认，早班照护团队已签署查房单。智能体开始执行工作流。</p>
+
+        <p>上午9点45分，九十分钟后，智能体准备发送一次计划内的用药提醒。它依据早上8点验证的授权采取行动。它不知道的是：上午9点20分，医生更新了医嘱，要求暂停所有计划用药，等待即将到来的诊断结果。该更新通过正确的临床渠道录入。智能体依据的授权已经过期了八十五分钟。</p>
+
+        <p>这不是权限失败——智能体在检查时是被正确授权的。这不是操作员错误——医生通过规定流程更新了医嘱。这是一次TOCTOU失效：授权在一个时刻被验证，又在另一个时刻被执行，智能体执行过程中没有任何机制能检测到授权状态在此期间已发生变化。</p>
+
+        <h2>物理世界的不可逆性消除了安全网</h2>
+        <p>软件系统中的TOCTOU失效通常会产生可恢复的后果。写入错误位置的文件可以移动，基于过时状态执行的数据库事务可以回滚。代价是开销和不一致，很少造成持久伤害。</p>
+
+        <p>物理世界AI智能体完全消除了这张安全网。已执行的照护干预无法恢复。依据过时访问权限开锁的门，无法为其开着的那几秒钟重新上锁。发送给住户的用药提醒已进入他们的意识，事后无法从人类记忆中撤回。</p>
+
+        <p>智能体延迟（具有许多中间步骤、每个步骤都可能触发外部状态变化的长工作流）与物理世界不可逆性的结合，意味着这类部署中的TOCTOU失效不是操作上的不便，而是问责事件：在物理世界发生了一件在行动时刻并未被授权的事情，即使在智能体启动时是被授权的。日志显示了一个发生时未经授权的行动。问责记录是破损的。</p>
+
+        <h2>硬件绑定缩小了窗口但无法关闭它</h2>
+        <p>硬件认证——基于TPM的执行环境、安全飞地——解决了"正确的智能体是否在运行"的问题。它并不解决"该智能体持有的授权是否仍然有效"的问题。在完全验证的硬件环境中执行的智能体，仍然可能依据三分钟前已被撤销的权限采取行动。硬件告诉你谁在行动；它对行动权是否仍然存在只字不提。</p>
+
+        <p>直接的回应是在每次重要行动之前立即重新验证授权。这在原则上是正确的，但面临两个结构性障碍。首先，部署在间歇性连接物理环境中的智能体，在需要重新验证时可能无法访问授权服务。其次，即使有可靠的连接，行动前立即重新验证仍会产生TOCTOU窗口：检查完成后200毫秒，授权服务器上处理了一个撤销操作；检查完成后400毫秒，行动执行了。缩小窗口可以降低风险，但不能消除这一结构性漏洞。</p>
+
+        <h2>后量子维度加剧了延迟</h2>
+        <p>后量子密码操作比经典对应算法承载更高的计算开销。验证后量子签名比验证椭圆曲线签名耗时更长。对于在多个并发实例中每分钟执行许多行动之前都要重新验证授权的智能体，这一开销使每个单独的TOCTOU窗口扩大了重新验证往返所需的时间。</p>
+
+        <p>一种回应是使用短生命周期授权令牌，可以针对缓存密钥进行本地验证，将重新验证开销限制为定期令牌刷新，而非每次行动前的完整授权查询。但这在每个令牌刷新边界重新引入了TOCTOU暴露——上一个令牌到期与下一个令牌签发之间的时刻，恰好是撤销最需要传播的时刻，也恰好是智能体可能正在假设当前令牌仍然有效而执行行动的时刻。</p>
+
+        <h2>将授权视为持续属性，而非前提条件</h2>
+        <p>TOCTOU分析得出的设计原则是：授权不能被视为在工作流启动时检查一次就假设始终有效的前提条件。它必须被视为智能体执行状态的持续属性——可以在任何时刻发生变化，智能体必须在架构上具备接收和响应这些变化的能力，即使在工作流进行中。</p>
+
+        <p>在操作上，这意味着授权基础设施必须支持流式撤销：能够将撤销信号推送给已经处于工作流执行中的智能体，而不仅仅是将权限标记为对未来检查已过期。智能体必须被设计成能够接收这些信号，并将其视为即时执行约束——暂停、上报或停止，而非依据工作流启动时有效但现在已不有效的授权完成工作流。</p>
+
+        <p>检查时有效的授权不是重要的那个。使用时有效的授权才是智能体必须持有的。缩小这两个时刻之间的差距不是性能优化。这是物理世界AI智能体能够被信任采取行动的前提条件。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/model-weight-integrity.html">上篇：模型权重完整性问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">檢查時間到使用時間問題：授權在智能體行動前已過期</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-26</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>檢查時間到使用時間（TOCTOU）是電腦安全中最古老的漏洞之一。模式很簡單：系統驗證一個條件，經過一段時間後，系統假設該條件仍然成立並採取行動。在檢查與使用之間，世界已經發生變化。系統對一個過時的快照採取了行動。</p>
+
+        <p>在經典的作業系統安全中，TOCTOU出現在調度器邊界——程式檢查檔案權限，發生上下文切換，另一個進程移動了該檔案，而原程式以不再適用的權限寫入了錯誤位置。這個窗口以微秒計量，後果通常可以恢復。</p>
+
+        <p>AI智能體在兩個維度上都使這一問題在結構上更為嚴重。檢查與使用之間的間隔不是微秒，而是數分鐘、數小時，或整個多步驟工作流的完整持續時間。當這些工作流與物理世界交匯時，後果無法恢復。這種組合是一個問責架構問題，更快的硬件無法解決。</p>
+
+        <h2>智能體TOCTOU失效的解剖</h2>
+        <p>一個智能體被分配管理照護機構住戶的用藥計劃。早上8點，它驗證授權：主治醫生已批准當前方案，藥房供應已確認，早班照護團隊已簽署查房單。智能體開始執行工作流。</p>
+
+        <p>上午9點45分，九十分鐘後，智能體準備發送一次計劃內的用藥提醒。它依據早上8點驗證的授權採取行動。它不知道的是：上午9點20分，醫生更新了醫囑，要求暫停所有計劃用藥，等待即將到來的診斷結果。該更新通過正確的臨床渠道錄入。智能體依據的授權已經過期了八十五分鐘。</p>
+
+        <p>這不是權限失敗——智能體在檢查時是被正確授權的。這不是操作員錯誤——醫生通過規定流程更新了醫囑。這是一次TOCTOU失效：授權在一個時刻被驗證，又在另一個時刻被執行，智能體執行過程中沒有任何機制能檢測到授權狀態在此期間已發生變化。</p>
+
+        <h2>物理世界的不可逆性消除了安全網</h2>
+        <p>軟件系統中的TOCTOU失效通常會產生可恢復的後果。寫入錯誤位置的檔案可以移動，基於過時狀態執行的資料庫事務可以回滾。代價是開銷和不一致，很少造成持久傷害。</p>
+
+        <p>物理世界AI智能體完全消除了這張安全網。已執行的照護干預無法恢復。依據過時訪問權限開鎖的門，無法為其開著的那幾秒鐘重新上鎖。發送給住戶的用藥提醒已進入他們的意識，事後無法從人類記憶中撤回。</p>
+
+        <p>智能體延遲（具有許多中間步驟、每個步驟都可能觸發外部狀態變化的長工作流）與物理世界不可逆性的結合，意味著這類部署中的TOCTOU失效不是操作上的不便，而是問責事件：在物理世界發生了一件在行動時刻並未被授權的事情，即使在智能體啟動時是被授權的。</p>
+
+        <h2>硬件綁定縮小了窗口但無法關閉它</h2>
+        <p>硬件認證——基於TPM的執行環境、安全飛地——解決了「正確的智能體是否在運行」的問題。它並不解決「該智能體持有的授權是否仍然有效」的問題。在完全驗證的硬件環境中執行的智能體，仍然可能依據三分鐘前已被撤銷的權限採取行動。硬件告訴你誰在行動；它對行動權是否仍然存在只字不提。</p>
+
+        <p>直接的回應是在每次重要行動之前立即重新驗證授權。這在原則上是正確的，但面臨兩個結構性障礙。首先，部署在間歇性連接物理環境中的智能體，在需要重新驗證時可能無法訪問授權服務。其次，即使有可靠的連接，行動前立即重新驗證仍會產生TOCTOU窗口。縮小窗口可以降低風險，但不能消除這一結構性漏洞。</p>
+
+        <h2>後量子維度加劇了延遲</h2>
+        <p>後量子密碼操作比經典對應算法承載更高的計算開銷。驗證後量子簽名比驗證橢圓曲線簽名耗時更長。對於在多個並發實例中每分鐘執行許多行動之前都要重新驗證授權的智能體，這一開銷使每個單獨的TOCTOU窗口擴大了重新驗證往返所需的時間。使用短生命週期授權令牌可以減少聚合延遲，但在每個令牌刷新邊界重新引入了TOCTOU暴露。</p>
+
+        <h2>將授權視為持續屬性，而非前提條件</h2>
+        <p>TOCTOU分析得出的設計原則是：授權不能被視為在工作流啟動時檢查一次就假設始終有效的前提條件。它必須被視為智能體執行狀態的持續屬性——可以在任何時刻發生變化，智能體必須在架構上具備接收和響應這些變化的能力，即使在工作流進行中。</p>
+
+        <p>在操作上，這意味著授權基礎設施必須支持流式撤銷：能夠將撤銷信號推送給已經處於工作流執行中的智能體。智能體必須被設計成能夠接收這些信號，並將其視為即時執行約束——暫停、上報或停止，而非依據工作流啟動時有效但現在已不有效的授權完成工作流。</p>
+
+        <p>檢查時有效的授權不是重要的那個。使用時有效的授權才是智能體必須持有的。縮小這兩個時刻之間的差距不是性能優化。這是物理世界AI智能體能夠被信任採取行動的前提條件。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/model-weight-integrity.html">上篇：模型權重完整性問題 →</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/" style="color:inherit;">© 2026 Asaptic Labs</a>
+  </footer>
+
+  <script src="../style.css" type="text/javascript" onerror="void 0"></script>
+  <script>
+    (function() {
+      var stored = localStorage.getItem('al_lang') || 'en';
+      document.querySelectorAll('.essay-lang').forEach(function(el) {
+        el.classList.toggle('active', el.dataset.langContent === stored);
+      });
+      document.querySelectorAll('.lang-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.lang === stored);
+        btn.addEventListener('click', function() {
+          var lang = btn.dataset.lang;
+          localStorage.setItem('al_lang', lang);
+          document.querySelectorAll('.essay-lang').forEach(function(el) {
+            el.classList.toggle('active', el.dataset.langContent === lang);
+          });
+          document.querySelectorAll('.lang-btn').forEach(function(b) {
+            b.classList.toggle('active', b.dataset.lang === lang);
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
