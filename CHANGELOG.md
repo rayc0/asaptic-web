@@ -1,3 +1,4 @@
+2026-05-26 20:15 UTC · blog: add essay 'The time-of-check to time-of-use problem — when authorization goes stale before the agent acts' (EN+ZH+ZH-HK) · 10546b6
 2026-05-26 16:15 UTC · blog: add essay 'The model weight integrity problem — who verifies what an AI agent is actually running' (EN+ZH+ZH-HK) · b23970a
 2026-05-25 16:15 UTC · blog: add essay 'The cascade failure problem — how a single misbehaving agent can corrupt an entire pipeline' (EN+ZH+ZH-HK) · 8452e37
 2026-05-25 12:15 UTC · blog: add essay 'The multiplicity problem — accountability when one AI agent runs as many simultaneous instances' (EN+ZH+ZH-HK) · 486e1c3
