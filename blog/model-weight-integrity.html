@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The model weight integrity problem — Asaptic Labs</title>
+
+  <meta name="description" content="When an AI agent acts in the world, the authorization covers a model. But which model is actually executing? The gap between 'a model is authorized' and 'the weights running in this hardware are those authorized weights' is where accountability silently breaks down." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/model-weight-integrity.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The model weight integrity problem — who verifies what an AI agent is actually running?" />
+  <meta property="og:description" content="Authorization is issued to a model. But what verifies that the weights executing in deployed hardware are the ones the authorization covers? Hardware attestation, post-quantum weight signatures, and runtime binding are the architecture — but most deployments have none of them." />
+  <meta property="og:url" content="https://asaptic.com/blog/model-weight-integrity.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-26" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The model weight integrity problem — who verifies what an AI agent is actually running?",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-26",
+    "description": "Authorization is issued to a model. But what verifies that the weights executing in deployed hardware are the authorized weights? Hardware attestation, post-quantum weight signatures, and runtime binding address the gap — but most deployments have none of them.",
+    "url": "https://asaptic.com/blog/model-weight-integrity.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 48px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The model weight integrity problem: who verifies what an AI agent is actually running?</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-26</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>When a principal authorizes an AI agent, the authorization covers a specific model: a named version, a stated capability set, a known behavioral profile. What that authorization cannot guarantee, by itself, is that the weights executing inside a deployed hardware enclosure are the ones the authorization names. The gap between "a model is authorized" and "the authorized model is what is running right now" is where model weight integrity breaks down — and in physical-world deployments, it breaks down silently.</p>
+
+        <p>Most AI agent deployments treat weight integrity as solved at training time: the model is evaluated, approved, and shipped. What happens after shipment is rarely part of the accountability architecture. Weights sit on a storage medium inside a device. A background update process may replace them. A partial write during a failed update may corrupt them. A sophisticated adversary who gains physical or network access to the device may substitute them with modified weights that behave identically under evaluation conditions and diverge only in specific, deliberately triggered scenarios. In none of these cases does the standard log record that the model currently executing differs from the model that was authorized.</p>
+
+        <h2>The verification gap</h2>
+        <p>The verification gap has a precise shape. Authorization is a claim about identity: principal P authorizes agent A, where A is identified by a model version, a checksum, or a name. Execution is a physical process: specific tensor values, loaded into specific hardware, processing specific inputs. No standard mechanism in today's agent infrastructure connects those two things at runtime. The authorization record in the central log contains the agent's claimed identity. The execution inside the device contains the actual weights. Claiming and being are different things, and nothing checks the difference.</p>
+
+        <p>In a cloud deployment where the operator controls the serving infrastructure, this gap is narrow. The operator can verify the deployed artifact before serving begins and can re-verify it on any schedule. The attack surface is relatively well understood, and the audit mechanisms of a managed cloud environment provide some assurance. The gap widens dramatically when agents are deployed into hardware that leaves the operator's direct control: embedded devices in care facilities, autonomous systems in industrial environments, edge inference hardware in clinical settings. Once a device is in the field, the operator's visibility into what is actually executing on it depends entirely on what the device reports about itself — and a device whose weights have been replaced will report whatever the replacement weights are programmed to report.</p>
+
+        <h2>Hardware-rooted weight binding</h2>
+        <p>The architectural answer is to bind model weight identity to hardware attestation at load time, not just at deployment time. Before a model is permitted to process any input, the device's hardware security module — a TPM, a secure enclave, or equivalent trusted silicon — computes a cryptographic measurement of the loaded weights and compares it against a signed reference measurement issued at authorization time. The reference measurement is signed by the authority that authorized the model: the organization that developed it, or the operator who approved it for deployment. If the measurement of the loaded weights does not match the signed reference, the device halts the load and raises an attestation failure. The model does not execute until the integrity check passes.</p>
+
+        <p>This is the same mechanism that secure boot uses to verify firmware, and that trusted execution environments use to verify code before granting it access to protected memory. Applying it to model weights treats the weights as firmware — which is exactly what they are in a deployed physical agent. The weights are the executable logic. Allowing them to run without hardware-rooted integrity verification is equivalent to allowing firmware to run without secure boot: it works most of the time, and fails in exactly the scenarios where an adversary has had the opportunity to interfere.</p>
+
+        <p>Weight binding at load time solves the deployment-time verification problem but does not address runtime drift: a device whose weights were valid at boot may have those weights modified while the agent is running, through a memory corruption vulnerability, a compromised update channel, or direct hardware manipulation. Runtime integrity requires periodic re-measurement — the hardware module re-hashing the weight storage at intervals and comparing the result to the reference — combined with a tamper-evident log of each measurement. If a re-measurement fails, the device should enter a safe-halt state and surface the failure to the central accountability system before the next agent decision is executed.</p>
+
+        <h2>The post-quantum dimension</h2>
+        <p>The signed reference measurements that weight binding depends on must themselves be unforgeable. An adversary who can produce a valid signature over a modified weight set — a measurement claiming that poisoned weights are the authorized ones — defeats the entire mechanism. The current standard approach uses elliptic-curve signatures, which are efficient and adequate against classical computation. Against a quantum-capable adversary, they are breakable.</p>
+
+        <p>This matters specifically for physical-world AI agents because of their operational lifespan. A device deployed into a care facility or industrial site today may be in service for a decade. The reference measurements embedded in that device at manufacturing time — the signed checksums against which future weight measurements are compared — will need to be valid for that entire period. If the signing algorithm is quantum-vulnerable, an adversary with access to a sufficiently capable quantum computer during that window can forge a reference measurement, replacing the legitimate signed checksum with one that authenticates poisoned weights as valid. The device's hardware attestation will then approve the compromised model as if it were the authorized one.</p>
+
+        <p>Reference measurements for physical-world AI agents should therefore use post-quantum signature schemes at manufacturing time, not as a future upgrade. The window to provision these correctly is before the device leaves the factory. Retrofitting post-quantum signatures onto deployed hardware is technically feasible only if the update mechanism itself is secure — which depends on the integrity of whatever code handles the update, which is itself part of the problem being solved. Devices that do not have post-quantum reference measurements at manufacture have a weight integrity architecture that is vulnerable to quantum-capable adversaries for the duration of their operational life.</p>
+
+        <h2>The physical care implication</h2>
+        <p>In care environments, the model weight integrity problem carries immediate consequence. An AI agent that monitors residents, assists with medication management, or supports clinical decision-making is authorized based on the behavioral profile of a specific, evaluated model. If the weights executing on the device have been modified — through a supply chain compromise, a tampered update, or deliberate substitution — the device's behavior may diverge from the authorized profile in ways that are clinically significant. The agent may suppress alerts it would previously have raised, modify recommendations in ways that favor particular outcomes, or introduce systematic biases that affect care quality across an entire facility.</p>
+
+        <p>None of this will appear in the standard operational logs. The logs will record what the agent decided and what it reported. They will not record that the model producing those decisions was not the authorized model. The accountability gap is not in the record of decisions — it is in the gap between the authorized agent identity and the actual executing identity. Weight integrity verification closes that gap at the hardware level, where it cannot be falsified by the software stack that the compromised weights themselves control.</p>
+
+        <h2>Update authorization as a first-class ceremony</h2>
+        <p>A weight update is a model replacement. It should be treated as such in the authorization architecture. In practice, many agent deployments handle model updates as background software maintenance — automated, silent, and subject to whatever access control governs the device's software update channel. This conflates the governance of software patches with the governance of authorized agent behavior, and the two are not the same problem.</p>
+
+        <p>A new model version is a new agent identity. Deploying it without a fresh authorization ceremony — a principal reviewing and approving the new version against a known behavioral specification, producing a new signed reference measurement, and updating the authorization record in the central accountability system — means that the deployed model may differ from the authorized one without any record of the change existing anywhere. The care plan that was validated against model version 2.4 is now being executed by model version 2.5, which was never reviewed against that plan. The accountability record says model 2.4. The device says model 2.5. No one flagged the discrepancy because the update happened silently.</p>
+
+        <p>Treating update authorization as a first-class ceremony, with the same rigor as initial deployment authorization, is not bureaucratic overhead. It is the minimum condition for maintaining the connection between what principals authorized and what is actually running — which is the precondition for accountability being a meaningful concept at all.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>主体授权一个AI智能体，授权覆盖特定模型。但没有任何机制验证部署硬件中实际执行的权重就是被授权的权重。解决方案是在加载时进行基于硬件的权重绑定：硬件安全模块对已加载权重进行密码学测量，并与授权时颁发的签名参考值进行比对；不匹配则中止加载。运行时定期重新测量可防止执行期间的权重漂移。由于物理世界设备的运行寿命可达十年，参考测量值的签名应在制造时采用后量子方案——量子能力对手可伪造参考测量，将被污染的权重验证为合法。权重更新在授权架构中应等同于新的部署授权，而非静默的后台维护。在照护环境中，被替换的权重可能在不触发任何现有警报的情况下改变临床相关决策。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>主體授權一個AI智能體，授權覆蓋特定模型。但沒有任何機制驗證部署硬件中實際執行的權重就是被授權的權重。解決方案是在加載時進行基於硬件的權重綁定：硬件安全模組對已加載權重進行密碼學測量，並與授權時頒發的簽名參考值進行比對；不匹配則中止加載。運行時定期重新測量可防止執行期間的權重漂移。由於物理世界設備的運行壽命可達十年，參考測量值的簽名應在製造時採用後量子方案——量子能力對手可偽造參考測量，將被污染的權重驗證為合法。權重更新在授權架構中應等同於新的部署授權，而非靜默的後台維護。在照護環境中，被替換的權重可能在不觸發任何現有警報的情況下改變臨床相關決策。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/offline-agent-problem.html">Previous: The offline agent problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">模型权重完整性问题：谁来验证AI智能体实际在运行什么？</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-26</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>当主体授权一个AI智能体时，授权覆盖的是特定模型：一个命名版本、一套说明的能力集、一份已知的行为档案。但授权本身无法保证的是：部署硬件机箱内正在执行的权重，就是授权所指名的那些权重。"一个模型已被授权"与"被授权的模型正是当前运行的模型"之间的差距，正是模型权重完整性失效之处——而在物理世界部署中，这种失效是无声无息的。</p>
+
+        <p>大多数AI智能体部署将权重完整性视为训练阶段已解决的问题：模型经过评估、审批、发布。发布之后发生的事情，很少被纳入问责架构。权重存储在设备内部的存储介质上。后台更新进程可能替换它们。更新失败时的不完整写入可能损坏它们。获得物理或网络访问权限的高级攻击者可能用经过修改的权重替换它们——这些修改后的权重在评估条件下行为完全相同，仅在特定的、刻意触发的场景中出现偏差。在上述任何情况下，标准日志都不会记录当前执行的模型与被授权的模型存在差异。</p>
+
+        <h2>验证缺口</h2>
+        <p>验证缺口有其精确的形状。授权是关于身份的声明：主体P授权智能体A，其中A由模型版本、校验和或名称标识。执行是一个物理过程：特定的张量值，加载到特定的硬件中，处理特定的输入。今天的智能体基础设施中没有任何标准机制在运行时将这两者关联起来。中央日志中的授权记录包含智能体声明的身份。设备内部的执行包含实际的权重。声明与实际是不同的事，而没有任何机制检验二者之间的差异。</p>
+
+        <p>在操作者控制服务基础设施的云端部署中，这一差距较小。操作者可以在服务开始前验证已部署的制品，并可按任意频率重新验证。攻击面相对明确，托管云环境的审计机制提供了一定保证。当智能体部署到脱离操作者直接控制的硬件中时，这一差距会急剧扩大：照护机构中的嵌入式设备、工业环境中的自主系统、临床环境中的边缘推理硬件。一旦设备进入现场，操作者对其实际执行内容的可见性，完全依赖于设备对自身的报告——而权重已被替换的设备，将报告替换权重被编程为报告的任何内容。</p>
+
+        <h2>基于硬件的权重绑定</h2>
+        <p>架构上的答案是在加载时——而非仅在部署时——将模型权重身份绑定到硬件认证。在允许模型处理任何输入之前，设备的硬件安全模块——TPM、安全飞地或同等可信芯片——对已加载权重计算密码学测量值，并将其与授权时颁发的签名参考测量值进行比对。参考测量值由授权该模型的机构签名：开发它的组织，或批准其部署的操作者。如果已加载权重的测量值与签名参考值不匹配，设备终止加载并触发认证失败。模型在完整性检查通过之前不得执行。</p>
+
+        <p>这与安全启动用于验证固件、可信执行环境用于在授予受保护内存访问权限之前验证代码所采用的机制相同。将其应用于模型权重，是将权重视为固件——在部署的物理智能体中，权重就是固件。权重是可执行逻辑。允许它们在没有基于硬件的完整性验证的情况下运行，等同于允许固件在没有安全启动的情况下运行：大多数时候有效，在攻击者有机会干预的场景中恰恰失效。</p>
+
+        <p>加载时的权重绑定解决了部署时的验证问题，但未解决运行时漂移问题：启动时权重有效的设备，可能通过内存损坏漏洞、被攻破的更新通道或直接硬件操纵，在运行时权重被修改。运行时完整性需要定期重新测量——硬件模块定期对权重存储重新哈希并将结果与参考值比对——并结合每次测量的防篡改日志。如果重新测量失败，设备应进入安全停机状态，并在下一个智能体决策执行前向中央问责系统报告该失败。</p>
+
+        <h2>后量子维度</h2>
+        <p>权重绑定所依赖的签名参考测量值本身必须不可伪造。能够对修改后的权重集生成有效签名——声称被污染的权重是已授权的——的攻击者，会使整个机制失效。当前标准方法使用椭圆曲线签名，效率高且足以抵御经典计算。面对量子能力的攻击者，则可被破解。</p>
+
+        <p>这对物理世界AI智能体具有特殊意义，原因在于其运行寿命。今天部署到照护机构或工业现场的设备，可能服务十年。在制造时嵌入该设备的参考测量值——用于与未来权重测量值比对的签名校验和——需要在整个周期内保持有效。如果签名算法对量子攻击存在漏洞，在此窗口内拥有足够能力的量子计算机的攻击者，可以伪造参考测量值，用能够验证被污染权重为合法权重的值替换合法的签名校验和。设备的硬件认证随后将批准被攻破的模型，仿佛它就是被授权的模型。</p>
+
+        <p>因此，物理世界AI智能体的参考测量值应在制造时采用后量子签名方案，而非作为未来升级。正确配置这些方案的窗口是在设备离开工厂之前。在已部署硬件上改装后量子签名在技术上是可行的，但前提是更新机制本身是安全的——而这又取决于处理更新的代码的完整性，而这正是被解决问题的一部分。制造时没有后量子参考测量值的设备，在其整个运行生命周期内，其权重完整性架构对量子能力攻击者存在漏洞。</p>
+
+        <h2>物理照护的影响</h2>
+        <p>在照护环境中，模型权重完整性问题承载着直接后果。监测住户、协助药物管理或支持临床决策的AI智能体，其授权基于特定的、经过评估的模型的行为档案。如果设备上执行的权重已被修改——通过供应链攻击、被篡改的更新或刻意替换——设备的行为可能在临床上重要的方面偏离被授权的档案。智能体可能压制本应触发的警报、以倾向特定结果的方式修改建议，或在整个机构范围内引入影响照护质量的系统性偏差。</p>
+
+        <p>这些都不会出现在标准操作日志中。日志会记录智能体的决策和报告内容，但不会记录产生这些决策的模型并非被授权的模型。问责缺口不在决策记录中——而在被授权的智能体身份与实际执行身份之间的差距中。权重完整性验证在硬件层面关闭了这一缺口，而硬件层面无法被被攻破的权重本身所控制的软件栈所伪造。</p>
+
+        <h2>权重更新授权作为一等仪式</h2>
+        <p>权重更新就是模型替换，在授权架构中应如此对待。实践中，许多智能体部署将模型更新视为后台软件维护——自动化、静默，且受控于设备软件更新通道的访问控制。这将软件补丁的治理与被授权智能体行为的治理混为一谈，而两者并非同一问题。</p>
+
+        <p>新模型版本是新的智能体身份。在没有新授权仪式的情况下部署它——主体对照已知行为规范审查并批准新版本、生成新的签名参考测量值，并在中央问责系统中更新授权记录——意味着已部署模型可能与被授权模型不同，而任何地方都没有变更记录。针对模型2.4版本验证的照护计划，现在由从未对该计划进行审查的模型2.5版本执行。问责记录显示的是模型2.4，设备上运行的是模型2.5，没有人标记这一差异，因为更新是静默发生的。</p>
+
+        <p>将更新授权作为一等仪式，以与初始部署授权相同的严格程度对待，不是官僚主义的额外负担。这是维持主体授权内容与实际运行内容之间连接的最低条件——而这是问责在任何有意义的概念上成立的前提。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/offline-agent-problem.html">上篇：离线智能体问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">模型權重完整性問題：誰來驗證AI智能體實際在運行什麼？</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-26</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>當主體授權一個AI智能體時，授權覆蓋的是特定模型：一個命名版本、一套說明的能力集、一份已知的行為檔案。但授權本身無法保證的是：部署硬件機箱內正在執行的權重，就是授權所指名的那些權重。「一個模型已被授權」與「被授權的模型正是當前運行的模型」之間的差距，正是模型權重完整性失效之處——而在物理世界部署中，這種失效是無聲無息的。</p>
+
+        <p>大多數AI智能體部署將權重完整性視為訓練階段已解決的問題：模型經過評估、審批、發佈。發佈之後發生的事情，很少被納入問責架構。權重存儲在設備內部的存儲介質上。後台更新進程可能替換它們。更新失敗時的不完整寫入可能損壞它們。獲得物理或網絡訪問權限的高級攻擊者可能用經過修改的權重替換它們——這些修改後的權重在評估條件下行為完全相同，僅在特定的、刻意觸發的場景中出現偏差。在上述任何情況下，標準日誌都不會記錄當前執行的模型與被授權的模型存在差異。</p>
+
+        <h2>驗證缺口</h2>
+        <p>驗證缺口有其精確的形狀。授權是關於身份的聲明：主體P授權智能體A，其中A由模型版本、校驗和或名稱標識。執行是一個物理過程：特定的張量值，加載到特定的硬件中，處理特定的輸入。今天的智能體基礎設施中沒有任何標準機制在運行時將這兩者關聯起來。中央日誌中的授權記錄包含智能體聲明的身份。設備內部的執行包含實際的權重。聲明與實際是不同的事，而沒有任何機制檢驗二者之間的差異。</p>
+
+        <p>在操作者控制服務基礎設施的雲端部署中，這一差距較小。操作者可以在服務開始前驗證已部署的製品，並可按任意頻率重新驗證。攻擊面相對明確，托管雲環境的審計機制提供了一定保證。當智能體部署到脫離操作者直接控制的硬件中時，這一差距會急劇擴大：照護機構中的嵌入式設備、工業環境中的自主系統、臨床環境中的邊緣推理硬件。一旦設備進入現場，操作者對其實際執行內容的可見性，完全依賴於設備對自身的報告——而權重已被替換的設備，將報告替換權重被編程為報告的任何內容。</p>
+
+        <h2>基於硬件的權重綁定</h2>
+        <p>架構上的答案是在加載時——而非僅在部署時——將模型權重身份綁定到硬件認證。在允許模型處理任何輸入之前，設備的硬件安全模組——TPM、安全飛地或同等可信芯片——對已加載權重計算密碼學測量值，並將其與授權時頒發的簽名參考測量值進行比對。參考測量值由授權該模型的機構簽名：開發它的組織，或批准其部署的操作者。如果已加載權重的測量值與簽名參考值不匹配，設備終止加載並觸發認證失敗。模型在完整性檢查通過之前不得執行。</p>
+
+        <p>這與安全啟動用於驗證固件、可信執行環境用於在授予受保護記憶體訪問權限之前驗證代碼所採用的機制相同。將其應用於模型權重，是將權重視為固件——在部署的物理智能體中，權重就是固件。權重是可執行邏輯。允許它們在沒有基於硬件的完整性驗證的情況下運行，等同於允許固件在沒有安全啟動的情況下運行：大多數時候有效，在攻擊者有機會干預的場景中恰恰失效。</p>
+
+        <p>加載時的權重綁定解決了部署時的驗證問題，但未解決運行時漂移問題：啟動時權重有效的設備，可能通過記憶體損壞漏洞、被攻破的更新通道或直接硬件操縱，在運行時權重被修改。運行時完整性需要定期重新測量——硬件模組定期對權重存儲重新哈希並將結果與參考值比對——並結合每次測量的防篡改日誌。如果重新測量失敗，設備應進入安全停機狀態，並在下一個智能體決策執行前向中央問責系統報告該失敗。</p>
+
+        <h2>後量子維度</h2>
+        <p>權重綁定所依賴的簽名參考測量值本身必須不可偽造。能夠對修改後的權重集生成有效簽名——聲稱被污染的權重是已授權的——的攻擊者，會使整個機制失效。當前標準方法使用橢圓曲線簽名，效率高且足以抵禦經典計算。面對量子能力的攻擊者，則可被破解。</p>
+
+        <p>這對物理世界AI智能體具有特殊意義，原因在於其運行壽命。今天部署到照護機構或工業現場的設備，可能服務十年。在製造時嵌入該設備的參考測量值——用於與未來權重測量值比對的簽名校驗和——需要在整個週期內保持有效。如果簽名算法對量子攻擊存在漏洞，在此窗口內擁有足夠能力的量子計算機的攻擊者，可以偽造參考測量值，用能夠驗證被污染權重為合法權重的值替換合法的簽名校驗和。設備的硬件認證隨後將批准被攻破的模型，彷彿它就是被授權的模型。</p>
+
+        <p>因此，物理世界AI智能體的參考測量值應在製造時採用後量子簽名方案，而非作為未來升級。正確配置這些方案的窗口是在設備離開工廠之前。在已部署硬件上改裝後量子簽名在技術上是可行的，但前提是更新機制本身是安全的——而這又取決於處理更新的代碼的完整性，而這正是被解決問題的一部分。製造時沒有後量子參考測量值的設備，在其整個運行生命週期內，其權重完整性架構對量子能力攻擊者存在漏洞。</p>
+
+        <h2>物理照護的影響</h2>
+        <p>在照護環境中，模型權重完整性問題承載著直接後果。監測住戶、協助藥物管理或支持臨床決策的AI智能體，其授權基於特定的、經過評估的模型的行為檔案。如果設備上執行的權重已被修改——通過供應鏈攻擊、被篡改的更新或刻意替換——設備的行為可能在臨床上重要的方面偏離被授權的檔案。智能體可能壓制本應觸發的警報、以傾向特定結果的方式修改建議，或在整個機構範圍內引入影響照護質量的系統性偏差。</p>
+
+        <p>這些都不會出現在標準操作日誌中。日誌會記錄智能體的決策和報告內容，但不會記錄產生這些決策的模型並非被授權的模型。問責缺口不在決策記錄中——而在被授權的智能體身份與實際執行身份之間的差距中。權重完整性驗證在硬件層面關閉了這一缺口，而硬件層面無法被被攻破的權重本身所控制的軟件棧所偽造。</p>
+
+        <h2>權重更新授權作為一等儀式</h2>
+        <p>權重更新就是模型替換，在授權架構中應如此對待。實踐中，許多智能體部署將模型更新視為後台軟件維護——自動化、靜默，且受控於設備軟件更新通道的訪問控制。這將軟件補丁的治理與被授權智能體行為的治理混為一談，而兩者並非同一問題。</p>
+
+        <p>新模型版本是新的智能體身份。在沒有新授權儀式的情況下部署它——主體對照已知行為規範審查並批准新版本、生成新的簽名參考測量值，並在中央問責系統中更新授權記錄——意味著已部署模型可能與被授權模型不同，而任何地方都沒有變更記錄。針對模型2.4版本驗證的照護計劃，現在由從未對該計劃進行審查的模型2.5版本執行。問責記錄顯示的是模型2.4，設備上運行的是模型2.5，沒有人標記這一差異，因為更新是靜默發生的。</p>
+
+        <p>將更新授權作為一等儀式，以與初始部署授權相同的嚴格程度對待，不是官僚主義的額外負擔。這是維持主體授權內容與實際運行內容之間連接的最低條件——而這是問責在任何有意義的概念上成立的前提。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/offline-agent-problem.html">上篇：離線智能體問題 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
