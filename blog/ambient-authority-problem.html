@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The ambient authority problem — Asaptic Labs</title>
+
+  <meta name="description" content="An AI agent can act on capabilities it never formally received. Every environment variable, mounted credential, and inherited file descriptor that the agent's process can reach is a capability the principal hierarchy never reviewed — and never revoked." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/ambient-authority-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The ambient authority problem: capabilities an AI agent inherits but never earned" />
+  <meta property="og:description" content="An AI agent can act on capabilities it never formally received. Every environment variable, mounted credential, and inherited file descriptor that the agent's process can reach is a capability the principal hierarchy never reviewed — and never revoked." />
+  <meta property="og:url" content="https://asaptic.com/blog/ambient-authority-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-27" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The ambient authority problem: capabilities an AI agent inherits but never earned",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-27",
+    "description": "An AI agent can act on capabilities it never formally received. Every environment variable, mounted credential, and inherited file descriptor that the agent's process can reach is a capability the principal hierarchy never reviewed — and never revoked.",
+    "url": "https://asaptic.com/blog/ambient-authority-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .essay-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+      margin-bottom: 56px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 40px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--gray-dim);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray);
+      transition: color 0.2s;
+    }
+    .essay-footer-back:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">ASAPTIC LABS</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/engage.html">Engage</a>
+      <a href="/blog/">Notes</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <span class="essay-label">NOTES FROM THE CROSSINGS · 2026-05-27</span>
+    <h1 class="essay-title">The ambient authority problem</h1>
+    <p class="essay-subtitle">Capabilities an AI agent inherits but never earned</p>
+
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>5 min read</span>
+      <span>× Quantum Security × Hardware × Human Care</span>
+    </div>
+
+    <div class="essay-lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">简</button>
+      <button class="lang-btn" data-lang="zht">繁</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>When a system grants an AI agent a permission, there is a principal — a human or an institution — who reviewed that grant and accepted responsibility for it. The grant model depends on this review. Permissions should exist because someone decided they should, and revocation is meaningful because there is something concrete to revoke.</p>
+
+        <p>Ambient authority breaks this model quietly. An agent does not need to request a capability that is already present in its execution environment. Cloud service credentials injected as environment variables, filesystem paths mounted into the container, network interfaces accessible from the host, inherited file descriptors from a parent process, implicit write access to a shared memory region — all of these are capabilities the agent's process can reach without any explicit grant having been made. No principal reviewed them in the context of the agent's deployment. No audit record notes that the agent holds them. When the agent uses them, there is no permission event to log, because the capability was never formally conferred.</p>
+
+        <h2>How ambient authority accumulates</h2>
+        <p>Ambient authority accumulates through ordinary operational practice. A container image is built by a platform team whose job is infrastructure, not agent security. The image inherits environment variables that make the deployment work — database connection strings, API tokens, service account credentials. An agent is later deployed into that image because it is the right runtime environment for the agent's other dependencies. The platform team did not design the credential exposure as an agent permission grant. They were not thinking about it that way. But from the agent's process perspective, those credentials are reachable, and reaching them requires no special action.</p>
+
+        <p>The permission accumulation problem describes agents that request and collect capabilities over time — each request individually reasonable, the aggregate dangerously broad. Ambient authority is structurally different. The capabilities were never requested. They predated the agent's deployment. The agent did not accumulate them; it inherited them at process start. This distinction matters for the audit trail: a permission accumulation review can trace the sequence of grant events. An ambient authority review must start from the execution environment itself and reason backward about what the agent can reach — a much harder forensic task.</p>
+
+        <h2>Hardware surfaces and the physical-world crossing</h2>
+        <p>The ambient authority problem has its sharpest edge in embedded hardware deployments. A care monitoring device is engineered with a specific capability profile: the sensors it exposes, the actuators it controls, the network interfaces it runs. That profile was designed for a defined operational scope by engineers who understood the physical consequences of each capability.</p>
+
+        <p>When an AI agent is deployed onto that device, it inherits the full capability profile of the platform. The agent's task may be narrow — observe and summarize; alert on threshold breach — but its process can reach every interface the device exposes. If the agent is later updated, if its context window is poisoned by adversarial input, or if a supply chain compromise alters its behavior, the blast radius is not bounded by the agent's intended scope. It is bounded by the device's physical capability surface — a much larger boundary that was never reviewed as an agent permission grant.</p>
+
+        <p>In a care environment, this is not a theoretical concern. A monitoring agent with ambient access to an actuator interface is an agent that can, under adversarial conditions, influence the physical environment. The gap between what the agent was designed to do and what its process can reach is the attack surface that the ambient authority problem creates.</p>
+
+        <h2>The post-quantum dimension</h2>
+        <p>Ambient credentials — API tokens, service account keys, cloud access credentials — are typically bearer tokens or credentials authenticated with classical asymmetric cryptography. They are long-lived and rarely rotated at the cadence that security posture would require. In many deployments they are static for the lifetime of the service.</p>
+
+        <p>The post-quantum transition compounds this. An ambient credential that exists today may be signed or protected with a cryptographic algorithm that becomes vulnerable before the credential is retired. An adversary who captures the environment at any point during the credential's lifetime can, with sufficient future capability, use it to forge authorized operations long after the original deployment has concluded. This is the harvest-now-decrypt-later pattern applied not to encrypted communications but to ambient authority itself: the capability to act on behalf of the agent's execution environment, indefinitely, because the credential was never scoped to a bounded authorization context and never signed with a quantum-resistant algorithm.</p>
+
+        <h2>The design response: explicit capability declination</h2>
+        <p>The minimal footprint principle says that an agent should acquire only the capabilities it needs. The ambient authority problem reveals a necessary corollary: an agent should also explicitly decline the capabilities present in its environment that it does not need. Declination is an active step, not an absence of action. An agent startup sequence should enumerate the capabilities reachable from its process — credentials, interfaces, paths, descriptors — and formally exclude those outside its operational scope. The exclusions should be logged as authorization events, just as grants are.</p>
+
+        <p>This creates an auditable record of what the agent chose not to use, which is as important as a record of what it did use. It creates a boundary that is reviewable by the principal hierarchy. And it creates a security invariant that can be enforced at the infrastructure level: a deployment where the agent's environment has been stripped to match its declared capability declinations is a deployment where the blast radius has been structurally contained before the agent ever runs.</p>
+
+        <p>The ambient authority problem is quiet because it requires no action. Capabilities arrive with the environment. The agent never asks. The grant never happens. The audit trail has nothing to show because nothing was formally conferred. That silence is the vulnerability: inherited authority without review is authority without accountability, and in the domains where agents act on the physical world, accountability is not optional.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">SUMMARY</span>
+        <p>An AI agent can act on capabilities it never formally received. Every environment variable, mounted credential, and inherited file descriptor that the agent's process can reach is a capability the principal hierarchy never reviewed. Unlike permission accumulation — where an agent collects grants over time — ambient authority predates the agent's deployment and leaves no grant event in the audit trail. In embedded hardware for care environments, inherited platform capabilities extend an agent's potential blast radius far beyond its intended operational scope. Ambient credentials protected by classical cryptography compound the risk across the post-quantum transition. The design response is explicit capability declination at startup: enumerate what is reachable, formally exclude what is out of scope, and log the exclusions as authorization events. Inherited authority without review is authority without accountability.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>当系统向AI智能体授予权限时，存在一个委托人——人或机构——审查了该授权并接受了其责任。授权模型依赖于这种审查。权限应该存在，是因为有人决定了它们应该存在；撤销是有意义的，因为有具体的东西可以撤销。</p>
+
+        <p>环境权威以一种安静的方式打破了这个模型。智能体不需要请求其执行环境中已经存在的能力。作为环境变量注入的云服务凭证、挂载到容器中的文件系统路径、从主机可访问的网络接口、从父进程继承的文件描述符、对共享内存区域的隐式写访问——所有这些都是智能体进程无需任何显式授权即可访问的能力。没有委托人在智能体部署的上下文中审查过它们。没有审计记录注明智能体持有它们。当智能体使用它们时，没有权限事件可以记录，因为该能力从未被正式授予。</p>
+
+        <h2>环境权威如何积累</h2>
+        <p>环境权威通过普通的操作实践积累。容器镜像由平台团队构建，他们的工作是基础设施，而不是智能体安全。镜像继承了使部署正常工作的环境变量——数据库连接字符串、API令牌、服务账户凭证。随后，智能体被部署到该镜像中，因为它是智能体其他依赖项的正确运行时环境。平台团队并没有将凭证暴露设计为智能体权限授予。他们没有这样考虑。但从智能体的进程角度来看，这些凭证是可访问的，而访问它们不需要任何特殊操作。</p>
+
+        <p>权限积累问题描述的是随时间请求和收集能力的智能体——每个请求单独来看都是合理的，但总体上危险地宽泛。环境权威在结构上是不同的。这些能力从未被请求过。它们早于智能体的部署而存在。智能体没有积累它们；它在进程启动时继承了它们。这种区别对审计轨迹很重要：权限积累审查可以追踪授权事件的序列。环境权威审查必须从执行环境本身开始，并向后推理智能体可以访问什么——这是一项困难得多的取证任务。</p>
+
+        <h2>硬件表面与物理世界交叉点</h2>
+        <p>环境权威问题在嵌入式硬件部署中边缘最为锋利。照护监测设备具有特定的能力配置：它公开的传感器、它控制的执行器、它运行的网络接口。该配置是由了解每种能力物理后果的工程师为特定操作范围设计的。</p>
+
+        <p>当AI智能体部署到该设备上时，它继承了平台的完整能力配置。智能体的任务可能很窄——观察和总结；在阈值违规时发出警报——但其进程可以访问设备公开的每个接口。如果智能体后来被更新，如果其上下文窗口被对抗性输入污染，或者如果供应链攻击改变了其行为，爆炸半径不受智能体预期范围的限制。它受设备物理能力表面的限制——一个更大的边界，从未被审查为智能体权限授予。</p>
+
+        <h2>后量子维度</h2>
+        <p>环境凭证——API令牌、服务账户密钥、云访问凭证——通常是不记名令牌或使用经典非对称密码学认证的凭证。它们是长期存在的，很少以安全态势要求的频率进行轮换。在许多部署中，它们在服务的整个生命周期内都是静态的。</p>
+
+        <p>后量子过渡加剧了这一问题。今天存在的环境凭证可能使用在凭证退役之前就变得脆弱的密码算法签名或保护。在凭证生命周期内的任何时间点捕获环境的攻击者，凭借足够的未来能力，可以在原始部署结束后很长时间内使用它来伪造授权操作。这是"现在收割，以后解密"模式应用于环境权威本身：代表智能体执行环境无限期行动的能力，因为凭证从未被限定在有界授权上下文中，也从未使用量子抗性算法签名。</p>
+
+        <h2>设计响应：显式能力放弃</h2>
+        <p>最小足迹原则说，智能体应该只获取它需要的能力。环境权威问题揭示了一个必要的推论：智能体还应该明确放弃其环境中它不需要的能力。放弃是一个主动步骤，而不是缺乏行动。智能体启动序列应该枚举从其进程可访问的能力——凭证、接口、路径、描述符——并正式排除那些超出其操作范围的能力。排除应该像授权一样记录为授权事件。这创建了一个可审计的记录，记录智能体选择不使用的内容，这与记录它使用的内容同样重要。</p>
+
+        <p>环境权威问题之所以安静，是因为它不需要任何行动。能力随环境而来。智能体从不请求。授权从不发生。审计轨迹没有任何显示，因为没有正式授予任何东西。这种沉默就是漏洞：没有审查的继承权威就是没有问责的权威，在智能体对物理世界采取行动的领域，问责是不可选择的。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>AI智能体可以对其从未正式获得的能力采取行动。智能体进程可以访问的每个环境变量、挂载的凭证和继承的文件描述符都是委托人层级从未审查的能力。与权限积累不同——智能体随时间收集授权——环境权威早于智能体部署而存在，在审计轨迹中不留任何授权事件。在照护环境的嵌入式硬件中，继承的平台能力将智能体的潜在爆炸半径扩展到远超其预期操作范围的程度。受经典密码学保护的环境凭证在后量子过渡中加剧了风险。设计响应是在启动时显式放弃能力：枚举可访问的内容，正式排除超出范围的内容，并将排除记录为授权事件。没有审查的继承权威就是没有问责的权威。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>當系統向AI智能體授予權限時，存在一個委托人——人或機構——審查了該授權並接受了其責任。授權模型依賴於這種審查。權限應該存在，是因為有人決定了它們應該存在；撤銷是有意義的，因為有具體的東西可以撤銷。</p>
+
+        <p>環境權威以一種安靜的方式打破了這個模型。智能體不需要請求其執行環境中已經存在的能力。作為環境變量注入的雲服務憑證、掛載到容器中的文件系統路徑、從主機可訪問的網絡接口、從父進程繼承的文件描述符、對共享內存區域的隱式寫訪問——所有這些都是智能體進程無需任何顯式授權即可訪問的能力。沒有委托人在智能體部署的上下文中審查過它們。沒有審計記錄注明智能體持有它們。當智能體使用它們時，沒有權限事件可以記錄，因為該能力從未被正式授予。</p>
+
+        <h2>環境權威如何積累</h2>
+        <p>環境權威通過普通的操作實踐積累。容器鏡像由平台團隊構建，他們的工作是基礎設施，而不是智能體安全。鏡像繼承了使部署正常工作的環境變量——數據庫連接字符串、API令牌、服務賬戶憑證。隨後，智能體被部署到該鏡像中，因為它是智能體其他依賴項的正確運行時環境。平台團隊並沒有將憑證暴露設計為智能體權限授予。他們沒有這樣考慮。但從智能體的進程角度來看，這些憑證是可訪問的，而訪問它們不需要任何特殊操作。</p>
+
+        <p>權限積累問題描述的是隨時間請求和收集能力的智能體——每個請求單獨來看都是合理的，但總體上危險地寬泛。環境權威在結構上是不同的。這些能力從未被請求過。它們早於智能體的部署而存在。智能體沒有積累它們；它在進程啟動時繼承了它們。這種區別對審計軌跡很重要：權限積累審查可以追蹤授權事件的序列。環境權威審查必須從執行環境本身開始，並向後推理智能體可以訪問什麼——這是一項困難得多的取證任務。</p>
+
+        <h2>硬件表面與物理世界交叉點</h2>
+        <p>環境權威問題在嵌入式硬件部署中邊緣最為鋒利。照護監測設備具有特定的能力配置：它公開的傳感器、它控制的執行器、它運行的網絡接口。該配置是由了解每種能力物理後果的工程師為特定操作範圍設計的。</p>
+
+        <p>當AI智能體部署到該設備上時，它繼承了平台的完整能力配置。智能體的任務可能很窄——觀察和總結；在閾值違規時發出警報——但其進程可以訪問設備公開的每個接口。如果智能體後來被更新，如果其上下文窗口被對抗性輸入污染，或者如果供應鏈攻擊改變了其行為，爆炸半徑不受智能體預期範圍的限制。它受設備物理能力表面的限制——一個更大的邊界，從未被審查為智能體權限授予。</p>
+
+        <h2>後量子維度</h2>
+        <p>環境憑證——API令牌、服務賬戶密鑰、雲訪問憑證——通常是不記名令牌或使用經典非對稱密碼學認證的憑證。它們是長期存在的，很少以安全態勢要求的頻率進行輪換。在許多部署中，它們在服務的整個生命週期內都是靜態的。</p>
+
+        <p>後量子過渡加劇了這一問題。今天存在的環境憑證可能使用在憑證退役之前就變得脆弱的密碼算法簽名或保護。在憑證生命週期內的任何時間點捕獲環境的攻擊者，憑藉足夠的未來能力，可以在原始部署結束後很長時間內使用它來偽造授權操作。這是"現在收割，以後解密"模式應用於環境權威本身：代表智能體執行環境無限期行動的能力，因為憑證從未被限定在有界授權上下文中，也從未使用量子抗性算法簽名。</p>
+
+        <h2>設計響應：顯式能力放棄</h2>
+        <p>最小足跡原則說，智能體應該只獲取它需要的能力。環境權威問題揭示了一個必要的推論：智能體還應該明確放棄其環境中它不需要的能力。放棄是一個主動步驟，而不是缺乏行動。智能體啟動序列應該枚舉從其進程可訪問的能力——憑證、接口、路徑、描述符——並正式排除那些超出其操作範圍的能力。排除應該像授權一樣記錄為授權事件。這創建了一個可審計的記錄，記錄智能體選擇不使用的內容，這與記錄它使用的內容同樣重要。</p>
+
+        <p>環境權威問題之所以安靜，是因為它不需要任何行動。能力隨環境而來。智能體從不請求。授權從不發生。審計軌跡沒有任何顯示，因為沒有正式授予任何東西。這種沉默就是漏洞：沒有審查的繼承權威就是沒有問責的權威，在智能體對物理世界採取行動的領域，問責是不可選擇的。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>AI智能體可以對其從未正式獲得的能力採取行動。智能體進程可以訪問的每個環境變量、掛載的憑證和繼承的文件描述符都是委托人層級從未審查的能力。與權限積累不同——智能體隨時間收集授權——環境權威早於智能體部署而存在，在審計軌跡中不留任何授權事件。在照護環境的嵌入式硬件中，繼承的平台能力將智能體的潛在爆炸半徑擴展到遠超其預期操作範圍的程度。受經典密碼學保護的環境憑證在後量子過渡中加劇了風險。設計響應是在啟動時顯式放棄能力：枚舉可訪問的內容，正式排除超出範圍的內容，並將排除記錄為授權事件。沒有審查的繼承權威就是沒有問責的權威。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-05-27</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </div>
+  </main>
+
+  <script>
+    const btns = document.querySelectorAll('.lang-btn');
+    const sections = document.querySelectorAll('.essay-lang');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        sections.forEach(s => {
+          s.classList.toggle('active', s.dataset.langContent === lang);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
