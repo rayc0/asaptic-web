@@ -1,3 +1,4 @@
+2026-05-27 00:15 UTC · blog: add essay 'The enumeration problem — why AI agents cannot fully list what they can do, and why that breaks the grant model' (EN+ZH+ZH-HK) · bbae56a
 2026-05-26 20:15 UTC · blog: add essay 'The time-of-check to time-of-use problem — when authorization goes stale before the agent acts' (EN+ZH+ZH-HK) · 10546b6
 2026-05-26 16:15 UTC · blog: add essay 'The model weight integrity problem — who verifies what an AI agent is actually running' (EN+ZH+ZH-HK) · b23970a
 2026-05-25 16:15 UTC · blog: add essay 'The cascade failure problem — how a single misbehaving agent can corrupt an entire pipeline' (EN+ZH+ZH-HK) · 8452e37
