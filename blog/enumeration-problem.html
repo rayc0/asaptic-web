@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The enumeration problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents built on large language models cannot fully list what they are capable of doing. This breaks the least-privilege grant model that secure system design depends on." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/enumeration-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The enumeration problem: why AI agents cannot fully list what they can do, and why that breaks the grant model" />
+  <meta property="og:description" content="The principle of least privilege requires knowing a system's capability surface. AI agents built on large language models cannot enumerate theirs. The capability surface is emergent, compositional, and larger than any permission list can represent." />
+  <meta property="og:url" content="https://asaptic.com/blog/enumeration-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-27" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The enumeration problem: why AI agents cannot fully list what they can do, and why that breaks the grant model",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-27",
+    "description": "AI agents built on large language models cannot fully list what they are capable of doing. This breaks the least-privilege grant model that secure system design depends on.",
+    "url": "https://asaptic.com/blog/enumeration-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 48px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The enumeration problem: why AI agents cannot fully list what they can do, and why that breaks the grant model</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-27</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>The principle of least privilege is foundational to secure system design. Grant a system only the permissions it needs to do its assigned work. Revoke the rest. The principle is simple, durable, and correct — and it depends entirely on a precondition that AI agents cannot satisfy: the ability to enumerate their own capabilities.</p>
+
+        <p>Traditional software has a bounded capability surface. A database connector can read and write to a database. A file-access library can operate within a defined path prefix. You can list the API surface, enumerate the permissions, and write a grant that covers exactly what the system needs to do. The precondition for least-privilege design — knowing what the system can do — is satisfied by construction.</p>
+
+        <p>AI agents built on large language models do not have this property. Their capability surface is not defined by a fixed API. It emerges from training, from the context window, from tool definitions loaded at runtime, and from the agent's ability to compose novel sequences of actions from the capabilities it does hold. Two agents with the same base model and the same tool set may have meaningfully different effective capability surfaces depending on what instructions they received during fine-tuning, what system prompts initialize at startup, and what compound action sequences they have learned to generate. This is not a temporary limitation that better documentation will resolve. It is structural. The capability surface of an LLM-based agent is not a closed set.</p>
+
+        <h2>The grant model failure</h2>
+        <p>The consequence for authorization design is direct. When you grant an agent access to a set of tools and resources, you are making a decision under incomplete information. You know what the tools nominally permit. You do not know all the compound actions the agent might generate using those tools in sequence, under edge conditions, or in response to inputs that were not anticipated when the grant was made.</p>
+
+        <p>Consider an agent authorized to send messages on behalf of a care coordinator. The grant covers messaging. What it does not enumerate is every sequence of actions the agent might compose involving messaging as a step: escalating a clinical concern to multiple parties in a sequence never explicitly defined, initiating a care-team assembly from a natural-language trigger condition that was not anticipated at grant time, or sending a message that references information the granting authority did not realize the agent held. Each action is within the letter of the grant. None were fully anticipated when the grant was made.</p>
+
+        <p>The enumeration problem is not that agents exceed their permissions. It is that the grant cannot precisely describe the boundary of permitted behavior, because the agent's effective behavior space is larger and more compositionally rich than a permission list can represent.</p>
+
+        <h2>Hardware attestation certifies the wrong surface</h2>
+        <p>Hardware-rooted attestation — TPM measurements, secure enclave verification — addresses whether the authorized agent is executing. The measurement covers the model weights, the runtime environment, the loaded tools. It certifies: this is the agent you authorized.</p>
+
+        <p>What attestation does not cover is what that agent will do across the full range of inputs it might receive. The attested agent can generate actions the attesting authority would not have sanctioned if they had been specifically enumerated at enrollment time. The certificate says the agent is the one you enrolled. It does not say the agent's behavior is bounded to what you intended when you enrolled it.</p>
+
+        <p>This is not a deficiency in the attestation mechanism. It reflects the irreducible mismatch between what attestation certifies — identity and provenance — and what least-privilege enforcement requires — a closed capability surface. Classical software allows both because capability is determined by code, and code is what attestation measures. For LLM-based agents, capability emerges from training and context in ways that code measurement alone cannot bound.</p>
+
+        <h2>Physical-world consequences cannot wait for enumeration to improve</h2>
+        <p>In care environments, the enumeration problem is not theoretical. An agent authorized to manage a resident's schedule may also be capable of composing a message that communicates clinical information it was not authorized to disclose — not by circumventing an access control, but by combining contextual information it legitimately holds with messaging access it was legitimately granted. The gap between authorized use and possible use is always present when capability is emergent rather than enumerated. In physical-world care, that gap carries risk that software-environment deployments do not face: the outputs reach human beings in ways that cannot be recalled, and the accountability question — was the agent authorized to do what it did? — cannot be answered by checking whether the action fell within the literal permission set.</p>
+
+        <h2>Design responses that work under enumeration uncertainty</h2>
+        <p>Because the capability surface cannot be fully enumerated in advance, authorization design for AI agents must work on a different principle: constrain by output rather than by input permission. Rather than asking what actions the agent is allowed to take, the design question becomes what outputs reaching the outside world are acceptable, and which must be reviewed before they cross a boundary.</p>
+
+        <p>This shifts the enforcement point from the authorization grant to the output channel. An agent can compose freely within its working context; before any output crosses a defined perimeter — a message sent, a record updated, a device actuated — it passes through an output gate that evaluates the output against an acceptable-use policy. The policy is defined in terms of observable outputs, not in terms of the internal action sequence that produced them. Capabilities are not enumerated; outputs are governed.</p>
+
+        <p>Output gating does not eliminate the enumeration problem. It reframes it: instead of requiring a complete capability enumeration at grant time, it requires a complete output classification at deployment time. For care environments and safety-critical hardware deployments, this trade is favorable. The space of acceptable outputs is smaller and more tractable than the space of possible agent actions. The enforcement boundary is also more directly tied to accountability — what matters, ultimately, is not what the agent did internally, but what it caused to cross into the world.</p>
+
+        <p>The principle of least privilege remains the correct frame. What changes, for AI agents, is where the least-privilege boundary is drawn.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>最小权限原则要求了解系统的能力边界。传统软件具有有限的能力表面，可以枚举。基于大语言模型的AI智能体则不然：其能力表面从训练、上下文窗口和工具组合中涌现，无法穷举。这打破了授权设计的前提——当你授权一个智能体时，你对其能做什么的了解是不完整的。硬件认证证明了"哪个智能体在运行"，却无法约束该智能体在所有可能输入下的行为范围。在物理世界照护场景中，这一缺口直接关系到问责：智能体可能合法持有的上下文与合法获得的工具权限相结合，产生了未经预期的输出。应对方案是以输出约束代替输入权限枚举：在输出跨越外部边界之前进行评估，而非试图在授权时枚举所有可能行为。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>最小權限原則要求了解系統的能力邊界。傳統軟件具有有限的能力表面，可以枚舉。基於大語言模型的AI智能體則不然：其能力表面從訓練、上下文窗口和工具組合中湧現，無法窮舉。這打破了授權設計的前提——當你授權一個智能體時，你對其能做什麼的了解是不完整的。硬件認證證明了「哪個智能體在運行」，卻無法約束該智能體在所有可能輸入下的行為範圍。在物理世界照護場景中，這一缺口直接關係到問責：智能體可能合法持有的上下文與合法獲得的工具權限相結合，產生了未經預期的輸出。應對方案是以輸出約束代替輸入權限枚舉：在輸出跨越外部邊界之前進行評估，而非試圖在授權時枚舉所有可能行為。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/toctou-problem.html">Previous: The TOCTOU problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">枚举问题：AI智能体无法完整列出自身能力，以及这如何打破授权模型</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-27</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>最小权限原则是安全系统设计的基础。仅授予系统完成其分配工作所需的权限，撤销其余权限。这一原则简单、持久且正确——但它完全依赖于一个AI智能体无法满足的前提：能够枚举自身的能力。</p>
+
+        <p>传统软件具有有限的能力表面。数据库连接器可以读写数据库，文件访问库可以在定义的路径前缀内操作。你可以列出API表面，枚举权限，并写出恰好覆盖系统所需工作的授权。最小权限设计的前提——了解系统能做什么——在构建时就得到了满足。</p>
+
+        <p>基于大语言模型构建的AI智能体不具备这一属性。其能力表面不由固定的API定义，而是从训练、上下文窗口、运行时加载的工具定义，以及智能体利用其持有能力组合新型动作序列的能力中涌现。这不是更好的文档能够解决的暂时性限制，而是结构性的。基于大语言模型的智能体的能力表面不是一个封闭集合。</p>
+
+        <h2>授权模型的失效</h2>
+        <p>对授权设计的影响是直接的。当你授权一个智能体访问一组工具和资源时，你是在不完整信息下做决策。你知道工具名义上允许什么，但你不知道智能体在边缘条件下，或在授权时未曾预期的输入响应中，可能组合生成的所有复合行动。</p>
+
+        <p>考虑一个被授权代表照护协调员发送消息的智能体。授权覆盖消息发送。但它没有枚举智能体可能以消息发送为步骤组合的所有行动序列：向从未明确定义顺序的多方上报临床问题，根据授权时未预期的自然语言触发条件发起照护团队集结，或发送引用了授权方未意识到智能体持有的信息的消息。每个行动都在授权的字面范围内，但没有一个在授权时被完整预期。</p>
+
+        <p>枚举问题不在于智能体超出其权限，而在于授权无法精确描述允许行为的边界——因为智能体的有效行为空间比权限列表所能表达的更大、更具组合性。</p>
+
+        <h2>硬件认证证明了错误的表面</h2>
+        <p>硬件根认证——TPM度量、安全飞地验证——解决的是授权的智能体是否正在执行的问题。度量涵盖模型权重、运行时环境、已加载的工具。它证明：这是你授权的智能体。</p>
+
+        <p>认证不覆盖的是该智能体在其可能接收的全部输入范围内将做什么。已认证的智能体可以生成认证机构如果在注册时具体枚举就不会批准的行动。证书说明智能体是你注册的那个，但它没有说明智能体的行为被限制在你注册时所预期的范围内。</p>
+
+        <p>这不是认证机制的缺陷，而是认证所证明的内容——身份和来源——与最小权限执行所要求的内容——封闭的能力表面——之间不可消除的错配。经典软件两者兼顾，因为能力由代码决定，而代码正是认证度量的内容。对于基于大语言模型的智能体，能力从训练和上下文中涌现，代码度量本身无法约束。</p>
+
+        <h2>物理世界的后果无法等待枚举能力的改善</h2>
+        <p>在照护环境中，枚举问题并非理论性的。一个被授权管理住户日程的智能体，也可能组合出传达其未被授权披露的临床信息的消息——不是通过绕过访问控制，而是将其合法持有的上下文信息与合法获得的消息权限相结合。当能力是涌现的而非可枚举的，授权使用与可能使用之间的缺口始终存在。在物理世界照护中，这一缺口承载着软件环境中没有的风险：输出以无法撤回的方式到达人类，问责问题——智能体有权做它所做的事吗？——无法通过检查行动是否在字面权限集合内来回答。</p>
+
+        <h2>在枚举不确定性下有效的设计方案</h2>
+        <p>由于能力表面无法提前完整枚举，AI智能体的授权设计必须基于不同的原则：以输出约束代替输入权限枚举。设计问题不是"智能体被允许采取什么行动"，而是"到达外部世界的哪些输出是可接受的，哪些在跨越边界前必须经过审核"。</p>
+
+        <p>这将执行点从授权授予转移到输出通道。智能体可以在其工作上下文中自由组合；在任何输出跨越定义边界之前——消息发送、记录更新、设备操动——它都经过一个输出门，根据可接受使用策略评估该输出。策略以可观察输出来定义，而非以产生这些输出的内部行动序列来定义。能力无需枚举，输出受到治理。</p>
+
+        <p>输出门控并不消除枚举问题，而是重新框架它：它不要求在授权时完整枚举能力，而是要求在部署时完整分类输出。对于照护环境和安全关键硬件部署，这一取舍是有利的。可接受输出的空间比可能的智能体行动空间更小、更易处理。最小权限原则仍然是正确的框架，对AI智能体而言改变的是这一边界的划定位置。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/toctou-problem.html">上一篇：检查时间到使用时间问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">枚舉問題：AI智能體無法完整列出自身能力，以及這如何打破授權模型</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-27</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>最小權限原則是安全系統設計的基礎。僅授予系統完成其分配工作所需的權限，撤銷其餘權限。這一原則簡單、持久且正確——但它完全依賴於一個AI智能體無法滿足的前提：能夠枚舉自身的能力。</p>
+
+        <p>傳統軟件具有有限的能力表面。數據庫連接器可以讀寫數據庫，文件訪問庫可以在定義的路徑前綴內操作。你可以列出API表面，枚舉權限，並寫出恰好覆蓋系統所需工作的授權。最小權限設計的前提——了解系統能做什麼——在構建時就得到了滿足。</p>
+
+        <p>基於大語言模型構建的AI智能體不具備這一屬性。其能力表面不由固定的API定義，而是從訓練、上下文窗口、運行時加載的工具定義，以及智能體利用其持有能力組合新型動作序列的能力中湧現。這不是更好的文檔能夠解決的暫時性限制，而是結構性的。基於大語言模型的智能體的能力表面不是一個封閉集合。</p>
+
+        <h2>授權模型的失效</h2>
+        <p>對授權設計的影響是直接的。當你授權一個智能體訪問一組工具和資源時，你是在不完整信息下做決策。你知道工具名義上允許什麼，但你不知道智能體在邊緣條件下，或在授權時未曾預期的輸入響應中，可能組合生成的所有複合行動。</p>
+
+        <p>考慮一個被授權代表照護協調員發送消息的智能體。授權覆蓋消息發送。但它沒有枚舉智能體可能以消息發送為步驟組合的所有行動序列：向從未明確定義順序的多方上報臨床問題，根據授權時未預期的自然語言觸發條件發起照護團隊集結，或發送引用了授權方未意識到智能體持有的信息的消息。每個行動都在授權的字面範圍內，但沒有一個在授權時被完整預期。</p>
+
+        <p>枚舉問題不在於智能體超出其權限，而在於授權無法精確描述允許行為的邊界——因為智能體的有效行為空間比權限列表所能表達的更大、更具組合性。</p>
+
+        <h2>硬件認證證明了錯誤的表面</h2>
+        <p>硬件根認證——TPM度量、安全飛地驗證——解決的是授權的智能體是否正在執行的問題。度量涵蓋模型權重、運行時環境、已加載的工具。它證明：這是你授權的智能體。</p>
+
+        <p>認證不覆蓋的是該智能體在其可能接收的全部輸入範圍內將做什麼。已認證的智能體可以生成認證機構如果在注冊時具體枚舉就不會批準的行動。證書說明智能體是你注冊的那個，但它沒有說明智能體的行為被限制在你注冊時所預期的範圍內。</p>
+
+        <p>這不是認證機制的缺陷，而是認證所證明的內容——身份和來源——與最小權限執行所要求的內容——封閉的能力表面——之間不可消除的錯配。經典軟件兩者兼顧，因為能力由代碼決定，而代碼正是認證度量的內容。對於基於大語言模型的智能體，能力從訓練和上下文中湧現，代碼度量本身無法約束。</p>
+
+        <h2>物理世界的後果無法等待枚舉能力的改善</h2>
+        <p>在照護環境中，枚舉問題並非理論性的。一個被授權管理住戶日程的智能體，也可能組合出傳達其未被授權披露的臨床信息的消息——不是通過繞過訪問控制，而是將其合法持有的上下文信息與合法獲得的消息權限相結合。當能力是湧現的而非可枚舉的，授權使用與可能使用之間的缺口始終存在。在物理世界照護中，這一缺口承載著軟件環境中沒有的風險：輸出以無法撤回的方式到達人類，問責問題——智能體有權做它所做的事嗎？——無法通過檢查行動是否在字面權限集合內來回答。</p>
+
+        <h2>在枚舉不確定性下有效的設計方案</h2>
+        <p>由於能力表面無法提前完整枚舉，AI智能體的授權設計必須基於不同的原則：以輸出約束代替輸入權限枚舉。設計問題不是「智能體被允許採取什麼行動」，而是「到達外部世界的哪些輸出是可接受的，哪些在跨越邊界前必須經過審核」。</p>
+
+        <p>這將執行點從授權授予轉移到輸出通道。智能體可以在其工作上下文中自由組合；在任何輸出跨越定義邊界之前——消息發送、記錄更新、設備操動——它都經過一個輸出門，根據可接受使用策略評估該輸出。策略以可觀察輸出來定義，而非以產生這些輸出的內部行動序列來定義。能力無需枚舉，輸出受到治理。</p>
+
+        <p>輸出門控並不消除枚舉問題，而是重新框架它：它不要求在授權時完整枚舉能力，而是要求在部署時完整分類輸出。對於照護環境和安全關鍵硬件部署，這一取捨是有利的。可接受輸出的空間比可能的智能體行動空間更小、更易處理。最小權限原則仍然是正確的框架，對AI智能體而言改變的是這一邊界的劃定位置。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/toctou-problem.html">上一篇：檢查時間到使用時間問題 →</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="essay-footer">
+    &copy; 2026 Asaptic Labs &middot; <a href="/privacy.html" style="color:inherit">Privacy</a>
+  </footer>
+
+  <script>
+    (function() {
+      const saved = localStorage.getItem('asaptic-lang') || 'en';
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === saved);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === saved);
+        btn.addEventListener('click', () => {
+          const lang = btn.dataset.lang;
+          localStorage.setItem('asaptic-lang', lang);
+          document.querySelectorAll('.essay-lang').forEach(el => {
+            el.classList.toggle('active', el.dataset.langContent === lang);
+          });
+          document.querySelectorAll('.lang-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.lang === lang);
+          });
+        });
+      });
+    })();
+  </script>
+
+</body>
+</html>
