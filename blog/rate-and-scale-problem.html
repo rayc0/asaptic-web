@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The rate and scale problem — Asaptic Labs</title>
+
+  <meta name="description" content="Human oversight was designed for human actors. AI agents bring machine speed and machine scale. When the rate of action exceeds the rate of accountability, the gap between what the agent did and what any human reviewed is not a temporary lag — it is the architecture." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/rate-and-scale-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The rate and scale problem: when an AI agent acts faster than any human can observe" />
+  <meta property="og:description" content="Human oversight was designed for human actors. AI agents bring machine speed and machine scale. When the rate of action exceeds the rate of accountability, the gap is not a temporary lag — it is the architecture." />
+  <meta property="og:url" content="https://asaptic.com/blog/rate-and-scale-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-27" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The rate and scale problem: when an AI agent acts faster than any human can observe",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-27",
+    "description": "Human oversight was designed for human actors. AI agents bring machine speed and machine scale. When the rate of action exceeds the rate of accountability, the gap is not a temporary lag — it is the architecture.",
+    "url": "https://asaptic.com/blog/rate-and-scale-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .essay-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+      margin-bottom: 56px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 40px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--gray-dim);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray);
+      transition: color 0.2s;
+    }
+    .essay-footer-back:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">ASAPTIC LABS</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/engage.html">Engage</a>
+      <a href="/blog/">Notes</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <span class="essay-label">NOTES FROM THE CROSSINGS · 2026-05-27</span>
+    <h1 class="essay-title">The rate and scale problem</h1>
+    <p class="essay-subtitle">When an AI agent acts faster than any human can observe</p>
+
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>5 min read</span>
+      <span>× Quantum Security × Hardware × Human Care</span>
+    </div>
+
+    <div class="essay-lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">简</button>
+      <button class="lang-btn" data-lang="zht">繁</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Human oversight mechanisms were designed for human actors. A review committee, an approval chain, an audit cycle — these structures assume a rate of action that a person or a small team can track in real time. When an AI agent enters a system, it brings machine speed and, with orchestration, machine scale. The oversight architecture does not automatically update. The result is a structural gap between how fast the agent can act and how fast accountability can follow.</p>
+
+        <p>This gap is not a temporary lag that engineering will eventually close. It is a feature of the architecture: the agent's operational clock runs at a different order of magnitude than the oversight clock. Every accountability mechanism built around human-speed assumptions — escalation queues, anomaly reviews, approval thresholds — begins to degrade the moment it is applied to a machine-speed actor. The degradation is not visible at first. It becomes visible when something goes wrong and the audit trail reveals decisions that compounded across thousands of steps before any human had occasion to look.</p>
+
+        <h2>The core asymmetry</h2>
+        <p>A human analyst processes a document, makes a decision, and moves to the next task. At machine speed, an agent can process ten thousand documents and make ten thousand decisions before the analyst has completed their first. This is not a hypothetical ceiling — it is a routine operational profile for any reasonably capable agent deployment. The decisions are individually small. The aggregate is large, and the aggregate is where harm accumulates.</p>
+
+        <p>The oversight structures built for human-speed actors rest on an assumption of pace parity: a reviewer can keep up with the actor. An anomaly becomes visible before it compounds. A mistake can be caught before it cascades. A single bad decision does not propagate to thousands of further decisions before anyone notices. At machine speed, none of these assumptions hold. The audit trail grows faster than it can be reviewed. Alerts accumulate faster than they can be triaged. The rate of error production can exceed the rate of error detection by orders of magnitude — and by the time a problem surfaces to a human principal, it may have replicated itself throughout the system in forms that are difficult or impossible to reverse.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>The rate asymmetry reaches its tightest constraint at the hardware crossing. Embedded agents in industrial, security, or biomedical hardware operate on latency budgets measured in microseconds. A control loop that waits for human review before acting is a control loop that cannot function. The physics of the hardware impose machine-speed decision cadences on the agent independent of the accountability architecture constructed around it.</p>
+
+        <p>This creates a structural impossibility: meaningful pre-decision human oversight at the rate the hardware requires is not achievable. The accountability architecture must therefore shift to post-hoc — the agent acts at machine speed, and accountability is reconstructed afterward from logs and telemetry. Post-hoc accountability has a fundamental limitation: it can establish what happened. It cannot prevent what happened. In domains where consequences are bounded and reversible, post-hoc accountability is a reasonable trade. In domains where consequences are unbounded or irreversible — which describes most safety-critical hardware deployments — it is not a complete answer. The question is not whether to accept post-hoc accountability in these environments; it is whether the logs are complete enough, the tamper-resistance strong enough, and the reconstruction fast enough to be meaningful when something goes wrong.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>In care environments the rate and scale problem manifests differently. The agent's decision cadence is typically slower than embedded hardware — decisions may be minutes or hours apart rather than microseconds — but the population of decisions is large and the consequences are personal and often irreversible. A care coordination agent managing schedules, alerts, or escalations across a population is making decisions that compound across people, not just across time.</p>
+
+        <p>Scale amplifies systematic errors across a population. A bias in the agent's escalation threshold affects not one person but every person in the population the agent monitors. A drift in its response to a specific presentation pattern propagates silently across every individual who matches that pattern, at a cadence that the team of human reviewers can never match. The scale of the deployment amplifies the blast radius of any systematic error while simultaneously making that error harder to detect — because no individual case appears anomalous at first. Only the aggregate does, and the aggregate is visible only in retrospect, after many individuals have already been affected.</p>
+
+        <p>This is the care-specific form of the rate and scale problem: the clock is slower but the stakes per decision are higher, the affected population is larger, and the systematic nature of any error means that the damage is already distributed before it becomes visible. Human oversight at the individual case level cannot catch a population-level drift. Only oversight designed for the aggregate can do that — and that requires building aggregate monitors into the deployment architecture, not adding them after the fact when a problem surfaces.</p>
+
+        <h2>Design responses</h2>
+        <p>Three structural responses are worth distinguishing, because they operate at different points in the accountability architecture.</p>
+
+        <p>Rate governors impose a maximum action rate on the agent independent of its task load. The agent may be capable of processing ten thousand items per minute, but the deployment constrains it to a number that the oversight architecture can track. This makes the agent's action rate matchable by human review, at the cost of reduced throughput. Rate governors are most appropriate in domains where throughput pressure exists but is not physically mandated — where the agent is fast because it can be, not because the physics of the domain require it.</p>
+
+        <p>Scale ceilings bound the population over which a single agent instance has authority. Rather than one agent covering an entire population, deployments are sharded to bounded groups. An error's blast radius cannot exceed the shard. Human reviewers are assigned to shards at a ratio that makes meaningful oversight achievable, and the aggregate monitor spans shards rather than the full population. Scale ceilings are the primary structural response for care deployments where per-decision speed is manageable but per-population scope is the accountability challenge.</p>
+
+        <p>Mandatory pause points embed hard-coded checkpoints into agent execution paths where human review is required before the agent may continue. Pause points do not govern rate; they govern consequence. They are placed at decision nodes where the cost of an error is high enough that throughput must yield to oversight — the irreversibility threshold. In practice, mandatory pause points are feasible only in domains where the frequency of pause-triggering decisions is low enough that the human reviewers assigned to them are not immediately overwhelmed.</p>
+
+        <p>None of these responses eliminates the rate and scale problem. Each trades a degree of capability against a degree of accountability. The appropriate trade depends on the deployment context, the reversibility of consequences, and the size of the affected population. What is not a valid response is to deploy a machine-speed, machine-scale agent against a human-speed oversight architecture and assume the gap will close on its own. It does not. The gap grows with every tick of the agent's clock, and the damage that accumulates inside the gap is the damage that accountability was supposed to prevent.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">SUMMARY</span>
+        <p>AI agents act at machine speed and machine scale; human oversight architectures were designed for human-speed actors. The asymmetry is structural, not temporary. At the hardware crossing, physics forces decision cadences too fast for pre-decision human review — post-hoc accountability from logs is the only feasible model, and its adequacy depends on log completeness and tamper-resistance. In physical-world care, slower per-decision speed is offset by large affected populations: systematic errors propagate across many individuals before aggregate patterns become visible to any human reviewer. Design responses include rate governors, scale ceilings, and mandatory pause points, each trading throughput for accountability at a different point in the architecture. Deploying machine-speed agents against human-speed oversight and expecting parity is not a plan; it is the gap itself.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>人类监督机制是为人类行为者设计的。审查委员会、审批链、审计周期——这些结构假设行动速率是一个人或小团队能够实时跟踪的。当AI智能体进入系统时，它带来了机器速度，通过编排还带来了机器规模。监督架构不会自动更新。结果是智能体行动速度与问责跟进速度之间出现了结构性差距。</p>
+
+        <p>这个差距不是工程最终会弥合的暂时滞后。它是架构的特性：智能体的运营时钟运行在与监督时钟不同的数量级上。围绕人类速度假设构建的每一个问责机制——升级队列、异常审查、审批阈值——一旦应用于机器速度的行为者就开始退化。退化最初是不可见的。当出错时它变得可见，审计轨迹揭示在任何人有机会查看之前就已跨越数千步骤积累的决策。</p>
+
+        <h2>核心不对称性</h2>
+        <p>人类分析师处理一份文件，做出决定，然后继续下一个任务。在机器速度下，智能体可以在分析师完成第一个任务之前处理一万份文件并做出一万个决定。这不是假设上限——这是任何合理有能力的智能体部署的常规操作情况。决策单独来看都是小的，但总体是大的，而总体是伤害积累的地方。</p>
+
+        <p>为人类速度行为者建立的监督结构依赖于步调一致的假设：审查者可以跟上行为者的步伐。异常在积累之前就变得可见。错误在级联之前可以被发现。单个错误决策不会在任何人注意之前传播到数千个后续决策。在机器速度下，这些假设都不成立。审计轨迹增长速度超过审查速度。警报积累速度超过分类速度。错误产生速率可能比错误检测速率高出几个数量级——当问题浮现到人类委托人面前时，它可能已经以难以或不可能逆转的形式在整个系统中复制了自己。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>速率不对称在硬件交叉点达到最紧约束。工业、安全或生物医学硬件中的嵌入式智能体在以微秒为单位的延迟预算内运行。等待人工审查后再行动的控制回路是无法运行的控制回路。硬件的物理特性对智能体施加机器速度的决策频率，独立于围绕它构建的问责架构。</p>
+
+        <p>这造成了结构性的不可能：在硬件需要的速率下进行有意义的决策前人工监督是不可实现的。因此问责架构必须转向事后——智能体以机器速度行动，问责事后从日志和遥测中重建。事后问责有一个根本限制：它能够确定发生了什么，但不能阻止发生了什么。在后果有界且可逆的领域，事后问责是合理的权衡。在后果无界或不可逆的领域——这描述了大多数安全关键硬件部署——这不是完整的答案。问题不是是否在这些环境中接受事后问责；而是日志是否足够完整、防篡改是否足够强、重建是否足够快，以便在出错时有意义。</p>
+
+        <h2>物理世界照护交叉点</h2>
+        <p>在照护环境中，速率和规模问题的表现有所不同。智能体的决策频率通常比嵌入式硬件慢——决策可能相隔数分钟或数小时而不是微秒——但决策的人口数量大，后果是个人的且往往是不可逆的。管理人口中日程安排、警报或升级的照护协调智能体做出的决策不仅跨越时间积累，还跨越人口积累。</p>
+
+        <p>规模放大了系统性错误在整个人口中的影响。智能体升级阈值中的偏差影响的不是一个人，而是智能体监控的人口中的每一个人。其对特定表现模式的响应漂移静默地传播到呈现该模式的每一个人，以人工审查团队永远无法匹配的频率进行。部署规模放大了任何系统性错误的爆炸半径，同时使该错误更难检测——因为最初没有个别案例看起来异常。只有总体是异常的，而总体只在事后才可见，此时许多人已经受到了影响。</p>
+
+        <h2>设计响应</h2>
+        <p>三种结构性响应值得区分，因为它们在问责架构的不同点发挥作用。</p>
+
+        <p>速率调控器对智能体施加独立于其任务负载的最大行动速率。智能体可能能够每分钟处理一万个项目，但部署将其限制在监督架构可以跟踪的数量。这使智能体的行动速率可以被人工审查匹配，代价是吞吐量降低。</p>
+
+        <p>规模上限约束单个智能体实例拥有权威的人口。部署被分片到有界群体，而不是一个智能体覆盖整个人口。错误的爆炸半径不能超过分片。以使有意义的监督成为可能的比例为分片分配人工审查员，而总体监控器跨越分片而不是整个人口。</p>
+
+        <p>强制暂停点在智能体执行路径中嵌入硬编码检查点，在继续之前需要人工审查。暂停点不管理速率；它们管理后果。它们被放置在错误成本足够高以至于吞吐量必须让步于监督的决策节点——不可逆性阈值。</p>
+
+        <p>这些响应都不能消除速率和规模问题。每种都以一定程度的能力换取一定程度的问责。适当的权衡取决于部署背景、后果的可逆性以及受影响人口的规模。不是有效响应的是将机器速度、机器规模的智能体部署到人类速度的监督架构中，并假设差距会自行弥合。它不会。差距随智能体时钟的每次滴答而增长，在差距内积累的损害正是问责本应阻止的损害。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>AI智能体以机器速度和机器规模行动；人类监督架构是为人类速度行为者设计的。不对称性是结构性的，而非暂时的。在硬件交叉点，物理特性强制执行决策频率，决策前的人工审查不可行——来自日志的事后问责是唯一可行模型。在物理世界照护中，较慢的单决策速度被大型受影响人口所抵消：系统性错误在总体模式对任何人工审查员可见之前已传播到许多人。设计响应包括速率调控器、规模上限和强制暂停点，每种都在架构的不同点以吞吐量换取问责。将机器速度智能体部署到人类速度监督中并期望对等，不是一个计划；它本身就是那个差距。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>人類監督機制是為人類行為者設計的。審查委員會、審批鏈、審計週期——這些結構假設行動速率是一個人或小團隊能夠實時跟蹤的。當AI智能體進入系統時，它帶來了機器速度，通過編排還帶來了機器規模。監督架構不會自動更新。結果是智能體行動速度與問責跟進速度之間出現了結構性差距。</p>
+
+        <p>這個差距不是工程最終會彌合的暫時滯後。它是架構的特性：智能體的運營時鐘運行在與監督時鐘不同的數量級上。圍繞人類速度假設構建的每一個問責機制——升級隊列、異常審查、審批閾值——一旦應用於機器速度的行為者就開始退化。退化最初是不可見的。當出錯時它變得可見，審計軌跡揭示在任何人有機會查看之前就已跨越數千步驟積累的決策。</p>
+
+        <h2>核心不對稱性</h2>
+        <p>人類分析師處理一份文件，做出決定，然後繼續下一個任務。在機器速度下，智能體可以在分析師完成第一個任務之前處理一萬份文件並做出一萬個決定。這不是假設上限——這是任何合理有能力的智能體部署的常規操作情況。決策單獨來看都是小的，但總體是大的，而總體是傷害積累的地方。</p>
+
+        <p>為人類速度行為者建立的監督結構依賴於步調一致的假設：審查者可以跟上行為者的步伐。異常在積累之前就變得可見。錯誤在級聯之前可以被發現。單個錯誤決策不會在任何人注意之前傳播到數千個後續決策。在機器速度下，這些假設都不成立。審計軌跡增長速度超過審查速度。警報積累速度超過分類速度。錯誤產生速率可能比錯誤檢測速率高出幾個數量級——當問題浮現到人類委托人面前時，它可能已經以難以或不可能逆轉的形式在整個系統中複製了自己。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>速率不對稱在硬件交叉點達到最緊約束。工業、安全或生物醫學硬件中的嵌入式智能體在以微秒為單位的延遲預算內運行。等待人工審查後再行動的控制回路是無法運行的控制回路。硬件的物理特性對智能體施加機器速度的決策頻率，獨立於圍繞它構建的問責架構。</p>
+
+        <p>這造成了結構性的不可能：在硬件需要的速率下進行有意義的決策前人工監督是不可實現的。因此問責架構必須轉向事後——智能體以機器速度行動，問責事後從日誌和遙測中重建。事後問責有一個根本限制：它能夠確定發生了什麼，但不能阻止發生了什麼。在後果有界且可逆的領域，事後問責是合理的權衡。在後果無界或不可逆的領域——這描述了大多數安全關鍵硬件部署——這不是完整的答案。問題不是是否在這些環境中接受事後問責；而是日誌是否足夠完整、防篡改是否足夠強、重建是否足夠快，以便在出錯時有意義。</p>
+
+        <h2>物理世界照護交叉點</h2>
+        <p>在照護環境中，速率和規模問題的表現有所不同。智能體的決策頻率通常比嵌入式硬件慢——決策可能相隔數分鐘或數小時而不是微秒——但決策的人口數量大，後果是個人的且往往是不可逆的。管理人口中日程安排、警報或升級的照護協調智能體做出的決策不僅跨越時間積累，還跨越人口積累。</p>
+
+        <p>規模放大了系統性錯誤在整個人口中的影響。智能體升級閾值中的偏差影響的不是一個人，而是智能體監控的人口中的每一個人。其對特定表現模式的響應漂移靜默地傳播到呈現該模式的每一個人，以人工審查團隊永遠無法匹配的頻率進行。部署規模放大了任何系統性錯誤的爆炸半徑，同時使該錯誤更難檢測——因為最初沒有個別案例看起來異常。只有總體是異常的，而總體只在事後才可見，此時許多人已經受到了影響。</p>
+
+        <h2>設計響應</h2>
+        <p>三種結構性響應值得區分，因為它們在問責架構的不同點發揮作用。</p>
+
+        <p>速率調控器對智能體施加獨立於其任務負載的最大行動速率。智能體可能能夠每分鐘處理一萬個項目，但部署將其限制在監督架構可以跟蹤的數量。這使智能體的行動速率可以被人工審查匹配，代價是吞吐量降低。</p>
+
+        <p>規模上限約束單個智能體實例擁有權威的人口。部署被分片到有界群體，而不是一個智能體覆蓋整個人口。錯誤的爆炸半徑不能超過分片。以使有意義的監督成為可能的比例為分片分配人工審查員，而總體監控器跨越分片而不是整個人口。</p>
+
+        <p>強制暫停點在智能體執行路徑中嵌入硬編碼檢查點，在繼續之前需要人工審查。暫停點不管理速率；它們管理後果。它們被放置在錯誤成本足夠高以至於吞吐量必須讓步於監督的決策節點——不可逆性閾值。</p>
+
+        <p>這些響應都不能消除速率和規模問題。每種都以一定程度的能力換取一定程度的問責。適當的權衡取決於部署背景、後果的可逆性以及受影響人口的規模。不是有效響應的是將機器速度、機器規模的智能體部署到人類速度的監督架構中，並假設差距會自行彌合。它不會。差距隨智能體時鐘的每次滴答而增長，在差距內積累的損害正是問責本應阻止的損害。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>AI智能體以機器速度和機器規模行動；人類監督架構是為人類速度行為者設計的。不對稱性是結構性的，而非暫時的。在硬件交叉點，物理特性強制執行決策頻率，決策前的人工審查不可行——來自日誌的事後問責是唯一可行模型。在物理世界照護中，較慢的單決策速度被大型受影響人口所抵消：系統性錯誤在總體模式對任何人工審查員可見之前已傳播到許多人。設計響應包括速率調控器、規模上限和強制暫停點，每種都在架構的不同點以吞吐量換取問責。將機器速度智能體部署到人類速度監督中並期望對等，不是一個計劃；它本身就是那個差距。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-05-27</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </div>
+  </main>
+
+  <script>
+    const btns = document.querySelectorAll('.lang-btn');
+    const sections = document.querySelectorAll('.essay-lang');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        sections.forEach(s => {
+          s.classList.toggle('active', s.dataset.langContent === lang);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
