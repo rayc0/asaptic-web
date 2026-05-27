@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The supply chain problem — Asaptic Labs</title>
+
+  <meta name="description" content="When you deploy an AI agent, you inspect the agent. You rarely inspect with the same depth every tool it calls. Each external endpoint is a trust decision — and accountability is only as strong as the weakest link." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/supply-chain-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The supply chain problem: every tool an AI agent calls is a trust decision" />
+  <meta property="og:description" content="Hardware attestation certifies the agent executing in your environment. It does not certify the runtime behavior of the endpoints that agent calls. The trust guarantee terminates precisely where the agent's influence extends furthest." />
+  <meta property="og:url" content="https://asaptic.com/blog/supply-chain-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-27" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The supply chain problem: every tool an AI agent calls is a trust decision",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-27",
+    "description": "When you deploy an AI agent, you inspect the agent. You rarely inspect with the same depth every tool it calls. Each external endpoint is a trust decision — and accountability is only as strong as the weakest link.",
+    "url": "https://asaptic.com/blog/supply-chain-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--fg);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 48px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The supply chain problem: every tool an AI agent calls is a trust decision</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-27</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>When you deploy an AI agent, you review the agent. You inspect its system prompt, validate its model, perhaps attest its weights in hardware. What you rarely inspect — in anything like the same depth — is the full set of tools the agent calls on your behalf: the API endpoints it touches, the plugins it loads, the sub-agents it delegates to. These form the supply chain. And accountability in agentic systems is only as strong as the weakest link in it.</p>
+
+        <h2>Classical supply chain attacks, now at reasoning speed</h2>
+        <p>Supply chain attacks are not new. Software has faced them for years: a malicious dependency injected into a package registry, a compromised build tool, a backdoored library that exfiltrates credentials while otherwise behaving normally. The difference in agentic systems is that the attack surface has moved up the stack, the speed has increased, and the accountability chain has lengthened.</p>
+
+        <p>A traditional software supply chain attack operates at code execution time. An agentic supply chain attack can operate at reasoning time: a tool that returns subtly manipulated data, an API endpoint whose responses are crafted to shift the agent's subsequent decisions, a sub-agent that performs most tasks faithfully while introducing quiet bias into others. The principal sees only the agent's output — not the manipulation that produced it. By the time an auditor traces the decision back to the tool call, the action has already propagated into the world.</p>
+
+        <h2>The attestation gap at the network boundary</h2>
+        <p>Hardware-rooted attestation gives you strong assurance about the agent executing in your environment. It certifies the model weights, the runtime, the tool definitions loaded at startup. What it does not certify is the runtime behavior of the endpoints those tools call.</p>
+
+        <p>When an agent calls a third-party API, the call leaves the attested execution environment. The response comes from a system you did not measure. The data returned may be accurate, manipulated, stale, or adversarially crafted — the attestation envelope does not extend across the network boundary. The agent incorporates that data into its context and acts on it with the same confidence it would place in attested internal state.</p>
+
+        <p>This is not a deficiency in attestation technology. It is a structural property of networked agentic systems. The boundary of what you can attest and the boundary of what the agent touches are not the same boundary. The trust guarantee that hardware attestation provides terminates precisely where the agent's influence extends furthest: into the external world.</p>
+
+        <h2>Care environments cannot afford tool trust debt</h2>
+        <p>In physical-world care environments, the supply chain problem takes on direct consequence. An agent that assists in care coordination may call scheduling systems, medication management platforms, and communication services. Each is a link in the chain. A supply chain compromise at any link — a response that subtly mis-states a dosage, a scheduling API that routes a message to the wrong care team, a communication endpoint that silently drops an escalation — could produce harm that reaches a human being before any reviewer sees it.</p>
+
+        <p>Care environments are also subject to regulatory requirements about the provenance and integrity of data informing care decisions. The accountability requirement runs to the data, not just to the agent that processed it. "The agent concluded X" is not an accountable answer when the agent was reasoning on responses from endpoints whose behavior was never verified.</p>
+
+        <h2>Post-quantum supply chains: the window before the transition closes</h2>
+        <p>The post-quantum transition introduces a specific supply chain concern: the cryptographic integrity of tool endpoints. Most API communications today rely on classical asymmetric cryptography — key exchange schemes that a sufficiently capable quantum computer could break. During the transition period, when post-quantum key exchange is being deployed patchily across the ecosystem, an adversary harvesting encrypted traffic today can retroactively decrypt API responses after gaining quantum capability.</p>
+
+        <p>For agentic systems that call external endpoints as part of decision-making, this is more than a confidentiality concern. If harvested responses are replayed selectively in the future — after the original endpoints have been decommissioned and audit trails are cold — the agent may be reasoning on data that was replaced without detection. The supply chain integrity problem and the post-quantum transition problem intersect at the API layer in ways that neither problem statement fully captures alone.</p>
+
+        <h2>What supply chain accountability requires</h2>
+        <p>Governing the supply chain in agentic systems requires extending the accountability boundary beyond the agent itself. At minimum: every external endpoint an agent calls should be registered at deployment time; its responses should be logged alongside the agent decisions they informed; behavioral anomalies should be detectable after the fact. An agent that cannot account for the data that produced its decisions cannot be held accountable for those decisions.</p>
+
+        <p>Supply chain review also means that third-party tools and APIs should be subject to the same enrollment scrutiny as the agents that call them. Attestation at the agent boundary is necessary but not sufficient. The hardest supply chain compromises are not the ones where the malicious endpoint announces itself — they are the ones where the endpoint behaves correctly 99.9% of the time, and the manipulated responses arrive precisely at the decision points where the agent is most dependent on external data and least equipped to detect the deviation.</p>
+
+        <p>Trust what you can measure. Govern what you cannot. Know exactly where the boundary between the two falls — because that boundary is where accountability ends and exposure begins.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>部署AI智能体时，你审查的是智能体本身，但很少以同等深度审查它调用的所有工具：第三方API端点、插件、子智能体。这些构成了供应链，而问责能力只与其中最薄弱的环节一样强。硬件根认证可以验证在你环境中运行的智能体，但无法认证那些工具所调用端点的运行时行为：认证包络在网络边界处终止，恰恰在智能体影响延伸最远的地方。在照护环境中，供应链中任何一个环节的受损——一个错误报告剂量的端点、一个将消息路由至错误团队的调度API——都可能在任何审查者发现之前对人产生伤害。后量子过渡增加了另一个维度：今天被收集的加密API响应，在攻击者获得量子能力后可被解密和选择性重放。供应链问责要求将问责边界延伸至智能体本身之外——注册每个端点、记录其响应、使异常行为在事后可检测。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>部署AI智能體時，你審查的是智能體本身，但很少以同等深度審查它調用的所有工具：第三方API端點、插件、子智能體。這些構成了供應鏈，而問責能力只與其中最薄弱的環節一樣強。硬件根認證可以驗證在你環境中運行的智能體，但無法認證那些工具所調用端點的運行時行為：認證包絡在網絡邊界處終止，恰恰在智能體影響延伸最遠的地方。在照護環境中，供應鏈中任何一個環節的受損——一個錯誤報告劑量的端點、一個將消息路由至錯誤團隊的調度API——都可能在任何審查者發現之前對人產生傷害。後量子過渡增加了另一個維度：今天被收集的加密API響應，在攻擊者獲得量子能力後可被解密和選擇性重放。供應鏈問責要求將問責邊界延伸至智能體本身之外——注冊每個端點、記錄其響應、使異常行為在事後可檢測。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/enumeration-problem.html">Previous: The enumeration problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">供应链问题：AI智能体调用的每一个工具都是一次信任决策</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-27</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>当你部署一个AI智能体时，你审查的是智能体本身。你检查其系统提示、验证其模型，也许还通过硬件认证其权重。但你很少以同等深度审查的，是智能体代表你调用的所有工具：它触达的API端点、加载的插件、委托的子智能体。这些构成了供应链。智能体系统中的问责能力，只与其中最薄弱的环节一样强。</p>
+
+        <h2>经典供应链攻击，现在以推理速度运行</h2>
+        <p>供应链攻击并不新鲜。软件领域已面对多年：注入软件包仓库的恶意依赖、受损的构建工具、在正常运行的同时静默窃取凭证的后门库。智能体系统的不同在于，攻击面向上移动了，速度加快了，问责链也拉长了。</p>
+
+        <p>传统软件供应链攻击在代码执行时发生。智能体供应链攻击可以在推理时发生：一个返回微妙篡改数据的工具，一个其响应被精心设计以影响智能体后续决策的API端点，一个大多数任务执行忠实但在其他任务中悄悄引入偏差的子智能体。委托人只看到智能体的输出——而不是产生该输出的操控。等到审计人员将决策追溯到工具调用时，行动早已传播至世界中。</p>
+
+        <h2>网络边界处的认证缺口</h2>
+        <p>硬件根认证为你提供了关于在环境中执行的智能体的强保证。它认证模型权重、运行时环境、启动时加载的工具定义。它不认证的，是那些工具所调用端点的运行时行为。</p>
+
+        <p>当智能体调用第三方API时，调用离开了已认证的执行环境。响应来自一个你未曾度量的系统。返回的数据可能是准确的、被篡改的、过时的或对抗性精心构造的——认证包络不会延伸到网络边界之外。智能体将该数据纳入上下文，并以与信任已认证内部状态相同的置信度基于此行动。</p>
+
+        <p>这不是认证技术的缺陷，而是网络化智能体系统的结构性属性。你能认证的边界与智能体触达的边界不是同一边界。硬件认证提供的信任保证，恰恰在智能体影响延伸最远的地方终止：进入外部世界。</p>
+
+        <h2>照护环境承担不起工具信任债务</h2>
+        <p>在物理世界照护环境中，供应链问题产生直接后果。协助照护协调的智能体可能调用排班系统、药物管理平台和通信服务。每一个都是链中的一环。任何环节的供应链受损——一个微妙错报剂量的响应、一个将消息路由至错误照护团队的排班API、一个静默丢弃上报的通信端点——都可能在任何审查者发现之前产生到达人类的伤害。</p>
+
+        <p>照护环境还受到关于告知照护决策的数据来源和完整性的监管要求约束。问责要求延伸至数据本身，而不仅仅是处理数据的智能体。当智能体在行为从未被验证的端点响应上进行推理时，"智能体得出了结论X"不是一个可问责的答案。</p>
+
+        <h2>后量子供应链：过渡窗口关闭之前</h2>
+        <p>后量子过渡引入了一个特定的供应链关切：工具端点的密码学完整性。今天大多数API通信依赖经典非对称密码学——一台能力足够强大的量子计算机可以破解的密钥交换方案。在过渡期间，当后量子密钥交换正在生态系统中参差不齐地部署时，今天收集加密流量的攻击者可以在获得量子能力后追溯解密API响应。</p>
+
+        <p>对于将调用外部端点作为决策制定一部分的智能体系统，这不仅仅是保密性问题。如果收集的响应在未来被选择性重放——在原始端点已停用且审计轨迹已冷却之后——智能体可能在未被检测到就已被替换的数据上进行推理。供应链完整性问题与后量子过渡问题在API层的交叉，以任何一个问题陈述单独都无法完整捕捉的方式发生。</p>
+
+        <h2>供应链问责需要什么</h2>
+        <p>治理智能体系统中的供应链，需要将问责边界延伸至智能体本身之外。最低限度：智能体调用的每个外部端点应在部署时注册；其响应应与其告知的智能体决策一同记录；行为异常应在事后可检测。一个无法说明产生其决策的数据来源的智能体，无法就那些决策被追究责任。</p>
+
+        <p>供应链审查还意味着，第三方工具和API应与调用它们的智能体接受同等的入驻审查。在智能体边界处进行认证是必要的，但不充分。最难发现的供应链受损，不是恶意端点自我暴露的那些——而是端点99.9%的时间行为正确，而被操控的响应恰好在智能体最依赖外部数据、最没有能力检测偏差的决策点到达的那些。</p>
+
+        <p>信任你能度量的。治理你不能度量的。确切知道两者之间的边界在哪里——因为那个边界是问责终止、暴露开始的地方。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/enumeration-problem.html">上一篇：枚举问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">供應鏈問題：AI智能體調用的每一個工具都是一次信任決策</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-27</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>當你部署一個AI智能體時，你審查的是智能體本身。你檢查其系統提示、驗證其模型，也許還通過硬件認證其權重。但你很少以同等深度審查的，是智能體代表你調用的所有工具：它觸達的API端點、加載的插件、委托的子智能體。這些構成了供應鏈。智能體系統中的問責能力，只與其中最薄弱的環節一樣強。</p>
+
+        <h2>經典供應鏈攻擊，現在以推理速度運行</h2>
+        <p>供應鏈攻擊並不新鮮。軟件領域已面對多年：注入軟件包倉庫的惡意依賴、受損的構建工具、在正常運行的同時靜默竊取憑證的後門庫。智能體系統的不同在於，攻擊面向上移動了，速度加快了，問責鏈也拉長了。</p>
+
+        <p>傳統軟件供應鏈攻擊在代碼執行時發生。智能體供應鏈攻擊可以在推理時發生：一個返回微妙篡改數據的工具，一個其響應被精心設計以影響智能體後續決策的API端點，一個大多數任務執行忠實但在其他任務中悄悄引入偏差的子智能體。委托人只看到智能體的輸出——而不是產生該輸出的操控。等到審計人員將決策追溯到工具調用時，行動早已傳播至世界中。</p>
+
+        <h2>網絡邊界處的認證缺口</h2>
+        <p>硬件根認證為你提供了關於在環境中執行的智能體的強保證。它認證模型權重、運行時環境、啟動時加載的工具定義。它不認證的，是那些工具所調用端點的運行時行為。</p>
+
+        <p>當智能體調用第三方API時，調用離開了已認證的執行環境。響應來自一個你未曾度量的系統。返回的數據可能是準確的、被篡改的、過時的或對抗性精心構造的——認證包絡不會延伸到網絡邊界之外。智能體將該數據納入上下文，並以與信任已認證內部狀態相同的置信度基於此行動。</p>
+
+        <p>這不是認證技術的缺陷，而是網絡化智能體系統的結構性屬性。你能認證的邊界與智能體觸達的邊界不是同一邊界。硬件認證提供的信任保證，恰恰在智能體影響延伸最遠的地方終止：進入外部世界。</p>
+
+        <h2>照護環境承擔不起工具信任債務</h2>
+        <p>在物理世界照護環境中，供應鏈問題產生直接後果。協助照護協調的智能體可能調用排班系統、藥物管理平台和通信服務。每一個都是鏈中的一環。任何環節的供應鏈受損——一個微妙錯報劑量的響應、一個將消息路由至錯誤照護團隊的排班API、一個靜默丟棄上報的通信端點——都可能在任何審查者發現之前產生到達人類的傷害。</p>
+
+        <p>照護環境還受到關於告知照護決策的數據來源和完整性的監管要求約束。問責要求延伸至數據本身，而不僅僅是處理數據的智能體。當智能體在行為從未被驗證的端點響應上進行推理時，「智能體得出了結論X」不是一個可問責的答案。</p>
+
+        <h2>後量子供應鏈：過渡窗口關閉之前</h2>
+        <p>後量子過渡引入了一個特定的供應鏈關切：工具端點的密碼學完整性。今天大多數API通信依賴經典非對稱密碼學——一台能力足夠強大的量子計算機可以破解的密鑰交換方案。在過渡期間，當後量子密鑰交換正在生態系統中參差不齊地部署時，今天收集加密流量的攻擊者可以在獲得量子能力後追溯解密API響應。</p>
+
+        <p>對於將調用外部端點作為決策制定一部分的智能體系統，這不僅僅是保密性問題。如果收集的響應在未來被選擇性重放——在原始端點已停用且審計軌跡已冷卻之後——智能體可能在未被檢測到就已被替換的數據上進行推理。供應鏈完整性問題與後量子過渡問題在API層的交叉，以任何一個問題陳述單獨都無法完整捕捉的方式發生。</p>
+
+        <h2>供應鏈問責需要什麼</h2>
+        <p>治理智能體系統中的供應鏈，需要將問責邊界延伸至智能體本身之外。最低限度：智能體調用的每個外部端點應在部署時注冊；其響應應與其告知的智能體決策一同記錄；行為異常應在事後可檢測。一個無法說明產生其決策的數據來源的智能體，無法就那些決策被追究責任。</p>
+
+        <p>供應鏈審查還意味著，第三方工具和API應與調用它們的智能體接受同等的入驻審查。在智能體邊界處進行認證是必要的，但不充分。最難發現的供應鏈受損，不是惡意端點自我暴露的那些——而是端點99.9%的時間行為正確，而被操控的響應恰好在智能體最依賴外部數據、最沒有能力檢測偏差的決策點到達的那些。</p>
+
+        <p>信任你能度量的。治理你不能度量的。確切知道兩者之間的邊界在哪裡——因為那個邊界是問責終止、暴露開始的地方。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/enumeration-problem.html">上一篇：枚舉問題 →</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="essay-footer">
+    &copy; 2026 Asaptic Labs &middot; <a href="/privacy.html" style="color:inherit">Privacy</a>
+  </footer>
+
+  <script>
+    (function() {
+      const saved = localStorage.getItem('asaptic-lang') || 'en';
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === saved);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === saved);
+        btn.addEventListener('click', () => {
+          const lang = btn.dataset.lang;
+          localStorage.setItem('asaptic-lang', lang);
+          document.querySelectorAll('.essay-lang').forEach(el => {
+            el.classList.toggle('active', el.dataset.langContent === lang);
+          });
+          document.querySelectorAll('.lang-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.lang === lang);
+          });
+        });
+      });
+    })();
+  </script>
+
+</body>
+</html>
