@@ -1,3 +1,4 @@
+2026-05-27 12:15 UTC · blog: add essay 'The handoff problem — accountability at the moment one AI agent passes work to another' (EN+ZH+ZH-HK) · 41e30a6
 2026-05-27 08:15 UTC · blog: add essay 'The termination problem — when and how to stop an AI agent, and what it means when you can't' (EN+ZH+ZH-HK) · 5055d09
 2026-05-27 04:15 UTC · blog: add essay 'The supply chain problem — every tool an AI agent calls is a trust decision' (EN+ZH+ZH-HK) · ff7a5bd
 2026-05-27 00:15 UTC · blog: add essay 'The enumeration problem — why AI agents cannot fully list what they can do, and why that breaks the grant model' (EN+ZH+ZH-HK) · bbae56a
