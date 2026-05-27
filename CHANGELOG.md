@@ -1,3 +1,4 @@
+2026-05-27 04:15 UTC · blog: add essay 'The supply chain problem — every tool an AI agent calls is a trust decision' (EN+ZH+ZH-HK) · ff7a5bd
 2026-05-27 00:15 UTC · blog: add essay 'The enumeration problem — why AI agents cannot fully list what they can do, and why that breaks the grant model' (EN+ZH+ZH-HK) · bbae56a
 2026-05-26 20:15 UTC · blog: add essay 'The time-of-check to time-of-use problem — when authorization goes stale before the agent acts' (EN+ZH+ZH-HK) · 10546b6
 2026-05-26 16:15 UTC · blog: add essay 'The model weight integrity problem — who verifies what an AI agent is actually running' (EN+ZH+ZH-HK) · b23970a
