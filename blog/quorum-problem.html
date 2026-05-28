@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The quorum problem — Asaptic Labs</title>
+
+  <meta name="description" content="Which decisions are consequential enough that a single AI agent should never be permitted to act alone? The quorum problem is the architecture question that follows." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/quorum-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The quorum problem: when a single AI agent should never be permitted to act alone" />
+  <meta property="og:description" content="Which decisions are consequential enough that a single AI agent should never be permitted to act alone? The quorum problem is the architecture question that follows." />
+  <meta property="og:url" content="https://asaptic.com/blog/quorum-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-28" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The quorum problem: when a single AI agent should never be permitted to act alone",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-28",
+    "description": "Which decisions are consequential enough that a single AI agent should never be permitted to act alone? The quorum problem is the architecture question that follows.",
+    "url": "https://asaptic.com/blog/quorum-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .essay-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+      margin-bottom: 56px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 40px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--gray-dim);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray);
+      transition: color 0.2s;
+    }
+    .essay-footer-back:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">ASAPTIC LABS</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/engage.html">Engage</a>
+      <a href="/blog/">Notes</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <span class="essay-label">NOTES FROM THE CROSSINGS · 2026-05-28</span>
+    <h1 class="essay-title">The quorum problem</h1>
+    <p class="essay-subtitle">When a single AI agent should never be permitted to act alone</p>
+
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>5 min read</span>
+      <span>× Quantum Security × Hardware × Human Care</span>
+    </div>
+
+    <div class="essay-lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">简</button>
+      <button class="lang-btn" data-lang="zht">繁</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Every authorization architecture eventually arrives at a threshold question: which decisions are consequential enough that a single agent's judgment is insufficient? The answer to that question defines where quorum requirements begin. A quorum is a minimum number of independent authorities — agents, systems, or human reviewers — whose agreement is a precondition for action. Human institutions have applied this logic to high-stakes decisions for centuries: court panels, committee votes, dual-key authorization. The question for AI agent deployments is not whether quorum logic applies, but how to implement it in a system where agents act at machine speed across distributed infrastructure.</p>
+
+        <h2>The single-agent authorization gap</h2>
+        <p>A single agent authorizing a high-stakes action creates a single point of accountability failure. If the agent is compromised, malfunctions, or simply wrong, the action proceeds without independent check. The failure mode is not theoretical — it is the same failure mode that dual-custody rules address in banking, that two-person integrity rules address in high-consequence physical environments, and that co-signature requirements address in legal instruments. In all these cases, the structural response to high consequence was not a better single authority; it was a minimum of two independent authorities whose concurrent agreement is required to proceed.</p>
+
+        <p>AI agent deployments often bypass this logic by default. The agent is authorized to act, it acts, and accountability is reconstructed afterward. For low-stakes, high-frequency decisions, this is the right trade. For decisions that are irreversible, that affect a party who cannot consent in the moment, or that cross a defined consequence threshold, single-agent authorization is not an efficiency choice — it is a structural gap. The quorum requirement does not tax efficiency; it is the minimum structural response proportionate to the irreversibility of the action being authorized.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>Implementing quorum authorization requires multi-signature schemes: each participating authority produces a cryptographic signature over the proposed action, and the action is only executed once a threshold number of valid signatures has accumulated. In systems that must remain accountable across a multi-year or multi-decade horizon — the timescale of physical infrastructure, regulated care, or long-cycle industrial deployments — those signatures must be quantum-resistant. Lattice-based signature schemes from the ML-DSA family standardized by NIST support threshold variants that allow quorum logic to be implemented without a centralized coordinator who becomes a single point of failure in its own right.</p>
+
+        <p>The post-quantum requirement matters for quorum specifically because the evidence the quorum produces — the set of signatures on the authorized action — is the accountability record that may need to hold up in an audit, a regulatory review, or a legal proceeding years after the fact. A quorum scheme whose signatures are vulnerable to a sufficiently capable adversary produces accountability evidence that may not survive the operational lifetime of the system it is meant to govern. Signing at decision time with algorithms that will remain valid across the system's full lifetime is not a hedge against a distant threat; it is the condition under which the quorum record remains meaningful.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Quorum logic applied to hardware agents introduces a physical constraint: each participating agent must be independently attestable before its vote is valid. A quorum of three agents is not meaningfully different from a single agent if two of the three are running on the same compromised hardware stack. Hardware-rooted attestation — each agent presenting a signed measurement of its runtime environment, verified against a root of trust the quorum coordinator accepts — transforms a nominally distributed quorum into a genuinely independent one.</p>
+
+        <p>In embedded hardware contexts, this creates a design requirement: agents with authority over high-consequence actuation must be architected so that quorum participants run in separate trusted execution environments, on separate physical substrates, or with separate attestation roots. Software redundancy on a shared hardware platform does not satisfy the independence requirement. An agent that can authorize a physical action alone, or as part of a quorum whose independence has not been attested, is structurally equivalent to a single unverified agent — regardless of how many software components are nominally involved.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>Physical-world care presents the most concrete cases where quorum requirements are not optional. An agent authorizing a medication adjustment, changing an emergency care protocol, or suppressing an escalation alert is making a decision whose consequences are borne by a person who cannot, in that moment, verify the agent's reasoning or correct its judgment. The agent's principal hierarchy — the organization that deployed it, the clinicians who configured it, the regulators who approved its use — bears accountability for that decision in the person's place.</p>
+
+        <p>Quorum requirements in care contexts do not require computationally expensive multi-party computation. The threshold can be achieved by requiring concurrent agreement between an AI agent, a separate rule-based safety check operating on different data, and a human reviewer for decisions above a defined consequence threshold. The human reviewer is one quorum member, not the sole authority. The structural effect is what matters: no single agent authorizes a high-consequence action alone, and every authorization produces a set of independent attestations that can be reconstructed in a dispute.</p>
+
+        <p>The care-specific design question is where to set the threshold. Too low, and every routine decision triggers quorum overhead that care workflows cannot absorb and that reviewers will route around. Too high, and consequential decisions pass through as routine. Calibrating the threshold requires explicit engagement with the consequence profile of the deployment — which decisions are irreversible, which affect people who cannot consent in real time, which create liability that the quorum record will need to address. That calibration is itself an accountability act, separate from the engineering of the quorum system, and it cannot be deferred to runtime or treated as a parameter the agent sets for itself.</p>
+
+        <h2>What quorum does not solve</h2>
+        <p>A quorum of agents that share a training lineage, a configuration source, or a deployment environment may be correlated in exactly the failure modes that matter. If three agents all exhibit the same systematic bias because they share a fine-tuning dataset, their agreement on a biased action is not evidence of correctness — it is evidence of correlated failure. Genuine quorum independence requires that the sources of error available to each participant are not the same. For AI agents, this is harder to guarantee than for hardware systems, where physical independence can be verified. Quorum architecture for agents must account for training correlation, prompt correlation, and shared context as failure modes that can undermine apparent independence.</p>
+
+        <p>This is not an argument against quorum requirements — it is an argument for designing them with explicit attention to the independence of the participants. A quorum of independently trained models, operating on independently gathered inputs, with independently attested execution environments, and producing independently verifiable signatures, is a substantially stronger accountability structure than single-agent authorization. It is also a substantially more expensive one to build correctly. The cost of building it correctly is proportionate to the cost of the consequences it is meant to prevent — which is exactly the condition under which accountability infrastructure is worth the investment.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">SUMMARY</span>
+        <p>The quorum problem is the question of which AI agent decisions are consequential enough to require independent agreement before execution. Single-agent authorization creates a single point of accountability failure; quorum requirements — drawn from dual-custody, two-person integrity, and co-signature logic — are the proportionate structural response. At the post-quantum security crossing, quorum signatures must use quantum-resistant algorithms so that the accountability record survives the system's full operational lifetime. At the hardware crossing, each quorum participant must be independently attested — software redundancy on shared hardware does not satisfy independence. In physical-world care, thresholds must be calibrated against the consequence profile of the deployment, and that calibration is itself an accountability act. Genuine quorum independence also requires attention to correlated failure modes: agents that share training, configuration, or context may agree in exactly the ways that do not help.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>每个授权架构最终都会面临一个阈值问题：哪些决策足够重要，以至于单个智能体的判断不够充分？这个问题的答案定义了法定人数要求的起点。法定人数是独立权威的最低数量——智能体、系统或人工审查员——其一致同意是行动的前提条件。人类机构几个世纪以来已将这种逻辑应用于高风险决策：法院合议庭、委员会投票、双密钥授权。AI智能体部署的问题不是法定人数逻辑是否适用，而是如何在智能体以机器速度在分布式基础设施中行动的系统中实施它。</p>
+
+        <h2>单智能体授权缺口</h2>
+        <p>单个智能体授权高风险行动会产生单点问责失败。如果智能体被攻陷、出现故障或只是判断错误，行动就会在没有独立检查的情况下进行。这种失败模式不是理论上的——它与银行业双重保管规则所解决的失败模式相同，与高后果物理环境中两人完整性规则所解决的相同，与法律文书中联署要求所解决的相同。在所有这些情况下，对高后果的结构性回应不是更好的单一权威，而是至少两个独立权威，需要其同时同意才能继续。</p>
+
+        <p>AI智能体部署通常默认绕过这种逻辑。智能体被授权行动，它行动，之后重建问责。对于低风险、高频率的决策，这是正确的权衡。对于不可逆转的、影响当时无法同意的一方的、或超过定义后果阈值的决策，单智能体授权不是效率选择——它是结构性缺口。法定人数要求不征税效率；它是与被授权行动的不可逆性相称的最低结构性回应。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>实施法定人数授权需要多重签名方案：每个参与权威对提议的行动产生密码签名，只有在积累了足够数量的有效签名后，行动才被执行。在必须在多年或数十年时间跨度内保持问责的系统中——物理基础设施、受监管护理或长周期工业部署的时间跨度——这些签名必须是抗量子的。NIST标准化的ML-DSA系列中的基于格的签名方案支持阈值变体，允许在没有集中式协调者的情况下实施法定人数逻辑，而集中式协调者本身会成为单点失败。</p>
+
+        <p>后量子要求对法定人数特别重要，因为法定人数产生的证据——授权行动上的一组签名——是可能需要在事后数年的审计、监管审查或法律程序中经受考验的问责记录。其签名对足够强大的对手易受攻击的法定人数方案产生的问责证据可能无法在其所治理系统的运营生命周期内存续。在决策时使用在系统全生命周期内保持有效的算法签名，不是对遥远威胁的对冲；它是法定人数记录保持有意义的条件。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>应用于硬件智能体的法定人数逻辑引入了物理约束：每个参与智能体必须在其投票有效之前可独立证明。如果三个智能体中的两个运行在同一个被攻陷的硬件堆栈上，三个智能体的法定人数与单个智能体没有实质差别。以硬件为根的证明——每个智能体提供其运行时环境的签名测量，根据法定人数协调者接受的信任根进行验证——将名义上分布的法定人数转变为真正独立的法定人数。</p>
+
+        <p>在嵌入式硬件上下文中，这产生了设计要求：对高后果驱动拥有权威的智能体必须被架构为法定人数参与者在单独的可信执行环境中运行，在单独的物理基底上，或具有单独的证明根。共享硬件平台上的软件冗余不满足独立性要求。无论名义上涉及多少软件组件，可以单独授权物理行动的智能体，或作为独立性未经证明的法定人数的一部分的智能体，在结构上等同于单个未验证的智能体。</p>
+
+        <h2>物理世界照护交叉点</h2>
+        <p>物理世界照护呈现了法定人数要求不是可选的最具体案例。授权药物调整、更改紧急护理方案或抑制升级警报的智能体正在做出后果由一个人承担的决策，而这个人在那一刻无法验证智能体的推理或纠正其判断。智能体的委托人层级——部署它的组织、配置它的临床医生、批准其使用的监管机构——代替那个人对该决策负责。</p>
+
+        <p>护理情境中的法定人数要求不需要计算代价高昂的多方计算。阈值可以通过要求AI智能体、在不同数据上操作的独立规则安全检查以及超过定义后果阈值的决策的人工审查员之间的同时同意来实现。人工审查员是一个法定人数成员，不是唯一权威。结构效果才是重要的：没有单个智能体单独授权高后果行动，每次授权都产生一组可以在争议中重建的独立证明。</p>
+
+        <p>特定于护理的设计问题是在哪里设置阈值。太低，每个常规决策都会触发护理工作流无法吸收且审查员会绕过的法定人数开销。太高，重要决策作为常规通过。校准阈值需要明确参与部署的后果配置——哪些决策是不可逆的，哪些影响无法实时同意的人，哪些产生法定人数记录需要解决的责任。该校准本身是一个问责行为，独立于法定人数系统的工程，不能推迟到运行时或被视为智能体自行设置的参数。</p>
+
+        <h2>法定人数不解决什么</h2>
+        <p>共享训练谱系、配置源或部署环境的智能体法定人数可能在重要的失败模式上完全相关。如果三个智能体都因共享微调数据集而表现出相同的系统性偏见，它们对有偏见行动的一致同意不是正确性的证据——它是相关失败的证据。真正的法定人数独立性要求每个参与者可用的错误来源不相同。对于AI智能体来说，这比硬件系统更难保证，在硬件系统中可以验证物理独立性。智能体的法定人数架构必须将训练相关性、提示相关性和共享上下文作为可以破坏表面独立性的失败模式来考虑。</p>
+
+        <p>这不是反对法定人数要求的论点——而是支持在明确关注参与者独立性的情况下设计它们的论点。由独立训练的模型组成、在独立收集的输入上操作、具有独立证明的执行环境、产生独立可验证签名的法定人数，是比单智能体授权实质上更强的问责结构。正确构建它也实质上更昂贵。正确构建它的成本与它旨在防止的后果成本成正比——这正是问责基础设施值得投资的条件。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>法定人数问题是哪些AI智能体决策足够重要以至于在执行前需要独立同意的问题。单智能体授权产生单点问责失败；法定人数要求——来自双重保管、两人完整性和联署逻辑——是相称的结构性回应。在后量子安全交叉点，法定人数签名必须使用抗量子算法，以便问责记录在系统的完整运营生命周期内存续。在硬件交叉点，每个法定人数参与者必须独立证明——共享硬件上的软件冗余不满足独立性。在物理世界照护中，阈值必须根据部署的后果配置校准，该校准本身是问责行为。真正的法定人数独立性还需要关注相关失败模式：共享训练、配置或上下文的智能体可能在不起帮助作用的方式上一致。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>每個授權架構最終都會面臨一個閾值問題：哪些決策足夠重要，以至於單個智能體的判斷不夠充分？這個問題的答案定義了法定人數要求的起點。法定人數是獨立權威的最低數量——智能體、系統或人工審查員——其一致同意是行動的前提條件。人類機構幾個世紀以來已將這種邏輯應用於高風險決策：法院合議庭、委員會投票、雙密鑰授權。AI智能體部署的問題不是法定人數邏輯是否適用，而是如何在智能體以機器速度在分布式基礎設施中行動的系統中實施它。</p>
+
+        <h2>單智能體授權缺口</h2>
+        <p>單個智能體授權高風險行動會產生單點問責失敗。如果智能體被攻陷、出現故障或只是判斷錯誤，行動就會在沒有獨立檢查的情況下進行。這種失敗模式不是理論上的——它與銀行業雙重保管規則所解決的失敗模式相同，與高後果物理環境中兩人完整性規則所解決的相同，與法律文書中聯署要求所解決的相同。在所有這些情況下，對高後果的結構性回應不是更好的單一權威，而是至少兩個獨立權威，需要其同時同意才能繼續。</p>
+
+        <p>AI智能體部署通常默認繞過這種邏輯。智能體被授權行動，它行動，之後重建問責。對於低風險、高頻率的決策，這是正確的權衡。對於不可逆轉的、影響當時無法同意的一方的、或超過定義後果閾值的決策，單智能體授權不是效率選擇——它是結構性缺口。法定人數要求不徵稅效率；它是與被授權行動的不可逆性相稱的最低結構性回應。</p>
+
+        <h2>後量子安全交叉點</h2>
+        <p>實施法定人數授權需要多重簽名方案：每個參與權威對提議的行動產生密碼簽名，只有在積累了足夠數量的有效簽名後，行動才被執行。在必須在多年或數十年時間跨度內保持問責的系統中——物理基礎設施、受監管護理或長週期工業部署的時間跨度——這些簽名必須是抗量子的。NIST標準化的ML-DSA系列中的基於格的簽名方案支持閾值變體，允許在沒有集中式協調者的情況下實施法定人數邏輯，而集中式協調者本身會成為單點失敗。</p>
+
+        <p>後量子要求對法定人數特別重要，因為法定人數產生的證據——授權行動上的一組簽名——是可能需要在事後數年的審計、監管審查或法律程序中經受考驗的問責記錄。其簽名對足夠強大的對手易受攻擊的法定人數方案產生的問責證據可能無法在其所治理系統的運營生命週期內存續。在決策時使用在系統全生命週期內保持有效的算法簽名，不是對遙遠威脅的對沖；它是法定人數記錄保持有意義的條件。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>應用於硬件智能體的法定人數邏輯引入了物理約束：每個參與智能體必須在其投票有效之前可獨立證明。如果三個智能體中的兩個運行在同一個被攻陷的硬件堆棧上，三個智能體的法定人數與單個智能體沒有實質差別。以硬件為根的證明——每個智能體提供其運行時環境的簽名測量，根據法定人數協調者接受的信任根進行驗證——將名義上分布的法定人數轉變為真正獨立的法定人數。</p>
+
+        <p>在嵌入式硬件上下文中，這產生了設計要求：對高後果驅動擁有權威的智能體必須被架構為法定人數參與者在單獨的可信執行環境中運行，在單獨的物理基底上，或具有單獨的證明根。共享硬件平台上的軟件冗余不滿足獨立性要求。無論名義上涉及多少軟件組件，可以單獨授權物理行動的智能體，或作為獨立性未經證明的法定人數的一部分的智能體，在結構上等同於單個未驗證的智能體。</p>
+
+        <h2>物理世界照護交叉點</h2>
+        <p>物理世界照護呈現了法定人數要求不是可選的最具體案例。授權藥物調整、更改緊急護理方案或抑制升級警報的智能體正在做出後果由一個人承擔的決策，而這個人在那一刻無法驗證智能體的推理或糾正其判斷。智能體的委託人層級——部署它的組織、配置它的臨床醫生、批准其使用的監管機構——代替那個人對該決策負責。</p>
+
+        <p>護理情境中的法定人數要求不需要計算代價高昂的多方計算。閾值可以通過要求AI智能體、在不同數據上操作的獨立規則安全檢查以及超過定義後果閾值的決策的人工審查員之間的同時同意來實現。人工審查員是一個法定人數成員，不是唯一權威。結構效果才是重要的：沒有單個智能體單獨授權高後果行動，每次授權都產生一組可以在爭議中重建的獨立證明。</p>
+
+        <p>特定於護理的設計問題是在哪裡設置閾值。太低，每個常規決策都會觸發護理工作流無法吸收且審查員會繞過的法定人數開銷。太高，重要決策作為常規通過。校準閾值需要明確參與部署的後果配置——哪些決策是不可逆的，哪些影響無法實時同意的人，哪些產生法定人數記錄需要解決的責任。該校準本身是一個問責行為，獨立於法定人數系統的工程，不能推遲到運行時或被視為智能體自行設置的參數。</p>
+
+        <h2>法定人數不解決什麼</h2>
+        <p>共享訓練譜系、配置源或部署環境的智能體法定人數可能在重要的失敗模式上完全相關。如果三個智能體都因共享微調數據集而表現出相同的系統性偏見，它們對有偏見行動的一致同意不是正確性的證據——它是相關失敗的證據。真正的法定人數獨立性要求每個參與者可用的錯誤來源不相同。對於AI智能體來說，這比硬件系統更難保證，在硬件系統中可以驗證物理獨立性。智能體的法定人數架構必須將訓練相關性、提示相關性和共享上下文作為可以破壞表面獨立性的失敗模式來考慮。</p>
+
+        <p>這不是反對法定人數要求的論點——而是支持在明確關注參與者獨立性的情況下設計它們的論點。由獨立訓練的模型組成、在獨立收集的輸入上操作、具有獨立證明的執行環境、產生獨立可驗證簽名的法定人數，是比單智能體授權實質上更強的問責結構。正確構建它也實質上更昂貴。正確構建它的成本與它旨在防止的後果成本成正比——這正是問責基礎設施值得投資的條件。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>法定人數問題是哪些AI智能體決策足夠重要以至於在執行前需要獨立同意的問題。單智能體授權產生單點問責失敗；法定人數要求——來自雙重保管、兩人完整性和聯署邏輯——是相稱的結構性回應。在後量子安全交叉點，法定人數簽名必須使用抗量子算法，以便問責記錄在系統的完整運營生命週期內存續。在硬件交叉點，每個法定人數參與者必須獨立證明——共享硬件上的軟件冗余不滿足獨立性。在物理世界照護中，閾值必須根據部署的後果配置校準，該校準本身是問責行為。真正的法定人數獨立性還需要關注相關失敗模式：共享訓練、配置或上下文的智能體可能在不起幫助作用的方式上一致。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-05-28</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </div>
+  </main>
+
+  <script>
+    const btns = document.querySelectorAll('.lang-btn');
+    const sections = document.querySelectorAll('.essay-lang');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        sections.forEach(s => {
+          s.classList.toggle('active', s.dataset.langContent === lang);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
