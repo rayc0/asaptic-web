@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The verification gap — Asaptic Labs</title>
+
+  <meta name="description" content="Accountability requires the ability to check whether an agent's output is correct. In the domains where AI agents are most useful, independent checking often requires the same capabilities as producing the output — and the system's own judgment becomes the only available check on itself." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/verification-gap.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The verification gap: when checking an agent's output requires the same capability as producing it" />
+  <meta property="og:description" content="Accountability requires the ability to check whether an agent's output is correct. In the domains where AI agents are most useful, independent checking often requires the same capabilities as producing the output — and accountability becomes self-referential." />
+  <meta property="og:url" content="https://asaptic.com/blog/verification-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-28" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The verification gap: when checking an agent's output requires the same capability as producing it",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-28",
+    "description": "Accountability requires the ability to check whether an agent's output is correct. In the domains where AI agents are most useful, independent checking often requires the same capabilities as producing the output — making accountability self-referential.",
+    "url": "https://asaptic.com/blog/verification-gap.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .essay-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+      margin-bottom: 56px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 40px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--gray-dim);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray);
+      transition: color 0.2s;
+    }
+    .essay-footer-back:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">ASAPTIC LABS</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/engage.html">Engage</a>
+      <a href="/blog/">Notes</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <span class="essay-label">NOTES FROM THE CROSSINGS · 2026-05-28</span>
+    <h1 class="essay-title">The verification gap</h1>
+    <p class="essay-subtitle">When checking an agent's output requires the same capability as producing it, accountability becomes self-referential</p>
+
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>6 min read</span>
+      <span>× Quantum Security × Hardware × Human Care</span>
+    </div>
+
+    <div class="essay-lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">简</button>
+      <button class="lang-btn" data-lang="zht">繁</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Every accountability architecture for AI agents rests on an assumption so basic it rarely gets stated: that the humans responsible for oversight can, in principle, check whether the agent's output is correct. Remove that assumption and the architecture changes character entirely. The oversight role becomes ceremonial. The approval record does not reflect genuine evaluation. The accountability structure exists on paper while the agent operates with unexamined authority.</p>
+
+        <p>The verification gap is the structural condition that arises when checking an AI agent's output requires capabilities similar to or greater than those required to produce it. It is distinct from automation bias, which is a behavioral tendency to defer without adequate scrutiny. The verification gap is an epistemological constraint: the capacity for independent scrutiny is absent, not merely underused. And it is not a deployment accident. Agents are typically deployed in domains where human capability is insufficient, costly, or unavailable — which is precisely why the automation is introduced. The gap is built into the deployment rationale.</p>
+
+        <p>This matters because verification is not merely a quality check. It is the mechanism by which accountability connects to reality. A log that is technically complete but whose contents cannot be independently evaluated does not support accountability. An approved recommendation that the approver lacked the capacity to assess is not accountable oversight — it is recorded deference. The difference between the two is the difference between oversight and theatre.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>Post-quantum cryptographic migration is among the most technically demanding governance tasks that AI agents are being asked to manage. Algorithm selection, parameter tuning, hybrid scheme design, and migration sequencing involve active research-level judgements. The organisations deploying agents to manage these transitions are, in most cases, doing so precisely because they lack the in-house expertise to make these decisions at the required pace and depth. The agent is introduced to fill a capability gap — but the same gap prevents independent verification of the agent's recommendations.</p>
+
+        <p>When an agent recommends a particular migration path, the organisation approving that recommendation rarely has the expertise to evaluate whether the path is sound. The approval reflects institutional trust in the agent and in the vendor relationship, not independent technical assessment. If the agent's recommendation is wrong — because of a subtle configuration error, an outdated training distribution, or a capability boundary the agent cannot recognise — the verification gap means the error may persist through the approval process undetected. The record will show authorisation; the oversight will have been absent.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware agents operating in infrastructure environments produce outputs — anomaly classifications, attestation verdicts, maintenance diagnoses — that often require physical access and deep device knowledge to verify independently. An operator receiving an agent's report that a device is healthy cannot, in most cases, independently confirm that health without reproducing the agent's sensor data collection, signal processing, and pattern recognition. The agent's output is not one source among several; it is frequently the only structured account of the device's condition available.</p>
+
+        <p>The verification gap in hardware contexts is compounded by the fact that the agent's outputs become inputs to downstream systems. An unverified attestation propagates into trust registries; an unverified anomaly classification drives maintenance queues. The gap does not stay bounded to the point of original assessment — it flows downstream, embedding unexamined agent judgements into the infrastructure that subsequent oversight depends on. Each downstream consumer of the agent's output inherits the verification gap of the original assessment.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>In care settings, the verification gap is clearest and most consequential. A clinical recommendation from an AI agent is produced by integrating signals — imaging, lab values, history, real-time monitoring — at a scale and granularity that the care team cannot replicate through independent reasoning in the time available. The recommendation is issued because the care team would not otherwise reach the same conclusion. That same asymmetry makes independent verification structurally difficult: if the team had the capacity to independently evaluate the clinical synthesis, they may not have needed the agent.</p>
+
+        <p>This does not mean care agents should not be deployed. It means the accountability architecture must be designed for the condition that contemporaneous verification is often not possible. The care team's approval of a recommendation cannot be treated as confirmation of its correctness — it is, at best, a plausibility check against clinical experience and a responsibility assignment. That is a meaningful act, but it is not verification. Treating it as verification inflates the apparent accountability of a system while leaving its actual accountability structure unchanged.</p>
+
+        <h2>Designing for the gap</h2>
+        <p>The verification gap cannot be eliminated in domains where it is structural. But it can be designed around. Three approaches are tractable at the three crossings.</p>
+
+        <p>The first is escalation to genuine external expertise. When a decision crosses a defined threshold of consequence, the accountability architecture should require a reviewer with the actual capability to check the output — an independent cryptographer, an external hardware engineer, a specialist clinical reviewer. This is expensive, and it requires accepting that not every agent output will receive real-time verification. Accepting that explicitly is more honest than maintaining the fiction that routine internal approval constitutes oversight.</p>
+
+        <p>The second is retrospective auditing. For domains where contemporaneous verification is impractical, a programme of structured post-hoc review — sampling agent decisions against ground truth where ground truth becomes available — can close part of the gap over time. The agent's decisions are not verified in the moment; they are evaluated after outcomes are known. This does not prevent individual errors, but it provides a genuine accountability signal that routine approval records cannot. The audit record must be separated from the agent's own logs to avoid circular validation.</p>
+
+        <p>The third is limiting consequential authority to the verifiable scope. Where the verification gap is largest — where the agent's outputs are least independently checkable — the authority the agent carries should be most constrained. This is not about limiting capability but about calibrating authority to the oversight infrastructure available. An agent whose outputs cannot be checked in real time should not carry authority to take irreversible actions without additional procedural barriers.</p>
+
+        <p>The verification gap is one of the hardest structural constraints in AI agent accountability. Ignoring it produces accountability records that look complete and are not. Acknowledging it and designing around it is the precondition for accountability that is real rather than recorded.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">SUMMARY</span>
+        <p>The verification gap arises when checking an AI agent's output requires capabilities similar to or greater than those needed to produce it. It is an epistemological constraint, not merely a behavioural tendency: independent scrutiny is structurally absent, not underused. Agents are deployed in domains where human capability is insufficient — which is exactly the condition that makes independent verification difficult. At the post-quantum crossing, the expertise gap that motivates deployment is the same gap that prevents real scrutiny of migration recommendations. At the hardware crossing, unverified agent outputs propagate into downstream systems, embedding unexamined judgements into the infrastructure that subsequent oversight depends on. In care, the clinical synthesis an agent performs at scale and speed is precisely what the care team cannot independently replicate. Designing for the gap means escalation to genuine external expertise, retrospective auditing against outcomes, and limiting agent authority to match the oversight infrastructure actually available.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>每一个针对人工智能体的问责架构都建立在一个如此基本以至于鲜少被明确表述的假设之上：负责监督的人类原则上能够检验智能体输出是否正确。一旦去掉这个假设，架构的性质便完全改变。监督角色变为仪式性的。批准记录不再反映真正的评估。问责结构停留于纸面，而智能体以未经审查的权限运作。</p>
+
+        <p>验证差距是指检验人工智能体的输出所需的能力与产生该输出所需的能力相当乃至更高时出现的结构性状态。它不同于自动化偏见——后者是一种在缺乏充分审查情况下主动依赖的行为倾向。验证差距是一种认识论约束：独立审查的能力本身缺失，而非未被充分使用。而且这不是部署事故。智能体通常部署在人类能力不足、成本高昂或不可及的领域——这正是引入自动化的原因。差距内嵌于部署本身的逻辑之中。</p>
+
+        <p>这一点之所以重要，是因为验证不仅仅是质量检查。它是问责制与现实相连的机制。一份技术上完整但内容无法独立评估的日志不能支撑问责制。一项审批者不具备能力加以评估的建议所产生的"批准"，不是负责任的监督——它是被记录的依赖。两者之间的差距，就是监督与走过场之间的差距。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>后量子密码迁移是人工智能体被要求管理的技术上最为复杂的治理任务之一。算法选择、参数调整、混合方案设计和迁移排序都涉及研究前沿水平的判断。部署智能体来管理这些迁移的组织，在大多数情况下，正是因为缺乏以所需速度和深度做出这些决策的内部专业知识，才引入智能体。智能体的引入是为了填补能力缺口——但同样的缺口也阻碍了对智能体建议的独立验证。</p>
+
+        <p>当智能体推荐某条迁移路径时，批准该建议的组织通常并不具备评估路径是否合理的专业知识。批准反映的是对智能体及供应商关系的机构信任，而非独立的技术评估。如果智能体的建议存在问题——因为细微的配置错误、过时的训练分布，或智能体无法识别的能力边界——验证差距意味着错误可能在不被察觉的情况下通过审批流程。记录将显示已授权，而监督本身缺席。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>在基础设施环境中运行的硬件智能体产生的输出——异常分类、证明判断、维护诊断——通常需要物理访问和深度设备知识才能独立验证。接收到智能体关于某设备健康报告的操作员，在大多数情况下，若不重现智能体的传感器数据采集、信号处理和模式识别，便无法独立确认设备的健康状态。智能体的输出不是多个信息来源之一，而往往是关于设备状态唯一可用的结构化描述。</p>
+
+        <p>硬件场景中的验证差距因智能体输出成为下游系统输入而进一步复杂化。未经验证的证明流入信任注册表；未经验证的异常分类驱动维护队列。差距并不局限于最初评估的节点——它向下游流动，将未经审查的智能体判断嵌入后续监督所依赖的基础设施之中。每个使用智能体输出的下游消费者都继承了原始评估的验证差距。</p>
+
+        <h2>物理世界护理交叉点</h2>
+        <p>在护理场景中，验证差距最为清晰，也最为重要。人工智能体的临床建议通过在规模和粒度上整合信号——影像、实验室值、病史、实时监测——产生，这是护理团队在现有时间内无法通过独立推理复现的。建议之所以产生，是因为护理团队无法独立得出相同结论。而正是这种不对称性使独立验证在结构上变得困难：如果团队具备独立评估临床综合的能力，他们或许从一开始就不需要智能体。</p>
+
+        <p>这并不意味着不应部署护理智能体。这意味着问责架构必须针对同步验证往往无法实现的状况而设计。护理团队对建议的批准不能被视为对其正确性的确认——充其量，它是结合临床经验的可信性核查和责任归属。这是一个有意义的行为，但它不是验证。将其视为验证，表面上提升了系统的问责性，而实际的问责结构却没有任何改变。</p>
+
+        <h2>围绕差距进行设计</h2>
+        <p>在差距属于结构性的领域，验证差距无法消除。但可以围绕它进行设计。三个交叉点各有可行的方案。</p>
+
+        <p>第一是上报至真正具备外部专业知识的人员。当一项决策超过设定的后果门槛，问责架构应要求具备实际检验能力的审查员介入——独立密码学家、外部硬件工程师、专科临床审查员。这代价高昂，且需要接受并非每个智能体输出都能获得实时验证的现实。明确接受这一点，比维持常规内部审批等同于监督的假象更为诚实。</p>
+
+        <p>第二是回顾性审计。对于同步验证不切实际的领域，可通过结构化的事后审查程序——在基准事实可获得时，对智能体决策进行采样——随时间部分弥合差距。智能体的决策不在当下验证，而是在结果已知后评估。这无法防止个别错误，但能提供常规审批记录所无法提供的真正问责信号。审计记录必须与智能体自身日志分离，以避免循环验证。</p>
+
+        <p>第三是将后果性权限限制在可验证的范围内。验证差距最大的地方——智能体输出最难被独立核查的地方——智能体所拥有的权限应受到最严格的约束。这不是限制能力，而是根据现有监督基础设施校准权限。无法实时核查输出的智能体，不应具备在没有额外程序障碍的情况下采取不可逆行动的权限。</p>
+
+        <p>验证差距是人工智能体问责制中最难克服的结构性约束之一。忽视它，会产生看起来完整却并不完整的问责记录。承认它并围绕它进行设计，是实现真正问责而非纸面问责的前提。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>验证差距出现于检验人工智能体输出所需的能力与产生该输出所需的能力相当乃至更高之时。它是一种认识论约束，而非行为倾向：独立审查的能力在结构上缺失，而非未被充分使用。智能体部署于人类能力不足的领域——而这恰恰是独立验证困难的原因所在。在后量子交叉点，驱动部署的专业知识缺口，同时也阻碍了对迁移建议的真正审查。在硬件交叉点，未经验证的智能体输出向下游传播，将未经审查的判断嵌入后续监督所依赖的基础设施。在护理领域，智能体以规模和速度执行的临床综合，正是护理团队无法独立复现的。围绕差距进行设计意味着：上报至真正的外部专业人员、结合结果数据开展回顾性审计，以及将智能体权限限制在现有监督基础设施实际可承载的范围内。</p>
+      </div>
+    </div>
+
+    <!-- ZH-HK -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>每一個針對人工智能體的問責架構都建立在一個如此基本以至於鮮少被明確表述的假設之上：負責監督的人類原則上能夠檢驗智能體輸出是否正確。一旦去掉這個假設，架構的性質便完全改變。監督角色變為儀式性的。批准紀錄不再反映真正的評估。問責結構停留於紙面，而智能體以未經審查的權限運作。</p>
+
+        <p>驗證差距是指檢驗人工智能體的輸出所需的能力與產生該輸出所需的能力相當乃至更高時出現的結構性狀態。它不同於自動化偏見——後者是一種在缺乏充分審查情況下主動依賴的行為傾向。驗證差距是一種認識論約束：獨立審查的能力本身缺失，而非未被充分使用。而且這不是部署事故。智能體通常部署在人類能力不足、成本高昂或不可及的領域——這正是引入自動化的原因。差距內嵌於部署本身的邏輯之中。</p>
+
+        <p>這一點之所以重要，是因為驗證不僅僅是質量檢查。它是問責制與現實相連的機制。一份技術上完整但內容無法獨立評估的日誌不能支撐問責制。一項審批者不具備能力加以評估的建議所產生的「批准」，不是負責任的監督——它是被記錄的依賴。兩者之間的差距，就是監督與走過場之間的差距。</p>
+
+        <h2>後量子安全交叉點</h2>
+        <p>後量子密碼遷移是人工智能體被要求管理的技術上最為複雜的治理任務之一。算法選擇、參數調整、混合方案設計和遷移排序都涉及研究前沿水平的判斷。部署智能體來管理這些遷移的組織，在大多數情況下，正是因為缺乏以所需速度和深度做出這些決策的內部專業知識，才引入智能體。智能體的引入是為了填補能力缺口——但同樣的缺口也阻礙了對智能體建議的獨立驗證。</p>
+
+        <p>當智能體推薦某條遷移路徑時，批准該建議的組織通常並不具備評估路徑是否合理的專業知識。批准反映的是對智能體及供應商關係的機構信任，而非獨立的技術評估。如果智能體的建議存在問題——因為細微的配置錯誤、過時的訓練分佈，或智能體無法識別的能力邊界——驗證差距意味著錯誤可能在不被察覺的情況下通過審批流程。紀錄將顯示已授權，而監督本身缺席。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>在基礎設施環境中運行的硬件智能體產生的輸出——異常分類、證明判斷、維護診斷——通常需要實體訪問和深度設備知識才能獨立驗證。接收到智能體關於某設備健康報告的操作員，在大多數情況下，若不重現智能體的傳感器數據採集、信號處理和模式識別，便無法獨立確認設備的健康狀態。智能體的輸出不是多個信息來源之一，而往往是關於設備狀態唯一可用的結構化描述。</p>
+
+        <p>硬件場景中的驗證差距因智能體輸出成為下游系統輸入而進一步複雜化。未經驗證的證明流入信任登記冊；未經驗證的異常分類驅動維護佇列。差距並不局限於最初評估的節點——它向下游流動，將未經審查的智能體判斷嵌入後續監督所依賴的基礎設施之中。每個使用智能體輸出的下游消費者都繼承了原始評估的驗證差距。</p>
+
+        <h2>物理世界護理交叉點</h2>
+        <p>在護理場景中，驗證差距最為清晰，也最為重要。人工智能體的臨床建議通過在規模和粒度上整合信號——影像、實驗室值、病史、實時監測——產生，這是護理團隊在現有時間內無法通過獨立推理復現的。建議之所以產生，是因為護理團隊無法獨立得出相同結論。而正是這種不對稱性使獨立驗證在結構上變得困難：如果團隊具備獨立評估臨床綜合的能力，他們或許從一開始就不需要智能體。</p>
+
+        <p>這並不意味著不應部署護理智能體。這意味著問責架構必須針對同步驗證往往無法實現的狀況而設計。護理團隊對建議的批准不能被視為對其正確性的確認——充其量，它是結合臨床經驗的可信性核查和責任歸屬。這是一個有意義的行為，但它不是驗證。將其視為驗證，表面上提升了系統的問責性，而實際的問責結構卻沒有任何改變。</p>
+
+        <h2>圍繞差距進行設計</h2>
+        <p>在差距屬於結構性的領域，驗證差距無法消除。但可以圍繞它進行設計。三個交叉點各有可行的方案。</p>
+
+        <p>第一是上報至真正具備外部專業知識的人員。當一項決策超過設定的後果門檻，問責架構應要求具備實際檢驗能力的審查員介入——獨立密碼學家、外部硬件工程師、專科臨床審查員。這代價高昂，且需要接受並非每個智能體輸出都能獲得實時驗證的現實。明確接受這一點，比維持常規內部審批等同於監督的假象更為誠實。</p>
+
+        <p>第二是回顧性審計。對於同步驗證不切實際的領域，可通過結構化的事後審查程序——在基準事實可獲得時，對智能體決策進行採樣——隨時間部分彌合差距。智能體的決策不在當下驗證，而是在結果已知後評估。這無法防止個別錯誤，但能提供常規審批紀錄所無法提供的真正問責信號。審計紀錄必須與智能體自身日誌分離，以避免循環驗證。</p>
+
+        <p>第三是將後果性權限限制在可驗證的範圍內。驗證差距最大的地方——智能體輸出最難被獨立核查的地方——智能體所擁有的權限應受到最嚴格的約束。這不是限制能力，而是根據現有監督基礎設施校準權限。無法實時核查輸出的智能體，不應具備在沒有額外程序障礙的情況下採取不可逆行動的權限。</p>
+
+        <p>驗證差距是人工智能體問責制中最難克服的結構性約束之一。忽視它，會產生看起來完整卻並不完整的問責紀錄。承認它並圍繞它進行設計，是實現真正問責而非紙面問責的前提。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>驗證差距出現於檢驗人工智能體輸出所需的能力與產生該輸出所需的能力相當乃至更高之時。它是一種認識論約束，而非行為傾向：獨立審查的能力在結構上缺失，而非未被充分使用。智能體部署於人類能力不足的領域——而這恰恰是獨立驗證困難的原因所在。在後量子交叉點，驅動部署的專業知識缺口，同時也阻礙了對遷移建議的真正審查。在硬件交叉點，未經驗證的智能體輸出向下游傳播，將未經審查的判斷嵌入後續監督所依賴的基礎設施。在護理領域，智能體以規模和速度執行的臨床綜合，正是護理團隊無法獨立復現的。圍繞差距進行設計意味著：上報至真正的外部專業人員、結合結果數據開展回顧性審計，以及將智能體權限限制在現有監督基礎設施實際可承載的範圍內。</p>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="essay-footer" style="max-width:680px;margin:0 auto 64px;padding:32px 32px 0;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+    <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+    <a href="/blog/" class="essay-footer-back">&larr; All essays</a>
+  </footer>
+
+  <script>
+    (function () {
+      var savedLang = localStorage.getItem('al-lang') || 'en';
+      function applyLang(lang) {
+        document.querySelectorAll('.essay-lang').forEach(function(el) {
+          el.classList.toggle('active', el.getAttribute('data-lang-content') === lang);
+        });
+        document.querySelectorAll('.lang-btn').forEach(function(btn) {
+          btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+        });
+        localStorage.setItem('al-lang', lang);
+      }
+      applyLang(savedLang);
+      document.querySelectorAll('.lang-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { applyLang(btn.getAttribute('data-lang')); });
+      });
+    })();
+  </script>
+</body>
+</html>
