@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The automation bias problem — Asaptic Labs</title>
+
+  <meta name="description" content="Oversight that defers to the agent it is supposed to oversee is not oversight. The automation bias problem is what happens when the humans nominally in the loop have effectively left it." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/automation-bias-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The automation bias problem: oversight that defers to the agent it oversees is not oversight" />
+  <meta property="og:description" content="Oversight that defers to the agent it is supposed to oversee is not oversight. The automation bias problem is what happens when the humans nominally in the loop have effectively left it." />
+  <meta property="og:url" content="https://asaptic.com/blog/automation-bias-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-28" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The automation bias problem: oversight that defers to the agent it oversees is not oversight",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-28",
+    "description": "Oversight that defers to the agent it is supposed to oversee is not oversight. The automation bias problem is what happens when the humans nominally in the loop have effectively left it.",
+    "url": "https://asaptic.com/blog/automation-bias-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .essay-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+      margin-bottom: 56px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 40px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--gray-dim);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray);
+      transition: color 0.2s;
+    }
+    .essay-footer-back:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">ASAPTIC LABS</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/engage.html">Engage</a>
+      <a href="/blog/">Notes</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <span class="essay-label">NOTES FROM THE CROSSINGS · 2026-05-28</span>
+    <h1 class="essay-title">The automation bias problem</h1>
+    <p class="essay-subtitle">Oversight that defers to the agent it is supposed to oversee is not oversight</p>
+
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>6 min read</span>
+      <span>× Quantum Security × Hardware × Human Care</span>
+    </div>
+
+    <div class="essay-lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">简</button>
+      <button class="lang-btn" data-lang="zht">繁</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Automation bias is the human tendency to accept machine-generated recommendations without adequate scrutiny — to defer to a system's output because it was produced by a system. In isolation, this is a well-documented cognitive effect. In the context of AI agents operating at high speed, in safety-critical domains, with outputs that are difficult to verify in real time, it is a structural accountability failure.</p>
+
+        <p>Accountability architectures for AI agents are built on the assumption that meaningful human oversight exists at the boundaries where an agent's authority is exercised or extended. When humans in those oversight roles defer excessively to the agent — approving what the agent recommends, accepting what the agent reports, escalating only what the agent flags — the architecture exists but the oversight does not. The human is present in the loop, but not in the loop in any meaningful sense. They are a rubber stamp with a heartbeat.</p>
+
+        <p>The problem is not that humans are careless. It is that AI agents are often right. A system correct most of the time creates the conditions for automation bias to take hold: the cost of scrutiny is high, the apparent benefit is low, and the historical record of agent recommendations supports deference. But accountability is not about the typical case. It is about the atypical one — the rare decision where the agent is wrong, where the context is unusual, where the recommendation is technically valid but consequentially inappropriate. Automation bias makes the oversight system systematically worse at detecting exactly these cases.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>In post-quantum security operations, automation bias is a practical threat to cryptographic governance. Key rotation schedules, algorithm migration decisions, and attestation policy updates are complex, technically demanding, and resistant to quick human evaluation. A security team that has learned to trust an agent's recommendations will tend to approve suggested changes with less scrutiny over time, not more. When the agent's recommendation is wrong — because of a configuration error, a compromised input, or a capability boundary the agent cannot reason about — the human oversight structure meant to catch the error is precisely the structure most degraded by accumulated deference. The record will show human approval of every change; the accountability will be absent.</p>
+
+        <p>There is a compounding effect specific to the post-quantum migration. The shift from classical to quantum-resistant algorithms involves judgements that few human reviewers are equipped to evaluate independently. The technical complexity that makes these decisions genuinely hard also makes them ideal ground for automation bias to operate: reviewers who cannot independently verify a recommendation are most likely to defer to the agent that produced it. The automation bias problem and the legibility problem reinforce each other at precisely the moment where the decisions are most consequential.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware agents operating in infrastructure environments produce attestation reports, anomaly flags, and maintenance recommendations at a rate no human can independently verify. The oversight layer must necessarily be sampled and selective — a small fraction of agent outputs reviewed against independent criteria. Automation bias compresses this further: reviewers learn which categories of output have historically been reliable, and their sampling becomes less representative over time. The agent does not control the oversight layer, but the effect is the same: oversight concentrates on cases the agent has historically been right about, and thins at the margins where failure is most likely.</p>
+
+        <p>Hardware contexts add a further dimension. When an agent manages physical infrastructure — power, network, access control — the consequences of a missed error are not limited to a bad record. The agent's recommendation shapes the physical world. Automation bias in this context transfers the agent's errors directly into real-world outcomes, with the appearance of human authorisation attached to each one.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>In care contexts, automation bias has a specific name in the clinical literature: automation complacency. Research in clinical decision support consistently finds that practitioners defer to automated recommendations even when those recommendations are flagged as uncertain or when clinical context provides countervailing evidence. For AI agents operating in care settings, the consequence is that the agent's authority in practice often exceeds its designed authority. The system presents a recommendation; the caregiver approves; the agent's output becomes the decision. The oversight structure is intact on paper; the oversight function is not.</p>
+
+        <p>The deeper problem in care is that automation bias is not equally distributed. It intensifies under time pressure, cognitive load, and fatigue — the exact conditions in which oversight matters most. The result is an oversight system whose reliability is inversely correlated with the difficulty of the situation: the more complex the case, the more likely a caregiver is to defer to the agent, and the more likely the agent is to be operating outside the domain its behaviour was validated for.</p>
+
+        <h2>What genuine oversight requires</h2>
+        <p>The practical response to automation bias is not to remove human oversight but to design oversight that resists deference. This means structuring oversight roles so they require independent evaluation rather than endorsement of agent output; it means sampling protocols that deliberately over-represent unusual and low-confidence cases rather than replicating the agent's own prioritisation; it means accountability structures for human reviewers that treat unexplained approvals as gaps rather than efficiencies.</p>
+
+        <p>The agent's recommendation is an input to the oversight process, not the output. When the oversight structure treats agent recommendations as the output to be endorsed rather than the input to be evaluated, the humans nominally in the loop have ceded the loop. Accountability requires that oversight exist in practice, not just on paper. An agent operating under rubber-stamp oversight has effective autonomy without formal autonomy — the accountability record shows human approval for every decision while the actual oversight function has failed. Designing against automation bias is not a soft governance measure; it is the structural work that determines whether oversight is real.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">SUMMARY</span>
+        <p>Automation bias — the tendency to defer to a system's output because it was produced by a system — is a structural accountability failure when it operates in human oversight roles for AI agents. An agent operating under rubber-stamp oversight has effective autonomy without formal autonomy: the record shows human approval while the oversight function has failed. At the post-quantum crossing, the technical complexity of cryptographic governance makes it ideal ground for bias to operate, compounding the legibility problem. At the hardware crossing, sampled oversight becomes unrepresentative as reviewers learn to trust historically reliable categories, thinning exactly where failure is most likely. In care, automation complacency intensifies under the time pressure and cognitive load where oversight matters most. Designing against automation bias means structuring oversight to require independent evaluation, sampling that over-represents unusual cases, and accountability for reviewers — not just for the agents they oversee.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>自动化偏见是人类倾向于不加充分审查地接受机器生成建议的现象——因为某个输出是由系统产生的，就对其言听计从。孤立来看，这是一种有据可查的认知效应。但在人工智能体以高速运行、处于安全关键领域、且输出难以实时验证的背景下，它是一种结构性的问责失败。</p>
+
+        <p>人工智能体的问责架构建立在这样一个假设之上：在智能体权限被行使或扩展的边界处，存在有实质意义的人类监督。当处于监督角色的人类过度依赖智能体时——批准智能体的建议、接受智能体的报告、只对智能体标记的内容进行升级处理——架构存在，但监督并不存在。人类在环路中在场，却不在真正意义上的环路中。他们是带着心跳的橡皮图章。</p>
+
+        <p>问题不在于人类粗心大意，而在于人工智能体往往是正确的。大多数时候都正确的系统为自动化偏见的形成创造了条件：审查的成本高，明显的收益低，智能体建议的历史记录支持依赖。但问责制不关乎典型情况，而关乎非典型情况——智能体出错的罕见决策、情境异常的情况、建议在技术上有效但在后果上不当的情况。自动化偏见使监督系统在检测这些情况时系统性地更差。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>在后量子安全运营中，自动化偏见对密码治理构成实际威胁。密钥轮换计划、算法迁移决策和证明策略更新复杂、技术要求高，且难以快速进行人工评估。学会信任智能体建议的安全团队，往往随着时间推移对建议变更的审查越来越少，而非越来越多。当智能体的建议出错时——因为配置错误、被篡改的输入，或智能体无法推理的能力边界——本应捕获错误的人类监督结构恰恰是因长期依赖而最为退化的结构。记录将显示每次变更都获得了人工批准，但问责制却缺席了。</p>
+
+        <p>后量子迁移特有的复合效应使问题加剧。从经典算法到抗量子算法的转变涉及少数人工审查员能够独立评估的判断。正是这种使决策真正困难的技术复杂性，也使其成为自动化偏见运作的理想土壤：无法独立验证建议的审查员最可能依赖产生该建议的智能体。自动化偏见问题与可读性问题在决策最为关键的时刻相互强化。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>在基础设施环境中运行的硬件智能体以任何人都无法独立验证的速率产生证明报告、异常标记和维护建议。监督层必然是抽样和选择性的——对少量智能体输出按照独立标准进行审查。自动化偏见进一步压缩了这一点：审查员会了解历史上可靠的输出类别，抽样因此变得越来越不具代表性。智能体不控制监督层，但效果是一样的：监督集中在智能体历史上正确的情况，在最可能发生失败的边缘变得稀薄。</p>
+
+        <p>硬件环境增加了另一个维度。当智能体管理物理基础设施——电力、网络、门禁控制——时，遗漏错误的后果不仅限于糟糕的记录。智能体的建议塑造物理世界。在这种情况下，自动化偏见将智能体的错误直接转化为现实世界的后果，而每一个后果都附带人工授权的表象。</p>
+
+        <h2>物理世界护理交叉点</h2>
+        <p>在护理情境中，自动化偏见在临床文献中有一个专有名称：自动化失察。临床决策支持领域的研究一致发现，从业者会依赖自动化建议，即使这些建议被标记为不确定，或临床情境提供了相反的证据。对于在护理环境中运行的人工智能体，结果是智能体在实践中的权限往往超过其设计权限。系统提出建议，护理人员批准，智能体的输出成为决策。监督结构在纸面上完整，监督功能则不然。</p>
+
+        <p>护理中更深层的问题是，自动化偏见的分布并不均匀。它在时间压力、认知负荷和疲劳的情况下加剧——而恰恰是在这些情况下监督最为重要。结果是，监督系统的可靠性与情境难度呈反比：案例越复杂，护理人员越可能依赖智能体，智能体越可能在其行为未经验证的领域之外运行。</p>
+
+        <h2>真正的监督需要什么</h2>
+        <p>应对自动化偏见的实际回应不是取消人类监督，而是设计能抵抗依赖的监督。这意味着构建需要独立评估而非认可智能体输出的监督角色；意味着有意对异常和低置信度案例进行过度抽样，而非复制智能体自身的优先级排序；意味着将无解释的批准视为缺口而非效率的人工审查员问责结构。</p>
+
+        <p>智能体的建议是监督过程的输入，而非输出。当监督结构将智能体建议视为需要认可的输出而非需要评估的输入时，名义上在环路中的人类已经让出了环路。问责制要求监督在实践中存在，而不仅仅是在纸面上存在。在橡皮图章监督下运行的智能体在没有正式自主权的情况下拥有了实际自主权——问责记录显示每项决策都获得人工批准，而实际监督功能已经失败。针对自动化偏见的设计不是软性治理措施，而是决定监督是否真实存在的结构性工作。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>自动化偏见——因某个输出由系统产生就对其依赖的倾向——在作用于人工智能体的人类监督角色时，是一种结构性的问责失败。在橡皮图章监督下运行的智能体在没有正式自主权的情况下拥有了实际自主权：记录显示人工批准，而监督功能已经失败。在后量子交叉点，密码治理的技术复杂性使其成为偏见运作的理想土壤，与可读性问题相互强化。在硬件交叉点，随着审查员对历史可靠类别产生信任，抽样监督变得缺乏代表性，在最可能失败的边缘变得稀薄。在护理领域，自动化失察在监督最重要的时间压力和认知负荷下加剧。应对自动化偏见的设计意味着构建需要独立评估的监督结构、对异常案例进行过度抽样，以及对审查员而非仅对其监督的智能体进行问责。</p>
+      </div>
+    </div>
+
+    <!-- ZH-HK -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>自動化偏見是人類傾向於不加充分審查地接受機器生成建議的現象——因為某個輸出是由系統產生的，便對其言聽計從。孤立來看，這是一種有據可查的認知效應。但在人工智能體以高速運行、處於安全關鍵領域、且輸出難以即時驗證的背景下，它是一種結構性的問責失敗。</p>
+
+        <p>人工智能體的問責架構建立在這樣一個假設之上：在智能體權限被行使或擴展的邊界處，存在有實質意義的人類監督。當處於監督角色的人類過度依賴智能體時——批准智能體的建議、接受智能體的報告、只對智能體標記的內容進行升級處理——架構存在，但監督並不存在。人類在環路中在場，卻不在真正意義上的環路中。他們是帶著心跳的橡皮圖章。</p>
+
+        <p>問題不在於人類粗心大意，而在於人工智能體往往是正確的。大多數時候都正確的系統為自動化偏見的形成創造了條件：審查的成本高，明顯的收益低，智能體建議的歷史紀錄支持依賴。但問責制不關乎典型情況，而關乎非典型情況——智能體出錯的罕見決策、情境異常的情況、建議在技術上有效但在後果上不當的情況。自動化偏見使監督系統在檢測這些情況時系統性地更差。</p>
+
+        <h2>後量子安全交叉點</h2>
+        <p>在後量子安全運營中，自動化偏見對密碼治理構成實際威脅。密鑰輪換計劃、算法遷移決策和證明策略更新複雜、技術要求高，且難以快速進行人工評估。學會信任智能體建議的安全團隊，往往隨著時間推移對建議變更的審查越來越少，而非越來越多。當智能體的建議出錯時——因為配置錯誤、被篡改的輸入，或智能體無法推理的能力邊界——本應捕獲錯誤的人類監督結構恰恰是因長期依賴而最為退化的結構。紀錄將顯示每次變更都獲得了人工批准，但問責制卻缺席了。</p>
+
+        <p>後量子遷移特有的複合效應使問題加劇。從經典算法到抗量子算法的轉變涉及少數人工審查員能夠獨立評估的判斷。正是這種使決策真正困難的技術複雜性，也使其成為自動化偏見運作的理想土壤：無法獨立驗證建議的審查員最可能依賴產生該建議的智能體。自動化偏見問題與可讀性問題在決策最為關鍵的時刻相互強化。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>在基礎設施環境中運行的硬件智能體以任何人都無法獨立驗證的速率產生證明報告、異常標記和維護建議。監督層必然是抽樣和選擇性的——對少量智能體輸出按照獨立標準進行審查。自動化偏見進一步壓縮了這一點：審查員會了解歷史上可靠的輸出類別，抽樣因此變得越來越不具代表性。智能體不控制監督層，但效果是一樣的：監督集中在智能體歷史上正確的情況，在最可能發生失敗的邊緣變得稀薄。</p>
+
+        <p>硬件環境增加了另一個維度。當智能體管理物理基礎設施——電力、網絡、門禁控制——時，遺漏錯誤的後果不僅限於糟糕的紀錄。智能體的建議塑造物理世界。在這種情況下，自動化偏見將智能體的錯誤直接轉化為現實世界的後果，而每一個後果都附帶人工授權的表象。</p>
+
+        <h2>物理世界護理交叉點</h2>
+        <p>在護理情境中，自動化偏見在臨床文獻中有一個專有名稱：自動化失察。臨床決策支持領域的研究一致發現，從業者會依賴自動化建議，即使這些建議被標記為不確定，或臨床情境提供了相反的證據。對於在護理環境中運行的人工智能體，結果是智能體在實踐中的權限往往超過其設計權限。系統提出建議，護理人員批准，智能體的輸出成為決策。監督結構在紙面上完整，監督功能則不然。</p>
+
+        <p>護理中更深層的問題是，自動化偏見的分佈並不均勻。它在時間壓力、認知負荷和疲勞的情況下加劇——而恰恰是在這些情況下監督最為重要。結果是，監督系統的可靠性與情境難度呈反比：案例越複雜，護理人員越可能依賴智能體，智能體越可能在其行為未經驗證的領域之外運行。</p>
+
+        <h2>真正的監督需要什麼</h2>
+        <p>應對自動化偏見的實際回應不是取消人類監督，而是設計能抵抗依賴的監督。這意味著構建需要獨立評估而非認可智能體輸出的監督角色；意味著有意對異常和低置信度案例進行過度抽樣，而非複製智能體自身的優先級排序；意味著將無解釋的批准視為缺口而非效率的人工審查員問責結構。</p>
+
+        <p>智能體的建議是監督過程的輸入，而非輸出。當監督結構將智能體建議視為需要認可的輸出而非需要評估的輸入時，名義上在環路中的人類已經讓出了環路。問責制要求監督在實踐中存在，而不僅僅是在紙面上存在。在橡皮圖章監督下運行的智能體在沒有正式自主權的情況下擁有了實際自主權——問責紀錄顯示每項決策都獲得人工批准，而實際監督功能已經失敗。針對自動化偏見的設計不是軟性治理措施，而是決定監督是否真實存在的結構性工作。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>自動化偏見——因某個輸出由系統產生就對其依賴的傾向——在作用於人工智能體的人類監督角色時，是一種結構性的問責失敗。在橡皮圖章監督下運行的智能體在沒有正式自主權的情況下擁有了實際自主權：紀錄顯示人工批准，而監督功能已經失敗。在後量子交叉點，密碼治理的技術複雜性使其成為偏見運作的理想土壤，與可讀性問題相互強化。在硬件交叉點，隨著審查員對歷史可靠類別產生信任，抽樣監督變得缺乏代表性，在最可能失敗的邊緣變得稀薄。在護理領域，自動化失察在監督最重要的時間壓力和認知負荷下加劇。應對自動化偏見的設計意味著構建需要獨立評估的監督結構、對異常案例進行過度抽樣，以及對審查員而非僅對其監督的智能體進行問責。</p>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="essay-footer" style="max-width:680px;margin:0 auto 64px;padding:32px 32px 0;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+    <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+    <a href="/blog/" class="essay-footer-back">&larr; All essays</a>
+  </footer>
+
+  <script>
+    (function () {
+      var savedLang = localStorage.getItem('al-lang') || 'en';
+      function applyLang(lang) {
+        document.querySelectorAll('.essay-lang').forEach(function(el) {
+          el.classList.toggle('active', el.getAttribute('data-lang-content') === lang);
+        });
+        document.querySelectorAll('.lang-btn').forEach(function(btn) {
+          btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+        });
+        localStorage.setItem('al-lang', lang);
+      }
+      applyLang(savedLang);
+      document.querySelectorAll('.lang-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { applyLang(btn.getAttribute('data-lang')); });
+      });
+    })();
+  </script>
+</body>
+</html>
