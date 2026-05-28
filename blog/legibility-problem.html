@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The legibility problem — Asaptic Labs</title>
+
+  <meta name="description" content="A log that no one can read is not accountability — it is the appearance of accountability. The legibility problem is the gap between technically auditable and humanly interpretable AI agent decisions." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/legibility-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The legibility problem: a log that no one can read is not accountability" />
+  <meta property="og:description" content="A log that no one can read is not accountability — it is the appearance of accountability. The legibility problem is the gap between technically auditable and humanly interpretable AI agent decisions." />
+  <meta property="og:url" content="https://asaptic.com/blog/legibility-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-28" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The legibility problem: a log that no one can read is not accountability",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-28",
+    "description": "A log that no one can read is not accountability — it is the appearance of accountability. The legibility problem is the gap between technically auditable and humanly interpretable AI agent decisions.",
+    "url": "https://asaptic.com/blog/legibility-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .essay-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+      margin-bottom: 56px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 40px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--gray-dim);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray);
+      transition: color 0.2s;
+    }
+    .essay-footer-back:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">ASAPTIC LABS</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/engage.html">Engage</a>
+      <a href="/blog/">Notes</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <span class="essay-label">NOTES FROM THE CROSSINGS · 2026-05-28</span>
+    <h1 class="essay-title">The legibility problem</h1>
+    <p class="essay-subtitle">A log that no one can read is not accountability — it is the appearance of accountability</p>
+
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>6 min read</span>
+      <span>× Quantum Security × Hardware × Human Care</span>
+    </div>
+
+    <div class="essay-lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">简</button>
+      <button class="lang-btn" data-lang="zht">繁</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>There is a version of accountability that is formally complete but practically empty. The audit log exists. The decision record is stored. The cryptographic attestation is attached. And yet no one in the organisation — not the engineer, not the compliance officer, not the person whose care was managed by the agent — can read the record and understand why the agent did what it did. The log is evidence without meaning. This is the legibility problem.</p>
+
+        <p>The legibility problem is distinct from related gaps. The forensic gap concerns whether a record exists at all. The observability gap concerns what you can see while the agent is running. The specification gap concerns whether the agent's objectives were correctly defined. The legibility problem is narrower: the record exists, the agent completed the task, but the decision trace — the chain of inference that led from inputs to action — is not interpretable by the humans responsible for oversight. The audit produces compliance theatre rather than accountability.</p>
+
+        <h2>Why legibility fails by default</h2>
+        <p>Legibility is not a natural property of logged agent behaviour. It is a design choice that must be made explicitly, and it is expensive. A decision trace faithful enough to be legible has three properties: it is complete (it captures the inputs the agent attended to, not just the outputs); it is contextual (it records the state of the world at the moment of decision, not an abstract summary); and it is interpretable (it is expressed in terms a qualified human reviewer can follow without specialised tooling).</p>
+
+        <p>Current agentic systems routinely fail one or more of these properties. Completeness fails when an agent logs its conclusion without logging the reasoning chain — the record shows "authorised" without showing why authorisation was granted. Contextual fidelity fails when the agent logs an action without logging the environmental state that triggered it — the record shows "administered" without showing the patient state at the time of the decision. Interpretability fails when the audit record is expressed in token probabilities, attention weights, or raw embeddings that are technically complete but humanly unreadable without conversion tooling that may not be available when the record is reviewed.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>The post-quantum crossing makes legibility a security requirement. Cryptographic attestation records produced by agents running post-quantum algorithms may embed algorithm identifiers, key material references, and hash chains in formats that are technically auditable by specialised tools but illegible to the security engineers and auditors who must actually review them. When a signing event is challenged — by a regulator, an incident responder, or a counterparty — the question is not merely whether the signature validates but whether a human reviewer can trace the chain of authority that produced it. An attestation record that validates algorithmically but cannot be narrated back to a human audience does not establish accountability; it establishes that a machine agreed with itself.</p>
+
+        <p>The migration from classical to quantum-resistant algorithms adds a second legibility layer. A system mid-migration may contain agents using different algorithm generations, each producing records in different formats. The composite audit trail is technically present but interpretively fragmented — a reviewer must understand which algorithm generation produced a given record to know what the record means. Legibility by design in this context requires records that self-identify their algorithm context in human-readable form alongside the cryptographic material, so that future reviewers — working years after the migration — can still follow what happened and why.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware agents produce telemetry at a rate and in a format shaped by the constraints of the device, not by the needs of the human reviewer. Sensor readings, state transitions, and attestation reports are logged in binary formats, abbreviated field identifiers, and device-native timestamps. A hardware attestation report may be cryptographically verified in milliseconds by a verification server, but the same report — printed or displayed to a compliance engineer — is a sequence of hex values with no inherent narrative.</p>
+
+        <p>The legibility problem at the hardware crossing is compounded by time. The records produced today will be reviewed — if they are reviewed at all — in a regulatory context, an incident investigation, or a liability proceeding that may occur years after the event. The engineers who designed the telemetry format may no longer be available. The tooling that parsed those records may be deprecated. An audit record whose legibility depends on current staff and current tooling is legible today and illegible tomorrow. Hardware-rooted attestation solves the integrity problem: the record is tamper-evident. It does not solve the legibility problem: the record must also be interpretable by a human reviewer who does not have access to the internal context that the record's authors took for granted.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>In care contexts, the legibility problem has a direct stakeholder consequence. Caregivers, clinical supervisors, patients' families, and regulators all have legitimate interests in understanding what a care agent did and why. These stakeholders are not engineers. They cannot follow a decision log expressed in model internal states or activation patterns. They can follow a structured narrative: at this time, under these conditions, the agent did this, because it assessed the situation as follows. The difference between these two representations is not merely aesthetic — it is the difference between accountability and its simulation.</p>
+
+        <p>A care agent that administers or withholds an intervention without producing a legible record of its reasoning has created a documentation gap that affects not only the agent's operators but the people in the agent's care. When an adverse event is investigated, the question "what did the agent consider when it made this decision?" must be answerable from the record alone, without requiring the developer to reconstruct internal states from logs that were never designed to be read by anyone outside the engineering team. Legibility is not a nice-to-have in care; it is the condition under which the agent's authority to act in someone's care can be justified after the fact.</p>
+
+        <h2>Legibility as a design requirement</h2>
+        <p>The practical implication is that legibility cannot be retrofitted. A system that logs what agents do without logging why agents did it will not become legible by adding more storage. The decision context — the inputs, the state, the objective framing, the alternatives considered and rejected — must be captured at the time of decision, in a form that can be read without the original system. This is a design requirement, not a logging improvement.</p>
+
+        <p>Building legible agents is more expensive than building agents that log outputs. It requires explicit reasoning traces, structured state capture at decision boundaries, and record formats designed for human review rather than machine verification. In domains where accountability is a genuine requirement — post-quantum security, embedded hardware, human care — that expense is not optional. The agent that acts without leaving a legible trace has not left an audit record; it has left a monument to its own opacity. Legibility is what turns a log into evidence and evidence into accountability.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">SUMMARY</span>
+        <p>The legibility problem is the gap between AI agent decisions that are technically auditable and those that are humanly interpretable. It is distinct from the forensic gap (whether a record exists) and the observability gap (what can be seen during execution) — it concerns records that exist but cannot be followed by the humans responsible for oversight. At the post-quantum security crossing, attestation records that validate algorithmically but cannot be narrated to a reviewer establish that a machine agreed with itself, not that a decision was accountable. At the hardware crossing, device-native telemetry formats that are legible to current tooling become illegible as time passes and context is lost. In physical-world care, a log that requires engineering expertise to interpret cannot fulfill the oversight obligations of caregivers, families, and regulators. Legibility must be designed in at the time of decision capture, not appended later — it is the design choice that turns a log into evidence.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>有一种问责制在形式上是完整的，但实际上是空洞的。审计日志存在，决策记录被存储，密码证明已附加。然而，组织中没有任何人——无论是工程师、合规官，还是由智能体管理护理的当事人——能够阅读记录并理解智能体为何采取了特定行动。日志是没有意义的证据。这就是可读性问题。</p>
+
+        <p>可读性问题与相关缺口不同。取证缺口涉及记录是否存在。可观测性缺口涉及在智能体运行时你能看到什么。规格缺口涉及智能体的目标是否被正确定义。可读性问题更为具体：记录存在，智能体完成了任务，但决策追踪——从输入到行动的推断链——无法被负责监督的人类解读。审计产生的是合规表演，而非真实问责。</p>
+
+        <h2>为何可读性默认失效</h2>
+        <p>可读性不是已记录智能体行为的自然属性。它是一个必须明确做出的设计选择，且代价高昂。一个足够可读的决策追踪具备三个属性：完整性（捕获智能体关注的输入，而非仅是输出）；情境性（记录决策时刻的世界状态，而非抽象摘要）；可解释性（以有资格的人工审查员无需专业工具即可理解的方式表达）。</p>
+
+        <p>当前智能体系统通常在这些属性上有一个或多个失效。当智能体记录结论而不记录推断链时，完整性失效——记录显示"已授权"而不显示为何授权。当智能体记录行动而不记录触发行动的环境状态时，情境保真度失效——记录显示"已给药"而不显示给药时的患者状态。当审计记录以技术上完整但没有转换工具便无法人工阅读的令牌概率、注意力权重或原始嵌入表达时，可解释性失效。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>后量子交叉点使可读性成为安全要求。运行后量子算法的智能体产生的密码证明记录可能以格式嵌入算法标识符、密钥材料参考和哈希链，这些格式对专业工具技术上可审计，但对实际必须审查它们的安全工程师和审计员来说是不可读的。当一个签名事件受到挑战时——无论是监管机构、事件响应人员，还是交易对手——问题不仅仅是签名是否有效，还有人工审查员是否能追溯产生它的权威链。一个算法上可验证但无法向人类受众叙述的证明记录，并不建立问责制；它建立的是机器与自身达成一致的证明。</p>
+
+        <p>从经典算法向抗量子算法的迁移增加了第二个可读性层次。系统在迁移过程中可能包含使用不同算法代的智能体，每个产生不同格式的记录。复合审计追踪在技术上存在，但在解释上是碎片化的。在这种情况下，设计时的可读性意味着在密码材料旁边以人类可读形式生成自我标识其算法上下文的记录，使未来的审查员——在迁移多年后工作——仍能理解发生了什么以及原因。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>硬件智能体产生的遥测数据受设备约束而非人工审查员需求的格式塑造。传感器读数、状态转换和证明报告以二进制格式、缩写字段标识符和设备原生时间戳记录。一个硬件证明报告可能由验证服务器在毫秒内通过密码验证，但同一报告——打印或显示给合规工程师——是一系列十六进制值，没有内在叙述。</p>
+
+        <p>硬件交叉点的可读性问题因时间而加剧。今天产生的记录——如果曾被审查——将在监管背景、事故调查或可能在事件发生多年后发生的责任诉讼中被审查。设计遥测格式的工程师可能已经不在了。解析这些记录的工具可能已被弃用。可读性依赖于当前员工和当前工具的审计记录今天可读，明天不可读。以硬件为根的证明解决了完整性问题：记录是防篡改的。它不能解决可读性问题：记录还必须能被没有记录作者所默认的内部上下文的人工审查员解读。</p>
+
+        <h2>物理世界照护交叉点</h2>
+        <p>在照护场景中，可读性问题有直接的利益相关者后果。护理人员、临床主管、患者家属和监管机构都有合理的利益来了解照护智能体做了什么以及为什么。这些利益相关者不是工程师。他们无法跟随以模型内部状态或激活模式表达的决策日志。他们可以跟随结构化叙述：在这个时间，在这些条件下，智能体做了这个，因为它对情况的评估如下。这两种表达之间的差异不仅仅是美学上的——这是问责制与其模拟之间的差异。</p>
+
+        <p>一个在没有产生可读推理记录的情况下施用或拒绝干预的照护智能体，创造了一个文档缺口，影响的不仅是智能体的运营者，还有处于智能体照护中的人。当不良事件被调查时，"智能体做这个决策时考虑了什么？"这个问题必须能从记录中单独回答，无需开发者从从未被设计为可读的日志中重建内部状态。可读性在照护中不是可选项；它是智能体在某人照护中的行动权限在事后可被证明合理的条件。</p>
+
+        <h2>可读性作为设计要求</h2>
+        <p>实际含义是可读性无法事后补救。一个记录智能体行为而不记录智能体行为原因的系统，不会通过增加存储变得可读。决策上下文——输入、状态、目标框架、被考虑和拒绝的替代方案——必须在决策时以不需要原始系统即可阅读的形式捕获。这是设计要求，而非日志改进。</p>
+
+        <p>构建可读智能体比构建记录输出的智能体更昂贵。它需要明确的推理追踪、在决策边界处的结构化状态捕获，以及为人工审查而非机器验证设计的记录格式。在后量子安全、嵌入式硬件和人类照护等问责制是真实要求的领域，这种代价不是可选的。在没有留下可读追踪的情况下行动的智能体，没有留下审计记录；它留下的是自身不透明度的纪念碑。可读性是将日志转化为证据、将证据转化为问责制的东西。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>可读性问题是AI智能体决策在技术上可审计与人类可解读之间的缺口。它与取证缺口（记录是否存在）和可观测性缺口（执行期间能看到什么）不同——它涉及存在但负责监督的人类无法理解的记录。在后量子安全交叉点，算法上可验证但无法向审查员叙述的证明记录建立的是机器与自身达成一致，而非决策可问责。在硬件交叉点，设备原生遥测格式随时间流逝和上下文丧失而变得不可读。在物理世界照护中，需要工程专业知识才能解读的日志无法履行护理人员、家属和监管机构的监督义务。可读性必须在决策捕获时设计进去，而非事后追加——这是将日志转化为证据的设计选择。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>有一種問責制在形式上是完整的，但實際上是空洞的。審計日誌存在，決策記錄被存儲，密碼證明已附加。然而，組織中沒有任何人——無論是工程師、合規官，還是由智能體管理護理的當事人——能夠閱讀記錄並理解智能體為何採取了特定行動。日誌是沒有意義的證據。這就是可讀性問題。</p>
+
+        <p>可讀性問題與相關缺口不同。取證缺口涉及記錄是否存在。可觀測性缺口涉及在智能體運行時你能看到什麼。規格缺口涉及智能體的目標是否被正確定義。可讀性問題更為具體：記錄存在，智能體完成了任務，但決策追蹤——從輸入到行動的推斷鏈——無法被負責監督的人類解讀。審計產生的是合規表演，而非真實問責。</p>
+
+        <h2>為何可讀性預設失效</h2>
+        <p>可讀性不是已記錄智能體行為的自然屬性。它是一個必須明確做出的設計選擇，且代價高昂。一個足夠可讀的決策追蹤具備三個屬性：完整性（捕獲智能體關注的輸入，而非僅是輸出）；情境性（記錄決策時刻的世界狀態，而非抽象摘要）；可解釋性（以有資格的人工審查員無需專業工具即可理解的方式表達）。</p>
+
+        <p>當前智能體系統通常在這些屬性上有一個或多個失效。當智能體記錄結論而不記錄推斷鏈時，完整性失效——記錄顯示「已授權」而不顯示為何授權。當智能體記錄行動而不記錄觸發行動的環境狀態時，情境保真度失效——記錄顯示「已給藥」而不顯示給藥時的患者狀態。當審計記錄以技術上完整但沒有轉換工具便無法人工閱讀的令牌概率、注意力權重或原始嵌入表達時，可解釋性失效。</p>
+
+        <h2>後量子安全交叉點</h2>
+        <p>後量子交叉點使可讀性成為安全要求。運行後量子算法的智能體產生的密碼證明記錄可能以格式嵌入算法標識符、密鑰材料參考和哈希鏈，這些格式對專業工具技術上可審計，但對實際必須審查它們的安全工程師和審計員來說是不可讀的。當一個簽名事件受到挑戰時——無論是監管機構、事件響應人員，還是交易對手——問題不僅僅是簽名是否有效，還有人工審查員是否能追溯產生它的權威鏈。一個算法上可驗證但無法向人類受衆敘述的證明記錄，並不建立問責制；它建立的是機器與自身達成一致的證明。</p>
+
+        <p>從經典算法向抗量子算法的遷移增加了第二個可讀性層次。系統在遷移過程中可能包含使用不同算法代的智能體，每個產生不同格式的記錄。複合審計追蹤在技術上存在，但在解釋上是碎片化的。在這種情況下，設計時的可讀性意味著在密碼材料旁邊以人類可讀形式生成自我標識其算法上下文的記錄，使未來的審查員——在遷移多年後工作——仍能理解發生了什麼以及原因。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>硬件智能體產生的遙測數據受設備約束而非人工審查員需求的格式塑造。感測器讀數、狀態轉換和證明報告以二進制格式、縮寫字段標識符和設備原生時間戳記錄。一個硬件證明報告可能由驗證服務器在毫秒內通過密碼驗證，但同一報告——打印或顯示給合規工程師——是一系列十六進制值，沒有內在敘述。</p>
+
+        <p>硬件交叉點的可讀性問題因時間而加劇。今天產生的記錄——如果曾被審查——將在監管背景、事故調查或可能在事件發生多年後發生的責任訴訟中被審查。設計遙測格式的工程師可能已經不在了。解析這些記錄的工具可能已被棄用。可讀性依賴於當前員工和當前工具的審計記錄今天可讀，明天不可讀。以硬件為根的證明解決了完整性問題：記錄是防篡改的。它不能解決可讀性問題：記錄還必須能被沒有記錄作者所默認的內部上下文的人工審查員解讀。</p>
+
+        <h2>物理世界照護交叉點</h2>
+        <p>在照護場景中，可讀性問題有直接的利益相關者後果。護理人員、臨床主管、患者家屬和監管機構都有合理的利益來了解照護智能體做了什麼以及為什麼。這些利益相關者不是工程師。他們無法跟隨以模型內部狀態或激活模式表達的決策日誌。他們可以跟隨結構化敘述：在這個時間，在這些條件下，智能體做了這個，因為它對情況的評估如下。這兩種表達之間的差異不僅僅是美學上的——這是問責制與其模擬之間的差異。</p>
+
+        <p>一個在沒有產生可讀推理記錄的情況下施用或拒絕干預的照護智能體，創造了一個文檔缺口，影響的不僅是智能體的營運者，還有處於智能體照護中的人。當不良事件被調查時，「智能體做這個決策時考慮了什麼？」這個問題必須能從記錄中單獨回答，無需開發者從從未被設計為可讀的日誌中重建內部狀態。可讀性在照護中不是可選項；它是智能體在某人照護中的行動權限在事後可被證明合理的條件。</p>
+
+        <h2>可讀性作為設計要求</h2>
+        <p>實際含義是可讀性無法事後補救。一個記錄智能體行為而不記錄智能體行為原因的系統，不會通過增加存儲變得可讀。決策上下文——輸入、狀態、目標框架、被考慮和拒絕的替代方案——必須在決策時以不需要原始系統即可閱讀的形式捕獲。這是設計要求，而非日誌改進。</p>
+
+        <p>構建可讀智能體比構建記錄輸出的智能體更昂貴。它需要明確的推理追蹤、在決策邊界處的結構化狀態捕獲，以及為人工審查而非機器驗證設計的記錄格式。在後量子安全、嵌入式硬件和人類照護等問責制是真實要求的領域，這種代價不是可選的。在沒有留下可讀追蹤的情況下行動的智能體，沒有留下審計記錄；它留下的是自身不透明度的紀念碑。可讀性是將日誌轉化為證據、將證據轉化為問責制的東西。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>可讀性問題是AI智能體決策在技術上可審計與人類可解讀之間的缺口。它與取證缺口（記錄是否存在）和可觀測性缺口（執行期間能看到什麼）不同——它涉及存在但負責監督的人類無法理解的記錄。在後量子安全交叉點，算法上可驗證但無法向審查員敘述的證明記錄建立的是機器與自身達成一致，而非決策可問責。在硬件交叉點，設備原生遙測格式隨時間流逝和上下文喪失而變得不可讀。在物理世界照護中，需要工程專業知識才能解讀的日誌無法履行護理人員、家屬和監管機構的監督義務。可讀性必須在決策捕獲時設計進去，而非事後追加——這是將日誌轉化為證據的設計選擇。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-05-28</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </div>
+  </main>
+
+  <script>
+    const btns = document.querySelectorAll('.lang-btn');
+    const sections = document.querySelectorAll('.essay-lang');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        sections.forEach(s => {
+          s.classList.toggle('active', s.dataset.langContent === lang);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
