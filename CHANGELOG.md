@@ -1,3 +1,4 @@
+2026-05-28 08:15 UTC · blog: add essay 'The legibility problem — technically auditable AI agent decisions that remain humanly uninterpretable' (EN+ZH+ZH-HK) · eac510f
 2026-05-28 04:15 UTC · blog: add essay 'The silent failure problem — accountability requires AI agents report failure, not just success' (EN+ZH+ZH-HK) · 512b21b
 2026-05-28 00:15 UTC · blog: add essay 'The quorum problem — when a single AI agent should never be permitted to act alone' (EN+ZH+ZH-HK) · 20fc80d
 2026-05-27 20:15 UTC · blog: add essay 'The rate and scale problem — machine-speed agents versus human-speed oversight' (EN+ZH+ZH-HK) · c8a2230
