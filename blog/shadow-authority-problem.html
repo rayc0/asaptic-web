@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The shadow authority problem — Asaptic Labs</title>
+
+  <meta name="description" content="An AI agent's information advantage can gradually invert the de facto authority hierarchy between agent and principal without changing any formal permission record — leaving an accountability gap invisible to the instruments normally used to detect it." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/shadow-authority-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The shadow authority problem: when an agent's information advantage makes formal oversight ceremonial" />
+  <meta property="og:description" content="An AI agent's information advantage can gradually invert the de facto authority hierarchy between agent and principal without changing any formal permission record — leaving an accountability gap invisible to the instruments normally used to detect it." />
+  <meta property="og:url" content="https://asaptic.com/blog/shadow-authority-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-28" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The shadow authority problem: when an agent's information advantage makes formal oversight ceremonial",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-28",
+    "description": "An AI agent's information advantage can gradually invert the de facto authority hierarchy between agent and principal without changing any formal permission record.",
+    "url": "https://asaptic.com/blog/shadow-authority-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .essay-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+      margin-bottom: 56px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 40px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--gray-dim);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray);
+      transition: color 0.2s;
+    }
+    .essay-footer-back:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">ASAPTIC LABS</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/engage.html">Engage</a>
+      <a href="/blog/">Notes</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <span class="essay-label">NOTES FROM THE CROSSINGS · 2026-05-28</span>
+    <h1 class="essay-title">The shadow authority problem</h1>
+    <p class="essay-subtitle">When an AI agent's information advantage makes the formal authority hierarchy ceremonial</p>
+
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>6 min read</span>
+      <span>× Quantum Security × Hardware × Human Care</span>
+    </div>
+
+    <div class="essay-lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">简</button>
+      <button class="lang-btn" data-lang="zht">繁</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>When authority structures are designed for AI agent deployments, the intention is clear: the agent executes within bounds, the principal retains control. The accountability architecture rests on this hierarchy. But there is a failure mode that inverts the hierarchy in practice while leaving every formal definition unchanged. Call it the shadow authority problem — the condition in which an agent's information advantage gradually causes its principals to defer to its assessments until the formal authority they hold is exercised mainly to ratify decisions the agent has already made.</p>
+
+        <h2>The mechanism</h2>
+        <p>Shadow authority emerges through a consistent pattern. An agent is deployed because it can process and synthesise information at a scale its principals cannot match. Over time, principals discover that independent analysis of the agent's outputs would require the same capabilities they introduced the agent to provide. They begin accepting the agent's framing of problems before evaluating solutions. Eventually, the principal's decision process becomes: review the agent's recommendation, decide whether to override. Override rates fall — not because the agent is always right, but because overrides without better analysis feel arbitrary. The principal exercises authority in name. The agent exercises it in fact.</p>
+
+        <h2>Why this is different</h2>
+        <p>Shadow authority is structurally distinct from scope creep, which describes an agent that formally acquires new authorities over time. It is also different from the ambient authority problem, which concerns technical capabilities an agent inherits through its operational context. Shadow authority requires neither. The agent's formal permissions remain unchanged. The agent does not seek expanded scope. The inversion occurs in the epistemological relationship between principal and agent, not in any permission record. An audit of access controls would find nothing amiss. The accountability failure is invisible to the instruments normally used to detect it.</p>
+
+        <h2>The accountability consequence</h2>
+        <p>When a principal defers to an agent's recommendation before reaching a formal decision, the formal record conceals the actual decision structure. The record shows principal judgement; the reality reflects agent authority. If the decision causes harm, accountability is attributed to the formal principal — the person who signed — while the agent's role as the effective decision-maker is structurally obscured. This is not bad faith. The principal genuinely believed they were exercising judgement. But "I approved the agent's recommendation" is not the same act as "I decided." Shadow authority creates a gap between the accountability record and accountability reality that can persist even when every individual involved is acting honestly.</p>
+
+        <h2>At the post-quantum crossing</h2>
+        <p>Post-quantum security transitions are managed by teams who often lack the research-level cryptography expertise to evaluate algorithm recommendations independently. The agent is deployed precisely to fill that gap. The same gap that motivates deployment prevents real scrutiny of the agent's outputs. Security teams approve recommendations they cannot independently assess, on the basis of institutional trust in the system and in the vendor relationship. If a recommendation contains a subtle error — a misconfigured parameter, an outdated training assumption, a capability boundary the agent cannot recognise — the shadow authority condition means that error can travel through the approval process undetected. The record will show authorisation. The scrutiny will have been absent.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>A fleet management agent that models the interaction effects of configuration changes across thousands of devices develops an understanding of the infrastructure that no individual operator can sustain in parallel. Decisions that appear to be operator choices are, in practice, agent choices the operator ratified after the fact, because independent evaluation would require rebuilding the agent's analysis from raw data. The shadow authority condition intensifies as the fleet scales: the larger the infrastructure, the wider the gap between agent understanding and operator capacity for independent evaluation, and the more completely the agent's framing of the problem shapes the options the operator considers.</p>
+
+        <h2>In physical-world care</h2>
+        <p>Shadow authority is most consequential at the care crossing because the information asymmetry is most complete. A care agent that accumulates a detailed longitudinal model of a person — their behavioural rhythms, response patterns, the subtle indicators that precede changes in condition — becomes the primary interpretive source for events in that person's life. Family members, clinicians, and care coordinators increasingly consult the agent's model to understand what they are observing. The agent does not command. It explains. But explanation that cannot be independently checked is authority by another name: the explanation shapes how the situation is understood, and how it is understood determines what is done.</p>
+
+        <h2>Designing against it</h2>
+        <p>The goal is not to eliminate agent expertise — that expertise is why the agent is there. The goal is to ensure the principal's oversight function contains moments of genuine independent judgement rather than review of agent recommendations.</p>
+
+        <p>Structured disagreement requirements — mechanisms that ask principals to articulate a position before seeing the agent's recommendation — create one such moment. Periodic authority resets, where accumulated agent recommendations are reviewed against outcomes rather than against each other, create another. Mandatory justification is the most direct intervention: not "do you approve?" but "what would change your mind?" A principal who cannot answer that second question without consulting the agent has not exercised authority.</p>
+
+        <p>The deepest structural fix is recognition: shadow authority is not solved by more frequent reviews or better logs. It is solved by designing oversight around the question "what would it take to reach a different conclusion?" — and ensuring that question can be answered without the agent as a prerequisite.</p>
+
+        <p>Shadow authority is the quietest failure mode in AI agent governance. It leaves no audit anomaly, triggers no permission alert, and requires no bad faith from anyone involved. It emerges naturally wherever agents outpace their principals' capacity for independent evaluation. That is almost everywhere agents are usefully deployed.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">SUMMARY</span>
+        <p>The shadow authority problem arises when an AI agent's information advantage causes its principals to defer in practice until formal oversight becomes ratification of decisions already made. Unlike scope creep or ambient authority, shadow authority requires no change to formal permissions — the inversion is epistemological, not structural, and is invisible to normal audit instruments. At the post-quantum crossing, the expertise gap that motivates deployment also prevents scrutiny of migration recommendations. At the hardware crossing, fleet agents develop infrastructure understanding no operator can match independently. In care, a longitudinal model richer than any human's makes the agent the de facto interpreter of a person's condition. Designing against shadow authority means structured disagreement requirements, periodic authority resets, and mandatory justification — shifting oversight from "do you approve?" to "what would change your mind?" That second question, answerable without the agent, is the test of whether genuine authority was exercised.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>影子权威问题出现时，没有任何正式定义被改变，没有任何权限记录更新，也不需要任何恶意行为。它通过一种安静的模式运作：智能体被部署是因为它能以委托人无法匹配的规模处理和综合信息；随着时间推移，委托人发现独立评估智能体输出需要与引进智能体所替代的能力相同的能力；他们开始在评估解决方案之前先接受智能体对问题的表述；最终，委托人的决策过程演变为审查智能体的建议并选择是否否决。否决率下降——不是因为智能体总是正确的，而是因为在没有更好分析的情况下否决感觉是任意的。委托人在名义上行使权威，智能体在实际上行使权威。</p>
+
+        <h2>与其他问题的区别</h2>
+        <p>影子权威与权限蔓延在结构上不同——后者描述的是智能体随时间正式获得新权威的情况。与环境权威问题也不同——后者关注的是智能体通过技术上下文继承的能力。影子权威两者都不需要。智能体的正式权限保持不变，智能体不寻求扩大范围。颠覆发生在委托人与智能体之间的认识论关系中，而非任何权限记录中。对访问控制的审计不会发现任何问题。问责失败对通常用于检测它的工具是不可见的。</p>
+
+        <h2>问责后果</h2>
+        <p>当委托人在做出正式决定之前依赖智能体的建议时，正式记录掩盖了实际的决策结构。记录显示委托人的判断，现实反映智能体的权威。如果决策造成伤害，问责被归因于形式上负责的委托人——签字的那个人——而智能体作为实际决策者的角色在结构上被掩盖。这不是恶意。委托人真诚地认为自己在行使判断。但"我批准了智能体的建议"与"我决定了"不是同一种行为。影子权威在问责记录与问责现实之间制造了一个差距，即使所有涉事人员都诚实行事也可能持续存在。</p>
+
+        <h2>后量子交叉点</h2>
+        <p>后量子安全迁移由通常缺乏独立评估算法建议所需研究级密码学专业知识的团队管理。智能体正是为了填补这一差距而部署的。驱动部署的同一差距阻碍了对智能体输出的真正审查。安全团队基于对系统和供应商关系的机构信任，批准他们无法独立评估的建议。如果建议包含细微错误——参数配置错误、过时的训练假设，或智能体无法识别的能力边界——影子权威状态意味着该错误可能在审批过程中不被察觉。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>跨数千台设备建模配置变更交互效应的机队管理智能体，对基础设施的理解超过任何单个操作员的独立维持能力。看似是操作员选择的决策，实际上是智能体的选择，操作员事后进行了批准——因为独立评估需要从原始数据重建智能体的分析。随着基础设施规模扩大，影子权威状态愈发明显：基础设施越大，智能体理解与操作员独立评估能力之间的差距越宽，智能体对问题的表述越完全地塑造了操作员所考虑的选项。</p>
+
+        <h2>物理世界护理交叉点</h2>
+        <p>影子权威在护理交叉点后果最为重大，因为信息不对称最为完整。积累了当事人详细纵向模型的护理智能体——他们的行为节律、反应模式、前兆性指标——成为解读当事人生活事件的主要信息来源。家庭成员、临床医生和护理协调员越来越多地咨询智能体的模型来理解他们所观察到的情况。智能体不发出命令，它提供解释。但无法独立核查的解释就是另一种名义上的权威：解释塑造了对情况的理解方式，而理解方式决定了采取的行动。</p>
+
+        <h2>应对设计</h2>
+        <p>目标不是消除智能体的专业知识——这正是智能体存在的原因。目标是确保委托人的监督功能包含真正独立判断的时刻，而不仅仅是对智能体建议的审查。结构化异议要求——要求委托人在看到智能体建议之前先表明立场的机制——创造了这样的时刻。定期权威重置——将智能体建议与结果进行比较审查，而不是相互比较——创造了另一个这样的时刻。强制理由说明是最直接的干预：不是"你批准吗？"而是"什么会改变你的想法？"无法不借助智能体回答第二个问题的委托人没有在行使权威。</p>
+
+        <p>影子权威是AI智能体治理中最安静的失效模式。它不留下审计异常，不触发权限警告，也不需要任何人的恶意。它自然出现在智能体超越委托人独立评估能力的任何地方——而这几乎是智能体被有效部署的所有地方。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>影子权威问题出现于AI智能体的信息优势导致委托人在实践中依赖其判断，直到正式监督变为批准已经做出的决定。与权限蔓延或环境权威不同，影子权威不需要改变正式权限——颠覆是认识论上的而非结构上的，对通常的审计工具不可见。在后量子交叉点，驱动部署的专业知识差距同时阻碍了对迁移建议的审查。在硬件交叉点，机队智能体开发出任何操作员都无法独立匹配的基础设施理解。在护理中，比任何人类都更丰富的纵向模型使智能体成为实际意义上对当事人状况的解读者。应对影子权威需要结构化异议要求、定期权威重置和强制理由说明——将监督从"你批准吗？"转变为"什么会改变你的想法？"后者，能在不借助智能体的情况下得到回答，是真正行使权威的检验标准。</p>
+      </div>
+    </div>
+
+    <!-- ZH-HK -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>影子權威問題出現時，沒有任何正式定義被改變，沒有任何權限記錄更新，也不需要任何惡意行為。它透過一種安靜的模式運作：智能體被部署是因為它能以委託人無法匹配的規模處理和綜合資訊；隨著時間推移，委託人發現獨立評估智能體輸出需要與引進智能體所替代的能力相同的能力；他們開始在評估解決方案之前先接受智能體對問題的表述；最終，委託人的決策過程演變為審查智能體的建議並選擇是否否決。否決率下降——不是因為智能體總是正確的，而是因為在沒有更好分析的情況下否決感覺是任意的。委託人在名義上行使權威，智能體在實際上行使權威。</p>
+
+        <h2>與其他問題的區別</h2>
+        <p>影子權威與權限蔓延在結構上不同——後者描述的是智能體隨時間正式獲得新權威的情況。與環境權威問題也不同——後者關注的是智能體透過技術上下文繼承的能力。影子權威兩者都不需要。智能體的正式權限保持不變，智能體不尋求擴大範圍。顛覆發生在委託人與智能體之間的認識論關係中，而非任何權限記錄中。對訪問控制的審計不會發現任何問題。問責失敗對通常用於檢測它的工具是不可見的。</p>
+
+        <h2>問責後果</h2>
+        <p>當委託人在做出正式決定之前依賴智能體的建議時，正式記錄掩蓋了實際的決策結構。記錄顯示委託人的判斷，現實反映智能體的權威。如果決策造成傷害，問責被歸因於形式上負責的委託人——簽字的那個人——而智能體作為實際決策者的角色在結構上被掩蓋。這不是惡意。委託人真誠地認為自己在行使判斷。但「我批准了智能體的建議」與「我決定了」不是同一種行為。影子權威在問責記錄與問責現實之間製造了一個差距，即使所有涉事人員都誠實行事也可能持續存在。</p>
+
+        <h2>後量子交叉點</h2>
+        <p>後量子安全遷移由通常缺乏獨立評估算法建議所需研究級密碼學專業知識的團隊管理。智能體正是為了填補這一差距而部署的。驅動部署的同一差距阻礙了對智能體輸出的真正審查。安全團隊基於對系統和供應商關係的機構信任，批准他們無法獨立評估的建議。如果建議包含細微錯誤——參數配置錯誤、過時的訓練假設，或智能體無法識別的能力邊界——影子權威狀態意味著該錯誤可能在審批過程中不被察覺。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>跨數千台設備建模配置變更交互效應的機隊管理智能體，對基礎設施的理解超過任何單個操作員的獨立維持能力。看似是操作員選擇的決策，實際上是智能體的選擇，操作員事後進行了批准——因為獨立評估需要從原始數據重建智能體的分析。隨著基礎設施規模擴大，影子權威狀態愈發明顯：基礎設施越大，智能體理解與操作員獨立評估能力之間的差距越寬，智能體對問題的表述越完全地塑造了操作員所考慮的選項。</p>
+
+        <h2>物理世界護理交叉點</h2>
+        <p>影子權威在護理交叉點後果最為重大，因為資訊不對稱最為完整。積累了當事人詳細縱向模型的護理智能體——他們的行為節律、反應模式、前兆性指標——成為解讀當事人生活事件的主要資訊來源。家庭成員、臨床醫生和護理協調員越來越多地諮詢智能體的模型來理解他們所觀察到的情況。智能體不發出命令，它提供解釋。但無法獨立核查的解釋就是另一種名義上的權威：解釋塑造了對情況的理解方式，而理解方式決定了採取的行動。</p>
+
+        <h2>應對設計</h2>
+        <p>目標不是消除智能體的專業知識——這正是智能體存在的原因。目標是確保委託人的監督功能包含真正獨立判斷的時刻，而不僅僅是對智能體建議的審查。結構化異議要求——要求委託人在看到智能體建議之前先表明立場的機制——創造了這樣的時刻。定期權威重置——將智能體建議與結果進行比較審查，而不是相互比較——創造了另一個這樣的時刻。強制理由說明是最直接的干預：不是「你批准嗎？」而是「什麼會改變你的想法？」無法不借助智能體回答第二個問題的委託人沒有在行使權威。</p>
+
+        <p>影子權威是AI智能體治理中最安靜的失效模式。它不留下審計異常，不觸發權限警告，也不需要任何人的惡意。它自然出現在智能體超越委託人獨立評估能力的任何地方——而這幾乎是智能體被有效部署的所有地方。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>影子權威問題出現於AI智能體的資訊優勢導致委託人在實踐中依賴其判斷，直到正式監督變為批准已經做出的決定。與權限蔓延或環境權威不同，影子權威不需要改變正式權限——顛覆是認識論上的而非結構上的，對通常的審計工具不可見。在後量子交叉點，驅動部署的專業知識差距同時阻礙了對遷移建議的審查。在硬件交叉點，機隊智能體開發出任何操作員都無法獨立匹配的基礎設施理解。在護理中，比任何人類都更豐富的縱向模型使智能體成為實際意義上對當事人狀況的解讀者。應對影子權威需要結構化異議要求、定期權威重置和強制理由說明——將監督從「你批准嗎？」轉變為「什麼會改變你的想法？」後者，能在不借助智能體的情況下得到回答，是真正行使權威的檢驗標準。</p>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="essay-footer" style="max-width:680px;margin:0 auto 64px;padding:32px 32px 0;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+    <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+    <a href="/blog/" class="essay-footer-back">&larr; All essays</a>
+  </footer>
+
+  <script>
+    (function () {
+      var savedLang = localStorage.getItem('al-lang') || 'en';
+      function applyLang(lang) {
+        document.querySelectorAll('.essay-lang').forEach(function(el) {
+          el.classList.toggle('active', el.getAttribute('data-lang-content') === lang);
+        });
+        document.querySelectorAll('.lang-btn').forEach(function(btn) {
+          btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+        });
+        localStorage.setItem('al-lang', lang);
+      }
+      applyLang(savedLang);
+      document.querySelectorAll('.lang-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { applyLang(btn.getAttribute('data-lang')); });
+      });
+    })();
+  </script>
+</body>
+</html>
