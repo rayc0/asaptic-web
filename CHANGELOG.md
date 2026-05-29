@@ -1,3 +1,4 @@
+2026-05-29 16:15 UTC · blog: add essay 'The decommissioning problem' — accountability does not end when an AI agent does (EN+ZH+ZH-HK) · 3d22afb
 2026-05-29 12:15 UTC · blog: add essay 'The informed override problem' — accountability transfers when humans override AI agents, but only if the override is informed (EN+ZH+ZH-HK) · 67c7a32
 2026-05-29 08:15 UTC · blog: add essay 'The anticipatory accountability problem — retrospective audits cannot govern agents that act before oversight is possible' (EN+ZH+ZH-HK) · efabc1c
 2026-05-29 00:15 UTC · blog: add essay 'The confidentiality-accountability tension — audit logs and privacy law point in opposite directions' (EN+ZH+ZH-HK) · d468233
