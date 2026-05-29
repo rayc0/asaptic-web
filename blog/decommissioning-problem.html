@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The decommissioning problem — Asaptic Labs</title>
+
+  <meta name="description" content="Accountability does not end when an AI agent does. The obligations that accumulate during operation survive decommission — and systems that don't plan for this leave accountability claims with no address to write to." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/decommissioning-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The decommissioning problem: what AI agent accountability demands when the system is turned off" />
+  <meta property="og:description" content="Accountability does not end when an AI agent does. The obligations that accumulate during operation survive decommission — and systems that don't plan for this leave accountability claims with no address to write to." />
+  <meta property="og:url" content="https://asaptic.com/blog/decommissioning-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-29" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The decommissioning problem: what AI agent accountability demands when the system is turned off",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-29",
+    "description": "Accountability does not end when an AI agent does. The obligations that accumulate during operation survive decommission — and systems that don't plan for this leave accountability claims with no address to write to.",
+    "url": "https://asaptic.com/blog/decommissioning-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .essay-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+      margin-bottom: 56px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--fg);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 48px 0 16px;
+      color: var(--fg);
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding: 28px 32px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--gray-dim);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray);
+      transition: color 0.2s;
+    }
+    .essay-footer-back:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">ASAPTIC LABS</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/engage.html">Engage</a>
+      <a href="/blog/">Notes</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <span class="essay-label">NOTES FROM THE CROSSINGS · 2026-05-29</span>
+    <h1 class="essay-title">The decommissioning problem</h1>
+    <p class="essay-subtitle">Accountability does not end when an AI agent does. The obligations that accumulate during operation survive decommission — and systems that don't plan for this leave accountability claims with no address to write to.</p>
+
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>5 min read</span>
+      <span>× Quantum Security × Hardware × Human Care</span>
+    </div>
+
+    <div class="essay-lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">简</button>
+      <button class="lang-btn" data-lang="zht">繁</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>When an AI agent system is shut down, the most natural assumption is that its obligations end with its operation. The agent stops acting; its audit trail is archived; the team that built it moves on. But accountability is not a function of whether a system is running. It is a function of whether consequences from its past actions remain in the world — and those consequences do not stop existing when the agent does.</p>
+
+        <p>This is the decommissioning problem. It is not a technical problem in the narrow sense; it is a governance problem that surfaces the moment anyone asks what happens to the accountability obligations a system accumulated while it was alive. The answer, in most current deployments, is that those obligations dissolve. The system is gone. The records may or may not be accessible. The people who understood it may have dispersed. A claim against a decommissioned agent has no obvious address.</p>
+
+        <h2>What decommissioning destroys</h2>
+        <p>Three categories of accountability infrastructure are at risk when an agent system is shut down. The first is evidentiary: audit logs, decision records, and the context required to interpret them. Archiving logs is necessary but not sufficient. A log entry that says "action taken at 14:32:07" is uninterpretable without the model version, the input context, the active permissions, and the downstream systems that were invoked. Decommissioning that preserves logs but discards the interpretive context has preserved the form of the audit trail while destroying its function.</p>
+        <p>The second is cryptographic. If an agent used signing keys to attest its decisions — a design feature that makes audit trails tamper-evident — those keys have a custody question at decommission. Keys that are destroyed at shutdown cannot be used to verify historical decisions. Keys that are retained indefinitely create their own risks. The decommissioning moment requires a deliberate key custody plan, not a default of either destruction or retention.</p>
+        <p>The third is relational. An agent system typically operates inside a web of integrations: APIs it called, systems it updated, human workflows it was embedded in. Those relationships do not terminate when the agent does. A downstream system that received outputs from a now-decommissioned agent may continue acting on them for years. The accountability chain does not end at the agent's last action; it extends forward through every downstream consequence that followed.</p>
+
+        <h2>At the post-quantum crossing</h2>
+        <p>The cryptographic dimension of the decommissioning problem is sharpest at the intersection with post-quantum security. An agent that signed its decisions using algorithms now considered vulnerable presents a retroactive integrity problem: past decisions, even if correctly logged, cannot be verified by any future party. The audit trail exists, but the ability to trust it has expired.</p>
+        <p>This creates a specific obligation at decommission time: transitioning signing keys to post-quantum algorithms before shutdown, not after. A system that is decommissioned with legacy signatures on its historical records has left those records in a state of future unverifiability. That is not a technical detail. It is an accountability failure — one that may not be visible for years, until someone needs to reconstruct what the system actually decided and discovers that the chain of trust has broken.</p>
+        <p>The inverse problem also applies. If a decommissioned system's historical records are re-signed under new algorithms at decommission time, the re-signing event itself must be attested. The record of "this signature was migrated from algorithm A to algorithm B on this date, by this authority" is itself part of the audit trail. Missing it collapses the evidentiary chain in a different way.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Agents that ran on dedicated hardware — secure enclaves, hardware security modules, trusted execution environments — leave a specific decommissioning residue. The hardware may be repurposed, resold, or destroyed. Each path has different implications for what it leaves behind and what it destroys.</p>
+        <p>Repurposed hardware carries the risk of unintended data persistence. Keys, partial logs, and model artefacts that were not explicitly cleared may survive the transition to a new purpose. The new system inherits a ghost of the old one — not operationally, but evidentiary. Resold hardware amplifies this risk by moving it outside the original operator's control. Hardware destruction eliminates the persistence risk but also eliminates any remaining cryptographic material that future accountability claims might need.</p>
+        <p>None of these outcomes is automatically correct. The right decommissioning path for hardware depends on what accountability obligations the system accumulated, how long those obligations last, and who holds the authority to make the custody decision. A hardware decommissioning procedure that doesn't begin with an accountability audit is guessing at the right answer.</p>
+
+        <h2>In physical-world care</h2>
+        <p>The decommissioning problem takes its most consequential form in physical care settings. An agent that managed care decisions — monitoring, scheduling, escalation, medication management — accumulates accountability obligations that run on biological timescales, not system lifecycles. A patient whose care was shaped by the agent's decisions may have health outcomes that unfold over years. If something goes wrong, the accountability investigation will need access to what the agent decided, why it decided it, and what its operating state was at the time.</p>
+        <p>Care accountability obligations are also legally structured in ways that most agent systems are not designed around. Medical records retention requirements vary by jurisdiction and often extend for years or decades after the care episode ends. An agent that contributed to medical decisions was, in a functional sense, part of the medical record. Its decommissioning needs to be coordinated with the retention obligations that apply to the records it generated — not just the records it logged for its own audit trail.</p>
+        <p>The handoff problem at decommission in care is especially acute. If a care agent is being replaced by a successor system, the successor needs to understand not just the current state of care but the history of decisions that produced that state. A decommissioning plan that does not include a structured handoff to the successor — or to human carers who will absorb the work — has introduced a discontinuity into the care record that may never be fully reconstructed.</p>
+
+        <h2>What a decommissioning plan requires</h2>
+        <p>Decommissioning should be treated as a first-class accountability event, not a cleanup task. This means several things in practice.</p>
+        <p>Before shutdown, an accountability audit should document what obligations the system accumulated, how long they last, and who inherits them. This is not a technical audit of system state; it is a governance document that maps accountability to surviving entities. The organisation that deployed the system does not necessarily shed accountability when it turns the system off. The decommissioning plan should be explicit about what remains.</p>
+        <p>Log preservation must include interpretive context, not just raw records. The goal is not to store bytes; it is to preserve the ability of a future investigator to reconstruct what happened. That requires model version records, input context schemas, active permission states at decision time, and documentation of any known system anomalies during operation. A log without context is archaeology, not accountability.</p>
+        <p>Cryptographic continuity requires a key custody decision before shutdown. If the system signed its decisions, the signing material needs a plan: migrate to post-quantum algorithms before shutdown, establish a long-term custody arrangement, and record the migration event as part of the audit trail. Destroying keys at shutdown is a choice with permanent consequences for future verifiability. It should be made deliberately, not by default.</p>
+        <p>Downstream notification should reach every system and workflow that received outputs from the decommissioned agent. Those systems need to know that the source of those outputs no longer exists, that the outputs cannot be refreshed, and that any accountability questions about past outputs must be directed to the archival record rather than a live system.</p>
+        <p>The decommissioning problem is ultimately a reminder that agent systems are not bounded by their runtime. They extend forward through their consequences and backward through their records. A decommissioning plan that treats shutdown as the end of the accountability story has misunderstood where the story ends.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">SUMMARY</span>
+        <p>Shutting down an AI agent system does not end its accountability obligations. Past decisions continue to have consequences; audit records remain subject to future investigation; care and legal obligations run on timescales longer than any system lifecycle. The decommissioning problem has three faces: evidentiary (logs without interpretive context are unreadable), cryptographic (signing keys destroyed at shutdown make historical records unverifiable), and relational (downstream systems that received outputs continue acting on them). At the post-quantum crossing, legacy signatures on historical records become unverifiable before the accountability obligations they document expire. At the hardware crossing, repurposed or resold devices carry evidentiary residue. In physical care, agent-generated records may be part of the medical record and subject to long-term retention obligations. Decommissioning should be treated as a first-class accountability event: begin with an obligations audit, preserve logs with interpretive context, make a deliberate key custody decision, and notify downstream systems. A plan that treats shutdown as the end of the accountability story has misunderstood where the story ends.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>当AI智能体系统关闭时，最自然的假设是其义务随着运营的结束而终止。智能体停止行动；审计追踪被存档；构建它的团队继续前进。但问责不是系统是否运行的函数。它是过去行动的后果是否仍存在于世界中的函数——这些后果不会因智能体消失而停止存在。</p>
+
+        <p>这就是退役问题。它不是狭义上的技术问题；它是一个治理问题，当有人询问系统在运行期间积累的问责义务发生了什么时，这个问题就会浮现。在大多数当前部署中，答案是这些义务消解了。系统消失了。记录可能可以访问，也可能无法访问。理解它的人可能已经散去。针对已退役智能体的索赔没有明确的地址。</p>
+
+        <h2>退役会破坏什么</h2>
+        <p>智能体系统关闭时，三类问责基础设施面临风险。第一类是证据性的：审计日志、决策记录以及解释它们所需的上下文。仅仅存档日志是必要但不充分的。没有模型版本、输入上下文、有效权限和调用的下游系统，一条写着"14:32:07采取了行动"的日志条目无法被解读。保留了日志但丢弃了解释上下文的退役操作保留了审计追踪的形式，同时破坏了其功能。</p>
+        <p>第二类是密码学的。如果智能体使用签名密钥来证明其决策，这些密钥在退役时面临托管问题。在关闭时销毁的密钥无法用于验证历史决策。无限期保留的密钥会产生自身的风险。退役时刻需要一个深思熟虑的密钥托管计划，而不是默认销毁或保留。</p>
+        <p>第三类是关系性的。智能体系统通常在集成网络中运行：它调用的API、它更新的系统、它嵌入的人类工作流。这些关系不会因智能体终止而终止。从已退役智能体接收输出的下游系统可能会继续基于这些输出行动多年。问责链不在智能体的最后一次行动处终止；它通过之后发生的每一个下游后果向前延伸。</p>
+
+        <h2>后量子交叉口</h2>
+        <p>退役问题的密码学维度在与后量子安全的交叉点上最为尖锐。使用现在被认为脆弱的算法签署其决策的智能体呈现了一个追溯完整性问题：即使正确记录了过去的决策，任何未来方也无法验证它们。审计追踪存在，但信任它的能力已经过期。</p>
+        <p>这在退役时创造了一个具体义务：在关闭之前而不是之后，将签名密钥迁移到后量子算法。以历史记录上的遗留签名退役的系统使那些记录处于未来无法验证的状态。这不是技术细节。这是一个问责失败——可能多年不可见，直到有人需要重建系统实际决定了什么，并发现信任链已经断裂。</p>
+
+        <h2>硬件交叉口</h2>
+        <p>在专用硬件上运行的智能体——安全飞地、硬件安全模块、可信执行环境——留下了特定的退役残留物。硬件可能被重新利用、转售或销毁。每条路径对于留下什么和销毁什么有不同的含义。重新利用的硬件存在意外数据持久性的风险。没有明确清除的密钥、部分日志和模型工件可能在转换到新目的时存活下来。销毁硬件消除了持久性风险，但也消除了未来问责索赔可能需要的任何剩余密码材料。</p>
+        <p>硬件的正确退役路径取决于系统积累的问责义务、这些义务持续多长时间以及谁有权做出托管决定。不从问责审计开始的硬件退役程序是在猜测正确答案。</p>
+
+        <h2>物理世界护理</h2>
+        <p>在物理护理环境中，退役问题采取了最具后果性的形式。管理护理决策的智能体积累了以生物时间尺度而非系统生命周期运行的问责义务。护理由智能体决策塑造的患者可能在数年内有健康后果展开。如果出现问题，问责调查将需要访问智能体决定了什么、为什么这样决定以及当时的运行状态。</p>
+        <p>护理问责义务也以大多数智能体系统没有针对设计的方式进行法律结构化。医疗记录保留要求因司法管辖区而异，通常在护理事件结束后延伸数年或数十年。对医疗决策做出贡献的智能体在功能上是医疗记录的一部分。其退役需要与适用于其生成记录的保留义务协调——不仅仅是它为自身审计追踪记录的记录。</p>
+
+        <h2>退役计划需要什么</h2>
+        <p>退役应该被视为一级问责事件，而不是清理任务。实践中这意味着几件事。关闭前，问责审计应记录系统积累了什么义务、持续多长时间以及谁继承它们。日志保存必须包括解释性上下文，而不仅仅是原始记录。密码连续性在关闭前需要密钥托管决定。下游通知应到达从已退役智能体接收输出的每个系统和工作流。退役问题最终提醒我们，智能体系统不受其运行时的限制——它们通过后果向前延伸，通过记录向后延伸。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>关闭AI智能体系统不会终止其问责义务。过去的决策继续产生后果；审计记录仍受未来调查的约束；护理和法律义务以比任何系统生命周期更长的时间尺度运行。退役问题有三个面向：证据性（没有解释性上下文的日志不可读）、密码学（在关闭时销毁签名密钥使历史记录无法验证）和关系性（接收输出的下游系统继续基于这些输出行动）。在后量子交叉口，历史记录上的遗留签名在它们记录的问责义务到期之前变得无法验证。在硬件交叉口，重新利用或转售的设备携带证据残留物。在物理护理中，智能体生成的记录可能是医疗记录的一部分，受长期保留义务约束。退役应被视为一级问责事件：从义务审计开始，保留带有解释性上下文的日志，做出深思熟虑的密钥托管决定，并通知下游系统。</p>
+      </div>
+    </div>
+
+    <!-- ZH-HK -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>當AI智能體系統關閉時，最自然的假設是其義務隨著運營的結束而終止。智能體停止行動；審計追蹤被存檔；構建它的團隊繼續前進。但問責不是系統是否運行的函數。它是過去行動的後果是否仍存在於世界中的函數——這些後果不會因智能體消失而停止存在。</p>
+
+        <p>這就是退役問題。它不是狹義上的技術問題；它是一個治理問題，當有人詢問系統在運行期間積累的問責義務發生了什麼時，這個問題就會浮現。在大多數當前部署中，答案是這些義務消解了。系統消失了。記錄可能可以訪問，也可能無法訪問。理解它的人可能已經散去。針對已退役智能體的索賠沒有明確的地址。</p>
+
+        <h2>退役會破壞什麼</h2>
+        <p>智能體系統關閉時，三類問責基礎設施面臨風險。第一類是證據性的：審計日誌、決策記錄以及解釋它們所需的上下文。僅僅存檔日誌是必要但不充分的。沒有模型版本、輸入上下文、有效權限和調用的下游系統，一條寫著「14:32:07採取了行動」的日誌條目無法被解讀。保留了日誌但丟棄了解釋上下文的退役操作保留了審計追蹤的形式，同時破壞了其功能。</p>
+        <p>第二類是密碼學的。如果智能體使用簽名密鑰來證明其決策，這些密鑰在退役時面臨託管問題。在關閉時銷毀的密鑰無法用於驗證歷史決策。無限期保留的密鑰會產生自身的風險。退役時刻需要一個深思熟慮的密鑰託管計劃，而不是預設銷毀或保留。</p>
+        <p>第三類是關係性的。智能體系統通常在整合網絡中運行：它調用的API、它更新的系統、它嵌入的人類工作流。這些關係不會因智能體終止而終止。從已退役智能體接收輸出的下游系統可能會繼續基於這些輸出行動多年。問責鏈不在智能體的最後一次行動處終止；它通過之後發生的每一個下游後果向前延伸。</p>
+
+        <h2>後量子交叉口</h2>
+        <p>退役問題的密碼學維度在與後量子安全的交叉點上最為尖銳。使用現在被認為脆弱的算法簽署其決策的智能體呈現了一個追溯完整性問題：即使正確記錄了過去的決策，任何未來方也無法驗證它們。審計追蹤存在，但信任它的能力已經過期。這在退役時創造了一個具體義務：在關閉之前而不是之後，將簽名密鑰遷移到後量子算法。以歷史記錄上的遺留簽名退役的系統使那些記錄處於未來無法驗證的狀態——可能多年不可見，直到有人需要重建系統實際決定了什麼，並發現信任鏈已經斷裂。</p>
+
+        <h2>硬體交叉口</h2>
+        <p>在專用硬體上運行的智能體——安全飛地、硬體安全模組、可信執行環境——留下了特定的退役殘留物。硬體可能被重新利用、轉售或銷毀。每條路徑對於留下什麼和銷毀什麼有不同的含義。重新利用的硬體存在意外資料持久性的風險。沒有明確清除的密鑰、部分日誌和模型工件可能在轉換到新目的時存活下來。銷毀硬體消除了持久性風險，但也消除了未來問責索賠可能需要的任何剩餘密碼材料。硬體的正確退役路徑取決於系統積累的問責義務、這些義務持續多長時間以及誰有權做出託管決定。</p>
+
+        <h2>物理世界護理</h2>
+        <p>在物理護理環境中，退役問題採取了最具後果性的形式。管理護理決策的智能體積累了以生物時間尺度而非系統生命週期運行的問責義務。護理由智能體決策塑造的患者可能在數年內有健康後果展開。如果出現問題，問責調查將需要訪問智能體決定了什麼、為什麼這樣決定以及當時的運行狀態。護理問責義務也以大多數智能體系統沒有針對設計的方式進行法律結構化。醫療記錄保留要求因司法管轄區而異，通常在護理事件結束後延伸數年或數十年。對醫療決策做出貢獻的智能體在功能上是醫療記錄的一部分。其退役需要與適用於其生成記錄的保留義務協調。</p>
+
+        <h2>退役計劃需要什麼</h2>
+        <p>退役應該被視為一級問責事件，而不是清理任務。實踐中這意味著幾件事。關閉前，問責審計應記錄系統積累了什麼義務、持續多長時間以及誰繼承它們。日誌保存必須包括解釋性上下文，而不僅僅是原始記錄。目標不是儲存字節；而是保留未來調查員重建發生了什麼的能力。這需要模型版本記錄、輸入上下文模式、決策時的有效權限狀態，以及運行期間任何已知系統異常的文件。密碼連續性在關閉前需要密鑰託管決定。下游通知應到達從已退役智能體接收輸出的每個系統和工作流。退役問題最終提醒我們，智能體系統不受其運行時的限制——它們通過後果向前延伸，通過記錄向後延伸。把關閉視為問責故事終結的計劃誤解了故事在哪裡結束。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>關閉AI智能體系統不會終止其問責義務。過去的決策繼續產生後果；審計記錄仍受未來調查的約束；護理和法律義務以比任何系統生命週期更長的時間尺度運行。退役問題有三個面向：證據性（沒有解釋性上下文的日誌不可讀）、密碼學（在關閉時銷毀簽名密鑰使歷史記錄無法驗證）和關係性（接收輸出的下游系統繼續基於這些輸出行動）。在後量子交叉口，歷史記錄上的遺留簽名在它們記錄的問責義務到期之前變得無法驗證。在硬體交叉口，重新利用或轉售的設備攜帶證據殘留物。在物理護理中，智能體生成的記錄可能是醫療記錄的一部分，受長期保留義務約束。退役應被視為一級問責事件：從義務審計開始，保留帶有解釋性上下文的日誌，做出深思熟慮的密鑰託管決定，並通知下游系統。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-05-29</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
