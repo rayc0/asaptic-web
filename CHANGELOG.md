@@ -1,3 +1,4 @@
+2026-05-29 00:15 UTC · blog: add essay 'The confidentiality-accountability tension — audit logs and privacy law point in opposite directions' (EN+ZH+ZH-HK) · d468233
 2026-05-28 20:15 UTC · blog: add essay 'The shadow authority problem — when an agent's information advantage makes formal oversight ceremonial' (EN+ZH+ZH-HK) · 9d7cd43
 2026-05-28 20:09 UTC · blog: add essay 'The verification gap — accountability requires the ability to check, but checking often requires the same capabilities as doing' (EN+ZH+ZH-HK) · 1bc283f
 2026-05-28 12:15 UTC · blog: add essay 'The automation bias problem — oversight that defers to the agent it oversees is not oversight' (EN+ZH+ZH-HK) · 40373bb
