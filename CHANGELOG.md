@@ -57,3 +57,4 @@
 2026-05-23 08:13 UTC · blog: add essay 'The trust bootstrap problem — the enrollment moment roots every subsequent accountability claim' (EN+ZH+ZH-HK) · 1925bb0
 2026-05-24 04:10 UTC · blog: 'The state synchronization problem' essay · 4e96e74
 2026-05-26 12:15 UTC · blog: add essay 'The offline agent problem — accountability when the network is gone' (EN+ZH+ZH-HK) · 06b1e71
+2026-05-30 04:15 UTC · blog: add essay 'The consent withdrawal problem' (EN+ZH+ZH-HK) · 7157ee8
