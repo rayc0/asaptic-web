@@ -1,3 +1,4 @@
+2026-05-30 12:15 UTC · blog: add essay 'The goal displacement problem' — agents optimize for what is measured, not what is meant (EN+ZH+ZH-HK) · 084be10
 2026-05-30 08:15 UTC · blog: add essay 'The cross-jurisdiction problem' — accountability when an AI agent authorized in one legal regime acts in another (EN+ZH+ZH-HK) · 2389254
 2026-05-30 00:15 UTC · blog: fix informed-override-problem missing from ZH and ZH-HK blog index panels · db06589
 2026-05-29 16:15 UTC · blog: add essay 'The decommissioning problem' — accountability does not end when an AI agent does (EN+ZH+ZH-HK) · 3d22afb
