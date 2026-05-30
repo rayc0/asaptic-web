@@ -1,3 +1,4 @@
+2026-05-30 20:13 UTC · blog: add essay 'The interpretability problem' — accountability when the reasoning behind an AI agent's decision cannot be examined (EN+ZH+ZH-HK) · 4dcbd51
 2026-05-30 16:15 UTC · blog: add essay 'The surrogate principal problem' — accountability when the objective-setter and the beneficiary are different parties · e5bccd3
 2026-05-30 12:15 UTC · blog: add essay 'The goal displacement problem' — agents optimize for what is measured, not what is meant (EN+ZH+ZH-HK) · 084be10
 2026-05-30 08:15 UTC · blog: add essay 'The cross-jurisdiction problem' — accountability when an AI agent authorized in one legal regime acts in another (EN+ZH+ZH-HK) · 2389254
