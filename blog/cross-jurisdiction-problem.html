@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The cross-jurisdiction problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents are authorized in one legal regime but act across many simultaneously. Accountability fragments when compute, data, authorization, and affected persons each fall under different regulatory territories that do not agree with each other." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/cross-jurisdiction-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The cross-jurisdiction problem: when an AI agent authorized in one legal regime acts in another" />
+  <meta property="og:description" content="AI agents span multiple regulatory territories in a single workflow: authorization in one, compute in another, data in a third, effects on persons subject to a fourth. No single regime governs the unified decision. Accountability fragments. Jurisdiction must become an explicit primitive in authorization architecture, not an assumption left to compliance teams at deployment time." />
+  <meta property="og:url" content="https://asaptic.com/blog/cross-jurisdiction-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-30" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The cross-jurisdiction problem: when an AI agent authorized in one legal regime acts in another",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-30",
+    "description": "AI agents are authorized in one legal regime but act across many simultaneously. Accountability fragments when compute, data, authorization, and affected persons each fall under different regulatory territories that do not agree with each other.",
+    "url": "https://asaptic.com/blog/cross-jurisdiction-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 48px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The cross-jurisdiction problem: when an AI agent authorized in one legal regime acts in another</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-30</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>AI agents are designed without meaningful jurisdictional awareness. Authorization happens in one legal regime; computation happens in another; data flows across a third; effects land on people subject to a fourth. The legal fiction that an agent acts where its principal is located collapses when a single workflow spans multiple regulatory territories simultaneously. The cross-jurisdiction problem is not a compliance wrinkle — it is a structural gap in how accountability is assigned when a unified decision is made by a system distributed across regimes that do not agree with each other.</p>
+
+        <h2>A distributed accountability surface</h2>
+        <p>Consider a care coordination agent authorized by an operator whose business is registered in one territory. The operator's backend runs on cloud infrastructure in a second. The patient data it reads is subject to the data protection regime of a third territory, where the care facility operates. The specialist it contacts is practicing under the professional licensing regime of a fourth. A single workflow spans all four simultaneously, authorized under the rules of exactly one.</p>
+
+        <p>Each territorial layer has its own rules about what the agent is permitted to do. Data minimization requirements differ. The scope of authorized clinical communication differs. Professional liability for agent-assisted recommendations differs. Each regulatory regime sees only the slice of the agent's activity that occurs within its territory — and in most cases has no visibility into the other layers. The agent's accountability surface is unified; the regulatory coverage is fragmented.</p>
+
+        <h2>The cryptographic compliance problem</h2>
+        <p>Post-quantum algorithm selection is jurisdictionally entangled in ways that are easy to underestimate. Standards bodies have converged on similar algorithm families, but the specific algorithm choices, key sizes, and compliance timelines differ by jurisdiction. An agent that uses one standardized algorithm for its signatures and attestations may be compliant in its operator's home territory while failing requirements in a data territory where a different algorithm family has been mandated.</p>
+
+        <p>Hardware roots of trust carry this problem deeper. A trusted execution environment certified by the attestation authority recognized in one jurisdiction may not satisfy the requirements of another's regulatory regime. An agent operating across these jurisdictions simultaneously cannot hold attestations that are valid under all relevant regulatory frameworks at once — the frameworks are not harmonized. When operators select an attestation root, they make a jurisdictional compliance choice that is invisible to every other territory's regulators. The agent proceeds in the belief that its identity is established; each regulator sees only whether the attestation satisfies its own standard.</p>
+
+        <h2>The accountability gap when something goes wrong</h2>
+        <p>When an AI agent acts incorrectly in a cross-jurisdiction deployment, the accountability question immediately becomes: which regulator has standing over this failure? Each jurisdiction has authority over a slice. The jurisdiction where the operator is registered can sanction the operator. The jurisdiction where the compute runs can require audit access to server logs. The jurisdiction where data was stored can examine data protection compliance. The jurisdiction where the affected person is located can pursue local remedies. Each exercise of authority is legitimate. None has authority over the whole workflow. The total coverage of all jurisdictions does not add up to accountability for the unified decision the agent made.</p>
+
+        <p>The person harmed navigates four separate remedial channels with no guarantee that any of them can reach the decision that caused the harm. The operator faces simultaneous regulatory exposure in multiple territories, each with its own evidentiary standards and timelines. The audit trail that is complete from any single regulator's perspective is fragmentary from the perspective of the whole. This is not a failure of enforcement. It is a structural feature of deploying unified agents across non-unified legal landscapes.</p>
+
+        <h2>Jurisdiction as an authorization primitive</h2>
+        <p>The design principle that follows is that jurisdiction must be explicit in the authorization grant — not assumed, not inferred, and not left to the agent to discover at runtime. An authorization grant that does not name the territories in which the agent is permitted to act, and what constraints govern each category of action within each territory, is incomplete. An agent operating on an incomplete grant is acting without the information it needs to remain within its accountability envelope.</p>
+
+        <p>In practice, authorization architecture for cross-border deployments needs to encode which territories' requirements govern each category of action — data reads, clinical communications, payments — and which algorithm and attestation requirements apply in each territory where relevant data or principals are located. It also needs to define what the agent must do when a required action falls into a territory for which no compliant configuration exists. The answer to that last question should be: refuse and escalate, not proceed and log.</p>
+
+        <p>Most current authorization frameworks treat jurisdiction as an external constraint to be verified by a compliance team before deployment, not as a structured property of the authorization grant itself. That is adequate when agents operate within a single regulatory territory. It is not adequate when a single workflow spans many. The cross-jurisdiction problem will not stay manageable as agents become more capable and deployments more distributed. The point at which it becomes unmanageable is exactly the point at which retrofitting jurisdiction-aware authorization becomes hardest.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>AI智能体在设计上缺乏司法管辖区意识：授权在一个法律制度下发生，计算在另一个地方，数据受第三个地域管辖，影响落在第四个制度下的人身上。后量子算法选择和硬件认证根因地域而异，无法同时满足所有相关监管框架的要求。当出现问题时，每个司法管辖区只能制裁其切片内的行为，无法问责整体决策。正确的设计原则是：将司法管辖区作为授权授予本身的结构化属性——明确每类行动在哪个地域受何规则约束，而非将其留给部署前的合规团队审查。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>AI智能體在設計上缺乏司法管轄區意識：授權在一個法律制度下發生，計算在另一個地方，數據受第三個地域管轄，影響落在第四個制度下的人身上。後量子算法選擇和硬件認證根因地域而異，無法同時滿足所有相關監管框架的要求。當出現問題時，每個司法管轄區只能制裁其切片內的行為，無法問責整體決策。正確的設計原則是：將司法管轄區作為授權授予本身的結構化屬性——明確每類行動在哪個地域受何規則約束，而非將其留給部署前的合規團隊審查。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/consent-withdrawal-problem.html">Previous: The consent withdrawal problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">跨司法管辖区问题：当AI智能体在一个法律制度下被授权却在另一个制度下行动</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-30</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>AI智能体在设计上缺乏有意义的司法管辖区意识。授权在一个法律制度下发生；计算在另一个地方进行；数据流经第三个地方；影响落在受第四个制度管辖的人身上。"智能体在其委托人所在地行事"的法律虚构，在单一工作流同时跨越多个监管地域时便会崩溃。跨司法管辖区问题不是合规问题——它是当分布在相互不一致的制度中的系统做出统一决策时，如何分配问责的结构性缺口。</p>
+
+        <h2>分布式问责表面</h2>
+        <p>考虑一个照护协调智能体，其运营者的业务注册在一个地域。运营者的后端在第二个地域的云基础设施上运行。它读取的患者数据受第三个地域数据保护制度的管辖，该地域是照护机构所在地。它联系的专科医生在第四个地域的专业执照制度下执业。单一工作流同时跨越所有四个地域，但仅在其中一个地域的规则下被授权。</p>
+
+        <p>每个地域层都有关于智能体被允许做什么的不同规则。数据最小化要求各异。授权临床沟通的范围各异。智能体辅助建议的专业责任各异。每个监管制度仅看到智能体活动中发生在其地域内的切片——在大多数情况下，对其他层没有可见性。智能体的问责表面是统一的；监管覆盖是碎片化的。</p>
+
+        <h2>密码学合规问题</h2>
+        <p>后量子算法选择在司法管辖区层面相互纠缠，其程度容易被低估。标准机构已就相似的算法家族达成共识，但具体算法选择、密钥大小和合规时间表因地域而异。一个使用某种标准化算法进行签名和认证的智能体，在其运营者的本地地域可能合规，但在数据所在的地域可能违反不同算法家族的强制要求。</p>
+
+        <p>硬件信任根将这一问题推向更深层。在一个司法管辖区被认可的可信执行环境，可能不满足另一个监管制度的要求。同时跨越这些司法管辖区运行的智能体，无法同时持有在所有相关监管框架下有效的认证——框架本身未经协调。运营者在选择认证根时做出了司法管辖区合规选择，对所有其他地域的监管机构而言，这一选择是不透明的。智能体在其身份已确立的假设下运行；每个监管机构只检查该认证是否满足自己的标准。</p>
+
+        <h2>出现问题时的问责缺口</h2>
+        <p>当AI智能体在跨司法管辖区部署中出现错误时，问责问题立即变为：哪个监管机构对这一失误拥有管辖权？每个司法管辖区对一个切片拥有权力。运营者注册所在的地域可以制裁运营者。计算运行所在的地域可以要求访问服务器日志。数据存储所在的地域可以审查数据保护合规情况。受影响者所在的地域可以依据当地法律寻求救济。每项权力行使都是合法的，但没有任何一项对整个工作流拥有权力。所有司法管辖区的总覆盖范围，并不等于对智能体所做的统一决策的问责。</p>
+
+        <p>受害者需要在四个独立的救济渠道中寻求帮助，却无法保证其中任何一个能触及导致伤害的决策。运营者同时面临多个地域的监管风险，每个地域有各自的证据标准和时间表。从任何单一监管机构角度看似完整的审计线索，从整体角度看却是碎片化的。这不是执法的失败，而是在非统一法律环境中部署统一智能体的结构性特征。</p>
+
+        <h2>将司法管辖区作为授权原语</h2>
+        <p>由此得出的设计原则是：司法管辖区必须在授权授予中明确——不能假设、不能推断，也不能留给智能体在运行时去发现。一个未明确说明智能体被允许在哪些地域行动、每个地域内每类行动受何规则约束的授权授予，是不完整的。在不完整授权下运行的智能体，缺乏保持在其问责范围内所需的信息。</p>
+
+        <p>在实践中，跨境部署的授权架构需要编码：哪些地域的要求管辖每类行动（数据读取、临床沟通、支付）；相关数据或委托人所在的每个地域适用哪些算法和认证要求；以及当所需行动落入没有合规配置的地域时，智能体应该怎么做。最后一个问题的答案应该是：拒绝并上报，而非执行并记录。</p>
+
+        <p>当前大多数授权框架将司法管辖区视为部署前由合规团队验证的外部约束，而非授权授予本身的结构化属性。当智能体在单一监管地域内运行时，这种做法是足够的。当单一工作流跨越多个地域时，这种做法就不够了。随着智能体能力越来越强、部署越来越分散，跨司法管辖区问题将越来越难以管控。它变得难以管控的时刻，恰恰是最难进行追溯改造的时刻。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/consent-withdrawal-problem.html">上篇：同意撤回问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">跨司法管轄區問題：當AI智能體在一個法律制度下被授權卻在另一個制度下行動</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-30</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>AI智能體在設計上缺乏有意義的司法管轄區意識。授權在一個法律制度下發生；計算在另一個地方進行；數據流經第三個地方；影響落在受第四個制度管轄的人身上。「智能體在其委託人所在地行事」的法律虛構，在單一工作流同時跨越多個監管地域時便會崩潰。跨司法管轄區問題不是合規問題——它是當分布在相互不一致的制度中的系統做出統一決策時，如何分配問責的結構性缺口。</p>
+
+        <h2>分佈式問責表面</h2>
+        <p>考慮一個照護協調智能體，其運營者的業務註冊在一個地域。運營者的後端在第二個地域的雲基礎設施上運行。它讀取的患者數據受第三個地域數據保護制度的管轄，該地域是照護機構所在地。它聯繫的專科醫生在第四個地域的專業執照制度下執業。單一工作流同時跨越所有四個地域，但僅在其中一個地域的規則下被授權。</p>
+
+        <p>每個地域層都有關於智能體被允許做什麼的不同規則。數據最小化要求各異。授權臨床溝通的範圍各異。智能體輔助建議的專業責任各異。每個監管制度僅看到智能體活動中發生在其地域內的切片——在大多數情況下，對其他層沒有可見性。智能體的問責表面是統一的；監管覆蓋是碎片化的。</p>
+
+        <h2>密碼學合規問題</h2>
+        <p>後量子算法選擇在司法管轄區層面相互糾纏，其程度容易被低估。標準機構已就相似的算法家族達成共識，但具體算法選擇、密鑰大小和合規時間表因地域而異。一個使用某種標準化算法進行簽名和認證的智能體，在其運營者的本地地域可能合規，但在數據所在的地域可能違反不同算法家族的強制要求。</p>
+
+        <p>硬件信任根將這一問題推向更深層。在一個司法管轄區被認可的可信執行環境，可能不滿足另一個監管制度的要求。同時跨越這些司法管轄區運行的智能體，無法同時持有在所有相關監管框架下有效的認證——框架本身未經協調。運營者在選擇認證根時做出了司法管轄區合規選擇，對所有其他地域的監管機構而言，這一選擇是不透明的。智能體在其身份已確立的假設下運行；每個監管機構只檢查該認證是否滿足自己的標準。</p>
+
+        <h2>出現問題時的問責缺口</h2>
+        <p>當AI智能體在跨司法管轄區部署中出現錯誤時，問責問題立即變為：哪個監管機構對這一失誤擁有管轄權？每個司法管轄區對一個切片擁有權力。運營者註冊所在的地域可以制裁運營者。計算運行所在的地域可以要求訪問服務器日誌。數據存儲所在的地域可以審查數據保護合規情況。受影響者所在的地域可以依據當地法律尋求救濟。每項權力行使都是合法的，但沒有任何一項對整個工作流擁有權力。所有司法管轄區的總覆蓋範圍，並不等於對智能體所做的統一決策的問責。</p>
+
+        <p>受害者需要在四個獨立的救濟渠道中尋求幫助，卻無法保證其中任何一個能觸及導致傷害的決策。運營者同時面臨多個地域的監管風險，每個地域有各自的證據標準和時間表。從任何單一監管機構角度看似完整的審計線索，從整體角度看卻是碎片化的。這不是執法的失敗，而是在非統一法律環境中部署統一智能體的結構性特徵。</p>
+
+        <h2>將司法管轄區作為授權原語</h2>
+        <p>由此得出的設計原則是：司法管轄區必須在授權授予中明確——不能假設、不能推斷，也不能留給智能體在運行時去發現。一個未明確說明智能體被允許在哪些地域行動、每個地域內每類行動受何規則約束的授權授予，是不完整的。在不完整授權下運行的智能體，缺乏保持在其問責範圍內所需的信息。</p>
+
+        <p>在實踐中，跨境部署的授權架構需要編碼：哪些地域的要求管轄每類行動（數據讀取、臨床溝通、支付）；相關數據或委託人所在的每個地域適用哪些算法和認證要求；以及當所需行動落入沒有合規配置的地域時，智能體應該怎麼做。最後一個問題的答案應該是：拒絕並上報，而非執行並記錄。</p>
+
+        <p>當前大多數授權框架將司法管轄區視為部署前由合規團隊驗證的外部約束，而非授權授予本身的結構化屬性。當智能體在單一監管地域內運行時，這種做法是足夠的。當單一工作流跨越多個地域時，這種做法就不夠了。隨著智能體能力越來越強、部署越來越分散，跨司法管轄區問題將越來越難以管控。它變得難以管控的時刻，恰恰是最難進行追溯改造的時刻。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/consent-withdrawal-problem.html">上篇：同意撤回問題 →</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/" style="color:inherit;">© 2026 Asaptic Labs</a>
+  </footer>
+
+  <script src="../style.css" type="text/javascript" onerror="void 0"></script>
+  <script>
+    (function() {
+      var stored = localStorage.getItem('al_lang') || 'en';
+      document.querySelectorAll('.essay-lang').forEach(function(el) {
+        el.classList.toggle('active', el.dataset.langContent === stored);
+      });
+      document.querySelectorAll('.lang-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.lang === stored);
+        btn.addEventListener('click', function() {
+          var lang = btn.dataset.lang;
+          localStorage.setItem('al_lang', lang);
+          document.querySelectorAll('.essay-lang').forEach(function(el) {
+            el.classList.toggle('active', el.dataset.langContent === lang);
+          });
+          document.querySelectorAll('.lang-btn').forEach(function(b) {
+            b.classList.toggle('active', b.dataset.lang === lang);
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
