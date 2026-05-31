@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The interpretability problem — Asaptic Labs</title>
+
+  <meta name="description" content="Accountability requires understanding not just what an AI agent decided, but why. When the reasoning that produced a decision cannot be independently examined, the audit record is complete and the accountability picture is empty." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/interpretability-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The interpretability problem: accountability when the reasoning behind an AI agent's decision cannot be examined" />
+  <meta property="og:description" content="Accountability requires understanding not just what an AI agent decided, but why. When the reasoning that produced a decision cannot be independently examined, the audit record is complete and the accountability picture is empty." />
+  <meta property="og:url" content="https://asaptic.com/blog/interpretability-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-30" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The interpretability problem: accountability when the reasoning behind an AI agent's decision cannot be examined",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-30",
+    "description": "Accountability requires understanding not just what an AI agent decided, but why. When the reasoning that produced a decision cannot be independently examined, the audit record is complete and the accountability picture is empty.",
+    "url": "https://asaptic.com/blog/interpretability-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .essay-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+      margin-bottom: 56px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 40px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--gray-dim);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray);
+      transition: color 0.2s;
+    }
+    .essay-footer-back:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">ASAPTIC LABS</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/engage.html">Engage</a>
+      <a href="/blog/">Notes</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <span class="essay-label">NOTES FROM THE CROSSINGS · 2026-05-30</span>
+    <h1 class="essay-title">The interpretability problem</h1>
+    <p class="essay-subtitle">Accountability when the reasoning behind an AI agent's decision cannot be examined</p>
+
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>6 min read</span>
+      <span>× Quantum Security × Hardware × Human Care</span>
+    </div>
+
+    <div class="essay-lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">简</button>
+      <button class="lang-btn" data-lang="zht">繁</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>An AI agent's decision can be recorded in full — the inputs it received, the action it selected, the outputs it produced — and that record can be complete while telling an auditor almost nothing about whether the decision was correct. The audit trail answers what. Accountability requires understanding why. When the reasoning that produced a decision cannot be independently examined, you have a complete log and an empty accountability picture. This is the interpretability problem.</p>
+
+        <h2>What the problem is</h2>
+        <p>Interpretability, as used here, does not mean a simplified explanation produced after the fact. Post-hoc explanations — narrative summaries, feature-importance rankings, natural language justifications generated by the same model that made the decision — are reconstructions, not expositions. They describe a plausible chain of reasoning that could have produced the output; they do not expose the actual computational path. The difference matters for accountability: a reconstruction can be wrong without being detectable as wrong, because there is no ground truth to check it against.</p>
+
+        <p>True interpretability would allow an independent party to examine the agent's intermediate reasoning states, identify the factors that drove a decision, and verify that the stated justification and the actual computation are consistent. This is not available for most current AI agents operating at production scale. What is available instead are outputs, and the outputs can look correct even when the underlying reasoning would not survive scrutiny.</p>
+
+        <h2>The accountability gap it creates</h2>
+        <p>When an AI agent's decision causes harm and the reasoning that drove it cannot be examined, accountability reduces to outcome attribution. Investigators can establish that the agent acted, that the action preceded the harm, and that the action was within the agent's authorized scope. They cannot establish whether the reasoning was sound, whether the inputs were weighted appropriately, or whether a different framing of the same situation would have produced a different and better decision. The accountability record identifies the proximate cause; the interpretability gap conceals the structural one.</p>
+
+        <p>This matters disproportionately in domains where decisions are novel, high-stakes, and not fully covered by prior policy. Routine decisions in well-understood conditions can be evaluated by comparing outputs to expected outputs. Decisions at the edge — where the agent is doing what it was built to do but in a context its designers did not fully anticipate — can only be evaluated by examining the reasoning. Those are exactly the decisions most likely to cause harm, and they are the decisions for which interpretability is most often absent.</p>
+
+        <h2>At the post-quantum crossing</h2>
+        <p>A post-quantum migration agent operates in a domain where the principals it advises typically lack the cryptographic depth to evaluate its reasoning independently. When the agent recommends a particular algorithm choice, parameter configuration, or migration sequence, the recommendation is assessed against outcomes — did the migration complete without error? — not against reasoning. A subtly incorrect recommendation may produce outputs that pass all automated checks while resting on a flawed assessment of the threat model or algorithm properties.</p>
+
+        <p>The interpretability gap is especially severe here because the domain is one where errors are not self-correcting. A wrong cryptographic choice does not immediately manifest as a visible failure; it creates latent vulnerability that may not be exploited for years. By the time the reasoning error becomes apparent, the decisions it informed have been distributed across infrastructure, ratified in policies, and acted on by downstream systems. The audit log will show authorisation. It will not show whether the reasoning was sound when it was made.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>A fleet management agent that makes configuration decisions across large device populations must navigate interaction effects between device states, software versions, environmental conditions, and operational requirements. The reasoning that produces a particular configuration recommendation may depend on the joint state of thousands of variables that no single operator can reconstruct from the output alone. When a configuration change contributes to a device failure or a fleet-wide incident, the interpretability question is not "what did the agent do?" — the log answers that — but "why did it assess this configuration as acceptable?"</p>
+
+        <p>Without interpretability, post-incident review defaults to replacing the agent's recommendation with a different recommendation, produced by different humans using the same incomplete information. The structural conditions that produced the original flawed assessment remain unaddressed. Repeated incidents of the same type follow. The pattern is familiar in complex infrastructure management: symptoms are addressed, root causes are not, because the root cause lives in reasoning that cannot be opened.</p>
+
+        <h2>In physical-world care</h2>
+        <p>The interpretability problem is most acute at the care crossing because the right to understand a decision is itself a component of care. A person subject to a care agent's decisions — about routine support, about escalation to clinical attention, about how their condition is characterized in records that follow them — has a legitimate claim not just to know what was decided but to understand the basis for it. That understanding is necessary for meaningful consent, for informed override, and for the person's own agency over their care narrative.</p>
+
+        <p>A care agent that produces correct outcomes most of the time can still cause harm in specific cases through reasoning that privileges one pattern of data over another in ways the affected person cannot contest because they cannot see it. The interpretability gap in care is not a technical limitation the person should be expected to accept; it is a structural reduction in their capacity for self-determination. When a care agent's reasoning is opaque, the accountability architecture that surrounds it must compensate: more frequent human review, narrower autonomous scope, and mandatory channels for the person to register that an outcome did not match their understood intentions.</p>
+
+        <h2>What accountability architecture requires</h2>
+        <p>Interpretability cannot be fully achieved for current large-scale AI systems, and accountability architecture must be designed for that constraint rather than against it. The practical options are not "interpretable agent" or "uninterpretable agent" but rather: how should scope, oversight, and review intervals be calibrated to the interpretability level actually available?</p>
+
+        <p>Agents operating in low-interpretability conditions should operate in narrower scopes: tighter action boundaries, more frequent checkpoints, and more systematic logging of the information state at the moment of decision. The log cannot substitute for the reasoning, but a richer information snapshot at the decision point gives reviewers a better basis for assessing whether the output was plausible given what the agent knew.</p>
+
+        <p>Mandatory dissent windows — structured periods between a decision recommendation and its execution during which a human reviewer can object — serve a different function: they do not expose the reasoning, but they create moments at which independent judgement can intervene. The value of a dissent window depends entirely on the reviewer having enough information to form a genuine position, which requires readable decision context rather than raw model output.</p>
+
+        <p>The deepest requirement is that interpretability be treated as a first-class property in agent deployment decisions, not an aspirational capability to be added later. An agent deployed in a domain where its reasoning cannot be examined is an agent whose accountability architecture is structurally incomplete from day one. Recognizing that incompleteness is not an argument against deployment; it is an argument for building the compensating controls before deployment, not after an incident forces the question.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">SUMMARY</span>
+        <p>The interpretability problem arises when an AI agent's decision can be fully recorded — inputs, action, outputs — while the reasoning that produced it remains opaque. Post-hoc explanations are reconstructions, not expositions; they can be wrong without being detectable as wrong. The accountability gap this creates is disproportionately severe for novel, high-stakes decisions at the edge of anticipated conditions — exactly the decisions most likely to cause harm. At the post-quantum crossing, cryptographic errors in an agent's reasoning may produce outputs that pass all checks while creating latent vulnerability that surfaces only years later. At the hardware crossing, configuration reasoning that no operator can reconstruct leaves post-incident review addressing symptoms rather than root causes. In physical-world care, opacity in an agent's reasoning reduces the affected person's capacity for self-determination — a reduction that accountability architecture must compensate with narrower scope, mandatory review windows, and explicit channels for contesting outcomes. Interpretability cannot be fully achieved for current large-scale systems; the design question is how scope, oversight frequency, and logging depth should be calibrated to the interpretability level actually available — and those calibrations must be made before deployment, not after the first incident makes their absence visible.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>一个AI智能体的决策可以被完整记录——它接收的输入、它选择的行动、它产生的输出——这份记录可以是完整的，却几乎无法告诉审计员这个决策是否正确。审计追踪回答了"做了什么"。问责制要求理解"为什么"。当产生决策的推理过程无法被独立检查时，你拥有完整的日志，却面对空洞的问责图景。这就是可解释性问题。</p>
+
+        <h2>问题的本质</h2>
+        <p>这里所说的可解释性，并非指事后产生的简化解释。事后解释——叙事性摘要、特征重要性排名、由做出决策的同一个模型生成的自然语言理由——是重构，不是阐释。它们描述了一个可能产生该输出的合理推理链；它们并不揭示实际的计算路径。这一区别对问责制至关重要：重构可能是错误的，却不会被检测为错误，因为没有真实值可以对照验证。</p>
+
+        <p>真正的可解释性应当允许独立方检查智能体的中间推理状态，识别驱动决策的因素，并验证所陈述的理由与实际计算是否一致。对于大多数以生产规模运行的现有AI智能体，这是不可实现的。能得到的是输出——而输出可以在底层推理经不起审查的情况下看起来是正确的。</p>
+
+        <h2>由此产生的问责差距</h2>
+        <p>当AI智能体的决策造成伤害，而驱动该决策的推理无法被检查时，问责制退化为结果归因。调查人员可以确定智能体采取了行动、行动发生在伤害之前、行动在智能体的授权范围内。他们无法确定推理是否合理、输入是否被适当权衡，或者对同一情况的不同表述是否会产生不同且更好的决策。问责记录识别了近因；可解释性差距掩盖了结构性原因。</p>
+
+        <p>在决策具有新颖性、高风险性且未被先前政策充分覆盖的领域，这种影响尤为显著。常规决策可以通过比较输出与预期输出来评估。边界决策——智能体在其设计者未完全预见的情境中做它被构建来做的事——只能通过检查推理来评估。这些恰恰是最可能造成伤害的决策，也是可解释性最常缺失的决策。</p>
+
+        <h2>后量子交叉点</h2>
+        <p>后量子迁移智能体在一个委托人通常缺乏独立评估其推理所需密码学深度的领域运作。当智能体推荐特定算法选择、参数配置或迁移序列时，建议是通过结果来评估的——迁移是否无错误地完成——而非通过推理。一个细微错误的建议可能产生通过所有自动检查的输出，同时基于对威胁模型或算法属性的错误评估。</p>
+
+        <p>可解释性差距在此处尤为严重，因为该领域中的错误不会自我纠正。错误的密码学选择不会立即表现为可见失败；它创造了潜在的脆弱性，可能多年后才被利用。等到推理错误变得明显时，它所影响的决策已经分布在基础设施中、在政策中得到批准、并被下游系统付诸实施。审计日志将显示授权。它不会显示推理在做出时是否合理。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>在大型设备群体中做出配置决策的机队管理智能体，必须处理设备状态、软件版本、环境条件和运营需求之间的交互效应。产生特定配置建议的推理可能取决于数千个变量的联合状态，没有任何单个操作员能仅从输出中重建。当配置变更导致设备故障或机队事故时，可解释性问题不是"智能体做了什么"——日志回答了这个问题——而是"它为什么评估这个配置是可接受的？"</p>
+
+        <p>没有可解释性，事后审查默认退为：用不同的人使用相同不完整信息产生的不同建议，来替代智能体的建议。产生原始错误评估的结构性条件未得到解决。同类型的重复事故接踵而至。这个模式在复杂基础设施管理中很熟悉：症状被解决，根本原因没有被解决，因为根本原因存在于无法打开的推理中。</p>
+
+        <h2>物理世界护理交叉点</h2>
+        <p>可解释性问题在护理交叉点最为突出，因为理解决策本身就是护理的组成部分。受护理智能体决策影响的人——关于日常支持、关于向临床关注的升级、关于其状况在跟随他们的记录中如何被表征——不仅有权知道决策了什么，还有权理解其依据。这种理解对于有意义的同意、知情否决以及此人对自己护理叙事的自主权至关重要。</p>
+
+        <p>在大多数时间产生正确结果的护理智能体，仍然可能在特定案例中通过以受影响者无法质疑的方式偏重某些数据模式而造成伤害，因为他们看不到。护理中的可解释性差距不是受影响者应该接受的技术限制；它是其自我决定能力的结构性削减。当护理智能体的推理不透明时，围绕它的问责架构必须进行补偿：更频繁的人工审查、更窄的自主范围，以及让当事人就结果与其理解意图不符进行登记的强制渠道。</p>
+
+        <h2>问责架构的要求</h2>
+        <p>对于当前的大规模AI系统，可解释性无法完全实现，问责架构必须针对这一约束而非反对它来设计。实际选项不是"可解释智能体"或"不可解释智能体"，而是：范围、监督和审查间隔应如何根据实际可用的可解释性水平进行校准？</p>
+
+        <p>在低可解释性条件下运行的智能体应在更窄的范围内运行：更严格的行动边界、更频繁的检查点，以及对决策时刻信息状态更系统化的记录。日志无法替代推理，但决策时刻更丰富的信息快照为审查者提供更好的基础来评估输出是否与智能体所知信息相符。</p>
+
+        <p>强制异议窗口——在决策建议与执行之间设置的结构化时期，在此期间人类审查者可以提出异议——服务于不同功能：它们不暴露推理，但创造了独立判断可以介入的时刻。异议窗口的价值完全取决于审查者拥有足够信息以形成真实立场，这需要可读的决策情境而非原始模型输出。</p>
+
+        <p>最深层的要求是：可解释性应被视为智能体部署决策中的一等属性，而非日后添加的愿景性能力。在推理无法被检查的领域部署的智能体，其问责架构从第一天起就在结构上不完整。认识到这种不完整性不是反对部署的论据；而是在部署之前——而非事故后被迫面对这个问题之后——构建补偿性控制措施的论据。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>可解释性问题出现于AI智能体的决策可以被完整记录——输入、行动、输出——而产生它的推理却仍然不透明之时。事后解释是重构而非阐释；它们可以是错误的却不被检测为错误。由此产生的问责差距对边界案例中新颖的高风险决策影响最为严重——恰恰是最可能造成伤害的决策。在后量子交叉点，智能体推理中的密码学错误可能产生通过所有检查的输出，同时创造多年后才显现的潜在脆弱性。在硬件交叉点，没有操作员能重建的配置推理使事后审查只能解决症状而非根本原因。在物理世界护理中，推理不透明削减了受影响者的自我决定能力——问责架构必须通过更窄的范围、强制审查窗口和明确的结果质疑渠道来补偿。可解释性无法对当前大规模系统完全实现；设计问题是范围、监督频率和日志深度应如何根据实际可用的可解释性水平进行校准——这些校准必须在部署前完成，而非在首次事故使其缺失变得可见之后。</p>
+      </div>
+    </div>
+
+    <!-- ZH-HK -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>一個AI智能體的決策可以被完整記錄——它接收的輸入、它選擇的行動、它產生的輸出——這份記錄可以是完整的，卻幾乎無法告訴審計員這個決策是否正確。審計追蹤回答了「做了什麼」。問責制要求理解「為什麼」。當產生決策的推理過程無法被獨立檢查時，你擁有完整的日誌，卻面對空洞的問責圖景。這就是可解釋性問題。</p>
+
+        <h2>問題的本質</h2>
+        <p>這裡所說的可解釋性，並非指事後產生的簡化解釋。事後解釋——敘事性摘要、特徵重要性排名、由做出決策的同一個模型生成的自然語言理由——是重構，不是闡釋。它們描述了一個可能產生該輸出的合理推理鏈；它們並不揭示實際的計算路徑。這一區別對問責制至關重要：重構可能是錯誤的，卻不會被檢測為錯誤，因為沒有真實值可以對照驗證。</p>
+
+        <p>真正的可解釋性應當允許獨立方檢查智能體的中間推理狀態，識別驅動決策的因素，並驗證所陳述的理由與實際計算是否一致。對於大多數以生產規模運行的現有AI智能體，這是不可實現的。能得到的是輸出——而輸出可以在底層推理經不起審查的情況下看起來是正確的。</p>
+
+        <h2>由此產生的問責差距</h2>
+        <p>當AI智能體的決策造成傷害，而驅動該決策的推理無法被檢查時，問責制退化為結果歸因。調查人員可以確定智能體採取了行動、行動發生在傷害之前、行動在智能體的授權範圍內。他們無法確定推理是否合理、輸入是否被適當權衡，或者對同一情況的不同表述是否會產生不同且更好的決策。問責記錄識別了近因；可解釋性差距掩蓋了結構性原因。</p>
+
+        <p>在決策具有新穎性、高風險性且未被先前政策充分覆蓋的領域，這種影響尤為顯著。常規決策可以通過比較輸出與預期輸出來評估。邊界決策——智能體在其設計者未完全預見的情境中做它被構建來做的事——只能通過檢查推理來評估。這些恰恰是最可能造成傷害的決策，也是可解釋性最常缺失的決策。</p>
+
+        <h2>後量子交叉點</h2>
+        <p>後量子遷移智能體在一個委託人通常缺乏獨立評估其推理所需密碼學深度的領域運作。當智能體推薦特定算法選擇、參數配置或遷移序列時，建議是通過結果來評估的——遷移是否無錯誤地完成——而非通過推理。一個細微錯誤的建議可能產生通過所有自動檢查的輸出，同時基於對威脅模型或算法屬性的錯誤評估。</p>
+
+        <p>可解釋性差距在此處尤為嚴重，因為該領域中的錯誤不會自我糾正。錯誤的密碼學選擇不會立即表現為可見失敗；它創造了潛在的脆弱性，可能多年後才被利用。等到推理錯誤變得明顯時，它所影響的決策已經分佈在基礎設施中、在政策中得到批准、並被下游系統付諸實施。審計日誌將顯示授權。它不會顯示推理在做出時是否合理。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>在大型設備群體中做出配置決策的機隊管理智能體，必須處理設備狀態、軟件版本、環境條件和運營需求之間的交互效應。產生特定配置建議的推理可能取決於數千個變量的聯合狀態，沒有任何單個操作員能僅從輸出中重建。當配置變更導致設備故障或機隊事故時，可解釋性問題不是「智能體做了什麼」——日誌回答了這個問題——而是「它為什麼評估這個配置是可接受的？」</p>
+
+        <p>沒有可解釋性，事後審查默認退為：用不同的人使用相同不完整信息產生的不同建議，來替代智能體的建議。產生原始錯誤評估的結構性條件未得到解決。同類型的重複事故接踵而至。這個模式在複雜基礎設施管理中很熟悉：症狀被解決，根本原因沒有被解決，因為根本原因存在於無法打開的推理中。</p>
+
+        <h2>物理世界護理交叉點</h2>
+        <p>可解釋性問題在護理交叉點最為突出，因為理解決策本身就是護理的組成部分。受護理智能體決策影響的人——關於日常支持、關於向臨床關注的升級、關於其狀況在跟隨他們的記錄中如何被表徵——不僅有權知道決策了什麼，還有權理解其依據。這種理解對於有意義的同意、知情否決以及此人對自己護理敘事的自主權至關重要。</p>
+
+        <p>在大多數時間產生正確結果的護理智能體，仍然可能在特定案例中通過以受影響者無法質疑的方式偏重某些數據模式而造成傷害，因為他們看不到。護理中的可解釋性差距不是受影響者應該接受的技術限制；它是其自我決定能力的結構性削減。當護理智能體的推理不透明時，圍繞它的問責架構必須進行補償：更頻繁的人工審查、更窄的自主範圍，以及讓當事人就結果與其理解意圖不符進行登記的強制渠道。</p>
+
+        <h2>問責架構的要求</h2>
+        <p>對於當前的大規模AI系統，可解釋性無法完全實現，問責架構必須針對這一約束而非反對它來設計。實際選項不是「可解釋智能體」或「不可解釋智能體」，而是：範圍、監督和審查間隔應如何根據實際可用的可解釋性水平進行校準？</p>
+
+        <p>在低可解釋性條件下運行的智能體應在更窄的範圍內運行：更嚴格的行動邊界、更頻繁的檢查點，以及對決策時刻信息狀態更系統化的記錄。日誌無法替代推理，但決策時刻更豐富的信息快照為審查者提供更好的基礎來評估輸出是否與智能體所知信息相符。</p>
+
+        <p>強制異議窗口——在決策建議與執行之間設置的結構化時期，在此期間人類審查者可以提出異議——服務於不同功能：它們不暴露推理，但創造了獨立判斷可以介入的時刻。異議窗口的價值完全取決於審查者擁有足夠信息以形成真實立場，這需要可讀的決策情境而非原始模型輸出。</p>
+
+        <p>最深層的要求是：可解釋性應被視為智能體部署決策中的一等屬性，而非日後添加的願景性能力。在推理無法被檢查的領域部署的智能體，其問責架構從第一天起就在結構上不完整。認識到這種不完整性不是反對部署的論據；而是在部署之前——而非事故後被迫面對這個問題之後——構建補償性控制措施的論據。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>可解釋性問題出現於AI智能體的決策可以被完整記錄——輸入、行動、輸出——而產生它的推理卻仍然不透明之時。事後解釋是重構而非闡釋；它們可以是錯誤的卻不被檢測為錯誤。由此產生的問責差距對邊界案例中新穎的高風險決策影響最為嚴重——恰恰是最可能造成傷害的決策。在後量子交叉點，智能體推理中的密碼學錯誤可能產生通過所有檢查的輸出，同時創造多年後才顯現的潛在脆弱性。在硬件交叉點，沒有操作員能重建的配置推理使事後審查只能解決症狀而非根本原因。在物理世界護理中，推理不透明削減了受影響者的自我決定能力——問責架構必須通過更窄的範圍、強制審查窗口和明確的結果質疑渠道來補償。可解釋性無法對當前大規模系統完全實現；設計問題是範圍、監督頻率和日誌深度應如何根據實際可用的可解釋性水平進行校準——這些校準必須在部署前完成，而非在首次事故使其缺失變得可見之後。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-05-30</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

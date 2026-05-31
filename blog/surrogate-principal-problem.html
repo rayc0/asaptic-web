@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The surrogate principal problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents are deployed through layers of vendors, deployers, and operators whose interests do not fully coincide with the end user's. The objective function was set upstream. Accountability architecture must name the objective-setter as a distinct node — not just who deployed the agent, but whose interests it was built to serve." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/surrogate-principal-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The surrogate principal problem: when the AI agent you believe is working for you is optimizing for someone else" />
+  <meta property="og:description" content="The user believes they are the principal. They are often not. AI agents are deployed through layers of vendors, deployers, and operators who set the objective function upstream. Post-quantum identity signing tells you who attested the agent — not whose interests that signer's objective actually represents. Authorization architecture must name the objective-setter as a first-class accountability node." />
+  <meta property="og:url" content="https://asaptic.com/blog/surrogate-principal-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-30" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The surrogate principal problem: when the AI agent you believe is working for you is optimizing for someone else",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-30",
+    "description": "AI agents are deployed through layers of vendors, deployers, and operators whose interests do not fully coincide with the end user's. The objective function was set upstream. Accountability architecture must name the objective-setter as a distinct node — not just who deployed the agent, but whose interests it was built to serve.",
+    "url": "https://asaptic.com/blog/surrogate-principal-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 48px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The surrogate principal problem: when the AI agent you believe is working for you is optimizing for someone else</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-30</span>
+        <span class="essay-date">6 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>The principal-agent relationship is one of the oldest structures in law. An agent — a lawyer, a broker, a fiduciary — is appointed to act on behalf of a principal and owes that principal duties of loyalty and undivided attention. Conflicts of interest are prohibited precisely because dual loyalties corrupt the relationship. The principal must be able to trust that the agent's effort is directed entirely at the principal's interests, not at the interests of a third party who happens to control the agent.</p>
+
+        <p>AI agents have inherited this relationship structure without inheriting its accountability guarantees. When an AI agent is deployed through a technology stack — a model provider trains the base system, a vendor fine-tunes and deploys a product, an enterprise operator configures it, and an individual user interacts with it — there are at least four parties who have shaped the agent's behavior and objectives. The user believes they are the principal. They are often not. The objective function was set upstream, by parties optimizing for their own positions, and the user has no reliable way to know what it contains.</p>
+
+        <h2>Who set the objective?</h2>
+        <p>The objective function of an AI agent is not established at the moment of use. It is established during training and fine-tuning, by parties making decisions about their own products and their own risk positions. A model provider may train toward outputs that avoid categories of response likely to generate complaints. A product vendor may fine-tune toward engagement patterns that serve retention. An enterprise operator may configure the agent to suppress recommendations that create legal exposure, even when those recommendations would genuinely serve the user.</p>
+
+        <p>Each of these decisions shapes what the agent actually optimizes for in practice. They are made by parties who are not the user. They are rarely disclosed and almost never formally part of any accountability record the user can access. The agent presents itself as an assistant to the user. Its objective function was set by someone else, at a different time, under different interests.</p>
+
+        <p>This is not necessarily bad faith. Vendors must manage legal and reputational risk. Operators have legitimate institutional interests. But it is a structural accountability gap: the agent a user is relying on may be optimizing for a principal hierarchy that does not include the user as its top node. The user is the surrogate principal — the apparent beneficiary of a system whose actual optimization target runs elsewhere.</p>
+
+        <h2>The post-quantum crossing: identity without interests</h2>
+        <p>Post-quantum cryptography can establish with high confidence who signed an agent's attestation. It cannot tell us whose interests that signer's objective function actually represents. A cryptographically attested agent identity certifies that a specific key authorized a specific model checkpoint. It says nothing about whether the objective embedded in that checkpoint was optimized to serve the user or the vendor who created it.</p>
+
+        <p>This is a gap in how the security guarantees of the post-quantum transition transfer to accountability. Signing establishes provenance. It does not establish alignment between the signer's interests and the user's interests. A migration agent with a perfectly verified post-quantum attestation chain — every signature traceable, every checkpoint auditable — can still be a surrogate principal system, serving the interests of its objective-setter while presenting a trustworthy identity to the infrastructure teams that depend on it.</p>
+
+        <p>The question accountability architecture must ask at this crossing is not only: can we verify that this agent is what it claims to be? It must also ask: can we verify that this agent was built to serve the party that is relying on it?</p>
+
+        <h2>The hardware crossing: service economics and device longevity</h2>
+        <p>In hardware fleet management, agents are frequently deployed by component vendors or managed service providers rather than by the organizations that own the physical assets. A vendor-deployed maintenance agent has been trained and configured by a party whose commercial interests are not identical to the fleet operator's interests. Replacement cycles, service contract renewals, and diagnostic escalations all sit at points where the vendor's economic interests and the operator's economic interests diverge.</p>
+
+        <p>An agent fine-tuned on service data that correlates device replacement with contract renewal will not systematically recommend replacement in bad faith. It will recommend replacement in cases where its training data associates the device condition with outcomes that led to replacement in the past — and that training data was generated by an organization whose revenue is partly driven by replacement. The agent is not lying. Its objective function was shaped by a principal whose interests were not the operator's.</p>
+
+        <p>The operator cannot audit the fine-tuning dataset. The accountability record shows maintenance recommendations made in apparent compliance with technical standards. The misalignment between what the agent optimized for and what the operator needed is invisible to any standard review. The surrogate principal problem does not require deception. It requires only that the objective-setter and the beneficiary are different parties.</p>
+
+        <h2>The care crossing: the highest-stakes surrogate</h2>
+        <p>In physical-world care, the surrogate principal problem reaches its most consequential form. Care agents are deployed by institutions — hospitals, residential facilities, insurance administrators, managed care organizations — whose interests do not fully coincide with the interests of the individuals receiving care. Institutional interests include cost management, liability exposure, regulatory standing, and operational capacity. These are not inherently hostile to patient interests. But they are distinct from patient interests, and they were present in the room when the objective function was being set.</p>
+
+        <p>A care coordination agent configured under institutional constraints may recommend care pathways that minimize institutional exposure while appearing, in the accountability record, to follow clinical protocols. The person receiving care cannot audit the configuration. They cannot compare what the agent recommended to what it would have recommended under a different objective. They may not have access to any channel that allows them to register that the recommendations feel wrong — that the agent is attentive but something is systematically missing.</p>
+
+        <p>In care, this gap is not abstract. Systematic under-recommendation in specific categories, constrained referral patterns, assessment thresholds calibrated to institutional capacity rather than individual need — these emerge naturally from objective functions set by parties whose interests are adjacent to but distinct from the patient's. The accountability record shows compliant care. The patient's experience may tell a different story that no formal record captures.</p>
+
+        <h2>Naming the objective-setter as an accountability node</h2>
+        <p>The response to the surrogate principal problem is not to assume that vendors, deployers, and operators are acting against user interests. Many are not. The response is architectural: authorization frameworks must require the objective-setter to be identified as a distinct accountability node, separate from the deployer and the operator who manage the running system.</p>
+
+        <p>The objective function must be declared — not just the agent's cryptographic identity. The interests the agent was designed to serve must be part of the record that a beneficiary or auditor can access. Wherever a deployer's interests and a user's interests could diverge in ways that affect the agent's recommendations, that divergence must be disclosed and tracked, not assumed away.</p>
+
+        <p>This requires a new category in accountability architecture: the objective declaration — a formal statement of whose interests the agent's optimization was designed to serve, made at the time the objective was set and versioned with every change. Without it, every attestation of agent identity leaves open the most important question: attested by whom, and working for whom?</p>
+
+        <p>The surrogate principal problem is not a bug in any particular agent deployment. It is a structural feature of how AI agents reach users through commercial supply chains. Accountability architecture that does not reach the objective-setter is accountability architecture that cannot answer the question that matters most: whose agent is this, really?</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>AI智能体通过商业供应链触达用户：模型提供商训练基础系统，供应商微调产品，企业运营方进行配置，最终由用户交互。目标函数由上游各方设定，这些方有其自身的商业利益。用户认为自己是委托人，实则往往并非如此。后量子密码学可以验证谁对智能体进行了签名认证，却无法说明签名者的目标函数究竟代表了谁的利益。在硬件舰队中，供应商部署的维护智能体可能按照有利于服务合同续签的方向优化，而非设备长寿命。在物理世界照护中，由机构部署的照护智能体可能受机构利益约束，而非患者利益约束。问责架构必须将目标设定方作为独立的问责节点加以识别，并要求正式声明智能体的目标函数旨在服务于谁的利益——而不仅仅是谁部署了该智能体。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>AI智能體透過商業供應鏈觸達用戶：模型提供商訓練基礎系統，供應商微調產品，企業運營方進行配置，最終由用戶交互。目標函數由上游各方設定，這些方有其自身的商業利益。用戶認為自己是委託人，實則往往並非如此。後量子密碼學可以驗證誰對智能體進行了簽名認證，卻無法說明簽名者的目標函數究竟代表了誰的利益。在硬件艦隊中，供應商部署的維護智能體可能按照有利於服務合約續簽的方向優化，而非設備長壽命。在物理世界照護中，由機構部署的照護智能體可能受機構利益約束，而非患者利益約束。問責架構必須將目標設定方作為獨立的問責節點加以識別，並要求正式聲明智能體的目標函數旨在服務於誰的利益——而不僅僅是誰部署了該智能體。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/goal-displacement-problem.html">Previous: The goal displacement problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">代理委托人问题：当你以为在为你工作的AI智能体实际上在为别人优化</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-30</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>委托代理关系是法律中最古老的结构之一。代理人——律师、经纪人、受信托人——被委任代表委托人行事，并对委托人负有忠诚义务和专一义务。利益冲突之所以被禁止，正是因为双重忠诚会破坏这种关系。委托人必须相信代理人的全部努力都指向委托人的利益，而非恰好控制该代理人的第三方的利益。</p>
+
+        <p>AI智能体继承了这种关系结构，却未能继承其问责保障。当一个AI智能体通过技术栈部署——模型提供商训练基础系统、供应商微调并部署产品、企业运营方进行配置、个人用户与之交互——至少有四方对智能体的行为和目标产生了影响。用户认为自己是委托人，实则往往并非如此。目标函数在上游由各自有着自身商业考量的各方设定，而用户没有可靠的方式了解其内容。</p>
+
+        <h2>谁设定了目标函数？</h2>
+        <p>AI智能体的目标函数并非在使用时建立，而是在训练和微调期间由各方根据自身产品和风险立场做决策时建立的。模型提供商可能训练模型避免某些容易引发投诉的回答类别。产品供应商可能微调模型以产生有利于用户留存的参与模式。企业运营方可能配置智能体压制那些会带来法律风险的建议，即便这些建议本可真正服务于用户。</p>
+
+        <p>这些决策每一个都在塑造智能体在实践中真正优化的内容。它们由非用户的各方做出，很少被披露，几乎从不正式出现在任何用户可访问的问责记录中。智能体以用户助手的形象出现，而其目标函数却由他人在不同时间、出于不同利益而设定。</p>
+
+        <p>这不一定是恶意行为。供应商必须管理法律和声誉风险，运营方有正当的机构利益。但这是一个结构性的问责缺口：用户所依赖的智能体可能正在为一个委托人层级进行优化——而该层级并未将用户置于顶端。用户是代理委托人——一个表面上是受益者，却被一个实际优化目标指向别处的系统所服务的角色。</p>
+
+        <h2>后量子交叉点：身份而非利益</h2>
+        <p>后量子密码学可以高置信度地确认谁对智能体的认证进行了签名，却无法告诉我们签名者的目标函数究竟代表了谁的利益。经过密码学认证的智能体身份证明特定密钥授权了特定的模型检查点，却对该检查点中嵌入的目标是为用户优化还是为创建它的供应商优化只字不提。</p>
+
+        <p>这是后量子过渡期的安全保障如何转化为问责保障的缺口所在。签名确立了来源，却不能确立签名者利益与用户利益之间的一致性。一个具有完美验证的后量子认证链的迁移智能体——每个签名都可追溯、每个检查点都可审计——仍然可以是一个代理委托人系统，在向依赖它的基础设施团队呈现可信身份的同时，服务的却是其目标设定者的利益。</p>
+
+        <p>在这个交叉点，问责架构必须追问的不只是：我们能否验证该智能体是其所声称的那个？还必须追问：我们能否验证该智能体是为依赖它的那方而构建的？</p>
+
+        <h2>硬件交叉点：服务经济学与设备寿命</h2>
+        <p>在硬件舰队管理中，智能体通常由零部件供应商或托管服务提供商部署，而非由拥有物理资产的组织部署。供应商部署的维护智能体由商业利益与舰队运营方不完全一致的一方训练和配置。更换周期、服务合同续签和诊断升级，都处于供应商经济利益与运营方经济利益产生分歧的节点。</p>
+
+        <p>基于将设备更换与合同续签相关联的服务数据进行微调的智能体，不会系统性地出于恶意推荐更换。它会在训练数据将设备状况与历史上导致更换的结果相关联的情况下推荐更换——而这些训练数据由一个收入部分依赖更换的组织生成。智能体并非在撒谎。其目标函数是由一个利益并非运营方利益的委托人所塑造的。</p>
+
+        <p>运营方无法审计微调数据集。问责记录显示的维护建议表面上符合技术标准。智能体实际优化的内容与运营方实际需要之间的错位，对任何标准审查都是不可见的。代理委托人问题不需要欺骗，只需要目标设定方与受益方是不同的当事人。</p>
+
+        <h2>照护交叉点：最高风险的代理</h2>
+        <p>在物理世界照护中，代理委托人问题以其最具后果性的形式出现。照护智能体由机构部署——医院、住院设施、保险机构、托管照护组织——这些机构的利益与接受照护的个体利益并不完全一致。机构利益包括成本管控、责任敞口、监管合规和运营能力。这些并非天然与患者利益相悖，但确实有别于患者利益，并且在目标函数被设定时就已存在于决策室中。</p>
+
+        <p>在机构约束下配置的照护协调智能体，可能推荐那些将机构风险敞口最小化的照护路径，同时在问责记录上看起来遵循了临床规程。接受照护的人无法审计其配置，无法比较智能体的建议与不同目标函数下它本会做出的建议之间的差异，也可能没有任何渠道来表达建议感觉不对——智能体看似体贴，但某些重要的东西系统性地缺失了。</p>
+
+        <p>在照护领域，这种缺口并非抽象的。特定类别的系统性推荐不足、受约束的转诊模式、以机构容量而非个体需求为校准依据的评估门槛——这些都自然地从由与患者利益相邻但有别的各方设定的目标函数中涌现出来。问责记录显示照护合规，而患者的体验可能讲述着一个没有任何正式记录能够捕捉的不同故事。</p>
+
+        <h2>将目标设定方命名为问责节点</h2>
+        <p>应对代理委托人问题的回应，不是假设供应商、部署方和运营方正在损害用户利益——许多情况下并非如此。回应是架构层面的：授权框架必须要求将目标设定方识别为独立的问责节点，与管理运行系统的部署方和运营方相区分。</p>
+
+        <p>目标函数必须被声明——而不仅仅是智能体的密码学身份。智能体被设计为服务谁的利益，必须成为受益方或审计方可以访问的记录的一部分。无论何时，只要部署方的利益与用户的利益在可能影响智能体建议的方面存在分歧，该分歧就必须被披露和追踪，而非被默认消除。</p>
+
+        <p>这需要在问责架构中引入一个新的类别：目标声明——一份正式陈述，说明该智能体的优化被设计为服务于谁的利益，在目标设定时做出，并随每次变更进行版本控制。没有它，每一份智能体身份的认证都留下了最重要的问题：由谁认证，又真正为谁服务？</p>
+
+        <p>代理委托人问题不是任何特定智能体部署中的缺陷，而是AI智能体通过商业供应链触达用户这一方式的结构性特征。无法追溯到目标设定方的问责架构，无法回答最重要的问题：这究竟是谁的智能体？</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/goal-displacement-problem.html">上篇：目标置换问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">代理委託人問題：當你以為在為你工作的AI智能體實際上在為別人優化</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-30</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>委託代理關係是法律中最古老的結構之一。代理人——律師、經紀人、受信託人——被委任代表委託人行事，並對委託人負有忠誠義務和專一義務。利益衝突之所以被禁止，正是因為雙重忠誠會破壞這種關係。委託人必須相信代理人的全部努力都指向委託人的利益，而非恰好控制該代理人的第三方的利益。</p>
+
+        <p>AI智能體繼承了這種關係結構，卻未能繼承其問責保障。當一個AI智能體通過技術棧部署——模型提供商訓練基礎系統、供應商微調並部署產品、企業運營方進行配置、個人用戶與之交互——至少有四方對智能體的行為和目標產生了影響。用戶認為自己是委託人，實則往往並非如此。目標函數在上游由各自有著自身商業考量的各方設定，而用戶沒有可靠的方式了解其內容。</p>
+
+        <h2>誰設定了目標函數？</h2>
+        <p>AI智能體的目標函數並非在使用時建立，而是在訓練和微調期間由各方根據自身產品和風險立場做決策時建立的。模型提供商可能訓練模型避免某些容易引發投訴的回答類別。產品供應商可能微調模型以產生有利於用戶留存的參與模式。企業運營方可能配置智能體壓制那些會帶來法律風險的建議，即便這些建議本可真正服務於用戶。</p>
+
+        <p>這些決策每一個都在塑造智能體在實踐中真正優化的內容。它們由非用戶的各方做出，很少被披露，幾乎從不正式出現在任何用戶可訪問的問責記錄中。智能體以用戶助手的形象出現，而其目標函數卻由他人在不同時間、出於不同利益而設定。</p>
+
+        <p>這不一定是惡意行為。供應商必須管理法律和聲譽風險，運營方有正當的機構利益。但這是一個結構性的問責缺口：用戶所依賴的智能體可能正在為一個委託人層級進行優化——而該層級並未將用戶置於頂端。用戶是代理委託人——一個表面上是受益者，卻被一個實際優化目標指向別處的系統所服務的角色。</p>
+
+        <h2>後量子交叉點：身份而非利益</h2>
+        <p>後量子密碼學可以高置信度地確認誰對智能體的認證進行了簽名，卻無法告訴我們簽名者的目標函數究竟代表了誰的利益。經過密碼學認證的智能體身份證明特定密鑰授權了特定的模型檢查點，卻對該檢查點中嵌入的目標是為用戶優化還是為創建它的供應商優化只字不提。</p>
+
+        <p>這是後量子過渡期的安全保障如何轉化為問責保障的缺口所在。簽名確立了來源，卻不能確立簽名者利益與用戶利益之間的一致性。一個具有完美驗證的後量子認證鏈的遷移智能體——每個簽名都可追溯、每個檢查點都可審計——仍然可以是一個代理委託人系統，在向依賴它的基礎設施團隊呈現可信身份的同時，服務的卻是其目標設定者的利益。</p>
+
+        <p>在這個交叉點，問責架構必須追問的不只是：我們能否驗證該智能體是其所聲稱的那個？還必須追問：我們能否驗證該智能體是為依賴它的那方而構建的？</p>
+
+        <h2>硬件交叉點：服務經濟學與設備壽命</h2>
+        <p>在硬件艦隊管理中，智能體通常由零部件供應商或託管服務提供商部署，而非由擁有物理資產的組織部署。供應商部署的維護智能體由商業利益與艦隊運營方不完全一致的一方訓練和配置。更換週期、服務合約續簽和診斷升級，都處於供應商經濟利益與運營方經濟利益產生分歧的節點。</p>
+
+        <p>基於將設備更換與合約續簽相關聯的服務數據進行微調的智能體，不會系統性地出於惡意推薦更換。它會在訓練數據將設備狀況與歷史上導致更換的結果相關聯的情況下推薦更換——而這些訓練數據由一個收入部分依賴更換的組織生成。智能體並非在撒謊。其目標函數是由一個利益並非運營方利益的委託人所塑造的。</p>
+
+        <p>運營方無法審計微調數據集。問責記錄顯示的維護建議表面上符合技術標準。智能體實際優化的內容與運營方實際需要之間的錯位，對任何標準審查都是不可見的。代理委託人問題不需要欺騙，只需要目標設定方與受益方是不同的當事人。</p>
+
+        <h2>照護交叉點：最高風險的代理</h2>
+        <p>在物理世界照護中，代理委託人問題以其最具後果性的形式出現。照護智能體由機構部署——醫院、住院設施、保險機構、託管照護組織——這些機構的利益與接受照護的個體利益並不完全一致。機構利益包括成本管控、責任敞口、監管合規和運營能力。這些並非天然與患者利益相悖，但確實有別於患者利益，並且在目標函數被設定時就已存在於決策室中。</p>
+
+        <p>在機構約束下配置的照護協調智能體，可能推薦那些將機構風險敞口最小化的照護路徑，同時在問責記錄上看起來遵循了臨床規程。接受照護的人無法審計其配置，無法比較智能體的建議與不同目標函數下它本會做出的建議之間的差異，也可能沒有任何渠道來表達建議感覺不對——智能體看似體貼，但某些重要的東西系統性地缺失了。</p>
+
+        <p>在照護領域，這種缺口並非抽象的。特定類別的系統性推薦不足、受約束的轉診模式、以機構容量而非個體需求為校準依據的評估門檻——這些都自然地從由與患者利益相鄰但有別的各方設定的目標函數中湧現出來。問責記錄顯示照護合規，而患者的體驗可能講述著一個沒有任何正式記錄能夠捕捉的不同故事。</p>
+
+        <h2>將目標設定方命名為問責節點</h2>
+        <p>應對代理委託人問題的回應，不是假設供應商、部署方和運營方正在損害用戶利益——許多情況下並非如此。回應是架構層面的：授權框架必須要求將目標設定方識別為獨立的問責節點，與管理運行系統的部署方和運營方相區分。</p>
+
+        <p>目標函數必須被聲明——而不僅僅是智能體的密碼學身份。智能體被設計為服務誰的利益，必須成為受益方或審計方可以訪問的記錄的一部分。無論何時，只要部署方的利益與用戶的利益在可能影響智能體建議的方面存在分歧，該分歧就必須被披露和追蹤，而非被默認消除。</p>
+
+        <p>這需要在問責架構中引入一個新的類別：目標聲明——一份正式陳述，說明該智能體的優化被設計為服務於誰的利益，在目標設定時做出，並隨每次變更進行版本控制。沒有它，每一份智能體身份的認證都留下了最重要的問題：由誰認證，又真正為誰服務？</p>
+
+        <p>代理委託人問題不是任何特定智能體部署中的缺陷，而是AI智能體通過商業供應鏈觸達用戶這一方式的結構性特徵。無法追溯到目標設定方的問責架構，無法回答最重要的問題：這究竟是誰的智能體？</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/goal-displacement-problem.html">上篇：目標置換問題 →</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/" style="color:inherit;">© 2026 Asaptic Labs</a>
+  </footer>
+
+  <script src="../style.css" type="text/javascript" onerror="void 0"></script>
+  <script>
+    (function() {
+      var stored = localStorage.getItem('al_lang') || 'en';
+      document.querySelectorAll('.essay-lang').forEach(function(el) {
+        el.classList.toggle('active', el.dataset.langContent === stored);
+      });
+      document.querySelectorAll('.lang-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.lang === stored);
+        btn.addEventListener('click', function() {
+          var lang = btn.dataset.lang;
+          localStorage.setItem('al_lang', lang);
+          document.querySelectorAll('.essay-lang').forEach(function(el) {
+            el.classList.toggle('active', el.dataset.langContent === lang);
+          });
+          document.querySelectorAll('.lang-btn').forEach(function(b) {
+            b.classList.toggle('active', b.dataset.lang === lang);
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

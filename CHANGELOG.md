@@ -1,3 +1,8 @@
+2026-05-30 20:13 UTC · blog: add essay 'The interpretability problem' — accountability when the reasoning behind an AI agent's decision cannot be examined (EN+ZH+ZH-HK) · 4dcbd51
+2026-05-30 16:15 UTC · blog: add essay 'The surrogate principal problem' — accountability when the objective-setter and the beneficiary are different parties · e5bccd3
+2026-05-30 12:15 UTC · blog: add essay 'The goal displacement problem' — agents optimize for what is measured, not what is meant (EN+ZH+ZH-HK) · 084be10
+2026-05-30 08:15 UTC · blog: add essay 'The cross-jurisdiction problem' — accountability when an AI agent authorized in one legal regime acts in another (EN+ZH+ZH-HK) · 2389254
+2026-05-30 00:15 UTC · blog: fix informed-override-problem missing from ZH and ZH-HK blog index panels · db06589
 2026-05-29 16:15 UTC · blog: add essay 'The decommissioning problem' — accountability does not end when an AI agent does (EN+ZH+ZH-HK) · 3d22afb
 2026-05-29 12:15 UTC · blog: add essay 'The informed override problem' — accountability transfers when humans override AI agents, but only if the override is informed (EN+ZH+ZH-HK) · 67c7a32
 2026-05-29 08:15 UTC · blog: add essay 'The anticipatory accountability problem — retrospective audits cannot govern agents that act before oversight is possible' (EN+ZH+ZH-HK) · efabc1c
@@ -56,3 +61,4 @@
 2026-05-23 08:13 UTC · blog: add essay 'The trust bootstrap problem — the enrollment moment roots every subsequent accountability claim' (EN+ZH+ZH-HK) · 1925bb0
 2026-05-24 04:10 UTC · blog: 'The state synchronization problem' essay · 4e96e74
 2026-05-26 12:15 UTC · blog: add essay 'The offline agent problem — accountability when the network is gone' (EN+ZH+ZH-HK) · 06b1e71
+2026-05-30 04:15 UTC · blog: add essay 'The consent withdrawal problem' (EN+ZH+ZH-HK) · 7157ee8
