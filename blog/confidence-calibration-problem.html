@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The confidence calibration problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents present every recommendation with equal surface confidence. When expressed certainty does not track actual accuracy, oversight fails precisely at the moments it matters most." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/confidence-calibration-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The confidence calibration problem: when AI agent certainty fails as an oversight signal" />
+  <meta property="og:description" content="AI agents present every recommendation with equal surface confidence. When expressed certainty does not track actual accuracy, oversight fails precisely at the moments it matters most." />
+  <meta property="og:url" content="https://asaptic.com/blog/confidence-calibration-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-31" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The confidence calibration problem: when AI agent certainty fails as an oversight signal",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-31",
+    "description": "AI agents present every recommendation with equal surface confidence. When expressed certainty does not track actual accuracy, oversight fails precisely at the moments it matters most.",
+    "url": "https://asaptic.com/blog/confidence-calibration-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .essay-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+      margin-bottom: 56px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 40px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--gray-dim);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray);
+      transition: color 0.2s;
+    }
+    .essay-footer-back:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">ASAPTIC LABS</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/engage.html">Engage</a>
+      <a href="/blog/">Notes</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <span class="essay-label">NOTES FROM THE CROSSINGS · 2026-05-31</span>
+    <h1 class="essay-title">The confidence calibration problem</h1>
+    <p class="essay-subtitle">When AI agent certainty fails as an oversight signal</p>
+
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>6 min read</span>
+      <span>× Quantum Security × Hardware × Human Care</span>
+    </div>
+
+    <div class="essay-lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">简</button>
+      <button class="lang-btn" data-lang="zht">繁</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>An AI agent's recommendation that rests on strong evidence, narrow conditions, and well-understood precedent arrives in exactly the same format as one that rests on weak evidence, broad extrapolation, and conditions the agent has never encountered before. Both look confident. Neither signals how much scrutiny each warrants. This is the confidence calibration problem, and it is not a cosmetic defect — it is a structural failure in the oversight model that every deployed AI agent depends on.</p>
+
+        <h2>What the problem is</h2>
+        <p>Calibration, in the technical sense, is the degree to which a system's expressed certainty tracks its actual accuracy. A well-calibrated agent that reports 80% confidence should be right about 80% of the time on cases in that confidence band. Most deployed AI agents are not calibrated in this sense. The architectures that produce outputs — particularly large language models trained to generate fluent, confident-sounding text — do not expose the uncertainty that underlies them. A model trained to sound authoritative does exactly that, whether the underlying computation is high-confidence or operating far outside its reliable range.</p>
+
+        <p>The output carries no reliable metadata about how much the agent knew, how far outside its training distribution the current situation falls, or how many alternative outputs were nearly as likely as the one selected. Principals who try to use the agent's apparent certainty as an oversight signal are reading a display that does not track the underlying state. They cannot distinguish routine decisions that warrant light review from novel decisions that warrant close examination — and they do not know that the signal has failed.</p>
+
+        <h2>The accountability structure it distorts</h2>
+        <p>Oversight architecture is built on the assumption that attention can be allocated. You cannot review every AI agent decision at the same depth; the model assumes that signals will direct attention toward the decisions that need it most. Calibrated confidence is one of those signals. When it is absent, the signal-based allocation model fails silently: the oversight architecture appears functional, reports on-schedule, and produces the right-looking paperwork, while the decisions that most needed scrutiny received the same review depth as the ones that did not.</p>
+
+        <p>This creates a systematic failure mode that is invisible until an adverse outcome makes it visible. An overconfident output in a genuinely novel, high-stakes situation goes unreviewed not because reviewers are negligent, but because the output does not signal that review is warranted. The accountability gap surfaces after the fact — when investigation reveals that the agent was operating far outside its reliable range, that the output was an extrapolation rather than a well-grounded recommendation, and that no one knew to look.</p>
+
+        <h2>At the post-quantum crossing</h2>
+        <p>Cryptographic migration decisions vary widely in how well-supported they are. A recommendation to rotate a certificate algorithm where dozens of comparable migrations have been completed and validated is a very different epistemic object from a recommendation to configure a protocol parameter for a novel threat model in conditions without close historical analogs. An uncalibrated migration agent presents both with the same surface confidence. The operator cannot distinguish routine execution from extrapolation at the frontier of the agent's knowledge.</p>
+
+        <p>The stakes are compressive. A confident-sounding recommendation for a well-understood migration step and a confident-sounding recommendation for an untested configuration will receive identical oversight unless the agent explicitly signals the difference. In cryptographic infrastructure, a wrong decision does not immediately fail in ways that reveal the error — it creates latent vulnerability that may not be exploited for years. By the time the calibration failure becomes apparent, the decision has been ratified across infrastructure and is very difficult to reverse.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Fleet management agents encounter conditions along a continuous spectrum from well-characterized to genuinely novel. A configuration recommendation for a device type with thousands of deployment-hours of validated data is more reliable than one for a device variant just entering a new environmental context. Both may arrive with identical surface confidence. Hardware failure modes interact in ways that are difficult to characterize from limited data, and the interaction effects that cause fleet-wide incidents are disproportionately likely to arise in exactly the novel conditions where an agent's training coverage is thinnest.</p>
+
+        <p>An agent that presents uncertain extrapolations as confidently as well-supported recommendations leads operators to apply the same intervention threshold across the full range of conditions. Novel conditions receive no additional scrutiny, even though novel conditions are precisely where hardware incidents are most likely to originate. The oversight model that was designed around signal-based attention allocation has been quietly disconnected from the signal it was designed to read.</p>
+
+        <h2>In physical-world care</h2>
+        <p>The calibration problem takes its most ethically significant form in care contexts. A care agent uncertain about whether an observed pattern falls within normal variation or warrants clinical escalation carries accountability obligations that are directly proportional to that uncertainty. The care team needs to know the agent is uncertain — not as an abstract property of the system, but as a live signal that should shape their response to the specific recommendation in front of them.</p>
+
+        <p>When the agent does not expose its uncertainty, the care team cannot make a calibrated judgment about whether to intervene. The agent's apparent confidence substitutes for the team's informed evaluation — a substitution the team does not know is happening. Decisions made at the edge of an agent's reliable range, without the escalation that genuine uncertainty would trigger, can cause irreversible harm to people who trusted the system precisely because it appeared certain. Calibrated confidence signaling in care is not a convenience feature — it is a safety property with direct consequences for the people the system serves.</p>
+
+        <h2>What accountability architecture requires</h2>
+        <p>Accountability architecture that relies on signal-based oversight requires that the signals be reliable. Confidence calibration — the degree to which an agent's expressed certainty tracks its actual accuracy — must be measured against holdout data, validated on out-of-distribution inputs, and reported as a first-class deployment property before any domain where oversight decisions are made based on the agent's apparent certainty.</p>
+
+        <p>Where calibration cannot be demonstrated to an adequate standard, the architecture must compensate: narrower autonomous scope, higher default review frequency, and mandatory escalation thresholds that do not depend on the agent's own confidence output. Explicit out-of-distribution detection — mechanisms that flag when the current input is unlike the training distribution in ways that predict lower reliability — should be treated as a required component, not an optional enhancement.</p>
+
+        <p>The alternative — deploying an uncalibrated agent into an oversight model that treats the agent's confidence as a reliable signal — is an accountability architecture that fails by design. The failure will be invisible until a high-stakes decision at the edge of the agent's knowledge goes unreviewed because no one knew it was at the edge. At that point, the gap is not a surprise. It was always there; the calibration problem just kept it hidden.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">SUMMARY</span>
+        <p>The confidence calibration problem arises when an AI agent presents every recommendation with equal surface confidence, regardless of whether that recommendation rests on strong evidence or thin extrapolation. Oversight architecture is built on the premise that signals will direct attention toward the decisions that need scrutiny most. When expressed confidence does not track actual accuracy, that signal fails silently: the oversight model appears functional while the decisions most likely to cause harm receive no additional review. At the post-quantum crossing, uncalibrated migration agents create latent vulnerability by presenting untested configuration recommendations with the same apparent certainty as routine migrations. At the hardware crossing, equal-confidence outputs across well-characterized and novel conditions leave fleet incidents concentrated exactly where agent reliability is lowest. In physical-world care, confidence that does not track uncertainty substitutes the agent's apparent certainty for the care team's informed evaluation — a substitution the team does not know is happening, with directly harmful consequences. Accountability architecture that depends on signal-based oversight must treat calibration as a first-class deployment property: measured, validated, and reported before deployment in any domain where humans use the agent's confidence to decide how closely to review its recommendations.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>一个基于强有力证据、有限条件和充分理解先例的AI智能体建议，与一个基于薄弱证据、广泛外推以及智能体从未遇到过的条件的建议，以完全相同的格式呈现。两者看起来都是自信的。两者都没有发出各自所需审查程度的信号。这就是置信度校准问题，它不是一个表面缺陷——它是每个已部署AI智能体所依赖的监督模型中的结构性失败。</p>
+
+        <h2>问题的本质</h2>
+        <p>从技术意义上说，校准是系统表达的确定性与其实际准确性的匹配程度。一个校准良好的智能体报告80%的置信度，在该置信度区间的案例中应该大约有80%的时间是正确的。大多数已部署的AI智能体并不是这种意义上的校准。产生输出的架构——特别是训练用于生成流畅、自信听起来文本的大型语言模型——不会暴露其背后的不确定性。训练为听起来权威的模型正是这样做的，无论底层计算是高置信度还是在其可靠范围之外运行。</p>
+
+        <p>输出没有关于智能体了解多少、当前情况距其训练分布有多远，或者有多少替代输出几乎与被选择的输出一样可能的可靠元数据。试图使用智能体表面确定性作为监督信号的委托人，正在读取一个不追踪底层状态的显示器。他们无法区分需要轻度审查的常规决策和需要密切检查的新颖决策——而且他们不知道信号已经失效。</p>
+
+        <h2>它所扭曲的问责结构</h2>
+        <p>监督架构建立在注意力可以分配的假设上。你无法以相同深度审查每一个AI智能体决策；该模型假设信号将把注意力引导到最需要的决策上。校准的置信度是这些信号之一。当它缺失时，基于信号的分配模型会悄悄失败：监督架构看起来功能正常、按时报告、产生看起来正确的文件，而最需要审查的决策却与不需要审查的决策获得相同的审查深度。</p>
+
+        <p>这创造了一种在不良结果使其显现之前不可见的系统性失败模式。在真正新颖的高风险情况下过度自信的输出不会被审查，不是因为审查者粗心，而是因为输出没有发出需要审查的信号。问责差距事后才会浮现——当调查揭示智能体在其可靠范围之外运行、输出是外推而非有充分依据的建议，且没有人知道需要查看时。</p>
+
+        <h2>后量子交叉点</h2>
+        <p>密码学迁移决策在证据支持方面差异很大。推荐轮换一个已完成和验证了数十次可比迁移的证书算法，与推荐为没有类似历史先例的新威胁模型配置协议参数，是非常不同的认识论对象。未校准的迁移智能体以相同的表面置信度呈现两者。操作员无法区分常规执行和在智能体知识前沿的外推。</p>
+
+        <p>风险具有压缩性。对充分理解的迁移步骤的听起来自信的建议，和对未经测试的配置的听起来自信的建议，将在没有智能体明确发出差异信号的情况下获得相同的监督。在密码学基础设施中，错误决策不会立即以揭示错误的方式失败——它创造潜在的脆弱性，可能多年后才被利用。等到校准失败变得明显时，决策已在基础设施中得到批准，且很难逆转。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>机队管理智能体遇到的条件从特征良好到真正新颖各不相同。对于具有数千部署小时经过验证数据的设备类型的配置建议，比对于刚进入新环境上下文的设备变体的建议更可靠。两者都可能以相同的表面置信度呈现。硬件故障模式以难以从有限数据中表征的方式交互，导致机队范围事故的交互效应，不成比例地可能恰好出现在智能体训练覆盖最薄弱的新颖条件中。</p>
+
+        <p>以与充分支持的建议相同的置信度呈现不确定外推的智能体，会导致操作员在全部条件范围内应用相同的干预阈值。新颖条件没有受到额外审查，即使新颖条件正是最可能发生硬件事故的地方。围绕基于信号的注意力分配设计的监督模型，已经悄悄地与它被设计来读取的信号断开了连接。</p>
+
+        <h2>物理世界护理交叉点</h2>
+        <p>校准问题在护理场景中以其最具伦理意义的形式出现。对于一个不确定观察到的模式是否属于正常变异或需要临床升级的护理智能体，其问责义务与该不确定性直接成正比。护理团队需要知道智能体是不确定的——不是作为系统的抽象属性，而是作为应当影响其对面前具体建议的响应的实时信号。</p>
+
+        <p>当智能体不暴露其不确定性时，护理团队无法对是否干预做出校准判断。智能体的表面置信度取代了团队的知情评估——这是一种团队不知道正在发生的替代。在智能体可靠范围边缘做出的决策，没有真正不确定性会触发的升级，可能对那些恰恰因为系统看起来确定而信任它的人造成不可挽回的伤害。护理中的校准置信度信号不是便利功能——它是对系统所服务的人有直接后果的安全属性。</p>
+
+        <h2>问责架构的要求</h2>
+        <p>依赖于基于信号的监督的问责架构要求信号是可靠的。置信度校准——智能体表达的确定性在多大程度上追踪其实际准确性——必须针对保留数据进行测量，在分布外输入上进行验证，并在任何基于智能体表面确定性做出监督决策的领域部署之前，作为一等部署属性进行报告。</p>
+
+        <p>在无法将校准证明到足够标准的地方，架构必须进行补偿：更窄的自主范围、更高的默认审查频率，以及不依赖于智能体自身置信度输出的强制升级阈值。明确的分布外检测——标记当前输入与以预测较低可靠性的方式不同于训练分布的机制——应被视为必需组件，而非可选增强。</p>
+
+        <p>另一种选择——将未校准的智能体部署到将智能体置信度视为可靠信号的监督模型中——是一种设计上失败的问责架构。失败将是不可见的，直到智能体知识边缘的高风险决策未被审查，因为没有人知道它在边缘。届时，这个差距并不令人惊讶。它一直都在；只是置信度校准问题将其隐藏了。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>置信度校准问题出现于AI智能体以相同的表面置信度呈现每个建议，无论该建议是基于强有力证据还是薄弱外推。监督架构建立在信号将把注意力引导到最需要审查的决策的前提上。当表达的置信度不追踪实际准确性时，该信号悄悄失效：监督模型看起来功能正常，而最可能造成伤害的决策没有受到额外审查。在后量子交叉点，未校准的迁移智能体通过以与常规迁移相同的表面确定性呈现未经测试的配置建议，创造潜在的脆弱性。在硬件交叉点，在特征良好和新颖条件下的等置信度输出，将机队事故集中在恰好是智能体可靠性最低的地方。在物理世界护理中，不追踪不确定性的置信度，用智能体的表面确定性取代了护理团队的知情评估——这是一种团队不知道正在发生的替代，具有直接的有害后果。依赖于基于信号的监督的问责架构必须将校准视为一等部署属性：在任何人类使用智能体置信度来决定多仔细审查其建议的领域部署之前，进行测量、验证和报告。</p>
+      </div>
+    </div>
+
+    <!-- ZH-HK -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>一個基於強有力證據、有限條件和充分理解先例的AI智能體建議，與一個基於薄弱證據、廣泛外推以及智能體從未遇到過的條件的建議，以完全相同的格式呈現。兩者看起來都是自信的。兩者都沒有發出各自所需審查程度的信號。這就是置信度校準問題，它不是一個表面缺陷——它是每個已部署AI智能體所依賴的監督模型中的結構性失敗。</p>
+
+        <h2>問題的本質</h2>
+        <p>從技術意義上說，校準是系統表達的確定性與其實際準確性的匹配程度。一個校準良好的智能體報告80%的置信度，在該置信度區間的案例中應該大約有80%的時間是正確的。大多數已部署的AI智能體並不是這種意義上的校準。產生輸出的架構——特別是訓練用於生成流暢、自信聽起來文本的大型語言模型——不會暴露其背後的不確定性。訓練為聽起來權威的模型正是這樣做的，無論底層計算是高置信度還是在其可靠範圍之外運行。</p>
+
+        <p>輸出沒有關於智能體了解多少、當前情況距其訓練分佈有多遠，或者有多少替代輸出幾乎與被選擇的輸出一樣可能的可靠元數據。試圖使用智能體表面確定性作為監督信號的委託人，正在讀取一個不追蹤底層狀態的顯示器。他們無法區分需要輕度審查的常規決策和需要密切檢查的新穎決策——而且他們不知道信號已經失效。</p>
+
+        <h2>它所扭曲的問責結構</h2>
+        <p>監督架構建立在注意力可以分配的假設上。你無法以相同深度審查每一個AI智能體決策；該模型假設信號將把注意力引導到最需要的決策上。校準的置信度是這些信號之一。當它缺失時，基於信號的分配模型會悄悄失敗：監督架構看起來功能正常、按時報告、產生看起來正確的文件，而最需要審查的決策卻與不需要審查的決策獲得相同的審查深度。</p>
+
+        <p>這創造了一種在不良結果使其顯現之前不可見的系統性失敗模式。在真正新穎的高風險情況下過度自信的輸出不會被審查，不是因為審查者粗心，而是因為輸出沒有發出需要審查的信號。問責差距事後才會浮現——當調查揭示智能體在其可靠範圍之外運行、輸出是外推而非有充分依據的建議，且沒有人知道需要查看時。</p>
+
+        <h2>後量子交叉點</h2>
+        <p>密碼學遷移決策在證據支持方面差異很大。推薦輪換一個已完成和驗證了數十次可比遷移的證書算法，與推薦為沒有類似歷史先例的新威脅模型配置協議參數，是非常不同的認識論對象。未校準的遷移智能體以相同的表面置信度呈現兩者。操作員無法區分常規執行和在智能體知識前沿的外推。</p>
+
+        <p>風險具有壓縮性。對充分理解的遷移步驟的聽起來自信的建議，和對未經測試的配置的聽起來自信的建議，將在沒有智能體明確發出差異信號的情況下獲得相同的監督。在密碼學基礎設施中，錯誤決策不會立即以揭示錯誤的方式失敗——它創造潛在的脆弱性，可能多年後才被利用。等到校準失敗變得明顯時，決策已在基礎設施中得到批准，且很難逆轉。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>機隊管理智能體遇到的條件從特徵良好到真正新穎各不相同。對於具有數千部署小時經過驗證數據的設備類型的配置建議，比對於剛進入新環境上下文的設備變體的建議更可靠。兩者都可能以相同的表面置信度呈現。硬件故障模式以難以從有限數據中表徵的方式交互，導致機隊範圍事故的交互效應，不成比例地可能恰好出現在智能體訓練覆蓋最薄弱的新穎條件中。</p>
+
+        <p>以與充分支持的建議相同的置信度呈現不確定外推的智能體，會導致操作員在全部條件範圍內應用相同的干預閾值。新穎條件沒有受到額外審查，即使新穎條件正是最可能發生硬件事故的地方。圍繞基於信號的注意力分配設計的監督模型，已經悄悄地與它被設計來讀取的信號斷開了連接。</p>
+
+        <h2>物理世界護理交叉點</h2>
+        <p>校準問題在護理場景中以其最具倫理意義的形式出現。對於一個不確定觀察到的模式是否屬於正常變異或需要臨床升級的護理智能體，其問責義務與該不確定性直接成正比。護理團隊需要知道智能體是不確定的——不是作為系統的抽象屬性，而是作為應當影響其對面前具體建議的響應的實時信號。</p>
+
+        <p>當智能體不暴露其不確定性時，護理團隊無法對是否干預做出校準判斷。智能體的表面置信度取代了團隊的知情評估——這是一種團隊不知道正在發生的替代。在智能體可靠範圍邊緣做出的決策，沒有真正不確定性會觸發的升級，可能對那些恰恰因為系統看起來確定而信任它的人造成不可挽回的傷害。護理中的校準置信度信號不是便利功能——它是對系統所服務的人有直接後果的安全屬性。</p>
+
+        <h2>問責架構的要求</h2>
+        <p>依賴於基於信號的監督的問責架構要求信號是可靠的。置信度校準——智能體表達的確定性在多大程度上追蹤其實際準確性——必須針對保留數據進行測量，在分佈外輸入上進行驗證，並在任何基於智能體表面確定性做出監督決策的領域部署之前，作為一等部署屬性進行報告。</p>
+
+        <p>在無法將校準證明到足夠標準的地方，架構必須進行補償：更窄的自主範圍、更高的默認審查頻率，以及不依賴於智能體自身置信度輸出的強制升級閾值。明確的分佈外檢測——標記當前輸入與以預測較低可靠性的方式不同於訓練分佈的機制——應被視為必需組件，而非可選增強。</p>
+
+        <p>另一種選擇——將未校準的智能體部署到將智能體置信度視為可靠信號的監督模型中——是一種設計上失敗的問責架構。失敗將是不可見的，直到智能體知識邊緣的高風險決策未被審查，因為沒有人知道它在邊緣。届時，這個差距並不令人驚訝。它一直都在；只是置信度校準問題將其隱藏了。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>置信度校準問題出現於AI智能體以相同的表面置信度呈現每個建議，無論該建議是基於強有力證據還是薄弱外推。監督架構建立在信號將把注意力引導到最需要審查的決策的前提上。當表達的置信度不追蹤實際準確性時，該信號悄悄失效：監督模型看起來功能正常，而最可能造成傷害的決策沒有受到額外審查。在後量子交叉點，未校準的遷移智能體通過以與常規遷移相同的表面確定性呈現未經測試的配置建議，創造潛在的脆弱性。在硬件交叉點，在特徵良好和新穎條件下的等置信度輸出，將機隊事故集中在恰好是智能體可靠性最低的地方。在物理世界護理中，不追蹤不確定性的置信度，用智能體的表面確定性取代了護理團隊的知情評估——這是一種團隊不知道正在發生的替代，具有直接的有害後果。依賴於基於信號的監督的問責架構必須將校準視為一等部署屬性：在任何人類使用智能體置信度來決定多仔細審查其建議的領域部署之前，進行測量、驗證和報告。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-05-31</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
