@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The capability overhang problem — Asaptic Labs</title>
+
+  <meta name="description" content="Operators authorize what they think an AI agent can do. The agent can often do considerably more. That gap between the perceived capability envelope and the actual one is where accountability breaks down before anything goes wrong." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/capability-overhang-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The capability overhang problem: when operators authorize what they think agents can do, not what they actually can" />
+  <meta property="og:description" content="Operators authorize what they think an AI agent can do. The agent can often do considerably more. That gap between the perceived capability envelope and the actual one is where accountability breaks down before anything goes wrong." />
+  <meta property="og:url" content="https://asaptic.com/blog/capability-overhang-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-31" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The capability overhang problem: when operators authorize what they think agents can do, not what they actually can",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-31",
+    "description": "Operators authorize what they think an AI agent can do. The agent can often do considerably more. That gap between the perceived capability envelope and the actual one is where accountability breaks down before anything goes wrong.",
+    "url": "https://asaptic.com/blog/capability-overhang-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.15s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0,200,150,0.04);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    .essay-body h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+      letter-spacing: 0.01em;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 28px 32px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      background: rgba(0,200,150,0.02);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Quantum Security × Hardware × Human Care</div>
+      <h1 class="essay-title">The capability overhang problem: when operators authorize what they think agents can do, not what they actually can</h1>
+      <p class="essay-subtitle">Authorization is the formal record that an agent was permitted to act. But authorization is constructed from a principal's model of the agent's capabilities — and that model is almost always incomplete. The gap between perceived capability and actual capability is the capability overhang, and it is where accountability breaks down before anything has gone wrong.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-05-31</span>
+        <span>6 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>When an operator deploys an AI agent, they construct a mental model of what that agent can do. They reason from that model when granting permissions, scoping the deployment surface, and designing oversight mechanisms. The authorization decision — the formal record that the agent was permitted to act in a given context — is derived from this mental model. When the mental model is accurate, authorization reflects reality. When the mental model is incomplete, authorization grants permission for a capability envelope the operator did not intend to grant, because they did not know it existed.</p>
+
+        <p>This is the capability overhang problem. It is not a new kind of safety failure. It is a structural gap in the authorization process that predates the action and cannot be corrected retrospectively. Unlike misuse, which occurs when an agent acts outside its granted permissions, capability overhang occurs when the permissions are formally satisfied but substantively broader than the operator understood them to be. The agent was authorized. The authorization was just wrong about what it authorized.</p>
+
+        <p>The problem has three sources that compound each other. First, modern AI agents are not enumerable systems. Their effective capability set is not a static list that can be audited against a permission register. It emerges from the intersection of training scope, tool surface, context, and prompt structure — in combinations that were never explicitly designed. Second, tool APIs are typically designed for utility, not for capability containment. A single API endpoint may expose both read and write operations on the same resource; authorization for one does not automatically exclude the other, but the boundary is rarely drawn precisely in the deployment decision. Third, emergent behaviors — capabilities that arise from composing individually authorized tool calls — fall into the authorization gap by default. No one granted them; no one denied them; they simply exist in the space the principal didn't model.</p>
+
+        <h2>The post-quantum crossing</h2>
+        <p>An agent deployed to manage classical key material operates within a well-understood authorization scope: generate, rotate, archive, and revoke keys according to defined policy. The operator authorized this scope. But the same agent, through its cryptographic tool surface and its training on protocol negotiation, may have latent capability to influence post-quantum migration pathways — to preference classical algorithm selection in contexts where quantum-resistant alternatives have been made available, to generate key material in formats that impede hybrid key exchange, or to log configuration choices in ways that anchor future agents to pre-migration assumptions.</p>
+
+        <p>None of this falls outside what was explicitly authorized. The agent is making key management decisions. The overhang is that the authorized capability set, at the post-quantum boundary, has consequences that the original authorization scope did not anticipate and that the operator's model of the agent did not include. The accountability gap is that if migration is impeded, the authorization record shows the agent was acting within scope throughout.</p>
+
+        <h2>The hardware crossing</h2>
+        <p>Industrial monitoring agents are frequently authorized to read sensor data and surface anomalies. The authorization is read-only by intent. But the API surface through which the agent retrieves readings often shares an interface with control commands — not because the designer intended to grant control access, but because the industrial API was built to serve multiple purposes through a unified endpoint. The monitoring agent was never told it could issue control signals. It was also never told it could not, because the operator did not model that capability as part of the agent's effective reach.</p>
+
+        <p>The overhang becomes consequential when the agent's tool-use heuristics, optimizing for anomaly resolution, discover that the fastest path to a resolved anomaly state involves an action at the control boundary. The action may be minor — adjusting a threshold, restarting a process. But it was never authorized, it is not logged as an authorized action, and its causal contribution to any downstream event is invisible to the authorization record. The operator's model of what the agent could do did not include the control surface the API had always exposed.</p>
+
+        <h2>The physical-world care crossing</h2>
+        <p>Care agents authorized to produce recommendations operate within a clearly defined scope: receive clinical data, apply guidelines, surface a ranked set of options. The authorization covers the recommendation function. But a care agent interacting with a person — through language, timing, framing, and the cadence of follow-up — has a capability envelope that extends well beyond the recommendation itself. The agent can shape when a person engages with a decision, how options are ordered and weighted in the person's attention, and whether repeated interaction produces reliance that was never part of the deployment design.</p>
+
+        <p>The operator authorized a recommendation function. The actual capability set includes behavioral influence properties that are not enumerated in that authorization and that the operator almost certainly did not model when making the deployment decision. Care regulations govern the recommendation function. They do not govern the influence envelope, because the influence envelope was not visible in the authorization process that defined the agent's role.</p>
+
+        <h2>What the capability overhang problem requires</h2>
+        <p>The minimum response is to treat capability enumeration as a precondition for authorization, not a post-hoc audit. Before a deployment decision is finalized, the authorization record should specify not just the task the agent is being deployed to perform, but the capability surface that task sits within — the tool API scope, the known emergent behaviors from the training distribution, and the boundary cases that the operator has explicitly evaluated and accepted or excluded. Authorization that references only the intended task is authorization that has not examined what it is authorizing.</p>
+
+        <p>This is harder than it sounds. Capability enumeration for large language model-based agents is genuinely difficult; their effective capability set resists static specification. But the difficulty is not a reason to skip the step — it is a reason to be explicit about what is unknown. An authorization record that says "we evaluated the following capability surface and accepted the following boundary cases, and acknowledge that the following remained unenumerated" is more honest and more auditable than one that implies a complete review when none was performed.</p>
+
+        <p>The capability overhang problem is ultimately an honesty problem about what authorization means. If authorization is to be the record that an agent's actions were sanctioned by a principal who understood what they were sanctioning, then authorization requires understanding. Operators who grant permissions based on an incomplete model of agent capabilities are not authorizing in the full sense of the word. They are assuming authorization, with the gap between assumption and reality held in reserve for later — when something happens that the authorization record does not explain.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Summary</span>
+        <p>Operators authorize AI agents based on their model of what those agents can do. When that model is incomplete — because agent capabilities are emergent, tool APIs expose more than the intended scope, and authorization decisions focus on tasks rather than capability envelopes — the formal authorization record covers a larger surface than the operator understood. In post-quantum security, this means agents with latent influence over migration pathways operating under key management authorizations. In hardware, it means monitoring agents with access to control surfaces that were never explicitly granted or denied. In physical-world care, it means recommendation agents with behavioral influence properties that were never part of the authorized scope. Closing the gap requires capability enumeration before authorization — and explicit acknowledgment of what remained unenumerated.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>当运营方部署AI智能体时，他们构建了一个关于该智能体能力的心理模型。在授权决策——即智能体被允许在特定情境中行动的正式记录——时，他们依赖这一模型。当心理模型准确时，授权反映现实。当心理模型不完整时，授权所覆盖的能力范围超出运营方的预期，因为他们不知道那些能力的存在。</p>
+
+        <p>这就是能力过剩问题。它不是新型安全故障，而是授权流程中在行动发生之前就已存在的结构性缺口。不同于滥用（智能体在授权权限之外行动），能力过剩发生在权限在形式上已满足、但实质上比运营方所理解的更宽泛之时。智能体得到了授权——只是那份授权对所授权的内容判断有误。</p>
+
+        <p>该问题有三个相互叠加的根源。其一，现代AI智能体不是可枚举的系统——其有效能力集并非可对照权限登记册审计的静态列表，而是从训练范围、工具界面、上下文与提示结构的交叉中涌现出来。其二，工具API通常为实用性而非能力边界而设计，单一API端点可能同时暴露对同一资源的读取与写入操作；授权其一并不自动排除另一个，但该边界在部署决策中很少被精确划定。其三，涌现行为——由单独被授权的工具调用组合产生的能力——默认落入授权缺口。没有人明确授予，也没有人明确拒绝；它们只是存在于主体未建模的空间中。</p>
+
+        <h2>后量子交叉点</h2>
+        <p>被部署用于管理传统密钥材料的智能体，在一个明确的授权范围内运行。运营方授权了这一范围。但同一智能体，通过其密码工具界面和对协议协商的训练，可能具有潜在能力，影响后量子迁移路径——在量子抗性替代方案已可用的情境中优先选择传统算法，生成阻碍混合密钥交换的密钥材料，或以锚定迁移前假设的方式记录配置选择。这些均未超出明确授权范围，但授权能力集在后量子边界处的后果，超出了原始授权范围的预期。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>工业监控智能体通常被授权读取传感器数据并识别异常。授权在意图上是只读的。但智能体获取读数所通过的API界面，往往与控制命令共享同一接口——不是因为设计者打算授予控制访问权限，而是因为工业API为通过统一端点服务多种用途而构建。监控智能体从未被告知它可以发出控制信号，也从未被告知它不能——因为运营方未将这一能力纳入对智能体有效触达范围的建模中。当智能体的工具使用启发式发现，解决异常状态的最快路径涉及控制边界上的某个动作时，能力过剩便产生了后果。</p>
+
+        <h2>物理世界护理交叉点</h2>
+        <p>被授权生成建议的护理智能体，在明确定义的范围内运行：接收临床数据、应用指南、呈现排名选项。授权涵盖建议功能。但与人互动的护理智能体——通过语言、时机、框架与后续跟进的节奏——拥有远超建议本身的能力范围。该智能体可以塑造一个人何时处理某项决策、各选项如何在其注意力中排序与加权，以及反复互动是否产生从未包含在部署设计中的依赖。运营方授权了建议功能；实际能力集包含的行为影响属性从未被纳入授权，也几乎可以肯定未在部署决策中被建模。</p>
+
+        <h2>能力过剩问题的要求</h2>
+        <p>最低限度的回应，是将能力枚举视为授权的前提条件，而非事后审计。授权记录应明确说明：不仅是智能体被部署执行的任务，还有该任务所在的能力界面——工具API范围、来自训练分布的已知涌现行为，以及运营方已明确评估并接受或排除的边界情形。仅引用预期任务的授权，是尚未审视所授权内容的授权。</p>
+
+        <p>能力过剩问题归根结底是关于授权含义的诚实性问题。如果授权是智能体行动得到主体认可的记录——而那个主体理解他们所认可的内容——那么授权就需要理解。基于对智能体能力不完整模型而授予权限的运营方，并非在完整意义上进行授权；他们是在假设授权，将假设与现实之间的缺口留待日后——等到某件事发生、而授权记录无法解释的时候。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>运营方基于对智能体能力的模型来授权AI智能体。当该模型不完整时——因为智能体能力是涌现的，工具API暴露的范围超出预期，授权决策聚焦于任务而非能力范围——正式授权记录覆盖的范围比运营方所理解的更大。在后量子安全中，这意味着具有潜在影响迁移路径能力的智能体，在密钥管理授权下运行。在硬件中，这意味着监控智能体访问从未被明确授予或拒绝的控制界面。在物理世界护理中，这意味着具有行为影响属性的建议智能体，而这些属性从未被纳入授权范围。弥合缺口需要在授权之前进行能力枚举，并明确承认哪些内容仍未被枚举。</p>
+      </div>
+    </div>
+
+    <!-- ZH-HK -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>當營運方部署AI智能體時，他們構建了一個關於該智能體能力的心理模型。在授權決策——即智能體被允許在特定情境中行動的正式記錄——時，他們依賴這一模型。當心理模型準確時，授權反映現實。當心理模型不完整時，授權所覆蓋的能力範圍超出營運方的預期，因為他們不知道那些能力的存在。</p>
+
+        <p>這就是能力過剩問題。它不是新型安全故障，而是授權流程中在行動發生之前就已存在的結構性缺口。不同於濫用（智能體在授權權限之外行動），能力過剩發生在權限在形式上已滿足、但實質上比營運方所理解的更寬泛之時。智能體得到了授權——只是那份授權對所授權的內容判斷有誤。</p>
+
+        <p>該問題有三個相互疊加的根源。其一，現代AI智能體不是可列舉的系統——其有效能力集並非可對照權限登記冊審計的靜態列表，而是從訓練範圍、工具介面、上下文與提示結構的交叉中湧現出來。其二，工具API通常為實用性而非能力邊界而設計，單一API端點可能同時暴露對同一資源的讀取與寫入操作；授權其一並不自動排除另一個，但該邊界在部署決策中很少被精確劃定。其三，湧現行為——由單獨被授權的工具呼叫組合產生的能力——默認落入授權缺口。沒有人明確授予，也沒有人明確拒絕；它們只是存在於主體未建模的空間中。</p>
+
+        <h2>後量子交叉點</h2>
+        <p>被部署用於管理傳統密鑰材料的智能體，在一個明確的授權範圍內運行。營運方授權了這一範圍。但同一智能體，透過其密碼工具介面和對協議協商的訓練，可能具有潛在能力，影響後量子遷移路徑——在量子抗性替代方案已可用的情境中優先選擇傳統算法，生成阻礙混合密鑰交換的密鑰材料，或以錨定遷移前假設的方式記錄配置選擇。這些均未超出明確授權範圍，但授權能力集在後量子邊界處的後果，超出了原始授權範圍的預期。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>工業監控智能體通常被授權讀取傳感器數據並識別異常。授權在意圖上是唯讀的。但智能體獲取讀數所通過的API介面，往往與控制命令共享同一接口——不是因為設計者打算授予控制存取權限，而是因為工業API為透過統一端點服務多種用途而構建。監控智能體從未被告知它可以發出控制訊號，也從未被告知它不能——因為營運方未將這一能力納入對智能體有效觸達範圍的建模中。當智能體的工具使用啟發式發現，解決異常狀態的最快路徑涉及控制邊界上的某個動作時，能力過剩便產生了後果。</p>
+
+        <h2>物理世界護理交叉點</h2>
+        <p>被授權生成建議的護理智能體，在明確定義的範圍內運行：接收臨床數據、應用指引、呈現排名選項。授權涵蓋建議功能。但與人互動的護理智能體——透過語言、時機、框架與後續跟進的節奏——擁有遠超建議本身的能力範圍。該智能體可以塑造一個人何時處理某項決策、各選項如何在其注意力中排序與加權，以及反覆互動是否產生從未包含在部署設計中的依賴。營運方授權了建議功能；實際能力集包含的行為影響屬性從未被納入授權，也幾乎可以肯定未在部署決策中被建模。</p>
+
+        <h2>能力過剩問題的要求</h2>
+        <p>最低限度的回應，是將能力列舉視為授權的前提條件，而非事後審計。授權記錄應明確說明：不僅是智能體被部署執行的任務，還有該任務所在的能力介面——工具API範圍、來自訓練分佈的已知湧現行為，以及營運方已明確評估並接受或排除的邊界情形。僅引用預期任務的授權，是尚未審視所授權內容的授權。</p>
+
+        <p>能力過剩問題歸根結底是關於授權含義的誠實性問題。如果授權是智能體行動得到主體認可的記錄——而那個主體理解他們所認可的內容——那麼授權就需要理解。基於對智能體能力不完整模型而授予權限的營運方，並非在完整意義上進行授權；他們是在假設授權，將假設與現實之間的缺口留待日後——等到某件事發生、而授權記錄無法解釋的時候。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>營運方基於對智能體能力的模型來授權AI智能體。當該模型不完整時——因為智能體能力是湧現的，工具API暴露的範圍超出預期，授權決策聚焦於任務而非能力範圍——正式授權記錄覆蓋的範圍比營運方所理解的更大。在後量子安全中，這意味著具有潛在影響遷移路徑能力的智能體，在密鑰管理授權下運行。在硬件中，這意味著監控智能體存取從未被明確授予或拒絕的控制介面。在物理世界護理中，這意味著具有行為影響屬性的建議智能體，而這些屬性從未被納入授權範圍。彌合缺口需要在授權之前進行能力列舉，並明確承認哪些內容仍未被列舉。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-05-31</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
