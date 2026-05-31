@@ -1,3 +1,4 @@
+2026-05-31 08:15 UTC · blog: add essay 'The confidence calibration problem' — oversight fails when AI agent certainty does not track actual accuracy (EN+ZH+ZH-HK) · c674cd0
 2026-05-31 00:15 UTC · sitemap: add 23 missing blog entries, update /blog/ lastmod · e83430f
 2026-05-30 20:13 UTC · blog: add essay 'The interpretability problem' — accountability when the reasoning behind an AI agent's decision cannot be examined (EN+ZH+ZH-HK) · 4dcbd51
 2026-05-30 16:15 UTC · blog: add essay 'The surrogate principal problem' — accountability when the objective-setter and the beneficiary are different parties · e5bccd3
