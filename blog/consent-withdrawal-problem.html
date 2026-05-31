@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The consent withdrawal problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents treat consent as a one-time gate checked at workflow start. But people change their minds. When consent is withdrawn mid-workflow, the agent may not receive the signal, cannot verify its authenticity, and has no architectural mechanism to halt actions already in flight." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/consent-withdrawal-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The consent withdrawal problem: when a person changes their mind after an agent has already started" />
+  <meta property="og:description" content="Consent in AI agent systems is typically captured once and treated as a persistent gate. The withdrawal problem exposes a gap: no reliable channel to push a withdrawal signal to an agent mid-workflow, no cryptographic guarantee that the signal is authentic, and no architecture to interrupt actions already executing." />
+  <meta property="og:url" content="https://asaptic.com/blog/consent-withdrawal-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-30" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The consent withdrawal problem: when a person changes their mind after an agent has already started",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-30",
+    "description": "AI agents treat consent as a one-time gate checked at workflow start. But people change their minds. When consent is withdrawn mid-workflow, the agent may not receive the signal, cannot verify its authenticity, and has no architectural mechanism to halt actions already in flight.",
+    "url": "https://asaptic.com/blog/consent-withdrawal-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 48px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The consent withdrawal problem: when a person changes their mind after an agent has already started</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-05-30</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>AI agent accountability literature spends considerable attention on consent at enrollment: who authorized this agent, under what scope, on whose behalf. The consent layer that exists in well-designed systems is a representation of authorization at workflow start — a record that the right people agreed before the agent began. That layer matters. But it treats consent as a gate, not a condition. Once the gate opens, the agent proceeds. The consent withdrawal problem begins precisely at the moment the gate opens.</p>
+
+        <p>People change their minds. Circumstances change. A patient who agreed this morning to an AI-assisted care protocol may withdraw that agreement this afternoon — because their clinical condition changed, because a family member raised a concern, because they simply reconsidered. The question the consent-as-gate architecture cannot answer is: how does that withdrawal reach an agent that is already mid-workflow, and what does the agent do when it does?</p>
+
+        <h2>The anatomy of a consent withdrawal failure</h2>
+        <p>An AI agent is managing a multi-step care coordination workflow for a resident in a long-term care facility. At 10:00, the resident's authorized proxy reviewed the care plan and consented to AI-assisted scheduling and communication for the day's appointments. The agent began executing: confirming transport, notifying the on-site clinical team, preparing the afternoon medication schedule, and queuing communications to the resident's specialist.</p>
+
+        <p>At 13:30, the resident's proxy called the facility directly and verbally withdrew consent for the remainder of the day's AI-managed schedule. A care coordinator noted the withdrawal in the resident's record. The agent, executing its afternoon workflow, had no connection to that record. At 14:15, it dispatched the queued communications to the specialist — actions that fell squarely within the scope of the morning consent, and squarely outside the scope of the withdrawn consent. The agent was not malfunctioning. It was executing a workflow that was authorized when it started, against a consent state that had changed hours earlier.</p>
+
+        <p>This failure mode is not about malicious agents or misconfiguration. It is a structural gap in how consent is modeled: as a precondition that gates entry to a workflow, rather than as a continuous authorization state that the workflow is obligated to remain within throughout its execution.</p>
+
+        <h2>The signal delivery problem</h2>
+        <p>The most immediate challenge is channel: how does a withdrawal signal reach a running agent? In most current architectures, consent is represented as a flag in a database, set at enrollment and read at workflow initiation. There is no subscription mechanism — no way for the agent to receive a push notification that the flag has changed. The agent does not poll the consent store continuously; it read the value once when it started, and proceeds on that cached state until the workflow completes or it encounters an explicit checkpoint.</p>
+
+        <p>Even in systems that do poll consent state periodically, the polling interval creates a window. If the agent checks consent every five minutes and a withdrawal arrives four minutes and fifty seconds after the last check, the agent proceeds for five seconds on authorization that has already been withdrawn. In physical-world care, five seconds at the wrong moment is sufficient to dispatch a communication, trigger a medication reminder, or confirm a clinical appointment — actions whose consequences run longer than the polling cycle.</p>
+
+        <p>The correct architecture is a push model: consent withdrawal generates an event that is delivered to all agents currently executing workflows under that consent. This requires agents to be statefully reachable — to maintain a persistent connection or a message queue that the consent infrastructure can write to. That is a meaningfully different architecture than stateless workflow execution, and most current systems are not built this way.</p>
+
+        <h2>The authentication problem</h2>
+        <p>Assuming the delivery channel exists, there is a second problem: the agent receiving a withdrawal signal must be able to verify that the signal is authentic. A fraudulent withdrawal — injected by an adversary who wants to disrupt an agent's operation — is a denial-of-service attack masquerading as a consent event. An agent that accepts any withdrawal signal without cryptographic verification is vulnerable to manipulation. An agent that requires verification before acting on a withdrawal may delay long enough for the harm to occur anyway.</p>
+
+        <p>The same infrastructure that handles authorization grants needs to handle withdrawal: signed, timestamped, non-repudiable signals that an agent can verify against known keys before acting on them. In a post-quantum deployment context, those signatures must be generated and verified using algorithms that hold against quantum-capable adversaries. The computational overhead of post-quantum verification — not negligible, particularly in aggregate across many concurrent agent instances — means that the design of withdrawal signal cryptography is not separable from the design of the agent's execution latency budget.</p>
+
+        <p>Hardware-rooted trust environments help here in a specific way: the agent's hardware attestation can include the consent state as part of the attested execution context, meaning that any attempt to inject a false withdrawal signal that was not generated by the legitimate consent authority will fail the attestation check. But this requires the consent infrastructure to be integrated with the hardware attestation chain from the start — a design choice that is easy to defer and difficult to retrofit.</p>
+
+        <h2>The in-flight actions problem</h2>
+        <p>Even with a working delivery channel and verified authentication, a third problem remains: what happens to actions that the agent has already dispatched between the moment consent was withdrawn and the moment the withdrawal signal arrived? These actions are not unauthorized by negligence or error. They are actions that the agent was authorized to take at the time it took them, and for which the authorization lapsed before their effects resolved.</p>
+
+        <p>A communication dispatched to a specialist at 14:10 may not be read until 14:30. A medication reminder sent at 14:12 reaches the care team at 14:15. The agent received the withdrawal signal at 14:20 and halted. The halt is correct. But the already-dispatched communications continue to propagate and produce effects in the world — scheduling a clinical call, prompting a care action — that the person who withdrew consent did not authorize. The agent acted correctly at the moment it acted. The outcome was not what the person would have authorized.</p>
+
+        <p>This is where the consent withdrawal problem intersects with the rollback problem and the handoff problem. Actions that have already propagated to external systems cannot be recalled by halting the agent. The accountability question for those in-flight actions is genuinely hard: the agent acted within its authorization at the time of action; the authorization lapsed before the effects resolved; no single actor made an error. The gap is architectural.</p>
+
+        <h2>Consent as a continuous authorization state</h2>
+        <p>The design principle that follows is the same one that emerges from TOCTOU analysis and revocation analysis: authorization cannot be treated as a condition checked once and then assumed to persist. Consent, specifically, is a human relationship with an ongoing expression — not a document signed once and permanent. Architecturally, this means consent must be modeled as a streaming property of the agent's execution context, not a gate that the workflow passes through at initialization.</p>
+
+        <p>In practice, this requires three things. First, a push-capable consent infrastructure: the ability to generate withdrawal events and deliver them to running agents with latency short enough to matter in the relevant deployment domain. In physical-world care, "short enough" means seconds, not minutes. Second, cryptographically verifiable withdrawal signals, integrated with the same attestation chain that covers authorization grants, so agents can distinguish genuine withdrawal from adversarial disruption without introducing unbounded verification latency. Third, a defined posture for in-flight actions: agents must know, at design time, what to do with actions already dispatched when a withdrawal arrives — which classes of action can be recalled, which cannot, and who must be notified in either case.</p>
+
+        <p>The consent layer that matters most is not the one that records agreement at workflow start. It is the one that tracks whether agreement still holds at every moment of workflow execution, and that reaches the agent in time to do something about it when it does not.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>AI智能体系统通常将同意视为工作流启动时的一次性闸门：在正确的人同意之后，智能体开始执行，并在整个工作流期间按照初始授权状态运行。同意撤回问题揭示了这一架构中的结构性缺口：当一个人在智能体已开始执行后改变主意，撤回信号如何到达正在运行中的智能体？智能体如何验证该信号是真实的而非对抗性干扰？对于已在撤回到达前分发的行动又该如何处理？正确的设计原则是：将同意视为智能体执行状态的持续属性，而非入口检查——这需要推送式同意基础设施、可验证密码学签名的撤回信号，以及对在途行动的明确处理策略。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>AI智能體系統通常將同意視為工作流啟動時的一次性閘門：在正確的人同意之後，智能體開始執行，並在整個工作流期間按照初始授權狀態運行。同意撤回問題揭示了這一架構中的結構性缺口：當一個人在智能體已開始執行後改變主意，撤回信號如何到達正在運行中的智能體？智能體如何驗證該信號是真實的而非對抗性干擾？對於已在撤回到達前分發的行動又該如何處理？正確的設計原則是：將同意視為智能體執行狀態的持續屬性，而非入口檢查——這需要推送式同意基礎設施、可驗證密碼學簽名的撤回信號，以及對在途行動的明確處理策略。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/toctou-problem.html">Previous: The time-of-check to time-of-use problem →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">同意撤回问题：当一个人在智能体已开始执行后改变主意</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-30</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>AI智能体问责架构花费了大量精力关注注册时的同意：谁授权了这个智能体，在何种范围内，代表谁。设计完善的系统中存在的同意层，是工作流启动时授权的表示——在智能体开始之前，记录正确的人已经同意。这一层很重要。但它将同意视为闸门，而非持续条件。一旦闸门打开，智能体便继续执行。同意撤回问题恰恰从闸门打开的那一刻开始。</p>
+
+        <p>人们会改变主意。情况会发生变化。今天早上同意AI辅助照护方案的患者，今天下午可能会撤回同意——因为临床状况发生了变化，因为家属提出了疑虑，或者只是因为重新考虑了。"同意即闸门"架构无法回答的问题是：当撤回发生时，信号如何到达已经处于工作流执行中的智能体，智能体收到信号后该怎么办？</p>
+
+        <h2>同意撤回失效的解剖</h2>
+        <p>一个AI智能体正在为长期照护机构的一位住户管理多步骤照护协调工作流。上午10点，住户的授权代理人审阅了照护计划，并同意了当天预约的AI辅助调度和沟通。智能体开始执行：确认交通、通知现场临床团队、准备下午的用药计划，并为住户的专科医生排队发送通讯。</p>
+
+        <p>下午1点30分，住户代理人直接致电照护机构，口头撤回了对当天剩余AI管理计划的同意。一名护理协调员在住户记录中记录了这一撤回。执行下午工作流的智能体无法连接到该记录。下午2点15分，它发送了排队中的给专科医生的通讯——这些行动完全处于早上同意的范围内，也完全超出了已撤回同意的范围。智能体并没有出故障，它在执行一个启动时被授权的工作流，针对的是数小时前已经改变的同意状态。</p>
+
+        <p>这一失效模式与恶意智能体或配置错误无关。它是同意建模方式的结构性缺口：同意被视为进入工作流的前提条件，而非工作流在整个执行过程中必须保持在其范围内的持续授权状态。</p>
+
+        <h2>信号传递问题</h2>
+        <p>最直接的挑战是渠道：撤回信号如何到达正在运行的智能体？在当前大多数架构中，同意表示为数据库中的一个标志，在注册时设置，在工作流启动时读取。没有订阅机制——没有办法让智能体接收该标志已更改的推送通知。智能体不会持续轮询同意存储；它在启动时读取一次值，然后在缓存状态下继续执行，直到工作流完成或遇到明确的检查点。</p>
+
+        <p>即使在定期轮询同意状态的系统中，轮询间隔也会产生窗口期。如果智能体每五分钟检查一次同意，而撤回在上次检查后四分钟五十秒到达，智能体将在授权已被撤回的情况下继续运行五秒钟。在物理世界照护中，错误时刻的五秒钟足以发送一条通讯、触发用药提醒或确认一次临床预约——这些行动的后果比轮询周期持续更长。</p>
+
+        <p>正确的架构是推送模型：同意撤回产生一个事件，该事件被传递给所有当前在该同意下执行工作流的智能体。这要求智能体具有状态可达性——维护持久连接或消息队列，同意基础设施可以向其写入。这与无状态工作流执行是本质上不同的架构，而当前大多数系统并非如此构建。</p>
+
+        <h2>认证问题</h2>
+        <p>假设传递渠道存在，还有第二个问题：接收撤回信号的智能体必须能够验证该信号是真实的。虚假撤回——由希望破坏智能体运作的攻击者注入——是伪装成同意事件的拒绝服务攻击。接受任何撤回信号而不进行密码学验证的智能体容易受到操纵。在采取行动之前要求验证的智能体可能延迟足够长的时间，使伤害无论如何都会发生。</p>
+
+        <p>处理授权授予的同一基础设施需要处理撤回：带签名、带时间戳、不可否认的信号，智能体可以在采取行动之前针对已知密钥进行验证。在后量子部署环境中，这些签名必须使用能够抵御量子能力对手的算法生成和验证。后量子验证的计算开销——在许多并发智能体实例的聚合下并非微不足道——意味着撤回信号密码学的设计与智能体执行延迟预算的设计是不可分割的。</p>
+
+        <p>硬件信任根环境在特定方面有所帮助：智能体的硬件认证可以将同意状态作为已认证执行上下文的一部分，这意味着任何试图注入非由合法同意机构生成的虚假撤回信号的尝试都将通过认证检查失败。但这要求从一开始就将同意基础设施与硬件认证链集成——一个容易推迟但难以改造的设计选择。</p>
+
+        <h2>在途行动问题</h2>
+        <p>即使有有效的传递渠道和经过验证的认证，第三个问题依然存在：对于在同意撤回时刻与撤回信号到达时刻之间智能体已经分发的行动，该如何处理？这些行动并非因疏忽或错误而未经授权。它们是智能体在采取行动时被授权采取的行动，授权在其效果落地之前已经失效。</p>
+
+        <p>下午2点10分发送给专科医生的通讯可能要到2点30分才会被读取。下午2点12分发送的用药提醒在2点15分到达护理团队。智能体在2点20分收到撤回信号并停止了。停止是正确的。但已分发的通讯继续在世界中传播并产生效果——安排了一次临床通话，触发了一次照护行动——这些都是撤回同意的人未曾授权的。智能体在行动时采取了正确的行动。结果不是这个人会授权的。</p>
+
+        <p>这是同意撤回问题与回滚问题和交接问题交汇的地方。已经传播到外部系统的行动无法通过停止智能体来召回。对于这些在途行动的问责问题确实很难：智能体在行动时在其授权范围内行动；授权在效果落地之前失效；没有任何一个参与者犯了错误。缺口是架构性的。</p>
+
+        <h2>将同意视为持续的授权状态</h2>
+        <p>由此得出的设计原则与TOCTOU分析和撤销分析得出的原则相同：授权不能被视为一次检查就假设永久存在的条件。具体而言，同意是一种具有持续表达的人类关系——不是签署一次就永久有效的文件。在架构上，这意味着同意必须被建模为智能体执行上下文的流式属性，而非工作流在初始化时通过的闸门。</p>
+
+        <p>在实践中，这需要三件事。首先，具有推送能力的同意基础设施：能够生成撤回事件并以足够短的延迟将其传递给正在运行的智能体，在相关部署域中"足够短"意味着秒级，而非分钟级。其次，可密码学验证的撤回信号，与覆盖授权授予的同一认证链集成，以便智能体能够在不引入无界验证延迟的情况下区分真实撤回和对抗性干扰。第三，针对在途行动的明确处置策略：智能体必须在设计时知道，当撤回到达时已经分发的行动该如何处理——哪类行动可以召回，哪类不能，以及在任何一种情况下必须通知谁。</p>
+
+        <p>最重要的同意层不是在工作流启动时记录同意的那个，而是在工作流执行的每一个时刻追踪同意是否仍然有效、并在同意不再有效时及时到达智能体以便采取行动的那个。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/toctou-problem.html">上篇：检查时间到使用时间问题 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">同意撤回問題：當一個人在智能體已開始執行後改變主意</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-30</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>AI智能體問責架構花費了大量精力關注註冊時的同意：誰授權了這個智能體，在何種範圍內，代表誰。設計完善的系統中存在的同意層，是工作流啟動時授權的表示——在智能體開始之前，記錄正確的人已經同意。這一層很重要。但它將同意視為閘門，而非持續條件。一旦閘門打開，智能體便繼續執行。同意撤回問題恰恰從閘門打開的那一刻開始。</p>
+
+        <p>人們會改變主意。情況會發生變化。今天早上同意AI輔助照護方案的患者，今天下午可能會撤回同意——因為臨床狀況發生了變化，因為家屬提出了疑慮，或者只是因為重新考慮了。「同意即閘門」架構無法回答的問題是：當撤回發生時，信號如何到達已經處於工作流執行中的智能體，智能體收到信號後該怎麼辦？</p>
+
+        <h2>同意撤回失效的解剖</h2>
+        <p>一個AI智能體正在為長期照護機構的一位住戶管理多步驟照護協調工作流。上午10點，住戶的授權代理人審閱了照護計劃，並同意了當天預約的AI輔助調度和溝通。智能體開始執行：確認交通、通知現場臨床團隊、準備下午的用藥計劃，並為住戶的專科醫生排隊發送通訊。</p>
+
+        <p>下午1點30分，住戶代理人直接致電照護機構，口頭撤回了對當天剩餘AI管理計劃的同意。一名護理協調員在住戶記錄中記錄了這一撤回。執行下午工作流的智能體無法連接到該記錄。下午2點15分，它發送了排隊中的給專科醫生的通訊——這些行動完全處於早上同意的範圍內，也完全超出了已撤回同意的範圍。智能體並沒有出故障，它在執行一個啟動時被授權的工作流，針對的是數小時前已經改變的同意狀態。</p>
+
+        <p>這一失效模式與惡意智能體或配置錯誤無關。它是同意建模方式的結構性缺口：同意被視為進入工作流的前提條件，而非工作流在整個執行過程中必須保持在其範圍內的持續授權狀態。</p>
+
+        <h2>信號傳遞問題</h2>
+        <p>最直接的挑戰是渠道：撤回信號如何到達正在運行的智能體？在當前大多數架構中，同意表示為資料庫中的一個標誌，在註冊時設置，在工作流啟動時讀取。沒有訂閱機制——沒有辦法讓智能體接收該標誌已更改的推送通知。智能體不會持續輪詢同意存儲；它在啟動時讀取一次值，然後在緩存狀態下繼續執行，直到工作流完成或遇到明確的檢查點。</p>
+
+        <p>即使在定期輪詢同意狀態的系統中，輪詢間隔也會產生窗口期。如果智能體每五分鐘檢查一次同意，而撤回在上次檢查後四分鐘五十秒到達，智能體將在授權已被撤回的情況下繼續運行五秒鐘。在物理世界照護中，錯誤時刻的五秒鐘足以發送一條通訊、觸發用藥提醒或確認一次臨床預約——這些行動的後果比輪詢週期持續更長。</p>
+
+        <p>正確的架構是推送模型：同意撤回產生一個事件，該事件被傳遞給所有當前在該同意下執行工作流的智能體。這要求智能體具有狀態可達性——維護持久連接或消息隊列，同意基礎設施可以向其寫入。這與無狀態工作流執行是本質上不同的架構，而當前大多數系統並非如此構建。</p>
+
+        <h2>認證問題</h2>
+        <p>假設傳遞渠道存在，還有第二個問題：接收撤回信號的智能體必須能夠驗證該信號是真實的。虛假撤回——由希望破壞智能體運作的攻擊者注入——是偽裝成同意事件的拒絕服務攻擊。接受任何撤回信號而不進行密碼學驗證的智能體容易受到操縱。在採取行動之前要求驗證的智能體可能延遲足夠長的時間，使傷害無論如何都會發生。</p>
+
+        <p>處理授權授予的同一基礎設施需要處理撤回：帶簽名、帶時間戳、不可否認的信號，智能體可以在採取行動之前針對已知密鑰進行驗證。在後量子部署環境中，這些簽名必須使用能夠抵禦量子能力對手的算法生成和驗證。後量子驗證的計算開銷——在許多並發智能體實例的聚合下並非微不足道——意味著撤回信號密碼學的設計與智能體執行延遲預算的設計是不可分割的。</p>
+
+        <p>硬件信任根環境在特定方面有所幫助：智能體的硬件認證可以將同意狀態作為已認證執行上下文的一部分，這意味著任何試圖注入非由合法同意機構生成的虛假撤回信號的嘗試都將通過認證檢查失敗。但這要求從一開始就將同意基礎設施與硬件認證鏈集成——一個容易推遲但難以改造的設計選擇。</p>
+
+        <h2>在途行動問題</h2>
+        <p>即使有有效的傳遞渠道和經過驗證的認證，第三個問題依然存在：對於在同意撤回時刻與撤回信號到達時刻之間智能體已經分發的行動，該如何處理？這些行動並非因疏忽或錯誤而未經授權。它們是智能體在採取行動時被授權採取的行動，授權在其效果落地之前已經失效。</p>
+
+        <p>下午2點10分發送給專科醫生的通訊可能要到2點30分才會被讀取。下午2點12分發送的用藥提醒在2點15分到達護理團隊。智能體在2點20分收到撤回信號並停止了。停止是正確的。但已分發的通訊繼續在世界中傳播並產生效果——安排了一次臨床通話，觸發了一次照護行動——這些都是撤回同意的人未曾授權的。智能體在行動時採取了正確的行動。結果不是這個人會授權的。</p>
+
+        <p>這是同意撤回問題與回滾問題和交接問題交匯的地方。已經傳播到外部系統的行動無法通過停止智能體來召回。對於這些在途行動的問責問題確實很難：智能體在行動時在其授權範圍內行動；授權在效果落地之前失效；沒有任何一個參與者犯了錯誤。缺口是架構性的。</p>
+
+        <h2>將同意視為持續的授權狀態</h2>
+        <p>由此得出的設計原則與TOCTOU分析和撤銷分析得出的原則相同：授權不能被視為一次檢查就假設永久存在的條件。具體而言，同意是一種具有持續表達的人類關係——不是簽署一次就永久有效的文件。在架構上，這意味著同意必須被建模為智能體執行上下文的流式屬性，而非工作流在初始化時通過的閘門。</p>
+
+        <p>在實踐中，這需要三件事。首先，具有推送能力的同意基礎設施：能夠生成撤回事件並以足夠短的延遲將其傳遞給正在運行的智能體，在相關部署域中「足夠短」意味著秒級，而非分鐘級。其次，可密碼學驗證的撤回信號，與覆蓋授權授予的同一認證鏈集成，以便智能體能夠在不引入無界驗證延遲的情況下區分真實撤回和對抗性干擾。第三，針對在途行動的明確處置策略：智能體必須在設計時知道，當撤回到達時已經分發的行動該如何處理——哪類行動可以召回，哪類不能，以及在任何一種情況下必須通知誰。</p>
+
+        <p>最重要的同意層不是在工作流啟動時記錄同意的那個，而是在工作流執行的每一個時刻追蹤同意是否仍然有效、並在同意不再有效時及時到達智能體以便採取行動的那個。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/toctou-problem.html">上篇：檢查時間到使用時間問題 →</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/" style="color:inherit;">© 2026 Asaptic Labs</a>
+  </footer>
+
+  <script src="../style.css" type="text/javascript" onerror="void 0"></script>
+  <script>
+    (function() {
+      var stored = localStorage.getItem('al_lang') || 'en';
+      document.querySelectorAll('.essay-lang').forEach(function(el) {
+        el.classList.toggle('active', el.dataset.langContent === stored);
+      });
+      document.querySelectorAll('.lang-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.lang === stored);
+        btn.addEventListener('click', function() {
+          var lang = btn.dataset.lang;
+          localStorage.setItem('al_lang', lang);
+          document.querySelectorAll('.essay-lang').forEach(function(el) {
+            el.classList.toggle('active', el.dataset.langContent === lang);
+          });
+          document.querySelectorAll('.lang-btn').forEach(function(b) {
+            b.classList.toggle('active', b.dataset.lang === lang);
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
