@@ -1,3 +1,5 @@
+2026-05-31 12:30 UTC · blog: add essay 'The temporal accountability gap' — accountability when harm emerges long after the agent acts (EN+ZH+ZH-HK) · 59bf5b9
+2026-05-31 12:15 UTC · blog: add essay 'The semantic gap problem' — accountability when agent interpretation diverges from principal intent (EN+ZH+ZH-HK) · 8323763
 2026-05-31 08:15 UTC · blog: add essay 'The confidence calibration problem' — oversight fails when AI agent certainty does not track actual accuracy (EN+ZH+ZH-HK) · c674cd0
 2026-05-31 00:15 UTC · sitemap: add 23 missing blog entries, update /blog/ lastmod · e83430f
 2026-05-30 20:13 UTC · blog: add essay 'The interpretability problem' — accountability when the reasoning behind an AI agent's decision cannot be examined (EN+ZH+ZH-HK) · 4dcbd51
