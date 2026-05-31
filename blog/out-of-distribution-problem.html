@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The out-of-distribution problem — Asaptic Labs</title>
+
+  <meta name="description" content="Every AI agent is validated on a finite input distribution. Outside that boundary, its confidence is uncalibrated, its decision thresholds are no longer tuned, and its failure modes are no longer predictable — yet the agent typically continues operating without any signal that the boundary has been crossed." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/out-of-distribution-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The out-of-distribution problem: when an AI agent faces what it was never trained to handle" />
+  <meta property="og:description" content="Every AI agent is validated on a finite input distribution. Outside that boundary, its confidence is uncalibrated, its decision thresholds are no longer tuned, and its failure modes are no longer predictable — yet the agent typically continues operating without any signal that the boundary has been crossed." />
+  <meta property="og:url" content="https://asaptic.com/blog/out-of-distribution-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-05-31" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The out-of-distribution problem: when an AI agent faces what it was never trained to handle",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-05-31",
+    "description": "Every AI agent is validated on a finite input distribution. Outside that boundary, its confidence is uncalibrated, its decision thresholds are no longer tuned, and its failure modes are no longer predictable — yet the agent typically continues operating without any signal that the boundary has been crossed.",
+    "url": "https://asaptic.com/blog/out-of-distribution-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.15s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0,200,150,0.04);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    .essay-body h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+      letter-spacing: 0.01em;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 28px 32px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      background: rgba(0,200,150,0.02);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Quantum Security × Hardware × Human Care</div>
+      <h1 class="essay-title">The out-of-distribution problem: when an AI agent faces what it was never trained to handle</h1>
+      <p class="essay-subtitle">Validation demonstrates agent competence on a defined input distribution. Outside that boundary, the agent's expressed confidence is calibrated against a world it no longer recognises.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-05-31</span>
+        <span>6 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Every deployment decision for an AI agent carries an invisible boundary condition: the agent performs as tested within the range of inputs it was validated on, and makes no guarantee about anything outside it. That boundary is rarely articulated explicitly. Often it is not known precisely even by the developers. But it is always there — and when an agent crosses it, the reliability properties that justified deployment no longer apply.</p>
+
+        <p>The out-of-distribution problem is not primarily a model quality issue. A carefully trained and validated agent can still fail consequentially when it receives inputs that lie outside the distribution it was trained and evaluated on. The more specific failure is that the agent typically does not know it has crossed this boundary. Its confidence estimates are calibrated against in-distribution examples. Its reasoning patterns, its tool-use heuristics, its decision thresholds — all tuned for a world it recognises. When that world changes in the ways that matter, the agent proceeds as if it has not.</p>
+
+        <h2>The post-quantum crossing</h2>
+        <p>Post-quantum cryptography is not merely a change in algorithm parameters. It is a structural shift in the cryptographic landscape — new primitives, new failure modes, new attack surfaces that do not resemble the classical threat model most deployed agents were trained against. An agent making cryptographic configuration decisions that was validated against a classical threat model is, by definition, operating out-of-distribution when it encounters post-quantum relevant scenarios.</p>
+
+        <p>The difficulty is that this boundary is not a single bright line. It shifts as the threat model evolves: as new attacks are published, as standards mature, as recommended parameter sets change. An agent validated six months ago may already be out-of-distribution against the current landscape — not because the algorithms have changed, but because the security margins and configurations considered adequate have been revised. No alarm fires when this happens. The agent continues selecting parameters with the same apparent confidence it had when its choices were current, against a threat model it has not seen and was not trained to recognise.</p>
+
+        <h2>The hardware crossing</h2>
+        <p>Hardware environments in deployment differ from hardware environments in validation. A model validated on curated sensor readings from a controlled test environment will encounter sensor drift, manufacturing variance, environmental noise, and failure-mode signatures that did not appear in the validation set. An agent making maintenance scheduling or anomaly detection decisions in real deployment is, to varying degrees, always operating somewhere on the out-of-distribution spectrum.</p>
+
+        <p>The consequence is not that the agent fails obviously — it is that the agent fails in ways that are difficult to attribute. An agent classifying a vibration signature as normal when it is actually an early failure indicator produces no explicit error. It logs a normal classification with whatever confidence score it has been trained to report. The out-of-distribution character of the input is invisible in the output. The failure propagates silently until it surfaces as hardware damage — at which point the causal chain runs through an agent decision that was, at the time, indistinguishable from a correct one.</p>
+
+        <h2>The physical-world care crossing</h2>
+        <p>Human beings are irreducibly variable. No validation set captures the full distribution of a population in care — its comorbidities, its medication interactions, its behavioural patterns, its physiological responses. Every person in a real care setting is, in some respects, out-of-distribution relative to the validation data.</p>
+
+        <p>This is not a failure of validation effort; it is the structure of the problem. The gap between the distribution a care agent was validated on and the specific person it is now supporting is not incidental noise — it is the primary source of risk. Care agents that cannot identify their own out-of-distribution exposure cannot escalate appropriately, cannot qualify their recommendations accordingly, and cannot trigger the human review that such exposure in a care context requires.</p>
+
+        <p>The asymmetry is that care consequences are often delayed, ambiguous in causation, and attributed to the underlying condition rather than to the agent's handling. A care agent's out-of-distribution failure may produce harm that is clinically attributed to disease progression, not to a system operating outside its validation boundary. The accountability gap is structural: the exposure is unrecorded, the harm is unattributed, and the same agent continues making decisions for the next person in the same distribution gap it has always been in.</p>
+
+        <h2>What the out-of-distribution problem requires</h2>
+        <p>Closing the accountability gap requires, at minimum, that the agent's validation boundary be documented in terms that can be compared to actual deployment conditions; that deployment infrastructure maintains continuous monitoring against distributional shift indicators; and that when shift is detected, escalation or fallback behaviour is triggered automatically — not left to observers who have no visibility into the model's internal distribution assumptions.</p>
+
+        <p>More fundamentally, it requires accepting that out-of-distribution exposure is not an edge case in consequential deployments. It is the normal condition of any agent operating in a domain that is real, changing, and human. The question is not whether the agent will encounter out-of-distribution inputs — it will. The question is whether the deployment architecture acknowledges this, monitors for it, and responds in ways that preserve the safety properties the agent was validated to provide.</p>
+
+        <p>An agent operating out-of-distribution without knowing it is not a failed agent in the usual sense. It is an agent deployed without an accountability architecture capable of detecting the condition. The failure is upstream — in the deployment decision, not in the model.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Summary</span>
+        <p>Every AI agent is validated on a finite input distribution. Outside that boundary, its expressed confidence is uncalibrated, its decision thresholds are no longer tuned, and its failure modes are no longer predictable — yet the agent typically continues operating without any signal that the boundary has been crossed. In post-quantum security, this means agents selecting cryptographic parameters against a threat model that has already shifted. In hardware, it means anomaly detection classifying novel failure signatures as normal. In physical-world care, it means recommendations for patients whose characteristics fall outside the validation population — whose poor outcomes may be attributed to disease, not to an agent operating beyond its competence boundary. The deployment architecture must know where the validation boundary is, monitor against it, and trigger escalation when the gap between validation and deployment becomes consequential.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>每一个AI智能体的部署决策都携带着一个隐形的边界条件：智能体在其经过验证的输入范围内表现如测试所示，对范围之外的任何情况不作保证。这个边界很少被明确表述，通常即使是开发者也无法精确知晓。但它始终存在——当智能体越过它时，支撑部署决策的可靠性属性便不再适用。</p>
+
+        <p>分布外问题首先不是模型质量问题。一个经过精心训练和验证的智能体，当接收到训练和评估分布之外的输入时，仍可能造成严重后果的失败。更具体的失败在于，智能体通常不知道它已经越过了这个边界。其置信度估计是针对分布内示例校准的；其推理模式、工具使用启发式、决策阈值——都为它所识别的世界而调整。当那个世界以重要的方式改变时，智能体继续运作，好像什么都没有发生。</p>
+
+        <h2>后量子交叉点</h2>
+        <p>后量子密码学不仅仅是算法参数的改变。它是密码景观的结构性转变——新的基元、新的失败模式、与大多数已部署智能体所针对的经典威胁模型不相似的新攻击面。一个针对经典威胁模型验证的、正在做密码配置决策的智能体，在定义上，当遇到后量子相关场景时，就是在分布外运行。</p>
+
+        <p>难点在于这个边界不是单一明确的界限。它随着威胁模型的演进而移动：随着新攻击的发布，随着标准的成熟，随着推荐参数集的变化。六个月前经过验证的智能体可能已经对当前景观处于分布外状态——不是因为算法改变，而是因为被认为充分的安全边际和配置已被修订。当这种情况发生时，没有警报响起。智能体继续以与其选择仍然有效时相同的表面置信度选择参数，针对一个它没有见过也没有被训练去识别的威胁模型。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>部署中的硬件环境与验证中的硬件环境不同。在受控测试环境中对精心选取的传感器读数进行验证的模型，将会遇到验证集中没有出现的传感器漂移、制造差异、环境噪声和故障模式特征。在实际部署中做出维护调度或异常检测决策的智能体，在不同程度上，始终在分布外谱系的某处运行。</p>
+
+        <p>后果不是智能体明显失败——而是以难以归因的方式失败。将振动特征归类为正常、而实际上它是早期故障指标的智能体不会产生明确错误。它以训练所报告的任何置信度分数记录正常分类。输入的分布外特性在输出中是不可见的。失败悄然传播，直到作为硬件损坏浮现——此时因果链贯穿着一个智能体决策，而那个决策当时与正确决策无从区分。</p>
+
+        <h2>物理世界护理交叉点</h2>
+        <p>人类是不可化约地多变的。没有任何验证集能捕捉护理人群的完整分布——其并发症、药物相互作用、行为模式、生理反应。真实护理环境中的每个人，在某些方面，都相对于验证数据处于分布外。</p>
+
+        <p>这不是验证工作的失败；这是问题的结构。护理智能体验证所基于的分布与其现在支持的特定人员之间的差距，不是偶然的噪声——它是风险的主要来源。无法识别自身分布外暴露的护理智能体，无法适当地升级，无法相应地限定其建议，也无法触发护理环境中此类暴露所需的人工审查。</p>
+
+        <p>不对称性在于，护理后果通常延迟，因果关系模糊，并归因于潜在状况而非智能体的处理方式。护理智能体的分布外失败可能产生在临床上归因于疾病进展的伤害，而非归因于在验证边界之外运行的系统。问责差距是结构性的：暴露未被记录，伤害未被归因，同一智能体继续为下一位在同样分布差距中的人做出决策。</p>
+
+        <h2>分布外问题的要求</h2>
+        <p>弥合问责差距至少要求：智能体的验证边界以可与实际部署条件比较的术语记录；部署基础设施对分布偏移指标进行持续监控；当检测到偏移时，自动触发升级或回退行为——而不是留给那些对模型内部分布假设没有可见性的观察者。</p>
+
+        <p>更根本的是，它要求接受分布外暴露在后果性部署中不是边缘案例。它是任何在真实、变化和人性化领域中运行的智能体的正常状态。问题不是智能体是否会遇到分布外输入——它会。问题是部署架构是否承认这一点，对其进行监控，并以保留智能体经验证提供的安全属性的方式响应。</p>
+
+        <p>在不知情的情况下在分布外运行的智能体，通常意义上不是一个失败的智能体。它是一个在没有能够检测该条件的问责架构的情况下部署的智能体。失败在上游——在部署决策中，而不在模型中。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>每个AI智能体都在有限的输入分布上经过验证。在该分布之外，其表达的置信度未经校准，决策阈值不再调整，失败模式不再可预测——然而智能体通常在没有任何信号表明边界已被越过的情况下继续运行。在后量子安全中，这意味着智能体针对已经移动的威胁模型选择密码参数。在硬件中，这意味着异常检测将新型故障特征分类为正常。在物理世界护理中，这意味着为特征落在验证人群之外的患者提供建议，其不良结局可能被归因于疾病，而非归因于在能力边界之外运行的智能体。部署架构必须知道验证边界在哪里，对其进行监控，并在验证与部署之间的差距变得重要时触发升级。</p>
+      </div>
+    </div>
+
+    <!-- ZH-HK -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>每一個AI智能體的部署決策都攜帶著一個隱形的邊界條件：智能體在其經過驗證的輸入範圍內表現如測試所示，對範圍之外的任何情況不作保證。這個邊界很少被明確表述，通常即使是開發者也無法精確知曉。但它始終存在——當智能體越過它時，支撐部署決策的可靠性屬性便不再適用。</p>
+
+        <p>分佈外問題首先不是模型質量問題。一個經過精心訓練和驗證的智能體，當接收到訓練和評估分佈之外的輸入時，仍可能造成嚴重後果的失敗。更具體的失敗在於，智能體通常不知道它已經越過了這個邊界。其置信度估計是針對分佈內示例校準的；其推理模式、工具使用啟發式、決策閾值——都為它所識別的世界而調整。當那個世界以重要的方式改變時，智能體繼續運作，好像什麼都沒有發生。</p>
+
+        <h2>後量子交叉點</h2>
+        <p>後量子密碼學不僅僅是算法參數的改變。它是密碼景觀的結構性轉變——新的基元、新的失敗模式、與大多數已部署智能體所針對的經典威脅模型不相似的新攻擊面。一個針對經典威脅模型驗證的、正在做密碼配置決策的智能體，在定義上，當遇到後量子相關場景時，就是在分佈外運行。</p>
+
+        <p>難點在於這個邊界不是單一明確的界限。它隨著威脅模型的演進而移動：隨著新攻擊的發佈，隨著標準的成熟，隨著推薦參數集的變化。六個月前經過驗證的智能體可能已經對當前景觀處於分佈外狀態——不是因為算法改變，而是因為被認為充分的安全邊際和配置已被修訂。當這種情況發生時，沒有警報響起。智能體繼續以與其選擇仍然有效時相同的表面置信度選擇參數，針對一個它沒有見過也沒有被訓練去識別的威脅模型。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>部署中的硬件環境與驗證中的硬件環境不同。在受控測試環境中對精心選取的傳感器讀數進行驗證的模型，將會遇到驗證集中沒有出現的傳感器漂移、製造差異、環境噪聲和故障模式特徵。在實際部署中做出維護調度或異常檢測決策的智能體，在不同程度上，始終在分佈外譜系的某處運行。</p>
+
+        <p>後果不是智能體明顯失敗——而是以難以歸因的方式失敗。將振動特徵歸類為正常、而實際上它是早期故障指標的智能體不會產生明確錯誤。它以訓練所報告的任何置信度分數記錄正常分類。輸入的分佈外特性在輸出中是不可見的。失敗悄然傳播，直到作為硬件損壞浮現——此時因果鏈貫穿著一個智能體決策，而那個決策當時與正確決策無從區分。</p>
+
+        <h2>物理世界護理交叉點</h2>
+        <p>人類是不可化約地多變的。沒有任何驗證集能捕捉護理人群的完整分佈——其並發症、藥物相互作用、行為模式、生理反應。真實護理環境中的每個人，在某些方面，都相對於驗證數據處於分佈外。</p>
+
+        <p>這不是驗證工作的失敗；這是問題的結構。護理智能體驗證所基於的分佈與其現在支持的特定人員之間的差距，不是偶然的噪聲——它是風險的主要來源。無法識別自身分佈外暴露的護理智能體，無法適當地升級，無法相應地限定其建議，也無法觸發護理環境中此類暴露所需的人工審查。</p>
+
+        <p>不對稱性在於，護理後果通常延遲，因果關係模糊，並歸因於潛在狀況而非智能體的處理方式。護理智能體的分佈外失敗可能產生在臨床上歸因於疾病進展的傷害，而非歸因於在驗證邊界之外運行的系統。問責差距是結構性的：暴露未被記錄，傷害未被歸因，同一智能體繼續為下一位在同樣分佈差距中的人做出決策。</p>
+
+        <h2>分佈外問題的要求</h2>
+        <p>彌合問責差距至少要求：智能體的驗證邊界以可與實際部署條件比較的術語記錄；部署基礎設施對分佈偏移指標進行持續監控；當檢測到偏移時，自動觸發升級或回退行為——而不是留給那些對模型內部分佈假設沒有可見性的觀察者。</p>
+
+        <p>更根本的是，它要求接受分佈外暴露在後果性部署中不是邊緣案例。它是任何在真實、變化和人性化領域中運行的智能體的正常狀態。問題不是智能體是否會遇到分佈外輸入——它會。問題是部署架構是否承認這一點，對其進行監控，並以保留智能體經驗證提供的安全屬性的方式響應。</p>
+
+        <p>在不知情的情況下在分佈外運行的智能體，通常意義上不是一個失敗的智能體。它是一個在沒有能夠檢測該條件的問責架構的情況下部署的智能體。失敗在上游——在部署決策中，而不在模型中。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>每個AI智能體都在有限的輸入分佈上經過驗證。在該分佈之外，其表達的置信度未經校準，決策閾值不再調整，失敗模式不再可預測——然而智能體通常在沒有任何信號表明邊界已被越過的情況下繼續運行。在後量子安全中，這意味著智能體針對已經移動的威脅模型選擇密碼參數。在硬件中，這意味著異常檢測將新型故障特徵分類為正常。在物理世界護理中，這意味著為特徵落在驗證人群之外的患者提供建議，其不良結局可能被歸因於疾病，而非歸因於在能力邊界之外運行的智能體。部署架構必須知道驗證邊界在哪裡，對其進行監控，並在驗證與部署之間的差距變得重要時觸發升級。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-05-31</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
