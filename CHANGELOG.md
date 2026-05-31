@@ -1,3 +1,4 @@
+2026-05-31 16:15 UTC · blog: add essay 'The out-of-distribution problem' — accountability when agents face inputs outside their validation boundary (EN+ZH+ZH-HK) · 5639c1c
 2026-05-31 12:30 UTC · blog: add essay 'The temporal accountability gap' — accountability when harm emerges long after the agent acts (EN+ZH+ZH-HK) · 59bf5b9
 2026-05-31 12:15 UTC · blog: add essay 'The semantic gap problem' — accountability when agent interpretation diverges from principal intent (EN+ZH+ZH-HK) · 8323763
 2026-05-31 08:15 UTC · blog: add essay 'The confidence calibration problem' — oversight fails when AI agent certainty does not track actual accuracy (EN+ZH+ZH-HK) · c674cd0
