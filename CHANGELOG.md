@@ -64,3 +64,4 @@
 2026-05-24 04:10 UTC · blog: 'The state synchronization problem' essay · 4e96e74
 2026-05-26 12:15 UTC · blog: add essay 'The offline agent problem — accountability when the network is gone' (EN+ZH+ZH-HK) · 06b1e71
 2026-05-30 04:15 UTC · blog: add essay 'The consent withdrawal problem' (EN+ZH+ZH-HK) · 7157ee8
+2026-05-31 12:15 UTC · blog: add essay 'The semantic gap problem' — accountability when agent interpretation diverges from principal intent (EN+ZH+ZH-HK) · 8323763
