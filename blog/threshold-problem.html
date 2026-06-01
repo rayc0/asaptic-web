@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The threshold problem — Asaptic Labs</title>
+
+  <meta name="description" content="Every agent deployment has a threshold dividing assistance from autonomy. Thresholds are rarely declared as first-class design artifacts — they drift upward over time as trust accretes and operational pressure reduces escalation. When autonomy expands without a corresponding accountability decision, the authorization record stops reflecting reality." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/threshold-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The threshold problem: accountability when agent autonomy drifts upward without explicit governance" />
+  <meta property="og:description" content="Every agent deployment has a threshold dividing assistance from autonomy. Thresholds are rarely declared as first-class design artifacts — they drift upward over time as trust accretes and operational pressure reduces escalation. When autonomy expands without a corresponding accountability decision, the authorization record stops reflecting reality." />
+  <meta property="og:url" content="https://asaptic.com/blog/threshold-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-01" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The threshold problem: accountability when agent autonomy drifts upward without explicit governance",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-01",
+    "description": "Every agent deployment has a threshold dividing assistance from autonomy. Thresholds are rarely declared as first-class design artifacts — they drift upward over time as trust accretes and operational pressure reduces escalation. When autonomy expands without a corresponding accountability decision, the authorization record stops reflecting reality.",
+    "url": "https://asaptic.com/blog/threshold-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.15s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0,200,150,0.04);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    .essay-body h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+      letter-spacing: 0.01em;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 28px 32px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      background: rgba(0,200,150,0.02);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Quantum Security × Hardware × Human Care</div>
+      <h1 class="essay-title">The threshold problem: accountability when agent autonomy drifts upward without explicit governance</h1>
+      <p class="essay-subtitle">Every agent deployment contains a threshold — the point at which the agent acts rather than escalates. That threshold is almost never declared as a first-class design artifact. It drifts upward as trust accretes, as escalation volume creates operational pressure, and as no single person makes a decision to expand the agent's autonomous scope. When autonomy grows without a corresponding accountability decision, the authorization record stops reflecting the agent's actual behavior.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-01</span>
+        <span>6 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>The threshold is the line between an agent that assists and an agent that decides. On one side of the line, the agent surfaces a recommendation, a flag, or an escalation — and a human acts. On the other side, the agent acts directly, and human attention is not required. The position of that line is one of the most consequential properties of any agentic deployment. It determines who is accountable for which decisions, which oversight mechanisms apply, and where the authorization record ends and the agent's autonomous judgment begins.</p>
+
+        <p>Most threshold positions are not explicitly designed. They emerge. An agent authorized to monitor and escalate anomalies will, in practice, have an implicit threshold determined by the sensitivity of its detection model, the volume of escalations it generates, and the tolerance of the humans receiving those escalations for false positives. None of these inputs appear in the authorization record. The threshold is a byproduct of the deployment design, not a declared property of it.</p>
+
+        <p>Threshold drift occurs when the threshold's position changes over time without a corresponding authorization decision. The most common mechanism is operational pressure: escalation volume exceeds the human team's review capacity, so the threshold is raised to reduce the load. The second mechanism is trust accretion: the agent's outputs prove reliable over time, so operators become comfortable letting more decisions pass through without review. The third is model updating: as the agent's underlying model is retrained or fine-tuned, its confidence scores shift, which moves the threshold even when the threshold value itself is unchanged.</p>
+
+        <p>Each of these mechanisms is individually defensible. Reducing false-positive escalation rate is good engineering. Extending autonomy to a proven agent is reasonable trust management. Improving the model is maintenance. But together, they produce a deployment in which the agent's actual autonomous scope is substantially broader than the scope that was reviewed and authorized at deployment time. No single decision expanded the agent's authority. The expansion happened in the gaps between decisions.</p>
+
+        <h2>The post-quantum security crossing</h2>
+        <p>An agent managing cryptographic key rotation operates against a threshold that governs when it acts alone versus when it queues a rotation for human review. At deployment, the threshold might be set so that routine rotations are autonomous while rotations that affect trust anchors, cross-domain key material, or certificates with extended validity periods require review. Over time, the definition of "routine" expands. The agent has performed thousands of autonomous rotations without incident; operators have accepted its judgment on progressively more consequential material. The threshold drifts. Eventually, the agent is autonomously rotating key material that the original authorization was designed to require human review for — not because anyone decided to grant that authority, but because no one decided to preserve the boundary that excluded it.</p>
+
+        <p>In a post-quantum migration context, this matters acutely. The consequences of key rotation decisions are long-lived: material signed under a compromised or poorly executed rotation remains in use until expiration. A threshold that drifted during the classical period may have transferred autonomous authority over quantum-transition-critical key exchanges to an agent that was never reviewed for that scope.</p>
+
+        <h2>The hardware crossing</h2>
+        <p>Industrial and physical-world agents — robotic systems, environmental control agents, fleet monitoring systems — operate in domains where the threshold between recommendation and action has direct physical consequences. A robotic care assistant authorized to alert human caregivers when it detects a patient in distress has a threshold at which it alerts versus attempts an autonomous physical intervention. That threshold position is safety-critical. It determines whether a human is in the decision loop for the action or not.</p>
+
+        <p>Threshold drift in hardware deployments is particularly difficult to detect because it may be expressed in the latency of escalation rather than in its absence. An agent that previously escalated immediately may begin to delay — attempting a brief autonomous intervention first, escalating only if it fails. The escalation record continues to show escalations. The threshold has moved, but the audit trail does not reflect the movement because the audit trail records escalation events, not threshold positions.</p>
+
+        <h2>The physical-world care crossing</h2>
+        <p>Care agents advising on nutrition, medication timing, or care protocols operate against thresholds that distinguish clinical recommendation from clinical decision. At deployment, the agent might be authorized to flag deviations from a care plan without acting on them — flagging is autonomous, acting on the flag requires a qualified clinician. Over time, the most routine flags are resolved consistently in a predictable way; operators accept that the agent's flagging is so reliable that the clinician review step is perfunctory. The threshold drifts: the agent begins constructing pre-resolved flags — recommendations that include a proposed action so specific that accepting the flag is functionally equivalent to accepting the action.</p>
+
+        <p>The authorization record does not reflect this change. The agent is still "flagging" in the formal sense. The human is still nominally approving. But the autonomous scope of the agent's clinical judgment has expanded across the threshold without that expansion being named, reviewed, or logged as an authorization event. When a patient outcome is reviewed, the accountability chain appears intact — a clinician approved every action. The threshold problem is that the clinician's approval function was hollowed out by drift before the outcome occurred.</p>
+
+        <h2>What the threshold problem requires</h2>
+        <p>The minimum response is to make thresholds first-class design artifacts: declared at deployment time, explicitly versioned when they change, and logged as authorization events. A threshold change — whether driven by model updates, operational pressure, or trust accretion — should generate an audit record equivalent in accountability weight to the original authorization decision. Operators should be required to attest to threshold changes, not merely implement them as configuration updates.</p>
+
+        <p>Beyond logging, thresholds require monitoring. The current escalation rate is not a sufficient proxy for threshold position, because drift can reduce escalation rate while the threshold itself remains formally unchanged. Threshold governance requires tracking the distribution of decisions that pass through the autonomous channel against the distribution of decisions that were in scope at deployment authorization time — and flagging when the intersection is no longer what the authorization assumed.</p>
+
+        <p>The threshold problem is a governance problem that looks like an engineering problem. The tools for managing it — confidence thresholds, escalation routing, review queues — are all engineering constructs. But the question of where the threshold should sit, and who has authority to move it, is an accountability question. Systems that treat threshold management as a configuration concern rather than a governance concern will find that their agents have acquired substantially more autonomous authority than any principal ever intended to grant.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Summary</span>
+        <p>Every agent deployment has a threshold dividing the decisions it makes autonomously from the decisions it escalates. Thresholds are rarely declared as first-class design artifacts; they emerge from confidence scoring, operational pressure, and accumulated trust. Threshold drift — the upward movement of autonomous scope without explicit authorization — produces agents that act on a broader range of decisions than any principal reviewed or approved. In post-quantum key management, drift transfers autonomous authority over migration-critical material to agents that were never reviewed for that scope. In hardware deployments, drift may shift from immediate escalation to attempted autonomous intervention, with the threshold movement invisible in the escalation record. In care settings, drift hollows out the clinician review function before the accountability record reflects any change. Treating thresholds as first-class governance artifacts — declared, versioned, logged, and separately authorized — is the minimum architecture for containing autonomous scope to what was actually approved.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>阈值是辅助型智能体与决策型智能体之间的分界线。在阈值的一侧，智能体呈现建议、标记或上报——由人类行动；在另一侧，智能体直接行动，无需人类介入。这条线的位置是任何智能体部署中最关键的属性之一：它决定了谁对哪些决策负责、适用哪些监督机制，以及授权记录在哪里结束、智能体自主判断在哪里开始。</p>
+
+        <p>大多数阈值位置并非经过明确设计，而是自然涌现的。一个被授权监控并上报异常的智能体，其隐性阈值由检测模型的敏感度、产生的上报量以及接收上报的人类团队对误报的容忍度共同决定。这些输入都不出现在授权记录中。阈值是部署设计的副产品，而非其明确声明的属性。</p>
+
+        <p>阈值漂移是指阈值位置随时间变化，但没有相应的授权决策。最常见的机制是运营压力：上报量超过人类团队的审查能力，于是提高阈值以减少负荷。第二种机制是信任积累：智能体的输出被证明可靠，运营方变得放心地让更多决策无需审查而直接通过。第三种是模型更新：随着底层模型被重训练或微调，置信度评分发生变化，即使阈值值本身未改变，阈值也随之移动。</p>
+
+        <p>每一种机制单独看都是可以辩护的。降低误报上报率是良好的工程实践；对经过验证的智能体扩展自主权是合理的信任管理；改进模型是维护工作。但它们共同产生的结果是：智能体的实际自主范围远比部署时经过审查和授权的范围广泛。没有单一决策扩大了智能体的权限——扩张发生在决策之间的间隙中。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>管理密钥轮换的智能体依据一个阈值运作，决定何时自主行动、何时将轮换排入人工审查队列。部署时，阈值可能被设定为：常规轮换自主进行，而影响信任锚点、跨域密钥材料或效期较长的证书的轮换则需要审查。随着时间推移，"常规"的定义逐渐扩大。智能体已自主完成数千次轮换且未发生事故；运营方接受其判断的对象越来越重要。阈值漂移了。最终，智能体自主轮换的密钥材料，正是原始授权设计中要求人工审查的那类——不是因为有人决定授予那项权限，而是因为没有人决定维护排除它的边界。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>物理世界中的智能体——机器人系统、环境控制智能体、机队监控系统——在建议与行动之间的阈值直接影响物理后果的领域中运作。被授权在检测到患者处于困境时向人工护理员发出警报的护理机器人助手，有一个在警报与尝试自主物理干预之间进行选择的阈值。该阈值位置至关重要——它决定了人类是否处于决策回路中。硬件部署中的阈值漂移特别难以检测，因为它可能体现在上报延迟而非上报缺失上：先尝试简短的自主干预，失败时才上报。审计记录依然显示有上报事件，但阈值已经移动——记录的是上报事件，而非阈值位置。</p>
+
+        <h2>物理世界护理交叉点</h2>
+        <p>为营养、药物时机或护理方案提供建议的护理智能体，依据区分临床建议与临床决策的阈值运作。部署时，智能体可能被授权标记偏离护理计划的情况而不采取行动——标记是自主的，对标记采取行动需要合格临床医生参与。随着时间推移，最常规的标记以可预测的方式被一致解决；运营方认为智能体的标记足够可靠，临床医生的审查步骤已流于形式。阈值漂移了：智能体开始构建预先解决的标记——建议中包含如此具体的拟议行动，以至于接受标记在功能上等同于接受行动。授权记录没有反映这一变化。当患者结果受到审查时，问责链看似完整——临床医生批准了每一个行动。阈值问题在于：在结果发生之前，临床医生的批准功能已通过漂移被掏空。</p>
+
+        <h2>阈值问题的解决要求</h2>
+        <p>最低限度的回应是将阈值视为一等设计产物：在部署时声明，变更时明确版本化，并作为授权事件记录。阈值变更——无论由模型更新、运营压力还是信任积累驱动——都应产生在问责权重上等同于原始授权决策的审计记录。运营方应被要求对阈值变更进行认证，而不仅仅将其作为配置更新加以实施。</p>
+
+        <p>超越记录层面，阈值还需要监控。当前上报率并不是阈值位置的充分代理指标，因为漂移可以在阈值形式上保持不变的同时降低上报率。阈值治理需要追踪通过自主渠道的决策分布，与部署授权时在范围内的决策分布进行对照——并在交集不再符合授权假设时发出警告。</p>
+
+        <p>阈值问题是一个看起来像工程问题的治理问题。用于管理它的工具——置信度阈值、上报路由、审查队列——都是工程构件。但阈值应该设在哪里、谁有权移动它，则是问责问题。将阈值管理视为配置问题而非治理问题的系统，将发现其智能体已获得比任何委托人打算授予的更广泛的自主权限。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>每个智能体部署都有一条阈值，将自主决策与上报决策分隔开。阈值很少作为一等设计产物被声明；它们从置信度评分、运营压力和积累的信任中涌现。阈值漂移——在没有明确授权的情况下，自主范围向上移动——产生的智能体所处理的决策范围远超任何委托人审查或批准的范围。在后量子密钥管理中，漂移将对迁移关键材料的自主权转移给从未就该范围接受审查的智能体。在硬件部署中，漂移可能在不留下阈值移动迹象的情况下，将立即上报转变为先尝试自主干预。在护理场景中，漂移在问责记录反映任何变化之前就掏空了临床医生的审查功能。将阈值视为一等治理产物——声明、版本化、记录并单独授权——是将自主范围限制在实际获批范围内的最低架构要求。</p>
+      </div>
+    </div>
+
+    <!-- ZH-HK -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>閾值是輔助型智能體與決策型智能體之間的分界線。在閾值的一側，智能體呈現建議、標記或上報——由人類行動；在另一側，智能體直接行動，無需人類介入。這條線的位置是任何智能體部署中最關鍵的屬性之一：它決定了誰對哪些決策負責、適用哪些監督機制，以及授權記錄在哪裡結束、智能體自主判斷在哪裡開始。</p>
+
+        <p>大多數閾值位置並非經過明確設計，而是自然湧現的。一個被授權監控並上報異常的智能體，其隱性閾值由檢測模型的敏感度、產生的上報量以及接收上報的人類團隊對誤報的容忍度共同決定。這些輸入都不出現在授權記錄中。閾值是部署設計的副產品，而非其明確聲明的屬性。</p>
+
+        <p>閾值漂移是指閾值位置隨時間變化，但沒有相應的授權決策。最常見的機制是營運壓力：上報量超過人類團隊的審查能力，於是提高閾值以減少負荷。第二種機制是信任積累：智能體的輸出被證明可靠，營運方變得放心地讓更多決策無需審查而直接通過。第三種是模型更新：隨著底層模型被重新訓練或微調，置信度評分發生變化，即使閾值本身未改變，閾值位置也隨之移動。</p>
+
+        <p>每一種機制單獨看都是可以辯護的。降低誤報上報率是良好的工程實踐；對經過驗證的智能體擴展自主權是合理的信任管理；改進模型是維護工作。但它們共同產生的結果是：智能體的實際自主範圍遠比部署時經過審查和授權的範圍廣泛。沒有單一決策擴大了智能體的權限——擴張發生在決策之間的間隙中。</p>
+
+        <h2>後量子安全交叉點</h2>
+        <p>管理密鑰輪換的智能體依據一個閾值運作，決定何時自主行動、何時將輪換排入人工審查隊列。部署時，閾值可能被設定為：常規輪換自主進行，而影響信任錨點、跨域密鑰材料或效期較長的證書的輪換則需要審查。隨著時間推移，「常規」的定義逐漸擴大。智能體已自主完成數千次輪換且未發生事故；營運方接受其判斷的對象越來越重要。閾值漂移了。最終，智能體自主輪換的密鑰材料，正是原始授權設計中要求人工審查的那類——不是因為有人決定授予那項權限，而是因為沒有人決定維護排除它的邊界。在後量子遷移情境下，這尤為關鍵：密鑰輪換決策的後果長期存在，而在遷移關鍵密鑰交換上漂移的閾值，可能已將自主權轉移給從未就該範圍接受審查的智能體。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>物理世界中的智能體——機器人系統、環境控制智能體、機隊監控系統——在建議與行動之間的閾值直接影響物理後果的領域中運作。被授權在檢測到患者處於困境時向人工護理員發出警報的護理機器人助手，有一個在警報與嘗試自主物理干預之間進行選擇的閾值。該閾值位置至關重要——它決定了人類是否處於決策回路中。硬件部署中的閾值漂移特別難以察覺，因為它可能體現在上報延遲而非上報缺失上：先嘗試簡短的自主干預，失敗時才上報。審計記錄依然顯示有上報事件，但閾值已經移動——記錄的是上報事件，而非閾值位置。</p>
+
+        <h2>物理世界護理交叉點</h2>
+        <p>為營養、藥物時機或護理方案提供建議的護理智能體，依據區分臨床建議與臨床決策的閾值運作。部署時，智能體可能被授權標記偏離護理計劃的情況而不採取行動——標記是自主的，對標記採取行動需要合格臨床醫生參與。隨著時間推移，最常規的標記以可預測的方式被一致解決；營運方認為智能體的標記足夠可靠，臨床醫生的審查步驟已流於形式。閾值漂移了：智能體開始構建預先解決的標記——建議中包含如此具體的擬議行動，以至於接受標記在功能上等同於接受行動。授權記錄沒有反映這一變化。當患者結果受到審查時，問責鏈看似完整——臨床醫生批准了每一個行動。閾值問題在於：在結果發生之前，臨床醫生的批准功能已通過漂移被掏空。</p>
+
+        <h2>閾值問題的解決要求</h2>
+        <p>最低限度的回應是將閾值視為一等設計產物：在部署時聲明，變更時明確版本化，並作為授權事件記錄。閾值變更——無論由模型更新、營運壓力還是信任積累驅動——都應產生在問責權重上等同於原始授權決策的審計記錄。營運方應被要求對閾值變更進行認證，而不僅僅將其作為配置更新加以實施。</p>
+
+        <p>超越記錄層面，閾值還需要監控。當前上報率並不是閾值位置的充分代理指標，因為漂移可以在閾值形式上保持不變的同時降低上報率。閾值治理需要追蹤通過自主渠道的決策分佈，與部署授權時在範圍內的決策分佈進行對照——並在交集不再符合授權假設時發出警告。</p>
+
+        <p>閾值問題是一個看起來像工程問題的治理問題。用於管理它的工具——置信度閾值、上報路由、審查隊列——都是工程構件。但閾值應該設在哪裡、誰有權移動它，則是問責問題。將閾值管理視為配置問題而非治理問題的系統，將發現其智能體已獲得比任何委託人打算授予的更廣泛的自主權限。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>每個智能體部署都有一條閾值，將自主決策與上報決策分隔開。閾值很少作為一等設計產物被聲明；它們從置信度評分、營運壓力和積累的信任中湧現。閾值漂移——在沒有明確授權的情況下，自主範圍向上移動——產生的智能體所處理的決策範圍遠超任何委託人審查或批准的範圍。在後量子密鑰管理中，漂移將對遷移關鍵材料的自主權轉移給從未就該範圍接受審查的智能體。在硬件部署中，漂移可能在不留下閾值移動跡象的情況下，將立即上報轉變為先嘗試自主干預。在護理場景中，漂移在問責記錄反映任何變化之前就掏空了臨床醫生的審查功能。將閾值視為一等治理產物——聲明、版本化、記錄並單獨授權——是將自主範圍限制在實際獲批範圍內的最低架構要求。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-01</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
