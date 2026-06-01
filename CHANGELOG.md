@@ -1,3 +1,4 @@
+2026-06-01 20:15 UTC · blog: add essay 'The false consensus problem' — accountability when coordinating agents agree on a shared error (EN+ZH+ZH-HK) · 7030dc5
 2026-06-01 16:15 UTC · blog: add essay 'The algorithm agility problem' — accountability when agent crypto assumptions cannot migrate (EN+ZH+ZH-HK) · 0feeac6
 2026-06-01 12:15 UTC · blog: add essay 'The automation atrophy problem' — accountability when oversight capacity degrades through disuse (EN+ZH+ZH-HK) · 782c209
 2026-06-01 08:15 UTC · blog: add essay 'The normalization of deviance' — accountability when accepted deviations accumulate (EN+ZH+ZH-HK) · e6d16f4
