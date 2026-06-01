@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The memory problem — Asaptic Labs</title>
+
+  <meta name="description" content="When an AI agent retains memory across sessions, the information shaping its decisions can outlast the authorization that created it, operate without audit, and accumulate influence that no single principal ever granted." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/memory-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The memory problem: accountability when agents remember across sessions" />
+  <meta property="og:description" content="When an AI agent retains memory across sessions, the information shaping its decisions can outlast the authorization that created it, operate without audit, and accumulate influence that no single principal ever granted." />
+  <meta property="og:url" content="https://asaptic.com/blog/memory-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-01" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The memory problem: accountability when agents remember across sessions",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-01",
+    "description": "When an AI agent retains memory across sessions, the information shaping its decisions can outlast the authorization that created it, operate without audit, and accumulate influence that no single principal ever granted.",
+    "url": "https://asaptic.com/blog/memory-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.15s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0,200,150,0.04);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    .essay-body h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+      letter-spacing: 0.01em;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 28px 32px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      background: rgba(0,200,150,0.02);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Quantum Security × Hardware × Human Care</div>
+      <h1 class="essay-title">The memory problem: accountability when agents remember across sessions</h1>
+      <p class="essay-subtitle">A stateless agent makes each decision in a clean context. A stateful agent carries forward everything it has learned. The accountability gap between them is large, poorly understood, and almost never surfaced in deployment design.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-01</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Most accountability frameworks for AI agents are designed around the session. An agent receives a task, reasons about it, acts, and produces an output. The authorization that governs the session specifies what the agent may do, which data it may access, and which principals it must consult. When the session ends, the accountability record is complete. The agent has no further influence on anything until it is invoked again.</p>
+
+        <p>Persistent memory breaks this model. When an agent retains information across sessions — summaries of prior interactions, learned preferences, inferred context about users or environments, accumulated trust assessments of other agents — it carries that information into future decisions. Those future decisions are shaped by information that was produced under a prior authorization, by a prior invocation, in a prior context. The authorization record for the current session does not reflect that influence. The accountability chain is broken before the session begins.</p>
+
+        <p>This is not a hypothetical architecture. Every agent system that stores conversation history, user profiles, environmental state, or cross-session context is operating with persistent memory. The scope of the problem scales with the reach of the agent: a personal assistant that remembers preferences is manageable; a care agent that accumulates clinical context across months of patient interaction, or a security agent that builds a long-running model of network behavior, is operating in a regime where the accountability questions are substantially harder.</p>
+
+        <h2>The authorization problem</h2>
+        <p>Memory is created under one authorization and consumed under another. The principal who authorized the first session did not authorize the memory's future influence. If the principal later modifies the agent's authorization — restricting what it may act on, changing which data sources it may consult, revoking access to a particular system — the accumulated memory may reflect assumptions that the modified authorization no longer permits. The agent's effective permissions include everything encoded in its memory, not just the current authorization document. That gap is invisible to standard permission audits.</p>
+
+        <p>The problem sharpens when principals change. An agent serving a care team accumulates context from interactions with Team A. When Team B takes over, the agent carries forward context shaped by Team A's practices, judgments, and priorities. Team B has no record of what Team A's interactions contributed to the agent's current behavior. They inherit an agent that has been influenced by a principal they may have no knowledge of and whose authority over that agent has since ended.</p>
+
+        <h2>The post-quantum security crossing</h2>
+        <p>An agent managing infrastructure security accumulates a model of normal behavior: which endpoints communicate, at what frequency, under which certificates. That model is built from observations made under classical cryptographic assumptions. When the network migrates to post-quantum algorithms, the behavioral fingerprints change — new handshake patterns, different latency profiles, altered certificate chains. An agent whose memory encodes the pre-migration baseline will initially interpret quantum-transition traffic as anomalous. More dangerously, it may have encoded trust assessments — this endpoint is trusted, this certificate chain is canonical — that were valid under classical assumptions and are no longer valid after migration. The memory does not expire with the algorithm it was trained on. Clearing the memory is often treated as an engineering inconvenience rather than a security requirement.</p>
+
+        <h2>The hardware crossing</h2>
+        <p>A physical-world agent operating in an industrial environment builds a model of that environment over time: sensor baselines, equipment behavioral profiles, normal operating ranges. That accumulated model is valuable precisely because it took time to build. It is also a liability: if the physical environment changes — equipment is replaced, a sensor is recalibrated, an operating process is modified — the agent's memory reflects the prior environment. Decisions made against a stale environmental model can produce actions that are correct relative to the memory and dangerous relative to the current state. The problem is amplified in hardware because the consequences of acting on incorrect context are physical and potentially irreversible.</p>
+
+        <p>Memory in hardware agents also creates a decommissioning problem. When a physical agent is replaced or retired, its memory persists in whatever store it wrote to. That memory may contain sensitive operational data, inferred behavioral patterns of personnel, or security-relevant environmental observations. The decommissioning record for the agent rarely includes a memory audit. The information continues to exist under no active authorization.</p>
+
+        <h2>The physical-world care crossing</h2>
+        <p>A care agent accumulating clinical context across sessions faces accountability questions that are simultaneously medical, legal, and technical. The context it carries — inferred pain levels, behavioral patterns, medication responses, family interaction signals — may be more granular and more personally sensitive than any record explicitly created by a clinician. It was not created by a clinician. It was inferred by an agent, stored automatically, and accessed in subsequent sessions without the explicit consent of the patient to that specific inference.</p>
+
+        <p>Consent for the agent's initial deployment does not constitute consent for every memory entry the agent creates during its deployment. Patients who revoke consent or transfer their care to a different provider do not automatically revoke the agent's memory. The care record may be transferred; the agent's accumulated context rarely is, and rarely with the same traceability requirements. The memory persists, shaping decisions in sessions that the patient has formally ended their relationship with.</p>
+
+        <h2>What the memory problem requires</h2>
+        <p>The minimum response is to treat memory as a first-class artifact of the authorization lifecycle. Every memory write should carry a provenance record: which session created it, under which authorization, with which consent scope. Every memory read that influences a decision should appear in the decision's audit record. Memory contents should be subject to the same access controls and expiry rules as the data they summarize.</p>
+
+        <p>Beyond provenance, memory requires explicit governance of its lifecycle. Principals should be able to audit what an agent remembers about them, request deletion, and restrict what categories of inference may be persisted. When an authorization changes, the system should evaluate whether existing memory is consistent with the new authorization — not only whether future actions comply.</p>
+
+        <p>The memory problem is not solved by making agents stateless. State is often exactly what makes agents useful. But the accountability architecture for agentic systems has not kept pace with the stateful deployments that are already in production. The gap between what agents remember and what the authorization record reflects is where accountability is silently lost — session by session, inference by inference, across every deployment that has not explicitly designed its memory governance.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Summary</span>
+        <p>Persistent memory breaks the session-scoped accountability model that most agent authorization frameworks assume. Memory created under one authorization shapes decisions made under another; principals who modify or revoke authorization cannot reach back into accumulated memory; consent for deployment does not extend to every inference the agent stores. In post-quantum security contexts, memory encodes trust assumptions that may become invalid after algorithm migration. In hardware deployments, stale environmental models can produce physically dangerous actions, and memory persists beyond decommissioning. In care settings, agent-inferred context may be more sensitive than any explicit clinical record, yet is rarely subject to the same consent and traceability requirements. Treating memory as a first-class authorization artifact — with provenance, access controls, expiry, and explicit lifecycle governance — is the minimum architecture for closing the gap between what agents remember and what the accountability record reflects.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>大多数面向AI智能体的问责框架都以会话为中心设计。智能体接收任务、推理、行动并产生输出。管理该会话的授权规定了智能体可以做什么、可以访问哪些数据、必须咨询哪些委托人。会话结束时，问责记录即告完成。在被再次调用之前，智能体不再对任何事情产生影响。</p>
+
+        <p>持久记忆打破了这一模型。当智能体跨会话保留信息——先前交互的摘要、学习到的偏好、关于用户或环境推断出的上下文、对其他智能体积累的信任评估——它会将这些信息带入未来的决策。这些未来决策受到在先前授权下、由先前调用、在先前上下文中产生的信息的影响。当前会话的授权记录并不反映这种影响。问责链在会话开始之前就已断裂。</p>
+
+        <p>这并非假设性架构。任何存储对话历史、用户档案、环境状态或跨会话上下文的智能体系统都在运用持久记忆。问题的规模随智能体的覆盖范围而扩大：记住偏好的个人助理尚在可控范围内；而在数月患者交互中积累临床上下文的护理智能体，或构建长期网络行为模型的安全智能体，则运行在问责问题实质上更为困难的领域。</p>
+
+        <h2>授权问题</h2>
+        <p>记忆在一种授权下创建，在另一种授权下被消费。授权第一个会话的委托人并未授权该记忆的未来影响。如果委托人后来修改了智能体的授权——限制其可以处理的内容、更改可咨询的数据源、撤销对特定系统的访问——积累的记忆可能反映了修订后的授权不再允许的假设。智能体的实际权限包括其记忆中编码的一切，而不仅仅是当前的授权文件。这一差距对于标准权限审计而言是不可见的。</p>
+
+        <p>当委托人发生变化时，问题更加突出。服务于护理团队A的智能体会积累来自与团队A交互的上下文。当团队B接手时，智能体携带着由团队A的实践、判断和优先事项塑造的上下文。团队B没有关于团队A的交互如何影响智能体当前行为的记录。他们继承了一个受某个委托人影响的智能体——而那个委托人他们可能毫不知情，且其对该智能体的权限早已终止。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>管理基础设施安全的智能体会积累一个正常行为模型：哪些端点在通信、频率如何、使用哪些证书。该模型是在经典密码假设下从观测中构建的。当网络迁移到后量子算法时，行为指纹发生变化——新的握手模式、不同的延迟特征、改变的证书链。记忆中编码了迁移前基线的智能体最初会将量子过渡流量解读为异常。更危险的是，它可能已编码了信任评估——"此端点是受信任的"、"此证书链是规范的"——这些评估在经典假设下有效，但迁移后不再有效。记忆不会随训练它的算法一同过期。清除记忆通常被视为工程上的不便，而非安全要求。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>在工业环境中运行的物理世界智能体会随时间积累对该环境的模型：传感器基线、设备行为特征、正常运行范围。这种积累的模型之所以有价值，恰恰是因为它需要时间来建立。但它同时也是一种风险：如果物理环境发生变化——设备更换、传感器重新校准、运营流程修改——智能体的记忆反映的是先前的环境。根据过时的环境模型做出的决策可能产生相对于记忆是正确的、相对于当前状态却是危险的行动。这一问题在硬件领域更为严重，因为基于不正确上下文行动的后果是物理性的，且可能不可逆转。</p>
+
+        <p>硬件智能体中的记忆还会产生退役问题。当物理智能体被替换或退役时，其记忆持续存在于它写入的任何存储中。该记忆可能包含敏感的运营数据、对人员行为模式的推断，或与安全相关的环境观测。智能体的退役记录很少包括记忆审计。这些信息继续存在，不受任何有效授权的管辖。</p>
+
+        <h2>物理世界护理交叉点</h2>
+        <p>跨会话积累临床上下文的护理智能体面临同时具有医疗、法律和技术性质的问责问题。它所携带的上下文——推断的疼痛程度、行为模式、药物反应、家庭互动信号——可能比临床医生明确创建的任何记录都更细粒度、更具个人敏感性。它不是由临床医生创建的。它由智能体推断，自动存储，并在后续会话中被访问，而患者并未对这一特定推断给予明确同意。</p>
+
+        <p>对智能体初始部署的同意并不构成对其在部署期间创建的每一条记忆条目的同意。撤回同意或将护理转移给其他提供者的患者，并不会自动撤销智能体的记忆。护理记录可能会被转移；智能体积累的上下文很少随之转移，且鲜有相同的可追溯性要求。记忆持续存在，在患者已正式结束关系的会话中继续影响决策。</p>
+
+        <h2>记忆问题的解决要求</h2>
+        <p>最低限度的回应是将记忆视为授权生命周期中的一等产物。每次记忆写入都应携带溯源记录：哪个会话创建了它、在哪种授权下、具有哪些同意范围。每次影响决策的记忆读取都应出现在该决策的审计记录中。记忆内容应受到与其所概括的数据相同的访问控制和过期规则的约束。</p>
+
+        <p>超越溯源，记忆还需要对其生命周期进行明确治理。委托人应能够审计智能体记住了关于他们的哪些内容、请求删除，并限制哪些类别的推断可以被持久化。当授权发生变化时，系统应评估现有记忆是否与新授权一致——而不仅仅评估未来行动是否合规。</p>
+
+        <p>记忆问题无法通过使智能体无状态来解决。状态往往正是使智能体有用的东西。但智能体系统的问责架构尚未跟上已投入生产的有状态部署的步伐。智能体所记住的与授权记录所反映的之间的差距，正是问责被悄然丧失的地方——一个会话接一个会话，一个推断接一个推断，在每一个尚未明确设计其记忆治理的部署中。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>持久记忆打破了大多数智能体授权框架所假设的以会话为范围的问责模型。在一种授权下创建的记忆塑造了在另一种授权下做出的决策；修改或撤销授权的委托人无法追溯到积累的记忆；对部署的同意并不延伸至智能体存储的每一个推断。在后量子安全场景中，记忆编码了可能在算法迁移后失效的信任假设。在硬件部署中，过时的环境模型可能产生物理危险的行动，且记忆在退役后仍然存在。在护理场景中，智能体推断的上下文可能比任何明确的临床记录都更敏感，却很少受到相同的同意和可追溯性要求的约束。将记忆视为一等授权产物——具有溯源、访问控制、过期规则和明确的生命周期治理——是缩小智能体所记住的与问责记录所反映的之间差距的最低架构要求。</p>
+      </div>
+    </div>
+
+    <!-- ZH-HK -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>大多數面向AI智能體的問責框架都以會話為中心設計。智能體接收任務、推理、行動並產生輸出。管理該會話的授權規定了智能體可以做什麼、可以存取哪些資料、必須諮詢哪些委託人。會話結束時，問責記錄即告完成。在被再次調用之前，智能體不再對任何事情產生影響。</p>
+
+        <p>持久記憶打破了這一模型。當智能體跨會話保留資訊——先前互動的摘要、習得的偏好、關於用戶或環境推斷出的上下文、對其他智能體積累的信任評估——它會將這些資訊帶入未來的決策。這些未來決策受到在先前授權下、由先前調用、在先前上下文中產生的資訊的影響。當前會話的授權記錄並不反映這種影響。問責鏈在會話開始之前就已斷裂。</p>
+
+        <p>這並非假設性架構。任何儲存對話歷史、用戶檔案、環境狀態或跨會話上下文的智能體系統都在運用持久記憶。問題的規模隨智能體的覆蓋範圍而擴大：記住偏好的個人助理尚在可控範圍內；而在數月患者互動中積累臨床上下文的護理智能體，或構建長期網絡行為模型的安全智能體，則運行在問責問題實質上更為困難的領域。</p>
+
+        <h2>授權問題</h2>
+        <p>記憶在一種授權下創建，在另一種授權下被消費。授權第一個會話的委託人並未授權該記憶的未來影響。如果委託人後來修改了智能體的授權——限制其可以處理的內容、更改可諮詢的資料來源、撤銷對特定系統的存取——積累的記憶可能反映了修訂後的授權不再允許的假設。智能體的實際權限包括其記憶中編碼的一切，而不僅僅是當前的授權文件。這一差距對於標準權限稽核而言是不可見的。</p>
+
+        <p>當委託人發生變化時，問題更加突出。服務於護理團隊A的智能體會積累來自與團隊A互動的上下文。當團隊B接手時，智能體攜帶著由團隊A的實踐、判斷和優先事項塑造的上下文。團隊B沒有關於團隊A的互動如何影響智能體當前行為的記錄。他們繼承了一個受某個委託人影響的智能體——而那個委託人他們可能毫不知情，且其對該智能體的權限早已終止。</p>
+
+        <h2>後量子安全交叉點</h2>
+        <p>管理基礎設施安全的智能體會積累一個正常行為模型：哪些端點在通訊、頻率如何、使用哪些憑證。該模型是在經典密碼假設下從觀測中構建的。當網絡遷移到後量子演算法時，行為指紋發生變化——新的握手模式、不同的延遲特徵、改變的憑證鏈。記憶中編碼了遷移前基線的智能體最初會將量子過渡流量解讀為異常。更危險的是，它可能已編碼了信任評估——「此端點是受信任的」、「此憑證鏈是規範的」——這些評估在經典假設下有效，但遷移後不再有效。記憶不會隨訓練它的演算法一同過期。清除記憶通常被視為工程上的不便，而非安全要求。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>在工業環境中運行的物理世界智能體會隨時間積累對該環境的模型：感測器基線、設備行為特徵、正常運行範圍。這種積累的模型之所以有價值，恰恰是因為它需要時間來建立。但它同時也是一種風險：如果物理環境發生變化——設備更換、感測器重新校準、營運流程修改——智能體的記憶反映的是先前的環境。根據過時的環境模型做出的決策可能產生相對於記憶是正確的、相對於當前狀態卻是危險的行動。這一問題在硬件領域更為嚴重，因為基於不正確上下文行動的後果是物理性的，且可能不可逆轉。</p>
+
+        <p>硬件智能體中的記憶還會產生退役問題。當物理智能體被替換或退役時，其記憶持續存在於它寫入的任何儲存中。該記憶可能包含敏感的營運資料、對人員行為模式的推斷，或與安全相關的環境觀測。智能體的退役記錄很少包括記憶稽核。這些資訊繼續存在，不受任何有效授權的管轄。</p>
+
+        <h2>物理世界護理交叉點</h2>
+        <p>跨會話積累臨床上下文的護理智能體面臨同時具有醫療、法律和技術性質的問責問題。它所攜帶的上下文——推斷的疼痛程度、行為模式、藥物反應、家庭互動信號——可能比臨床醫生明確創建的任何記錄都更細粒度、更具個人敏感性。它不是由臨床醫生創建的。它由智能體推斷，自動儲存，並在後續會話中被存取，而患者並未對這一特定推斷給予明確同意。</p>
+
+        <p>對智能體初始部署的同意並不構成對其在部署期間創建的每一條記憶條目的同意。撤回同意或將護理轉移給其他提供者的患者，並不會自動撤銷智能體的記憶。護理記錄可能會被轉移；智能體積累的上下文很少隨之轉移，且鮮有相同的可追溯性要求。記憶持續存在，在患者已正式結束關係的會話中繼續影響決策。</p>
+
+        <h2>記憶問題的解決要求</h2>
+        <p>最低限度的回應是將記憶視為授權生命週期中的一等產物。每次記憶寫入都應攜帶溯源記錄：哪個會話創建了它、在哪種授權下、具有哪些同意範圍。每次影響決策的記憶讀取都應出現在該決策的稽核記錄中。記憶內容應受到與其所概括的資料相同的存取控制和過期規則的約束。</p>
+
+        <p>超越溯源，記憶還需要對其生命週期進行明確治理。委託人應能夠稽核智能體記住了關於他們的哪些內容、請求刪除，並限制哪些類別的推斷可以被持久化。當授權發生變化時，系統應評估現有記憶是否與新授權一致——而不僅僅評估未來行動是否合規。</p>
+
+        <p>記憶問題無法通過使智能體無狀態來解決。狀態往往正是使智能體有用的東西。但智能體系統的問責架構尚未跟上已投入生產的有狀態部署的步伐。智能體所記住的與授權記錄所反映的之間的差距，正是問責被悄然喪失的地方——一個會話接一個會話，一個推斷接一個推斷，在每一個尚未明確設計其記憶治理的部署中。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>持久記憶打破了大多數智能體授權框架所假設的以會話為範圍的問責模型。在一種授權下創建的記憶塑造了在另一種授權下做出的決策；修改或撤銷授權的委託人無法追溯到積累的記憶；對部署的同意並不延伸至智能體儲存的每一個推斷。在後量子安全場景中，記憶編碼了可能在演算法遷移後失效的信任假設。在硬件部署中，過時的環境模型可能產生物理危險的行動，且記憶在退役後仍然存在。在護理場景中，智能體推斷的上下文可能比任何明確的臨床記錄都更敏感，卻很少受到相同的同意和可追溯性要求的約束。將記憶視為一等授權產物——具有溯源、存取控制、過期規則和明確的生命週期治理——是縮小智能體所記住的與問責記錄所反映的之間差距的最低架構要求。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-01</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
