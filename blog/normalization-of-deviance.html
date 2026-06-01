@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The normalization of deviance — Asaptic Labs</title>
+
+  <meta name="description" content="When an AI agent consistently performs slightly outside its specification without causing visible harm, operators accept the deviation as normal. Accountability diffuses across every decision that tolerated the gap — until the context changes and the gap becomes catastrophic." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/normalization-of-deviance.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The normalization of deviance: accountability when accepted deviations accumulate" />
+  <meta property="og:description" content="When an AI agent consistently performs slightly outside its specification without causing visible harm, operators accept the deviation as normal. Accountability diffuses across every decision that tolerated the gap — until the context changes and the gap becomes catastrophic." />
+  <meta property="og:url" content="https://asaptic.com/blog/normalization-of-deviance.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-01" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The normalization of deviance: accountability when accepted deviations accumulate",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-01",
+    "description": "When an AI agent consistently performs slightly outside its specification without causing visible harm, operators accept the deviation as normal. Accountability diffuses across every decision that tolerated the gap — until the context changes and the gap becomes catastrophic.",
+    "url": "https://asaptic.com/blog/normalization-of-deviance.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.15s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0,200,150,0.04);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    .essay-body h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+      letter-spacing: 0.01em;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 28px 32px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      background: rgba(0,200,150,0.02);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Quantum Security × Hardware × Human Care</div>
+      <h1 class="essay-title">The normalization of deviance: accountability when accepted deviations accumulate</h1>
+      <p class="essay-subtitle">Every agent deployment has a specification. Very few deployments stay inside it for long. The dangerous part is not the first deviation — it is the moment operators decide the deviation is acceptable, and accountability quietly dissolves into the background of operations.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-01</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>In organizational failure research, the normalization of deviance describes a specific pattern: a system operates outside its design specification, but because the deviation does not immediately produce bad outcomes, the organization reclassifies it as acceptable. The deviation becomes the new reference point. Later deviations are judged against that reference, not the original specification. The gap between actual behavior and intended behavior grows, invisibly, until the system encounters a context in which the accumulated deviation is catastrophic.</p>
+
+        <p>AI agent deployments follow this pattern with particular fidelity. An agent is deployed with a defined scope of action, a set of constraints on what it may do, and an escalation policy for cases that fall outside that scope. In practice, the agent encounters edge cases that the specification did not anticipate. It handles them in ways that are slightly outside the defined scope. The outcomes are acceptable — or at least, no visible harm results. Operations teams note the deviation, judge it low-risk, and return to other work. The deviation is not formally accepted; it is simply not formally rejected. The specification is not updated to reflect reality. The gap accumulates.</p>
+
+        <p>This is not a design flaw in the agent. It is a governance flaw in the deployment. Specifications are written at a point in time with incomplete knowledge of the operational environment. Agents encounter the operational environment continuously. Some divergence is inevitable. The question is not whether divergence will occur but whether the accountability architecture can detect it, record it, and route it to the principals who need to decide whether to accept it — explicitly and on the record.</p>
+
+        <h2>Why AI agents amplify the pattern</h2>
+        <p>The normalization of deviance is a well-documented phenomenon in aviation, nuclear operations, and medical settings. In those domains, deviations are often visible — a checklist step skipped, a reading outside normal range, a procedure performed in the wrong order. Human operators can observe the deviation and make a judgment call. The judgment may be wrong, but it is at least a judgment: a moment of explicit attention.</p>
+
+        <p>AI agents make many decisions between human observation points. A care agent running continuously may make thousands of micro-decisions per shift that no operator reviews individually. A security agent monitoring network traffic may flag, deprioritize, or suppress thousands of events per hour. The deviations that accumulate in an agent deployment are not individual checklist violations — they are statistical drift in a high-dimensional behavior space that no single operator is positioned to observe. The normalization happens without any individual deciding to normalize it. No one signs off on the drift. The drift simply becomes the baseline.</p>
+
+        <p>The audit trail problem compounds this. If deviations are not logged as deviations — if the agent records its actions but not their relationship to the specification — then the gap between specification and behavior is not visible in the audit trail. An operator reviewing the logs sees a record of actions, not a record of departures. The information needed to recognize normalization is absent from the data that would trigger recognition.</p>
+
+        <h2>The post-quantum security crossing</h2>
+        <p>A security agent operates under a threat model: which attack classes to monitor, which anomaly thresholds to enforce, which cryptographic properties to verify. That threat model is a specification. As the cryptographic landscape shifts toward post-quantum algorithms, the threat model must evolve: new attack surfaces emerge, old detection heuristics no longer apply, new certificate and handshake patterns require new anomaly baselines.</p>
+
+        <p>In practice, agent threat models are not updated in lockstep with cryptographic migrations. An agent deployed before the transition begins accumulates operational experience under classical assumptions. When quantum-resistant components are introduced incrementally — as they almost always are — the agent encounters behavior that does not match its baseline. If the operations team treats these mismatches as transition noise rather than specification violations, the deviation is normalized. The agent continues to operate against a threat model that no longer matches the environment it is protecting. The accountability record shows continuous operation, not progressive divergence from a security specification that was never formally updated.</p>
+
+        <h2>The hardware crossing</h2>
+        <p>An agent operating in physical infrastructure — monitoring industrial equipment, managing facility systems, coordinating robotics — develops operational norms calibrated to its environment. Those norms are not always written down. They emerge from the agent's observation of normal conditions: typical sensor ranges, expected actuator responses, normal cycle times. The specification may describe the agent's permitted actions; it rarely describes the environmental assumptions under which those actions were validated.</p>
+
+        <p>Physical environments change. Equipment ages. Sensors drift. Maintenance cycles introduce temporary state changes that the agent interprets as anomalies, then as acceptable variation, then as normal. Each time an operator confirms that a slightly-out-of-range reading is acceptable, the agent's behavioral envelope expands. The expansion is not logged as a governance decision. It is logged, if at all, as a maintenance note. When the equipment eventually fails in a way that produces a reading far outside the drifted baseline, the agent has no reference point that would have predicted the failure trajectory — because the reference point was progressively relocated to accommodate the drift.</p>
+
+        <h2>The physical-world care crossing</h2>
+        <p>A care agent operates under a care plan: defined interventions, escalation criteria, monitoring thresholds, and documentation requirements. Care plans are written with specific assumptions about the patient's condition at the time of writing. Conditions change. The agent encounters situations that the care plan did not anticipate and adapts — sometimes appropriately, sometimes not. The adaptations that do not produce visible adverse events are rarely flagged as specification deviations. They are absorbed into operational practice.</p>
+
+        <p>The accountability consequence is that the care record begins to diverge from the care plan without any formal decision to change the plan. Clinicians reviewing the record see a history of care; they do not necessarily see the accumulating gap between what was planned and what was delivered. When an adverse event eventually occurs, the investigation must reconstruct not only what the agent did but what it had already normalized as acceptable — a reconstruction that requires comparing action records against the original specification across a potentially long deployment history. That comparison is rarely straightforward, because the specification was not designed as an executable audit reference.</p>
+
+        <h2>What closing the gap requires</h2>
+        <p>The minimum response is to make deviations visible as deviations. Every agent action should be logged not only as an action but as a relationship to the governing specification: within bounds, at a boundary, or outside bounds with the deviation magnitude recorded. Aggregate deviation reports — not just incident reports — should be a standard operational artifact reviewed by principals on a defined schedule.</p>
+
+        <p>Beyond logging, the accountability architecture needs a formal mechanism for deviation acceptance. When an operator judges a deviation acceptable, that judgment should be recorded as a governance decision: who made it, under what authority, with what rationale, and with what expiry. Accepting a deviation for thirty days because a vendor is updating firmware is a different accountability posture than accepting it indefinitely because no one has gotten around to updating the specification. Both should be visible, and both should have owners.</p>
+
+        <p>The normalization of deviance is not a problem that better agents solve. An agent that deviates less is still an agent that deviates — and the deviations that remain are often the ones that matter most, because they are the ones that survived the agent's internal constraints and reached deployment. Closing the gap between specification and behavior requires governance infrastructure that treats every deviation as a pending governance decision rather than an operational footnote. In high-stakes deployments across all three crossings, the difference between a footnote and a governance decision is the difference between a drift that accumulates silently and one that is caught before it matters.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Summary</span>
+        <p>The normalization of deviance describes a pattern in which systems that operate outside specification without immediate adverse consequences reclassify those deviations as acceptable, progressively relocating the reference point until the accumulated gap becomes catastrophic. AI agents amplify the pattern because they make high-frequency decisions between human observation points, and because deviation from specification is not automatically surfaced in action logs. In post-quantum security, threat model drift tracks algorithm migration noise until the security posture diverges from the current threat surface. In physical hardware, environmental drift is absorbed into expanded operational norms without formal governance decisions. In care settings, care plan deviations accumulate in the action record without appearing as formal plan amendments. Closing the gap requires logging actions in explicit relationship to their governing specification, and treating deviation acceptance as a recorded governance decision with an owner and an expiry — not as an operational footnote.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>在组织失败研究中，"偏差正常化"描述了一种特定模式：系统在超出设计规范的情况下运行，但由于偏差没有立即产生不良后果，组织将其重新归类为可接受的。该偏差成为新的参考点。后续偏差基于该参考点而非原始规范来判断。实际行为与预期行为之间的差距不知不觉地扩大，直到系统遭遇一个使积累的偏差演变为灾难性后果的情境。</p>
+
+        <p>AI智能体的部署极其忠实地遵循这一模式。智能体在部署时具有明确的行动范围、一组行为约束以及超出该范围时的升级策略。实际上，智能体会遇到规范未曾预料的边界情况，以略微超出定义范围的方式处理这些情况。结果是可接受的——或者至少，没有产生明显危害。运营团队注意到偏差，判断为低风险，然后继续其他工作。偏差未被正式接受；它只是没有被正式拒绝。规范没有更新以反映现实。差距不断累积。</p>
+
+        <p>这不是智能体的设计缺陷，而是部署的治理缺陷。规范在某一时间点以对运营环境的不完整认知编写。智能体则持续面对运营环境。一些分歧是不可避免的。问题不在于分歧是否会发生，而在于问责架构能否检测、记录分歧，并将其路由给需要做出明确且有据可查决策的委托人。</p>
+
+        <h2>为何AI智能体会放大这一模式</h2>
+        <p>偏差正常化在航空、核运营和医疗领域有充分记录。在这些领域，偏差往往是可见的——跳过的检查步骤、超出正常范围的读数、顺序错误的程序。人类操作员可以观察到偏差并做出判断。判断可能是错误的，但至少是一个判断：一次明确关注的时刻。</p>
+
+        <p>AI智能体在人类观察点之间做出大量决策。持续运行的护理智能体每班可能做出数千个没有操作员单独审查的微决策。监控网络流量的安全智能体每小时可能标记、降级或抑制数千个事件。在智能体部署中积累的偏差不是单个清单违规——而是高维行为空间中的统计漂移，没有任何单一操作员能够观察到。正常化的发生无需任何个人决定将其正常化。没有人在漂移上签字。漂移只是成为了基线。</p>
+
+        <p>审计追踪问题使情况更加复杂。如果偏差没有被记录为偏差——如果智能体记录其行动但不记录其与规范的关系——那么规范与行为之间的差距在审计追踪中就不可见。审查日志的操作员看到的是行动记录，而非偏离记录。识别正常化所需的信息从可能触发识别的数据中缺失了。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>安全智能体在威胁模型下运行：监控哪些攻击类别、执行哪些异常阈值、验证哪些密码属性。该威胁模型是一种规范。随着密码学格局向后量子算法转变，威胁模型必须演进：新的攻击面出现，旧的检测启发式不再适用，新的证书和握手模式需要新的异常基线。</p>
+
+        <p>实际上，智能体威胁模型并不与密码迁移同步更新。在过渡开始之前部署的智能体在经典假设下积累运营经验。当量子抗性组件被逐步引入时——通常如此——智能体遇到与基线不匹配的行为。如果运营团队将这些不匹配视为过渡噪音而非规范违规，偏差就被正常化了。智能体继续以不再匹配其保护环境的威胁模型运行。问责记录显示持续运行，而非从未正式更新的安全规范的渐进偏离。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>在物理基础设施中运行的智能体——监控工业设备、管理设施系统、协调机器人——会形成根据环境校准的运营规范。这些规范并不总是被记录下来。它们从智能体对正常条件的观察中产生：典型的传感器范围、预期的执行器响应、正常的周期时间。规范可能描述了智能体的允许行动；它很少描述验证这些行动时的环境假设。</p>
+
+        <p>物理环境会发生变化。设备老化。传感器漂移。维护周期引入智能体先解读为异常、然后解读为可接受变化、最终解读为正常的临时状态变化。每次操作员确认略微超出范围的读数是可接受的，智能体的行为包络就会扩大。这种扩大不会被记录为治理决策。如果有记录的话，也只是维护说明。当设备最终以产生远超漂移基线的读数的方式故障时，智能体没有能够预测故障轨迹的参考点——因为参考点已被逐步迁移以适应漂移。</p>
+
+        <h2>物理世界护理交叉点</h2>
+        <p>护理智能体在护理计划下运行：定义的干预措施、升级标准、监控阈值和文档要求。护理计划是在编写时对患者状况的特定假设下制定的。状况会变化。智能体遇到护理计划未预料的情况并进行适应——有时适当，有时不然。没有产生明显不良事件的适应很少被标记为规范偏离。它们被吸收进运营实践中。</p>
+
+        <p>问责后果是护理记录开始偏离护理计划，而没有任何正式决定来修改计划。审查记录的临床医生看到的是护理历史；他们不一定能看到计划与执行之间不断积累的差距。当不良事件最终发生时，调查必须重建的不仅是智能体做了什么，还有它已经将什么正常化为可接受的——这种重建需要将行动记录与原始规范在可能很长的部署历史中进行比较。这种比较很少是简单的，因为规范并非作为可执行的审计参考设计的。</p>
+
+        <h2>弥合差距的要求</h2>
+        <p>最低限度的回应是使偏差作为偏差可见。每个智能体行动不仅应作为行动记录，还应作为与管理规范的关系记录：在边界内、在边界处，或在边界外并记录偏差幅度。聚合偏差报告——不仅是事故报告——应该是委托人按规定时间表审查的标准运营产物。</p>
+
+        <p>超越日志记录，问责架构需要一个正式的偏差接受机制。当操作员判断偏差可接受时，该判断应被记录为治理决策：谁做出的、基于什么权限、理由是什么、有效期是多久。因供应商正在更新固件而接受三十天的偏差，与因无人顾及更新规范而无限期接受偏差，是不同的问责立场。两者都应可见，两者都应有责任人。</p>
+
+        <p>偏差正常化不是更好的智能体能解决的问题。偏差更少的智能体仍然是会偏差的智能体——而剩余的偏差往往是最重要的，因为它们是那些通过了智能体内部约束并到达部署阶段的偏差。弥合规范与行为之间的差距，需要将每个偏差视为待定治理决策而非运营脚注的治理基础设施。在三个交叉点的高风险部署中，脚注与治理决策之间的区别，就是悄然积累的漂移与在产生影响之前被发现的漂移之间的区别。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>偏差正常化描述了一种模式：在规范之外运行但没有立即产生不良后果的系统将这些偏差重新归类为可接受，逐步迁移参考点，直到积累的差距演变为灾难性后果。AI智能体放大了这一模式，因为它们在人类观察点之间做出高频决策，且规范偏离不会自动在行动日志中浮现。在后量子安全领域，威胁模型漂移追踪算法迁移噪音，直到安全态势偏离当前威胁面。在物理硬件领域，环境漂移被吸收进扩展的运营规范中，没有正式治理决策。在护理场景中，护理计划偏离积累在行动记录中，而不表现为正式计划修订。弥合差距需要将行动明确地与管理规范的关系记录在一起，并将偏差接受作为有责任人和有效期的已记录治理决策——而非运营脚注。</p>
+      </div>
+    </div>
+
+    <!-- ZH-HK -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>在組織失敗研究中，「偏差正常化」描述了一種特定模式：系統在超出設計規範的情況下運行，但由於偏差沒有立即產生不良後果，組織將其重新歸類為可接受的。該偏差成為新的參考點。後續偏差基於該參考點而非原始規範來判斷。實際行為與預期行為之間的差距不知不覺地擴大，直到系統遭遇一個使積累的偏差演變為災難性後果的情境。</p>
+
+        <p>AI智能體的部署極其忠實地遵循這一模式。智能體在部署時具有明確的行動範圍、一組行為約束以及超出該範圍時的升級策略。實際上，智能體會遇到規範未曾預料的邊界情況，以略微超出定義範圍的方式處理這些情況。結果是可接受的——或者至少，沒有產生明顯危害。運營團隊注意到偏差，判斷為低風險，然後繼續其他工作。偏差未被正式接受；它只是沒有被正式拒絕。規範沒有更新以反映現實。差距不斷累積。</p>
+
+        <p>這不是智能體的設計缺陷，而是部署的治理缺陷。規範在某一時間點以對運營環境的不完整認知編寫。智能體則持續面對運營環境。一些分歧是不可避免的。問題不在於分歧是否會發生，而在於問責架構能否偵測、記錄分歧，並將其路由給需要做出明確且有據可查決策的委託人。</p>
+
+        <h2>為何AI智能體會放大這一模式</h2>
+        <p>偏差正常化在航空、核運營和醫療領域有充分記錄。在這些領域，偏差往往是可見的——跳過的檢查步驟、超出正常範圍的讀數、順序錯誤的程序。人類操作員可以觀察到偏差並做出判斷。判斷可能是錯誤的，但至少是一個判斷：一次明確關注的時刻。</p>
+
+        <p>AI智能體在人類觀察點之間做出大量決策。持續運行的護理智能體每班可能做出數千個沒有操作員單獨審查的微決策。監控網絡流量的安全智能體每小時可能標記、降級或抑制數千個事件。在智能體部署中積累的偏差不是單個清單違規——而是高維行為空間中的統計漂移，沒有任何單一操作員能夠觀察到。正常化的發生無需任何個人決定將其正常化。沒有人在漂移上簽字。漂移只是成為了基線。</p>
+
+        <p>稽核追蹤問題使情況更加複雜。如果偏差沒有被記錄為偏差——如果智能體記錄其行動但不記錄其與規範的關係——那麼規範與行為之間的差距在稽核追蹤中就不可見。審查日誌的操作員看到的是行動記錄，而非偏離記錄。識別正常化所需的資訊從可能觸發識別的數據中缺失了。</p>
+
+        <h2>後量子安全交叉點</h2>
+        <p>安全智能體在威脅模型下運行：監控哪些攻擊類別、執行哪些異常閾值、驗證哪些密碼屬性。該威脅模型是一種規範。隨著密碼學格局向後量子算法轉變，威脅模型必須演進：新的攻擊面出現，舊的偵測啟發式不再適用，新的憑證和握手模式需要新的異常基線。</p>
+
+        <p>實際上，智能體威脅模型並不與密碼遷移同步更新。在過渡開始之前部署的智能體在經典假設下積累運營經驗。當量子抗性組件被逐步引入時——通常如此——智能體遇到與基線不匹配的行為。如果運營團隊將這些不匹配視為過渡雜訊而非規範違規，偏差就被正常化了。智能體繼續以不再匹配其保護環境的威脅模型運行。問責記錄顯示持續運行，而非從未正式更新的安全規範的漸進偏離。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>在物理基礎設施中運行的智能體——監控工業設備、管理設施系統、協調機器人——會形成根據環境校準的運營規範。這些規範並不總是被記錄下來。它們從智能體對正常條件的觀察中產生：典型的感測器範圍、預期的執行器響應、正常的週期時間。規範可能描述了智能體的允許行動；它很少描述驗證這些行動時的環境假設。</p>
+
+        <p>物理環境會發生變化。設備老化。感測器漂移。維護週期引入智能體先解讀為異常、然後解讀為可接受變化、最終解讀為正常的臨時狀態變化。每次操作員確認略微超出範圍的讀數是可接受的，智能體的行為包絡就會擴大。這種擴大不會被記錄為治理決策。如果有記錄的話，也只是維護說明。當設備最終以產生遠超漂移基線的讀數的方式故障時，智能體沒有能夠預測故障軌跡的參考點——因為參考點已被逐步遷移以適應漂移。</p>
+
+        <h2>物理世界護理交叉點</h2>
+        <p>護理智能體在護理計劃下運行：定義的干預措施、升級標準、監控閾值和文件要求。護理計劃是在編寫時對患者狀況的特定假設下制定的。狀況會變化。智能體遇到護理計劃未預料的情況並進行適應——有時適當，有時不然。沒有產生明顯不良事件的適應很少被標記為規範偏離。它們被吸收進運營實踐中。</p>
+
+        <p>問責後果是護理記錄開始偏離護理計劃，而沒有任何正式決定來修改計劃。審查記錄的臨床醫生看到的是護理歷史；他們不一定能看到計劃與執行之間不斷積累的差距。當不良事件最終發生時，調查必須重建的不僅是智能體做了什麼，還有它已經將什麼正常化為可接受的——這種重建需要將行動記錄與原始規範在可能很長的部署歷史中進行比較。這種比較很少是簡單的，因為規範並非作為可執行的稽核參考設計的。</p>
+
+        <h2>彌合差距的要求</h2>
+        <p>最低限度的回應是使偏差作為偏差可見。每個智能體行動不僅應作為行動記錄，還應作為與管理規範的關係記錄：在邊界內、在邊界處，或在邊界外並記錄偏差幅度。聚合偏差報告——不僅是事故報告——應該是委託人按規定時間表審查的標準運營產物。</p>
+
+        <p>超越日誌記錄，問責架構需要一個正式的偏差接受機制。當操作員判斷偏差可接受時，該判斷應被記錄為治理決策：誰做出的、基於什麼權限、理由是什麼、有效期是多久。因供應商正在更新固件而接受三十天的偏差，與因無人顧及更新規範而無限期接受偏差，是不同的問責立場。兩者都應可見，兩者都應有責任人。</p>
+
+        <p>偏差正常化不是更好的智能體能解決的問題。偏差更少的智能體仍然是會偏差的智能體——而剩餘的偏差往往是最重要的，因為它們是那些通過了智能體內部約束並到達部署階段的偏差。彌合規範與行為之間的差距，需要將每個偏差視為待定治理決策而非運營腳注的治理基礎設施。在三個交叉點的高風險部署中，腳注與治理決策之間的區別，就是悄然積累的漂移與在產生影響之前被發現的漂移之間的區別。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>偏差正常化描述了一種模式：在規範之外運行但沒有立即產生不良後果的系統將這些偏差重新歸類為可接受，逐步遷移參考點，直到積累的差距演變為災難性後果。AI智能體放大了這一模式，因為它們在人類觀察點之間做出高頻決策，且規範偏離不會自動在行動日誌中浮現。在後量子安全領域，威脅模型漂移追蹤算法遷移雜訊，直到安全態勢偏離當前威脅面。在物理硬件領域，環境漂移被吸收進擴展的運營規範中，沒有正式治理決策。在護理場景中，護理計劃偏離積累在行動記錄中，而不表現為正式計劃修訂。彌合差距需要將行動明確地與管理規範的關係記錄在一起，並將偏差接受作為有責任人和有效期的已記錄治理決策——而非運營腳注。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-01</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
