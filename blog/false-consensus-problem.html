@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The false consensus problem — Asaptic Labs</title>
+
+  <meta name="description" content="When multiple AI agents coordinate and converge on the same incorrect conclusion, the oversight mechanisms designed to catch individual error produce no signal — because they were built to detect disagreement, not to interrogate agreement." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/false-consensus-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The false consensus problem: accountability when coordinating agents agree on a shared error" />
+  <meta property="og:description" content="When multiple AI agents coordinate and converge on the same incorrect conclusion, the oversight mechanisms designed to catch individual error produce no signal — because they were built to detect disagreement, not to interrogate agreement." />
+  <meta property="og:url" content="https://asaptic.com/blog/false-consensus-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-01" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The false consensus problem: accountability when coordinating agents agree on a shared error",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-01",
+    "description": "When multiple AI agents coordinate and converge on the same incorrect conclusion, the oversight mechanisms designed to catch individual error produce no signal — because they were built to detect disagreement, not to interrogate agreement.",
+    "url": "https://asaptic.com/blog/false-consensus-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.15s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0,200,150,0.04);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    .essay-body h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+      letter-spacing: 0.01em;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 28px 32px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      background: rgba(0,200,150,0.02);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Quantum Security × Hardware × Human Care</div>
+      <h1 class="essay-title">The false consensus problem: accountability when coordinating agents agree on a shared error</h1>
+      <p class="essay-subtitle">When multiple AI agents coordinate and converge on the same incorrect conclusion, the oversight mechanisms designed to catch individual error produce no signal — because they were built to detect disagreement, not to interrogate agreement.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-01</span>
+        <span>6 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Distributed agent architectures commonly use agreement as a proxy for correctness. When agents disagree, the system surfaces the conflict for human review. When agents agree, the system proceeds. This structure is reasonable for most error modes: genuine errors are uncommon, and multiple independently reasoning agents are unlikely to commit the same mistake simultaneously. Consensus is a reliable signal — until the independence assumption breaks down.</p>
+
+        <p>The independence assumption breaks down in two predictable ways. First, agents trained on overlapping datasets or fine-tuned against similar evaluation criteria will share systematic blind spots. Their agreement reflects shared lineage, not independent corroboration. Second, an adversary who understands the shared substrate can craft inputs that exploit the shared failure mode, producing confident agreement across all agents on an output that serves the adversary's purpose. In both cases the oversight mechanism produces its strongest possible signal — unanimous agreement — at the precise moment the decision most needs scrutiny.</p>
+
+        <p>This is the false consensus problem: not disagreement that oversight failed to resolve, but agreement that oversight was never designed to question.</p>
+
+        <h2>The post-quantum security crossing</h2>
+        <p>Cryptographic verification schemes that depend on multiple independent validators rest on an assumption of genuinely independent verification paths. But validator implementations drawn from a shared reference library, initialized with keys derived from a common hardware root, and running on infrastructure procured from the same supply chain are not independent in the ways that matter for adversarial analysis. A targeted attack that understands the shared implementation characteristics can produce a forged record that all validators accept, because the forgery exploits properties common to every validator rather than vulnerabilities specific to any one.</p>
+
+        <p>The accountability consequence is severe. A multi-party attestation that is intended to demonstrate that no single party could have manufactured the record becomes, under false consensus, a mechanism that makes the manufactured record more credible — because it now carries multiple independent signatures, all of which are genuine in the narrow sense that each validator actually signed what it received. The audit trail is intact. The record is false. Nothing in the multi-party structure surfaced the problem.</p>
+
+        <p>Algorithm diversity — deliberately deploying validators that use different implementations, different hardware provenance, and different key derivation paths — is the structural countermeasure. It increases the cost of achieving false consensus because an attack must now succeed against heterogeneous targets simultaneously. It cannot eliminate the risk, but it changes the economics of the attack in ways that matter for infrastructure that must outlast its current threat model.</p>
+
+        <h2>The hardware crossing</h2>
+        <p>Hardware attestation schemes often rely on multiple roots of trust — secure enclaves, trusted platform modules, or hardware security modules that provide independent verification chains for agent identity and configuration claims. False consensus in this context arises when those verification nodes share manufacturing provenance, firmware versions, or configuration templates applied during the same provisioning event.</p>
+
+        <p>An attacker who understands the shared provisioning characteristics can craft a firmware modification or a configuration manipulation that all nodes attest to identically. No single node behaves anomalously. The distributed attestation record shows complete agreement. The infrastructure review will find nothing to escalate, because the review process was looking for disagreement among nodes — and there is none. The false configuration is now attested by every node that was supposed to detect it.</p>
+
+        <p>In a hardware fleet deployed at scale, the provisioning pipeline is the shared substrate that creates the false consensus surface. Diversity of provisioning origin, staggered firmware update cadences, and independent configuration audits that do not rely on the nodes' own attestations are the structural properties that reduce false consensus exposure. These are not best practices layered on top of sound architecture. They are constituents of sound architecture in environments where attestation is load-bearing.</p>
+
+        <h2>The physical-world care crossing</h2>
+        <p>In care environments, the deployment of multiple agents to cross-check recommendations is a widely considered safety pattern. The underlying logic is reasonable: if one agent produces an erroneous recommendation, a second agent that reaches a different conclusion provides the signal that triggers human review. The pattern fails precisely when both agents share training data distributions, optimization targets, and context window construction conventions — the conditions that characterize large-scale deployments where agents are procured from similar providers and configured for similar populations.</p>
+
+        <p>When agents trained on overlapping data are asked to evaluate the same patient record, their agreement does not demonstrate that the record has been assessed from two independent perspectives. It demonstrates that two agents that learned similar patterns from similar data reached similar conclusions when presented with the same input. The oversight mechanism designed to catch the first agent's errors is, under these conditions, a mechanism that amplifies the first agent's systematic blind spots — because it samples from the same blind spot distribution.</p>
+
+        <p>The patients most harmed by false consensus are those whose presentations differ from the training distribution in ways that all agents share. The record will document confident multi-agent agreement. Human review will not have been triggered. The accountability claim available after harm is that every agent assessed the case and reached the same conclusion — which is accurate, and which is precisely the problem.</p>
+
+        <h2>What false consensus requires in accountability design</h2>
+        <p>Accountability architecture that uses agreement as a correctness signal must capture the provenance of each agent's contribution alongside the agreement itself. Training dataset lineage, base model version, fine-tuning dataset identifiers, and context window construction conventions are not implementation details. They are the evidence required to assess whether agreement reflects independent corroboration or shared lineage.</p>
+
+        <p>This metadata needs to be recorded at the moment of the decision, not reconstructed after an incident. In post-hoc investigation, the provenance records that would distinguish genuine consensus from false consensus are often unavailable — because they were not treated as accountability-relevant at deployment time. By the time the question is asked, the versions have changed, the training configurations have been updated, and the audit trail documents only what the agents concluded, not what made their conclusions epistemically independent or dependent.</p>
+
+        <p>The design requirement is straightforward even when implementation is not: every multi-agent decision record must include provenance metadata sufficient to determine, at audit time, whether the agreement could have been independent. Where that metadata cannot be captured, the architecture should treat agreement as no stronger a signal than a single agent's conclusion — because in the absence of demonstrated independence, it is not stronger.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Summary</span>
+        <p>The false consensus problem is the accountability consequence of treating agent agreement as a proxy for correctness when the agreeing agents are not epistemically independent. Agents that share training data, algorithm implementations, or provisioning infrastructure can converge on the same incorrect conclusion without any individual agent behaving anomalously. Oversight mechanisms designed to detect disagreement produce no signal. The accountability record documents confident consensus on a wrong outcome. The structural countermeasures — implementation diversity, provenance separation, and decision-time lineage metadata — reduce false consensus exposure but require deliberate architectural choices before systems are built, not after incidents establish the need.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>分布式智能体架构通常将一致性作为正确性的代理信号。当智能体意见不一致时，系统将冲突呈现给人类审查。当智能体一致同意时，系统继续推进。这种结构对大多数错误模式是合理的：真实错误并不常见，而多个独立推理的智能体不太可能同时犯下相同的错误。共识是可靠的信号——直到独立性假设崩溃。</p>
+
+        <p>独立性假设以两种可预测的方式崩溃。首先，在重叠数据集上训练或针对相似评估标准进行微调的智能体会共享系统性盲点。它们的一致性反映的是共同血统，而非独立的相互印证。其次，了解共享基础架构的对手可以精心构造利用共享失效模式的输入，在所有智能体上产生对服务于对手目的的输出的自信一致性。在这两种情况下，监督机制在决策最需要审查的时刻，产生了最强烈的可能信号——全票通过的一致性。</p>
+
+        <p>这就是虚假共识问题：不是监督未能解决的分歧，而是监督从未被设计来质疑的一致性。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>依赖多个独立验证者的密码学验证方案建立在真正独立验证路径的假设之上。但是从共享参考库提取的验证者实现、从公共硬件根派生的密钥初始化、以及从同一供应链采购的基础设施上运行，并非在对抗性分析所关注的方式上是独立的。了解共享实现特征的有针对性攻击可以生成所有验证者都接受的伪造记录，因为该伪造利用了每个验证者共有的属性，而非任何单一验证者特有的漏洞。</p>
+
+        <p>问责后果非常严重。一个旨在证明没有任何单一方能够伪造记录的多方证明，在虚假共识下变成了使伪造记录更可信的机制——因为它现在携带多个独立签名，所有这些签名在狭义上都是真实的，即每个验证者确实签署了它所收到的内容。审计追踪完整。记录是虚假的。多方结构中没有任何内容暴露问题。</p>
+
+        <p>算法多样性——刻意部署使用不同实现、不同硬件来源和不同密钥派生路径的验证者——是结构性对策。它增加了实现虚假共识的成本，因为攻击现在必须同时成功对抗异质目标。它不能消除风险，但以对必须经受当前威胁模型考验的基础设施而言有意义的方式改变了攻击的经济学。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>硬件证明方案通常依赖多个信任根——安全飞地、可信平台模块或硬件安全模块，为智能体身份和配置声明提供独立验证链。在这种情况下，当这些验证节点共享制造来源、固件版本或在同一配置事件期间应用的配置模板时，虚假共识就会出现。</p>
+
+        <p>了解共享配置特征的攻击者可以精心构造固件修改或配置操纵，使所有节点以相同方式证明。没有单个节点表现异常。分布式证明记录显示完全一致。基础设施审查将找不到任何需要上报的内容，因为审查过程是在寻找节点之间的分歧——而没有分歧。虚假配置现在已被每个本应检测它的节点所证明。</p>
+
+        <p>在大规模部署的硬件集群中，配置管道是创建虚假共识攻击面的共享基础架构。配置来源的多样性、交错的固件更新节奏以及不依赖节点自身证明的独立配置审计，是减少虚假共识暴露的结构性属性。这些不是叠加在合理架构之上的最佳实践。它们是证明具有承载意义的环境中合理架构的组成部分。</p>
+
+        <h2>物理世界护理交叉点</h2>
+        <p>在护理环境中，部署多个智能体来交叉核查建议是一种被广泛考虑的安全模式。其基本逻辑是合理的：如果一个智能体产生错误建议，达到不同结论的第二个智能体会提供触发人类审查的信号。当两个智能体共享训练数据分布、优化目标和上下文窗口构建约定时，这种模式恰恰失效——这些条件正是大规模部署的典型特征，即从类似提供者采购并针对类似人群配置的智能体。</p>
+
+        <p>当在重叠数据上训练的智能体被要求评估同一患者记录时，它们的一致性并不能证明该记录已从两个独立角度进行了评估。它证明了从类似数据中学习了类似模式的两个智能体，在呈现相同输入时得出了类似结论。在这些条件下，旨在捕获第一个智能体错误的监督机制，是一种放大第一个智能体系统性盲点的机制——因为它从相同的盲点分布中取样。</p>
+
+        <p>受虚假共识伤害最深的患者是那些病情表现在所有智能体共有的方式上偏离训练分布的人。记录将记录自信的多智能体一致意见。人类审查将不会被触发。事故后可用的问责声明是每个智能体都评估了案例并得出了相同结论——这是准确的，这恰恰是问题所在。</p>
+
+        <h2>虚假共识对问责设计的要求</h2>
+        <p>使用一致性作为正确性信号的问责架构，必须在一致性本身旁边记录每个智能体贡献的来源。训练数据集血统、基础模型版本、微调数据集标识符和上下文窗口构建约定不是实现细节。它们是评估一致性是否反映独立印证或共同血统所需的证据。</p>
+
+        <p>这些元数据需要在决策时记录，而非在事故后重建。在事后调查中，区分真实共识和虚假共识所需的来源记录往往不可用——因为它们在部署时未被视为与问责相关。当问题被提出时，版本已经改变，训练配置已经更新，审计追踪只记录了智能体得出的结论，而非使其结论在认识论上独立或相关的内容。</p>
+
+        <p>设计要求即使在实现不简单时也很清晰：每个多智能体决策记录必须包含足以在审计时确定一致性是否可能是独立的来源元数据。在无法捕获该元数据的地方，架构应将一致性视为不强于单个智能体结论的信号——因为在缺乏证明独立性的情况下，它确实不更强。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>虚假共识问题是在同意的智能体在认识论上不独立时，将智能体一致性作为正确性代理的问责后果。共享训练数据、算法实现或配置基础架构的智能体可以收敛于相同的错误结论，而没有任何单个智能体表现异常。旨在检测分歧的监督机制不产生信号。问责记录记录了对错误结果的自信共识。结构性对策——实现多样性、来源分离和决策时的血统元数据——减少了虚假共识暴露，但需要在系统构建之前做出刻意的架构选择，而非在事故证明需要之后。</p>
+      </div>
+    </div>
+
+    <!-- ZH-HK -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>分散式智能體架構通常將一致性作為正確性的代理信號。當智能體意見不一致時，系統將衝突呈現給人類審查。當智能體一致同意時，系統繼續推進。這種結構對大多數錯誤模式是合理的：真實錯誤並不常見，而多個獨立推理的智能體不太可能同時犯下相同的錯誤。共識是可靠的信號——直到獨立性假設崩潰。</p>
+
+        <p>獨立性假設以兩種可預測的方式崩潰。首先，在重疊資料集上訓練或針對相似評估標準進行微調的智能體會共享系統性盲點。它們的一致性反映的是共同血統，而非獨立的相互印證。其次，了解共享基礎架構的對手可以精心構造利用共享失效模式的輸入，在所有智能體上產生對服務於對手目的之輸出的自信一致性。在這兩種情況下，監督機制在決策最需要審查的時刻，產生了最強烈的可能信號——全票通過的一致性。</p>
+
+        <p>這就是虛假共識問題：不是監督未能解決的分歧，而是監督從未被設計來質疑的一致性。</p>
+
+        <h2>後量子安全交叉點</h2>
+        <p>依賴多個獨立驗證者的密碼學驗證方案建立在真正獨立驗證路徑的假設之上。但是從共享參考庫提取的驗證者實現、從公共硬件根派生的金鑰初始化、以及從同一供應鏈採購的基礎架構上運行，並非在對抗性分析所關注的方式上是獨立的。了解共享實現特徵的有針對性攻擊可以生成所有驗證者都接受的偽造記錄，因為該偽造利用了每個驗證者共有的屬性，而非任何單一驗證者特有的漏洞。</p>
+
+        <p>問責後果非常嚴重。一個旨在證明沒有任何單一方能夠偽造記錄的多方證明，在虛假共識下變成了使偽造記錄更可信的機制——因為它現在攜帶多個獨立簽名，所有這些簽名在狹義上都是真實的，即每個驗證者確實簽署了它所收到的內容。稽核追蹤完整。記錄是虛假的。多方結構中沒有任何內容暴露問題。</p>
+
+        <p>算法多樣性——刻意部署使用不同實現、不同硬件來源和不同金鑰派生路徑的驗證者——是結構性對策。它增加了實現虛假共識的成本，因為攻擊現在必須同時成功對抗異質目標。它不能消除風險，但以對必須經受當前威脅模型考驗的基礎架構而言有意義的方式改變了攻擊的經濟學。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>硬件證明方案通常依賴多個信任根——安全飛地、可信平台模組或硬件安全模組，為智能體身份和配置聲明提供獨立驗證鏈。在這種情況下，當這些驗證節點共享製造來源、韌體版本或在同一配置事件期間應用的配置範本時，虛假共識就會出現。</p>
+
+        <p>了解共享配置特徵的攻擊者可以精心構造韌體修改或配置操縱，使所有節點以相同方式證明。沒有單個節點表現異常。分散式證明記錄顯示完全一致。基礎架構審查將找不到任何需要上報的內容，因為審查過程是在尋找節點之間的分歧——而沒有分歧。虛假配置現在已被每個本應檢測它的節點所證明。</p>
+
+        <p>在大規模部署的硬件叢集中，配置管道是創建虛假共識攻擊面的共享基礎架構。配置來源的多樣性、交錯的韌體更新節奏以及不依賴節點自身證明的獨立配置稽核，是減少虛假共識暴露的結構性屬性。這些不是疊加在合理架構之上的最佳實踐。它們是證明具有承載意義的環境中合理架構的組成部分。</p>
+
+        <h2>物理世界護理交叉點</h2>
+        <p>在護理環境中，部署多個智能體來交叉核查建議是一種被廣泛考慮的安全模式。其基本邏輯是合理的：如果一個智能體產生錯誤建議，達到不同結論的第二個智能體會提供觸發人類審查的信號。當兩個智能體共享訓練資料分佈、優化目標和上下文窗口構建約定時，這種模式恰恰失效——這些條件正是大規模部署的典型特徵，即從類似提供者採購並針對類似人群配置的智能體。</p>
+
+        <p>當在重疊資料上訓練的智能體被要求評估同一患者記錄時，它們的一致性並不能證明該記錄已從兩個獨立角度進行了評估。它證明了從類似資料中學習了類似模式的兩個智能體，在呈現相同輸入時得出了類似結論。在這些條件下，旨在捕獲第一個智能體錯誤的監督機制，是一種放大第一個智能體系統性盲點的機制——因為它從相同的盲點分佈中取樣。</p>
+
+        <p>受虛假共識傷害最深的患者是那些病情表現在所有智能體共有的方式上偏離訓練分佈的人。記錄將記錄自信的多智能體一致意見。人類審查將不會被觸發。事故後可用的問責聲明是每個智能體都評估了案例並得出了相同結論——這是準確的，這恰恰是問題所在。</p>
+
+        <h2>虛假共識對問責設計的要求</h2>
+        <p>使用一致性作為正確性信號的問責架構，必須在一致性本身旁邊記錄每個智能體貢獻的來源。訓練資料集血統、基礎模型版本、微調資料集識別碼和上下文窗口構建約定不是實現細節。它們是評估一致性是否反映獨立印證或共同血統所需的證據。</p>
+
+        <p>這些元資料需要在決策時記錄，而非在事故後重建。在事後調查中，區分真實共識和虛假共識所需的來源記錄往往不可用——因為它們在部署時未被視為與問責相關。當問題被提出時，版本已經改變，訓練配置已經更新，稽核追蹤只記錄了智能體得出的結論，而非使其結論在認識論上獨立或相關的內容。</p>
+
+        <p>設計要求即使在實現不簡單時也很清晰：每個多智能體決策記錄必須包含足以在稽核時確定一致性是否可能是獨立的來源元資料。在無法擷取該元資料的地方，架構應將一致性視為不強於單個智能體結論的信號——因為在缺乏證明獨立性的情況下，它確實不更強。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>虛假共識問題是在同意的智能體在認識論上不獨立時，將智能體一致性作為正確性代理的問責後果。共享訓練資料、算法實現或配置基礎架構的智能體可以收斂於相同的錯誤結論，而沒有任何單個智能體表現異常。旨在檢測分歧的監督機制不產生信號。問責記錄記錄了對錯誤結果的自信共識。結構性對策——實現多樣性、來源分離和決策時的血統元資料——減少了虛假共識暴露，但需要在系統構建之前做出刻意的架構選擇，而非在事故證明需要之後。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-01</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
