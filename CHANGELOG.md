@@ -1,3 +1,4 @@
+2026-06-01 12:15 UTC · blog: add essay 'The automation atrophy problem' — accountability when oversight capacity degrades through disuse (EN+ZH+ZH-HK) · 782c209
 2026-06-01 08:15 UTC · blog: add essay 'The normalization of deviance' — accountability when accepted deviations accumulate (EN+ZH+ZH-HK) · e6d16f4
 2026-06-01 04:15 UTC · blog: add essay 'The memory problem' — accountability when agents remember across sessions (EN+ZH+ZH-HK) · 865b5c4
 2026-06-01 00:15 UTC · blog: add essay 'The threshold problem' — accountability when agent autonomy drifts upward without explicit governance (EN+ZH+ZH-HK) · c79c556
