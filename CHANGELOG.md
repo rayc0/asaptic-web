@@ -1,3 +1,4 @@
+2026-06-01 04:15 UTC · blog: add essay 'The memory problem' — accountability when agents remember across sessions (EN+ZH+ZH-HK) · 865b5c4
 2026-06-01 00:15 UTC · blog: add essay 'The threshold problem' — accountability when agent autonomy drifts upward without explicit governance (EN+ZH+ZH-HK) · c79c556
 2026-05-31 20:15 UTC · blog: add essay 'The capability overhang problem' — accountability when operators authorize what they think agents can do, not what they actually can (EN+ZH+ZH-HK) · d77f3cf
 2026-05-31 16:15 UTC · blog: add essay 'The out-of-distribution problem' — accountability when agents face inputs outside their validation boundary (EN+ZH+ZH-HK) · 5639c1c
