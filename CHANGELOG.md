@@ -1,3 +1,4 @@
+2026-06-02 12:15 UTC · blog: add essay 'The harvest-now-decrypt-later problem' — accountability when today's agent decisions become tomorrow's exposed records (EN+ZH+ZH-HK) · 26364af
 2026-06-02 08:00 UTC · blog: add essay 'The urgency-accountability tension' — why the moments that demand the fastest agent action also demand the most careful oversight (EN+ZH+ZH-HK) · ea84be7
 2026-06-02 04:00 UTC · blog: add essay 'The physical signal problem' — accountability when the chain of trust begins in the physical world (EN+ZH+ZH-HK) · a4a7f8a
 2026-06-01 20:15 UTC · blog: add essay 'The false consensus problem' — accountability when coordinating agents agree on a shared error (EN+ZH+ZH-HK) · 7030dc5
