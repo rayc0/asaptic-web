@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The calibration drift problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents in physical environments act on sensor data. Sensors drift. Unlike sensor failure, drift is gradual and plausible — the readings look reasonable right up to the point where the decision they informed turns out to be wrong." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/calibration-drift-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The calibration drift problem: accountability when the agent's physical-world inputs silently degrade" />
+  <meta property="og:description" content="AI agents in physical environments act on sensor data. Sensors drift. Unlike sensor failure, drift is gradual and plausible — the readings look reasonable right up to the point where the decision they informed turns out to be wrong." />
+  <meta property="og:url" content="https://asaptic.com/blog/calibration-drift-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-02" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The calibration drift problem: accountability when the agent's physical-world inputs silently degrade",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-02",
+    "description": "AI agents in physical environments act on sensor data. Sensors drift. Unlike sensor failure, drift is gradual and plausible — the readings look reasonable right up to the point where the decision they informed turns out to be wrong.",
+    "url": "https://asaptic.com/blog/calibration-drift-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Hardware × Human Care × Quantum Security</div>
+      <h1 class="essay-title">The calibration drift problem: accountability when the agent's physical-world inputs silently degrade</h1>
+      <p class="essay-subtitle">AI agents that act in physical environments depend on sensors. Sensors drift. Unlike sensor failure, drift is gradual and produces plausible readings — the data looks reasonable right up to the moment the decision it produced turns out to be wrong. When that moment arrives, the accountability question is harder than it looks.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-02</span>
+        <span>6 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>A sensor that fails stops producing readings, or produces readings so obviously wrong that they trigger alerts. A sensor that drifts continues producing readings. They are off by a small and slowly growing margin. At any given moment, the value looks plausible. In isolation, no single reading is suspicious enough to act on. It is only in retrospect — after the decision informed by months of drifted inputs turns out to be harmful — that the pattern becomes visible.</p>
+
+        <p>This is the calibration drift problem. It sits at the junction of hardware and accountability, and it is sharpest in the domains where AI agents are being deployed fastest: physical-world care and critical infrastructure. The accountability frameworks developing around AI agents have not adequately addressed it, in part because the legal and philosophical categories for agent accountability were built around discrete events rather than gradual degradation.</p>
+
+        <h2>Why drift is harder than failure</h2>
+        <p>Sensor failure has a clear accountability structure. An agent makes a decision based on a sensor reading; the sensor is subsequently found to have failed; the agent's action can be traced to a defective input with a known failure time. Liability can be apportioned between the agent developer, the hardware supplier, and the operator responsible for maintenance.</p>
+
+        <p>Drift dissolves this structure. There is no failure time. The sensor was producing acceptable readings when it was last calibrated, and it is still producing readings that fall within a plausible range. The agent was not acting on a broken input; it was acting on an input that had gradually become less accurate. The agent cannot know the difference without an external reference. The operator, in many cases, cannot either.</p>
+
+        <p>The accountability question then becomes: who bears responsibility for harm caused by an agent that acted correctly given the inputs it had, when those inputs had silently degraded? The answer is not obvious, and current frameworks do not provide one.</p>
+
+        <h2>The hardware crossing: when trust roots drift</h2>
+        <p>At the hardware crossing, calibration drift touches the foundations of agent identity and cryptographic correctness. Hardware security modules depend on internal oscillators whose frequency drift affects the timing of cryptographic operations. Timing drift in protocols that assume synchronized clocks — including many of the post-quantum key exchange schemes entering deployment — can cause operations to silently fall outside specification. The operation succeeds in the sense that it completes without error. It fails in the sense that the timing guarantees the protocol relied on no longer hold.</p>
+
+        <p>This matters for AI agents that manage cryptographic state. An agent responsible for key rotation, session management, or certificate lifecycle in a hardware-anchored system is making decisions based on timing and state information that depends on calibrated hardware. If the hardware has drifted, the agent's view of the cryptographic state is subtly wrong. It will continue acting on that view confidently, because nothing in its observable environment signals a problem.</p>
+
+        <p>The accountability challenge here is that the agent is not the point of failure, and the hardware is not broken in any detectable sense. The failure mode lives in the gap between calibration events — and that gap is often not defined, tracked, or treated as an accountability-relevant artifact.</p>
+
+        <h2>The care crossing: when readings look right but aren't</h2>
+        <p>In physical-world care settings, calibration drift creates risk that is more immediate and harder to defend against. AI care agents make decisions — about medication schedules, activity levels, care escalation thresholds — based on readings from sensors embedded in the care environment. A pulse oximeter that reads two percentage points high does not look broken; it reports values in a plausible range. A weight scale that has drifted five kilograms low does not trigger any alarm; the trend line it produces looks smooth. A motion sensor whose detection radius has shrunk does not report errors; it simply fails to register activity that is actually occurring.</p>
+
+        <p>In each case the agent is acting correctly given its inputs. It is escalating when the readings cross the thresholds it was configured with; it is maintaining the care plan the readings support. The failure is invisible until a harm occurs that, retrospectively, the drifted readings explain.</p>
+
+        <p>The people most exposed to this failure mode are care recipients who cannot self-report that the sensor readings are wrong. An elderly resident experiencing genuine physiological changes may not be able to distinguish between the agent's decision being incorrect and the situation being what the agent describes. The agent's confidence in its readings — which is often communicated to care staff as confidence in the decision — is not calibrated to the physical state of the hardware providing the evidence.</p>
+
+        <h2>What accountability architecture demands</h2>
+        <p>Treating calibration drift as an accountability problem rather than a maintenance problem changes what the architecture must do. Several properties become necessary.</p>
+
+        <p>First, calibration events must be treated as first-class audit artifacts. The current calibration state of every sensor an agent acts on should be a logged, timestamped, and queryable fact — as much a part of the agent's accountability record as the decisions it made. An audit trail that records what an agent decided without recording the calibration state of the inputs at the time of decision is incomplete in an accountability-relevant sense.</p>
+
+        <p>Second, agents must propagate sensor uncertainty into their outputs. An agent acting on inputs from hardware whose last calibration is outside a defined tolerance window should flag that uncertainty explicitly — in its decision record and, where possible, to the humans relying on its outputs. The confidence an agent expresses in a decision should not be independent of the physical state of the hardware providing its evidence.</p>
+
+        <p>Third, calibration schedules must be treated as obligations that can be audited, not as maintenance recommendations that can be deferred. In care settings this means tying agent operating authority to the calibration status of the sensors it depends on. An agent whose sensor inputs have lapsed beyond a calibration threshold should operate in a degraded mode — with reduced autonomy and explicit uncertainty flags — until calibration is restored.</p>
+
+        <p>The calibration drift problem is not exotic. Every AI agent deployed in a physical environment faces it. The accountability architecture being built for those agents will need to address it directly — not as an edge case, but as a structural property of the operating domain.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>Sensor drift produces plausible readings that are gradually wrong, creating an accountability gap that sensor failure does not: the agent acted correctly on the inputs it had, but those inputs had silently degraded. Accountability architecture for physical-environment agents must treat calibration state as a first-class audit artifact, propagate sensor uncertainty into agent outputs, and tie operating authority to calibration currency.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>发生故障的传感器会停止产生读数，或产生明显错误的读数从而触发警报。发生漂移的传感器则持续产生读数。这些读数偏差微小且缓慢增长。在任何给定时刻，读数看起来都是合理的。没有单个读数足以引起警惕。只有在事后——当基于数月漂移数据做出的决策被证明是有害的——这一模式才变得清晰可见。</p>
+
+        <p>这就是校准漂移问题。它处于硬件与问责的交汇点，在AI智能体部署最快的领域中最为尖锐：实体世界护理和关键基础设施。围绕AI智能体发展的问责框架尚未充分解决这一问题，部分原因在于智能体问责的法律和哲学范畴是围绕离散事件而非渐进退化构建的。</p>
+
+        <h2>为何漂移比故障更难处理</h2>
+        <p>传感器故障有清晰的问责结构。智能体基于传感器读数做出决策；传感器随后被发现已故障；智能体的行动可追溯至已知故障时间的缺陷输入。责任可以在智能体开发者、硬件供应商和负责维护的运营者之间分配。</p>
+
+        <p>漂移消解了这一结构。没有故障时刻。传感器在最后一次校准时产生可接受的读数，现在仍然产生落在合理范围内的读数。智能体不是在基于损坏的输入行动，而是基于逐渐变得不那么准确的输入行动。没有外部参照，智能体无法区分这两种情况。在许多情况下，运营者同样无法区分。</p>
+
+        <p>问责问题因此变为：当一个智能体基于其所拥有的输入正确行动，而这些输入已悄然退化时，由谁来承担由此造成的伤害？答案并不明显，现有框架也没有提供答案。</p>
+
+        <h2>硬件交叉点：信任根的漂移</h2>
+        <p>在硬件交叉点，校准漂移触及智能体身份和加密正确性的基础。硬件安全模块依赖内部振荡器，其频率漂移会影响加密操作的时序。依赖同步时钟的协议中的时序漂移——包括许多进入部署的后量子密钥交换方案——可能导致操作在规范之外悄然运行。操作在完成而不报错的意义上是成功的，但在协议所依赖的时序保证不再成立的意义上是失败的。</p>
+
+        <p>这对管理加密状态的AI智能体至关重要。负责密钥轮换、会话管理或硬件锚定系统中证书生命周期的智能体，正在基于依赖校准硬件的时序和状态信息做出决策。如果硬件发生漂移，智能体对加密状态的视图就会存在微妙错误，它将继续自信地基于该视图行动，因为其可观察环境中没有任何信号表明存在问题。</p>
+
+        <p>这里的问责挑战在于：智能体不是失败点，硬件也没有以任何可检测的方式损坏。失败模式存在于校准事件之间的间隙中——而这个间隙通常没有被定义、追踪或视为与问责相关的记录。</p>
+
+        <h2>护理交叉点：读数看起来正确但并非如此</h2>
+        <p>在实体世界护理环境中，校准漂移创造了更直接且更难防御的风险。AI护理智能体基于嵌入护理环境的传感器读数做出决策——关于用药计划、活动水平、护理升级阈值。读数高出两个百分点的血氧仪看起来没有损坏，它报告的值在合理范围内。向下漂移五公斤的体重秤不会触发任何警报，它产生的趋势线看起来平滑。检测半径缩小的运动传感器不报错，只是无法登记实际发生的活动。</p>
+
+        <p>在每种情况下，智能体都在根据其输入正确行动。它在读数越过配置阈值时进行升级，维持读数所支持的护理计划。失败是不可见的，直到伤害发生，而漂移的读数在事后做出解释。</p>
+
+        <p>最暴露于这种失败模式的人是无法自我报告传感器读数错误的护理接受者。经历真实生理变化的老年居民可能无法区分智能体的决定是不正确的还是情况就是智能体所描述的那样。智能体对其读数的信心——通常以对决策的信心传达给护理人员——并未针对提供证据的硬件的物理状态进行校准。</p>
+
+        <h2>问责架构的要求</h2>
+        <p>将校准漂移视为问责问题而非维护问题，会改变架构必须做的事情。若干属性变得必要。</p>
+
+        <p>首先，校准事件必须被视为一等审计记录。智能体据以行动的每个传感器的当前校准状态，应当是一个已记录、有时间戳且可查询的事实——与智能体做出的决策同等重要。一个记录了智能体决策内容但没有记录当时输入校准状态的审计追踪，在问责意义上是不完整的。</p>
+
+        <p>其次，智能体必须将传感器不确定性传播到其输出中。一个基于最近校准超出规定容差窗口的硬件所提供输入进行行动的智能体，应该明确标记这种不确定性——在其决策记录中，以及在可能的情况下向依赖其输出的人标记。智能体对决策所表达的信心，不应与提供其证据的硬件的物理状态无关。</p>
+
+        <p>第三，校准计划必须被视为可审计的义务，而非可推迟的维护建议。在护理环境中，这意味着将智能体操作权限与其所依赖传感器的校准状态挂钩。传感器输入超过校准阈值的智能体，应在降级模式下运行——自主性降低，明确标记不确定性——直到校准恢复。</p>
+
+        <p>校准漂移问题并不罕见。部署在实体环境中的每个AI智能体都面临它。为这些智能体构建的问责架构需要直接解决它——不是作为边缘案例，而是作为运行领域的结构性属性。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>传感器漂移产生逐渐错误的合理读数，造成传感器故障所不会造成的问责缺口：智能体基于其所拥有的输入正确行动，但这些输入已悄然退化。物理环境智能体的问责架构必须将校准状态视为一等审计记录，将传感器不确定性传播到智能体输出，并将操作权限与校准时效挂钩。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>發生故障的感測器會停止產生讀數，或產生明顯錯誤的讀數從而觸發警報。發生漂移的感測器則持續產生讀數。這些讀數偏差微小且緩慢增長。在任何給定時刻，讀數看起來都是合理的。沒有單一讀數足以引起警惕。只有在事後——當基於數月漂移資料做出的決策被證明是有害的——這一模式才變得清晰可見。</p>
+
+        <p>這就是校準漂移問題。它處於硬體與問責的交匯點，在AI智能體部署最快的領域中最為尖銳：實體世界照護和關鍵基礎設施。圍繞AI智能體發展的問責框架尚未充分解決這一問題，部分原因在於智能體問責的法律和哲學範疇是圍繞離散事件而非漸進退化構建的。</p>
+
+        <h2>為何漂移比故障更難處理</h2>
+        <p>感測器故障有清晰的問責結構。智能體基於感測器讀數做出決策；感測器隨後被發現已故障；智能體的行動可追溯至已知故障時間的缺陷輸入。責任可以在智能體開發者、硬體供應商和負責維護的營運者之間分配。</p>
+
+        <p>漂移消解了這一結構。沒有故障時刻。感測器在最後一次校準時產生可接受的讀數，現在仍然產生落在合理範圍內的讀數。智能體不是在基於損壞的輸入行動，而是基於逐漸變得不那麼準確的輸入行動。沒有外部參照，智能體無法區分這兩種情況。在許多情況下，營運者同樣無法區分。</p>
+
+        <p>問責問題因此變為：當一個智能體基於其所擁有的輸入正確行動，而這些輸入已悄然退化時，由誰來承擔由此造成的傷害？答案並不明顯，現有框架也沒有提供答案。</p>
+
+        <h2>硬體交叉點：信任根的漂移</h2>
+        <p>在硬體交叉點，校準漂移觸及智能體身分和加密正確性的基礎。硬體安全模組依賴內部振盪器，其頻率漂移會影響加密操作的時序。依賴同步時鐘的協議中的時序漂移——包括許多進入部署的後量子金鑰交換方案——可能導致操作在規範之外悄然運作。操作在完成而不報錯的意義上是成功的，但在協議所依賴的時序保證不再成立的意義上是失敗的。</p>
+
+        <p>這對管理加密狀態的AI智能體至關重要。負責金鑰輪換、工作階段管理或硬體錨定系統中憑證生命週期的智能體，正在基於依賴校準硬體的時序和狀態資訊做出決策。如果硬體發生漂移，智能體對加密狀態的視圖就會存在微妙錯誤，它將繼續自信地基於該視圖行動，因為其可觀察環境中沒有任何訊號表明存在問題。</p>
+
+        <p>這裡的問責挑戰在於：智能體不是失敗點，硬體也沒有以任何可偵測的方式損壞。失敗模式存在於校準事件之間的間隙中——而這個間隙通常沒有被定義、追蹤或視為與問責相關的記錄。</p>
+
+        <h2>照護交叉點：讀數看起來正確但並非如此</h2>
+        <p>在實體世界照護環境中，校準漂移創造了更直接且更難防禦的風險。AI照護智能體基於嵌入照護環境的感測器讀數做出決策——關於用藥計畫、活動水準、照護升級閾值。讀數高出兩個百分點的血氧儀看起來沒有損壞，它回報的值在合理範圍內。向下漂移五公斤的體重秤不會觸發任何警報，它產生的趨勢線看起來平滑。偵測半徑縮小的動作感測器不報錯，只是無法登記實際發生的活動。</p>
+
+        <p>在每種情況下，智能體都在根據其輸入正確行動。它在讀數越過配置閾值時進行升級，維持讀數所支持的照護計畫。失敗是不可見的，直到傷害發生，而漂移的讀數在事後做出解釋。</p>
+
+        <p>最暴露於這種失敗模式的人是無法自我回報感測器讀數錯誤的照護接受者。經歷真實生理變化的老年居民可能無法區分智能體的決定是不正確的還是情況就是智能體所描述的那樣。智能體對其讀數的信心——通常以對決策的信心傳達給照護人員——並未針對提供證據的硬體的物理狀態進行校準。</p>
+
+        <h2>問責架構的要求</h2>
+        <p>將校準漂移視為問責問題而非維護問題，會改變架構必須做的事情。若干屬性變得必要。</p>
+
+        <p>首先，校準事件必須被視為一等審計記錄。智能體據以行動的每個感測器的當前校準狀態，應當是一個已記錄、有時間戳記且可查詢的事實——與智能體做出的決策同等重要。一個記錄了智能體決策內容但沒有記錄當時輸入校準狀態的審計追蹤，在問責意義上是不完整的。</p>
+
+        <p>其次，智能體必須將感測器不確定性傳播到其輸出中。一個基於最近校準超出規定容差窗口的硬體所提供輸入進行行動的智能體，應該明確標記這種不確定性——在其決策記錄中，以及在可能的情況下向依賴其輸出的人標記。智能體對決策所表達的信心，不應與提供其證據的硬體的物理狀態無關。</p>
+
+        <p>第三，校準計畫必須被視為可審計的義務，而非可推遲的維護建議。在照護環境中，這意味著將智能體操作權限與其所依賴感測器的校準狀態掛鉤。感測器輸入超過校準閾值的智能體，應在降級模式下運作——自主性降低，明確標記不確定性——直到校準恢復。</p>
+
+        <p>校準漂移問題並不罕見。部署在實體環境中的每個AI智能體都面臨它。為這些智能體構建的問責架構需要直接解決它——不是作為邊緣案例，而是作為運行領域的結構性屬性。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>感測器漂移產生逐漸錯誤的合理讀數，造成感測器故障所不會造成的問責缺口：智能體基於其所擁有的輸入正確行動，但這些輸入已悄然退化。實體環境智能體的問責架構必須將校準狀態視為一等審計記錄，將感測器不確定性傳播到智能體輸出，並將操作權限與校準時效掛鉤。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-02</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    const btns = document.querySelectorAll('.lang-btn');
+    const layers = document.querySelectorAll('.essay-lang');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        btns.forEach(b => b.classList.toggle('active', b === btn));
+        layers.forEach(l => l.classList.toggle('active', l.dataset.langContent === lang));
+      });
+    });
+  </script>
+</body>
+</html>
