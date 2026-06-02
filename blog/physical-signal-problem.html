@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The physical signal problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents that act in physical environments take their first input from the physical world itself — a sensor reading, a biometric, an environmental measurement. Hardware attestation and post-quantum cryptography protect everything after that point. They cannot protect the point of origin." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/physical-signal-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The physical signal problem: accountability when the chain of trust begins in the physical world" />
+  <meta property="og:description" content="AI agents that act in physical environments take their first input from the physical world itself — a sensor reading, a biometric, an environmental measurement. Hardware attestation and post-quantum cryptography protect everything after that point. They cannot protect the point of origin." />
+  <meta property="og:url" content="https://asaptic.com/blog/physical-signal-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-02" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The physical signal problem: accountability when the chain of trust begins in the physical world",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-02",
+    "description": "AI agents that act in physical environments take their first input from the physical world itself — a sensor reading, a biometric, an environmental measurement. Hardware attestation and post-quantum cryptography protect everything after that point. They cannot protect the point of origin.",
+    "url": "https://asaptic.com/blog/physical-signal-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Quantum Security × Hardware × Human Care</div>
+      <h1 class="essay-title">The physical signal problem: accountability when the chain of trust begins in the physical world</h1>
+      <p class="essay-subtitle">AI agents that act in physical environments take their first input from the physical world itself — a sensor reading, a biometric, an environmental measurement. Hardware attestation and post-quantum cryptography protect everything after that point. They cannot protect the point of origin.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-02</span>
+        <span>6 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>When we design accountability for AI agents, we typically begin at the software layer. We audit API calls. We sign tokens. We track which model version was running when a decision was made. We apply post-quantum cryptography to protect the integrity of digital communications between agents and the systems they depend on. These measures are necessary. But in physical-world deployments, the chain of trust does not begin at the software layer. It begins with a physical signal: a heart rate reading, a motion detection event, an environmental sensor measurement, a biometric scan. And the physical world cannot sign its own outputs.</p>
+
+        <p>This is the physical signal problem.</p>
+
+        <h2>The gap that attestation cannot close</h2>
+        <p>Secure hardware enclaves, TPM chips, and hardware attestation roots can verify that a sensor's digital output was not tampered with after leaving the device. They can prove that the data path from sensor to inference engine was intact. Post-quantum cryptographic schemes can ensure these attestations remain valid even against future cryptanalytic advances.</p>
+
+        <p>But none of this answers the prior question: did the physical world actually produce that reading? A perfectly attested, cryptographically intact reading of 40 bpm from a heart rate monitor may reflect a patient who removed the device, an electrode that detached, or a sensor that drifted. Hardware attestation proves the chain was unbroken in transit. It cannot prove that the chain was connected to reality at the source. The attestation boundary ends at the sensor housing. It does not extend to the physical environment the sensor inhabits.</p>
+
+        <h2>Three modes of failure</h2>
+        <p>The physical signal problem manifests in three distinct ways, each with different accountability implications.</p>
+
+        <p>The first is sensor failure — hardware degradation, calibration drift, or physical damage that causes the sensor to misreport the world without any anomaly in the digital chain. In a software system, a failing API returns an error code. A failing sensor often returns a number. An agent trained to act on that number will act, correctly, on a wrong picture of the physical world.</p>
+
+        <p>The second is environmental manipulation — deliberate interference with the physical signal before it reaches the sensor. A magnet placed near a Hall-effect sensor. Infrared light aimed at a proximity detector. Acoustic manipulation of a microphone. Unlike adversarial attacks on software inputs, physical manipulation leaves no software trace. The audit log records what the agent received; it cannot record what was done to the environment in the moments before measurement.</p>
+
+        <p>The third is context collapse — the physical signal is accurate, but the context that gives it meaning has changed. A 95% blood oxygen saturation reading means something different for an active 30-year-old than for a sedentary 80-year-old with chronic respiratory disease. The sensor reports faithfully. The agent interprets correctly given its training distribution. But the deployment context has drifted away from the distribution in which the agent's decision thresholds were calibrated. The error is not in the measurement or the inference; it is in the alignment between the world the agent was designed for and the world it is operating in.</p>
+
+        <h2>Why this matters at each crossing</h2>
+        <p>At the post-quantum security crossing, the physical signal problem defines the outer boundary of what cryptography can protect. Quantum-resistant signatures can secure every byte of data that flows from sensor to inference engine to actuator. They cannot retroactively certify that the sensor was correctly connected to the physical environment when the reading was taken. Accountability obligations for physical-world agent deployments must include verification of physical connectivity — not just cryptographic integrity of the digital chain.</p>
+
+        <p>At the hardware crossing, the physical signal problem clarifies what hardware attestation is actually attesting. A hardware root of trust establishes that computation ran in a trusted environment. It does not attest to the environmental inputs that triggered that computation. Designing hardware stacks for physical-world agent deployment requires separate mechanisms for physical-signal validation: redundant sensing paths, cross-modal consistency checks, physical tamper-detection at the sensor housing itself. These are not enhancements to attestation. They are a complementary system operating in the physical layer that attestation cannot reach.</p>
+
+        <p>At the physical-world care crossing, the stakes are highest. An AI agent supporting care decisions acts on a model of the patient's current state. That model is built from physical signals. If the signals are systematically wrong, the model is wrong, and care actions may cause harm. Unlike a wrong recommendation in a software domain, a wrong care action may be irreversible. The accountability obligation runs backward through the signal chain to the moment of physical measurement and forward through the care consequences to the point of harm — and it spans both.</p>
+
+        <h2>What accountable physical-world deployment requires</h2>
+        <p>Addressing the physical signal problem requires combining hardware, operational, and governance measures. The hardware layer should include redundant sensing paths, and divergence between sensors should generate explicit uncertainty flags rather than silent arbitration. The operational layer should include periodic physical calibration cycles that produce their own attestable records — closing the loop between the cryptographic chain and the physical environment it is meant to represent. The governance layer should treat sensor validation and environmental integrity as first-class components of deployment review, not post-incident concerns.</p>
+
+        <p>Physical signals cannot be fully verified by any finite chain of measurement. The physical world does not sign its outputs. What sound accountability architecture does is make the gap visible, auditable, and bounded — and ensure that those deploying agents in physical environments have treated that gap as a known constraint rather than a residual assumption.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Summary</span>
+        <p>Physical-world agent deployments begin their chain of trust with a physical signal — a sensor reading, a biometric, an environmental measurement — that neither hardware attestation nor post-quantum cryptography can verify against the physical world. Three failure modes follow: sensor degradation that produces plausible-looking wrong data, environmental manipulation that leaves no digital trace, and context collapse where accurate readings are interpreted against a stale calibration. Accountability-compliant deployment requires redundant sensing, periodic physical calibration with attestable records, and governance frameworks that treat sensor validity as a deployment prerequisite rather than a background assumption.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>当我们为AI智能体设计问责机制时，通常从软件层开始。我们审计API调用，签署令牌，追踪决策产生时运行的是哪个模型版本，并应用后量子密码学来保护智能体与其依赖系统之间数字通信的完整性。这些措施是必要的。但在物理世界部署中，信任链并非始于软件层，而是始于物理信号：心率读数、运动检测事件、环境传感器测量值、生物特征扫描。而物理世界无法对其自身的输出进行签名。</p>
+
+        <p>这就是物理信号问题。</p>
+
+        <h2>证明无法弥合的差距</h2>
+        <p>安全硬件飞地、TPM芯片和硬件证明根可以验证传感器的数字输出在离开设备后未被篡改。它们可以证明从传感器到推理引擎的数据路径是完整的。后量子密码方案可以确保即使面对未来的密码分析进展，这些证明仍然有效。</p>
+
+        <p>但这些都无法回答一个更基本的问题：物理世界是否确实产生了那个读数？一个来自心率监测仪、经过完美证明、密码学完整的40bpm读数，可能反映的是患者摘掉了设备、电极脱落，或传感器发生了漂移。硬件证明证明了链路在传输过程中未被破坏，却无法证明链路在源头连接到了现实。证明边界止于传感器外壳，不延伸至传感器所处的物理环境。</p>
+
+        <h2>三种失效模式</h2>
+        <p>物理信号问题以三种不同方式显现，各具不同的问责含义。</p>
+
+        <p>第一种是传感器故障——硬件退化、校准漂移或物理损坏，导致传感器在数字链路无任何异常的情况下错误报告物理世界。在软件系统中，失效的API返回错误代码；失效的传感器往往返回一个数字。被训练为依据该数字行动的智能体，将基于对物理世界的错误认知正确地行动。</p>
+
+        <p>第二种是环境操纵——在信号到达传感器之前对物理信号的蓄意干扰。放置在霍尔效应传感器旁的磁铁，对准接近探测器的红外光，对麦克风的声学操纵。与软件输入的对抗性攻击不同，物理操纵不留下任何软件痕迹。审计日志记录了智能体收到的内容，却无法记录在测量前的那些瞬间环境中发生了什么。</p>
+
+        <p>第三种是语境坍塌——物理信号是准确的，但赋予其意义的语境已经改变。95%的血氧饱和度读数对一个活跃的30岁健康人和一个患有慢性呼吸系统疾病、行动不便的80岁老人意义截然不同。传感器如实报告，智能体在其训练分布内正确推断，但部署语境已偏离了智能体决策阈值被校准时所基于的分布。错误不在于测量或推断，而在于智能体被设计用于的世界与其实际运行的世界之间的偏差。</p>
+
+        <h2>为何在各交叉点上都至关重要</h2>
+        <p>在后量子安全交叉点，物理信号问题定义了密码学所能保护的外部边界。量子抗性签名可以保护从传感器到推理引擎再到执行器的每一个字节。但它们无法追溯性地证明传感器在读取时确实正确连接到了物理环境。物理世界智能体部署的问责义务必须包括对物理连接性的验证——而不仅仅是数字链路的密码学完整性。</p>
+
+        <p>在硬件交叉点，物理信号问题阐明了硬件证明实际上在证明什么。硬件信任根确立计算在可信环境中运行，却不证明触发该计算的环境输入。为物理世界智能体部署设计硬件栈，需要为物理信号验证建立独立机制：冗余传感路径、跨模态一致性检查、传感器外壳本身的物理防篡改检测。这些不是对证明的增强，而是在证明无法触及的物理层中运行的互补系统。</p>
+
+        <p>在物理世界护理交叉点，风险最高。支持护理决策的AI智能体依赖患者当前状态的模型行事，而该模型建立在物理信号之上。如果信号系统性地错误，模型就是错误的，护理行动可能造成伤害。与软件领域中的错误建议不同，错误的护理行动可能是不可逆的。问责义务沿着信号链向后延伸至物理测量时刻，向前延伸至伤害发生点——横跨两者。</p>
+
+        <h2>问责的物理世界部署需要什么</h2>
+        <p>应对物理信号问题需要综合硬件、运营和治理措施。硬件层应包括冗余传感路径，传感器间的差异应触发明确的不确定性标志，而非静默仲裁。运营层应包括定期物理校准周期，产生各自可证明的记录——在密码学链路与其旨在代表的物理环境之间形成闭环。治理层应将传感器验证和环境完整性视为部署审查的一等组件，而非事后关切。</p>
+
+        <p>物理信号无法由任何有限的测量链完全验证。物理世界不对其输出进行签名。健全的问责架构所做的，是使这一差距可见、可审计、有界——并确保在物理环境中部署智能体的各方将这一差距视为已知约束，而非残余假设。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>物理世界智能体部署的信任链始于物理信号——传感器读数、生物特征、环境测量——而硬件证明和后量子密码学都无法将其与物理世界进行核实。三种失效模式随之而来：产生看似合理的错误数据的传感器退化、不留数字痕迹的环境操纵，以及准确读数在过时校准下被错误解释的语境坍塌。符合问责要求的部署需要冗余传感、配有可证明记录的定期物理校准，以及将传感器有效性视为部署前提而非背景假设的治理框架。</p>
+      </div>
+    </div>
+
+    <!-- ZH-HK -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>當我們為AI智能體設計問責機制時，通常從軟件層開始。我們審計API調用，簽署憑證，追蹤決策產生時運行的是哪個模型版本，並應用後量子密碼學來保護智能體與其依賴系統之間數字通訊的完整性。這些措施是必要的。但在物理世界部署中，信任鏈並非始於軟件層，而是始於物理訊號：心率讀數、動作偵測事件、環境感測器測量值、生物特徵掃描。而物理世界無法對其自身的輸出進行簽名。</p>
+
+        <p>這就是物理訊號問題。</p>
+
+        <h2>證明無法彌合的差距</h2>
+        <p>安全硬件飛地、TPM晶片和硬件證明根可以驗證感測器的數字輸出在離開裝置後未被竄改。它們可以證明從感測器到推理引擎的資料路徑是完整的。後量子密碼方案可以確保即使面對未來的密碼分析進展，這些證明仍然有效。</p>
+
+        <p>但這些都無法回答一個更根本的問題：物理世界是否確實產生了那個讀數？一個來自心率監測儀、經過完美證明、密碼學完整的40bpm讀數，可能反映的是患者摘掉了裝置、電極脫落，或感測器發生了漂移。硬件證明證明了鏈路在傳輸過程中未被破壞，卻無法證明鏈路在源頭連接到了現實。證明邊界止於感測器外殼，不延伸至感測器所處的物理環境。</p>
+
+        <h2>三種失效模式</h2>
+        <p>物理訊號問題以三種不同方式顯現，各具不同的問責含義。</p>
+
+        <p>第一種是感測器故障——硬件退化、校準漂移或物理損壞，導致感測器在數字鏈路無任何異常的情況下錯誤報告物理世界。在軟件系統中，失效的API返回錯誤碼；失效的感測器往往返回一個數字。被訓練為依據該數字行動的智能體，將基於對物理世界的錯誤認知正確地行動。</p>
+
+        <p>第二種是環境操縱——在訊號到達感測器之前對物理訊號的蓄意干擾。放置在霍爾效應感測器旁的磁鐵，對準接近偵測器的紅外線光，對麥克風的聲學操縱。與軟件輸入的對抗性攻擊不同，物理操縱不留下任何軟件痕跡。稽核日誌記錄了智能體收到的內容，卻無法記錄在測量前那些瞬間環境中發生了什麼。</p>
+
+        <p>第三種是語境崩潰——物理訊號是準確的，但賦予其意義的語境已經改變。95%的血氧飽和度讀數對一個活躍的30歲健康人和一個患有慢性呼吸系統疾病、行動不便的80歲老人意義截然不同。感測器如實報告，智能體在其訓練分佈內正確推斷，但部署語境已偏離了智能體決策閾值被校準時所基於的分佈。錯誤不在於測量或推斷，而在於智能體被設計用於的世界與其實際運行的世界之間的偏差。</p>
+
+        <h2>為何在各交叉點上都至關重要</h2>
+        <p>在後量子安全交叉點，物理訊號問題定義了密碼學所能保護的外部邊界。量子抗性簽名可以保護從感測器到推理引擎再到執行器的每一個位元組。但它們無法追溯性地證明感測器在讀取時確實正確連接到了物理環境。物理世界智能體部署的問責義務必須包括對物理連接性的驗證——而不僅僅是數字鏈路的密碼學完整性。</p>
+
+        <p>在硬件交叉點，物理訊號問題闡明了硬件證明實際上在證明什麼。硬件信任根確立計算在可信環境中運行，卻不證明觸發該計算的環境輸入。為物理世界智能體部署設計硬件棧，需要為物理訊號驗證建立獨立機制：冗餘感測路徑、跨模態一致性檢查、感測器外殼本身的物理防篡改偵測。這些不是對證明的增強，而是在證明無法觸及的物理層中運行的互補系統。</p>
+
+        <p>在物理世界護理交叉點，風險最高。支持護理決策的AI智能體依賴患者當前狀態的模型行事，而該模型建立在物理訊號之上。如果訊號系統性地錯誤，模型就是錯誤的，護理行動可能造成傷害。與軟件領域中的錯誤建議不同，錯誤的護理行動可能是不可逆的。問責義務沿著訊號鏈向後延伸至物理測量時刻，向前延伸至傷害發生點——橫跨兩者。</p>
+
+        <h2>問責的物理世界部署需要什麼</h2>
+        <p>應對物理訊號問題需要綜合硬件、運營和治理措施。硬件層應包括冗餘感測路徑，感測器間的差異應觸發明確的不確定性標誌，而非靜默仲裁。運營層應包括定期物理校準週期，產生各自可證明的記錄——在密碼學鏈路與其旨在代表的物理環境之間形成閉環。治理層應將感測器驗證和環境完整性視為部署審查的一等組件，而非事後關切。</p>
+
+        <p>物理訊號無法由任何有限的測量鏈完全驗證。物理世界不對其輸出進行簽名。健全的問責架構所做的，是使這一差距可見、可稽核、有界——並確保在物理環境中部署智能體的各方將這一差距視為已知約束，而非殘餘假設。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>物理世界智能體部署的信任鏈始於物理訊號——感測器讀數、生物特徵、環境測量——而硬件證明和後量子密碼學都無法將其與物理世界進行核實。三種失效模式隨之而來：產生看似合理的錯誤資料的感測器退化、不留數字痕跡的環境操縱，以及準確讀數在過時校準下被錯誤解釋的語境崩潰。符合問責要求的部署需要冗餘感測、配有可證明記錄的定期物理校準，以及將感測器有效性視為部署前提而非背景假設的治理框架。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-02</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
