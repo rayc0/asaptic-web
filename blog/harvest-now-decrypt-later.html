@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The harvest-now-decrypt-later problem — Asaptic Labs</title>
+
+  <meta name="description" content="Adversaries are archiving encrypted AI agent decision logs today. The accountability clock is running from the moment an agent first acts — not from the moment quantum hardware matures." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/harvest-now-decrypt-later.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The harvest-now-decrypt-later problem: accountability when today's agent decisions become tomorrow's exposed records" />
+  <meta property="og:description" content="Adversaries are archiving encrypted AI agent decision logs today. The accountability clock is running from the moment an agent first acts — not from the moment quantum hardware matures." />
+  <meta property="og:url" content="https://asaptic.com/blog/harvest-now-decrypt-later.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-02" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The harvest-now-decrypt-later problem: accountability when today's agent decisions become tomorrow's exposed records",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-02",
+    "description": "Adversaries are archiving encrypted AI agent decision logs today. The accountability clock is running from the moment an agent first acts — not from the moment quantum hardware matures.",
+    "url": "https://asaptic.com/blog/harvest-now-decrypt-later.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Quantum Security × Hardware × Human Care</div>
+      <h1 class="essay-title">The harvest-now-decrypt-later problem: accountability when today's agent decisions become tomorrow's exposed records</h1>
+      <p class="essay-subtitle">Adversaries are archiving encrypted AI agent decision logs today, deferring decryption until quantum computing capability arrives. This inverts the standard threat model: the accountability instruments agents must maintain for compliance are precisely the records that carry the highest long-term exposure. The design window is now.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-02</span>
+        <span>6 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Classical cryptography protects agent communications with an implicit time assumption: breaking the encryption would take longer than the value of the information inside. This assumption holds while cryptographic keys remain large enough relative to classical computational resources. It does not hold under a quantum adversary with access to Shor's algorithm and sufficient qubit capacity.</p>
+
+        <p>Adversaries who anticipate this transition are not waiting. Intercepting and archiving encrypted traffic is relatively cheap. Decryption is deferred. When — or if — cryptographically relevant quantum computing arrives, the archive becomes readable. This pattern has a name: harvest now, decrypt later.</p>
+
+        <p>For AI agents, this creates a problem that differs in kind, not just in degree, from classical encrypted communications.</p>
+
+        <h2>Why agents generate a different kind of exposure</h2>
+        <p>An agent does not transmit a one-time secret. An agent produces a continuous, dense record of decisions, instructions received, actions taken, models consulted, outputs generated, and overrides logged. Each interaction generates structured data about how the agent reasoned, what authority it invoked, and what the downstream consequences were.</p>
+
+        <p>This record is extraordinarily valuable in a way that most encrypted communications are not. A single intercepted message discloses what it contains. A harvested agent decision log discloses a detailed map of an operator's agent architecture — which agents exist, what tasks they perform, which principals authorize them, where the override thresholds sit, and which parts of the operation are most dependent on agent action.</p>
+
+        <p>The accountability instruments that AI agents must maintain for compliance — audit logs, override records, authorization chains — are precisely the records that create the highest harvest-now-decrypt-later exposure. The evidence of good governance today becomes a liability if it can be decrypted in the future.</p>
+
+        <h2>The forward secrecy gap</h2>
+        <p>Classical cryptographic systems have addressed a related problem — exposure of past sessions if a long-term key is later compromised — through forward secrecy. Session-specific ephemeral key pairs are generated for each communication; even if the long-term key is later compromised, past sessions remain protected because the session keys are never stored and cannot be reconstructed.</p>
+
+        <p>Agents in current deployments often do not implement forward secrecy for their decision logs. The logs exist precisely so they can be retrieved and audited; an ephemeral key that cannot be recovered defeats the audit purpose. This creates a structural tension: the audit trail that accountability requires and the forward secrecy that long-term protection requires point in opposite directions.</p>
+
+        <p>The resolution is not to abandon audit trails. It is to design audit architectures that provide cryptographically verified accountability to authorized principals without exposing the full contents of agent decision records to everyone who can intercept encrypted traffic in transit.</p>
+
+        <h2>The migration deadline is set by harvesting, not by quantum hardware</h2>
+        <p>The dominant mental model of post-quantum cryptographic migration treats it as a future problem: migrate before quantum computers become cryptographically relevant. This model is incorrect for harvest-now-decrypt-later threats. The migration deadline is not set by when quantum hardware matures. It is set by when adversaries begin archiving.</p>
+
+        <p>For sensitive applications — AI agents in care settings, agents operating in regulated environments, agents making decisions with long-term legal consequences — the archiving may already be underway. Any data produced today under classical cryptographic protection is harvested-now data. If the encryption cannot be upgraded retroactively, the window to protect future data is the only window available.</p>
+
+        <p>This reframes the urgency of post-quantum migration for agentic systems. It is not a future compliance exercise. It is a decision that determines whether the agent records generated today remain protected when quantum computing capability arrives — whenever that is.</p>
+
+        <h2>What correct architecture looks like</h2>
+        <p>Agents designed for long-lived deployment should use post-quantum key encapsulation for session establishment and post-quantum signature schemes for decision attestation. These are the two surfaces that harvest-now-decrypt-later threatens most directly: the channel through which agent decisions travel, and the cryptographic proof that a specific agent made a specific decision at a specific time.</p>
+
+        <p>Hardware-attested agent identity — where the cryptographic anchor for agent authorization lives in a tamper-resistant hardware module — provides a further layer of protection. Even if session keys are eventually exposed, an agent whose authorization tokens are rooted in hardware attestation makes it significantly harder for a future adversary to fabricate a plausible historical record.</p>
+
+        <p>Audit logs that need to be retrievable for compliance purposes should be held in encrypted storage with access controls that separate the retrieval path from the transit path. An adversary who can harvest transit traffic should not be able to use that harvest to access the audit store directly. The audit trail must be evidentially sound for authorized principals and dark to everyone else — now and in the post-quantum environment.</p>
+
+        <h2>The design moment</h2>
+        <p>Agents being designed and deployed now are making implicit decisions about how long their accountability evidence will remain trustworthy. Every agent whose decision logs are transmitted and stored under classical cryptographic protection is producing records whose long-term confidentiality depends on quantum computing arriving late, or not arriving at all.</p>
+
+        <p>Asaptic Labs' work at the post-quantum security crossing treats this not as a future risk to mitigate but as a present design constraint. The accountability systems agents carry must be built to remain valid across the cryptographic transition. The evidence that proves good governance today must still be valid as evidence — and only available to those authorized to see it — on the far side of the transition.</p>
+
+        <p>The harvest is already being built. The design window is now.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>The harvest-now-decrypt-later threat means the deadline for post-quantum migration in agentic systems is set by when adversaries begin archiving encrypted traffic — not by when quantum hardware matures. AI agents' compliance audit trails are uniquely high-value harvest targets. Post-quantum key encapsulation, hardware-attested identity, and separated audit retrieval paths are the architectural responses.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>传统密码学用一个隐含的时间假设保护智能体通信：破解加密所需的时间将超过信息内容的价值。当密钥相对于传统计算资源足够大时，这一假设成立。面对能够运行Shor算法且拥有足够量子比特的量子对手时，这一假设不再成立。</p>
+
+        <p>预见到这一转变的对手不会等待。拦截并存档加密流量成本相对低廉，解密则被推迟到未来。当——或者说如果——具有密码学意义的量子计算到来时，存档就变得可读。这种模式有一个专属名称：现在收获，稍后解密。</p>
+
+        <p>对AI智能体而言，这造成了一个在性质上与传统加密通信截然不同的问题。</p>
+
+        <h2>为什么智能体会产生一种不同类型的暴露风险</h2>
+        <p>智能体传输的不是一次性秘密，而是持续、密集的决策记录：接收到的指令、采取的行动、参考的模型、生成的输出以及记录的覆盖操作。每次交互都生成关于智能体如何推理、调用了哪些权限以及下游后果是什么的结构化数据。</p>
+
+        <p>这些记录具有大多数加密通信所不具备的极高价值。一条被拦截的消息仅披露其所含内容；而被收获的智能体决策日志则披露了运营者智能体架构的详细地图——哪些智能体存在、它们执行什么任务、哪些主体授权它们、覆盖阈值在哪里，以及业务的哪些部分最依赖智能体行动。</p>
+
+        <p>AI智能体为合规目的必须维护的问责工具——审计日志、覆盖记录、授权链——恰恰是产生最高"现收获稍后解密"风险的记录。今天良好治理的证据，一旦未来能够被解密，就会成为负债。</p>
+
+        <h2>前向保密的缺口</h2>
+        <p>传统密码系统通过前向保密解决了一个相关问题——长期密钥被攻陷后过去会话的暴露。每次通信生成特定于会话的临时密钥对；即使长期密钥后来被攻陷，过去的会话仍然受到保护，因为会话密钥从未被存储，无法被重建。</p>
+
+        <p>当前部署的智能体通常不为其决策日志实现前向保密。这些日志存在正是为了可以检索和审计；无法恢复的临时密钥将破坏审计目的。这造成了一个结构性张力：问责所需的审计追踪与长期保护所需的前向保密指向相反方向。</p>
+
+        <p>解决方案不是放弃审计追踪，而是设计能够向授权主体提供可密码学验证问责性的审计架构，同时不向所有能在传输中拦截加密流量的人暴露智能体决策记录的全部内容。</p>
+
+        <h2>迁移截止日期由收获时间决定，而非量子硬件</h2>
+        <p>后量子密码迁移的主流思维模型将其视为未来的问题：在量子计算机具有密码学意义之前完成迁移。对于"现收获稍后解密"威胁，这一模型是错误的。迁移截止日期不是由量子硬件何时成熟决定的，而是由对手何时开始存档决定的。</p>
+
+        <p>对于敏感应用——护理环境中的AI智能体、在受监管环境中运营的智能体、做出具有长期法律后果决策的智能体——存档可能已经在进行中。今天在传统密码学保护下产生的任何数据都是"现已收获"的数据。如果无法追溯性升级加密，保护未来数据的窗口是唯一可用的窗口。</p>
+
+        <p>这重新定义了智能体系统后量子迁移的紧迫性。这不是未来的合规练习，而是一个决定今天生成的智能体记录在量子计算能力到来时——无论何时——是否仍然受到保护的决定。</p>
+
+        <h2>正确的架构应该是什么样子</h2>
+        <p>为长期部署设计的智能体应该使用后量子密钥封装来建立会话，并使用后量子签名方案进行决策证明。这是"现收获稍后解密"最直接威胁的两个面：智能体决策传输的信道，以及特定智能体在特定时间做出特定决策的密码学证明。</p>
+
+        <p>硬件证明的智能体身份——智能体授权的密码学锚点位于防篡改硬件模块中——提供了进一步的保护层。即使会话密钥最终被暴露，身份验证令牌根植于硬件证明的智能体也使未来对手更难伪造可信的历史记录。</p>
+
+        <p>需要为合规目的可检索的审计日志应该保存在带有访问控制的加密存储中，该控制将检索路径与传输路径分离。能够收获传输流量的对手不应能够直接使用该收获来访问审计存储。审计追踪必须对授权主体具有证据效力，对其他所有人保持不可见——无论是现在还是在后量子环境中。</p>
+
+        <h2>设计时刻</h2>
+        <p>现在正在设计和部署的智能体正在对其问责证据能够保持可信的时间长度做出隐含决定。每一个在传统密码学保护下传输和存储决策日志的智能体，都在产生其长期机密性依赖于量子计算到来较晚或根本不到来的记录。</p>
+
+        <p>Asaptic Labs在后量子安全交叉点的工作将这视为当前设计约束，而非未来风险的缓解。智能体携带的问责系统必须构建为在密码学转变中保持有效。今天证明良好治理的证据，必须在转变的另一端仍然具有证据效力——并且只对有权查看的人可用。</p>
+
+        <p>存档已经在建立。设计窗口就是现在。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>"现收获稍后解密"威胁意味着智能体系统后量子迁移的截止日期，由对手何时开始存档加密流量决定——而非量子硬件何时成熟。AI智能体的合规审计追踪是独特的高价值收获目标。后量子密钥封装、硬件证明的身份以及分离的审计检索路径是正确的架构应对。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>傳統密碼學用一個隱含的時間假設保護智能體通信：破解加密所需的時間將超過信息內容的價值。當密鑰相對於傳統計算資源足夠大時，這一假設成立。面對能夠運行Shor算法且擁有足夠量子比特的量子對手時，這一假設不再成立。</p>
+
+        <p>預見到這一轉變的對手不會等待。攔截並存檔加密流量成本相對低廉，解密則被推遲到未來。當——或者說如果——具有密碼學意義的量子計算到來時，存檔就變得可讀。這種模式有一個專屬名稱：現在收穫，稍後解密。</p>
+
+        <p>對AI智能體而言，這造成了一個在性質上與傳統加密通信截然不同的問題。</p>
+
+        <h2>為什麼智能體會產生一種不同類型的暴露風險</h2>
+        <p>智能體傳輸的不是一次性秘密，而是持續、密集的決策記錄：接收到的指令、採取的行動、參考的模型、生成的輸出以及記錄的覆蓋操作。每次交互都生成關於智能體如何推理、調用了哪些權限以及下游後果是什麼的結構化數據。</p>
+
+        <p>這些記錄具有大多數加密通信所不具備的極高價值。一條被攔截的消息僅披露其所含內容；而被收穫的智能體決策日誌則披露了運營者智能體架構的詳細地圖——哪些智能體存在、它們執行什麼任務、哪些主體授權它們、覆蓋閾值在哪裡，以及業務的哪些部分最依賴智能體行動。</p>
+
+        <p>AI智能體為合規目的必須維護的問責工具——審計日誌、覆蓋記錄、授權鏈——恰恰是產生最高「現收穫稍後解密」風險的記錄。今天良好治理的證據，一旦未來能夠被解密，就會成為負債。</p>
+
+        <h2>前向保密的缺口</h2>
+        <p>傳統密碼系統通過前向保密解決了一個相關問題——長期密鑰被攻陷後過去會話的暴露。每次通信生成特定於會話的臨時密鑰對；即使長期密鑰後來被攻陷，過去的會話仍然受到保護，因為會話密鑰從未被存儲，無法被重建。</p>
+
+        <p>當前部署的智能體通常不為其決策日誌實現前向保密。這些日誌存在正是為了可以檢索和審計；無法恢復的臨時密鑰將破壞審計目的。這造成了一個結構性張力：問責所需的審計追蹤與長期保護所需的前向保密指向相反方向。</p>
+
+        <p>解決方案不是放棄審計追蹤，而是設計能夠向授權主體提供可密碼學驗證問責性的審計架構，同時不向所有能在傳輸中攔截加密流量的人暴露智能體決策記錄的全部內容。</p>
+
+        <h2>遷移截止日期由收穫時間決定，而非量子硬件</h2>
+        <p>後量子密碼遷移的主流思維模型將其視為未來的問題：在量子計算機具有密碼學意義之前完成遷移。對於「現收穫稍後解密」威脅，這一模型是錯誤的。遷移截止日期不是由量子硬件何時成熟決定的，而是由對手何時開始存檔決定的。</p>
+
+        <p>對於敏感應用——照護環境中的AI智能體、在受監管環境中運營的智能體、做出具有長期法律後果決策的智能體——存檔可能已經在進行中。今天在傳統密碼學保護下產生的任何數據都是「現已收穫」的數據。如果無法追溯性升級加密，保護未來數據的窗口是唯一可用的窗口。</p>
+
+        <p>這重新定義了智能體系統後量子遷移的迫切性。這不是未來的合規練習，而是一個決定今天生成的智能體記錄在量子計算能力到來時——無論何時——是否仍然受到保護的決定。</p>
+
+        <h2>正確的架構應該是什麼樣子</h2>
+        <p>為長期部署設計的智能體應該使用後量子密鑰封裝來建立會話，並使用後量子簽名方案進行決策證明。這是「現收穫稍後解密」最直接威脅的兩個面：智能體決策傳輸的信道，以及特定智能體在特定時間做出特定決策的密碼學證明。</p>
+
+        <p>硬件證明的智能體身份——智能體授權的密碼學錨點位於防篡改硬件模塊中——提供了進一步的保護層。即使會話密鑰最終被暴露，身份驗證令牌根植於硬件證明的智能體也使未來對手更難偽造可信的歷史記錄。</p>
+
+        <p>需要為合規目的可檢索的審計日誌應該保存在帶有訪問控制的加密存儲中，該控制將檢索路徑與傳輸路徑分離。能夠收穫傳輸流量的對手不應能夠直接使用該收穫來訪問審計存儲。審計追蹤必須對授權主體具有證據效力，對其他所有人保持不可見——無論是現在還是在後量子環境中。</p>
+
+        <h2>設計時刻</h2>
+        <p>現在正在設計和部署的智能體正在對其問責證據能夠保持可信的時間長度做出隱含決定。每一個在傳統密碼學保護下傳輸和存儲決策日誌的智能體，都在產生其長期機密性依賴於量子計算到來較晚或根本不到來的記錄。</p>
+
+        <p>Asaptic Labs在後量子安全交叉點的工作將這視為當前設計約束，而非未來風險的緩解。智能體攜帶的問責系統必須構建為在密碼學轉變中保持有效。今天證明良好治理的證據，必須在轉變的另一端仍然具有證據效力——並且只對有權查看的人可用。</p>
+
+        <p>存檔已經在建立。設計窗口就是現在。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>「現收穫稍後解密」威脅意味著智能體系統後量子遷移的截止日期，由對手何時開始存檔加密流量決定——而非量子硬件何時成熟。AI智能體的合規審計追蹤是獨特的高價值收穫目標。後量子密鑰封裝、硬件證明的身份以及分離的審計檢索路徑是正確的架構應對。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-02</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.toggle('active', el.dataset.langContent === lang));
+      });
+    });
+  </script>
+</body>
+</html>
