@@ -1,3 +1,4 @@
+2026-06-02 20:15 UTC · blog: add essay 'The calibration drift problem' — accountability when physical-world sensor inputs silently degrade (EN+ZH+ZH-HK) · a40152b
 2026-06-02 16:15 UTC · blog: add essay 'The adverse selection problem' — why AI agents reach the most vulnerable populations first (EN+ZH+ZH-HK) · 4963b3d
 2026-06-02 12:15 UTC · blog: add essay 'The harvest-now-decrypt-later problem' — accountability when today's agent decisions become tomorrow's exposed records (EN+ZH+ZH-HK) · 26364af
 2026-06-02 08:00 UTC · blog: add essay 'The urgency-accountability tension' — why the moments that demand the fastest agent action also demand the most careful oversight (EN+ZH+ZH-HK) · ea84be7
