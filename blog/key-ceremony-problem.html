@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The key ceremony problem — Asaptic Labs</title>
+
+  <meta name="description" content="A key ceremony is an accountability event, not just a technical procedure. When AI agents participate in post-quantum trust establishment, the chain of human accountability is interrupted at its most foundational point." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/key-ceremony-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The key ceremony problem: accountability when AI agents participate in post-quantum trust establishment" />
+  <meta property="og:description" content="A key ceremony is an accountability event, not just a technical procedure. When AI agents participate in post-quantum trust establishment, the chain of human accountability is interrupted at its most foundational point." />
+  <meta property="og:url" content="https://asaptic.com/blog/key-ceremony-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-03" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The key ceremony problem: accountability when AI agents participate in post-quantum trust establishment",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-03",
+    "description": "A key ceremony is an accountability event, not just a technical procedure. When AI agents participate in post-quantum trust establishment, the chain of human accountability is interrupted at its most foundational point.",
+    "url": "https://asaptic.com/blog/key-ceremony-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware</div>
+      <h1 class="essay-title">The key ceremony problem: accountability when AI agents participate in post-quantum trust establishment</h1>
+      <p class="essay-subtitle">A key ceremony is not merely a technical procedure. It is an accountability event — a moment when human witnesses establish that a root of trust was created correctly, by the right principals, under the right conditions. When an AI agent participates in that ceremony, the chain of human accountability is interrupted at its most foundational point.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-03</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>A key ceremony is one of the most carefully specified rituals in operational security. When a certificate authority generates a new root key, when a hardware security module is initialized, when a trust anchor is established for a distributed system — the ceremony is witnessed, recorded, and audited. Multiple humans must be present. The steps are scripted. The scripts are reviewed. The recording is archived. The whole point is that the root of the trust chain is established under conditions that can be reconstructed and verified: someone was accountable for what was signed, and that someone can be identified, questioned, and held responsible.</p>
+
+        <p>This accountability architecture is about to meet two simultaneous pressures. The first is the post-quantum transition: every cryptographic root established with classical algorithms must eventually be replaced with a quantum-safe equivalent. Organizations running large-scale infrastructure face a migration window in which new root keys must be generated and certified at a scale that strains the ceremonial infrastructure designed for rare, high-stakes events. The second pressure is the deployment of AI agents into operational security workflows — agents that can monitor, log, generate, and in some cases initiate cryptographic operations faster than human operators.</p>
+
+        <p>The collision point is the key ceremony itself.</p>
+
+        <h2>Why the ceremony is an accountability event, not just a procedure</h2>
+        <p>The formal requirements of a key ceremony — multiple witnesses, scripted steps, audited recording — are not security theater. They are the mechanism by which accountability is assigned at the foundational moment of a trust architecture. If the root key is later found to have been generated incorrectly, the ceremony record identifies who was responsible and what they certified. That chain of human accountability is what makes the root meaningful as a trust anchor: it was established by identifiable principals who had authority to do so and who can be held responsible if they did it wrong.</p>
+
+        <p>An AI agent cannot be a witness in this sense. An agent can produce a log that says "ceremony step 4 completed." It cannot certify that step 4 was completed correctly, by the right principals, under the right conditions — because the agent cannot be held accountable for a false certification. If an agent produces a ceremony record and the ceremony was in fact compromised, the record provides evidence but not accountability. The chain that makes the ceremony meaningful is broken at the agent's participation point.</p>
+
+        <h2>The post-quantum transition as an accountability stress test</h2>
+        <p>The post-quantum transition requires key ceremonies at unprecedented scale and cadence: new root keys for quantum-safe hierarchies, new signing keys for code and firmware, new attestation keys for hardware security modules. The pressure to use agents in this process is real — not because anyone intends to remove human accountability, but because the volume of ceremonies required exceeds what the infrastructure designed for rare events can absorb.</p>
+
+        <p>The danger is not deliberate substitution. It is gradual displacement: agents taking on ceremony support roles that expand incrementally, ceremony records that increasingly reflect agent-generated content, human witnesses who are nominally present but whose effective participation amounts to approving outputs they cannot independently verify. The ceremony retains its formal structure while losing its accountability substance.</p>
+
+        <p>At the hardware crossing, this is especially consequential. Hardware attestation — the mechanism by which a device proves its physical identity to a network — depends on keys established during device manufacturing and provisioning ceremonies. If those ceremonies are partially automated through agents whose participation is not subject to the same accountability requirements as human witnesses, the attestation chain that downstream AI agents rely on for their own trust claims is rooted in a ceremony that was never fully accountable.</p>
+
+        <h2>What the key ceremony problem requires</h2>
+        <p>The key ceremony problem does not require choosing between automation and accountability. It requires distinguishing between what agents can legitimately do in a ceremony and what they cannot substitute for.</p>
+
+        <p>Agents can monitor. They can log. They can detect deviations from the scripted procedure. They can produce structured outputs that make it easier for human witnesses to verify each step. These are legitimate support roles, and they reduce the error rate without displacing accountability.</p>
+
+        <p>What agents cannot do is certify. The human witnesses who sign the ceremony record are not signing a log — they are signing an assertion that they were present, that the procedure was followed correctly, that the conditions were appropriate. That assertion requires a principal who can be held accountable for a false claim. An agent cannot make that assertion in the accountability sense that matters for root trust.</p>
+
+        <p>The post-quantum transition will produce quantum-safe keys. Whether those keys are established in ceremonies that carry the same accountability weight as their classical predecessors is a separate question — and one that the current accountability infrastructure for key ceremonies has not yet answered. As the transition scales up, the answer will be decided in practice, ceremony by ceremony, before the question is formally posed.</p>
+
+        <p>That is the structure of the key ceremony problem: the accountability decisions are made at the engineering level, in the moment, before the governance frameworks have caught up. By the time the governance frameworks arrive, the precedents will already be set.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>A key ceremony is an accountability event: the moment when a trust root is established by identifiable principals who can be held responsible for its correctness. AI agents can support ceremonies — monitoring, logging, detecting procedural deviations — but cannot substitute for human witnesses as certifying principals. The post-quantum transition will drive key ceremonies to unprecedented scale, creating pressure to automate agent participation beyond support roles. If that displacement happens gradually and informally, the hardware attestation chains and quantum-safe trust hierarchies built on those ceremonies will be rooted in accountability gaps that post-incident investigation cannot close.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>密钥仪式是操作安全中规范最严格的仪式之一。当证书机构生成新的根密钥、当硬件安全模块初始化、当为分布式系统建立信任锚点时——仪式须有见证人、须有记录、须经审计。必须有多名人员在场，步骤须按脚本执行，脚本须经审查，记录须归档。关键在于：信任链的根必须在可重建和可验证的条件下建立——有人对签署的内容负责，该人可被识别、被质询、被追责。</p>
+
+        <p>这一问责架构即将面临两股同时到来的压力。其一是后量子过渡：每一个使用经典算法建立的密码根都必须最终被量子安全的等效方案替代。运营大规模基础设施的组织面临一个迁移窗口，在此期间必须以远超针对罕见高风险事件设计的仪式基础设施所能承受的规模生成和认证新根密钥。其二是AI智能体部署进入操作安全工作流——这些智能体能够比人类操作员更快地监控、记录、生成乃至在某些情况下发起密码操作。</p>
+
+        <p>两股压力的碰撞点就是密钥仪式本身。</p>
+
+        <h2>为什么仪式是问责事件而非单纯程序</h2>
+        <p>密钥仪式的正式要求——多名见证人、脚本化步骤、经审计的记录——并非安全形式主义。它们是在信任架构的奠基时刻指定问责的机制。如果根密钥事后被发现生成有误，仪式记录将识别谁负责、他们认证了什么。这条人类问责链赋予根密钥作为信任锚点的意义：它由有权限且若出错须负责的可识别主体建立。</p>
+
+        <p>AI智能体无法在这一意义上成为见证人。智能体可以产生一份写着"仪式第4步完成"的日志，但它无法证明第4步是由正确的主体在正确的条件下正确完成的——因为智能体无法为虚假认证承担责任。若智能体产生了仪式记录而仪式实际上已受到破坏，该记录提供证据但不提供问责。赋予仪式意义的那条链，在智能体参与处断裂了。</p>
+
+        <h2>后量子过渡作为问责压力测试</h2>
+        <p>后量子过渡要求以前所未有的规模和节奏进行密钥仪式：量子安全层级的新根密钥、代码和固件的新签名密钥、硬件安全模块的新认证密钥。在这一过程中使用智能体的压力是真实存在的——不是因为有人打算取消人类问责，而是因为所需仪式的数量超出了为罕见事件设计的基础设施所能承受的范围。</p>
+
+        <p>危险不在于蓄意替换，而在于逐步取代：智能体承担的仪式支持角色不断扩展，仪式记录越来越多地反映智能体生成的内容，人类见证人名义上在场，但实际参与仅限于批准他们无法独立核实的输出。仪式保留了形式结构，却失去了问责实质。</p>
+
+        <p>在硬件交叉点，这一影响尤为严重。硬件证明——设备向网络证明其物理身份的机制——依赖于在设备制造和配置仪式中建立的密钥。如果这些仪式通过不受与人类见证人相同问责要求约束的智能体部分自动化，那么下游AI智能体赖以支撑其自身信任主张的认证链，根植于一个从未完全具备问责性的仪式。</p>
+
+        <h2>密钥仪式问题的要求</h2>
+        <p>密钥仪式问题并不要求在自动化与问责之间做出选择，而是要求区分智能体在仪式中可以合法做什么，以及它们无法替代什么。</p>
+
+        <p>智能体可以监控，可以记录，可以检测脚本偏差，可以产生使人类见证人更容易核实每个步骤的结构化输出。这些是合理的支持角色，能在不取代问责的情况下降低错误率。</p>
+
+        <p>智能体不能做的是认证。签署仪式记录的人类见证人并非在签署一份日志——他们在签署一项声明：他们在场，程序被正确遵循，条件是适当的。这一声明需要一个可为虚假主张承担责任的主体。智能体无法在对根信任至关重要的问责意义上作出这一声明。</p>
+
+        <p>后量子过渡将产生量子安全密钥。这些密钥是否在具有与其经典前身相同问责分量的仪式中建立，是另一个问题——而当前的密钥仪式问责基础设施尚未给出答案。随着过渡规模扩大，答案将在实践中逐个仪式地被决定，早于问题被正式提出。</p>
+
+        <p>这就是密钥仪式问题的结构：问责决定在工程层面、在当下、在治理框架跟上之前就已作出。当治理框架到来时，先例已经形成。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>密钥仪式是问责事件：信任根由可识别且须为其正确性负责的主体建立的时刻。AI智能体可以支持仪式——监控、记录、检测程序偏差——但无法替代作为认证主体的人类见证人。后量子过渡将推动密钥仪式达到前所未有的规模，形成将智能体参与推向支持角色以外的压力。若这种取代以渐进和非正式的方式发生，建立在这些仪式之上的硬件认证链和量子安全信任层级将根植于事后调查无法弥合的问责空白。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>密鑰儀式是操作安全中規範最嚴格的儀式之一。當憑證機構生成新的根密鑰、當硬體安全模組初始化、當為分散式系統建立信任錨點時——儀式須有見證人、須有記錄、須經審計。必須有多名人員在場，步驟須按腳本執行，腳本須經審查，記錄須歸檔。關鍵在於：信任鏈的根必須在可重建和可驗證的條件下建立——有人對簽署的內容負責，該人可被識別、被質詢、被追責。</p>
+
+        <p>這一問責架構即將面臨兩股同時到來的壓力。其一是後量子過渡：每一個使用經典演算法建立的密碼根都必須最終被量子安全的等效方案替代。運營大規模基礎設施的組織面臨一個遷移窗口，在此期間必須以遠超針對罕見高風險事件設計的儀式基礎設施所能承受的規模生成和認證新根密鑰。其二是AI智能體部署進入操作安全工作流——這些智能體能夠比人類操作員更快地監控、記錄、生成乃至在某些情況下發起密碼操作。</p>
+
+        <p>兩股壓力的碰撞點就是密鑰儀式本身。</p>
+
+        <h2>為什麼儀式是問責事件而非單純程序</h2>
+        <p>密鑰儀式的正式要求——多名見證人、腳本化步驟、經審計的記錄——並非安全形式主義。它們是在信任架構的奠基時刻指定問責的機制。如果根密鑰事後被發現生成有誤，儀式記錄將識別誰負責、他們認證了什麼。這條人類問責鏈賦予根密鑰作為信任錨點的意義：它由有權限且若出錯須負責的可識別主體建立。</p>
+
+        <p>AI智能體無法在這一意義上成為見證人。智能體可以產生一份寫著「儀式第4步完成」的日誌，但它無法證明第4步是由正確的主體在正確的條件下正確完成的——因為智能體無法為虛假認證承擔責任。若智能體產生了儀式記錄而儀式實際上已受到破壞，該記錄提供證據但不提供問責。賦予儀式意義的那條鏈，在智能體參與處斷裂了。</p>
+
+        <h2>後量子過渡作為問責壓力測試</h2>
+        <p>後量子過渡要求以前所未有的規模和節奏進行密鑰儀式：量子安全層級的新根密鑰、程式碼和韌體的新簽名密鑰、硬體安全模組的新認證密鑰。在這一過程中使用智能體的壓力是真實存在的——不是因為有人打算取消人類問責，而是因為所需儀式的數量超出了為罕見事件設計的基礎設施所能承受的範圍。</p>
+
+        <p>危險不在於蓄意替換，而在於逐步取代：智能體承擔的儀式支持角色不斷擴展，儀式記錄越來越多地反映智能體生成的內容，人類見證人名義上在場，但實際參與僅限於批准他們無法獨立核實的輸出。儀式保留了形式結構，卻失去了問責實質。</p>
+
+        <p>在硬體交叉點，這一影響尤為嚴重。硬體證明——設備向網路證明其物理身份的機制——依賴於在設備製造和配置儀式中建立的密鑰。如果這些儀式透過不受與人類見證人相同問責要求約束的智能體部分自動化，那麼下游AI智能體賴以支撐其自身信任主張的認證鏈，根植於一個從未完全具備問責性的儀式。</p>
+
+        <h2>密鑰儀式問題的要求</h2>
+        <p>密鑰儀式問題並不要求在自動化與問責之間做出選擇，而是要求區分智能體在儀式中可以合法做什麼，以及它們無法替代什麼。</p>
+
+        <p>智能體可以監控，可以記錄，可以檢測腳本偏差，可以產生使人類見證人更容易核實每個步驟的結構化輸出。這些是合理的支持角色，能在不取代問責的情況下降低錯誤率。</p>
+
+        <p>智能體不能做的是認證。簽署儀式記錄的人類見證人並非在簽署一份日誌——他們在簽署一項聲明：他們在場，程序被正確遵循，條件是適當的。這一聲明需要一個可為虛假主張承擔責任的主體。智能體無法在對根信任至關重要的問責意義上作出這一聲明。</p>
+
+        <p>後量子過渡將產生量子安全密鑰。這些密鑰是否在具有與其經典前身相同問責分量的儀式中建立，是另一個問題——而當前的密鑰儀式問責基礎設施尚未給出答案。隨著過渡規模擴大，答案將在實踐中逐個儀式地被決定，早於問題被正式提出。</p>
+
+        <p>這就是密鑰儀式問題的結構：問責決定在工程層面、在當下、在治理框架跟上之前就已作出。當治理框架到來時，先例已經形成。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>密鑰儀式是問責事件：信任根由可識別且須為其正確性負責的主體建立的時刻。AI智能體可以支持儀式——監控、記錄、檢測程序偏差——但無法替代作為認證主體的人類見證人。後量子過渡將推動密鑰儀式達到前所未有的規模，形成將智能體參與推向支持角色以外的壓力。若這種取代以漸進和非正式的方式發生，建立在這些儀式之上的硬體認證鏈和量子安全信任層級將根植於事後調查無法彌合的問責空白。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const langSections = document.querySelectorAll('.essay-lang');
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        langBtns.forEach(b => b.classList.remove('active'));
+        langSections.forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
