@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The distillation gap — Asaptic Labs</title>
+
+  <meta name="description" content="When AI agents are compressed for deployment on edge hardware, the safety evaluations conducted on the original model may no longer hold. At the hardware crossing this breaks the certification chain; at the care crossing it silently removes the edge-case coverage that matters most where mistakes are irreversible." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/distillation-gap.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The distillation gap: accountability when AI agents are compressed for hardware deployment" />
+  <meta property="og:description" content="When AI agents are compressed for deployment on edge hardware, the safety evaluations conducted on the original model may no longer hold. At the hardware crossing this breaks the certification chain; at the care crossing it silently removes the edge-case coverage that matters most where mistakes are irreversible." />
+  <meta property="og:url" content="https://asaptic.com/blog/distillation-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-03" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The distillation gap: accountability when AI agents are compressed for hardware deployment",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-03",
+    "description": "When AI agents are compressed for deployment on edge hardware, the safety evaluations conducted on the original model may no longer hold. At the hardware crossing this breaks the certification chain; at the care crossing it silently removes the edge-case coverage that matters most where mistakes are irreversible.",
+    "url": "https://asaptic.com/blog/distillation-gap.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Hardware × Human Care</div>
+      <h1 class="essay-title">The distillation gap: accountability when AI agents are compressed for hardware deployment</h1>
+      <p class="essay-subtitle">When a large AI model is compressed for deployment on a medical device, a care robot, or an edge processor in a patient's home, it gets smaller. Something less visible also happens: the safety properties evaluated in the original system may no longer hold in the compressed one. This is the distillation gap — and the accountability chain that should close it usually does not exist.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-03</span>
+        <span>6 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>The term "distillation" covers a family of techniques — quantisation, knowledge distillation, pruning, low-rank factorisation — that share a single practical goal: taking a model whose computational requirements were designed for data centers and making it small enough to run on hardware that fits in a pocket, a ward, or a wall socket. These techniques are mature. The deployment economics are compelling. The accountability infrastructure for the transition has not kept pace.</p>
+
+        <p>The core problem is this. A large model is evaluated for safety, tested against edge cases, and subjected to systematic adversarial probing that produces a reasonable basis for trust. That evaluation is expensive and time-consuming, and it is conducted once — on the original model. When the model is compressed for hardware deployment, the compressed version is a different model. Not radically different in expectation: if the compression is done carefully, average-case behavior is preserved. But at the margins — low-probability inputs, novel context combinations, the edge cases that matter most in safety-critical settings — the compressed model may diverge from the original in ways that are not easily predicted and are rarely re-tested.</p>
+
+        <p>This divergence is the distillation gap. It is not a bug in any particular implementation. It is a structural feature of the relationship between model capacity, edge deployment requirements, and the accountability chain that connects them.</p>
+
+        <h2>Why compression changes edge-case behavior</h2>
+        <p>Quantisation, which reduces the numerical precision of model weights, is known to affect model behavior more sharply in regions of the input space that the training data covered sparsely. This is because the model's learned representations are most finely differentiated — and therefore most sensitive to precision loss — precisely in the areas where training signal was weakest.</p>
+
+        <p>Physical-world care is exactly the domain where sparse coverage matters most: an unusual combination of medications, an atypical vital-sign pattern, a care need that does not fit the standard classification. The model's trained behavior in these regions was marginal to begin with. Compression makes those margins less predictable.</p>
+
+        <p>Pruning has an analogous issue. When the lowest-contribution weights are removed from a model, "lowest contribution" is measured against the training distribution. The pruned capacity may have been doing nothing visible on average while being essential for correctly handling some narrow but consequential class of cases. In a care context, that narrow class might be a rare drug interaction that the larger model had implicitly learned to recognize. In a hardware security context, it might be a corner-case firmware state that the agent was trained to treat as suspicious. Pruning removes it silently. There is no mechanism in the standard compression pipeline to flag that a capability has been lost, because the pipeline has no concept of which capabilities matter outside the training distribution.</p>
+
+        <h2>The hardware crossing: certification and the compression seam</h2>
+        <p>At the hardware crossing, AI agents make or interpret decisions about physical devices — which firmware states are acceptable, which sensor readings warrant an alert, which attestations are valid. These are policy decisions embedded in the agent's behavior, and they are the decisions most likely to be evaluated and certified before deployment.</p>
+
+        <p>The distillation gap creates a seam in that certification. The original developer certifies the large model. The hardware integrator compresses it. The care operator deploys the compressed version. The certifying body reviewed — which version? In practice, the compressed model is deployed under the authority of the original certification, because re-evaluating a distilled model carries the same cost as evaluating the original. The original evaluation is cited as supporting evidence, but it is evidence for a different model.</p>
+
+        <p>This is not a hypothetical failure mode. It is the default operational pattern. When a compressed model deployed on medical hardware behaves differently from the certified original — even once, in a low-probability edge case — the certification chain has been broken at the compression step. The accountability infrastructure does not surface this because it was never designed to treat compression as a distinct point of accountability. It treats compression as a performance optimization, which is all it is from an engineering standpoint. From an accountability standpoint, it is a model replacement.</p>
+
+        <h2>The care crossing: silent capability loss where it matters most</h2>
+        <p>At the physical-world care crossing, the distillation gap has the most immediate human consequences. Care agents are deployed precisely because the settings they operate in are under-resourced: too few practitioners, too many care recipients, too much demand on human attention. The care agent is supposed to cover the gaps. But if the compressed care agent has silently lost the capability to handle the edge cases that the original model had learned — the unusual presentations, the rare contraindications, the atypical symptom patterns — then it has lost exactly the capability that the under-resourced setting most needs.</p>
+
+        <p>This is the perverse arithmetic of the distillation gap in care contexts. Compression is attractive precisely because it enables deployment in resource-constrained environments. But the resource constraints that make compression attractive are also the constraints that make edge-case coverage most critical. The model gets deployed where the margin for error is smallest, in a form that makes its margins least predictable.</p>
+
+        <p>Care recipients cannot inspect a model's compression parameters. They cannot compare the behavior of the deployed version against the certified original. They have no reliable way to know whether the agent advising them has the edge-case coverage that was verified — or whether it was quietly left behind at the compression step.</p>
+
+        <h2>What closing the gap requires</h2>
+        <p>First, evaluation parity. A compressed model deployed in a safety-critical or care context should be evaluated independently, not as a derivative of the original model's evaluation. The burden of proof sits with the compressed version. Citing the original certification as evidence is not the same as having evidence for the deployed model.</p>
+
+        <p>Second, provenance attestation for the compression process. Just as hardware attestation roots trust in the physical properties of a chip, model attestation should document every compression step: which techniques were applied, on which training distribution, with what fidelity thresholds, verified by whom. This is not overhead — it is the engineering record that makes post-incident accountability possible.</p>
+
+        <p>Third, scope-bounded deployment. A compressed model whose evaluation covers a specific input distribution should operate only within that distribution, with explicit monitoring for out-of-distribution inputs and a defined escalation path when they are detected. "This model was evaluated on scenario class X; it should not operate autonomously on scenario class Y" is a deployable constraint. Absent that constraint, the operator is implicitly claiming that the compressed model is safe across the full range of inputs the original covered — a claim for which they typically have no evidence.</p>
+
+        <p>Fourth, separation of the compression step in the accountability chain. When a deployed agent causes harm and the root cause is traced to a behavioral difference introduced by compression, the question "was this a failure of the original model or a failure of the compression process?" should have a definitive answer. It currently does not. The compression step should be treated as a distinct point of accountability, with its own documentation and its own chain of responsibility — not absorbed into the deployment decision as a technical detail.</p>
+
+        <p>The distillation gap matters most at precisely the intersection of two demanding deployment requirements: the need to bring AI capabilities close to the physical world, and the need for those capabilities to be trustworthy in domains where the physical world is most consequential. A care agent that fails silently because its compression removed the edge-case coverage it most needed is not a theoretical risk. It is a deployable product today.</p>
+
+        <p>The accountability infrastructure for that product is not.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>When an AI model is compressed for edge hardware deployment, its average-case behavior is preserved but its edge-case behavior may not be. Safety evaluations conducted on the original model do not transfer to the compressed version. At the hardware crossing this breaks the certification chain; at the care crossing it silently removes coverage for the rare, high-consequence cases that matter most in under-resourced settings. Closing the gap requires evaluation parity for compressed models, provenance attestation for the compression process, scope-bounded deployment constraints, and treatment of the compression step as a distinct point of accountability rather than a technical detail absorbed into the deployment decision.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>"蒸馏"涵盖了一系列技术——量化、知识蒸馏、剪枝、低秩分解——它们有一个共同的实际目标：将为数据中心设计的模型缩小到足以在口袋大小的设备、病房或墙壁插座上运行。这些技术已经成熟，部署的经济效益也很有吸引力。但过渡期间的问责基础设施尚未跟上。</p>
+
+        <p>核心问题在于：大型模型经过安全评估、边界测试和系统性对抗性探测，建立了合理的信任基础。这种评估费用高昂、耗时，且只针对原始模型进行一次。当模型随后被压缩用于硬件部署时，压缩版本是一个不同的模型。在平均情况下，差异不大——如果压缩谨慎进行，平均行为会被保留。但在边界处——低概率输入、新颖的上下文组合、在安全关键场景中最重要的边界案例——压缩模型可能会以难以预测且很少重新测试的方式偏离原始模型。</p>
+
+        <p>这种差异就是"蒸馏间隙"。它不是任何特定实现中的缺陷，而是模型容量、边缘部署需求和将两者连接起来的问责链之间关系的结构性特征。</p>
+
+        <h2>为什么压缩会改变边界案例行为</h2>
+        <p>量化会降低模型权重的数值精度，已知这会在训练数据稀疏覆盖的输入空间区域中更明显地影响模型行为。这是因为模型学习的表示在训练信号最弱的地方最为精细——因此对精度损失也最为敏感。</p>
+
+        <p>物理世界护理恰恰是稀疏覆盖最为关键的领域：不寻常的药物组合、非典型的生命体征模式、不适合标准分类的护理需求。模型在这些区域的训练行为本来就很边缘，压缩使这些边缘更加难以预测。</p>
+
+        <p>剪枝存在类似问题。当从模型中去除贡献最小的权重时，"贡献最小"是相对于训练分布衡量的。被剪掉的容量在平均水平上可能什么都没做，但对于正确处理某类狭窄但重要的案例却至关重要。在护理场景中，那类狭窄案例可能是较大模型隐式学习识别的罕见药物相互作用。剪枝会悄然去除它，标准压缩流程中没有任何机制来标记某项能力已经丢失。</p>
+
+        <h2>硬件交叉点：认证与压缩接缝</h2>
+        <p>在硬件交叉点，AI智能体对物理设备做出或解释决策——哪些固件状态是可接受的、哪些传感器读数值得发出警报、哪些证明是有效的。这些是嵌入在智能体行为中的策略决策，也是部署前最可能被评估和认证的决策。</p>
+
+        <p>蒸馏间隙在认证中造成了一道接缝。原始开发者认证大型模型，硬件集成商压缩它，护理运营商部署压缩版本。认证机构审查的是哪个版本？实际上，压缩模型是在原始认证的权威下部署的，因为重新评估蒸馏模型的成本与评估原始模型相当。原始评估被引用为支持证据，但那是对不同模型的证据。</p>
+
+        <p>当部署在医疗硬件上的压缩模型——即使一次，在低概率边界案例中——与认证的原始模型行为不同时，认证链已在压缩步骤处断裂。问责基础设施不会发现这一点，因为它从未被设计为将压缩视为独立的问责节点。</p>
+
+        <h2>护理交叉点：在最关键之处悄然失去的能力</h2>
+        <p>在物理世界护理交叉点，蒸馏间隙具有最直接的人类后果。护理智能体恰恰部署在资源不足的场景：从业者太少、护理对象太多、对人类注意力的需求太大。护理智能体应该弥补这些差距。但如果压缩后的护理智能体悄然失去了处理原始模型已学习的边界案例的能力——不寻常的表现、罕见的禁忌症、非典型的症状模式——那么它恰恰失去了资源不足场景最需要的能力。</p>
+
+        <p>护理场景中蒸馏间隙的反常算术在于：压缩之所以有吸引力，正是因为它能在资源受限的环境中实现部署。但使压缩有吸引力的资源限制，也是使边界案例覆盖最为关键的限制。模型在容错空间最小的地方部署，而形式上使其边界最难以预测。</p>
+
+        <p>护理对象无法检查模型的压缩参数，无法将部署版本的行为与认证的原始版本进行比较，也没有可靠的方法知道为他们提供建议的智能体是否具备已验证的边界案例覆盖——还是在压缩步骤中悄然丢失了。</p>
+
+        <h2>弥合差距的要求</h2>
+        <p>第一，评估平等。在安全关键或护理场景中部署的压缩模型应该独立评估，而不是作为原始模型评估的衍生。举证责任在于压缩版本——引用原始认证作为证据与拥有已部署模型的证据不同。</p>
+
+        <p>第二，对压缩过程进行来源证明。正如硬件证明将信任根植于芯片的物理属性，模型证明应记录每个压缩步骤：应用了哪些技术、基于哪种训练分布、保真度阈值是什么、由谁验证。这不是额外负担——而是使事后问责成为可能的工程记录。</p>
+
+        <p>第三，范围限制部署。评估覆盖特定输入分布的压缩模型应只在该分布内运行，并对分布外输入进行明确监控，在检测到时有明确的升级路径。"此模型针对场景类别X进行了评估；它不应在场景类别Y上自主运行"是一种可部署的约束。</p>
+
+        <p>第四，将压缩步骤在问责链中单独列出。当已部署智能体造成伤害且根本原因可追溯至压缩引入的行为差异时，"这是原始模型的失败还是压缩过程的失败？"这个问题应有明确答案。目前没有。压缩步骤应被视为独立的问责节点，有其自己的文档和责任链——而不是作为技术细节被吸收进部署决策中。</p>
+
+        <p>当护理智能体因压缩去除了其最需要的边界案例覆盖而悄然失败时，这不是理论风险——而是今天可以部署的产品。但问责基础设施尚未就绪。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>当AI模型被压缩用于边缘硬件部署时，其平均案例行为得以保留，但边界案例行为可能不会。对原始模型进行的安全评估不能转移到压缩版本。在硬件交叉点，这会破坏认证链；在护理交叉点，它会悄然去除在资源不足场景中最关键的罕见高后果案例的覆盖。弥合差距需要对压缩模型进行评估平等、对压缩过程进行来源证明、范围限制部署约束，以及将压缩步骤视为独立问责节点而非被吸收进部署决策的技术细节。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>「蒸餾」涵蓋了一系列技術——量化、知識蒸餾、剪枝、低秩分解——它們有一個共同的實際目標：將為資料中心設計的模型縮小到足以在口袋大小的設備、病房或牆壁插座上運行。這些技術已經成熟，部署的經濟效益也很有吸引力。但過渡期間的問責基礎設施尚未跟上。</p>
+
+        <p>核心問題在於：大型模型經過安全評估、邊界測試和系統性對抗性探測，建立了合理的信任基礎。這種評估費用高昂、耗時，且只針對原始模型進行一次。當模型隨後被壓縮用於硬體部署時，壓縮版本是一個不同的模型。在平均情況下，差異不大——如果壓縮謹慎進行，平均行為會被保留。但在邊界處——低概率輸入、新穎的情境組合、在安全關鍵場景中最重要的邊界案例——壓縮模型可能會以難以預測且很少重新測試的方式偏離原始模型。</p>
+
+        <p>這種差異就是「蒸餾間隙」。它不是任何特定實作中的缺陷，而是模型容量、邊緣部署需求和將兩者連接起來的問責鏈之間關係的結構性特徵。</p>
+
+        <h2>為什麼壓縮會改變邊界案例行為</h2>
+        <p>量化會降低模型權重的數值精度，已知這會在訓練資料稀疏覆蓋的輸入空間區域中更明顯地影響模型行為。這是因為模型學習的表示在訓練信號最弱的地方最為精細——因此對精度損失也最為敏感。</p>
+
+        <p>物理世界護理恰恰是稀疏覆蓋最為關鍵的領域：不尋常的藥物組合、非典型的生命體徵模式、不適合標準分類的護理需求。模型在這些區域的訓練行為本來就很邊緣，壓縮使這些邊緣更加難以預測。</p>
+
+        <p>剪枝存在類似問題。當從模型中去除貢獻最小的權重時，「貢獻最小」是相對於訓練分布衡量的。被剪掉的容量在平均水平上可能什麼都沒做，但對於正確處理某類狹窄但重要的案例卻至關重要。在護理場景中，那類狹窄案例可能是較大模型隱式學習識別的罕見藥物交互作用。剪枝會悄然去除它，標準壓縮流程中沒有任何機制來標記某項能力已經丟失。</p>
+
+        <h2>硬體交叉點：認證與壓縮接縫</h2>
+        <p>在硬體交叉點，AI智能體對物理設備做出或解釋決策——哪些韌體狀態是可接受的、哪些感測器讀數值得發出警報、哪些證明是有效的。這些是嵌入在智能體行為中的策略決策，也是部署前最可能被評估和認證的決策。</p>
+
+        <p>蒸餾間隙在認證中造成了一道接縫。原始開發者認證大型模型，硬體整合商壓縮它，護理運營商部署壓縮版本。認證機構審查的是哪個版本？實際上，壓縮模型是在原始認證的權威下部署的，因為重新評估蒸餾模型的成本與評估原始模型相當。原始評估被引用為支持證據，但那是對不同模型的證據。</p>
+
+        <p>當部署在醫療硬體上的壓縮模型——即使一次，在低概率邊界案例中——與認證的原始模型行為不同時，認證鏈已在壓縮步驟處斷裂。問責基礎設施不會發現這一點，因為它從未被設計為將壓縮視為獨立的問責節點。</p>
+
+        <h2>護理交叉點：在最關鍵之處悄然失去的能力</h2>
+        <p>在物理世界護理交叉點，蒸餾間隙具有最直接的人類後果。護理智能體恰恰部署在資源不足的場景：從業者太少、護理對象太多、對人類注意力的需求太大。護理智能體應該彌補這些差距。但如果壓縮後的護理智能體悄然失去了處理原始模型已學習的邊界案例的能力——不尋常的表現、罕見的禁忌症、非典型的症狀模式——那麼它恰恰失去了資源不足場景最需要的能力。</p>
+
+        <p>護理場景中蒸餾間隙的反常算術在於：壓縮之所以有吸引力，正是因為它能在資源受限的環境中實現部署。但使壓縮有吸引力的資源限制，也是使邊界案例覆蓋最為關鍵的限制。模型在容錯空間最小的地方部署，而形式上使其邊界最難以預測。</p>
+
+        <p>護理對象無法檢查模型的壓縮參數，無法將部署版本的行為與認證的原始版本進行比較，也沒有可靠的方法知道為他們提供建議的智能體是否具備已驗證的邊界案例覆蓋——還是在壓縮步驟中悄然丟失了。</p>
+
+        <h2>彌合差距的要求</h2>
+        <p>第一，評估平等。在安全關鍵或護理場景中部署的壓縮模型應該獨立評估，而不是作為原始模型評估的衍生。舉證責任在於壓縮版本——引用原始認證作為證據與擁有已部署模型的證據不同。</p>
+
+        <p>第二，對壓縮過程進行來源證明。正如硬體證明將信任根植於晶片的物理屬性，模型證明應記錄每個壓縮步驟：應用了哪些技術、基於哪種訓練分布、保真度閾值是什麼、由誰驗證。這不是額外負擔——而是使事後問責成為可能的工程記錄。</p>
+
+        <p>第三，範圍限制部署。評估覆蓋特定輸入分布的壓縮模型應只在該分布內運行，並對分布外輸入進行明確監控，在檢測到時有明確的升級路徑。「此模型針對場景類別X進行了評估；它不應在場景類別Y上自主運行」是一種可部署的約束。</p>
+
+        <p>第四，將壓縮步驟在問責鏈中單獨列出。當已部署智能體造成傷害且根本原因可追溯至壓縮引入的行為差異時，「這是原始模型的失敗還是壓縮過程的失敗？」這個問題應有明確答案。目前沒有。壓縮步驟應被視為獨立的問責節點，有其自己的文件和責任鏈——而不是作為技術細節被吸收進部署決策中。</p>
+
+        <p>當護理智能體因壓縮去除了其最需要的邊界案例覆蓋而悄然失敗時，這不是理論風險——而是今天可以部署的產品。但問責基礎設施尚未就緒。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>當AI模型被壓縮用於邊緣硬體部署時，其平均案例行為得以保留，但邊界案例行為可能不會。對原始模型進行的安全評估不能轉移到壓縮版本。在硬體交叉點，這會破壞認證鏈；在護理交叉點，它會悄然去除在資源不足場景中最關鍵的罕見高後果案例的覆蓋。彌合差距需要對壓縮模型進行評估平等、對壓縮過程進行來源證明、範圍限制部署約束，以及將壓縮步驟視為獨立問責節點而非被吸收進部署決策的技術細節。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const langSections = document.querySelectorAll('.essay-lang');
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        langBtns.forEach(b => b.classList.remove('active'));
+        langSections.forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
