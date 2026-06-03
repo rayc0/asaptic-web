@@ -1,3 +1,4 @@
+2026-06-03 04:15 UTC · blog: add essay 'The stale world model problem' — accountability when an agent acts on knowledge that no longer reflects reality (EN+ZH+ZH-HK) · f4dfc54
 2026-06-03 00:15 UTC · blog: add essay 'The negative space problem' — accountability when an AI agent fails to act (EN+ZH+ZH-HK) · 5f01f5f
 2026-06-02 20:15 UTC · blog: add essay 'The calibration drift problem' — accountability when physical-world sensor inputs silently degrade (EN+ZH+ZH-HK) · a40152b
 2026-06-02 16:15 UTC · blog: add essay 'The adverse selection problem' — why AI agents reach the most vulnerable populations first (EN+ZH+ZH-HK) · 4963b3d
