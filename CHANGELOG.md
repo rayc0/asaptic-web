@@ -1,3 +1,4 @@
+2026-06-03 16:15 UTC · blog: add essay 'The key ceremony problem' — accountability when AI agents participate in post-quantum trust establishment (EN+ZH+ZH-HK) · 5b4ff57
 2026-06-03 12:15 UTC · blog: add essay 'The distillation gap' — accountability when AI agents are compressed for hardware deployment (EN+ZH+ZH-HK) · 00bb86d
 2026-06-03 08:15 UTC · blog: add essay 'The update authority problem' — accountability when an AI agent is patched (EN+ZH+ZH-HK) · e619b05
 2026-06-03 04:15 UTC · blog: add essay 'The stale world model problem' — accountability when an agent acts on knowledge that no longer reflects reality (EN+ZH+ZH-HK) · f4dfc54
