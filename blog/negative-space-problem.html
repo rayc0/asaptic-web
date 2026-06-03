@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The negative space problem — Asaptic Labs</title>
+
+  <meta name="description" content="Most accountability frameworks for AI agents are built around decisions made and actions taken. But agents deployed in monitoring, care, and security roles are also expected to act when conditions call for it. The accountability gap created by inaction is structurally different from the gap created by a wrong action." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/negative-space-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The negative space problem: accountability when an AI agent fails to act" />
+  <meta property="og:description" content="Most accountability frameworks for AI agents are built around decisions made and actions taken. But agents deployed in monitoring, care, and security roles are also expected to act when conditions call for it. The accountability gap created by inaction is structurally different from the gap created by a wrong action." />
+  <meta property="og:url" content="https://asaptic.com/blog/negative-space-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-03" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The negative space problem: accountability when an AI agent fails to act",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-03",
+    "description": "Most accountability frameworks for AI agents are built around decisions made and actions taken. But agents deployed in monitoring, care, and security roles are also expected to act when conditions call for it. The accountability gap created by inaction is structurally different from the gap created by a wrong action.",
+    "url": "https://asaptic.com/blog/negative-space-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Human Care × Hardware × Quantum Security</div>
+      <h1 class="essay-title">The negative space problem: accountability when an AI agent fails to act</h1>
+      <p class="essay-subtitle">Most accountability frameworks for AI agents are built around decisions made and actions taken. But agents deployed in monitoring, care, and security roles are also expected to act when conditions call for it. The accountability gap created by inaction is structurally different from the gap created by a wrong action — and most current frameworks do not address it.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-03</span>
+        <span>6 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Most accountability frameworks for AI agents are built around decisions made and actions taken. An agent executes an operation; it creates a record; it crosses a threshold and escalates. The accountability question is what happened and who authorized it.</p>
+
+        <p>But AI agents deployed in monitoring, care, and security roles are expected to do something else: to watch continuously and act when conditions call for it. The expected action might be an alert, an escalation, a record, or a preventive intervention. The accountability problem that arises when that action does not happen — when the agent was watching and did not flag — is structurally different from the problem of a wrong action, and most current frameworks do not address it.</p>
+
+        <p>This is the negative space problem.</p>
+
+        <h2>The structure of omission</h2>
+        <p>When an agent takes a wrong action, the accountability record begins at a specific moment: the decision. That decision is timestamped, attributable, and available for review. The question is whether it was authorized, correctly formed, and based on appropriate inputs.</p>
+
+        <p>When an agent fails to act when it should have, there is no moment to review. There is no timestamped non-decision. There is only the absence of a record that should exist — and the absence of a record is not itself a record. The harm that follows may be traceable to the agent's inaction in retrospect, but the absence creates no footprint of its own.</p>
+
+        <p>This asymmetry matters enormously for care contexts. An AI care agent is expected to detect deterioration and escalate. When it does escalate, the escalation is logged. When it does not — when a patient's condition worsens without the agent raising an alert it was positioned to raise — the absence of an alert is not an entry in the audit trail. The harm arrives; the audit trail contains nothing that explains why the alert was absent.</p>
+
+        <h2>The PQ crossing: silent gaps in security monitoring</h2>
+        <p>At the post-quantum crossing, the negative space problem appears in the context of cryptographic hygiene. An AI agent responsible for monitoring the cryptographic posture of a system — certificate expiry, cipher suite compliance, key rotation schedules — creates its accountability record through the alerts it raises. When a transition to quantum-resistant algorithms is incomplete, an agent that was monitoring for legacy cipher usage and did not flag a non-compliant endpoint created no record of that gap.</p>
+
+        <p>The security event that follows might be attributed to the cryptographic transition, or to the monitoring system, or to an operator who never reviewed reports that were never generated. The agent's non-action is a cause of the harm, but the accountability structure was not built to capture omission as a first-class event. The absence is invisible to the audit trail by design.</p>
+
+        <p>The problem is compounded at the hardware crossing. An agent monitoring the integrity of hardware-anchored cryptographic state — checking that secure enclaves are operating within specification, that attestation chains remain valid — depends on conditions that may silently degrade. A monitoring agent that checked last week and found nothing wrong is not the same as a monitoring agent that checked today. The gap between checks is not recorded as a gap. It is recorded as nothing at all.</p>
+
+        <h2>The care crossing: the escalation that never came</h2>
+        <p>In physical-world care, the negative space problem is both most acute and least addressed. Care agents are deployed precisely to provide continuous monitoring that human care staff cannot maintain at the same intensity. Their value proposition is the escalation — the alert that catches a deterioration before it becomes irreversible.</p>
+
+        <p>When that escalation does not occur, the question is not only what the agent did. It is what the agent was positioned to do, what its thresholds were configured to detect, whether those thresholds were appropriate, and whether the care team was entitled to rely on the agent's silence as a signal that conditions were stable.</p>
+
+        <p>That last point is critical. In care settings, agent silence is often operationally interpreted as a signal. Staff who rely on an AI monitoring system learn to treat the absence of alerts as evidence that no alert is warranted. When the agent fails to fire — because the threshold was misconfigured, because a sensor had drifted, because a rare combination of conditions fell into an unmonitored gap — the silence that precedes the harm is indistinguishable from the silence that means everything is fine.</p>
+
+        <p>The people most exposed to this failure mode are care recipients who cannot self-report that something is wrong. An elderly resident experiencing genuine deterioration may not be in a position to identify that the care agent has not flagged it. The agent's silence carries a weight of clinical authority it was never designed to bear.</p>
+
+        <h2>What accountability architecture requires</h2>
+        <p>Addressing the negative space problem requires treating non-events as audit objects. Several properties follow.</p>
+
+        <p>First, expected actions that did not occur should be logged as absences, not as blanks. An agent monitoring for a condition should create a record when it evaluates that condition and finds nothing actionable — not just when it finds something. The absence of an alert should be a logged finding, not the default silence. The audit trail should contain affirmative statements of the form "evaluated condition X at time T; no action warranted" as consistently as it contains records of actions taken.</p>
+
+        <p>Second, the conditions under which an agent is expected to act must be explicitly specified and independently auditable. The configuration that defines an agent's alert thresholds is an accountability artifact — it determines what the agent should have flagged and what it was permitted to miss. That configuration should be versioned, timestamped, and reviewable alongside the decisions it governed. Changing a threshold without leaving an audit trail is the equivalent of retrospectively rewriting the rules by which the agent operated.</p>
+
+        <p>Third, reliance on agent silence must be governed. Where humans operationally treat agent inaction as a positive signal — where the absence of an alert is taken to mean conditions are stable — that inference depends entirely on the correctness of the agent's monitoring configuration. The governance of that reliance: who authorized it, what audits it requires, and how quickly misconfiguration can be detected, should be explicit and subject to review.</p>
+
+        <p>The negative space problem will not be solved by better action logging alone. It requires that the absence of expected actions becomes as visible and traceable as the actions themselves. Until it does, the accountability architecture for AI agents remains structurally blind to the most consequential thing many of them can do: nothing.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>When an AI agent takes a wrong action, the accountability record starts at the decision. When an agent fails to act when it should have, there is no record at all — only a harmful absence that existing audit architectures cannot see. Accountability frameworks for monitoring agents must treat non-events as first-class audit objects: logging evaluated conditions where no action was taken, versioning alert configurations as accountability artifacts, and explicitly governing operational reliance on agent silence.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>大多数AI智能体的问责框架都围绕着已做出的决策和已采取的行动构建。智能体执行操作、创建记录、跨越阈值并升级处理。问责问题是发生了什么以及谁授权了它。</p>
+
+        <p>但部署在监控、护理和安全角色中的AI智能体被期望做另一件事：持续观察并在条件需要时采取行动。预期行动可能是警报、升级、记录或预防性干预。当该行动未发生时——当智能体在监视但没有发出标记——所产生的问责问题在结构上与错误行动的问题不同，而且大多数现有框架都没有解决这一问题。</p>
+
+        <p>这就是负空间问题。</p>
+
+        <h2>遗漏的结构</h2>
+        <p>当智能体采取错误行动时，问责记录从特定时刻开始：决策时刻。该决策有时间戳、可归因，并可供审查。问题是它是否被授权、是否正确形成以及是否基于适当的输入。</p>
+
+        <p>当智能体在应该采取行动时未采取行动时，没有可审查的时刻。没有带时间戳的非决策。只有应该存在的记录的缺失——而记录的缺失本身不是记录。随后发生的危害可能在事后被追溯到智能体的不作为，但缺失本身不会留下任何痕迹。</p>
+
+        <p>这种不对称性在护理场景中极为重要。AI护理智能体被期望检测到病情恶化并升级处理。当它确实升级时，升级被记录。当它没有升级——当患者病情恶化而智能体本有能力发出但未发出警报时——警报缺失不会成为审计跟踪中的条目。危害发生了，但审计跟踪中没有任何内容解释为什么警报缺席。</p>
+
+        <h2>后量子交叉点：安全监控中的静默缺口</h2>
+        <p>在后量子交叉点，负空间问题出现在密码卫生的背景下。负责监控系统密码状态的AI智能体——证书到期、密码套件合规性、密钥轮换计划——通过其发出的警报创建问责记录。当向量子抗性算法的过渡不完整时，本应监控传统密码使用并未标记不合规端点的智能体不会留下该缺口的记录。</p>
+
+        <p>随后发生的安全事件可能被归咎于密码过渡失败、监控系统故障或未审查从未生成的报告的运营者。智能体的不作为是危害的原因，但问责结构并非为捕捉遗漏为第一类事件而构建的。缺失在设计上对审计跟踪不可见。</p>
+
+        <p>在硬件交叉点，这一问题更为复杂。监控硬件锚定密码状态完整性的智能体——检查安全飞地是否在规范内运行、证明链是否保持有效——依赖于可能悄然退化的条件。上周检查过且未发现问题的监控智能体与今天检查的监控智能体不同。检查之间的间隔不被记录为间隔，而是根本不被记录。</p>
+
+        <h2>护理交叉点：从未到来的升级</h2>
+        <p>在实体世界护理中，负空间问题既最为尖锐，又最不受重视。护理智能体的部署正是为了提供人类护理人员无法以相同强度维持的持续监控。它们的价值主张在于升级——在恶化变得不可逆之前捕捉到它的警报。</p>
+
+        <p>当升级未发生时，问题不仅仅是智能体做了什么，还有：智能体本有能力做什么、其阈值被配置为检测什么、这些阈值是否适当，以及护理团队是否有权将智能体的沉默解读为状况稳定的信号。</p>
+
+        <p>最后一点至关重要。在护理场景中，智能体的沉默通常在操作上被解读为一种信号。依赖AI监控系统的工作人员学会将警报缺失视为无需警报的证据。当智能体未触发时——因为阈值配置错误、传感器已漂移或罕见的条件组合落入未监控的缺口——危害之前的沉默与一切正常的沉默无从区分。</p>
+
+        <p>最容易受到这种失败模式影响的是无法自报问题的护理对象。正在经历真实恶化的老年居民可能无法识别出护理智能体没有发出标记。智能体的沉默承载着它从未被设计去承担的临床权威。</p>
+
+        <h2>问责架构的要求</h2>
+        <p>解决负空间问题需要将非事件作为审计对象处理。几个特性由此而来。</p>
+
+        <p>首先，未发生的预期行动应被记录为缺席，而非空白。监控某一状况的智能体在评估该状况但未发现可操作内容时应创建记录——而不仅仅是在发现问题时。警报缺失应是一个记录的发现，而非默认的沉默。审计跟踪应该像记录已采取行动一样，持续包含"在时间T评估了状况X，无需操作"形式的陈述。</p>
+
+        <p>其次，智能体被期望采取行动的条件必须被明确规定且可独立审计。定义智能体警报阈值的配置是一个问责工件——它决定了智能体应标记什么以及被允许遗漏什么。该配置应进行版本控制、加盖时间戳，并与其所治理的决策一起可供审查。在不留下审计跟踪的情况下更改阈值等同于追溯性地重写智能体运行规则。</p>
+
+        <p>第三，对智能体沉默的依赖必须受到治理。当人类在操作上将智能体不作为视为积极信号时——将警报缺失理解为状况稳定——这一推断完全取决于智能体监控配置的正确性。对这种依赖的治理：谁授权了它、需要什么审计以及如何快速检测到配置错误，应该是明确的并接受审查。</p>
+
+        <p>负空间问题无法仅靠更好的行动记录来解决。它要求预期行动的缺失与行动本身一样可见和可追溯。在此之前，AI智能体的问责架构在结构上对许多智能体所能做的最重要的事情视而不见：什么都不做。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>当AI智能体采取错误行动时，问责记录从决策开始。当智能体在应该行动时未行动时，根本没有记录——只有现有审计架构无法看到的有害缺失。监控智能体的问责框架必须将非事件作为一等审计对象：记录未采取行动时评估的状况、将警报配置版本化为问责工件，并明确治理对智能体沉默的操作依赖。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>大多數AI智能體的問責框架都圍繞著已做出的決策和已採取的行動構建。智能體執行操作、創建記錄、跨越閾值並升級處理。問責問題是發生了什麼以及誰授權了它。</p>
+
+        <p>但部署在監控、護理和安全角色中的AI智能體被期望做另一件事：持續觀察並在條件需要時採取行動。預期行動可能是警報、升級、記錄或預防性干預。當該行動未發生時——當智能體在監視但沒有發出標記——所產生的問責問題在結構上與錯誤行動的問題不同，而且大多數現有框架都沒有解決這一問題。</p>
+
+        <p>這就是負空間問題。</p>
+
+        <h2>遺漏的結構</h2>
+        <p>當智能體採取錯誤行動時，問責記錄從特定時刻開始：決策時刻。該決策有時間戳、可歸因，並可供審查。問題是它是否被授權、是否正確形成以及是否基於適當的輸入。</p>
+
+        <p>當智能體在應該採取行動時未採取行動時，沒有可審查的時刻。沒有帶時間戳的非決策。只有應該存在的記錄的缺失——而記錄的缺失本身不是記錄。隨後發生的危害可能在事後被追溯到智能體的不作為，但缺失本身不會留下任何痕迹。</p>
+
+        <p>這種不對稱性在護理場景中極為重要。AI護理智能體被期望檢測到病情惡化並升級處理。當它確實升級時，升級被記錄。當它沒有升級——當患者病情惡化而智能體本有能力發出但未發出警報時——警報缺失不會成為審計跟蹤中的條目。危害發生了，但審計跟蹤中沒有任何內容解釋為什麼警報缺席。</p>
+
+        <h2>後量子交叉點：安全監控中的靜默缺口</h2>
+        <p>在後量子交叉點，負空間問題出現在密碼衛生的背景下。負責監控系統密碼狀態的AI智能體——憑證到期、密碼套件合規性、金鑰輪換計畫——通過其發出的警報創建問責記錄。當向量子抗性演算法的過渡不完整時，本應監控傳統密碼使用並未標記不合規端點的智能體不會留下該缺口的記錄。</p>
+
+        <p>隨後發生的安全事件可能被歸咎於密碼過渡失敗、監控系統故障或未審查從未生成的報告的運營者。智能體的不作為是危害的原因，但問責結構並非為捕捉遺漏為第一類事件而構建的。缺失在設計上對審計跟蹤不可見。</p>
+
+        <p>在硬體交叉點，這一問題更為複雜。監控硬體錨定密碼狀態完整性的智能體——檢查安全飛地是否在規範內運行、認證鏈是否保持有效——依賴於可能悄然退化的條件。上週檢查過且未發現問題的監控智能體與今天檢查的監控智能體不同。檢查之間的間隔不被記錄為間隔，而是根本不被記錄。</p>
+
+        <h2>護理交叉點：從未到來的升級</h2>
+        <p>在實體世界護理中，負空間問題既最為尖銳，又最不受重視。護理智能體的部署正是為了提供人類護理人員無法以相同強度維持的持續監控。它們的價值主張在於升級——在惡化變得不可逆之前捕捉到它的警報。</p>
+
+        <p>當升級未發生時，問題不僅僅是智能體做了什麼，還有：智能體本有能力做什麼、其閾值被配置為檢測什麼、這些閾值是否適當，以及護理團隊是否有權將智能體的沉默解讀為狀況穩定的信號。</p>
+
+        <p>最後一點至關重要。在護理場景中，智能體的沉默通常在操作上被解讀為一種信號。依賴AI監控系統的工作人員學會將警報缺失視為無需警報的證據。當智能體未觸發時——因為閾值配置錯誤、感測器已漂移或罕見的條件組合落入未監控的缺口——危害之前的沉默與一切正常的沉默無從區分。</p>
+
+        <p>最容易受到這種失敗模式影響的是無法自報問題的護理對象。正在經歷真實惡化的老年居民可能無法識別出護理智能體沒有發出標記。智能體的沉默承載著它從未被設計去承擔的臨床權威。</p>
+
+        <h2>問責架構的要求</h2>
+        <p>解決負空間問題需要將非事件作為審計對象處理。幾個特性由此而來。</p>
+
+        <p>首先，未發生的預期行動應被記錄為缺席，而非空白。監控某一狀況的智能體在評估該狀況但未發現可操作內容時應創建記錄——而不僅僅是在發現問題時。警報缺失應是一個記錄的發現，而非默認的沉默。審計跟蹤應該像記錄已採取行動一樣，持續包含「在時間T評估了狀況X，無需操作」形式的陳述。</p>
+
+        <p>其次，智能體被期望採取行動的條件必須被明確規定且可獨立審計。定義智能體警報閾值的配置是一個問責工件——它決定了智能體應標記什麼以及被允許遺漏什麼。該配置應進行版本控制、加蓋時間戳，並與其所治理的決策一起可供審查。在不留下審計跟蹤的情況下更改閾值等同於追溯性地重寫智能體運行規則。</p>
+
+        <p>第三，對智能體沉默的依賴必須受到治理。當人類在操作上將智能體不作為視為積極信號時——將警報缺失理解為狀況穩定——這一推斷完全取決於智能體監控配置的正確性。對這種依賴的治理：誰授權了它、需要什麼審計以及如何快速檢測到配置錯誤，應該是明確的並接受審查。</p>
+
+        <p>負空間問題無法僅靠更好的行動記錄來解決。它要求預期行動的缺失與行動本身一樣可見和可追溯。在此之前，AI智能體的問責架構在結構上對許多智能體所能做的最重要的事情視而不見：什麼都不做。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>當AI智能體採取錯誤行動時，問責記錄從決策開始。當智能體在應該行動時未行動時，根本沒有記錄——只有現有審計架構無法看到的有害缺失。監控智能體的問責框架必須將非事件作為一等審計對象：記錄未採取行動時評估的狀況、將警報配置版本化為問責工件，並明確治理對智能體沉默的操作依賴。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-03</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
