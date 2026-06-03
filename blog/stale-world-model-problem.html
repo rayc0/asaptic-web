@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The stale world model problem — Asaptic Labs</title>
+
+  <meta name="description" content="Every AI agent carries a world model derived from its training data. That model has a timestamp. The world does not stop changing at that timestamp. Accountability frameworks have not yet confronted what it means to deploy an agent whose representation of reality diverges from reality itself — not because of sensor drift, but because the world moved and the agent did not." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/stale-world-model-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The stale world model problem: accountability when an agent acts on a world that has already changed" />
+  <meta property="og:description" content="Every AI agent carries a world model derived from its training data. That model has a timestamp. The world does not stop changing at that timestamp. Accountability frameworks have not yet confronted what it means to deploy an agent whose representation of reality diverges from reality itself — not because of sensor drift, but because the world moved and the agent did not." />
+  <meta property="og:url" content="https://asaptic.com/blog/stale-world-model-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-03" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The stale world model problem: accountability when an agent acts on a world that has already changed",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-03",
+    "description": "Every AI agent carries a world model derived from its training data. That model has a timestamp. The world does not stop changing at that timestamp. Accountability frameworks have not yet confronted what it means to deploy an agent whose representation of reality diverges from reality itself — not because of sensor drift, but because the world moved and the agent did not.",
+    "url": "https://asaptic.com/blog/stale-world-model-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Quantum Security × Hardware × Human Care</div>
+      <h1 class="essay-title">The stale world model problem: accountability when an agent acts on a world that has already changed</h1>
+      <p class="essay-subtitle">Every AI agent carries a world model derived from its training data. That model has a timestamp. The world does not stop changing at that timestamp. Clinical guidelines are revised, cryptographic standards are deprecated, hardware specifications change through firmware. Accountability frameworks have not yet confronted what it means to deploy an agent whose representation of reality diverges from reality itself — not because of sensor drift, but because the world moved and the agent did not.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-03</span>
+        <span>6 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Every AI agent carries a model of the world derived from its training data. That model has a timestamp — the moment the data collection ended. The world, however, does not stop changing at that timestamp. Clinical guidelines are revised. Cryptographic standards are deprecated. Hardware specifications change through firmware updates. Regulatory requirements evolve. An agent deployed today may have been trained on a world that no longer exists.</p>
+
+        <p>This is the stale world model problem: accountability when an agent's representation of reality diverges from reality itself — not because of sensor drift or adversarial interference, but because the world moved and the agent did not.</p>
+
+        <h2>The structure of temporal displacement</h2>
+        <p>The stale world model problem is distinct from calibration drift. Calibration drift occurs when the pipeline from physical world to agent input degrades — sensors drift, signal chains accumulate error. The stale world model problem occurs upstream of that pipeline: in the agent's trained beliefs about what valid inputs look like, what appropriate responses are, and what the operational context requires.</p>
+
+        <p>It is also distinct from out-of-distribution inputs. Out-of-distribution handling asks: does this input resemble what the agent was trained on? The stale world model problem asks something different: even if this input looks familiar, is the agent's response to it still correct given how the world has changed since training?</p>
+
+        <p>These are not interchangeable questions. An agent that encounters a familiar-looking situation and responds competently can still be operating on a stale model. The response may have been appropriate when the training data was current. It may be inappropriate today. The agent's confidence is unchanged; its correctness is not. And the accountability structure has no way of distinguishing between them.</p>
+
+        <h2>The PQ crossing: deprecated assumptions</h2>
+        <p>At the post-quantum crossing, the stale world model problem takes a precise form. An agent trained before a particular cipher suite was formally deprecated may continue to treat that suite as acceptable. The agent's behavior has not changed; the world's assessment of that behavior has.</p>
+
+        <p>Cryptographic standards evolve through a documented, deliberate process — standards bodies publish guidance, vendors announce timelines, compliance frameworks are updated. But an agent's trained assumptions about acceptable cryptographic practice are baked into its weights. Unless there is an explicit mechanism for updating those assumptions — and for attesting that the update occurred — the agent continues to apply yesterday's rules to today's infrastructure.</p>
+
+        <p>The accountability gap is specific: there may be no record of which cryptographic assumptions an agent was trained on, when those assumptions were last validated against current standards, or whether a deployment continues to reflect up-to-date guidance. The agent acts correctly according to its model. Its model is wrong. Neither fact appears in the audit trail.</p>
+
+        <h2>The hardware crossing: the firmware the agent doesn't know about</h2>
+        <p>At the hardware crossing, the stale world model problem appears in device capability modeling. An agent that interacts with hardware devices — managing them, configuring them, or acting on their outputs — builds assumptions about those devices' capabilities, interfaces, and behaviors. Hardware changes through firmware updates. The device the agent knew at training time may not be the device it is managing today.</p>
+
+        <p>This matters particularly for security-relevant hardware functions: secure enclaves, attestation modules, hardware security keys. If a firmware update changes the attestation protocol, an agent with a stale model of that protocol may accept attestation that the device considers valid under old rules but that an auditor would reject under current ones — or vice versa. The agent is not behaving anomalously. It is behaving consistently with a model that no longer accurately describes the hardware it governs.</p>
+
+        <p>The traceability problem is compounded because firmware update histories and agent training dates may be managed by entirely different teams on entirely different cadences, with no formal mechanism linking them. The hardware moved; the agent's model of it did not; nobody was assigned responsibility for closing that gap.</p>
+
+        <h2>The care crossing: guidelines that move faster than agents</h2>
+        <p>In physical-world care, clinical knowledge is not static. Treatment protocols are revised in light of new evidence. Medication dosage guidance changes. Risk stratification criteria are updated as population data accumulates. An agent trained on medical literature from eighteen months ago may be confidently applying guidance that clinical consensus has since revised.</p>
+
+        <p>The care crossing is where this problem has the sharpest consequences. A care agent giving advice, flagging risks, or informing clinical decisions is implicitly making a claim about current best practice. That claim may be accurate for the model's training corpus. The care recipient and the care team may have no way of knowing that the guidance they are relying on reflects a past state of clinical knowledge rather than the present one.</p>
+
+        <p>The people most exposed to this gap are those with the least capacity to independently verify clinical guidance — the populations who tend to receive AI-mediated care first, and who have the most at stake when that guidance is wrong. An agent's confident assertion of a care recommendation carries weight. The fact that the recommendation was valid eighteen months ago and has since been superseded is not visible in the recommendation itself.</p>
+
+        <h2>What accountability requires</h2>
+        <p>The stale world model problem calls for treating knowledge provenance as a first-class accountability artifact. Several requirements follow.</p>
+
+        <p>First, agents should carry a verifiable knowledge date — not just a training cutoff timestamp, but an attestation of the specific domain knowledge versions incorporated and when they were last validated against current standards in that domain. A single training date obscures what the agent actually knows: different domains within the same model may have been current at different points in time.</p>
+
+        <p>Second, deployment governance should include a staleness threshold: a maximum interval between domain knowledge validation and deployment, adjusted for the rate of change in the relevant domain. Cryptographic standards move faster than care protocols, which move faster than some regulatory frameworks. A threshold calibrated to the slowest-moving domain will leave fast-moving domains dangerously exposed. The threshold must match the domain's actual velocity.</p>
+
+        <p>Third, the accountability chain for stale-model decisions must be explicit. When an agent operates on a stale world model, the question is not only what decision was taken, but who was responsible for attesting that the model was current, and whether that responsibility was exercised and documented before deployment.</p>
+
+        <p>An agent acting confidently on an outdated model is not a failure of the agent. It is a failure of the deployment governance that released a model into a changed world without attesting to the currency of its knowledge of that world. Until knowledge provenance is treated as an accountability artifact on the same footing as the decision log, the accountability record for stale-model decisions will contain the consequence and omit the cause.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>Every AI agent's world model has a timestamp; the world does not. An agent acting on deprecated cryptographic assumptions, outdated firmware capability models, or superseded clinical guidelines is not behaving anomalously — it is behaving exactly as trained. The accountability framework for this failure is not a better sensor pipeline or a wider distribution envelope; it is knowledge provenance as a first-class audit artifact: verifiable domain knowledge dates, explicit staleness thresholds calibrated per domain, and a named accountability chain for attesting currency before deployment.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>每个AI智能体都携带着从其训练数据中衍生出的世界模型。该模型有一个时间戳记——数据收集结束的那一刻。然而，世界并不会在那个时间戳记处停止变化。临床指南被修订，密码学标准被废弃，硬件规格通过固件更新而改变，监管要求随之演变。今天部署的智能体，可能是基于一个已不再存在的世界进行训练的。</p>
+
+        <p>这就是陈旧世界模型问题：当智能体对现实的表征与现实本身产生分歧时的问责——不是因为传感器漂移或对抗性干扰，而是因为世界已经改变，而智能体没有随之更新。</p>
+
+        <h2>时间位移的结构</h2>
+        <p>陈旧世界模型问题不同于校准漂移。校准漂移发生在从物理世界到智能体输入的管道退化时——传感器漂移，信号链积累误差。陈旧世界模型问题发生在该管道的上游：在智能体关于有效输入的外观、适当响应以及操作环境所需内容的训练信念中。</p>
+
+        <p>它也不同于分布外输入。分布外处理询问：这个输入是否与智能体被训练的内容相似？陈旧世界模型问题提出了不同的问题：即使这个输入看起来很熟悉，鉴于世界自训练以来的变化，智能体的响应是否仍然正确？</p>
+
+        <p>这些不是可以互换的问题。遭遇熟悉场景并能胜任地响应的智能体，仍然可能在使用陈旧模型。该响应在训练数据还是最新的时候可能是适当的，但今天可能已不再适当。智能体的置信度没有变化，但其正确性已经变化。问责结构却无法区分两者。</p>
+
+        <h2>后量子交叉点：已废弃的假设</h2>
+        <p>在后量子交叉点，陈旧世界模型问题采取了精确的形式。在特定密码套件被正式废弃之前训练的智能体，可能继续将该套件视为可接受的。智能体的行为没有改变；世界对该行为的评估已经改变。</p>
+
+        <p>密码学标准通过有记录的、审慎的过程演变——标准机构发布指导方针，供应商宣布时间表，合规框架更新。但智能体关于可接受密码学实践的训练假设已内置于其参数中。除非有明确的机制来更新这些假设——并证明更新已发生——否则智能体将继续将昨天的规则应用于今天的基础设施。</p>
+
+        <p>问责差距是具体的：可能没有记录说明智能体是基于哪些密码学假设训练的，这些假设最后一次针对当前标准进行验证是什么时候，或者部署是否继续反映最新指导。智能体按照其模型正确行事，其模型是错误的，这两个事实都没有出现在审计跟踪中。</p>
+
+        <h2>硬件交叉点：智能体不知道的固件</h2>
+        <p>在硬件交叉点，陈旧世界模型问题出现在设备能力建模中。与硬件设备交互的智能体——管理、配置或依据其输出采取行动——会建立关于这些设备的能力、接口和行为的假设。硬件通过固件更新而改变。智能体在训练时了解的设备可能不是它今天正在管理的设备。</p>
+
+        <p>这对安全相关的硬件功能尤其重要：安全飞地、证明模块、硬件安全密钥。如果固件更新改变了认证协议，拥有该协议陈旧模型的智能体可能接受设备在旧规则下认为有效的认证，但审计员会在当前规则下拒绝——或反之。智能体没有表现出异常，它的行为与一个不再准确描述其所管辖硬件的模型保持一致。</p>
+
+        <p>可追溯性问题更加复杂，因为固件更新历史和智能体训练日期可能由完全不同的团队按完全不同的节奏管理，没有正式机制将两者联系起来。硬件发生了变化，智能体对它的模型没有变化，没有人被指定负责弥合这一差距。</p>
+
+        <h2>护理交叉点：比智能体更新更快的指南</h2>
+        <p>在物理世界护理中，临床知识不是静态的。治疗方案根据新证据进行修订，药物剂量指导会改变，随着人口数据积累，风险分层标准会更新。基于十八个月前医学文献训练的智能体可能自信地应用临床共识此后已经修订的指导方针。</p>
+
+        <p>护理交叉点是这个问题后果最为尖锐的地方。提供建议、标记风险或提供临床决策信息的护理智能体隐含地声称符合当前最佳实践。该声明可能对模型的训练语料库是准确的。护理对象和护理团队可能无法知道他们所依赖的指导反映的是过去的临床知识状态，而非当前状态。</p>
+
+        <p>最容易受到这一差距影响的是那些独立验证临床指导能力最弱的人——往往是最先接受AI辅助护理的人群，也是在指导错误时损失最大的人。智能体对护理建议的自信声称具有分量。该建议在十八个月前有效而此后已被取代这一事实，在建议本身中并不可见。</p>
+
+        <h2>问责要求</h2>
+        <p>陈旧世界模型问题要求将知识来源视为一等问责工件。几个要求由此而来。</p>
+
+        <p>首先，智能体应该携带可验证的知识日期——不仅仅是训练截止时间戳，而是所整合的特定领域知识版本以及上次针对该领域当前标准进行验证的时间的证明。单一的训练日期掩盖了智能体实际了解的内容：同一模型中不同领域的知识可能在不同时间点是最新的。</p>
+
+        <p>其次，部署治理应包括一个陈旧阈值：知识验证和部署之间的最大时间间隔，根据相关领域的变化速率进行调整。密码学标准的变化速度快于护理协议，护理协议的变化速度快于某些监管框架。根据变化最慢的领域校准的阈值，将使快速变化的领域处于危险的暴露状态。阈值必须与领域的实际变化速度相匹配。</p>
+
+        <p>第三，陈旧模型决策的问责链必须明确。当智能体在陈旧世界模型上运行时，问题不仅仅是做出了什么决策，还有：谁负责证明模型是最新的，以及该责任是否在部署前得到履行和记录。</p>
+
+        <p>自信地依据过时模型行事的智能体不是智能体的失败，而是将模型发布到已改变的世界中却未证明其对该世界的知识时效性的部署治理的失败。在知识来源被视为与决策日志同等地位的问责工件之前，陈旧模型决策的问责记录将包含后果而省略原因。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>每个AI智能体的世界模型都有时间戳；世界没有。依据已废弃的密码学假设、过时的固件能力模型或已被取代的临床指南行事的智能体，并非表现异常——它的行为完全符合训练。这种失败的问责框架不是更好的传感器管道或更宽的分布包络；而是将知识来源作为一等审计工件：可验证的领域知识日期、按领域校准的明确陈旧阈值，以及部署前证明时效性的具名问责链。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>每個AI智能體都攜帶著從其訓練資料中衍生出的世界模型。該模型有一個時間戳記——資料收集結束的那一刻。然而，世界並不會在那個時間戳記處停止變化。臨床指南被修訂，密碼學標準被廢棄，硬體規格透過韌體更新而改變，監管要求隨之演變。今天部署的智能體，可能是基於一個已不再存在的世界進行訓練的。</p>
+
+        <p>這就是陳舊世界模型問題：當智能體對現實的表徵與現實本身產生分歧時的問責——不是因為感測器漂移或對抗性干擾，而是因為世界已經改變，而智能體沒有隨之更新。</p>
+
+        <h2>時間位移的結構</h2>
+        <p>陳舊世界模型問題不同於校準漂移。校準漂移發生在從物理世界到智能體輸入的管道退化時——感測器漂移，訊號鏈積累誤差。陳舊世界模型問題發生在該管道的上游：在智能體關於有效輸入的外觀、適當回應以及操作環境所需內容的訓練信念中。</p>
+
+        <p>它也不同於分布外輸入。分布外處理詢問：這個輸入是否與智能體被訓練的內容相似？陳舊世界模型問題提出了不同的問題：即使這個輸入看起來很熟悉，鑑於世界自訓練以來的變化，智能體的回應是否仍然正確？</p>
+
+        <p>這些不是可以互換的問題。遭遇熟悉場景並能勝任地回應的智能體，仍然可能在使用陳舊模型。該回應在訓練資料還是最新的時候可能是適當的，但今天可能已不再適當。智能體的置信度沒有變化，但其正確性已經變化。問責結構卻無法區分兩者。</p>
+
+        <h2>後量子交叉點：已廢棄的假設</h2>
+        <p>在後量子交叉點，陳舊世界模型問題採取了精確的形式。在特定密碼套件被正式廢棄之前訓練的智能體，可能繼續將該套件視為可接受的。智能體的行為沒有改變；世界對該行為的評估已經改變。</p>
+
+        <p>密碼學標準透過有記錄的、審慎的過程演變——標準機構發布指導方針，供應商宣布時間表，合規框架更新。但智能體關於可接受密碼學實踐的訓練假設已內置於其參數中。除非有明確的機制來更新這些假設——並證明更新已發生——否則智能體將繼續將昨天的規則應用於今天的基礎設施。</p>
+
+        <p>問責差距是具體的：可能沒有記錄說明智能體是基於哪些密碼學假設訓練的，這些假設最後一次針對當前標準進行驗證是什麼時候，或者部署是否繼續反映最新指導。智能體按照其模型正確行事，其模型是錯誤的，這兩個事實都沒有出現在審計跟蹤中。</p>
+
+        <h2>硬體交叉點：智能體不知道的韌體</h2>
+        <p>在硬體交叉點，陳舊世界模型問題出現在裝置能力建模中。與硬體裝置互動的智能體——管理、配置或依據其輸出採取行動——會建立關於這些裝置的能力、介面和行為的假設。硬體透過韌體更新而改變。智能體在訓練時了解的裝置可能不是它今天正在管理的裝置。</p>
+
+        <p>這對安全相關的硬體功能尤其重要：安全飛地、認證模組、硬體安全金鑰。如果韌體更新改變了認證協定，擁有該協定陳舊模型的智能體可能接受裝置在舊規則下認為有效的認證，但審計員會在當前規則下拒絕——或反之。智能體沒有表現出異常，它的行為與一個不再準確描述其所管轄硬體的模型保持一致。</p>
+
+        <p>可追溯性問題更加複雜，因為韌體更新歷史和智能體訓練日期可能由完全不同的團隊按完全不同的節奏管理，沒有正式機制將兩者聯繫起來。硬體發生了變化，智能體對它的模型沒有變化，沒有人被指定負責彌合這一差距。</p>
+
+        <h2>護理交叉點：比智能體更新更快的指南</h2>
+        <p>在物理世界護理中，臨床知識不是靜態的。治療方案根據新證據進行修訂，藥物劑量指導會改變，隨著人口資料積累，風險分層標準會更新。基於十八個月前醫學文獻訓練的智能體可能自信地應用臨床共識此後已經修訂的指導方針。</p>
+
+        <p>護理交叉點是這個問題後果最為尖銳的地方。提供建議、標記風險或提供臨床決策資訊的護理智能體隱含地聲稱符合當前最佳實踐。該聲明可能對模型的訓練語料庫是準確的。護理對象和護理團隊可能無法知道他們所依賴的指導反映的是過去的臨床知識狀態，而非當前狀態。</p>
+
+        <p>最容易受到這一差距影響的是那些獨立驗證臨床指導能力最弱的人——往往是最先接受AI輔助護理的人群，也是在指導錯誤時損失最大的人。智能體對護理建議的自信聲稱具有分量。該建議在十八個月前有效而此後已被取代這一事實，在建議本身中並不可見。</p>
+
+        <h2>問責要求</h2>
+        <p>陳舊世界模型問題要求將知識來源視為一等問責工件。幾個要求由此而來。</p>
+
+        <p>首先，智能體應該攜帶可驗證的知識日期——不僅僅是訓練截止時間戳記，而是所整合的特定領域知識版本以及上次針對該領域當前標準進行驗證的時間的證明。單一的訓練日期掩蓋了智能體實際了解的內容：同一模型中不同領域的知識可能在不同時間點是最新的。</p>
+
+        <p>其次，部署治理應包括一個陳舊閾值：知識驗證和部署之間的最大時間間隔，根據相關領域的變化速率進行調整。密碼學標準的變化速度快於護理協議，護理協議的變化速度快於某些監管框架。根據變化最慢的領域校準的閾值，將使快速變化的領域處於危險的暴露狀態。閾值必須與領域的實際變化速度相匹配。</p>
+
+        <p>第三，陳舊模型決策的問責鏈必須明確。當智能體在陳舊世界模型上運行時，問題不僅僅是做出了什麼決策，還有：誰負責證明模型是最新的，以及該責任是否在部署前得到履行和記錄。</p>
+
+        <p>自信地依據過時模型行事的智能體不是智能體的失敗，而是將模型發布到已改變的世界中卻未證明其對該世界的知識時效性的部署治理的失敗。在知識來源被視為與決策日誌同等地位的問責工件之前，陳舊模型決策的問責記錄將包含後果而省略原因。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>每個AI智能體的世界模型都有時間戳記；世界沒有。依據已廢棄的密碼學假設、過時的韌體能力模型或已被取代的臨床指南行事的智能體，並非表現異常——它的行為完全符合訓練。這種失敗的問責框架不是更好的感測器管道或更寬的分布包絡；而是將知識來源作為一等審計工件：可驗證的領域知識日期、按領域校準的明確陳舊閾值，以及部署前證明時效性的具名問責鏈。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-03</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
