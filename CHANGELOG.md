@@ -1,3 +1,4 @@
+2026-06-03 20:15 UTC · blog: fix duplicate/missing language cards in blog index — EN section had ZH/ZHT cards for 5 newest essays; ZH+ZHT sections missing key-ceremony, update-authority, negative-space entries · 8a9f400
 2026-06-03 16:15 UTC · blog: add essay 'The key ceremony problem' — accountability when AI agents participate in post-quantum trust establishment (EN+ZH+ZH-HK) · 5b4ff57
 2026-06-03 12:15 UTC · blog: add essay 'The distillation gap' — accountability when AI agents are compressed for hardware deployment (EN+ZH+ZH-HK) · 00bb86d
 2026-06-03 08:15 UTC · blog: add essay 'The update authority problem' — accountability when an AI agent is patched (EN+ZH+ZH-HK) · e619b05
