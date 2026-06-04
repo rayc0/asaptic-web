@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The professional boundary problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents now perform, at scale, the functional equivalent of many credentialed activities — clinical judgment, security certification, cryptographic review. None hold credentials. None carry professional liability. The accountability that credentials provide does not disappear because agents don't hold them. It becomes unlocatable." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/professional-boundary-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The professional boundary problem: accountability when AI agents act within credentialed domains" />
+  <meta property="og:description" content="AI agents now perform, at scale, the functional equivalent of many credentialed activities. None hold credentials. None carry professional liability. Unlocatable accountability is, in practice, no accountability at all." />
+  <meta property="og:url" content="https://asaptic.com/blog/professional-boundary-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-04" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The professional boundary problem: accountability when AI agents act within credentialed domains",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-04",
+    "description": "AI agents now perform, at scale, the functional equivalent of many credentialed activities — clinical judgment, security certification, cryptographic review. None hold credentials. None carry professional liability. The accountability that credentials provide does not disappear because agents don't hold them. It becomes unlocatable.",
+    "url": "https://asaptic.com/blog/professional-boundary-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The professional boundary problem: accountability when AI agents act within credentialed domains</h1>
+      <p class="essay-subtitle">Every licensed profession rests on a social contract: demonstrated competence, ethical obligations, and clear accountability when decisions cause harm. AI agents now perform the functional equivalent of many credentialed activities — at scale, without credentials, and without the accountability architecture credentials were designed to provide.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-04</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Every licensed profession rests on a social contract: the state grants a monopoly on certain activities in exchange for the profession's commitment to minimum competence, ethical obligations, and accountability when things go wrong. A physician can prescribe medication, carry malpractice liability, and be sanctioned by a licensing board. A security engineer can certify compliance, carry professional liability, and be held accountable against a professional standard. A cryptographer can approve key management procedures and bear responsibility for their correctness.</p>
+
+        <p>AI agents are now performing, at scale, the functional equivalent of many of these credentialed activities. A care agent that identifies medication non-adherence and recommends a care escalation is doing something recognizably similar to clinical judgment. A security agent that certifies a software component as safe for deployment is doing something similar to what a certified engineer would do. A cryptographic migration agent that determines which systems have satisfied post-quantum transition requirements is doing something similar to what a credentialed security architect would do.</p>
+
+        <p>None of these agents hold credentials. None carry professional liability. None can be sanctioned by a licensing board. This is the professional boundary problem.</p>
+
+        <h2>The credential gap</h2>
+        <p>The credential system was designed to solve a hard problem: how do you ensure that someone making high-stakes decisions in a technical domain is minimally qualified, and how do you create accountability when their decision causes harm? The answer was to require demonstrated competence, register practitioners publicly, and create a direct line of accountability from decision to decision-maker.</p>
+
+        <p>AI agents disrupt this structure without resolving the underlying problem. The decisions that require credentials are high-stakes because they require domain expertise, ethical judgment, and accountability under uncertainty. These properties do not become less important because an agent is making the decision. They become harder to locate.</p>
+
+        <p>When an agent makes a care decision, the accountability chain looks like this: the agent is developed by a company, contracted by a care provider, which has a relationship with the patient. The specific decision — this escalation, this alert, this recommendation — connects to no licensed practitioner. The credential structure has been bypassed, but the need for accountability has not.</p>
+
+        <h2>At the care crossing</h2>
+        <p>In physical-world care, the professional boundary problem appears wherever agents make decisions that functionally resemble clinical judgment. A care agent that monitors vitals and generates care recommendations is performing activities that, executed by a human, would require clinical training and licensure. The agent's output — "this pattern suggests worsening function; suggest contacting the care team" — is functionally equivalent to a clinical alert generated by a nurse or physician assistant.</p>
+
+        <p>The distinction matters for accountability. When a licensed practitioner generates a clinical alert that turns out to be wrong, there is a clear accountability pathway: the practitioner's judgment is evaluated against professional standards, and the outcome connects to a specific credentialed actor. When an agent generates the same alert and turns out to be wrong, the accountability pathway is unclear. No credential was issued. No professional standard applies directly. No licensing board has jurisdiction over the agent.</p>
+
+        <p>The problem is not that agents cannot perform these functions well — they often can. It is that the accountability architecture for when they perform them badly does not exist in the form that credential systems provide. The care recipient's recourse is narrower, the evidentiary standards less clear, and the responsible party harder to identify.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware security involves activities with corresponding professional credentials — certified system administrator, certified security analyst, certified penetration tester. An agent that performs security assessments, evaluates vulnerability severity, or signs off on compliance configurations is performing activities with credentialed equivalents. The outputs of these activities — a compliance status, a vulnerability rating, a security recommendation — carry weight in downstream operational decisions.</p>
+
+        <p>When an agent produces a hardware security evaluation that turns out to be wrong — a system declared adequately secured that was not, a vulnerability rated low-severity that was later exploited — the accountability question is the same. No credentialed practitioner signed off on the specific judgment. The accountability pathway that credentials provide is absent, and the harm that follows cannot be traced back through a professional accountability structure that never existed.</p>
+
+        <h2>At the post-quantum crossing</h2>
+        <p>Cryptographic infrastructure is one of the most credential-intensive areas of information security. Cryptographers, security architects, and compliance officers who certify cryptographic controls are accountable through professional and contractual channels when those controls fail. An agent that manages cryptographic migrations — recommending algorithm deprecations, certifying transition completion, approving the sequencing of key management changes — is performing work that, in human hands, would carry this professional accountability.</p>
+
+        <p>When a migration agent recommends a transition sequence that leaves a window of cryptographic exposure, or certifies a system as migration-complete before it actually is, the missing accountability is not incidental. It is structural. The work was performed outside the credential framework that exists precisely to create accountability for high-consequence technical decisions. The organization that relied on the agent's certification has no professional recourse against the agent and no direct recourse against the practitioner, because no practitioner was involved.</p>
+
+        <h2>What accountability requires</h2>
+        <p>The professional boundary problem does not have a simple solution, and it does not have a credential solution. Issuing credentials to AI agents is not coherent — credentials certify demonstrated competence and impose ongoing obligations on an entity capable of bearing them. An agent cannot sit an examination, carry malpractice insurance, or be subject to disciplinary proceedings in any meaningful sense.</p>
+
+        <p>What is coherent is requiring that agent actions within credentialed domains remain connected to a credentialed human who can bear the accountability. This is not the same as requiring human approval for every agent action — that would eliminate most of the value agents provide. It is requiring that the accountability chain remain intact: that somewhere in the decision hierarchy, a credentialed practitioner can be identified who has reviewed the agent's work at sufficient depth to bear responsibility for its quality.</p>
+
+        <p>Where no such review exists — where the agent acts within a credentialed domain and no credentialed human is in the accountability chain — the credential system has not been replaced. It has been circumvented. The accountability that credentials provide does not disappear because agents don't hold them. It becomes unlocatable. And unlocatable accountability is, in practice, no accountability at all.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>Licensed credentials solve a specific problem: how to ensure minimal competence in high-stakes domains and create clear accountability when decisions cause harm. AI agents now perform the functional equivalent of many credentialed activities — clinical judgment at the care crossing, security certification at the hardware crossing, cryptographic review at the post-quantum crossing — without holding credentials or carrying professional liability. The accountability that credentials were designed to provide does not transfer automatically to the institutions behind the agents. Unless deployment frameworks require a credentialed human to remain in the accountability chain for agent actions in credentialed domains, accountability becomes structurally unlocatable.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>每一个持牌职业都建立在一份社会契约之上：国家授予某些活动的专营权，以换取该职业对最低能力标准、职业道德义务以及出错时承担责任的承诺。医生可以开具处方、承担医疗事故责任，并受到执照委员会的制裁。安全工程师可以认证合规、承担职业责任，并依据职业标准被追究责任。密码学家可以批准密钥管理程序并为其正确性负责。</p>
+
+        <p>AI智能体现在正在大规模执行许多此类持证活动的功能等价物。一个识别用药不依从并建议照护升级的照护智能体，正在做与临床判断极为相似的事情。一个认证软件组件可安全部署的安全智能体，正在做认证工程师会做的事。一个确定哪些系统已满足后量子迁移要求的加密迁移智能体，正在做持证安全架构师会做的事。</p>
+
+        <p>这些智能体都不持有资质证书。都不承担职业责任。都不能被执照委员会制裁。这就是职业边界问题。</p>
+
+        <h2>资质差距</h2>
+        <p>资质认证体系被设计来解决一个困难问题：如何确保在技术领域做出高风险决策的人具备最低资格，以及如何在其决策造成伤害时创造问责？答案是要求展示的能力、公开注册执业者，并在决策和决策者之间建立直接的问责路径。</p>
+
+        <p>AI智能体在不解决潜在问题的情况下扰乱了这一结构。需要资质认证的决策之所以是高风险的，是因为它们需要领域专业知识、道德判断和不确定情况下的问责。这些属性并不会因为智能体在做决策而变得不那么重要。它们变得更难以定位。</p>
+
+        <p>当智能体做出照护决策时，问责链如下：智能体由一家公司开发，与照护提供者签约，后者与患者有关系。具体决定——这次升级、这个警报、这个建议——没有连接到任何持证执业者。资质认证结构被绕过了，但对问责的需求并没有。</p>
+
+        <h2>在照护交叉点</h2>
+        <p>在物理世界照护中，职业边界问题出现在智能体做出功能上类似临床判断的决策的地方。一个监测生命体征并生成照护建议的照护智能体，正在执行如果由人类执行则需要临床培训和执照的活动。智能体的输出——"这种模式表明功能恶化；建议联系照护团队"——在功能上等同于由护士或医生助理生成的临床警报。</p>
+
+        <p>这种区别对问责很重要。当持证执业者生成一个事后证明错误的临床警报时，存在清晰的问责路径：执业者的判断根据职业标准进行评估，结果与特定的持证执业者相连。当智能体生成相同的警报并事后证明错误时，问责路径不清晰。没有颁发证书。没有直接适用的职业标准。没有执照委员会对智能体拥有管辖权。</p>
+
+        <p>问题不在于智能体不能很好地执行这些功能——它们通常可以。在于当它们执行不当时的问责架构并不以资质认证体系提供的形式存在。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件安全涉及具有相应专业资质的活动——认证系统管理员、认证安全分析师、认证渗透测试员。一个执行安全评估、评估漏洞严重程度或签署合规配置的智能体，正在执行具有持证等价物的活动。这些活动的输出——合规状态、漏洞评级、安全建议——在下游运营决策中具有分量。</p>
+
+        <p>当智能体产生一个事后证明错误的硬件安全评估——一个被宣称为充分安全但实际上没有的系统，一个被评为低严重性但后来被利用的漏洞——问责问题是相同的。没有持证执业者签署具体判断。资质认证提供的问责路径不存在，随之而来的损害无法追溯到从未存在的职业问责结构。</p>
+
+        <h2>在后量子交叉点</h2>
+        <p>加密基础设施是信息安全中资质认证最密集的领域之一。认证加密控制的密码学家、安全架构师和合规官员在这些控制失败时通过职业和合同渠道承担责任。一个管理加密迁移的智能体——建议算法弃用、认证迁移完成、批准密钥管理变更的排序——正在执行如果由人类完成则携带这种职业问责的工作。</p>
+
+        <p>当迁移智能体建议一个留下加密暴露窗口的过渡序列，或在系统实际完成之前认证它已完成迁移时，缺失的问责不是偶然的。它是结构性的。这项工作在资质认证框架之外执行，而该框架的存在恰恰是为了为高后果技术决策创造问责。</p>
+
+        <h2>问责的要求</h2>
+        <p>职业边界问题没有简单的解决方案，也没有资质认证解决方案。向AI智能体颁发证书是不合理的——证书认证已展示的能力，并向能够承担义务的实体施加持续义务。智能体无法参加考试、持有执业责任险，或以任何有意义的方式接受纪律处分。</p>
+
+        <p>合理的做法是要求智能体在持证领域内的行动与能够承担问责的持证人类保持关联。这与要求每次智能体行动都需要人工批准不同——那将消除智能体提供的大部分价值。它要求问责链保持完整：在决策层级中某处，可以识别出一位持证执业者，他以足够的深度审查了智能体的工作，能够为其质量负责。</p>
+
+        <p>在这种审查不存在的地方——智能体在持证领域行动但问责链中没有持证人类的地方——资质认证体系没有被取代。它被绕过了。资质认证提供的问责并不会因为智能体不持有证书而消失。它变得无法定位。而实际上无法定位的问责，就等于没有问责。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>持照资质解决了一个具体问题：如何确保在高风险领域的最低能力，以及在决策造成伤害时创造清晰的问责。AI智能体现在执行许多持证活动的功能等价物——照护交叉点的临床判断、硬件交叉点的安全认证、后量子交叉点的加密审查——而不持有证书或承担职业责任。资质认证旨在提供的问责不会自动转移到智能体背后的机构。除非部署框架要求持证人类在持证领域的智能体行动中保持在问责链中，否则问责在结构上将无法定位。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>每一個持牌職業都建立在一份社會契約之上：國家授予某些活動的專營權，以換取該職業對最低能力標準、職業道德義務以及出錯時承擔責任的承諾。醫生可以開具處方、承擔醫療事故責任，並受到執照委員會的制裁。安全工程師可以認證合規、承擔職業責任，並依據職業標準被追究責任。密碼學家可以批准金鑰管理程序並為其正確性負責。</p>
+
+        <p>AI智能體現在正在大規模執行許多此類持證活動的功能等價物。一個識別用藥不依從並建議照護升級的照護智能體，正在做與臨床判斷極為相似的事情。一個認證軟件組件可安全部署的安全智能體，正在做認證工程師會做的事。一個確定哪些系統已滿足後量子遷移要求的加密遷移智能體，正在做持證安全架構師會做的事。</p>
+
+        <p>這些智能體都不持有資質證書。都不承擔職業責任。都不能被執照委員會制裁。這就是職業邊界問題。</p>
+
+        <h2>資質差距</h2>
+        <p>資質認證體系被設計來解決一個困難問題：如何確保在技術領域做出高風險決策的人具備最低資格，以及如何在其決策造成傷害時創造問責？答案是要求展示的能力、公開登記執業者，並在決策和決策者之間建立直接的問責路徑。</p>
+
+        <p>AI智能體在不解決潛在問題的情況下擾亂了這一結構。需要資質認證的決策之所以是高風險的，是因為它們需要領域專業知識、道德判斷和不確定情況下的問責。這些屬性並不會因為智能體在做決策而變得不那麼重要。它們變得更難以定位。</p>
+
+        <p>當智能體做出照護決策時，問責鏈如下：智能體由一家公司開發，與照護提供者簽約，後者與患者有關係。具體決定——這次升級、這個警報、這個建議——沒有連接到任何持證執業者。資質認證結構被繞過了，但對問責的需求並沒有。</p>
+
+        <h2>在照護交叉點</h2>
+        <p>在實體世界照護中，職業邊界問題出現在智能體做出功能上類似臨床判斷的決策的地方。一個監測生命體徵並生成照護建議的照護智能體，正在執行如果由人類執行則需要臨床培訓和執照的活動。智能體的輸出——「這種模式表明功能惡化；建議聯繫照護團隊」——在功能上等同於由護士或醫生助理生成的臨床警報。</p>
+
+        <p>這種區別對問責很重要。當持證執業者生成一個事後證明錯誤的臨床警報時，存在清晰的問責路徑：執業者的判斷根據職業標準進行評估，結果與特定的持證執業者相連。當智能體生成相同的警報並事後證明錯誤時，問責路徑不清晰。沒有頒發證書。沒有直接適用的職業標準。沒有執照委員會對智能體擁有管轄權。</p>
+
+        <p>問題不在於智能體不能很好地執行這些功能——它們通常可以。在於當它們執行不當時的問責架構並不以資質認證體系提供的形式存在。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>硬件安全涉及具有相應專業資質的活動——認證系統管理員、認證安全分析師、認證滲透測試員。一個執行安全評估、評估漏洞嚴重程度或簽署合規配置的智能體，正在執行具有持證等價物的活動。這些活動的輸出——合規狀態、漏洞評級、安全建議——在下游運營決策中具有分量。</p>
+
+        <p>當智能體產生一個事後證明錯誤的硬件安全評估——一個被宣稱為充分安全但實際上沒有的系統，一個被評為低嚴重性但後來被利用的漏洞——問責問題是相同的。沒有持證執業者簽署具體判斷。資質認證提供的問責路徑不存在，隨之而來的損害無法追溯到從未存在的職業問責結構。</p>
+
+        <h2>在後量子交叉點</h2>
+        <p>加密基礎設施是資訊安全中資質認證最密集的領域之一。認證加密控制的密碼學家、安全架構師和合規官員在這些控制失敗時通過職業和合約渠道承擔責任。一個管理加密遷移的智能體——建議算法棄用、認證遷移完成、批准金鑰管理變更的排序——正在執行如果由人類完成則攜帶這種職業問責的工作。</p>
+
+        <p>當遷移智能體建議一個留下加密暴露窗口的過渡序列，或在系統實際完成之前認證它已完成遷移時，缺失的問責不是偶然的。它是結構性的。這項工作在資質認證框架之外執行，而該框架的存在恰恰是為了為高後果技術決策創造問責。</p>
+
+        <h2>問責的要求</h2>
+        <p>職業邊界問題沒有簡單的解決方案，也沒有資質認證解決方案。向AI智能體頒發證書是不合理的——證書認證已展示的能力，並向能夠承擔義務的實體施加持續義務。智能體無法參加考試、持有執業責任險，或以任何有意義的方式接受紀律處分。</p>
+
+        <p>合理的做法是要求智能體在持證領域內的行動與能夠承擔問責的持證人類保持關聯。這與要求每次智能體行動都需要人工批准不同——那將消除智能體提供的大部分價值。它要求問責鏈保持完整：在決策層級中某處，可以識別出一位持證執業者，他以足夠的深度審查了智能體的工作，能夠為其質量負責。</p>
+
+        <p>在這種審查不存在的地方——智能體在持證領域行動但問責鏈中沒有持證人類的地方——資質認證體系沒有被取代。它被繞過了。資質認證提供的問責並不會因為智能體不持有證書而消失。它變得無法定位。而實際上無法定位的問責，就等於沒有問責。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>持照資質解決了一個具體問題：如何確保在高風險領域的最低能力，以及在決策造成傷害時創造清晰的問責。AI智能體現在執行許多持證活動的功能等價物——照護交叉點的臨床判斷、硬件交叉點的安全認證、後量子交叉點的加密審查——而不持有證書或承擔職業責任。資質認證旨在提供的問責不會自動轉移到智能體背後的機構。除非部署框架要求持證人類在持證領域的智能體行動中保持在問責鏈中，否則問責在結構上將無法定位。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const langSections = document.querySelectorAll('.essay-lang');
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        langBtns.forEach(b => b.classList.remove('active'));
+        langSections.forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
