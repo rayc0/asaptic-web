@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The precautionary action problem — Asaptic Labs</title>
+
+  <meta name="description" content="When an AI agent takes precautionary action based on predicted risk, preventing the harm also destroys the evidence needed to evaluate whether the action was warranted. Success and unjustified intervention become indistinguishable. This is not a measurement error — it is a structural inversion of how accountability works." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/precautionary-action-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The precautionary action problem: accountability when an AI agent prevents what might not have happened" />
+  <meta property="og:description" content="When an AI agent takes precautionary action based on predicted risk, preventing the harm also destroys the evidence needed to evaluate whether the action was warranted. Success and unjustified intervention become indistinguishable." />
+  <meta property="og:url" content="https://asaptic.com/blog/precautionary-action-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-04" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The precautionary action problem: accountability when an AI agent prevents what might not have happened",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-04",
+    "description": "When an AI agent takes precautionary action based on predicted risk, preventing the harm also destroys the evidence needed to evaluate whether the action was warranted. Success and unjustified intervention become indistinguishable. This is not a measurement error — it is a structural inversion of how accountability works.",
+    "url": "https://asaptic.com/blog/precautionary-action-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The precautionary action problem: accountability when an AI agent prevents what might not have happened</h1>
+      <p class="essay-subtitle">When an AI agent takes precautionary action based on predicted risk, preventing the harm also destroys the evidence needed to evaluate whether the action was warranted. Success and unjustified intervention become indistinguishable. This is not a measurement error — it is a structural inversion of how accountability works.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-04</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>In most accountability frameworks, outcomes anchor evaluation. A decision that led to harm is examined; a decision that led to none is not. Accountability proceedings work backward from consequences to causes, establishing what happened and whether different choices would have changed it.</p>
+
+        <p>AI agents deployed in predictive and preventive roles disrupt this logic. A care agent that flags a patient for early intervention, a hardware security agent that quarantines a device based on behavioral anomalies, a migration agent that pre-emptively rotates cryptographic keys on predicted vulnerability — each acts before the feared outcome has occurred. If the action succeeds, the outcome does not occur. The prevention becomes the evidence. And the evidence cannot be distinguished from the counterfactual in which the risk was never real.</p>
+
+        <p>This is the precautionary action problem. It is not a variant of the counterfactual accountability problem, which asks what would have happened had the agent acted differently after an adverse event. It is a prior and more fundamental issue: when prevention succeeds, both justified intervention and unnecessary intervention look exactly the same.</p>
+
+        <h2>Why prevention destroys the evaluation signal</h2>
+        <p>Consider a care agent that identifies a patient showing early signs of deterioration and escalates to the care team. The escalation triggers timely intervention. The patient stabilizes. The system appears to have worked. But the evaluation question — was this escalation warranted? — requires knowing whether deterioration would have occurred without intervention. That is unobservable. The only observation is the one where intervention happened.</p>
+
+        <p>In traditional clinical oversight, practitioners develop institutional knowledge about which presentations reliably precede deterioration and which do not. That knowledge is built from many cases, including cases where deterioration was not escalated and its course could be observed. Precautionary AI agents generate a different data distribution: when the agent flags and clinicians intervene, the natural course is interrupted. Over time, an agent that over-flags generates a dataset in which deterioration never follows its flagged presentations — because intervention prevented it. The prediction record looks excellent precisely because the interventions make the predictions unverifiable.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>A fleet management agent that quarantines devices based on behavioral signatures consistent with firmware compromise generates the same evidentiary problem at different stakes. If the quarantine is applied and the suspected compromise does not spread, the agent gets credit for prevention. If the device was not actually compromised — if the behavioral signature was a false positive — the quarantine looks identical to a successful interception. The difference is not visible in outcome data.</p>
+
+        <p>At scale, over-quarantine is not a neutral error. Quarantined devices are unavailable; service continuity suffers; operations teams investigate false positives that consume capacity that should be directed at real threats. But the accountability signal does not surface this. The agent appears to be performing correctly. Evaluating whether precautionary quarantine thresholds are calibrated correctly requires a separate evidentiary method — one that tracks the outcomes of quarantined devices when the quarantine is eventually lifted, and compares them against a held-out control population. Few fleet management deployments maintain this discipline.</p>
+
+        <h2>At the post-quantum crossing</h2>
+        <p>Precautionary key rotation — deprecating cryptographic keys based on predicted algorithmic vulnerability, before any confirmed exploitation — has a similar structure. A migration agent that recommends pre-emptive rotation of keys using algorithms considered vulnerable to emerging quantum computing capability is making a prediction about future break timelines. If the rotation happens and the predicted break never materializes on that timeline, the rotation was either correctly precautionary or unnecessary. The outcome is indistinguishable.</p>
+
+        <p>The compounding problem is that precautionary key rotation carries real and immediate operational costs: downtime, compatibility risk, validation overhead, migration complexity. The benefits are speculative and long-dated. An accountability framework that evaluates precautionary action only against immediate operational disruption will systematically undervalue it. One that evaluates it against prevented harm cannot see the prevention. Neither produces a reliable signal.</p>
+
+        <h2>What accountability architecture requires</h2>
+        <p>The precautionary action problem cannot be resolved by better outcome tracking — because the outcome structure is the problem. What it requires is a shift in the object of accountability: from outcomes to decision quality at the moment of decision.</p>
+
+        <p>A precautionary agent that can be held accountable for the quality of its predictions — not the accuracy of its outcomes, but the evidentiary basis, the calibration of its risk estimates, and the appropriateness of the threshold it applied — can be evaluated independently of whether the feared outcome would have occurred. This requires agents to produce structured decision records: what evidence triggered the flag, what threshold was applied, what alternative thresholds were considered, and what base rate the prediction drew from.</p>
+
+        <p>It also requires institutional discipline about shadow populations: when intervention is applied to a cohort, maintaining a comparable population without intervention is the only method for calibrating whether the thresholds are justified. This carries real ethical weight — allowing some members of the shadow population to face the risk the precautionary action was meant to prevent is not neutral. But without it, the precautionary agent operates in a closed loop where success confirms itself and error is invisible.</p>
+
+        <p>Preventing harm is the goal. But if prevention destroys the evidence needed to evaluate whether the action was warranted, the accountability framework is not governing the agent — it is narrating it.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>When an AI agent acts to prevent a predicted harm, success makes the evaluation question unanswerable: you cannot observe whether the harm would have occurred without the intervention. This is not a counterfactual accountability problem — it is a structural inversion where prevention and unjustified interference look identical in the outcome record. At the care crossing, over-escalation agents build prediction records that confirm themselves. At the hardware crossing, false-positive quarantine is invisible in outcome data. At the post-quantum crossing, precautionary key rotation cannot be evaluated against harm prevented. The remedy is to shift accountability from outcomes to decision quality: structured pre-action records documenting the evidentiary basis, threshold applied, and base rate drawn from. Without this shift, the precautionary agent is ungovernable by design.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>在大多数问责框架中，结果是评估的锚点。导致伤害的决策会受到审查；没有导致伤害的决策则不会。问责程序从后果追溯到原因，确定发生了什么，以及不同的选择是否会改变结果。</p>
+
+        <p>部署在预测和预防角色中的AI智能体打破了这种逻辑。一个对患者发出早期干预标记的照护智能体、一个基于行为异常对设备实施隔离的硬件安全智能体、一个基于预测漏洞预先轮换加密密钥的迁移智能体——每一个都在feared后果发生之前采取行动。如果行动成功，后果就不会发生。预防本身成为证据。而这种证据无法与风险从未真实存在的反事实相区别。</p>
+
+        <p>这就是预防行动问题。它不是反事实问责问题的变体——后者询问的是如果智能体在不良事件发生后采取不同行动会发生什么。它是一个更根本的先决问题：当预防成功时，合理干预和不必要干预看起来完全相同。</p>
+
+        <h2>为什么预防会破坏评估信号</h2>
+        <p>考虑一个照护智能体，它识别出一名显示出恶化早期迹象的患者，并向照护团队发出升级信号。升级触发了及时干预。患者病情稳定了。系统看起来已经发挥作用。但评估问题——这次升级是否有必要？——需要知道如果没有干预，恶化是否会发生。这是不可观察的。唯一的观察是干预发生的那个。</p>
+
+        <p>在传统临床监督中，从业者积累了关于哪些表现可靠地预示恶化、哪些不会的机构知识。这种知识建立在许多案例之上，包括那些恶化未被升级而其过程可以被观察的案例。预防性AI智能体产生了不同的数据分布：当智能体发出标记而临床医生干预时，自然过程被打断。随着时间推移，一个过度标记的智能体会生成一个数据集，其中恶化从未跟随其标记的表现——因为干预阻止了它。预测记录看起来优秀，恰恰是因为干预使预测变得无法验证。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>一个基于与固件入侵一致的行为特征对设备实施隔离的机群管理智能体，以不同的风险级别产生相同的证据问题。如果隔离被实施且可疑入侵没有扩散，智能体获得预防的功劳。如果设备实际上并未被入侵——如果行为特征是误报——隔离与成功拦截看起来完全相同。这种差异在结果数据中是不可见的。</p>
+
+        <p>在规模上，过度隔离不是中性错误。被隔离的设备不可用；服务连续性受损；运营团队调查占用了应该指向真实威胁的容量的误报。但问责信号不会揭示这一点。智能体看起来运行正常。评估预防性隔离阈值是否经过正确校准，需要一种单独的证据方法——一种在隔离最终解除时追踪被隔离设备结果、并将其与保留的对照群体进行比较的方法。很少有机群管理部署保持这种规范。</p>
+
+        <h2>在后量子交叉点</h2>
+        <p>预防性密钥轮换——在任何确认的利用之前，基于预测的算法漏洞废弃加密密钥——具有类似的结构。一个建议预先轮换使用被认为易受新兴量子计算能力攻击的算法密钥的迁移智能体，正在对未来破解时间线做出预测。如果轮换发生而预测的破解没有在该时间线上实现，轮换要么是正确的预防措施，要么是不必要的。结果是无法区分的。</p>
+
+        <p>复合问题是，预防性密钥轮换具有真实且即时的运营成本：停机、兼容性风险、验证开销、迁移复杂性。收益是推测性的且长期的。一个仅根据即时运营中断来评估预防行动的问责框架，会系统性地低估它。一个根据预防的伤害来评估它的框架看不到预防。两者都不产生可靠的信号。</p>
+
+        <h2>问责架构的要求</h2>
+        <p>预防行动问题无法通过更好的结果追踪来解决——因为结果结构就是问题所在。它需要的是问责对象的转变：从结果到决策时刻的决策质量。</p>
+
+        <p>一个能够为其预测质量承担责任的预防性智能体——不是其结果的准确性，而是证据基础、风险估计的校准，以及所应用阈值的适当性——可以独立于feared后果是否会发生而被评估。这要求智能体产生结构化的决策记录：什么证据触发了标记，应用了什么阈值，考虑了什么替代阈值，以及预测来自什么基础率。</p>
+
+        <p>这也要求关于影子群体的机构规范：当干预应用于一个群体时，维持一个没有干预的可比群体，是校准阈值是否合理的唯一方法。这具有真实的伦理分量——允许影子群体的一些成员面对预防行动旨在防止的风险，不是中性的。但没有它，预防性智能体在一个成功自我证明而错误不可见的闭环中运作。</p>
+
+        <p>预防伤害是目标。但如果预防破坏了评估行动是否有必要所需的证据，问责框架就不是在治理智能体——而是在叙述它。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>当AI智能体采取行动预防预测的伤害时，成功使评估问题无法回答：你无法观察没有干预的情况下伤害是否会发生。这不是反事实问责问题——它是结构性倒置，预防和不合理干预在结果记录中看起来完全相同。在照护交叉点，过度升级的智能体构建了自我证实的预测记录。在硬件交叉点，误报隔离在结果数据中是不可见的。在后量子交叉点，预防性密钥轮换无法根据预防的伤害来评估。解决方案是将问责从结果转移到决策质量：记录证据基础、应用阈值和采用基础率的结构化行动前记录。没有这种转变，预防性智能体在设计上就是不可治理的。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>在大多數問責框架中，結果是評估的錨點。導致傷害的決策會受到審查；沒有導致傷害的決策則不會。問責程序從後果追溯到原因，確定發生了什麼，以及不同的選擇是否會改變結果。</p>
+
+        <p>部署在預測和預防角色中的AI智能體打破了這種邏輯。一個對病人發出早期干預標記的照護智能體、一個基於行為異常對設備實施隔離的硬件安全智能體、一個基於預測漏洞預先輪換加密金鑰的遷移智能體——每一個都在feared後果發生之前採取行動。如果行動成功，後果就不會發生。預防本身成為證據。而這種證據無法與風險從未真實存在的反事實相區別。</p>
+
+        <p>這就是預防行動問題。它不是反事實問責問題的變體——後者詢問的是如果智能體在不良事件發生後採取不同行動會發生什麼。它是一個更根本的先決問題：當預防成功時，合理干預和不必要干預看起來完全相同。</p>
+
+        <h2>為什麼預防會破壞評估信號</h2>
+        <p>考慮一個照護智能體，它識別出一名顯示出惡化早期跡象的病人，並向照護團隊發出升級信號。升級觸發了及時干預。病人病情穩定了。系統看起來已經發揮作用。但評估問題——這次升級是否有必要？——需要知道如果沒有干預，惡化是否會發生。這是不可觀察的。唯一的觀察是干預發生的那個。</p>
+
+        <p>在傳統臨床監督中，從業者積累了關於哪些表現可靠地預示惡化、哪些不會的機構知識。這種知識建立在許多案例之上，包括那些惡化未被升級而其過程可以被觀察的案例。預防性AI智能體產生了不同的數據分佈：當智能體發出標記而臨床醫生干預時，自然過程被打斷。隨著時間推移，一個過度標記的智能體會生成一個數據集，其中惡化從未跟隨其標記的表現——因為干預阻止了它。預測記錄看起來優秀，恰恰是因為干預使預測變得無法驗證。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>一個基於與韌體入侵一致的行為特徵對設備實施隔離的機群管理智能體，以不同的風險級別產生相同的證據問題。如果隔離被實施且可疑入侵沒有擴散，智能體獲得預防的功勞。如果設備實際上並未被入侵——如果行為特徵是誤報——隔離與成功攔截看起來完全相同。這種差異在結果數據中是不可見的。</p>
+
+        <p>在規模上，過度隔離不是中性錯誤。被隔離的設備不可用；服務連續性受損；運營團隊調查占用了應該指向真實威脅的容量的誤報。但問責信號不會揭示這一點。智能體看起來運行正常。評估預防性隔離閾值是否經過正確校準，需要一種單獨的證據方法——一種在隔離最終解除時追蹤被隔離設備結果、並將其與保留的對照群體進行比較的方法。很少有機群管理部署保持這種規範。</p>
+
+        <h2>在後量子交叉點</h2>
+        <p>預防性金鑰輪換——在任何確認的利用之前，基於預測的算法漏洞廢棄加密金鑰——具有類似的結構。一個建議預先輪換使用被認為易受新興量子計算能力攻擊的算法金鑰的遷移智能體，正在對未來破解時間線做出預測。如果輪換發生而預測的破解沒有在該時間線上實現，輪換要麼是正確的預防措施，要麼是不必要的。結果是無法區分的。</p>
+
+        <p>複合問題是，預防性金鑰輪換具有真實且即時的運營成本：停機、兼容性風險、驗證開銷、遷移複雜性。收益是推測性的且長期的。一個僅根據即時運營中斷來評估預防行動的問責框架，會系統性地低估它。一個根據預防的傷害來評估它的框架看不到預防。兩者都不產生可靠的信號。</p>
+
+        <h2>問責架構的要求</h2>
+        <p>預防行動問題無法通過更好的結果追蹤來解決——因為結果結構就是問題所在。它需要的是問責對象的轉變：從結果到決策時刻的決策質量。</p>
+
+        <p>一個能夠為其預測質量承擔責任的預防性智能體——不是其結果的準確性，而是證據基礎、風險估計的校準，以及所應用閾值的適當性——可以獨立於feared後果是否會發生而被評估。這要求智能體產生結構化的決策記錄：什麼證據觸發了標記，應用了什麼閾值，考慮了什麼替代閾值，以及預測來自什麼基礎率。</p>
+
+        <p>這也要求關於影子群體的機構規範：當干預應用於一個群體時，維持一個沒有干預的可比群體，是校準閾值是否合理的唯一方法。這具有真實的倫理分量——允許影子群體的一些成員面對預防行動旨在防止的風險，不是中性的。但沒有它，預防性智能體在一個成功自我證明而錯誤不可見的閉環中運作。</p>
+
+        <p>預防傷害是目標。但如果預防破壞了評估行動是否有必要所需的證據，問責框架就不是在治理智能體——而是在敘述它。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>當AI智能體採取行動預防預測的傷害時，成功使評估問題無法回答：你無法觀察沒有干預的情況下傷害是否會發生。這不是反事實問責問題——它是結構性倒置，預防和不合理干預在結果記錄中看起來完全相同。在照護交叉點，過度升級的智能體構建了自我證實的預測記錄。在硬件交叉點，誤報隔離在結果數據中是不可見的。在後量子交叉點，預防性金鑰輪換無法根據預防的傷害來評估。解決方案是將問責從結果轉移到決策質量：記錄證據基礎、應用閾值和採用基礎率的結構化行動前記錄。沒有這種轉變，預防性智能體在設計上就是不可治理的。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const langSections = document.querySelectorAll('.essay-lang');
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        langBtns.forEach(b => b.classList.remove('active'));
+        langSections.forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
