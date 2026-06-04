@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The alert saturation problem — Asaptic Labs</title>
+
+  <meta name="description" content="An accountability system generates signals. When those signals exceed the capacity of the humans meant to receive them, the system has not been breached — it has been overwhelmed. The effect is the same." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/alert-saturation-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The alert saturation problem: when accountability signals become noise" />
+  <meta property="og:description" content="An accountability system generates signals. When those signals exceed the capacity of the humans meant to receive them, the system has not been breached — it has been overwhelmed. The effect is the same." />
+  <meta property="og:url" content="https://asaptic.com/blog/alert-saturation-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-04" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The alert saturation problem: when accountability signals become noise",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-04",
+    "description": "An accountability system generates signals. When those signals exceed the capacity of the humans meant to receive them, the system has not been breached — it has been overwhelmed. The effect is the same.",
+    "url": "https://asaptic.com/blog/alert-saturation-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The alert saturation problem: when accountability signals become noise</h1>
+      <p class="essay-subtitle">An accountability system generates signals. When those signals exceed the capacity of the humans meant to receive them, the system has not been breached — it has been overwhelmed. The effect is the same.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-04</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Clinical alarm fatigue is documented in the medical literature. In intensive care settings, a single patient may trigger hundreds of alarms in a single shift — monitors for heart rate, blood pressure, ventilator parameters, infusion pumps, and position sensors each contributing to the total. The clinical finding, confirmed across multiple hospital studies, is that nurses respond to a decreasing fraction of alarms as total volume rises, and that the alarms they fail to respond to include genuine emergencies. The accountability mechanism designed to detect deteriorating patient status has become, at high volume, a mechanism that obscures it.</p>
+
+        <p>The phenomenon has a name in clinical practice: alarm fatigue. It is typically treated as a human factors problem specific to healthcare. But it is a structural problem that will appear wherever accountability systems generate more signals than oversight processes can absorb — and the deployment of AI agents across the three crossings creates exactly that condition at each one.</p>
+
+        <h2>The structure of the problem</h2>
+        <p>An accountability system has two sides: a signal-generation side and a signal-reception side. Both have capacity limits. The signal-generation side is designed to err toward completeness — flagging more rather than fewer events, because any missed event might be the one that mattered. The signal-reception side is constrained by human attention: finite, easily saturated, and subject to desensitization when the signal-to-noise ratio drops below a useful threshold.</p>
+
+        <p>When volume rises faster than the reception side can scale, the accountability loop breaks at the human end. The logs exist. The alerts fire. The records accumulate. But the oversight is nominal — present in architecture, absent in practice. An agent operating in this environment is effectively unaccountable, not because no one is watching, but because there is too much to watch.</p>
+
+        <p>What makes this specifically dangerous is that it looks correct from the outside. Compliance frameworks check for the presence of logging. Auditors verify that alerts are configured. The accountability infrastructure exists. The saturation problem is invisible until a missed event surfaces — at which point the record shows that the alert fired, the log captured it, and no one responded. Accountability without coverage.</p>
+
+        <h2>At the care crossing</h2>
+        <p>Clinical alarm fatigue is the direct physical-world instance of this problem. Agents deployed in care settings — monitoring vital signs, detecting falls, flagging medication timing — generate structured alerts as their accountability outputs. In a facility with dozens of patients, each monitored by a suite of agents, the total alert volume during a single shift may exceed any realistic oversight capacity.</p>
+
+        <p>The structural tension here is irreducible by adding more agents. If care agents generate alerts, and those alerts reach human caregivers, and the volume of alerts desensitizes caregivers to the point where genuine emergencies are missed — then deploying more thorough monitoring has made the situation worse, not better. The accountability mechanism has turned against its purpose. This is not a hypothetical: it is the documented experience of every care setting that has added monitoring technology faster than it redesigned its alert triage architecture.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Fleet-scale hardware deployment creates a second instance. When devices must attest their integrity to a network — firmware version, hardware configuration, cryptographic credential status — each failed attestation generates an event. In a fleet of millions of devices, even a small percentage of legitimate hardware anomalies produces a signal volume that strains security operations centers.</p>
+
+        <p>The practical response is suppression: alert thresholds are raised, auto-dismiss rules are configured, categories of attestation failure are reclassified as informational rather than actionable. Each of these adaptations is rational in isolation. Together they progressively hollow out the accountability architecture. By the time a genuine compromise event occurs, the signal it generates may be indistinguishable from the background noise that has already been systematically deprioritized. The infrastructure logs the event. The oversight culture no longer treats that log category as requiring response.</p>
+
+        <h2>At the post-quantum crossing</h2>
+        <p>The post-quantum transition will create a concentrated version of this problem. As organizations migrate cryptographic infrastructure from classical to quantum-safe algorithms, the interim period produces validation failures at scale: old signature schemes flagging as deprecated, hybrid negotiation sequences generating unexpected validation states, HSM firmware updates creating attestation gaps during rollover. Security teams face a surge in cryptographic validation alerts precisely when the signals are most meaningful — but also most voluminous.</p>
+
+        <p>The risk is that security operations centers adapt to the surge the way they always adapt to surges: by raising thresholds and compressing alert categories. The adaptation reduces noise. It also reduces sensitivity at exactly the moment when a genuine exploitation attempt would first be detectable. A migration-period alert surge trains oversight processes to deprioritize the signal class that a real threat would use as cover.</p>
+
+        <h2>What alert saturation requires</h2>
+        <p>The answer is not fewer accountability signals. It is accountability signal architecture: the deliberate design of tiered urgency, adaptive thresholds, and human-calibrated selection that matches the reception capacity of oversight processes to the generation capacity of deployed agents.</p>
+
+        <p>This means treating signal volume as a design constraint from the beginning — not as a parameter to be tuned after deployment, when saturation has already altered the oversight culture that the signals were meant to serve. It means distinguishing between signals that require human response within minutes and signals that require human review within weeks, and routing them differently rather than delivering everything to the same queue at the same priority.</p>
+
+        <p>An accountability system that generates more signals than humans can process is not a strong accountability system that needs better tooling. It is an accountability system that has optimized for the appearance of oversight while eroding the substance of it. The logs exist. The alerts fire. The accountability does not.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>Alert saturation breaks accountability loops at the human end without breaking the logging infrastructure. The result looks compliant from the outside — alerts are configured, records exist — but oversight is nominal. This structural failure appears at all three crossings: clinical alarm fatigue in care settings, attestation alert suppression in hardware fleets, and cryptographic validation surges during post-quantum migration. The remedy is accountability signal architecture — tiered urgency, adaptive thresholds, and human-calibrated selection designed from the start, not tuned after saturation has already changed the oversight culture.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>临床警报疲劳在医学文献中已有充分记录。在重症监护环境中，单个患者在一个班次内可能触发数百次警报——心率、血压、呼吸机参数、输液泵和位置传感器的监控设备各自贡献数据。多项医院研究的临床发现表明：随着警报总量上升，护士对警报的响应比例下降，而她们未能响应的警报中，包含了真实的紧急事件。这套本旨检测患者病情恶化的问责机制，在高容量下却成了掩盖病情的机制。</p>
+
+        <p>这一现象在临床实践中有一个名字：警报疲劳。通常被视为医疗领域特有的人因问题。但这实际上是一个结构性问题，凡是问责系统产生的信号超出监督流程所能吸收的数量时，便会出现——而AI智能体在三个交叉点的部署，恰好在每个交叉点都制造了这种条件。</p>
+
+        <h2>问题结构</h2>
+        <p>问责系统有两个面向：信号生成面和信号接收面。两者都有容量限制。信号生成面被设计为倾向于完整性——宁多报不少报，因为任何漏报的事件都可能是最重要的那一个。信号接收面受制于人类注意力：有限、易于饱和，且当信噪比下降到可用阈值以下时，会发生脱敏。</p>
+
+        <p>当信号量增长速度超过接收端的扩展能力时，问责闭环在人类端断裂。日志存在，警报触发，记录积累。但监督是名义上的——在架构上存在，在实践中缺席。在这种环境中运行的智能体实际上处于无问责状态，不是因为无人监视，而是因为监视内容太多。</p>
+
+        <p>尤其危险的是，这从外部看起来是正确的。合规框架检查日志的存在，审计员验证警报是否配置。问责基础设施存在。饱和问题在遗漏事件浮出水面之前是不可见的——而那时记录会显示警报已触发，日志已记录，没有人响应。有问责基础设施，却无问责覆盖。</p>
+
+        <h2>在照护交叉点</h2>
+        <p>临床警报疲劳是这一问题的直接现实场景。部署在照护场景中的智能体——监测生命体征、检测跌倒、标记用药时机——以结构化警报作为其问责输出。在一个拥有数十名患者、每人由一套智能体监测的设施中，单班内的警报总量可能超过任何现实的监督容量。</p>
+
+        <p>这里的结构性张力无法通过增加更多智能体来化解。如果照护智能体产生警报，这些警报到达人类护理人员，而警报数量使护理人员脱敏到错过真实紧急情况的程度——那么部署更周密的监测反而使情况更糟，而非更好。问责机制已然背离其目的。这并非假设，而是每一个在重新设计警报分诊架构之前就快速增加监测技术的照护机构的有据可查的经历。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>大规模硬件部署制造了第二个实例。当设备必须向网络证明其完整性——固件版本、硬件配置、密码凭证状态——每次认证失败都会生成一个事件。在数百万设备的集群中，即便只有一小部分出现合理的硬件异常，也会产生令安全运营中心不堪重负的信号量。</p>
+
+        <p>实际应对方式是抑制：提高警报阈值、配置自动忽略规则、将某些类别的认证失败重新定义为信息性而非可操作事件。这些适应措施单独来看都是理性的，合在一起却逐步掏空了问责架构。到真正的威胁事件发生时，它产生的信号可能与已被系统性降级的背景噪声无从区分。基础设施记录了事件，而监督文化不再将该日志类别视为需要响应的内容。</p>
+
+        <h2>在后量子交叉点</h2>
+        <p>后量子过渡将集中制造这一问题。随着组织将密码基础设施从经典算法迁移到量子安全算法，过渡期间将大规模产生验证失败：旧签名方案被标记为已废弃、混合协商序列产生意外验证状态、HSM固件更新在切换期间产生认证间隙。安全团队将在密码验证警报最有意义——但也最海量——的时刻面临警报激增。</p>
+
+        <p>风险在于，安全运营中心会以一贯方式应对激增：提高阈值、压缩警报类别。这种适应降低了噪声，同时也在最需要灵敏度的时刻降低了灵敏度。迁移期间的警报激增训练了监督流程将该信号类别降级——而真实的威胁恰恰会将其作为掩护。</p>
+
+        <h2>警报饱和的要求</h2>
+        <p>答案不是减少问责信号，而是问责信号架构：有意设计分级紧急度、自适应阈值和以人为本的信号筛选，使监督流程的接收容量与部署智能体的信号生成容量相匹配。</p>
+
+        <p>这意味着从一开始就将信号量视为设计约束——而不是部署后再调整的参数，届时饱和已经改变了信号本应服务的监督文化。这意味着区分需要在数分钟内人工响应的信号和需要在数周内人工审查的信号，并以不同方式路由，而不是将所有内容以相同优先级推送到同一队列。</p>
+
+        <p>一个产生超出人类处理能力的信号量的问责系统，不是一个需要更好工具的强大问责系统。它是一个优化了监督外观、同时侵蚀其实质的问责系统。日志存在，警报触发，问责缺位。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>警报饱和在不破坏日志基础设施的情况下，从人类端断裂了问责闭环。结果从外部看来合规——警报已配置，记录存在——但监督是名义上的。这一结构性失败出现在三个交叉点：照护场景中的临床警报疲劳、硬件集群中的认证警报抑制、后量子迁移期间的密码验证激增。补救之道是问责信号架构——从设计之初便建立分级紧急度、自适应阈值和以人为本的信号筛选，而不是等饱和已经改变监督文化之后再调整。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>臨床警報疲勞在醫學文獻中已有充分記載。在重症監護環境中，單個病人在一個班次內可能觸發數百次警報——心率、血壓、呼吸機參數、輸液泵及位置感應器的監控設備各自貢獻數據。多項醫院研究的臨床發現表明：隨著警報總量上升，護士對警報的響應比例下降，而她們未能響應的警報中，包含了真實的緊急事件。這套本旨檢測病人病情惡化的問責機制，在高容量下卻成了遮蔽病情的機制。</p>
+
+        <p>這一現象在臨床實踐中有一個名字：警報疲勞。通常被視為醫療領域特有的人因問題。但這實際上是一個結構性問題，凡是問責系統所產生的信號超出監督流程所能吸收的量，便會出現——而AI智能體在三個交叉點的部署，恰好在每個交叉點都製造了這種條件。</p>
+
+        <h2>問題結構</h2>
+        <p>問責系統有兩個面向：信號生成面和信號接收面。兩者皆有容量限制。信號生成面被設計為傾向完整性——寧多報不少報，因為任何漏報的事件都可能是最重要的那一個。信號接收面受制於人類注意力：有限、易於飽和，且當信噪比降至可用閾值以下時，會產生脫敏。</p>
+
+        <p>當信號量增長速度超過接收端的擴展能力時，問責閉環在人類端斷裂。日誌存在，警報觸發，記錄積累。但監督是名義上的——在架構上存在，在實踐中缺席。在這種環境中運作的智能體實際上處於無問責狀態，不是因為無人監視，而是因為監視內容太多。</p>
+
+        <p>尤其危險的是，這從外部看起來是正確的。合規框架檢查日誌的存在，審計員驗證警報是否已配置。問責基礎設施存在。飽和問題在遺漏事件浮現之前是不可見的——而那時記錄會顯示警報已觸發，日誌已記錄，卻無人響應。有問責基礎設施，卻無問責覆蓋。</p>
+
+        <h2>在照護交叉點</h2>
+        <p>臨床警報疲勞是這一問題的直接現實場景。部署在照護場景中的智能體——監測生命體徵、偵測跌倒、標記用藥時機——以結構化警報作為其問責輸出。在擁有數十名病人、每人由一套智能體監測的設施中，單班內的警報總量可能超出任何現實的監督容量。</p>
+
+        <p>這裡的結構性張力無法靠增加更多智能體化解。若照護智能體產生警報，這些警報到達人類護理人員，而警報數量使護理人員脫敏至錯過真實緊急情況的程度——那麼部署更周密的監測反而令情況惡化，而非改善。問責機制已然背離其目的。這並非假設，而是每一個在重新設計警報分診架構之前就快速增加監測技術的照護機構的有據可查的經歷。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>大規模硬件部署製造了第二個實例。當設備必須向網絡證明其完整性——韌體版本、硬件配置、密碼憑證狀態——每次認證失敗都會生成一個事件。在數百萬台設備的集群中，即使只有一小部分出現合理的硬件異常，也會產生令安全運營中心不堪重負的信號量。</p>
+
+        <p>實際應對方式是抑制：提高警報閾值、配置自動忽略規則、將某些類別的認證失敗重新定義為資訊性而非可操作事件。這些適應措施單獨來看各有其理，合在一起卻逐步掏空了問責架構。到真正的威脅事件發生時，它所產生的信號可能與已被系統性降級的背景噪聲無從區分。基礎設施記錄了事件，而監督文化不再將該日誌類別視為需要響應的內容。</p>
+
+        <h2>在後量子交叉點</h2>
+        <p>後量子過渡將集中製造這一問題。隨著組織將密碼基礎設施從經典演算法遷移至量子安全演算法，過渡期間將大規模產生驗證失敗：舊簽名方案被標記為已棄用、混合協商序列產生意外驗證狀態、HSM韌體更新在切換期間產生認證間隙。安全團隊將在密碼驗證警報最具意義——卻也最為海量——的時刻面臨警報激增。</p>
+
+        <p>風險在於，安全運營中心將以一貫方式應對激增：提高閾值、壓縮警報類別。此種適應降低了噪聲，卻也在最需要靈敏度的時刻降低了靈敏度。遷移期間的警報激增訓練了監督流程將該信號類別降級——而真實的威脅恰恰會將其作為掩護。</p>
+
+        <h2>警報飽和的要求</h2>
+        <p>答案不是減少問責信號，而是問責信號架構：有意設計分層緊急度、自適應閾值和以人為本的信號篩選，使監督流程的接收容量與部署智能體的信號生成容量相匹配。</p>
+
+        <p>這意味著從一開始便將信號量視為設計約束——而非部署後才調整的參數，屆時飽和已改變了信號本應服務的監督文化。這意味著區分需要在數分鐘內人工響應的信號和需要在數週內人工審查的信號，並以不同方式路由，而非將所有內容以相同優先級推送至同一佇列。</p>
+
+        <p>一個產生超出人類處理能力的信號量的問責系統，並非一個需要更好工具的強大問責系統。它是一個優化了監督外觀、同時侵蝕其實質的問責系統。日誌存在，警報觸發，問責缺席。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>警報飽和在不破壞日誌基礎設施的情況下，從人類端斷裂了問責閉環。結果從外部看來合規——警報已配置，記錄存在——但監督是名義上的。這一結構性失敗出現在三個交叉點：照護場景中的臨床警報疲勞、硬件集群中的認證警報抑制、後量子遷移期間的密碼驗證激增。補救之道是問責信號架構——從設計之初便建立分層緊急度、自適應閾值和以人為本的信號篩選，而不是等飽和已改變監督文化之後再調整。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const langSections = document.querySelectorAll('.essay-lang');
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        langBtns.forEach(b => b.classList.remove('active'));
+        langSections.forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
