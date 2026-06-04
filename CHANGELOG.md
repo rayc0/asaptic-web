@@ -90,3 +90,4 @@
 2026-06-04 00:15 UTC · blog: add essay 'The alert saturation problem' — when accountability signals become noise (EN+ZH+ZH-HK) · 11dff07
 2026-06-04 04:15 UTC · blog: add essay 'The counterfactual accountability problem' — when the alternative outcome is unobservable (EN+ZH+ZH-HK) · c1ecfe5
 2026-06-04 08:14 UTC · precautionary-action-problem essay (EN+ZH+ZH-HK) · 4621e5b
+2026-06-04 12:15 UTC · blog: add essay 'The consent granularity problem' — accountability when principals cannot specify permissions at the resolution agents act on (EN+ZH+ZH-HK) · de88a95
