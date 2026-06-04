@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The representation gap — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents operate exclusively on data — structured approximations of physical reality. When the representation diverges from reality, the agent acts on a false premise with full confidence. No single actor controls the full representation. Accountability must reach the actors who gave the agent a wrong world." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/representation-gap.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The representation gap: accountability when AI agents act on a model, not reality" />
+  <meta property="og:description" content="AI agents cannot touch a patient, inspect a circuit board, or detect a key compromise through direct observation. Every inference is mediated by a representation. When the representation is wrong, the agent acts confidently on a false premise." />
+  <meta property="og:url" content="https://asaptic.com/blog/representation-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-04" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The representation gap: accountability when AI agents act on a model, not reality",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-04",
+    "description": "AI agents operate exclusively on data — structured approximations of physical reality. When the representation diverges from reality, the agent acts on a false premise with full confidence. No single actor controls the full representation. Accountability must reach the actors who gave the agent a wrong world.",
+    "url": "https://asaptic.com/blog/representation-gap.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The representation gap: accountability when AI agents act on a model, not reality</h1>
+      <p class="essay-subtitle">AI agents operate exclusively on data — structured approximations of physical reality. When the representation diverges from what it describes, the agent acts on a false premise with full confidence. The gap is structural, not incidental. And the accountability question it raises — who is responsible for the model the agent was given — has no clear owner.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-04</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>AI agents cannot touch a patient, inspect a circuit board, or detect a key compromise through direct observation. Every inference, recommendation, and action is mediated by a representation — a structured approximation of physical reality that was created at a particular time, by a particular process, and may no longer match what it describes.</p>
+
+        <p>This is not unique to AI agents. Human practitioners also work from records. A physician reviewing a patient's chart is working from a representation. A security engineer reviewing a system diagram is working from a representation. The difference is that human practitioners bring tacit knowledge to the gap between the representation and reality — they know the chart is missing context, they look for inconsistencies, they ask questions the record cannot answer. Their direct contact supplements the data.</p>
+
+        <p>AI agents have no such supplement. The representation is everything. When the representation is accurate, agents can perform exceptionally well. When it diverges from reality — and it always does, somewhere — the agent has no mechanism to detect the divergence. It acts on a false premise with full confidence.</p>
+
+        <p>This is the representation gap. It is structural, not incidental. It follows from the nature of data-driven systems. And it creates accountability questions that existing frameworks do not answer well: when harm follows from a flawed representation, who is responsible for the model the agent was given?</p>
+
+        <h2>At the care crossing</h2>
+        <p>In physical-world care, a person's digital representation is assembled from clinical records, device readings, care plan notes, and structured assessments. Each data point was captured at a specific moment, by a specific instrument or provider, for a specific purpose. Together they form a coherent-seeming whole that is actually a mosaic of snapshots from different times, different sources, and different contexts.</p>
+
+        <p>The person has changed. They have aged, recovered, declined, or made decisions that the record does not yet reflect. A medication list may include drugs discontinued informally. A care plan may reflect goals the person has since abandoned. Vital sign baselines may be months old. The agent operates on a representation that was accurate at the moment of last update and is increasingly approximate ever after.</p>
+
+        <p>An agent operating on this representation makes decisions that are locally coherent — they fit the data model — but may not fit the person. When harm follows, the accountability question is not only "what did the agent infer?" but "who was responsible for the representation the agent was given?" No single actor assembled the full representation. It was built across organizations, devices, and time. The agent's deployer did not create most of it. The agent itself cannot verify it. The gap in accountability matches the gap between the model and reality.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware security agents operate on representations of physical systems — network topology maps, firmware inventories, configuration baselines, vulnerability scan results. These representations are created by discovery processes that run at intervals, not continuously. Between scans, physical reality changes: a device is swapped, firmware is updated out-of-band, a configuration is modified through an undocumented pathway.</p>
+
+        <p>An agent evaluating security posture against a stale map is not detecting vulnerabilities — it is failing to detect them. Its clean assessment is accurate relative to the representation and wrong relative to the actual system. When an attacker exploits what the agent's map did not show, the accountability question is the same: who was responsible for the freshness of the representation the agent operated on? The answer is almost never clearly defined in deployment contracts or operational procedures.</p>
+
+        <h2>At the post-quantum crossing</h2>
+        <p>Cryptographic identity is a representation: a public key asserts "I am this entity, and I control this key." Key material ages, gets compromised, gets delegated to parties who no longer hold it, or gets superseded by updated key material that the broader system has not yet synchronized. An agent managing a cryptographic migration operates on a representation of which algorithms are active, which keys are valid, and which systems have completed their transitions.</p>
+
+        <p>If that representation is wrong — a key still listed as valid that has been compromised, a migration marked complete that was only partially executed, an algorithm recorded as deprecated that is still serving live traffic — the agent certifies a false state. The confidence with which it asserts "this system is migration-complete" is indistinguishable, in its outputs, from the confidence it would have if the system actually were. The representation gap at this crossing is particularly consequential because the errors are silent: they remain invisible until an adversary exploits the discrepancy between the agent's model and the actual cryptographic state.</p>
+
+        <h2>What the gap requires</h2>
+        <p>The representation gap does not have an engineering solution that eliminates it. Continuous data collection narrows it; freshness tracking makes it visible; anomaly detection can flag cases where the representation diverges from observed behavior. But the gap cannot be closed entirely. Data collection is never simultaneous across all sources. Representations are always approximations. Physical reality changes faster than any representation system can track.</p>
+
+        <p>What the gap requires is accountability architecture that names it explicitly rather than treating it as a residual detail. Deployers should be required to characterize the representations their agents operate on: how they are assembled, how frequently they are refreshed, and what their known limitations are. In high-stakes contexts — care decisions, security certifications, cryptographic state assertions — agents should be prohibited from acting on representations older than a defined threshold without explicit acknowledgment that the representation may be stale.</p>
+
+        <p>And when harm is traced to a representation error rather than an inference error — when the agent reasoned correctly from wrong inputs — the accountability pathway must reach the representation's custodians. Those are the organizations that assembled, maintained, and served the data model the agent relied on. They may not be the agent's deployer. They may be a care network's data infrastructure team, a hardware vendor's firmware update service, or a certificate authority's key status feed. In each case, they gave the agent a world to act on. When that world was wrong, they share responsibility for what followed.</p>
+
+        <p>The agent acted on the world it was given. Accountability must reach the actors who gave it that world.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI agents operate on structured representations of reality, never on reality itself. The representation gap — the divergence between the model and the world it describes — is structural and unavoidable. It is present at every crossing: care agents act on patient data models that lag behind living patients; hardware agents act on system maps that trail actual infrastructure; post-quantum agents act on cryptographic state records that may not reflect actual key validity. When harm follows from a flawed representation, accountability must reach the custodians of the model the agent was given — not only the agent's deployer or the agent itself.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>AI智能体无法直接接触患者、检查电路板或通过直接观察检测密钥泄露。每一个推断、建议和行动都通过表示来中介——物理现实的结构化近似，在特定时间、通过特定过程创建，可能不再与所描述的内容匹配。</p>
+
+        <p>这对AI智能体来说并非独有。人类从业者也依据记录工作。医生审查患者病历时是在处理一种表示，安全工程师审查系统图时也是如此。不同之处在于，人类从业者将隐性知识带入表示与现实之间的差距——他们知道病历缺少上下文，寻找不一致之处，提出记录无法回答的问题。他们的直接接触补充了数据。</p>
+
+        <p>AI智能体没有这种补充。表示就是一切。当表示准确时，智能体可以表现出色。当它偏离现实时——而它总会在某处偏离——智能体没有机制检测这种偏差。它以充分的自信基于错误前提行动。这就是表示差距。</p>
+
+        <h2>在照护交叉点</h2>
+        <p>在物理世界照护中，一个人的数字表示从临床记录、设备读数、照护计划注释和结构化评估中组装而成。每个数据点在特定时刻、由特定仪器或提供者为特定目的捕获。它们共同形成一个表面上连贯的整体，实际上是来自不同时间、不同来源和不同情境的快照拼图。</p>
+
+        <p>当智能体在这种表示上运作时，它做出局部连贯的决策——它们符合数据模型——但可能不符合真实的人。当损害随之而来时，问责问题不仅仅是"智能体推断出了什么？"，还有"谁对智能体所给的表示负责？"没有单一行为者组装了完整的表示，问责的差距与模型和现实之间的差距相匹配。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件安全智能体在物理系统的表示上运作——网络拓扑图、固件清单、配置基线、漏洞扫描结果。这些表示由以间隔运行的发现过程创建，而非持续运行。扫描之间，物理现实发生变化：设备被替换、固件通过带外渠道更新、配置通过未记录路径被修改。</p>
+
+        <p>根据过时地图评估安全态势的智能体并未在检测漏洞——它无法检测它们。其干净的评估相对于表示是准确的，相对于实际系统是错误的。当攻击者利用智能体地图未显示的内容时，问责问题是相同的：谁对智能体运作所依赖的表示的新鲜度负责？</p>
+
+        <h2>在后量子交叉点</h2>
+        <p>加密身份是一种表示：公钥断言"我是这个实体，我控制这把密钥。"密钥材料老化、被泄露、被委托给不再持有它的各方，或被更新的密钥材料取代，而更广泛的系统尚未同步。如果管理加密迁移的智能体依赖的表示是错误的——仍被列为有效但已被泄露的密钥、被标记为完成但只是部分执行的迁移——智能体会以与现实准确时相同的自信认证错误状态。错误在被对手利用之前是不可见的。</p>
+
+        <h2>差距所需要的</h2>
+        <p>表示差距没有消除它的工程解决方案。持续数据收集可以缩小它；新鲜度跟踪使其可见；异常检测可以标记表示与观察行为偏离的情况。但差距无法完全关闭。</p>
+
+        <p>差距所需要的是明确命名它的问责架构，而不是将其视为残余细节。部署者应被要求描述其智能体运作所依赖的表示：如何组装、刷新频率以及已知限制。在高风险情境中，智能体应被禁止在超过定义阈值的表示上行动。</p>
+
+        <p>当损害被追溯到表示错误而非推断错误时，问责路径必须到达表示的托管人——组装、维护和提供智能体所依赖的数据模型的组织。他们给了智能体一个可以行动的世界。当那个世界是错的，他们共同承担后续的责任。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>AI智能体在现实的结构化表示上运作，而非在现实本身上。表示差距——模型与它所描述的世界之间的偏差——是结构性的且不可避免的。它存在于每个交叉点：照护智能体在落后于活生生患者的患者数据模型上行动；硬件智能体在落后于实际基础设施的系统图上行动；后量子智能体在可能不反映实际密钥有效性的加密状态记录上行动。当损害源于有缺陷的表示时，问责必须到达给智能体提供模型的托管人，而不仅仅是智能体的部署者或智能体本身。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>AI智能體無法直接接觸患者、檢查電路板或通過直接觀察檢測金鑰洩露。每一個推斷、建議和行動都通過表示來中介——物理現實的結構化近似，在特定時間、通過特定過程創建，可能不再與所描述的內容匹配。</p>
+
+        <p>這對AI智能體來說並非獨有。人類從業者也依據記錄工作。醫生審查患者病歷時是在處理一種表示，安全工程師審查系統圖時也是如此。不同之處在於，人類從業者將隱性知識帶入表示與現實之間的差距——他們知道病歷缺少上下文，尋找不一致之處，提出記錄無法回答的問題。他們的直接接觸補充了數據。</p>
+
+        <p>AI智能體沒有這種補充。表示就是一切。當表示準確時，智能體可以表現出色。當它偏離現實時——而它總會在某處偏離——智能體沒有機制檢測這種偏差。它以充分的自信基於錯誤前提行動。這就是表示差距。</p>
+
+        <h2>在照護交叉點</h2>
+        <p>在實體世界照護中，一個人的數字表示從臨床記錄、設備讀數、照護計劃注釋和結構化評估中組裝而成。每個數據點在特定時刻、由特定儀器或提供者為特定目的捕獲。它們共同形成一個表面上連貫的整體，實際上是來自不同時間、不同來源和不同情境的快照拼圖。</p>
+
+        <p>當智能體在這種表示上運作時，它做出局部連貫的決策——它們符合數據模型——但可能不符合真實的人。當損害隨之而來時，問責問題不僅僅是「智能體推斷出了什麼？」，還有「誰對智能體所給的表示負責？」沒有單一行為者組裝了完整的表示，問責的差距與模型和現實之間的差距相匹配。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>硬件安全智能體在物理系統的表示上運作——網絡拓撲圖、固件清單、配置基線、漏洞掃描結果。這些表示由以間隔運行的發現過程創建，而非持續運行。掃描之間，物理現實發生變化：設備被替換、固件通過帶外渠道更新、配置通過未記錄路徑被修改。</p>
+
+        <p>根據過時地圖評估安全態勢的智能體並未在檢測漏洞——它無法檢測它們。其乾淨的評估相對於表示是準確的，相對於實際系統是錯誤的。當攻擊者利用智能體地圖未顯示的內容時，問責問題是相同的：誰對智能體運作所依賴的表示的新鮮度負責？</p>
+
+        <h2>在後量子交叉點</h2>
+        <p>加密身份是一種表示：公鑰斷言「我是這個實體，我控制這把金鑰。」金鑰材料老化、被洩露、被委託給不再持有它的各方，或被更新的金鑰材料取代，而更廣泛的系統尚未同步。如果管理加密遷移的智能體依賴的表示是錯誤的——仍被列為有效但已被洩露的金鑰、被標記為完成但只是部分執行的遷移——智能體會以與現實準確時相同的自信認證錯誤狀態。錯誤在被對手利用之前是不可見的。</p>
+
+        <h2>差距所需要的</h2>
+        <p>表示差距沒有消除它的工程解決方案。持續數據收集可以縮小它；新鮮度追蹤使其可見；異常檢測可以標記表示與觀察行為偏離的情況。但差距無法完全關閉。</p>
+
+        <p>差距所需要的是明確命名它的問責架構，而不是將其視為殘餘細節。部署者應被要求描述其智能體運作所依賴的表示：如何組裝、刷新頻率以及已知限制。在高風險情境中，智能體應被禁止在超過定義閾值的表示上行動。</p>
+
+        <p>當損害被追溯到表示錯誤而非推斷錯誤時，問責路徑必須到達表示的托管人——組裝、維護和提供智能體所依賴的數據模型的組織。他們給了智能體一個可以行動的世界。當那個世界是錯的，他們共同承擔後續的責任。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>AI智能體在現實的結構化表示上運作，而非在現實本身上。表示差距——模型與它所描述的世界之間的偏差——是結構性的且不可避免的。它存在於每個交叉點：照護智能體在落後於活生生患者的患者數據模型上行動；硬件智能體在落後於實際基礎設施的系統圖上行動；後量子智能體在可能不反映實際金鑰有效性的加密狀態記錄上行動。當損害源於有缺陷的表示時，問責必須到達給智能體提供模型的托管人，而不僅僅是智能體的部署者或智能體本身。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const langSections = document.querySelectorAll('.essay-lang');
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        langBtns.forEach(b => b.classList.remove('active'));
+        langSections.forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
