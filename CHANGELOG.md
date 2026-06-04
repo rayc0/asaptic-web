@@ -89,3 +89,4 @@
 2026-06-02 00:00 UTC · blog: add essay 'The asymmetric correction problem' — accountability when agent errors scale faster than corrections can (EN+ZH+ZH-HK) · 034b82a
 2026-06-04 00:15 UTC · blog: add essay 'The alert saturation problem' — when accountability signals become noise (EN+ZH+ZH-HK) · 11dff07
 2026-06-04 04:15 UTC · blog: add essay 'The counterfactual accountability problem' — when the alternative outcome is unobservable (EN+ZH+ZH-HK) · c1ecfe5
+2026-06-04 08:14 UTC · precautionary-action-problem essay (EN+ZH+ZH-HK) · 4621e5b
