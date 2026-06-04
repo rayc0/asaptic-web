@@ -1,3 +1,4 @@
+2026-06-04 20:15 UTC · blog: add essay 'The representation gap' — accountability when AI agents act on a model, not reality (EN+ZH+ZH-HK) · b3ae267
 2026-06-04 16:15 UTC · blog: add essay 'The professional boundary problem' — accountability when AI agents act within credentialed domains (EN+ZH+ZH-HK) · 1a20e54
 2026-06-03 20:15 UTC · blog: fix duplicate/missing language cards in blog index — EN section had ZH/ZHT cards for 5 newest essays; ZH+ZHT sections missing key-ceremony, update-authority, negative-space entries · 8a9f400
 2026-06-03 16:15 UTC · blog: add essay 'The key ceremony problem' — accountability when AI agents participate in post-quantum trust establishment (EN+ZH+ZH-HK) · 5b4ff57
