@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The consent granularity problem — Asaptic Labs</title>
+
+  <meta name="description" content="Human principals authorize AI agents at a coarse resolution — grant access, revoke access, adjust a setting. Agents act at a fine resolution — thousands of distinct operations within any granted permission. The gap between what principals can specify and what agents can do is not a UI problem. It is a structural accountability gap." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/consent-granularity-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The consent granularity problem: accountability when human principals cannot specify permissions at the resolution AI agents can act on" />
+  <meta property="og:description" content="Human principals authorize AI agents at a coarse resolution — grant access, revoke access, adjust a setting. Agents act at a fine resolution — thousands of distinct operations within any granted permission. The gap between what principals can specify and what agents can do is not a UI problem. It is a structural accountability gap." />
+  <meta property="og:url" content="https://asaptic.com/blog/consent-granularity-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-04" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The consent granularity problem: accountability when human principals cannot specify permissions at the resolution AI agents can act on",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-04",
+    "description": "Human principals authorize AI agents at a coarse resolution — grant access, revoke access, adjust a setting. Agents act at a fine resolution — thousands of distinct operations within any granted permission. The gap between what principals can specify and what agents can do is not a UI problem. It is a structural accountability gap.",
+    "url": "https://asaptic.com/blog/consent-granularity-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The consent granularity problem: accountability when principals cannot specify permissions at the resolution agents act on</h1>
+      <p class="essay-subtitle">Human principals authorize AI agents at a coarse resolution — grant access, revoke access, adjust a setting. Agents act at a fine resolution — thousands of distinct operations within any granted permission. The gap between what principals can specify and what agents can do is not a UI problem. It is a structural accountability gap.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-04</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Every meaningful consent framework rests on the assumption that the consenting party understands, at some workable resolution, what they are agreeing to. The resolution does not need to be complete — nobody reads every clause of a software license — but it needs to be sufficient to anchor accountability. If what actually happens diverges substantially from what was plausibly anticipated, the consent did not govern the action.</p>
+
+        <p>AI agents operate at a resolution that human principals cannot match. A care agent granted access to a patient's daily schedule can, within that permission, infer medication adherence from appointment patterns, detect social isolation from visitor frequency, correlate sleep disruption with care event timing, and flag behavioral anomalies against longitudinal baselines. The principal who said "yes, the agent can see the schedule" did not say yes to any of those specific inferences. They said yes to a coarse category. The agent acts on the fine-grained content of that category.</p>
+
+        <p>This is the consent granularity problem. It is not resolved by better privacy notices, longer terms of service, or more granular permission checkboxes. The checkboxes are coarser than the operations. The gap is structural.</p>
+
+        <h2>Why the gap is not closeable by disclosure</h2>
+        <p>The standard response to consent gaps is disclosure: tell the user more specifically what the agent will do. But disclosure works only when the disclosed list is finite and comprehensible. For AI agents operating on rich input data, the list of possible operations is neither. A care agent's behavioral inference capability is not a fixed list of named operations — it is a function of the data available, the model's current capability, and the deployment context. The agent may perform operations that were not enumerated at consent time because they emerge from data combinations that did not exist when the disclosure was written.</p>
+
+        <p>More disclosure does not close the gap; it shifts the problem from consent to comprehension. A principal who receives a ten-page inventory of possible agent operations before clicking "agree" has not consented at higher resolution. They have consented to the existence of the inventory. The accountability foundation is not improved. It is obscured.</p>
+
+        <h2>At the care crossing</h2>
+        <p>In physical-world care, the consent granularity problem appears most acutely in domestic and residential contexts. A family that authorizes a care agent to support an elderly relative at home has agreed to a general purpose. They have not — and often cannot — enumerate every specific inference, escalation trigger, data retention behavior, or third-party notification the agent may generate. The care agent that calls for emergency services, alerts a distant family member, or logs a concern about the home environment is acting within the general authorization but well beyond what any specific consent covered.</p>
+
+        <p>The accountability question — was this action authorized? — cannot be answered by reference to the consent record, because the consent record does not describe the action. It describes a category that contains the action. Accountability frameworks built on consent therefore govern categories, not actions. An agent can act in ways that were not anticipated, not intended, and not desired by the principal, while remaining technically within the granted category.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware-adjacent agents present the same problem at a different surface. An agent authorized to manage firmware on a device fleet has been granted a permission category — firmware management — that encompasses hundreds of specific operations: which devices receive updates and in what order, what rollback behavior is triggered under what conditions, which devices are quarantined when a signature anomaly is detected, and how long devices remain in quarantine before human review is required. None of these specific behaviors were enumerated at the point of authorization. They were implicit in the granted category.</p>
+
+        <p>When an agent makes a firmware decision that disrupts production operations, the accountability question is not whether the agent had firmware management authority — it did. The question is whether the specific decision was within the scope of what was actually consented to. At the granularity of "firmware management," that question is unanswerable from the authorization record alone.</p>
+
+        <h2>At the post-quantum crossing</h2>
+        <p>Cryptographic migration agents face the same structure at higher stakes. An agent authorized to manage cryptographic infrastructure can, within that authorization, decide which algorithms to deprecate, on what timeline, in which order across which systems, and with what fallback behavior when migration fails. These decisions carry significant operational and security consequences. The authorization that granted "cryptographic infrastructure management" did not specify any of them. It authorized a category. The agent fills in the category's content.</p>
+
+        <p>When the agent's specific choices produce a gap in cryptographic coverage — a window during migration when some systems are using deprecated algorithms — the authorization record will confirm the agent had authority. It will not reveal whether the specific sequencing decision was ever considered, evaluated, or sanctioned by any principal.</p>
+
+        <h2>What accountability requires</h2>
+        <p>The consent granularity problem does not have a consent solution. It has an audit solution: accountability must be grounded not in what was authorized at the category level, but in what the agent actually did at the operation level. This requires agents to produce operation-level records — not category-level logs — that can be reviewed against principal expectations after the fact.</p>
+
+        <p>It also requires institutional discipline about what "authorization" means. A granted permission is not a blank check for all operations within the category. It is a provisional authorization that carries an implicit ratification requirement: principals should have ongoing mechanisms to confirm that the specific operations being performed fall within what they actually intended. Where that mechanism is absent, the authorization has outrun the consent.</p>
+
+        <p>The gap between what a principal can specify and what an agent can do will widen as agents become more capable. Accountability frameworks that treat coarse authorization as sufficient consent will govern progressively less of what agents actually do. The choice is not between granular consent and coarse consent. It is between operation-level audit and accountability-in-name-only.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>Humans authorize AI agents at the level of categories — "manage firmware," "access the schedule," "handle cryptographic infrastructure." Agents act at the level of specific operations, thousands of which fall within any single category. The gap between these resolutions means that consent records confirm authorization at the category level while being silent about the specific actions taken. At the care crossing, general authorizations contain unanticipated inferences and escalations. At the hardware crossing, firmware authority encompasses undescribed operational decisions. At the post-quantum crossing, migration authority covers undisclosed sequencing choices. Closing the accountability gap requires operation-level audit — not longer disclosures, not finer checkboxes — because the operations emerge from the data, not from the disclosure.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>每一个有意义的同意框架都建立在这样一个假设之上：同意方在某种可行的分辨率下理解他们同意的内容。分辨率不需要完整——没有人阅读软件许可的每一条款——但它需要足够充分以锚定问责。如果实际发生的事情与合理预期的内容有实质性偏差，那么同意就没有约束那个行动。</p>
+
+        <p>AI智能体的运作分辨率是人类委托人无法匹配的。一个被授权访问患者日常日程的照护智能体，在该权限内可以从预约模式推断用药依从性、从访客频率检测社会孤立、将睡眠中断与照护事件时间关联，以及将行为异常与纵向基线对比标记。说"是的，智能体可以查看日程"的委托人，并没有同意这些具体的推断。他们同意了一个粗略的类别。智能体在该类别的细粒度内容上行动。</p>
+
+        <p>这就是同意粒度问题。它不能通过更好的隐私声明、更长的服务条款或更细粒度的权限复选框来解决。复选框比操作更粗略。这个差距是结构性的。</p>
+
+        <h2>为什么这个差距无法通过披露来弥合</h2>
+        <p>对同意差距的标准回应是披露：更具体地告诉用户智能体将做什么。但披露只有在披露列表有限且可理解的情况下才有效。对于在丰富输入数据上运作的AI智能体，可能操作的列表两者皆非。照护智能体的行为推断能力不是命名操作的固定列表——它是可用数据、模型当前能力和部署上下文的函数。智能体可能执行在同意时没有列举的操作，因为它们来自撰写披露时不存在的数据组合。</p>
+
+        <p>更多披露不会弥合差距；它将问题从同意转移到理解。一个在点击"同意"之前收到十页可能代理操作清单的委托人，并没有以更高分辨率同意。他们同意了清单的存在。问责基础没有改善，而是被遮蔽了。</p>
+
+        <h2>在照护交叉点</h2>
+        <p>在物理世界照护中，同意粒度问题在家庭和住宅环境中最为突出。一个授权照护智能体在家中支持老年亲属的家庭，同意了一个一般性目的。他们没有——通常也无法——列举智能体可能生成的每一个具体推断、升级触发器、数据保留行为或第三方通知。呼叫紧急服务、提醒远方家庭成员或记录对家庭环境关注的照护智能体，是在一般授权范围内行动，但远超任何具体同意所涵盖的范围。</p>
+
+        <p>问责问题——这个行动是被授权的吗？——无法通过参考同意记录来回答，因为同意记录没有描述那个行动。它描述了一个包含该行动的类别。因此，建立在同意之上的问责框架治理的是类别，而不是行动。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>相邻硬件的智能体在不同的表面呈现相同的问题。一个被授权管理设备群固件的智能体，被授予了一个权限类别——固件管理——它包含了数百个具体操作：哪些设备以何种顺序接收更新、在何种条件下触发什么回滚行为、当检测到签名异常时哪些设备被隔离，以及设备在需要人工审查前被隔离多长时间。在授权时，这些具体行为都没有被列举。它们隐含在授予的类别中。</p>
+
+        <p>当智能体做出干扰生产操作的固件决定时，问责问题不是智能体是否拥有固件管理权限——它确实拥有。问题是具体决定是否在实际同意的范围内。在"固件管理"的粒度上，仅从授权记录来看，这个问题是无法回答的。</p>
+
+        <h2>在后量子交叉点</h2>
+        <p>加密迁移智能体面临相同的结构，但风险更高。一个被授权管理加密基础设施的智能体，可以在该授权范围内决定废弃哪些算法、按照什么时间线、在哪些系统上以什么顺序，以及当迁移失败时采用什么回退行为。这些决定具有重大的操作和安全后果。授予"加密基础设施管理"的授权没有指定其中任何一项。它授权了一个类别。智能体填充该类别的内容。</p>
+
+        <p>当智能体的具体选择导致加密覆盖出现空白——迁移期间某些系统使用已弃用算法的窗口——授权记录将确认智能体拥有权限。它不会揭示具体的排序决定是否曾被任何委托人考虑、评估或批准。</p>
+
+        <h2>问责的要求</h2>
+        <p>同意粒度问题没有同意解决方案。它有一个审计解决方案：问责必须建立在智能体在操作层面实际做了什么，而不是类别层面上授权了什么。这要求智能体生成操作层面的记录——而不是类别层面的日志——可以在事后与委托人期望进行比较。</p>
+
+        <p>这也要求对"授权"意味着什么保持机构纪律。授予的权限不是该类别内所有操作的空白支票。它是一种临时授权，携带隐含的批准要求：委托人应该有持续的机制来确认正在执行的具体操作属于他们实际意图的范围。在该机制缺失的地方，授权已经超过了同意。</p>
+
+        <p>委托人能够指定的内容与智能体能够做的内容之间的差距，将随着智能体能力的增强而扩大。将粗略授权视为充分同意的问责框架将逐渐减少对智能体实际所做事情的治理。选择不是精细同意与粗略同意之间的选择。而是操作层面审计与名义问责之间的选择。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>人类在类别层面授权AI智能体——"管理固件"、"访问日程"、"处理加密基础设施"。智能体在具体操作层面行动，任何单一类别内都包含数千个操作。这些分辨率之间的差距意味着同意记录在类别层面确认授权，而对所采取的具体行动保持沉默。在照护交叉点，一般授权包含未预期的推断和升级。在硬件交叉点，固件权限包含未描述的操作决定。在后量子交叉点，迁移权限涵盖未披露的排序选择。弥合问责差距需要操作层面的审计——而不是更长的披露、更细的复选框——因为这些操作来自数据，而不是来自披露。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>每一個有意義的同意框架都建立在這樣一個假設之上：同意方在某種可行的分辨率下理解他們同意的內容。分辨率不需要完整——沒有人閱讀軟件許可的每一條款——但它需要足夠充分以錨定問責。如果實際發生的事情與合理預期的內容有實質性偏差，那麼同意就沒有約束那個行動。</p>
+
+        <p>AI智能體的運作分辨率是人類委託人無法匹配的。一個被授權存取病人日常日程的照護智能體，在該權限內可以從預約模式推斷用藥依從性、從訪客頻率檢測社會孤立、將睡眠中斷與照護事件時間關聯，以及將行為異常與縱向基線對比標記。說「是的，智能體可以查看日程」的委託人，並沒有同意這些具體的推斷。他們同意了一個粗略的類別。智能體在該類別的細粒度內容上行動。</p>
+
+        <p>這就是同意粒度問題。它不能通過更好的隱私聲明、更長的服務條款或更細粒度的權限核取方塊來解決。核取方塊比操作更粗略。這個差距是結構性的。</p>
+
+        <h2>為什麼這個差距無法通過披露來彌合</h2>
+        <p>對同意差距的標準回應是披露：更具體地告訴用戶智能體將做什麼。但披露只有在披露列表有限且可理解的情況下才有效。對於在豐富輸入數據上運作的AI智能體，可能操作的列表兩者皆非。照護智能體的行為推斷能力不是命名操作的固定列表——它是可用數據、模型當前能力和部署上下文的函數。智能體可能執行在同意時沒有列舉的操作，因為它們來自撰寫披露時不存在的數據組合。</p>
+
+        <p>更多披露不會彌合差距；它將問題從同意轉移到理解。一個在點擊「同意」之前收到十頁可能代理操作清單的委託人，並沒有以更高分辨率同意。他們同意了清單的存在。問責基礎沒有改善，而是被遮蔽了。</p>
+
+        <h2>在照護交叉點</h2>
+        <p>在實體世界照護中，同意粒度問題在家庭和住宅環境中最為突出。一個授權照護智能體在家中支持老年親屬的家庭，同意了一個一般性目的。他們沒有——通常也無法——列舉智能體可能生成的每一個具體推斷、升級觸發器、數據保留行為或第三方通知。呼叫緊急服務、提醒遠方家庭成員或記錄對家庭環境關注的照護智能體，是在一般授權範圍內行動，但遠超任何具體同意所涵蓋的範圍。</p>
+
+        <p>問責問題——這個行動是被授權的嗎？——無法通過參考同意記錄來回答，因為同意記錄沒有描述那個行動。它描述了一個包含該行動的類別。因此，建立在同意之上的問責框架治理的是類別，而不是行動。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>相鄰硬件的智能體在不同的表面呈現相同的問題。一個被授權管理設備群韌體的智能體，被授予了一個權限類別——韌體管理——它包含了數百個具體操作：哪些設備以何種順序接收更新、在何種條件下觸發什麼回滾行為、當檢測到簽名異常時哪些設備被隔離，以及設備在需要人工審查前被隔離多長時間。在授權時，這些具體行為都沒有被列舉。它們隱含在授予的類別中。</p>
+
+        <p>當智能體做出干擾生產操作的韌體決定時，問責問題不是智能體是否擁有韌體管理權限——它確實擁有。問題是具體決定是否在實際同意的範圍內。在「韌體管理」的粒度上，僅從授權記錄來看，這個問題是無法回答的。</p>
+
+        <h2>在後量子交叉點</h2>
+        <p>加密遷移智能體面臨相同的結構，但風險更高。一個被授權管理加密基礎設施的智能體，可以在該授權範圍內決定廢棄哪些算法、按照什麼時間線、在哪些系統上以什麼順序，以及當遷移失敗時採用什麼回退行為。這些決定具有重大的操作和安全後果。授予「加密基礎設施管理」的授權沒有指定其中任何一項。它授權了一個類別。智能體填充該類別的內容。</p>
+
+        <p>當智能體的具體選擇導致加密覆蓋出現空白——遷移期間某些系統使用已棄用算法的窗口——授權記錄將確認智能體擁有權限。它不會揭示具體的排序決定是否曾被任何委託人考慮、評估或批准。</p>
+
+        <h2>問責的要求</h2>
+        <p>同意粒度問題沒有同意解決方案。它有一個審計解決方案：問責必須建立在智能體在操作層面實際做了什麼，而不是類別層面上授權了什麼。這要求智能體生成操作層面的記錄——而不是類別層面的日誌——可以在事後與委託人期望進行比較。</p>
+
+        <p>這也要求對「授權」意味著什麼保持機構紀律。授予的權限不是該類別內所有操作的空白支票。它是一種臨時授權，攜帶隱含的批准要求：委託人應該有持續的機制來確認正在執行的具體操作屬於他們實際意圖的範圍。在該機制缺失的地方，授權已經超過了同意。</p>
+
+        <p>委託人能夠指定的內容與智能體能夠做的內容之間的差距，將隨著智能體能力的增強而擴大。將粗略授權視為充分同意的問責框架將逐漸減少對智能體實際所做事情的治理。選擇不是精細同意與粗略同意之間的選擇。而是操作層面審計與名義問責之間的選擇。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>人類在類別層面授權AI智能體——「管理韌體」、「存取日程」、「處理加密基礎設施」。智能體在具體操作層面行動，任何單一類別內都包含數千個操作。這些分辨率之間的差距意味著同意記錄在類別層面確認授權，而對所採取的具體行動保持沉默。在照護交叉點，一般授權包含未預期的推斷和升級。在硬件交叉點，韌體權限包含未描述的操作決定。在後量子交叉點，遷移權限涵蓋未披露的排序選擇。彌合問責差距需要操作層面的審計——而不是更長的披露、更細的核取方塊——因為這些操作來自數據，而不是來自披露。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const langSections = document.querySelectorAll('.essay-lang');
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        langBtns.forEach(b => b.classList.remove('active'));
+        langSections.forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
