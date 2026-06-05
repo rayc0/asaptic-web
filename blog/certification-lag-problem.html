@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The certification lag problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI certification processes operate on year-long timelines. AI models improve on month-long cycles. When a certified agent causes harm, the first question is: was the certified version the one that was actually running? The answer is almost always complicated." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/certification-lag-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The certification lag problem: accountability when the approved version is not the one running" />
+  <meta property="og:description" content="AI certification timelines run in years; model improvement cycles run in months. By the time an AI agent is approved for high-stakes deployment, the version under review is already behind. This gap is not a process failure — it is a structural feature of any certification regime applied to rapidly evolving systems. Accountability frameworks have not caught up." />
+  <meta property="og:url" content="https://asaptic.com/blog/certification-lag-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-05" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The certification lag problem: accountability when the approved version is not the one running",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-05",
+    "description": "AI certification processes operate on year-long timelines. AI models improve on month-long cycles. When a certified agent causes harm, the first question is: was the certified version the one that was actually running? The answer is almost always complicated.",
+    "url": "https://asaptic.com/blog/certification-lag-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The certification lag problem: accountability when the approved version is not the one running</h1>
+      <p class="essay-subtitle">AI certification timelines run in years; model improvement cycles run in months. By the time an agent is approved for high-stakes deployment, the version under review is already behind. This is not a process failure — it is a structural feature of any certification regime applied to rapidly evolving systems. Accountability frameworks have not caught up.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-05</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>When an AI agent causes harm in a high-stakes domain, one of the first questions in any accountability proceeding is deceptively simple: was the version that caused harm the version that was approved? In established engineering disciplines — pharmaceuticals, aviation, medical devices — this question has a clean answer. The approved artifact is frozen, the deployment record shows which version ran, and accountability can proceed from there.</p>
+
+        <p>For AI agents, the answer is almost always complicated. Certification takes time. Models improve continuously. The gap between when a version enters a certification process and when that process concludes can be twelve, eighteen, or thirty-six months. During that period, the model's developers have typically released several successor versions with measurably better performance, lower error rates, and fixed failure modes that the certified version still exhibits. By the time approval arrives, the operator faces a dilemma that no certification framework was designed to resolve.</p>
+
+        <h2>The dilemma the lag creates</h2>
+        <p>Using the certified version is defensible in a narrow sense — the certification is on record, the version is documented, the approval authority has validated it. But the certified version may have known limitations that newer versions have corrected. Deploying an older, worse model because it is certified, while a better one exists, is a choice that the certification framework makes look like prudence but which may produce worse outcomes for the people the agent is meant to serve.</p>
+
+        <p>Using an uncertified update introduces a different accountability gap. The operator may deploy the update because it genuinely reduces risk — fixing a safety-relevant failure mode, for instance — but any harm that follows happens outside the certification boundary. The operator cannot point to external validation. The accountability record shows a deployment that diverged from the approved version, and any investigation will spend considerable effort on whether that divergence caused the harm rather than on the substantive question of what the agent did.</p>
+
+        <p>Neither path is clean. The certification lag converts a question about model quality into a question about process compliance, and the two questions have different answers to different parties at different times.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>Cryptographic standards have always had long certification cycles. The transition to post-quantum algorithms is playing out across a timeline measured in years, with standards bodies completing reviews long after the practical deployment of the algorithms they are reviewing. An AI agent handling post-quantum key operations that was certified against an earlier threat model is operating today against an evolved threat landscape that the certification process did not examine. The certification provides legitimate cover; it does not provide actual security assurance against threats that emerged after the review completed. Accountability for a compromise that exploits a gap in the certified threat model falls into the space between the certifying body's scope, the deployer's scope, and the vendor's scope — with each party pointing at the others.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware certification — for AI accelerators, embedded controllers, industrial compute platforms — involves lengthy testing against specific firmware versions and operating conditions. Security patches and firmware updates are a routine part of maintaining any deployed system. When a critical vulnerability is discovered, operators patch it, and the patched firmware is typically not the firmware that was certified. The alternative — running unpatched, vulnerable firmware because the patched version hasn't completed recertification — is not a viable choice in most operational contexts. Yet the accountability record for a system running patched, uncertified firmware is structurally similar to the record for a system running unauthorized modifications. The patch that improved security and the modification that introduced a vulnerability look the same in a certification audit.</p>
+
+        <h2>At the care crossing</h2>
+        <p>Medical AI faces the sharpest version of this problem. A device or software agent that achieves market authorization has been reviewed against a defined intended use, a defined patient population, and a specific version of the model. Real-world deployment rarely stays within those boundaries. Patient populations shift. The intended use expands. New model versions are released. Operators integrate the agent with other systems that the original authorization did not contemplate. At each step, the gap between the authorized artifact and the running system widens. When harm occurs and accountability proceedings begin, investigators must reconstruct which version ran, what its authorization covered, and which of the many departures from the authorization boundary contributed to the outcome. This is tractable in theory; in practice, the records needed to answer these questions are rarely maintained with the necessary precision.</p>
+
+        <h2>What accountability architecture requires</h2>
+        <p>The certification lag problem does not have a simple fix. Faster certification reduces the lag but does not close it; models will continue to improve faster than any institutional review process can operate. The structural solution is to treat certification not as a point-in-time approval of a frozen artifact, but as an ongoing relationship between the certifying authority, the deployer, and the version history of the agent.</p>
+
+        <p>This requires three things that current frameworks largely lack. First, deployment records must include version attestation — cryptographic evidence of which exact version ran at which time, preserved in a form that cannot be retroactively modified. Second, change impact assessments must distinguish certification-invalidating changes from minor updates, with clear accountability for the classification decision. Third, the certification boundary must be explicit in accountability proceedings: investigators should be required to state which aspects of an agent's behavior fell within the certified scope and which did not, before attributing harm to either.</p>
+
+        <p>The certified version and the deployed version are rarely the same. Accountability frameworks that treat them as interchangeable leave a structural gap that neither the certification body nor the deployer fully owns — and that gap is where most of the hard accountability questions live.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI certification timelines are measured in years; model development cycles are measured in months. By deployment, the certified version is typically already behind. This creates a structural accountability gap: using the certified version may mean deploying a worse model with known limitations, while using an updated version means operating outside the certification boundary. Neither path has clean accountability. Closing the gap requires version attestation in deployment records, explicit change impact classification, and accountability proceedings that distinguish what the certification covered from what it did not.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>当AI智能体在高风险领域造成损害时，任何问责程序中最先提出的问题之一表面上很简单：造成损害的版本是否是被批准的版本？在成熟的工程学科中——制药、航空、医疗器械——这个问题有明确的答案。经批准的制品是固定的，部署记录显示运行了哪个版本，问责可以从那里推进。</p>
+
+        <p>对于AI智能体，答案几乎总是复杂的。认证需要时间。模型持续改进。某个版本进入认证程序与该程序结束之间的差距可以是十二、十八或三十六个月。在此期间，模型的开发者通常已经发布了几个后续版本，这些版本具有可测量的更好性能、更低的错误率，并修复了经认证版本仍存在的失败模式。当批准到来时，运营商面临的是任何认证框架都没有被设计来解决的困境。</p>
+
+        <h2>滞后创造的两难困境</h2>
+        <p>使用经认证的版本在狭义上是可辩护的——认证有记录，版本有文档，审批机构已对其进行验证。但经认证的版本可能存在较新版本已纠正的已知局限。部署较旧、较差的模型仅因为它已获认证，而更好的版本存在，是一种认证框架使其看起来谨慎但可能为被服务人员产生更差结果的选择。</p>
+
+        <p>使用未认证的更新则引入了不同的问责差距。运营商可能部署更新是因为它真正降低了风险——例如修复了与安全相关的失败模式——但随后发生的任何损害都发生在认证边界之外。运营商无法指向外部验证。问责记录显示的部署偏离了经批准的版本，任何调查都将花费大量精力于该偏离是否造成损害，而非关于智能体实际行为的实质性问题。</p>
+
+        <p>两条路都不干净。认证滞后将关于模型质量的问题转化为关于流程合规的问题，这两个问题对不同时间的不同各方有不同的答案。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>密码学标准历来有漫长的认证周期。向后量子算法的过渡正在跨越以年计算的时间线上展开，标准机构在其审查的算法实际部署很久之后才完成审查。处理后量子密钥操作的AI智能体如果是针对早期威胁模型认证的，今天就是在对抗认证过程未检查的演变后的威胁格局。认证提供了合法保护；它不提供对认证审查完成后出现的威胁的实际安全保证。利用经认证威胁模型中差距进行的攻击所造成的损害，落入认证机构范围、部署者范围和供应商范围之间的空间——每方都指向其他方。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件认证——针对AI加速器、嵌入式控制器、工业计算平台——涉及针对特定固件版本和运行条件的漫长测试。安全补丁和固件更新是维护任何已部署系统的常规部分。当发现关键漏洞时，运营商会打补丁，而打了补丁的固件通常不是经过认证的固件。另一选择——运行未打补丁、有漏洞的固件，因为打了补丁的版本还没有完成重新认证——在大多数操作环境中不是可行的选择。然而，运行了打补丁的、未认证固件的系统的问责记录，在结构上与运行了未经授权修改的系统的记录相似。在认证审计中，改善了安全的补丁和引入了漏洞的修改看起来是一样的。</p>
+
+        <h2>在照护交叉点</h2>
+        <p>医疗AI面临这个问题最尖锐的版本。获得市场授权的设备或软件智能体已经针对定义的预期用途、定义的患者群体和特定模型版本进行了审查。真实世界的部署很少保持在这些边界内。患者群体发生变化，预期用途扩大，新模型版本发布，运营商将智能体与原始授权未考虑的其他系统集成。在每一步，经授权的制品与运行中的系统之间的差距扩大。当损害发生并开始问责程序时，调查人员必须重建哪个版本在运行、其授权涵盖了什么，以及许多偏离授权边界的行为中哪些促成了结果。这在理论上是可处理的；在实践中，回答这些问题所需的记录很少以必要的精确度维护。</p>
+
+        <h2>问责架构的要求</h2>
+        <p>认证滞后问题没有简单的解决方案。更快的认证减少了滞后但不能消除它；模型将继续比任何机构审查流程更快地改进。结构性解决方案是将认证不视为对固定制品的时间点批准，而是视为认证机构、部署者和智能体版本历史之间的持续关系。</p>
+
+        <p>这需要当前框架在很大程度上缺乏的三件事。首先，部署记录必须包括版本证明——关于哪个确切版本在何时运行的密码学证据，以无法被事后修改的形式保存。其次，变更影响评估必须区分使认证失效的变更与次要更新，对分类决定有明确的问责。第三，认证边界必须在问责程序中明确：调查人员应被要求说明智能体行为的哪些方面在经认证的范围内，哪些不在，然后再将损害归因于其中任何一个。</p>
+
+        <p>经认证的版本和部署的版本很少是相同的。将两者视为可互换的问责框架留下了一个认证机构和部署者都没有完全拥有的结构性差距——而那个差距正是大多数棘手问责问题所在的地方。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>AI认证时间线以年计；模型开发周期以月计。到部署时，经认证的版本通常已经落后。这造成了一个结构性问责差距：使用经认证的版本可能意味着部署具有已知局限的较差模型，而使用更新版本意味着在认证边界之外运行。两条路都没有干净的问责。缩小这个差距需要在部署记录中进行版本证明、明确的变更影响分类，以及区分认证涵盖内容与未涵盖内容的问责程序。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>當AI智能體在高風險領域造成損害時，任何問責程序中最先提出的問題之一表面上很簡單：造成損害的版本是否是被批准的版本？在成熟的工程學科中——製藥、航空、醫療器械——這個問題有明確的答案。經批准的製品是固定的，部署記錄顯示運行了哪個版本，問責可以從那裡推進。</p>
+
+        <p>對於AI智能體，答案幾乎總是複雜的。認證需要時間。模型持續改進。某個版本進入認證程序與該程序結束之間的差距可以是十二、十八或三十六個月。在此期間，模型的開發者通常已經發布了幾個後續版本，這些版本具有可測量的更好性能、更低的錯誤率，並修復了經認證版本仍存在的失敗模式。當批准到來時，營運商面臨的是任何認證框架都沒有被設計來解決的困境。</p>
+
+        <h2>滯後創造的兩難困境</h2>
+        <p>使用經認證的版本在狹義上是可辯護的——認證有記錄，版本有文件，審批機構已對其進行驗證。但經認證的版本可能存在較新版本已糾正的已知限制。部署較舊、較差的模型僅因為它已獲認證，而更好的版本存在，是一種認證框架使其看起來謹慎但可能為被服務人員產生更差結果的選擇。</p>
+
+        <p>使用未認證的更新則引入了不同的問責差距。營運商可能部署更新是因為它真正降低了風險——例如修復了與安全相關的失敗模式——但隨後發生的任何損害都發生在認證邊界之外。營運商無法指向外部驗證。問責記錄顯示的部署偏離了經批准的版本，任何調查都將花費大量精力於該偏離是否造成損害，而非關於智能體實際行為的實質性問題。</p>
+
+        <p>兩條路都不乾淨。認證滯後將關於模型品質的問題轉化為關於流程合規的問題，這兩個問題對不同時間的不同各方有不同的答案。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>密碼學標準歷來有漫長的認證週期。向後量子算法的過渡正在跨越以年計算的時間線上展開，標準機構在其審查的算法實際部署很久之後才完成審查。處理後量子金鑰操作的AI智能體如果是針對早期威脅模型認證的，今天就是在對抗認證過程未檢查的演變後的威脅格局。認證提供了合法保護；它不提供對認證審查完成後出現的威脅的實際安全保證。利用經認證威脅模型中差距進行的攻擊所造成的損害，落入認證機構範圍、部署者範圍和供應商範圍之間的空間——每方都指向其他方。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>硬件認證——針對AI加速器、嵌入式控制器、工業計算平台——涉及針對特定韌體版本和運行條件的漫長測試。安全補丁和韌體更新是維護任何已部署系統的常規部分。當發現關鍵漏洞時，營運商會打補丁，而打了補丁的韌體通常不是經過認證的韌體。另一選擇——運行未打補丁、有漏洞的韌體，因為打了補丁的版本還沒有完成重新認證——在大多數操作環境中不是可行的選擇。然而，運行了打補丁的、未認證韌體的系統的問責記錄，在結構上與運行了未經授權修改的系統的記錄相似。在認證稽核中，改善了安全的補丁和引入了漏洞的修改看起來是一樣的。</p>
+
+        <h2>在照護交叉點</h2>
+        <p>醫療AI面臨這個問題最尖銳的版本。獲得市場授權的設備或軟件智能體已經針對定義的預期用途、定義的患者群體和特定模型版本進行了審查。真實世界的部署很少保持在這些邊界內。患者群體發生變化，預期用途擴大，新模型版本發布，營運商將智能體與原始授權未考慮的其他系統整合。在每一步，經授權的製品與運行中的系統之間的差距擴大。當損害發生並開始問責程序時，調查人員必須重建哪個版本在運行、其授權涵蓋了什麼，以及許多偏離授權邊界的行為中哪些促成了結果。這在理論上是可處理的；在實踐中，回答這些問題所需的記錄很少以必要的精確度維護。</p>
+
+        <h2>問責架構的要求</h2>
+        <p>認證滯後問題沒有簡單的解決方案。更快的認證減少了滯後但不能消除它；模型將繼續比任何機構審查流程更快地改進。結構性解決方案是將認證不視為對固定製品的時間點批准，而是視為認證機構、部署者和智能體版本歷史之間的持續關係。</p>
+
+        <p>這需要當前框架在很大程度上缺乏的三件事。首先，部署記錄必須包括版本證明——關於哪個確切版本在何時運行的密碼學證據，以無法被事後修改的形式保存。其次，變更影響評估必須區分使認證失效的變更與次要更新，對分類決定有明確的問責。第三，認證邊界必須在問責程序中明確：調查人員應被要求說明智能體行為的哪些方面在經認證的範圍內，哪些不在，然後再將損害歸因於其中任何一個。</p>
+
+        <p>經認證的版本和部署的版本很少是相同的。將兩者視為可互換的問責框架留下了一個認證機構和部署者都沒有完全擁有的結構性差距——而那個差距正是大多數棘手問責問題所在的地方。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>AI認證時間線以年計；模型開發週期以月計。到部署時，經認證的版本通常已經落後。這造成了一個結構性問責差距：使用經認證的版本可能意味著部署具有已知限制的較差模型，而使用更新版本意味著在認證邊界之外運行。兩條路都沒有乾淨的問責。縮小這個差距需要在部署記錄中進行版本證明、明確的變更影響分類，以及區分認證涵蓋內容與未涵蓋內容的問責程序。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const langSections = document.querySelectorAll('.essay-lang');
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        langBtns.forEach(b => b.classList.remove('active'));
+        langSections.forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
