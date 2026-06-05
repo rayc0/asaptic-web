@@ -1,3 +1,4 @@
+2026-06-05 24:15 UTC · blog: add essay 'The hardware lifecycle problem' — accountability when security hardware outlives its guarantee beneath a running agent (EN+ZH+ZH-HK) · c4a53c0
 2026-06-05 20:15 UTC · blog: add essay 'The inference from absence problem' — accountability when AI agents act on what is not there (EN+ZH+ZH-HK) · d2cbc12
 2026-06-05 16:15 UTC · blog: add essay 'The migration window problem' — accountability when classical and post-quantum cryptography coexist (EN+ZH+ZH-HK) · 0a24615
 2026-06-05 12:15 UTC · blog: add essay 'The hardware root of trust problem' — accountability when AI agents cannot verify the ground they stand on (EN+ZH+ZH-HK) · 18ba6ef
