@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The hardware root of trust problem — Asaptic Labs</title>
+
+  <meta name="description" content="Every security claim an AI agent makes ultimately rests on assertions from the hardware it runs on. When that hardware root of trust is absent, compromised, or not built to account for agents, the entire accountability chain is suspended in software — and software can be modified." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/hardware-root-of-trust-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The hardware root of trust problem: when AI agents cannot verify the ground they stand on" />
+  <meta property="og:description" content="Every security claim an AI agent makes ultimately rests on assertions from the hardware it runs on. When that hardware root of trust is absent, compromised, or not built to account for agents, the entire accountability chain is suspended in software — and software can be modified." />
+  <meta property="og:url" content="https://asaptic.com/blog/hardware-root-of-trust-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-05" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The hardware root of trust problem: when AI agents cannot verify the ground they stand on",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-05",
+    "description": "Every security claim an AI agent makes ultimately rests on assertions from the hardware it runs on. When that hardware root of trust is absent, compromised, or not built to account for agents, the entire accountability chain is suspended in software — and software can be modified.",
+    "url": "https://asaptic.com/blog/hardware-root-of-trust-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The hardware root of trust problem: when AI agents cannot verify the ground they stand on</h1>
+      <p class="essay-subtitle">Every security claim an AI agent makes ultimately rests on assertions from the hardware it runs on. When that hardware root of trust is absent, compromised, or not built to account for agents, the entire accountability chain is suspended in software — and software can be modified.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-05</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Security claims made in software can always be questioned. A process that reports its own integrity, a log that records its own activity, an agent that attests to its own state — each of these can be falsified by compromising the layer that reports them. The hardware root of trust is the answer to this regress: a component at the physical layer whose assertions the software stack above it cannot fabricate. When it exists and works, it gives the rest of the accountability chain somewhere to stand. When it is absent or inadequate, the chain is entirely suspended in software, and software can be modified.</p>
+
+        <p>AI agents deployed at the three crossings — post-quantum security operations, hardware-adjacent infrastructure, and physical-world care — make high-stakes decisions in environments where the integrity of their own execution environment is precisely what adversaries have reason to undermine. Yet most agent deployments treat the hardware execution environment as a given, building accountability architecture in the software layers without asking whether those layers themselves are verifiable.</p>
+
+        <h2>The structure of the problem</h2>
+        <p>Hardware roots of trust — implemented in trusted platform modules, secure enclaves, and hardware security modules — work by anchoring measurements of the software stack to a key that cannot be extracted from the physical device. A remote verifier can ask the hardware to attest to a current state and, if the attestation passes, be confident that the software running on that device matches what was measured. This process has well-understood limits: it measures state at a moment in time, it covers only what the attestation design encloses, and the trust it conveys is only as strong as the manufacturer's root certificate chain. But within those limits, it gives accountability something physical to rest on.</p>
+
+        <p>Most AI agents today run on general-purpose cloud infrastructure, shared hardware, or commercial edge devices not designed with agent-level attestation in mind. The accountability infrastructure for these agents — logs, audit trails, decision records — is generated and stored in the same software layer that an attacker with host access could modify. The hardware root of trust question is not exotic. It is the prerequisite condition for the rest of the accountability architecture to be meaningful.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>Post-quantum key operations are precisely the operations that adversaries planning for long time horizons are most interested in subverting. A harvest-now-decrypt-later posture does not require breaching the cryptographic algorithm — it requires access to ciphertext and patience. But a more direct path exists: compromise the key generation or key usage environment at the hardware level, before post-quantum protections are in place. An AI agent performing post-quantum key operations on hardware lacking a functioning root of trust makes the security claim that the operations were performed correctly. The claim may be true. But it is made in software, and the hardware layer beneath it cannot confirm it. Post-quantum migration efforts that focus on algorithm selection while treating the hardware execution environment as given are completing only half the transition.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware-adjacent AI agents — those managing firmware updates, supply chain integrity, or infrastructure monitoring — are responsible for the integrity of physical systems. A compromised agent in these roles can falsify audit trails, approve corrupted firmware, or report normal status on degraded hardware. The accountability architecture for these agents requires that the agents themselves run on verified, attested hardware. An agent that checks hardware integrity but runs on hardware that has not itself been checked has a circularity the software layer cannot resolve.</p>
+
+        <p>At scale, hardware attestation for AI agents faces a practical difficulty: attestation schemes were designed for relatively static configurations, while AI agents update frequently, run in containerized or virtualized environments, and are often distributed across heterogeneous hardware fleets. Attestation designed for firmware persistence does not compose cleanly with agent deployment pipelines, and the gap between them is where verifiable accountability stops.</p>
+
+        <h2>At the care crossing</h2>
+        <p>Care-setting AI agents operate on commercial medical-grade equipment, general-purpose edge devices, and hospital network infrastructure acquired on multi-year procurement cycles. These environments were not designed to support hardware attestation for software agents, and retrofitting attestation into existing care infrastructure is operationally and financially difficult.</p>
+
+        <p>The consequence is that care agents make decisions — triage assessments, medication recommendations, alert escalations — on hardware whose integrity they cannot verify and external auditors cannot confirm. A safety-relevant failure that originates in hardware-layer compromise is indistinguishable from model error, sensor fault, or network failure in the accountability record. Investigators working at the software layer cannot see below it. The harm may be real and the cause recoverable in principle, but the investigation has no floor.</p>
+
+        <h2>What accountability architecture requires</h2>
+        <p>Closing the hardware root of trust gap for AI agents requires three things collectively absent from most current deployments. First, attestation coverage: agents should run on hardware that supports remote attestation, and the attestation should cover the full execution environment, not only the underlying firmware. Second, agent-aware measurement: attestation schemes should measure the specific model version, configuration, and runtime environment of the agent — not solely the operating system and boot chain. Third, accountability chain extension: audit records should include attestation receipts — cryptographic confirmation that the hardware root of trust validated the execution environment at the time of a decision.</p>
+
+        <p>Without these, the accountability chain for AI agent decisions begins in software and has no physical anchor. That is not a gap that additional software-layer controls can close. Logs that attest to decisions made by agents that cannot themselves be attested are records of software speaking about software — coherent internally, and meaningless as a foundation for external accountability.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI agent accountability rests on audit logs, decision records, and attestation claims — all generated in software. Without a hardware root of trust that verifiably anchors those claims to the physical execution environment, the entire accountability chain is suspended in a layer that can be modified. Most agent deployments do not have this anchor. Closing the gap requires attestation coverage of the agent's execution environment, agent-aware measurement schemes, and audit records that include attestation receipts. Accountability architecture that ignores the hardware layer is architecture built on assumptions that adversaries know how to remove.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>软件层面的安全声明始终可以被质疑。一个报告自身完整性的进程、记录自身活动的日志、证明自身状态的智能体——这些都可以通过危害其报告层来伪造。硬件信任根是对这种无限倒退的回应：物理层的一个组件，其断言是其上方软件栈无法伪造的。当它存在并正常工作时，为整个问责链提供了立足之地。当它缺失或不足时，链条完全悬挂于软件之中——而软件可以被修改。</p>
+
+        <p>在三个交叉点部署的AI智能体——后量子安全操作、硬件相邻基础设施以及现实世界照护——在对手有充分理由破坏其自身执行环境完整性的环境中做出高风险决策。然而，大多数智能体部署将硬件执行环境视为既定条件，在软件层构建问责架构，而不追问这些软件层本身是否可验证。</p>
+
+        <h2>问题的结构</h2>
+        <p>硬件信任根——在可信平台模块、安全飞地和硬件安全模块中实现——通过将软件栈的测量值锚定到无法从物理设备中提取的密钥来工作。远程验证者可以请求硬件证明当前状态，如果证明通过，则可以确信该设备上运行的软件与被测量的内容一致。这个过程有众所周知的限制：它在特定时刻测量状态，只覆盖证明设计所包含的内容，所传递的信任强度不超过制造商根证书链。但在这些限制内，它为问责提供了物理支撑点。</p>
+
+        <p>今天大多数AI智能体运行在通用云基础设施、共享硬件或商业边缘设备上，这些都不是为智能体级别的证明而设计的。这些智能体的问责基础设施——日志、审计跟踪、决策记录——在与具有主机访问权限的攻击者可以修改的相同软件层中生成和存储。硬件信任根问题并不罕见。它是其余问责架构有意义的前提条件。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>后量子密钥操作正是具有长期时间规划的对手最感兴趣颠覆的操作。"现在收集、日后解密"的策略不需要突破密码算法——它需要获取密文和耐心等待。但存在更直接的路径：在后量子保护到位之前，在硬件层面危害密钥生成或密钥使用环境。在缺乏正常信任根的硬件上执行后量子密钥操作的AI智能体，声称操作被正确执行。这个声明可能是真实的，但它是在软件中做出的，而其下方的硬件层无法确认它。专注于算法选择而将硬件执行环境视为既定条件的后量子迁移工作，只完成了转型的一半。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件相邻AI智能体——那些管理固件更新、供应链完整性或基础设施监控的智能体——负责物理系统的完整性。这些角色中被危害的智能体可以伪造审计跟踪、批准损坏的固件，或在降级硬件上报告正常状态。这些智能体的问责架构要求智能体本身运行在经过验证和证明的硬件上。一个检查硬件完整性但运行在未被检查的硬件上的智能体，存在软件层无法解决的循环问题。</p>
+
+        <p>大规模部署时，AI智能体的硬件证明面临实际困难：证明方案是为相对静态的配置设计的，而AI智能体频繁更新，在容器化或虚拟化环境中运行，通常分布在异构硬件集群中。为固件持久性设计的证明与智能体部署管道的组合并不干净，二者之间的差距正是可验证问责停止的地方。</p>
+
+        <h2>在照护交叉点</h2>
+        <p>照护环境AI智能体在商业医疗级设备、通用边缘设备和按多年采购周期获取的医院网络基础设施上运行。这些环境不是为软件智能体的硬件证明而设计的，将证明改造进现有照护基础设施在操作和财务上都很困难。</p>
+
+        <p>结果是，照护智能体在无法验证完整性的硬件上做出决策——分诊评估、用药建议、警报升级——外部审计员也无法确认。在问责记录中，源于硬件层危害的安全相关故障与模型错误、传感器故障或网络故障无法区分。在软件层工作的调查人员看不到其下方的内容。</p>
+
+        <h2>问责架构的要求</h2>
+        <p>为AI智能体填补硬件信任根差距需要当前大多数部署集体缺失的三件事。第一，证明覆盖：智能体应在支持远程证明的硬件上运行，证明应覆盖完整的执行环境，而不仅仅是底层固件。第二，智能体感知测量：证明方案应测量智能体的特定模型版本、配置和运行时环境——不仅仅是操作系统和启动链。第三，问责链扩展：审计记录应包括证明收据——在决策时硬件信任根验证执行环境的密码学确认。</p>
+
+        <p>没有这些，AI智能体决策的问责链从软件开始，没有物理锚点。这不是额外的软件层控制可以填补的差距。证明无法自我证明的智能体所做决策的日志，是软件谈论软件的记录——内部连贯，作为外部问责的基础毫无意义。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>AI智能体问责依赖于审计日志、决策记录和证明声明——全部在软件中生成。没有将这些声明可验证地锚定到物理执行环境的硬件信任根，整个问责链就悬挂在可以被修改的层中。大多数智能体部署没有这个锚点。填补差距需要覆盖智能体执行环境的证明、智能体感知测量方案，以及包含证明收据的审计记录。忽视硬件层的问责架构，是建立在对手知道如何消除的假设之上的架构。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>軟件層面的安全聲明始終可以被質疑。一個報告自身完整性的進程、記錄自身活動的日誌、證明自身狀態的智能體——這些都可以通過危害其報告層來偽造。硬件信任根是對這種無限倒退的回應：物理層的一個組件，其斷言是其上方軟件棧無法偽造的。當它存在並正常工作時，為整個問責鏈提供了立足之地。當它缺失或不足時，鏈條完全懸掛於軟件之中——而軟件可以被修改。</p>
+
+        <p>在三個交叉點部署的AI智能體——後量子安全操作、硬件相鄰基礎設施以及現實世界照護——在對手有充分理由破壞其自身執行環境完整性的環境中做出高風險決策。然而，大多數智能體部署將硬件執行環境視為既定條件，在軟件層構建問責架構，而不追問這些軟件層本身是否可驗證。</p>
+
+        <h2>問題的結構</h2>
+        <p>硬件信任根——在可信平台模組、安全飛地和硬件安全模組中實現——通過將軟件棧的測量值錨定到無法從物理設備中提取的密鑰來工作。遠端驗證者可以請求硬件證明當前狀態，如果證明通過，則可以確信該設備上運行的軟件與被測量的內容一致。這個過程有眾所周知的限制：它在特定時刻測量狀態，只覆蓋證明設計所包含的內容，所傳遞的信任強度不超過製造商根憑證鏈。但在這些限制內，它為問責提供了物理支撐點。</p>
+
+        <p>今天大多數AI智能體運行在通用雲端基礎設施、共享硬件或商業邊緣設備上，這些都不是為智能體級別的證明而設計的。這些智能體的問責基礎設施——日誌、稽核追蹤、決策記錄——在與具有主機訪問權限的攻擊者可以修改的相同軟件層中生成和儲存。硬件信任根問題並不罕見。它是其餘問責架構有意義的前提條件。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>後量子密鑰操作正是具有長期時間規劃的對手最感興趣顛覆的操作。「現在收集、日後解密」的策略不需要突破密碼算法——它需要獲取密文和耐心等待。但存在更直接的路徑：在後量子保護到位之前，在硬件層面危害密鑰生成或密鑰使用環境。在缺乏正常信任根的硬件上執行後量子密鑰操作的AI智能體，聲稱操作被正確執行。這個聲明可能是真實的，但它是在軟件中做出的，而其下方的硬件層無法確認它。專注於算法選擇而將硬件執行環境視為既定條件的後量子遷移工作，只完成了轉型的一半。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>硬件相鄰AI智能體——那些管理韌體更新、供應鏈完整性或基礎設施監控的智能體——負責物理系統的完整性。這些角色中被危害的智能體可以偽造稽核追蹤、批准損壞的韌體，或在降級硬件上報告正常狀態。這些智能體的問責架構要求智能體本身運行在經過驗證和證明的硬件上。一個檢查硬件完整性但運行在未被檢查的硬件上的智能體，存在軟件層無法解決的循環問題。</p>
+
+        <p>大規模部署時，AI智能體的硬件證明面臨實際困難：證明方案是為相對靜態的配置設計的，而AI智能體頻繁更新，在容器化或虛擬化環境中運行，通常分佈在異構硬件叢集中。為韌體持久性設計的證明與智能體部署管道的組合並不乾淨，二者之間的差距正是可驗證問責停止的地方。</p>
+
+        <h2>在照護交叉點</h2>
+        <p>照護環境AI智能體在商業醫療級設備、通用邊緣設備和按多年採購週期獲取的醫院網絡基礎設施上運行。這些環境不是為軟件智能體的硬件證明而設計的，將證明改造進現有照護基礎設施在操作和財務上都很困難。</p>
+
+        <p>結果是，照護智能體在無法驗證完整性的硬件上做出決策——分診評估、用藥建議、警報升級——外部審計員也無法確認。在問責記錄中，源於硬件層危害的安全相關故障與模型錯誤、感測器故障或網絡故障無法區分。在軟件層工作的調查人員看不到其下方的內容。</p>
+
+        <h2>問責架構的要求</h2>
+        <p>為AI智能體填補硬件信任根差距需要當前大多數部署集體缺失的三件事。第一，證明覆蓋：智能體應在支援遠端證明的硬件上運行，證明應覆蓋完整的執行環境，而不僅僅是底層韌體。第二，智能體感知測量：證明方案應測量智能體的特定模型版本、配置和運行時環境——不僅僅是作業系統和啟動鏈。第三，問責鏈擴展：稽核記錄應包括證明收據——在決策時硬件信任根驗證執行環境的密碼學確認。</p>
+
+        <p>沒有這些，AI智能體決策的問責鏈從軟件開始，沒有物理錨點。這不是額外的軟件層控制可以填補的差距。證明無法自我證明的智能體所做決策的日誌，是軟件談論軟件的記錄——內部連貫，作為外部問責的基礎毫無意義。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>AI智能體問責依賴於稽核日誌、決策記錄和證明聲明——全部在軟件中生成。沒有將這些聲明可驗證地錨定到物理執行環境的硬件信任根，整個問責鏈就懸掛在可以被修改的層中。大多數智能體部署沒有這個錨點。填補差距需要覆蓋智能體執行環境的證明、智能體感知測量方案，以及包含證明收據的稽核記錄。忽視硬件層的問責架構，是建立在對手知道如何消除的假設之上的架構。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const langSections = document.querySelectorAll('.essay-lang');
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        langBtns.forEach(b => b.classList.remove('active'));
+        langSections.forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
