@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The hardware lifecycle problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agent deployments in care facilities and critical infrastructure are designed to run for a decade or more. The security hardware they depend on is not. When hardware reaches end-of-life mid-deployment, the root of trust silently degrades — and standard accountability architectures do not detect it." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/hardware-lifecycle-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The hardware lifecycle problem: when security hardware outlives its guarantee beneath a running agent" />
+  <meta property="og:description" content="AI deployments run for ten-plus years. The TPMs and secure enclaves beneath them do not. When hardware reaches end-of-life mid-deployment, the root of trust degrades silently — and most accountability architectures have no way to know." />
+  <meta property="og:url" content="https://asaptic.com/blog/hardware-lifecycle-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-05" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The hardware lifecycle problem: when security hardware outlives its guarantee beneath a running agent",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-05",
+    "description": "AI agent deployments in care facilities and critical infrastructure are designed to run for a decade or more. The security hardware they depend on is not. When hardware reaches end-of-life mid-deployment, the root of trust silently degrades — and standard accountability architectures do not detect it.",
+    "url": "https://asaptic.com/blog/hardware-lifecycle-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Hardware × Post-Quantum Security × Physical-World Care</div>
+      <h1 class="essay-title">The hardware lifecycle problem: when security hardware outlives its guarantee beneath a running agent</h1>
+      <p class="essay-subtitle">AI agent deployments in care facilities and critical infrastructure are designed to run for a decade or more. The security hardware they depend on is not. When hardware reaches end-of-life mid-deployment, the root of trust silently degrades — and standard accountability architectures do not detect it.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-05</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>The security properties of an AI agent deployment are often described as if they are stable features of the software. The agent is described as attested, tamper-evident, or cryptographically authenticated — present tense, indefinite duration. These claims are grounded in hardware: a trusted platform module, a secure enclave, a hardware security module that provides the root of trust for every attestation the agent makes. But hardware has a lifecycle. Security patches stop arriving. Firmware certifications expire. Algorithms implemented in silicon become deprecated. The root of trust that made the accountability architecture possible is still running, but it is no longer trustworthy in the same way — and there is typically no signal in the accountability record to indicate that anything has changed.</p>
+
+        <p>The mismatch in timescales is structural. AI agent deployments in residential care settings, hospital networks, and industrial control environments are designed and budgeted for operational lifetimes of ten to fifteen years. The hardware security components embedded in those environments — trusted platform modules, secure enclaves, hardware security modules — carry manufacturer support commitments of five to seven years. After that window, the hardware continues to function. It continues to produce attestations. It continues to sign. But the vendor is no longer auditing it for vulnerabilities, patching its firmware, or certifying its cryptographic implementations against current standards. The attestation the agent produces is indistinguishable from a valid one to any observer who checks only the signature format and not the provenance of the signing hardware.</p>
+
+        <h2>What end-of-life means for accountability</h2>
+        <p>In the standard hardware security model, the value of a hardware root of trust derives from two properties: the hardware is assumed to be tamper-resistant, and its security posture is assumed to be maintained. End-of-life breaks the second assumption while leaving the first apparently intact. The hardware does not announce that it is no longer being patched. The attestations it produces do not carry an expiry timestamp. The audit trail generated by an agent running on end-of-life security hardware looks identical to an audit trail generated by an agent running on current, fully-supported hardware.</p>
+
+        <p>This creates a specific accountability problem. When a decision made by an AI agent is reviewed — in a regulatory audit, an adverse event investigation, or a post-incident analysis — the reviewer assesses the integrity of the decision by checking whether the agent's claims were properly attested. The attestation was valid. The hardware root of trust existed. The accountability architecture appears to hold. What is not visible in the audit record is that the hardware providing that root of trust had not received a firmware update in four years, that two CVEs affecting its attestation implementation had been published without being patched, and that the cryptographic algorithm it used to sign attestations had been deprecated eighteen months earlier. The accountability was formally complete and substantively hollow.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>The hardware crossing is where AI agents interface with physical infrastructure whose security properties are grounded in silicon. At this crossing, the hardware lifecycle problem is most direct: the agent's accountability claims are only as current as the hardware that anchors them. A hardware agent managing a device fleet across a ten-year deployment will outlive the security guarantees of the hardware it runs on. As it does, the attestation records it produces become progressively less trustworthy without any visible change in their structure or content. A fleet whose hardware security components entered end-of-life in year six looks identical in the audit record to one whose components are fully current — unless an operator is tracking hardware lifecycle independently and correlating it with the accountability record, which almost none are.</p>
+
+        <p>The problem compounds for agents that manage other hardware. A hardware agent that attests device integrity throughout a fleet is implicitly asserting that its own integrity is provable. If the hardware root of trust for the managing agent is itself past its support window, every integrity claim the agent makes about devices downstream inherits that hollow guarantee. The accountability chain does not fail visibly. It fails quietly, at the layer where claims meet physics, in a way that only becomes apparent when someone asks a question that the formal record cannot actually answer.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>The post-quantum migration adds a time-critical dimension to the hardware lifecycle problem. The transition to quantum-resistant cryptographic algorithms is not only a software migration. Many of the algorithms that must be replaced — RSA, elliptic curve variants — are implemented in the dedicated cryptographic accelerators inside hardware security modules and trusted platform modules. Replacing those algorithms requires either firmware updates (available only while the hardware is in active support) or hardware replacement. An AI agent deployment whose underlying security hardware has reached end-of-life will not receive the firmware that implements quantum-resistant algorithms. It will continue signing with algorithms whose long-term integrity cannot be assumed. The accountability records it produces now will need to be interpreted in the future against the question of whether the signing algorithm was already known to be inadequate — and the formal record will not contain that context.</p>
+
+        <p>The harvest-now-decrypt-later problem that drives urgency in the post-quantum migration applies symmetrically to accountability records. Attestations signed today with deprecated algorithms become retroactively questionable when those algorithms are broken. For an AI agent making decisions in high-stakes domains, the integrity of the accountability record is not only relevant at decision time. It must hold up in retrospective review years or decades later. A decision made in 2026 on behalf of a patient in a care facility may be reviewed in a regulatory proceeding in 2033. If the hardware that attested that decision's integrity has been end-of-life since 2028, the formal attestation becomes a contested artifact rather than a reliable anchor.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>Physical-world care deployments face the hardware lifecycle problem across two axes: their operational duration and their procurement context. Care facilities are not technology companies. They do not have hardware refresh cycles synchronized with security support windows. A tablet fleet deployed in a residential care setting in 2024 will plausibly still be running in 2032, long after the hardware security components embedded in those tablets have passed their support window. The AI agents running on that infrastructure — managing medication schedules, monitoring vital signs, routing care worker tasks — will continue producing accountability records that appear formally valid but are grounded in hardware whose security posture is no longer certified.</p>
+
+        <p>The procurement context amplifies this. Hardware refresh in care settings is constrained by budget cycles, regulatory approval for medical device software, and the operational disruption of migrating a running care system. Replacing the underlying hardware of a deployed care agent is not a decision a care facility makes on a security vendor's schedule. It requires clinical validation, staff retraining, and regulatory re-approval in many jurisdictions. The result is that the actual hardware lifecycle in deployed care systems extends well beyond manufacturer support windows by structural necessity, and the accountability architecture built on top of that hardware degrades accordingly.</p>
+
+        <h2>What lifecycle-aware accountability requires</h2>
+        <p>Three additions to standard accountability architecture would make the hardware lifecycle problem visible. First, hardware provenance records: the accountability architecture for an AI agent deployment should include explicit records of the hardware components that provide the root of trust — make, model, firmware version, manufacturer support status, and end-of-support date — as first-class audit objects. These records should be updated whenever hardware status changes and correlated with the accountability records the hardware anchors. Second, end-of-support alerts: the accountability system should flag, in the audit record itself, when a root-of-trust component enters end-of-life. Attestations produced after that date should carry metadata indicating that the hardware backing them is past its support window. This does not invalidate those attestations, but it provides context that a future reviewer needs. Third, algorithm deprecation tracking: where the hardware implements specific cryptographic algorithms, the accountability system should track the deprecation status of those algorithms and flag attestations produced using deprecated implementations.</p>
+
+        <p>The hardware lifecycle problem is not a failure of any individual component. The hardware works. The attestations are formally valid. The accountability record is accurate as far as it goes. The problem is a structural gap between the temporal assumptions embedded in the accountability architecture and the actual lifecycle of the physical components that support it. Closing that gap requires treating hardware lifecycle as an accountability dimension, not just an operational one — and it requires doing so before the mismatch becomes visible only in retrospect.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI agent deployments are designed for ten-to-fifteen-year operational lifetimes. The hardware security components they depend on — trusted platform modules, secure enclaves, hardware security modules — carry manufacturer support commitments of five to seven years. After end-of-life, hardware continues to produce attestations that are formally indistinguishable from valid ones, but are no longer backed by active security maintenance, firmware patches, or certified cryptographic implementations. The accountability record does not show when this transition happens. Lifecycle-aware accountability requires hardware provenance records, end-of-support flags in the audit trail, and algorithm deprecation tracking as first-class audit objects — not operational metadata that lives outside the accountability system.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>AI智能体部署的安全属性通常被描述为软件的稳定特征。智能体被描述为经过证明的、防篡改的或加密认证的——现在时态，无限期。这些声明建立在硬件基础之上：可信平台模块、安全飞地、硬件安全模块，为智能体做出的每次证明提供信任根。但硬件有生命周期。安全补丁停止到来。固件认证过期。在芯片中实现的算法被弃用。使问责架构得以实现的信任根仍在运行，但其可信程度已不再相同——而问责记录中通常没有任何信号表明有任何变化。</p>
+
+        <p>时间尺度上的不匹配是结构性的。住宅照护环境、医院网络和工业控制环境中的AI智能体部署，其设计和预算的运营寿命为十至十五年。嵌入这些环境中的硬件安全组件——可信平台模块、安全飞地、硬件安全模块——的制造商支持承诺为五至七年。在此窗口之后，硬件继续运行，继续产生证明，继续签名。但供应商不再对其进行漏洞审计、修补固件，也不再根据当前标准认证其加密实现。智能体产生的证明对于任何只检查签名格式而不检查签名硬件来源的观察者来说，与有效证明无法区分。</p>
+
+        <h2>寿命终止对问责的意义</h2>
+        <p>在标准硬件安全模型中，硬件信任根的价值来自两个属性：硬件被假定为防篡改的，其安全态势被假定为得到维护的。寿命终止打破了第二个假设，同时表面上保留了第一个假设。硬件不会宣布它不再被修补。它产生的证明不带有过期时间戳。在寿命终止的安全硬件上运行的智能体生成的审计追踪，与在当前、完全支持的硬件上运行的智能体生成的审计追踪看起来完全相同。</p>
+
+        <p>这造成了一个特定的问责问题。当AI智能体做出的决策被审查时——在监管审计、不良事件调查或事后分析中——审查员通过检查智能体的声明是否被正确证明来评估决策的完整性。证明是有效的。硬件信任根存在。问责架构看似成立。审计记录中不可见的是：提供信任根的硬件已经四年没有收到固件更新，两个影响其证明实现的CVE已发布但未修补，以及它用于签署证明的加密算法在十八个月前已被弃用。问责在形式上是完整的，在实质上却是空洞的。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件交叉点是AI智能体与安全属性建立在硅上的物理基础设施接口的地方。在这个交叉点，硬件生命周期问题最为直接：智能体的问责声明只与锚定它们的硬件一样新。在十年部署中管理设备群的硬件智能体将超过其运行硬件的安全保证。随着时间推移，它产生的证明记录在可信度上逐渐降低，但在结构或内容上没有任何可见变化。在审计记录中，硬件安全组件在第六年进入寿命终止的设备群，看起来与组件完全现代的设备群完全相同——除非运营商独立跟踪硬件生命周期并将其与问责记录相关联，而几乎没有人这样做。</p>
+
+        <p>对于管理其他硬件的智能体，问题会复合。一个对整个设备群的设备完整性进行证明的硬件智能体，隐式地断言其自身完整性是可证明的。如果管理智能体的硬件信任根本身已超出其支持窗口，智能体对下游设备做出的每一个完整性声明都继承了那个空洞的保证。问责链不会明显失败，它会悄悄地在声明与物理现实相遇的层面失败，这种方式只有当有人提出正式记录实际上无法回答的问题时才会变得明显。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>后量子迁移为硬件生命周期问题增加了一个时间关键的维度。向抗量子加密算法的过渡不仅仅是软件迁移。许多必须替换的算法——RSA、椭圆曲线变体——在硬件安全模块和可信平台模块内的专用加密加速器中实现。替换这些算法需要固件更新（仅在硬件处于积极支持状态时可用）或硬件更换。底层安全硬件已达到寿命终止的AI智能体部署，将无法接收实现抗量子算法的固件，将继续使用长期完整性无法被假定的算法进行签名。它现在产生的问责记录将来需要针对签名算法是否已知不足这一问题进行解释——而正式记录将不包含这一背景。</p>
+
+        <p>驱动后量子迁移紧迫性的"现在收集，以后解密"问题对问责记录同样适用。今天用弃用算法签名的证明，在那些算法被破解时，会在回溯性上变得有问题。对于在高风险领域做出决策的AI智能体，问责记录的完整性不仅在决策时相关，还必须在多年后的回顾性审查中经得起考验。2026年代表照护机构患者做出的决策，可能在2033年的监管程序中被审查。如果证明该决策完整性的硬件自2028年以来已经过了寿命终止，正式证明就会成为一个有争议的人工制品，而不是可靠的锚点。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>物理世界照护部署从两个轴面临硬件生命周期问题：其运营持续时间和采购背景。照护机构不是科技公司，它们没有与安全支持窗口同步的硬件更新周期。2024年在住宅照护环境中部署的平板设备群，很可能在2032年仍在运行，远在这些平板中嵌入的硬件安全组件超过其支持窗口之后。在该基础设施上运行的AI智能体——管理用药计划、监测生命体征、路由护理工作人员任务——将继续产生形式上有效但建立在安全态势不再经认证的硬件上的问责记录。</p>
+
+        <p>采购背景放大了这一问题。照护环境中的硬件更新受到预算周期、医疗设备软件监管批准以及迁移运行中照护系统的运营中断的约束。替换已部署照护智能体的底层硬件，不是照护机构按照安全供应商的时间表做出的决定。在许多司法管辖区，它需要临床验证、员工再培训和监管重新批准。结果是，已部署照护系统中的实际硬件生命周期，因结构性必要性而远超制造商支持窗口，建立在该硬件之上的问责架构也随之降级。</p>
+
+        <h2>生命周期感知问责需要什么</h2>
+        <p>对标准问责架构的三项补充将使硬件生命周期问题可见。第一，硬件来源记录：AI智能体部署的问责架构应将提供信任根的硬件组件的明确记录——品牌、型号、固件版本、制造商支持状态和终止支持日期——作为一等审计对象。这些记录应在硬件状态变化时更新，并与其锚定的问责记录相关联。第二，终止支持警报：当信任根组件进入寿命终止时，问责系统应在审计记录本身中标记。在该日期之后产生的证明应携带元数据，表明支持它们的硬件已超出其支持窗口。这不会使那些证明无效，但为未来的审查员提供了所需的背景。第三，算法弃用追踪：当硬件实现特定加密算法时，问责系统应追踪这些算法的弃用状态，并标记使用已弃用实现产生的证明。</p>
+
+        <p>硬件生命周期问题不是任何单个组件的失败。硬件工作正常，证明在形式上有效，问责记录就其所及范围而言是准确的。问题是问责架构中嵌入的时间假设与支持它的物理组件的实际生命周期之间的结构性差距。弥合这一差距需要将硬件生命周期视为问责维度，而不仅仅是运营维度——并且需要在不匹配只能在回顾中变得可见之前这样做。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>AI智能体部署的设计运营寿命为十至十五年。它们依赖的硬件安全组件——可信平台模块、安全飞地、硬件安全模块——的制造商支持承诺为五至七年。寿命终止后，硬件继续产生在形式上与有效证明无法区分的证明，但不再有主动安全维护、固件补丁或经认证的加密实现作为支撑。问责记录不显示此过渡发生的时间。生命周期感知问责需要将硬件来源记录、终止支持标志和算法弃用追踪作为一等审计对象——而不是存在于问责系统之外的运营元数据。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>AI智能體部署的安全屬性通常被描述為軟件的穩定特徵。智能體被描述為經過證明的、防篡改的或加密認證的——現在時態，無限期。這些聲明建立在硬件基礎之上：可信平台模組、安全飛地、硬件安全模組，為智能體做出的每次證明提供信任根。但硬件有生命周期。安全補丁停止到來。固件認證過期。在晶片中實現的演算法被棄用。使問責架構得以實現的信任根仍在運行，但其可信程度已不再相同——而問責記錄中通常沒有任何信號表明有任何變化。</p>
+
+        <p>時間尺度上的不匹配是結構性的。住宅照護環境、醫院網絡和工業控制環境中的AI智能體部署，其設計和預算的運營壽命為十至十五年。嵌入這些環境中的硬件安全組件——可信平台模組、安全飛地、硬件安全模組——的製造商支持承諾為五至七年。在此窗口之後，硬件繼續運行，繼續產生證明，繼續簽名。但供應商不再對其進行漏洞審計、修補固件，也不再根據當前標準認證其加密實現。智能體產生的證明對於任何只檢查簽名格式而不檢查簽名硬件來源的觀察者來說，與有效證明無法區分。</p>
+
+        <h2>壽命終止對問責的意義</h2>
+        <p>在標準硬件安全模型中，硬件信任根的價值來自兩個屬性：硬件被假定為防篡改的，其安全態勢被假定為得到維護的。壽命終止打破了第二個假設，同時表面上保留了第一個假設。硬件不會宣布它不再被修補。它產生的證明不帶有過期時間戳。在壽命終止的安全硬件上運行的智能體生成的稽核追蹤，與在當前、完全支持的硬件上運行的智能體生成的稽核追蹤看起來完全相同。</p>
+
+        <p>這造成了一個特定的問責問題。當AI智能體做出的決策被審查時——在監管稽核、不良事件調查或事後分析中——審查員通過檢查智能體的聲明是否被正確證明來評估決策的完整性。證明是有效的。硬件信任根存在。問責架構看似成立。稽核記錄中不可見的是：提供信任根的硬件已經四年沒有收到固件更新，兩個影響其證明實現的CVE已發布但未修補，以及它用於簽署證明的加密演算法在十八個月前已被棄用。問責在形式上是完整的，在實質上卻是空洞的。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>硬件交叉點是AI智能體與安全屬性建立在矽上的物理基礎設施接口的地方。在這個交叉點，硬件生命周期問題最為直接：智能體的問責聲明只與錨定它們的硬件一樣新。在十年部署中管理設備群的硬件智能體將超過其運行硬件的安全保證。隨著時間推移，它產生的證明記錄在可信度上逐漸降低，但在結構或內容上沒有任何可見變化。在稽核記錄中，硬件安全組件在第六年進入壽命終止的設備群，看起來與組件完全現代的設備群完全相同——除非運營商獨立追蹤硬件生命周期並將其與問責記錄相關聯，而幾乎沒有人這樣做。</p>
+
+        <p>對於管理其他硬件的智能體，問題會複合。一個對整個設備群的設備完整性進行證明的硬件智能體，隱式地斷言其自身完整性是可證明的。如果管理智能體的硬件信任根本身已超出其支持窗口，智能體對下游設備做出的每一個完整性聲明都繼承了那個空洞的保證。問責鏈不會明顯失敗，它會悄悄地在聲明與物理現實相遇的層面失敗，這種方式只有當有人提出正式記錄實際上無法回答的問題時才會變得明顯。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>後量子遷移為硬件生命周期問題增加了一個時間關鍵的維度。向抗量子加密演算法的過渡不僅僅是軟件遷移。許多必須替換的演算法——RSA、橢圓曲線變體——在硬件安全模組和可信平台模組內的專用加密加速器中實現。替換這些演算法需要固件更新（僅在硬件處於積極支持狀態時可用）或硬件更換。底層安全硬件已達到壽命終止的AI智能體部署，將無法接收實現抗量子演算法的固件，將繼續使用長期完整性無法被假定的演算法進行簽名。它現在產生的問責記錄將來需要針對簽名演算法是否已知不足這一問題進行解釋——而正式記錄將不包含這一背景。</p>
+
+        <p>驅動後量子遷移緊迫性的「現在收集，以後解密」問題對問責記錄同樣適用。今天用棄用演算法簽名的證明，在那些演算法被破解時，會在回溯性上變得有問題。對於在高風險領域做出決策的AI智能體，問責記錄的完整性不僅在決策時相關，還必須在多年後的回顧性審查中經得起考驗。2026年代表照護機構患者做出的決策，可能在2033年的監管程序中被審查。如果證明該決策完整性的硬件自2028年以來已經過了壽命終止，正式證明就會成為一個有爭議的人工製品，而不是可靠的錨點。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>物理世界照護部署從兩個軸面臨硬件生命周期問題：其運營持續時間和採購背景。照護機構不是科技公司，它們沒有與安全支持窗口同步的硬件更新周期。2024年在住宅照護環境中部署的平板設備群，很可能在2032年仍在運行，遠在這些平板中嵌入的硬件安全組件超過其支持窗口之後。在該基礎設施上運行的AI智能體——管理用藥計劃、監測生命體徵、路由護理工作人員任務——將繼續產生形式上有效但建立在安全態勢不再經認證的硬件上的問責記錄。</p>
+
+        <p>採購背景放大了這一問題。照護環境中的硬件更新受到預算周期、醫療設備軟件監管批准以及遷移運行中照護系統的運營中斷的約束。替換已部署照護智能體的底層硬件，不是照護機構按照安全供應商的時間表做出的決定。在許多司法管轄區，它需要臨床驗證、員工再培訓和監管重新批准。結果是，已部署照護系統中的實際硬件生命周期，因結構性必要性而遠超製造商支持窗口，建立在該硬件之上的問責架構也隨之降級。</p>
+
+        <h2>生命周期感知問責需要什麼</h2>
+        <p>對標準問責架構的三項補充將使硬件生命周期問題可見。第一，硬件來源記錄：AI智能體部署的問責架構應將提供信任根的硬件組件的明確記錄——品牌、型號、固件版本、製造商支持狀態和終止支持日期——作為一等稽核對象。這些記錄應在硬件狀態變化時更新，並與其錨定的問責記錄相關聯。第二，終止支持警報：當信任根組件進入壽命終止時，問責系統應在稽核記錄本身中標記。在該日期之後產生的證明應攜帶元數據，表明支持它們的硬件已超出其支持窗口。這不會使那些證明無效，但為未來的審查員提供了所需的背景。第三，演算法棄用追蹤：當硬件實現特定加密演算法時，問責系統應追蹤這些演算法的棄用狀態，並標記使用已棄用實現產生的證明。</p>
+
+        <p>硬件生命周期問題不是任何單個組件的失敗。硬件工作正常，證明在形式上有效，問責記錄就其所及範圍而言是準確的。問題是問責架構中嵌入的時間假設與支持它的物理組件的實際生命周期之間的結構性差距。彌合這一差距需要將硬件生命周期視為問責維度，而不僅僅是運營維度——並且需要在不匹配只能在回顧中變得可見之前這樣做。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>AI智能體部署的設計運營壽命為十至十五年。它們依賴的硬件安全組件——可信平台模組、安全飛地、硬件安全模組——的製造商支持承諾為五至七年。壽命終止後，硬件繼續產生在形式上與有效證明無法區分的證明，但不再有主動安全維護、固件補丁或經認證的加密實現作為支撐。問責記錄不顯示此過渡發生的時間。生命周期感知問責需要將硬件來源記錄、終止支持標誌和演算法棄用追蹤作為一等稽核對象——而不是存在於問責系統之外的運營元數據。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const langSections = document.querySelectorAll('.essay-lang');
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        langBtns.forEach(b => b.classList.remove('active'));
+        langSections.forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
