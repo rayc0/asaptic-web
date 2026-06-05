@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The migration window problem — Asaptic Labs</title>
+
+  <meta name="description" content="Every organization migrating to post-quantum cryptography must operate both old and new protocols in parallel. During this transition window, accountability architecture must validate claims across two incompatible trust systems simultaneously — and most agent deployments are not built to do this." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/migration-window-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The migration window problem: accountability when classical and post-quantum cryptography coexist" />
+  <meta property="og:description" content="Every organization migrating to post-quantum cryptography must operate both old and new protocols in parallel. During this transition window, accountability architecture must validate claims across two incompatible trust systems simultaneously — and most agent deployments are not built to do this." />
+  <meta property="og:url" content="https://asaptic.com/blog/migration-window-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-05" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The migration window problem: accountability when classical and post-quantum cryptography coexist",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-05",
+    "description": "Every organization migrating to post-quantum cryptography must operate both old and new protocols in parallel. During this transition window, accountability architecture must validate claims across two incompatible trust systems simultaneously — and most agent deployments are not built to do this.",
+    "url": "https://asaptic.com/blog/migration-window-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The migration window problem: accountability when classical and post-quantum cryptography coexist</h1>
+      <p class="essay-subtitle">Every organization migrating to post-quantum cryptography must operate both old and new protocols in parallel. During this transition window, accountability architecture must validate claims across two incompatible trust systems simultaneously — and most agent deployments are not built to do this.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-05</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Every transition creates a gap. When organizations move from classical to post-quantum cryptography, neither the old system nor the new one has full accountability coverage during the handover. Classical infrastructure cannot validate post-quantum attestations. Post-quantum infrastructure cannot verify classical signatures. The migration window is the period when both systems are partially deployed, and AI agents operating in it face accountability claims that pass through infrastructure designed for a world that no longer fully exists.</p>
+
+        <p>The migration window is not a brief edge case. Post-quantum transitions at the infrastructure level are expected to take years: NIST finalized post-quantum standards in 2024, but full deployment across government, financial, and care systems will extend well into the next decade. For AI agents operating in high-stakes domains at the three crossings, this window is not a fleeting interoperability challenge — it is the operational environment they will inhabit for the foreseeable future.</p>
+
+        <h2>The structure of the problem</h2>
+        <p>A well-formed accountability chain requires that every claim in it can be verified by the parties who need to rely on it. Classical public key infrastructure produces signatures and attestations that classical verifiers can check. Post-quantum algorithms produce signatures and attestations in different formats with different properties. When an AI agent operating in a mixed environment produces a decision record — a signed audit log, an attestation receipt, a cryptographic proof of action — the party reviewing that record needs to verify it using the tools they have.</p>
+
+        <p>During the migration window, the reviewing party may have classical tools, post-quantum tools, or some version of both. The agent may have signed using a classical key (still valid but potentially exposed to long-horizon adversaries), a post-quantum key (valid but unverifiable by legacy infrastructure), or a hybrid scheme (verifiable only by systems that support the hybrid). Any mismatch produces an accountability claim that the recipient cannot fully evaluate. The claim is neither confirmed nor refuted — it is unresolvable with available tools.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>AI agents managing cryptographic infrastructure during the migration window are simultaneously responsible for operating classical systems, deploying post-quantum successors, and maintaining continuity across the transition. The accountability architecture for these agents inherits the complexity of both systems. Every decision record produced in a hybrid environment may need to be verifiable years later, by parties who have completed their own migration at a different pace. A signature created using a classical algorithm today may need to support accountability review a decade from now, by which time the infrastructure that would verify it may no longer be maintained. The accountability claim is created under one trust regime and reviewed under another. The gap between them is not recorded in the record itself.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware attestation chains are typically rooted in manufacturer-issued certificates embedded in physical devices. Devices built before the post-quantum transition use classical algorithms in their attestation infrastructure. Post-quantum attestation requires updated firmware or new hardware. An AI agent managing a heterogeneous fleet during migration encounters attestation claims signed by a mixture of classical and post-quantum keys. The agent's own attestation infrastructure must navigate this mixture to produce consistent accountability records — but firmware updates that migrate attestation chains have their own accountability requirements, creating a circularity: to attest the migration, the attestation mechanism must itself have already been migrated. Most fleets will not resolve this cleanly.</p>
+
+        <h2>At the care crossing</h2>
+        <p>Care systems operate on multi-year procurement cycles, are subject to regulatory approval requirements for software changes, and face practical constraints on update frequency driven by clinical safety validation. A care AI agent deployed in a hospital with mixed legacy and modern infrastructure will encounter cryptographic claims from clinical systems, medical devices, and identity platforms at different migration stages. The accountability record for a care decision may pass through classical signature chains, post-quantum attestations, and hybrid constructs — none of which a single auditor can evaluate using one verification toolchain. Care accountability review during the migration window requires parallel verification capabilities that most audit frameworks do not have, and that care procurement timelines did not anticipate.</p>
+
+        <h2>What the transition window requires</h2>
+        <p>Three capabilities are collectively absent from most current deployments navigating the migration window. First, explicit window annotation: accountability records should note which cryptographic infrastructure validated each claim at creation time, including its migration status — so that future reviewers understand the trust context under which the record was produced. Second, long-horizon verification commitment: systems should be designed to remain verifiable for the expected audit lifetime of their records, not only at the time of creation. Third, migration-aware agents: AI agents operating in mixed environments should be designed to flag — not silently accept — accountability claims they cannot fully verify with available tools, making the incompleteness visible in the record rather than hiding it.</p>
+
+        <p>The migration window is not a temporary impairment that will resolve when the transition completes. It is a sustained period during which accountability architecture operates at reduced guarantees, the boundaries of those reductions are not clearly communicated, and the agents producing accountability claims are not designed to surface the limitations. Organizations that treat the transition as an algorithm upgrade, without redesigning their accountability architecture for the window they must operate through, will discover the gap only when they need the records.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>During the post-quantum migration window, AI agent accountability records pass through cryptographic infrastructure designed for two incompatible trust systems. Neither classical nor post-quantum verification toolchains can fully evaluate claims signed under the mixed infrastructure most organizations will operate during the transition. The window is not brief — for AI agents at the care, hardware, and post-quantum security crossings, it is the operational environment for the foreseeable future. Accountability architecture that ignores the transition state produces records that appear complete and are not.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>每一次过渡都会制造差距。当组织从经典密码学迁移到后量子密码学时，旧系统和新系统在交接期间都没有完整的问责覆盖。经典基础设施无法验证后量子证明。后量子基础设施无法核实经典签名。迁移窗口期是两个系统都处于部分部署状态的时间，在此期间运行的AI智能体面临着经过为已不再完全存在的世界设计的基础设施的问责声明。</p>
+
+        <p>迁移窗口期不是短暂的边缘情况。基础设施层面的后量子迁移预计将持续数年：NIST于2024年确定了后量子标准，但在政府、金融和医疗系统的全面部署将延续到下一个十年。对于在三个交叉点高风险领域运行的AI智能体来说，这个窗口不是短暂的互操作性挑战——而是在可预见的未来它们将持续运作其中的环境。</p>
+
+        <h2>问题的结构</h2>
+        <p>一个完善的问责链要求其中的每个声明都能被需要依赖它的各方所验证。经典公钥基础设施产生经典验证者可以检查的签名和证明。后量子算法产生不同格式、具有不同属性的签名和证明。当在混合环境中运行的AI智能体产生决策记录——已签名的审计日志、证明收据、行动的密码学证明——审查该记录的一方需要能够使用他们拥有的工具来验证它。</p>
+
+        <p>在迁移窗口期，审查方可能拥有经典工具、后量子工具或两者的某个版本。智能体可能使用经典密钥（仍然有效，但可能向长期对手暴露）、后量子密钥（有效，但遗留基础设施无法验证）或混合方案（仅限支持混合方案的系统可验证）进行签名。该链中的任何不匹配都会产生接收方无法完全评估的问责声明。该声明既不能被确认也不能被驳斥——用现有工具无法解决。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>在迁移窗口期管理密码基础设施的AI智能体同时负责操作经典系统、部署后量子继任者并维护过渡期间的连续性。这些智能体的问责架构继承了两个系统的复杂性。在混合环境中产生的每个决策记录，可能需要多年后由按不同速度完成自身迁移的各方进行核实。今天使用经典算法创建的签名，可能需要在十年后支持问责审查——届时可以验证该签名的基础设施可能已不再维护。问责声明在一个信任体系下创建，在另一个信任体系下审查。二者之间的差距不会记录在记录本身中。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件证明链通常根植于嵌入物理设备的制造商颁发的证书。在后量子迁移之前构建的设备，其证明基础设施使用经典算法。后量子证明需要更新固件或新硬件。在迁移期间管理异构集群的AI智能体将遇到使用经典和后量子密钥混合签名的证明声明。智能体自身的证明基础设施必须在这种混合中导航以产生一致的问责记录——但迁移证明链的固件更新本身有问责要求，产生了循环：要证明迁移，证明机制本身必须已经迁移完成。大多数集群无法干净地解决这个问题。</p>
+
+        <h2>在照护交叉点</h2>
+        <p>医疗系统在多年采购周期上运行，软件变更受监管审批要求约束，并在临床安全验证驱动的更新频率上有实际限制。部署在具有遗留和现代基础设施混合的医院中的照护AI智能体，将遇到来自处于不同迁移阶段的临床系统、医疗设备和身份平台的密码声明。照护决策的问责记录可能经过经典签名链、后量子证明和混合构造——没有一个审计员能够使用单一的验证工具链来评估所有这些。迁移窗口期的照护问责审查需要大多数审计框架所没有的并行验证能力，而医疗采购时间表也未曾预见到这种需求。</p>
+
+        <h2>迁移窗口期的要求</h2>
+        <p>在导航迁移窗口期的当前大多数部署中，有三种能力集体缺失。第一，明确的窗口标注：问责记录应注明在创建时哪个密码基础设施验证了每个声明，包括其迁移状态——使未来的审查者能够理解记录产生时的信任背景。第二，长期验证承诺：系统应设计为在其记录的预期审计生命周期内保持可验证——而不仅仅是在创建时。第三，迁移感知智能体：在混合环境中运行的AI智能体应被设计为标记——而不是默默接受——它们无法使用可用工具完全验证的问责声明，从而使不完整性在记录中可见。</p>
+
+        <p>迁移窗口期不是一种将在过渡完成时得到解决的临时损害。它是问责架构在降低的保证下运行的持续时期，这些降低的边界没有被清楚地传达，产生问责声明的智能体没有被设计为使限制可见。将过渡视为算法升级而不为必须操作的窗口重新设计问责架构的组织，将只在需要记录时才发现差距。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>在后量子迁移窗口期，AI智能体问责记录经过为两个不兼容信任系统设计的密码基础设施。经典和后量子验证工具链都无法完全评估大多数组织在迁移期间运行的混合基础设施下签署的声明。窗口期并不短暂——对于在照护、硬件和后量子安全交叉点的AI智能体来说，这是可预见未来的运营环境。忽视过渡状态的问责架构产生看似完整却并不完整的记录。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>每一次過渡都會製造差距。當組織從經典密碼學遷移到後量子密碼學時，舊系統和新系統在交接期間都沒有完整的問責覆蓋。經典基礎設施無法驗證後量子證明。後量子基礎設施無法核實經典簽名。遷移窗口期是兩個系統都處於部分部署狀態的時間，在此期間運行的AI智能體面臨著經過為已不再完全存在的世界設計的基礎設施的問責聲明。</p>
+
+        <p>遷移窗口期不是短暫的邊緣情況。基礎設施層面的後量子遷移預計將持續數年：NIST於2024年確定了後量子標準，但在政府、金融和醫療系統的全面部署將延續到下一個十年。對於在三個交叉點高風險領域運行的AI智能體來說，這個窗口不是短暫的互操作性挑戰——而是在可預見的未來它們將持續運作其中的環境。</p>
+
+        <h2>問題的結構</h2>
+        <p>一個完善的問責鏈要求其中的每個聲明都能被需要依賴它的各方所驗證。經典公鑰基礎設施產生經典驗證者可以檢查的簽名和證明。後量子算法產生不同格式、具有不同屬性的簽名和證明。當在混合環境中運行的AI智能體產生決策記錄——已簽名的稽核日誌、證明收據、行動的密碼學證明——審查該記錄的一方需要能夠使用他們擁有的工具來驗證它。</p>
+
+        <p>在遷移窗口期，審查方可能擁有經典工具、後量子工具或兩者的某個版本。智能體可能使用經典密鑰（仍然有效，但可能向長期對手暴露）、後量子密鑰（有效，但遺留基礎設施無法驗證）或混合方案（僅限支持混合方案的系統可驗證）進行簽名。該鏈中的任何不匹配都會產生接收方無法完全評估的問責聲明。該聲明既不能被確認也不能被駁斥——用現有工具無法解決。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>在遷移窗口期管理密碼基礎設施的AI智能體同時負責操作經典系統、部署後量子繼任者並維護過渡期間的連續性。這些智能體的問責架構繼承了兩個系統的複雜性。在混合環境中產生的每個決策記錄，可能需要多年後由按不同速度完成自身遷移的各方進行核實。今天使用經典算法創建的簽名，可能需要在十年後支持問責審查——屆時可以驗證該簽名的基礎設施可能已不再維護。問責聲明在一個信任體制下創建，在另一個信任體制下審查。兩者之間的差距不會記錄在記錄本身中。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>硬件證明鏈通常根植於嵌入物理設備的製造商頒發的憑證。在後量子遷移之前構建的設備，其證明基礎設施使用經典算法。後量子證明需要更新韌體或新硬件。在遷移期間管理異構叢集的AI智能體將遇到使用經典和後量子密鑰混合簽名的證明聲明。智能體自身的證明基礎設施必須在這種混合中導航以產生一致的問責記錄——但遷移證明鏈的韌體更新本身有問責要求，產生了循環：要證明遷移，證明機制本身必須已經遷移完成。大多數叢集無法乾淨地解決這個問題。</p>
+
+        <h2>在照護交叉點</h2>
+        <p>醫療系統在多年採購週期上運行，軟件變更受監管審批要求約束，並在臨床安全驗證驅動的更新頻率上有實際限制。部署在具有遺留和現代基礎設施混合的醫院中的照護AI智能體，將遇到來自處於不同遷移階段的臨床系統、醫療設備和身份平台的密碼聲明。照護決策的問責記錄可能經過經典簽名鏈、後量子證明和混合構造——沒有一個審計員能夠使用單一的驗證工具鏈來評估所有這些。遷移窗口期的照護問責審查需要大多數審計框架所沒有的並行驗證能力，而醫療採購時間表也未曾預見到這種需求。</p>
+
+        <h2>遷移窗口期的要求</h2>
+        <p>在導航遷移窗口期的當前大多數部署中，有三種能力集體缺失。第一，明確的窗口標註：問責記錄應注明在創建時哪個密碼基礎設施驗證了每個聲明，包括其遷移狀態——使未來的審查者能夠理解記錄產生時的信任背景。第二，長期驗證承諾：系統應設計為在其記錄的預期稽核生命週期內保持可驗證——而不僅僅是在創建時。第三，遷移感知智能體：在混合環境中運行的AI智能體應被設計為標記——而不是默默接受——它們無法使用可用工具完全驗證的問責聲明，從而使不完整性在記錄中可見。</p>
+
+        <p>遷移窗口期不是一種將在過渡完成時得到解決的臨時損害。它是問責架構在降低的保證下運行的持續時期，這些降低的邊界沒有被清楚地傳達，產生問責聲明的智能體沒有被設計為使限制可見。將過渡視為算法升級而不為必須操作的窗口重新設計問責架構的組織，將只在需要記錄時才發現差距。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>在後量子遷移窗口期，AI智能體問責記錄經過為兩個不相容信任系統設計的密碼基礎設施。經典和後量子驗證工具鏈都無法完全評估大多數組織在遷移期間運行的混合基礎設施下簽署的聲明。窗口期並不短暫——對於在照護、硬件和後量子安全交叉點的AI智能體來說，這是可預見未來的運營環境。忽視過渡狀態的問責架構產生看似完整卻並不完整的記錄。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const langSections = document.querySelectorAll('.essay-lang');
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        langBtns.forEach(b => b.classList.remove('active'));
+        langSections.forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
