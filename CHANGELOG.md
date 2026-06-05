@@ -1,3 +1,4 @@
+2026-06-05 12:15 UTC · blog: add essay 'The hardware root of trust problem' — accountability when AI agents cannot verify the ground they stand on (EN+ZH+ZH-HK) · 18ba6ef
 2026-06-05 08:15 UTC · blog: add essay 'The certification lag problem' — accountability when the approved version is not the one running (EN+ZH+ZH-HK) · 977bd97
 2026-06-05 04:15 UTC · blog: add essay 'The substrate independence illusion' — accountability when AI agents are treated as substrate-neutral (EN+ZH+ZH-HK) · 11ab6a6
 2026-06-04 20:15 UTC · blog: add essay 'The representation gap' — accountability when AI agents act on a model, not reality (EN+ZH+ZH-HK) · b3ae267
