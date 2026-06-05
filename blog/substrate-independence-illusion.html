@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The substrate independence illusion — Asaptic Labs</title>
+
+  <meta name="description" content="AI systems are designed and tested as if identical weights on different hardware produce identical behavior. For accountability, this assumption fails. Hardware determines timing, fault tolerance, memory integrity, and power behavior — all of which shape what the agent actually does." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/substrate-independence-illusion.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The substrate independence illusion: why accountability cannot ignore the hardware an agent runs on" />
+  <meta property="og:description" content="AI agents are built as if behavior is substrate-independent — the same weights, the same outputs, regardless of hardware. Accountability cannot afford that assumption. The hardware layer shapes timing, integrity, and failure modes in ways that determine what the agent actually does." />
+  <meta property="og:url" content="https://asaptic.com/blog/substrate-independence-illusion.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-05" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The substrate independence illusion: why accountability cannot ignore the hardware an agent runs on",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-05",
+    "description": "AI systems are designed and tested as if identical weights on different hardware produce identical behavior. For accountability, this assumption fails. Hardware determines timing, fault tolerance, memory integrity, and power behavior — all of which shape what the agent actually does.",
+    "url": "https://asaptic.com/blog/substrate-independence-illusion.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Hardware × Post-Quantum Security × Physical-World Care</div>
+      <h1 class="essay-title">The substrate independence illusion: why accountability cannot ignore the hardware an agent runs on</h1>
+      <p class="essay-subtitle">AI systems are designed and tested as if identical weights on different hardware produce identical behavior. For accountability, this assumption fails. The hardware layer shapes timing, memory integrity, fault tolerance, and power behavior — all of which determine what the agent actually does. Accountability frameworks that treat the substrate as invisible create structural blind spots that no amount of software-layer auditing can close.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-05</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>A core assumption in how AI systems are built and evaluated is that behavior is substrate-independent: the same model weights, executing on different hardware, produce functionally equivalent outputs. This assumption is not exactly wrong — it is useful enough that the entire industry relies on it for testing, certification, and deployment. A model validated on one hardware configuration is shipped to thousands of different configurations with the expectation that the validation transfers.</p>
+
+        <p>But for accountability, the assumption breaks down in several ways that matter. Hardware is not a neutral conduit for computation. It is a physical system with its own failure modes, timing properties, memory integrity characteristics, and susceptibility to manipulation. These properties shape what the agent actually does — not at the level of abstract weights and activations, but at the level of bits that change, operations that are skipped, and outputs that arrive at the wrong time. When an agent's behavior in a high-stakes deployment diverges from its validated behavior, the hardware layer is a plausible and often unexamined cause.</p>
+
+        <h2>What hardware actually determines</h2>
+        <p>At the most basic level, hardware determines timing. A model running on an accelerator under thermal throttling executes more slowly than during certification testing. A model running on a device with memory contention produces different latency distributions than the same model running in isolation. For agents that act on real-time inputs — clinical monitoring systems, hardware security monitors, time-sensitive cryptographic operations — these timing differences are not noise. They determine whether the agent acts before or after a threshold is crossed, whether an alert fires within a response window, or whether a cryptographic commitment is generated before a session expires.</p>
+
+        <p>Hardware also determines memory integrity. DRAM is susceptible to bit flip events from cosmic rays, power anomalies, and deliberate hardware attacks. A bit flip in model weights or activation buffers does not produce a predictable error — it produces a subtly different computation that may pass sanity checks while being systematically wrong in the specific inputs that triggered the flip. Accountability frameworks that rely on software-level logs to reconstruct what an agent did cannot detect these events. The log faithfully records the output; it does not record that the output was produced by subtly corrupted arithmetic.</p>
+
+        <p>And hardware determines what can be verified. Trusted execution environments and secure enclaves exist precisely because software-only attestation cannot establish the integrity of the computation at the silicon level. An agent running outside a verified hardware boundary can be attested at the software layer while being compromised at a layer that software attestation cannot see. The accountability record says "this agent ran this code"; it cannot say "this agent ran this code on hardware that had not been tampered with."</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Agents deployed to manage hardware fleets — enforcing firmware baselines, validating configuration state, detecting anomalous device behavior — are particularly exposed to substrate effects. These agents are often deployed on the same infrastructure they are meant to monitor. An agent running on compromised hardware to certify the health of other hardware in the same fleet is not a hypothetical; it is a routine deployment pattern in edge computing and industrial control environments.</p>
+
+        <p>The substrate independence illusion makes this invisible. If the certification framework assumes that the agent's behavior is fully determined by its software, it will not look for evidence that the hardware layer was the point of compromise. The agent's clean certification output will be taken as evidence of clean infrastructure, even if the agent's own computation was manipulated at the hardware level to produce that output. Accountability for the resulting harm will be unlocatable: the software was correct, the weights were intact, the code was unmodified. Nothing in the software-layer audit trail explains what went wrong.</p>
+
+        <h2>At the post-quantum crossing</h2>
+        <p>Cryptographic operations are among the most hardware-sensitive computations an AI agent can perform. Timing side-channels — variations in execution time that correlate with secret key material — are a well-documented class of hardware-layer vulnerability. An agent performing post-quantum key exchange or cryptographic state validation on hardware that allows timing observation may be leaking information about the keys it is processing, regardless of the correctness of its software implementation.</p>
+
+        <p>This is not a software problem. The code may be perfectly correct. The model weights may be exactly as trained. The hardware may be executing the computation faithfully. And yet the computation leaks, because the hardware's timing behavior is observable to an adversary co-located on the same physical substrate or monitoring power consumption. Accountability frameworks that treat the cryptographic agent as a black box — validating its software and trusting its outputs — cannot assign responsibility for leakage that occurs at a layer they do not examine.</p>
+
+        <h2>At the care crossing</h2>
+        <p>Medical AI agents deployed on embedded devices — clinical monitoring systems, wearable diagnostics, point-of-care decision support — operate on hardware that ages, drifts, and fails in ways that are not always visible to the software layer. A sensor that has developed calibration drift still produces numerical outputs that the agent processes as valid inputs. An accelerator that has developed a systematic fault still produces outputs that appear structurally correct. The agent's behavior changes as the hardware changes, but the software-layer audit record shows a model running on the same weights, receiving plausible inputs, and producing outputs in the correct format.</p>
+
+        <p>When patient harm follows and accountability investigations begin, the software-layer record provides a misleading picture of what actually happened. The agent behaved as specified given the inputs it received; the problem was that the inputs were wrong in ways the hardware's degradation produced. Accountability that does not extend to hardware provenance, calibration records, and maintenance history cannot reconstruct the actual causal chain.</p>
+
+        <h2>What substrate-aware accountability requires</h2>
+        <p>Closing the substrate independence gap does not require solving all hardware security problems. It requires naming the assumption explicitly and building accountability architecture that does not rely on it where the stakes are high.</p>
+
+        <p>In practice, this means three things. First, hardware provenance must be part of the deployment record. When an agent is deployed, the record should identify not just the software version and model weights but the specific hardware, its attestation status, and its maintenance history. Traceability to the substrate should be a condition of high-stakes deployment, not an afterthought for incident investigation.</p>
+
+        <p>Second, hardware health monitoring should be treated as part of the agent's accountability infrastructure, not as a separate operational concern. An agent that cannot verify the integrity of the hardware it runs on cannot fully vouch for the integrity of its own outputs. The accountability record should include hardware health signals alongside behavioral logs.</p>
+
+        <p>Third, accountability investigations involving AI agents in high-stakes domains should explicitly examine the hardware layer before concluding that the software layer explains the outcome. The substrate independence illusion will cause investigators to stop at the software boundary. The cases where it matters most are precisely the cases where the hardware layer is not easily inspectable — which is an argument for investing in hardware-layer auditability before incidents occur, not after.</p>
+
+        <p>The agent ran correctly. The hardware did not. In the accountability record that ignores the substrate, those two facts are indistinguishable.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI accountability frameworks typically treat hardware as a neutral conduit — the same weights, the same behavior, regardless of substrate. This assumption fails at every crossing. Hardware shapes timing, memory integrity, and verifiability in ways that determine what agents actually do under deployment conditions. Accountability records built on software-layer auditing cannot detect hardware-layer failures, manipulation, or degradation. Closing the substrate gap requires hardware provenance in deployment records, hardware health as part of accountability infrastructure, and explicit hardware-layer examination in incident investigations.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>AI系统构建和评估的一个核心假设是，行为与底层硬件无关：相同的模型权重在不同硬件上执行，产生功能等价的输出。整个行业依赖这一假设进行测试、认证和部署——在一种硬件配置上经过验证的模型被部署到数千种不同配置中，期望验证结果可以转移。</p>
+
+        <p>但对于问责而言，这一假设在几个重要方面失效。硬件不是计算的中立导管。它是具有自身故障模式、时序属性、内存完整性特征和可操控性的物理系统。这些属性决定了智能体实际的行为——不是在抽象权重和激活的层面，而是在比特改变、操作被跳过、输出在错误时间到达的层面。当智能体在高风险部署中的行为偏离其验证行为时，硬件层是一个可能且常常未被审查的原因。</p>
+
+        <h2>硬件实际上决定什么</h2>
+        <p>在最基本的层面，硬件决定时序。在热降频下运行的加速器执行速度比认证测试时慢。在存在内存竞争的设备上运行的模型产生与在隔离环境中运行的相同模型不同的延迟分布。对于对实时输入做出响应的智能体——临床监测系统、硬件安全监视器、时间敏感的加密操作——这些时序差异不是噪声，它们决定了智能体是否在阈值被跨越之前或之后做出响应。</p>
+
+        <p>硬件也决定内存完整性。DRAM容易受到宇宙射线、电源异常和蓄意硬件攻击导致的位翻转。模型权重或激活缓冲区中的位翻转不会产生可预测的错误——它产生细微不同的计算，可能通过合理性检查，同时在触发翻转的特定输入上系统性地出错。依赖软件层日志重建智能体行为的问责框架无法检测这些事件。</p>
+
+        <p>硬件还决定什么可以被验证。可信执行环境之所以存在，正是因为仅靠软件的证明无法在硅片层面建立计算完整性。在未经验证的硬件边界外运行的智能体可以在软件层面获得证明，同时在软件证明无法看到的层面被攻击。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>部署用于管理硬件群的智能体——执行固件基线、验证配置状态、检测异常设备行为——特别容易受到底层影响。这些智能体通常部署在它们本应监控的相同基础设施上。在受损硬件上运行的智能体认证同一群中其他硬件的健康状态，这不是假设——这是边缘计算和工业控制环境中的常规部署模式。</p>
+
+        <p>底层独立性幻觉使这一问题不可见。如果认证框架假设智能体的行为完全由其软件决定，它就不会寻找硬件层是攻陷点的证据。智能体干净的认证输出将被视为基础设施干净的证据，即使智能体自身的计算在硬件层面被操纵以产生该输出。对由此造成损害的问责将无法定位：软件是正确的，权重是完整的，代码未经修改——软件层审计轨迹中没有任何内容能解释出了什么问题。</p>
+
+        <h2>在后量子交叉点</h2>
+        <p>加密操作是AI智能体可以执行的最依赖硬件的计算之一。时序旁路——与秘密密钥材料相关的执行时间变化——是一类有充分记录的硬件层漏洞。在允许时序观测的硬件上执行后量子密钥交换或加密状态验证的智能体，可能在泄露关于其处理的密钥的信息，无论其软件实现的正确性如何。</p>
+
+        <p>这不是软件问题。代码可能完全正确，模型权重可能完全与训练时相同，硬件可能忠实地执行计算。然而计算在泄漏，因为硬件的时序行为对位于同一物理底层或监控功耗的对手是可观察的。将加密智能体视为黑盒——验证其软件并信任其输出——的问责框架无法为发生在其未检查层面的泄漏分配责任。</p>
+
+        <h2>在照护交叉点</h2>
+        <p>部署在嵌入式设备上的医疗AI智能体——临床监测系统、可穿戴诊断设备、护理点决策支持——在以软件层不可见的方式老化、漂移和故障的硬件上运行。已出现校准漂移的传感器仍然产生智能体作为有效输入处理的数值输出。已出现系统性故障的加速器仍然产生结构上看起来正确的输出。随着硬件的变化，智能体的行为也在变化，但软件层审计记录显示的模型运行着相同的权重，接收看似合理的输入，并产生格式正确的输出。</p>
+
+        <p>当患者受到伤害并开始问责调查时，软件层记录提供了一个关于实际发生情况的误导性图景。在给定其接收到的输入的情况下，智能体按规范行为；问题在于输入在硬件退化产生的方式上是错误的。不延伸到硬件溯源、校准记录和维护历史的问责无法重建实际的因果链。</p>
+
+        <h2>底层感知问责所需要的</h2>
+        <p>缩小底层独立性差距不需要解决所有硬件安全问题。它需要明确命名这一假设，并在风险高时构建不依赖它的问责架构。</p>
+
+        <p>在实践中，这意味着三件事。首先，硬件溯源必须成为部署记录的一部分：记录不仅是软件版本和模型权重，还有具体硬件、其证明状态和维护历史。其次，硬件健康监控应被视为智能体问责基础设施的一部分，而非单独的运营关注点。第三，涉及高风险领域AI智能体的问责调查应在得出软件层解释结论之前明确检查硬件层。</p>
+
+        <p>智能体运行正确。硬件没有。在忽视底层的问责记录中，这两个事实是无法区分的。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>AI问责框架通常将硬件视为中立导管——相同的权重，无论底层如何，行为相同。这一假设在每个交叉点都会失效。硬件以决定智能体在部署条件下实际行为的方式影响时序、内存完整性和可验证性。建立在软件层审计上的问责记录无法检测硬件层的故障、操纵或退化。缩小底层差距需要在部署记录中包含硬件溯源、将硬件健康纳入问责基础设施，以及在事故调查中明确进行硬件层检查。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>AI系統構建和評估的一個核心假設是，行為與底層硬件無關：相同的模型權重在不同硬件上執行，產生功能等價的輸出。整個行業依賴這一假設進行測試、認證和部署——在一種硬件配置上經過驗證的模型被部署到數千種不同配置中，期望驗證結果可以轉移。</p>
+
+        <p>但對於問責而言，這一假設在幾個重要方面失效。硬件不是計算的中立導管。它是具有自身故障模式、時序屬性、記憶體完整性特徵和可操控性的物理系統。這些屬性決定了智能體實際的行為——不是在抽象權重和激活的層面，而是在位元改變、操作被跳過、輸出在錯誤時間到達的層面。當智能體在高風險部署中的行為偏離其驗證行為時，硬件層是一個可能且常常未被審查的原因。</p>
+
+        <h2>硬件實際上決定什麼</h2>
+        <p>在最基本的層面，硬件決定時序。在熱降頻下運行的加速器執行速度比認證測試時慢。在存在記憶體競爭的設備上運行的模型產生與在隔離環境中運行的相同模型不同的延遲分佈。對於對即時輸入做出響應的智能體——臨床監測系統、硬件安全監視器、時間敏感的加密操作——這些時序差異不是噪聲，它們決定了智能體是否在閾值被跨越之前或之後做出響應。</p>
+
+        <p>硬件也決定記憶體完整性。DRAM容易受到宇宙射線、電源異常和蓄意硬件攻擊導致的位元翻轉。模型權重或激活緩衝區中的位元翻轉不會產生可預測的錯誤——它產生細微不同的計算，可能通過合理性檢查，同時在觸發翻轉的特定輸入上系統性地出錯。依賴軟件層日誌重建智能體行為的問責框架無法檢測這些事件。</p>
+
+        <p>硬件還決定什麼可以被驗證。可信執行環境之所以存在，正是因為僅靠軟件的證明無法在矽片層面建立計算完整性。在未經驗證的硬件邊界外運行的智能體可以在軟件層面獲得證明，同時在軟件證明無法看到的層面被攻擊。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>部署用於管理硬件群的智能體——執行韌體基線、驗證配置狀態、檢測異常設備行為——特別容易受到底層影響。這些智能體通常部署在它們本應監控的相同基礎設施上。在受損硬件上運行的智能體認證同一群中其他硬件的健康狀態，這不是假設——這是邊緣運算和工業控制環境中的常規部署模式。</p>
+
+        <p>底層獨立性幻覺使這一問題不可見。如果認證框架假設智能體的行為完全由其軟件決定，它就不會尋找硬件層是攻陷點的證據。智能體乾淨的認證輸出將被視為基礎設施乾淨的證據，即使智能體自身的計算在硬件層面被操縱以產生該輸出。對由此造成損害的問責將無法定位：軟件是正確的，權重是完整的，代碼未經修改——軟件層審計軌跡中沒有任何內容能解釋出了什麼問題。</p>
+
+        <h2>在後量子交叉點</h2>
+        <p>加密操作是AI智能體可以執行的最依賴硬件的計算之一。時序旁路——與秘密金鑰材料相關的執行時間變化——是一類有充分記錄的硬件層漏洞。在允許時序觀測的硬件上執行後量子金鑰交換或加密狀態驗證的智能體，可能在洩露關於其處理的金鑰的信息，無論其軟件實現的正確性如何。</p>
+
+        <p>這不是軟件問題。代碼可能完全正確，模型權重可能完全與訓練時相同，硬件可能忠實地執行計算。然而計算在洩漏，因為硬件的時序行為對位於同一物理底層或監控功耗的對手是可觀察的。將加密智能體視為黑盒——驗證其軟件並信任其輸出——的問責框架無法為發生在其未檢查層面的洩漏分配責任。</p>
+
+        <h2>在照護交叉點</h2>
+        <p>部署在嵌入式設備上的醫療AI智能體——臨床監測系統、穿戴式診斷設備、護理點決策支援——在以軟件層不可見的方式老化、漂移和故障的硬件上運行。已出現校準漂移的感測器仍然產生智能體作為有效輸入處理的數值輸出。已出現系統性故障的加速器仍然產生結構上看起來正確的輸出。隨著硬件的變化，智能體的行為也在變化，但軟件層審計記錄顯示的模型運行著相同的權重，接收看似合理的輸入，並產生格式正確的輸出。</p>
+
+        <p>當患者受到傷害並開始問責調查時，軟件層記錄提供了一個關於實際發生情況的誤導性圖景。在給定其接收到的輸入的情況下，智能體按規範行為；問題在於輸入在硬件退化產生的方式上是錯誤的。不延伸到硬件溯源、校準記錄和維護歷史的問責無法重建實際的因果鏈。</p>
+
+        <h2>底層感知問責所需要的</h2>
+        <p>縮小底層獨立性差距不需要解決所有硬件安全問題。它需要明確命名這一假設，並在風險高時構建不依賴它的問責架構。</p>
+
+        <p>在實踐中，這意味著三件事。首先，硬件溯源必須成為部署記錄的一部分：記錄不僅是軟件版本和模型權重，還有具體硬件、其證明狀態和維護歷史。其次，硬件健康監控應被視為智能體問責基礎設施的一部分，而非單獨的運營關注點。第三，涉及高風險領域AI智能體的問責調查應在得出軟件層解釋結論之前明確檢查硬件層。</p>
+
+        <p>智能體運行正確。硬件沒有。在忽視底層的問責記錄中，這兩個事實是無法區分的。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>AI問責框架通常將硬件視為中立導管——相同的權重，無論底層如何，行為相同。這一假設在每個交叉點都會失效。硬件以決定智能體在部署條件下實際行為的方式影響時序、記憶體完整性和可驗證性。建立在軟件層審計上的問責記錄無法檢測硬件層的故障、操縱或退化。縮小底層差距需要在部署記錄中包含硬件溯源、將硬件健康納入問責基礎設施，以及在事故調查中明確進行硬件層檢查。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+      <a href="/blog/" class="essay-footer-back">← All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const langSections = document.querySelectorAll('.essay-lang');
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        langBtns.forEach(b => b.classList.remove('active'));
+        langSections.forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
