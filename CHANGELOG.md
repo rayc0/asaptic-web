@@ -1,3 +1,4 @@
+2026-06-05 16:15 UTC · blog: add essay 'The migration window problem' — accountability when classical and post-quantum cryptography coexist (EN+ZH+ZH-HK) · 0a24615
 2026-06-05 12:15 UTC · blog: add essay 'The hardware root of trust problem' — accountability when AI agents cannot verify the ground they stand on (EN+ZH+ZH-HK) · 18ba6ef
 2026-06-05 08:15 UTC · blog: add essay 'The certification lag problem' — accountability when the approved version is not the one running (EN+ZH+ZH-HK) · 977bd97
 2026-06-05 04:15 UTC · blog: add essay 'The substrate independence illusion' — accountability when AI agents are treated as substrate-neutral (EN+ZH+ZH-HK) · 11ab6a6
