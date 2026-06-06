@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The witness problem — Asaptic Labs</title>
+
+  <meta name="description" content="When an AI agent is the only entity with access to the events it reports on, accountability rests entirely on the agent's own account. Cryptographic signatures and hardware attestation can guarantee that account has not been modified. They cannot guarantee it was accurate when produced." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/witness-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The witness problem: accountability when an AI agent is the only observer" />
+  <meta property="og:description" content="Integrity and accuracy are different properties. Post-quantum signatures and hardware attestation guarantee that an agent's record was not changed after it was produced. When the agent is the only observer, no mechanism guarantees the record was correct when it was produced." />
+  <meta property="og:url" content="https://asaptic.com/blog/witness-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-06" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The witness problem: accountability when an AI agent is the only observer",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-06",
+    "description": "When an AI agent is the only entity with access to the events it reports on, accountability rests entirely on the agent's own account. Cryptographic signatures and hardware attestation can guarantee that account has not been modified. They cannot guarantee it was accurate when produced.",
+    "url": "https://asaptic.com/blog/witness-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The witness problem: accountability when an AI agent is the only observer</h1>
+      <p class="essay-subtitle">Integrity and accuracy are different properties. Post-quantum signatures and hardware attestation guarantee that an agent's record was not changed after it was produced. When the agent is the only observer, no mechanism guarantees the record was correct when it was produced.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-06</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Most AI agent accountability architecture rests on an implicit assumption: the agent's record can be checked against something external. A human supervisor might review the log against their own recollection. A second system might have captured the same event from a different vantage point. Physical evidence might corroborate what the record claims. Accountability, under this model, is a matter of correlation — does the agent's account match what others observed?</p>
+
+        <p>That assumption fails whenever the agent is the sole witness. In deployments where the agent operates alone — monitoring a facility overnight when no human is present, managing a cryptographic process where no second system has independent access, providing bedside observation to a patient when no clinician is watching — the accountability record is the agent's own report about events it is the only entity positioned to describe. There is nothing external to correlate it against. Logs, attestations, and audits all depend on what the agent chose to record about events only the agent observed.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>Post-quantum signatures applied to agent accountability records provide a guarantee with a precise and limited scope: they confirm that the signed content was not modified after it was produced. If the private key is well-managed and the algorithm is sound, a valid signature proves integrity. But integrity — the guarantee that the record was not changed after production — is categorically different from accuracy: the guarantee that the record was correct when it was produced.</p>
+
+        <p>When an agent is the sole witness, the accuracy of the record cannot be established by any downstream verification mechanism, regardless of cryptographic strength. A post-quantum-signed accountability record from a sole-witness deployment carries a complete guarantee of integrity and a complete absence of any external accuracy check. Post-quantum migration will produce signatures that are cryptographically resistant to attack for decades. But a record can be perfectly signed and substantially wrong. No advance in signature strength closes the gap between integrity and accuracy when the only entity that observed the events is also the entity that produced the record.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware attestation extends the integrity guarantee further down the stack: an attested record can carry proof not only that the content was not modified after production, but that it was produced by a specific verified system in a specific verified hardware state. Attestation adds provenance to integrity. But provenance — confirmation of which system produced the record — does not extend to the accuracy of what that system observed.</p>
+
+        <p>A device agent that misreads a sensor due to calibration drift, environmental interference, or software fault produces a hardware-attested, cryptographically signed record of an observation that did not correspond to the physical world. The attestation is complete. The record is wrong. No hardware mechanism establishes a verified correspondence between an attested system state and the accuracy of that system's perceptual outputs. The hardware crossing is precisely where this matters most: agents embedded in physical infrastructure are often the only system in contact with the environment they report on, and attestation of their hardware identity does nothing to verify the accuracy of their environmental readings.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>In care settings, the sole-witness condition is structural and expected. A monitoring agent observing a patient overnight is, in most facility configurations, the only entity present for the majority of that period. The vital sign readings it records, the alerts it elevates or suppresses, the patient interactions it responds to without escalating — these events constitute the care record. There is no human co-witness for routine overnight observation. There is no independent sensor system capturing the same physiological measurements from a separate vantage point.</p>
+
+        <p>This is the design, not a failure of it. Agents are deployed in care settings precisely because continuous human presence at the required resolution and duration is not available or sustainable. But the accountability practices that work for human care documentation — where a clinician's notes can be compared against another clinician's independent examination, where a patient can corroborate or contest events they experienced — do not translate to sole-witness agent deployments. The agent's record is the record of what happened. If it is incomplete, inaccurate, or systematically biased by a calibration problem that went undetected, there may be no correcting source.</p>
+
+        <h2>The design response</h2>
+        <p>The witness problem does not have a cryptographic solution. Stronger signatures do not resolve it. Better attestation does not resolve it. The gap between integrity and accuracy, in a sole-witness deployment, is structural. Closing it requires architectural interventions: independent tamper-evident physical environment logging that the agent cannot author; redundant observation paths even where a single sensor is operationally sufficient; anomaly detection over the agent's own reports using signals the agent does not control; and explicit disclosure to oversight principals when an agent is operating as the sole observer of consequential events. These measures do not restore independent witness verification — they make the sole-witness condition visible and constrained, so that oversight can be applied with accurate knowledge of what can and cannot be verified.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>When an AI agent is the only observer, accountability records carry a complete guarantee of integrity and a complete absence of external accuracy verification. Post-quantum signatures and hardware attestation certify that the agent's own account has not been changed — not that it was correct when produced. At all three crossings, the sole-witness condition requires explicit architectural recognition: tamper-evident environmental logging that the agent cannot author, redundant observation paths, anomaly detection over agent-authored records, and explicit disclosure to principals when independent verification is structurally unavailable.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>大多数AI智能体问责架构依赖一个隐含假设：智能体的记录可以与某些外部内容进行核对。人类监督者可能会将日志与自己的记忆进行比对。第二个系统可能已从不同角度捕获了同一事件。物理证据可能可以印证记录所声称的内容。在这种模型下，问责是一个关联问题——智能体的陈述是否与其他观察者所见相符？</p>
+
+        <p>当智能体是唯一目击者时，这一假设便会失效。在智能体独自运行的部署中——在没有人类在场时通宵监控设施、在没有第二系统独立访问的情况下管理密码过程、在没有临床医师看守时为患者提供床旁观察——问责记录是智能体关于其作为唯一能够描述这些事件的实体所发生事情的报告。没有外部内容可以与之关联。日志、证明和审计都依赖于智能体选择记录的只有智能体观察到的事件。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>应用于智能体问责记录的后量子签名提供了一个具有精确和有限范围的保证：它们确认签署内容在生成后未被修改。如果私钥管理良好且算法健全，有效签名证明了完整性。但完整性——记录在生成后未被更改的保证——与准确性截然不同：记录在生成时是正确的保证。</p>
+
+        <p>当智能体是唯一目击者时，无论密码强度如何，记录的准确性都无法通过任何下游验证机制确立。来自唯一目击者部署的后量子签名问责记录携带完整的完整性保证，以及对任何外部准确性检查的完全缺失。后量子迁移将产生在密码上抵御攻击数十年的签名。但一条记录可以被完美签署却在实质上是错误的。当观察事件的唯一实体也是生成记录的实体时，签名强度的任何进步都无法弥合完整性与准确性之间的差距。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件证明向下进一步扩展了完整性保证：经过证明的记录不仅可以证明内容在生成后未被修改，还可以证明它是由特定验证系统在特定验证硬件状态下生成的。证明为完整性添加了来源。但来源——确认哪个系统生成了记录——不扩展到该系统观察的准确性。</p>
+
+        <p>由于校准漂移、环境干扰或软件故障而错误读取传感器的设备智能体，会生成硬件证明的、密码签名的不对应于物理世界的观察记录。证明是完整的，记录是错误的。没有任何硬件机制在经过证明的系统状态与该系统感知输出的准确性之间建立经过验证的对应关系。硬件交叉点恰恰是这一点最重要的地方：嵌入物理基础设施的智能体通常是与其报告的环境接触的唯一系统，其硬件身份的证明对于验证其环境读数的准确性没有任何作用。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>在照护环境中，唯一目击者条件是结构性的且预期的。在大多数设施配置中，通宵监控患者的监控智能体是该时段大部分时间的唯一在场实体。它记录的生命体征读数、它升级或抑制的警报、它在不上报的情况下响应的患者互动——这些事件构成了照护记录。对于例行的夜间观察，没有人类共同目击者。没有独立传感器系统从单独视角捕获相同的生理测量值。</p>
+
+        <p>这是设计，不是设计失败。智能体在照护环境中部署，正是因为所需分辨率和持续时间的持续人类存在不可用或不可持续。但适用于人类照护文档的问责实践——临床医师的记录可以与另一名临床医师的独立检查进行比较，患者可以证实或反驳其经历的事件——不适用于唯一目击者智能体部署。智能体的记录就是发生事情的记录。如果它不完整、不准确，或因未被检测到的校准问题而系统性偏差，可能没有纠正来源。</p>
+
+        <h2>设计回应</h2>
+        <p>目击者问题没有密码学解决方案。更强的签名无法解决它，更好的证明也无法解决它。在唯一目击者部署中，完整性与准确性之间的差距是结构性的。弥合它需要架构干预：智能体无法生成的独立防篡改物理环境日志；即使单个传感器在操作上已足够，也需要冗余观察路径；使用智能体不控制的信号对智能体自身报告进行异常检测；以及当智能体作为重要事件的唯一观察者运行时，向监督主体明确披露。这些措施不能恢复独立目击者验证——它们使唯一目击者条件可见且受约束，从而可以在准确了解哪些内容可以被验证、哪些不能的情况下应用监督。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>当AI智能体是唯一观察者时，问责记录携带完整的完整性保证，以及外部准确性验证的完全缺失。后量子签名和硬件证明证明智能体自身的陈述未被更改——而非其在生成时是正确的。在所有三个交叉点，唯一目击者条件需要明确的架构认可：智能体无法生成的防篡改环境日志、冗余观察路径、对智能体生成记录的异常检测，以及在独立验证结构上不可用时向主体明确披露。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>大多數AI智能體問責架構依賴一個隱含假設：智能體的記錄可以與某些外部內容進行核對。人類監督者可能會將日誌與自己的記憶進行比對。第二個系統可能已從不同角度捕獲了同一事件。物理證據可能可以印證記錄所聲稱的內容。在這種模型下，問責是一個關聯問題——智能體的陳述是否與其他觀察者所見相符？</p>
+
+        <p>當智能體是唯一目擊者時，這一假設便會失效。在智能體獨自運行的部署中——在沒有人類在場時通宵監控設施、在沒有第二系統獨立訪問的情況下管理密碼過程、在沒有臨床醫師看守時為患者提供床旁觀察——問責記錄是智能體關於其作為唯一能夠描述這些事件的實體所發生事情的報告。沒有外部內容可以與之關聯。日誌、證明和審計都依賴於智能體選擇記錄的只有智能體觀察到的事件。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>應用於智能體問責記錄的後量子簽名提供了一個具有精確和有限範圍的保證：它們確認簽署內容在生成後未被修改。如果私鑰管理良好且算法健全，有效簽名證明了完整性。但完整性——記錄在生成後未被更改的保證——與準確性截然不同：記錄在生成時是正確的保證。</p>
+
+        <p>當智能體是唯一目擊者時，無論密碼強度如何，記錄的準確性都無法通過任何下游驗證機制確立。來自唯一目擊者部署的後量子簽名問責記錄攜帶完整的完整性保證，以及對任何外部準確性檢查的完全缺失。後量子遷移將產生在密碼上抵禦攻擊數十年的簽名。但一條記錄可以被完美簽署卻在實質上是錯誤的。當觀察事件的唯一實體也是生成記錄的實體時，簽名強度的任何進步都無法彌合完整性與準確性之間的差距。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>硬件證明向下進一步擴展了完整性保證：經過證明的記錄不僅可以證明內容在生成後未被修改，還可以證明它是由特定驗證系統在特定驗證硬件狀態下生成的。證明為完整性添加了來源。但來源——確認哪個系統生成了記錄——不擴展到該系統觀察的準確性。</p>
+
+        <p>由於校準漂移、環境干擾或軟件故障而錯誤讀取感測器的裝置智能體，會生成硬件證明的、密碼簽名的不對應於物理世界的觀察記錄。證明是完整的，記錄是錯誤的。沒有任何硬件機制在經過證明的系統狀態與該系統感知輸出的準確性之間建立經過驗證的對應關係。硬件交叉點恰恰是這一點最重要的地方：嵌入物理基礎設施的智能體通常是與其報告的環境接觸的唯一系統，其硬件身份的證明對於驗證其環境讀數的準確性沒有任何作用。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>在照護環境中，唯一目擊者條件是結構性的且預期的。在大多數設施配置中，通宵監控患者的監控智能體是該時段大部分時間的唯一在場實體。它記錄的生命體徵讀數、它升級或抑制的警報、它在不上報的情況下回應的患者互動——這些事件構成了照護記錄。對於例行的夜間觀察，沒有人類共同目擊者。沒有獨立感測器系統從單獨視角捕獲相同的生理測量值。</p>
+
+        <p>這是設計，不是設計失敗。智能體在照護環境中部署，正是因為所需分辨率和持續時間的持續人類存在不可用或不可持續。但適用於人類照護文件的問責實踐——臨床醫師的記錄可以與另一名臨床醫師的獨立檢查進行比較，患者可以證實或反駁其經歷的事件——不適用於唯一目擊者智能體部署。智能體的記錄就是發生事情的記錄。如果它不完整、不準確，或因未被檢測到的校準問題而系統性偏差，可能沒有糾正來源。</p>
+
+        <h2>設計回應</h2>
+        <p>目擊者問題沒有密碼學解決方案。更強的簽名無法解決它，更好的證明也無法解決它。在唯一目擊者部署中，完整性與準確性之間的差距是結構性的。彌合它需要架構干預：智能體無法生成的獨立防篡改物理環境日誌；即使單個感測器在操作上已足夠，也需要冗餘觀察路徑；使用智能體不控制的信號對智能體自身報告進行異常檢測；以及當智能體作為重要事件的唯一觀察者運行時，向監督主體明確披露。這些措施不能恢復獨立目擊者驗證——它們使唯一目擊者條件可見且受約束，從而可以在準確了解哪些內容可以被驗證、哪些不能的情況下應用監督。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>當AI智能體是唯一觀察者時，問責記錄攜帶完整的完整性保證，以及外部準確性驗證的完全缺失。後量子簽名和硬件證明證明智能體自身的陳述未被更改——而非其在生成時是正確的。在所有三個交叉點，唯一目擊者條件需要明確的架構認可：智能體無法生成的防篡改環境日誌、冗餘觀察路徑、對智能體生成記錄的異常檢測，以及在獨立驗證結構上不可用時向主體明確披露。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-06</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
