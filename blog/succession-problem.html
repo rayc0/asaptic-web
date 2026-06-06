@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The succession problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents are deployed by organizations that may be acquired, restructured, or dissolved before accountability is needed. When the responsible organization changes, the accountability chain the agent was designed around may silently break." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/succession-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The succession problem: accountability when the organization responsible for an AI agent changes" />
+  <meta property="og:description" content="The accountability model for AI agents assumes a stable organizational entity. In practice, organizations are acquired, restructured, and dissolved. The agent keeps running; the accountability chain may have silently broken." />
+  <meta property="og:url" content="https://asaptic.com/blog/succession-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-06" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The succession problem: accountability when the organization responsible for an AI agent changes",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-06",
+    "description": "AI agents are deployed by organizations that may be acquired, restructured, or dissolved before accountability is needed. When the responsible organization changes, the accountability chain the agent was designed around may silently break.",
+    "url": "https://asaptic.com/blog/succession-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The succession problem: accountability when the organization responsible for an AI agent changes</h1>
+      <p class="essay-subtitle">Every AI agent is deployed by an organization. That organization may be acquired, restructured, or dissolved while the agent continues to operate. When it is, the accountability architecture built around the original deployer may have no successor.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-06</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>The standard accountability model for AI agents assigns responsibility to a deploying organization: a legal entity with obligations, insurance, regulatory standing, and staff who can be questioned. When something goes wrong, accountability flows along a chain from the agent's action to the organization that deployed it. This model assumes the deploying organization still exists when accountability is needed. In practice, that assumption fails more often than accountability frameworks anticipate. Organizations are acquired, restructured, outsourced, and dissolved. AI agents deployed in the prior organizational form continue running in the new one. The accountability chain designed for the old entity does not automatically transfer to the new.</p>
+
+        <p>The succession problem is distinct from the decommissioning problem, which concerns how an agent is retired at end of life. Succession occurs while the agent is still active: the principal that commissioned it, controls its authorization policy, holds its audit logs, and is liable for its actions has changed — but the agent has not. From the agent's perspective, nothing has changed. It continues operating under the same configuration, serving the same functions, generating the same log entries. From an accountability perspective, the responsible entity at the time of deployment may no longer have any relationship to the responsible entity at the time consequences manifest. The gap between them is the succession problem.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>Cryptographic accountability depends on persistent organizational identity. Root keys, signing authorities, and key escrow arrangements are established under the authority of specific legal entities with specific regulatory standing. When an organization is acquired or restructured, those arrangements do not automatically transfer to the acquiring entity. The original signing authority may no longer exist. The staff who held key management responsibilities may have left. The regulatory relationships that gave the original accountability claims their force — their standing to assert that cryptographic operations were conducted in compliance with a specific regime — may be held by an entity that no longer controls the agent.</p>
+
+        <p>This creates a gap that post-quantum signatures cannot close. A signature proves that a key was used; it does not prove that the organization currently responsible for the system authorized the key's existence under procedures that remain in force. During a post-quantum migration, where the entire accountability value of new algorithms depends on chains of properly established trust, an organizational succession that goes unrecorded in the cryptographic accountability architecture can break the chain at its root. The acquiring organization may find itself operating cryptographic infrastructure whose full accountability provenance traces to an entity it cannot compel to produce records.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware security accountability depends on persistent relationships with specific vendors, certification bodies, and regulatory registrars. When a hardware vendor is acquired, support obligations, firmware signing authorities, and attestation certificate hierarchies may change hands in ways not immediately visible to the agent's deployer. A device fleet whose attestation validity depended on a certificate hierarchy issued by a vendor that has since been absorbed may find that renewal paths are unclear, that the new parent organization's signing infrastructure is different, or that regulatory certification transfers require additional steps that were not anticipated.</p>
+
+        <p>The agent operating that hardware fleet experiences no operational discontinuity. Its attestation calls continue to return valid results against its existing authorization profile. What has changed is the accountability relationship between those results and the organizations that must answer for them. If a hardware security incident later requires reconstruction of the full accountability chain — who certified this hardware, who maintained it, who was responsible for vulnerability disclosure — the organizational succession creates gaps that engineering records alone cannot fill. Accountability for a hardware fleet spans the entire chain of vendor relationships from manufacture through operation, and organizational changes anywhere in that chain can make the chain untraversable when it is needed.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>Care agents operate under ongoing obligations to the people they serve. Those obligations are held by the deploying organization — typically a healthcare provider, care technology vendor, or both. When that organization changes, the obligations do not disappear, but the entity responsible for honoring them does. A care technology vendor acquired mid-deployment may have a new parent organization that has not been introduced to the patients the agent serves, has not established the regulatory relationships required to operate in the relevant jurisdiction, and has not reviewed the care agent's authorization policy under its own risk and compliance framework.</p>
+
+        <p>The patients served by the care agent may not know the responsible organization has changed. The agent continues its scheduled interactions, generates its logs, and escalates its alerts to care coordinators whose organizational relationships may themselves have shifted. When an adverse outcome occurs and accountability review begins, the investigation must reconstruct not just what the agent did but who was responsible for its governance at every point in its operation — and the answer may be different at different points in the timeline. Accountability continuity in care settings requires that organizational succession be treated as a clinical governance event, not merely a commercial transaction.</p>
+
+        <h2>The succession gap and its structural remedy</h2>
+        <p>The succession problem is not solved by contract. Acquisition agreements routinely include clauses transferring liability for existing deployments, but legal liability transfer is not the same as accountability architecture transfer. The acquiring organization may hold legal responsibility without possessing the operational knowledge, staff expertise, regulatory standing, or access to historical records needed to exercise that responsibility. The accountability chain is not a legal claim. It is a body of documented practices, standing relationships, and institutional knowledge that allows accountability to be discharged in practice, not merely assigned on paper.</p>
+
+        <p>The structural remedy requires treating organizational succession as a first-class event in an AI agent's accountability record — equivalent in significance to a software update or a major configuration change. At the moment of succession, the accountability architecture should produce a succession record: a structured snapshot of the agent's authorization policy, key material provenance, hardware certification status, open obligations, and known risks, transferred explicitly to the succeeding entity with documented acknowledgment. The succeeding organization's acceptance should be conditional on its review of that record and its attestation that it has the capability to discharge the obligations it is assuming. Without this, succession is an accountability void disguised as a routine business transaction. At all three crossings, agents with long operational lifetimes will outlive the organizations that created them. That is not a failure mode to be managed after the fact — it is a design condition to be anticipated from the start.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI agents deployed by organizations that are subsequently acquired, restructured, or dissolved face the succession problem: the accountability architecture built around the original deployer has no automatic successor. At the post-quantum crossing, signing authorities and key escrow arrangements trace to entities that may no longer control the system. At the hardware crossing, vendor certification chains can become untraversable after acquisition. At the care crossing, patients may continue receiving care from an agent whose governing organization they never consented to. The remedy is to treat organizational succession as a first-class accountability event, requiring a structured succession record transferred explicitly to the incoming entity — not merely a legal liability clause in an acquisition agreement.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>AI智能体的标准问责模型将责任分配给部署组织：一个具有义务、保险、监管地位和可被质询员工的法律实体。当出现问题时，问责沿着从智能体行动到部署它的组织的链条流动。这个模型假设问责需要时部署组织仍然存在。然而在实践中，这一假设比问责框架预期的更频繁地失败。组织被收购、重组、外包和解散。以前组织形式部署的AI智能体在新形式下继续运行。为旧实体设计的问责链不会自动转移到新实体。</p>
+
+        <p>继承问题不同于停用问题，后者涉及智能体在使用寿命结束时如何退役。继承发生在智能体仍然活跃时：委托它的委托方、控制其授权策略、持有其审计日志并对其行动负责的实体已经改变——但智能体没有。从智能体的角度来看，什么都没有改变。它继续在相同配置下运行，提供相同功能，生成相同的日志条目。从问责角度来看，部署时负责的实体可能与后果显现时负责的实体没有任何关系。两者之间的差距就是继承问题。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>密码问责依赖于持久的组织身份。根密钥、签名权威和密钥托管安排是在具有特定监管地位的特定法律实体的授权下建立的。当组织被收购或重组时，这些安排不会自动转移到收购实体。原始签名权威可能不再存在。负责密钥管理的员工可能已经离开。赋予原始问责声明其效力的监管关系——其断言密码操作在符合特定制度的情况下进行的地位——可能由不再控制智能体的实体持有。</p>
+
+        <p>这造成了后量子签名无法弥合的差距。签名证明使用了密钥；它不证明当前负责该系统的组织按照仍然有效的程序授权了密钥的存在。在后量子迁移期间，新算法的全部问责价值依赖于正确建立的信任链，未记录在密码问责架构中的组织继承可能在根部断裂该链。收购组织可能发现自己在运营密码基础设施，其完整问责来源可追溯至其无法强制提供记录的实体。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件安全问责依赖于与特定供应商、认证机构和监管登记处的持久关系。当硬件供应商被收购时，支持义务、固件签名权威和认证证书层次结构可能以智能体部署方不立即可见的方式易手。依赖已被吸收的供应商签发的证书层次结构进行认证有效性的设备群，可能发现续签路径不清晰，新母公司的签名基础设施不同，或监管认证转移需要未预料到的额外步骤。</p>
+
+        <p>操作该硬件群的智能体没有经历操作中断。其认证调用继续根据其现有授权配置文件返回有效结果。改变的是那些结果与必须对其负责的组织之间的问责关系。如果硬件安全事件后来需要重建完整的问责链——谁认证了这个硬件、谁维护了它、谁负责漏洞披露——组织继承会造成工程记录单独无法填补的差距。硬件群的问责跨越了从制造到运营的整个供应商关系链，该链中任何地方的组织变化都可能在需要时使链变得无法穿越。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>照护智能体在持续履行对其服务对象的义务。这些义务由部署组织持有——通常是医疗服务提供者、照护技术供应商或两者兼有。当该组织改变时，义务不会消失，但负责履行义务的实体会消失。在部署中途被收购的照护技术供应商可能有一个新母组织，该组织尚未被介绍给智能体服务的患者，尚未建立在相关司法管辖区运营所需的监管关系，也尚未在其自身风险和合规框架下审查照护智能体的授权策略。</p>
+
+        <p>照护智能体服务的患者可能不知道负责组织已经改变。智能体继续其预定互动，生成其日志，并将其警报上报给本身的组织关系可能已经改变的护理协调员。当发生不良结果并开始问责审查时，调查不仅必须重建智能体所做的事，还必须重建在其运营的每个时点谁负责其治理——答案在时间线的不同点可能不同。照护环境中的问责连续性要求将组织继承视为临床治理事件，而不仅仅是商业交易。</p>
+
+        <h2>继承差距及其结构性补救措施</h2>
+        <p>继承问题不能通过合同解决。收购协议通常包含转移现有部署责任的条款，但法律责任转移与问责架构转移不同。收购组织可能在法律上负责，但不拥有实际履行该责任所需的操作知识、员工专业知识、监管地位或历史记录访问权。问责链不是法律声明，而是一套有文件记录的实践、持续关系和机构知识，使问责得以在实践中而非仅在纸面上履行。</p>
+
+        <p>结构性补救措施要求将组织继承视为AI智能体问责记录中的一等事件——其重要性相当于软件更新或重大配置变更。在继承时刻，问责架构应生成继承记录：智能体授权策略、密钥材料来源、硬件认证状态、未了义务和已知风险的结构化快照，明确转移给继承实体，并附有有文件记录的确认。继承组织的接受应以其审查该记录并证明其有能力履行其所承担义务为条件。没有这一点，继承就是伪装成常规商业交易的问责空白。在三个交叉点，具有长运营寿命的智能体将比创建它们的组织活得更久。这不是要事后管理的失败模式——而是从一开始就需要预料的设计条件。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>由随后被收购、重组或解散的组织部署的AI智能体面临继承问题：围绕原始部署方建立的问责架构没有自动继承者。在后量子交叉点，签名权威和密钥托管安排可追溯至可能不再控制该系统的实体。在硬件交叉点，供应商认证链可能在收购后变得无法穿越。在照护交叉点，患者可能继续接受其从未同意的治理组织管理的智能体的照护。补救措施是将组织继承视为一等问责事件，要求明确转移给进入实体的结构化继承记录——而不仅仅是收购协议中的法律责任条款。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>AI智能體的標準問責模型將責任分配給部署組織：一個具有義務、保險、監管地位和可被質詢員工的法律實體。當出現問題時，問責沿著從智能體行動到部署它的組織的鏈條流動。這個模型假設問責需要時部署組織仍然存在。然而在實踐中，這一假設比問責框架預期的更頻繁地失敗。組織被收購、重組、外包和解散。以前組織形式部署的AI智能體在新形式下繼續運行。為舊實體設計的問責鏈不會自動轉移到新實體。</p>
+
+        <p>繼承問題不同於停用問題，後者涉及智能體在使用壽命結束時如何退役。繼承發生在智能體仍然活躍時：委託它的委託方、控制其授權策略、持有其稽核日誌並對其行動負責的實體已經改變——但智能體沒有。從智能體的角度來看，什麼都沒有改變。它繼續在相同配置下運行，提供相同功能，生成相同的日誌條目。從問責角度來看，部署時負責的實體可能與後果顯現時負責的實體沒有任何關係。兩者之間的差距就是繼承問題。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>密碼問責依賴於持久的組織身份。根金鑰、簽名權威和金鑰託管安排是在具有特定監管地位的特定法律實體的授權下建立的。當組織被收購或重組時，這些安排不會自動轉移到收購實體。原始簽名權威可能不再存在。負責金鑰管理的員工可能已經離開。賦予原始問責聲明其效力的監管關係——其斷言密碼操作在符合特定制度的情況下進行的地位——可能由不再控制智能體的實體持有。</p>
+
+        <p>這造成了後量子簽名無法彌合的差距。簽名證明使用了金鑰；它不證明當前負責該系統的組織按照仍然有效的程序授權了金鑰的存在。在後量子遷移期間，新演算法的全部問責價值依賴於正確建立的信任鏈，未記錄在密碼問責架構中的組織繼承可能在根部斷裂該鏈。收購組織可能發現自己在運營密碼基礎設施，其完整問責來源可追溯至其無法強制提供記錄的實體。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>硬件安全問責依賴於與特定供應商、認證機構和監管登記處的持久關係。當硬件供應商被收購時，支援義務、韌體簽名權威和認證憑證層次結構可能以智能體部署方不立即可見的方式易手。依賴已被吸收的供應商簽發的憑證層次結構進行認證有效性的設備群，可能發現續簽路徑不清晰，新母公司的簽名基礎設施不同，或監管認證轉移需要未預料到的額外步驟。</p>
+
+        <p>操作該硬件群的智能體沒有經歷操作中斷。其認證調用繼續根據其現有授權配置文件返回有效結果。改變的是那些結果與必須對其負責的組織之間的問責關係。如果硬件安全事件後來需要重建完整的問責鏈——誰認證了這個硬件、誰維護了它、誰負責漏洞披露——組織繼承會造成工程記錄單獨無法填補的差距。硬件群的問責跨越了從製造到運營的整個供應商關係鏈，該鏈中任何地方的組織變化都可能在需要時使鏈變得無法穿越。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>照護智能體在持續履行對其服務對象的義務。這些義務由部署組織持有——通常是醫療服務提供者、照護技術供應商或兩者兼有。當該組織改變時，義務不會消失，但負責履行義務的實體會消失。在部署中途被收購的照護技術供應商可能有一個新母組織，該組織尚未被介紹給智能體服務的患者，尚未建立在相關司法管轄區運營所需的監管關係，也尚未在其自身風險和合規框架下審查照護智能體的授權策略。</p>
+
+        <p>照護智能體服務的患者可能不知道負責組織已經改變。智能體繼續其預定互動，生成其日誌，並將其警報上報給本身的組織關係可能已經改變的護理協調員。當發生不良結果並開始問責審查時，調查不僅必須重建智能體所做的事，還必須重建在其運營的每個時點誰負責其治理——答案在時間線的不同點可能不同。照護環境中的問責連續性要求將組織繼承視為臨床治理事件，而不僅僅是商業交易。</p>
+
+        <h2>繼承差距及其結構性補救措施</h2>
+        <p>繼承問題不能通過合同解決。收購協議通常包含轉移現有部署責任的條款，但法律責任轉移與問責架構轉移不同。收購組織可能在法律上負責，但不擁有實際履行該責任所需的操作知識、員工專業知識、監管地位或歷史記錄存取權。問責鏈不是法律聲明，而是一套有文件記錄的實踐、持續關係和機構知識，使問責得以在實踐中而非僅在紙面上履行。</p>
+
+        <p>結構性補救措施要求將組織繼承視為AI智能體問責記錄中的一等事件——其重要性相當於軟體更新或重大配置變更。在繼承時刻，問責架構應生成繼承記錄：智能體授權策略、金鑰材料來源、硬件認證狀態、未了義務和已知風險的結構化快照，明確轉移給繼承實體，並附有有文件記錄的確認。繼承組織的接受應以其審查該記錄並證明其有能力履行其所承擔義務為條件。沒有這一點，繼承就是偽裝成常規商業交易的問責空白。在三個交叉點，具有長運營壽命的智能體將比建立它們的組織活得更久。這不是要事後管理的失敗模式——而是從一開始就需要預料的設計條件。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>由隨後被收購、重組或解散的組織部署的AI智能體面臨繼承問題：圍繞原始部署方建立的問責架構沒有自動繼承者。在後量子交叉點，簽名權威和金鑰託管安排可追溯至可能不再控制該系統的實體。在硬件交叉點，供應商認證鏈可能在收購後變得無法穿越。在照護交叉點，患者可能繼續接受其從未同意的治理組織管理的智能體的照護。補救措施是將組織繼承視為一等問責事件，要求明確轉移給進入實體的結構化繼承記錄——而不僅僅是收購協議中的法律責任條款。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-06</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
