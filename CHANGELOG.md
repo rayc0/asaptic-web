@@ -1,3 +1,4 @@
+2026-06-06 20:15 UTC · sitemap: add 17 missing blog essays (84→101 entries), bump blog/ lastmod · dff7dcc
 2026-06-06 16:15 UTC · blog: add essay 'The succession problem' — accountability when the organization responsible for an AI agent changes (EN+ZH+ZH-HK) · d451cd4
 2026-06-06 12:15 UTC · blog: add essay 'The consent-under-incapacity problem' — accountability when AI agents act for persons who cannot consent (EN+ZH+ZH-HK) · 0aebc83
 2026-06-06 08:15 UTC · blog: add essay 'The witness problem' — accountability when an AI agent is the only observer (EN+ZH+ZH-HK) · 401243c
