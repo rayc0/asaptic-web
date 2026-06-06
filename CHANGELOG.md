@@ -1,3 +1,4 @@
+2026-06-06 12:15 UTC · blog: add essay 'The consent-under-incapacity problem' — accountability when AI agents act for persons who cannot consent (EN+ZH+ZH-HK) · 0aebc83
 2026-06-06 08:15 UTC · blog: add essay 'The witness problem' — accountability when an AI agent is the only observer (EN+ZH+ZH-HK) · 401243c
 2026-06-06 04:15 UTC · blog: add essay 'The evidence admissibility problem' — accountability when AI agent records reach the courtroom (EN+ZH+ZH-HK) · f9f0964
 2026-06-05 24:15 UTC · blog: add essay 'The hardware lifecycle problem' — accountability when security hardware outlives its guarantee beneath a running agent (EN+ZH+ZH-HK) · c4a53c0
