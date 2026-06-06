@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The evidence admissibility problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agent accountability records are designed for operational oversight. Legal proceedings require something harder: adversarially durable evidence whose provenance, integrity, and interpretation can be challenged by a party motivated to break them. Most current accountability architectures were not built for that." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/evidence-admissibility-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The evidence admissibility problem: accountability when AI agent records reach the courtroom" />
+  <meta property="og:description" content="Generating a log and producing admissible evidence are different activities with different requirements. AI agent accountability architecture was designed for operational review, not adversarial third-party challenge. When those records reach legal proceedings, the gap becomes visible." />
+  <meta property="og:url" content="https://asaptic.com/blog/evidence-admissibility-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-06" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The evidence admissibility problem: accountability when AI agent records reach the courtroom",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-06",
+    "description": "AI agent accountability records are designed for operational oversight. Legal proceedings require something harder: adversarially durable evidence whose provenance, integrity, and interpretation can be challenged by a party motivated to break them. Most current accountability architectures were not built for that.",
+    "url": "https://asaptic.com/blog/evidence-admissibility-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The evidence admissibility problem: accountability when AI agent records reach the courtroom</h1>
+      <p class="essay-subtitle">Generating a log and producing admissible evidence are different activities with different requirements. AI agent accountability architecture was designed for operational review, not adversarial third-party challenge. When those records reach legal proceedings, the gap becomes visible.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-06</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>When an AI agent makes a consequential decision — routing a medication dose, quarantining a device in a critical infrastructure network, halting a key ceremony because a threshold was not met — that decision is typically logged. The log is the accountability record. It is also, when things go wrong, the evidence. But generating a record and producing admissible evidence are different activities with different requirements. The accountability architecture most AI agent systems use today was designed for operational oversight, not for the evidentiary standards that govern legal proceedings. When those records reach a courtroom, the gap becomes visible.</p>
+
+        <h2>What the court needs that the log does not provide</h2>
+        <p>Evidentiary standards vary across jurisdictions, but they converge on a core set of questions that standard agent logs do not answer. Who produced this record? Can you prove it has not been modified since production? What was the state of the system that produced it? Is the log complete, or does it omit decisions that were taken but not recorded? Standard AI agent accountability records are designed to answer operational questions: what action was taken, at what time, in what state, with what result. They are not designed to be adversarially challenged by a party motivated to show that the record is incomplete, modified, or produced by a process different from what is claimed. When records are challenged in legal proceedings, the operational accountability layer is typically insufficient to resolve those challenges.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>The post-quantum transition introduces a specific and severe evidentiary problem. Many AI agent accountability records are digitally signed — the signature is the integrity guarantee. If the algorithm used to sign the record is later broken, every record signed with that algorithm becomes a contested artifact. This is not a hypothetical: the timeline for cryptographic deprecation regularly outruns the timeline for legal proceedings. A decision signed in 2026 with an algorithm deprecated in 2030 may be subject to legal review in 2031. At that point, the signature that was supposed to guarantee the record's integrity is itself under question.</p>
+
+        <p>The harvest-now-collect-later dynamic applies to accountability records directly. An adversary who retains signed agent logs gains leverage if the signing algorithm is later broken — not only to read confidential content, but to contest the integrity of those records in any subsequent proceeding. The signing algorithm that made the accountability architecture work during operation becomes a liability in post-production litigation. The remedy requires algorithm agility in the accountability layer itself: records must carry renewable signatures so that integrity guarantees can be refreshed as algorithms are deprecated, without introducing new questions about whether the renewal modified the underlying record.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware-attested accountability records carry an implicit claim: this record was produced by a system with a specific, verified hardware identity. The attestation is the chain of custody. But hardware attestation is only as durable as the hardware security component that produced it. When that component is later compromised, replaced, or reaches end-of-life, the attestation claim becomes challengeable. A forensic investigation that traces an accountability record to a hardware security module whose firmware was never patched against known vulnerabilities does not produce a clean chain of custody.</p>
+
+        <p>At the hardware crossing, accountability records are often the only evidence of what a device agent did. There is no human witness. There may be no secondary record. If the hardware attestation is challenged and cannot be defended, the evidentiary record collapses entirely. The remedy requires treating hardware lifecycle as an evidentiary matter, not only an operational one: preserving hardware state documentation at the time of record production, maintaining independent records of the firmware and certification status of attestation components, and designing hardware replacement procedures that preserve rather than break the chain of custody for existing records.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>In care settings, AI agent decisions may need to be evaluated in medical proceedings, regulatory investigations, or inquiries where the standard of evidence is high and the interpretation of AI decision records is not yet established. Courts lack precedent for evaluating the provenance, completeness, and interpretation of records generated by AI care agents. The gap between what the agent decided and what it logged, the difference between the agent's internal state and its externalized record, and the question of which version of the model was running at the time of the decision are all evidentiary questions that standard accountability architectures do not make answerable by third parties.</p>
+
+        <p>The physical-world care crossing also produces the longest evidentiary timelines. A decision made about a patient's care in 2026 may be reviewed in a proceeding that opens in 2034. The accountability architecture must preserve not only the record of the decision, but enough context — model version, training data vintage, sensor calibration state, hardware attestation chain — to allow a third party eight years later to reconstruct what the agent was doing and why. Designing for an eight-year evidentiary window is a materially different requirement than designing for an operational audit six months after the fact.</p>
+
+        <h2>The core gap</h2>
+        <p>The accountability architecture most AI agents use today was designed around the assumption that records are reviewed by parties who share the same operational context as the party that produced them: the same access, the same technical vocabulary, the same assumptions about what the record means. Adversarial third-party review — by a court, a regulator, an opposing party in litigation — has different requirements. Building accountability architecture that holds in both contexts requires designing for the harder case from the beginning, not retrofitting evidentiary durability after a system is deployed and a proceeding has opened.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI agent accountability records are built for operational oversight by parties who share the same context. Legal proceedings impose adversarial third-party review under evidentiary standards that most accountability architectures were not designed to meet. Three specific gaps appear at the crossings: post-quantum signature deprecation that retroactively contests record integrity; hardware lifecycle events that break attestation chains; and long evidentiary timelines in care settings that require preserving decision context across years. Closing these gaps requires treating evidentiary durability as a design requirement from the start, not a retrofit.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>当AI智能体做出重要决策——路由药物剂量、在关键基础设施网络中隔离设备、因阈值未达而终止密钥仪式——该决策通常会被记录。日志是问责记录，也是事情出错时的证据。但生成记录与提供可采纳的证据是不同的活动，有着不同的要求。当今大多数AI智能体系统使用的问责架构是为操作监督而设计的，而非为法律诉讼所适用的证据标准而设计。当这些记录进入法庭时，差距便显现出来。</p>
+
+        <h2>法庭所需而日志未能提供的内容</h2>
+        <p>证据标准因司法管辖区而异，但它们汇聚于标准智能体日志无法回答的核心问题：谁生成了这份记录？您能证明它自生成以来未被修改吗？生成它的系统处于何种状态？日志是完整的，还是遗漏了已采取但未记录的决策？标准AI智能体问责记录旨在回答操作性问题：采取了什么行动、在什么时间、在什么状态下、结果如何。它们并非为受到有动机证明记录不完整、已被修改或由所声称过程之外的过程生成的一方的对抗性质疑而设计。当记录在法律诉讼中受到质疑时，操作问责层通常不足以解决这些质疑。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>后量子过渡引入了一个特定且严峻的证据问题。许多AI智能体问责记录经过数字签名——签名是完整性保证。如果用于签署记录的算法后来被破解，每条用该算法签署的记录都会成为有争议的工件。这并非假设：密码学弃用的时间线经常超越法律诉讼的时间线。一个在2026年用于签署的、在2030年被弃用的算法，其相关记录可能在2031年面临法律审查。届时，原本用于保证记录完整性的签名本身也受到质疑。</p>
+
+        <p>收集后解密的动态直接适用于问责记录。保留已签署智能体日志的对手，若签署算法后来被破解，便获得了优势——不仅可以读取机密内容，还可以在任何后续诉讼中质疑这些记录的完整性。使问责架构在操作期间有效的签署算法，在生产后诉讼中成为负担。补救措施需要在问责层本身实现算法灵活性：记录必须携带可更新的签名，以便在算法被弃用时能够刷新完整性保证，而不引入关于更新是否修改了底层记录的新问题。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件证明的问责记录携带隐含声明：此记录由具有特定、经验证硬件身份的系统生成。证明是监管链。但硬件证明的持久性仅与生成它的硬件安全组件一样持久。当该组件后来被攻破、替换或达到寿命终止时，证明声明便可受到质疑。将问责记录追溯到固件从未针对已知漏洞进行修补的硬件安全模块的法证调查，无法产生清晰的监管链。</p>
+
+        <p>在硬件交叉点，问责记录通常是设备智能体行为的唯一证据。没有人类证人，可能没有次级记录。如果硬件证明受到质疑且无法得到辩护，证据记录便完全崩溃。补救措施需要将硬件生命周期视为证据问题，而不仅是操作问题：在记录生成时保存硬件状态文档，维护证明组件的固件和认证状态的独立记录，以及设计保留而非破坏现有记录监管链的硬件替换程序。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>在照护环境中，AI智能体的决策可能需要在医疗诉讼、监管调查或调查中进行评估，而AI决策记录的解释尚未建立。法院缺乏评估AI照护智能体生成记录的来源、完整性和解释的先例。智能体决策与其记录之间的差距、智能体内部状态与其外化记录之间的差异，以及决策时运行的模型版本问题，都是标准问责架构无法让第三方回答的证据性问题。</p>
+
+        <p>物理世界照护交叉点还产生最长的证据时间线。2026年关于患者照护的决策，可能在2034年启动的诉讼中需要审查。问责架构不仅必须保留决策记录，还必须保留足够的背景——模型版本、训练数据时效、传感器校准状态、硬件证明链——以允许八年后的第三方重建智能体在做什么及为什么。为八年证据窗口设计，与为六个月后的操作审计设计，是本质不同的要求。</p>
+
+        <h2>核心差距</h2>
+        <p>当今大多数AI智能体使用的问责架构是围绕以下假设设计的：记录由与生成记录的一方共享相同操作背景的各方审查——相同的访问权限、相同的技术词汇、对记录含义的相同假设。对抗性第三方审查——由法院、监管机构或诉讼中的对方当事人进行——有不同的要求。构建在两种背景下都有效的问责架构，需要从一开始就为更难的情况进行设计，而不是在系统部署并启动诉讼后再补充证据持久性。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>AI智能体问责记录是为由共享相同背景的各方进行操作监督而构建的。法律诉讼施加了对抗性第三方审查，其证据标准是大多数问责架构未被设计来满足的。三个具体差距出现在各交叉点：后量子签名弃用追溯性地质疑记录完整性；硬件生命周期事件破坏证明链；照护环境中漫长的证据时间线要求跨年保存决策背景。弥合这些差距需要从一开始就将证据持久性视为设计要求，而非事后补充。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>當AI智能體做出重要決策——路由藥物劑量、在關鍵基礎設施網絡中隔離裝置、因閾值未達而終止密鑰儀式——該決策通常會被記錄。日誌是問責記錄，也是事情出錯時的證據。但生成記錄與提供可採納的證據是不同的活動，有著不同的要求。當今大多數AI智能體系統使用的問責架構是為操作監督而設計的，而非為法律訴訟所適用的證據標準而設計。當這些記錄進入法庭時，差距便顯現出來。</p>
+
+        <h2>法庭所需而日誌未能提供的內容</h2>
+        <p>證據標準因司法管轄區而異，但它們匯聚於標準智能體日誌無法回答的核心問題：誰生成了這份記錄？您能證明它自生成以來未被修改嗎？生成它的系統處於何種狀態？日誌是完整的，還是遺漏了已採取但未記錄的決策？標準AI智能體問責記錄旨在回答操作性問題：採取了什麼行動、在什麼時間、在什麼狀態下、結果如何。它們並非為受到有動機證明記錄不完整、已被修改或由所聲稱過程之外的過程生成的一方的對抗性質疑而設計。當記錄在法律訴訟中受到質疑時，操作問責層通常不足以解決這些質疑。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>後量子過渡引入了一個特定且嚴峻的證據問題。許多AI智能體問責記錄經過數字簽名——簽名是完整性保證。如果用於簽署記錄的算法後來被破解，每條用該算法簽署的記錄都會成為有爭議的工件。這並非假設：密碼學棄用的時間線經常超越法律訴訟的時間線。一個在2026年用於簽署的、在2030年被棄用的算法，其相關記錄可能在2031年面臨法律審查。屆時，原本用於保證記錄完整性的簽名本身也受到質疑。</p>
+
+        <p>收集後解密的動態直接適用於問責記錄。保留已簽署智能體日誌的對手，若簽署算法後來被破解，便獲得了優勢——不僅可以讀取機密內容，還可以在任何後續訴訟中質疑這些記錄的完整性。使問責架構在操作期間有效的簽署算法，在生產後訴訟中成為負擔。補救措施需要在問責層本身實現算法靈活性：記錄必須攜帶可更新的簽名，以便在算法被棄用時能夠刷新完整性保證，而不引入關於更新是否修改了底層記錄的新問題。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>硬件證明的問責記錄攜帶隱含聲明：此記錄由具有特定、經驗證硬件身份的系統生成。證明是監管鏈。但硬件證明的持久性僅與生成它的硬件安全組件一樣持久。當該組件後來被攻破、替換或達到壽命終止時，證明聲明便可受到質疑。將問責記錄追溯到固件從未針對已知漏洞進行修補的硬件安全模塊的法證調查，無法產生清晰的監管鏈。</p>
+
+        <p>在硬件交叉點，問責記錄通常是裝置智能體行為的唯一證據。沒有人類證人，可能沒有次級記錄。如果硬件證明受到質疑且無法得到辯護，證據記錄便完全崩潰。補救措施需要將硬件生命週期視為證據問題，而不僅是操作問題：在記錄生成時保存硬件狀態文件，維護證明組件的固件和認證狀態的獨立記錄，以及設計保留而非破壞現有記錄監管鏈的硬件替換程序。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>在照護環境中，AI智能體的決策可能需要在醫療訴訟、監管調查或調查中進行評估，而AI決策記錄的解釋尚未建立。法院缺乏評估AI照護智能體生成記錄的來源、完整性和解釋的先例。智能體決策與其記錄之間的差距、智能體內部狀態與其外化記錄之間的差異，以及決策時運行的模型版本問題，都是標準問責架構無法讓第三方回答的證據性問題。</p>
+
+        <p>物理世界照護交叉點還產生最長的證據時間線。2026年關於患者照護的決策，可能在2034年啟動的訴訟中需要審查。問責架構不僅必須保留決策記錄，還必須保留足夠的背景——模型版本、訓練數據時效、感測器校準狀態、硬件證明鏈——以允許八年後的第三方重建智能體在做什麼及為什麼。為八年證據窗口設計，與為六個月後的操作審計設計，是本質不同的要求。</p>
+
+        <h2>核心差距</h2>
+        <p>當今大多數AI智能體使用的問責架構是圍繞以下假設設計的：記錄由與生成記錄的一方共享相同操作背景的各方審查——相同的訪問權限、相同的技術詞彙、對記錄含義的相同假設。對抗性第三方審查——由法院、監管機構或訴訟中的對方當事人進行——有不同的要求。構建在兩種背景下都有效的問責架構，需要從一開始就為更難的情況進行設計，而不是在系統部署並啟動訴訟後再補充證據持久性。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>AI智能體問責記錄是為由共享相同背景的各方進行操作監督而構建的。法律訴訟施加了對抗性第三方審查，其證據標準是大多數問責架構未被設計來滿足的。三個具體差距出現在各交叉點：後量子簽名棄用追溯性地質疑記錄完整性；硬件生命週期事件破壞證明鏈；照護環境中漫長的證據時間線要求跨年保存決策背景。彌合這些差距需要從一開始就將證據持久性視為設計要求，而非事後補充。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-06</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
