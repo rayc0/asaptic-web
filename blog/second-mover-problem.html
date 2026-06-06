@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The second-mover problem — Asaptic Labs</title>
+
+  <meta name="description" content="Every AI agent deployment has a history. The second-mover problem arises when an agent's accountability for a current outcome cannot be separated from the consequences of prior actions it did not take." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/second-mover-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The second-mover problem: accountability when an AI agent inherits consequences it did not create" />
+  <meta property="og:description" content="An agent that rotates keys it did not generate, monitors a patient mid-trajectory, or operates hardware it did not configure inherits the security properties and accountability debts of prior decisions. The audit trail does not distinguish inherited from originated consequences." />
+  <meta property="og:url" content="https://asaptic.com/blog/second-mover-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-06" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The second-mover problem: accountability when an AI agent inherits consequences it did not create",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-06",
+    "description": "Every AI agent deployment has a history. The second-mover problem arises when an agent's accountability for a current outcome cannot be separated from the consequences of prior actions it did not take.",
+    "url": "https://asaptic.com/blog/second-mover-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The second-mover problem: accountability when an AI agent inherits consequences it did not create</h1>
+      <p class="essay-subtitle">Every AI agent deployment has a history the agent did not write. The second-mover problem arises when an agent's accountability for a current outcome cannot be separated from the consequences of prior decisions it did not make.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-06</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>The standard accountability model for AI agents assumes a clean origination point: an agent is deployed, it acts, its actions are logged, and when something goes wrong the log is consulted. This model works well when the agent's entire operating history is its own. Most agents, in practice, are not first movers. They inherit. They take over a patient mid-care. They operate hardware they did not commission. They manage cryptographic material they did not generate. They apply authorization policies established before they existed. The second-mover problem is what happens to accountability when the history the agent inherits shaped the outcome the agent is now accountable for.</p>
+
+        <p>The problem is not that the inheriting agent is unaware of history. It may have access to prior records, configuration snapshots, and audit logs from earlier operations. The problem is structural: the agent's accountability record begins when it begins, but the causal chain producing current outcomes may extend much further back. When an adverse outcome occurs, the investigation must attribute cause across a boundary the accountability architecture was not designed to traverse. Prior decisions — made by earlier agent versions, human operators, or system integrators — are often not represented in the current agent's record in a form that supports causal attribution. The inherited consequence has become the agent's opening condition, and the opening condition looks, from the current log, like ground truth.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>Cryptographic key material has a lifecycle that rarely aligns with agent deployment cycles. An agent that takes over key management mid-lifecycle inherits key material it did not generate under conditions it did not set. If the keys were generated under a classical algorithm now considered vulnerable, or under practices that predate current standards, the second-mover agent's security guarantees are bounded by that inherited material — regardless of the current agent's own practices. The agent may be operating with full compliance with current standards while depending on a root of trust that was compromised before it arrived.</p>
+
+        <p>This creates an accountability asymmetry. If a decryption failure or key compromise is later traced to the inherited material, the attribution question — whose practices produced the weakness? — cannot be answered by examining only the current agent's record. The second-mover agent's log is clean. The vulnerability predates the log's first entry. Post-quantum signatures on current operations prove their own integrity; they do not certify the integrity of the substrate the operations were built on. Inheritance accountability requires that the handover moment be recorded as a distinct event, with an explicit snapshot of the key material state, provenance assertions, and any known weaknesses acknowledged at transfer time.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware configurations established at deployment persist through extended device lifetimes. When a new agent instance begins operating on hardware it did not commission, it inherits the security properties — and security debts — encoded in that device's configuration. Firmware versions acceptable at initial deployment may fall below current standards during the agent's tenure. Attestation keys generated under earlier assumptions may carry weaker guarantees than current specifications require. Physical security controls established at installation may have degraded through wear, environmental exposure, or facility changes the agent cannot observe.</p>
+
+        <p>Hardware attestation answers the question: is this device currently running authorized firmware in a verified state? It does not answer: who decided what firmware was authorized, or whether that decision would be made the same way today? When the current agent issues an attestation-backed claim, it is asserting that the device matches its current authorization profile. It is not asserting that the authorization profile itself was designed to meet current security requirements. The second-mover agent inherits both the hardware state and the authorization baseline. If that baseline was set incorrectly or has since become inadequate, the agent's attestation claims are formally correct and substantively incomplete.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>Care continuity means most clinical agents encounter patients mid-trajectory. The care plan the agent is executing was established before it was deployed. Medications were already prescribed. Interventions already taken cannot be reversed. Clinical observations from prior care episodes inform current risk assessments. The agent inherits not just data but clinical obligations — commitments to a course of action that were made under a different operating context and cannot be unilaterally revised without clinical justification that the agent itself may not be positioned to provide.</p>
+
+        <p>When an adverse outcome occurs, clinical accountability review must ask: was this outcome shaped by current decisions, by inherited care plan elements, or by the interaction between them? That question is rarely answerable from the current agent's record alone. The prior care record is a separate system, with separate provenance, produced under different accountability standards. The second-mover agent acted on information and constraints it did not originate. Its log reflects what it did; it does not reflect why those were the available choices. Care accountability architecture that does not explicitly represent the handover state — what the agent received, under what conditions, with what obligations already in force — cannot reliably answer questions about which decisions actually drove the outcome.</p>
+
+        <h2>The inheritance record as an accountability primitive</h2>
+        <p>The design response to the second-mover problem is an inheritance record: a structured, signed snapshot produced at the moment an agent takes responsibility for an ongoing deployment. The inheritance record captures the state the agent received — key material provenance and age, hardware configuration and known deviations from current standards, care plan obligations already in force and their originating context. It is not a disclaimer. It is the accountability anchor that makes subsequent investigation tractable.</p>
+
+        <p>Without an inheritance record, investigation of second-mover outcomes degrades into archaeology: piecing together prior state from fragmentary sources, each with its own provenance and reliability profile. With one, the handover moment is a documented fact, and causal attribution can be divided cleanly into what the agent inherited and what it subsequently introduced. The inheritance record does not fix the underlying accountability gap — prior decisions can still produce future consequences — but it makes the boundary between inherited and originated consequences visible in the audit trail. At all three crossings, that visibility is the minimum condition for accountable deployment.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>Most AI agents are not first movers: they inherit cryptographic material they did not generate, hardware they did not configure, and care plans they did not establish. When adverse outcomes occur, the causal chain extends across a boundary the accountability architecture was not designed to traverse. The design response is an inheritance record — a structured snapshot produced at handover that captures the state the agent received, the provenance of that state, and any known weaknesses acknowledged at transfer. Without it, the audit trail treats inherited consequences as the agent's own opening conditions, making sound causal attribution impossible.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>AI智能体的标准问责模型假设一个清晰的起源点：智能体被部署、采取行动、记录日志，出现问题时查阅日志。当智能体的完整运营历史是其自己的时候，这个模型运作良好。然而在实践中，大多数智能体不是第一行动者。它们继承。它们接手处于照护中途的患者。它们操作并非自己调试的硬件。它们管理并非自己生成的密码材料。它们应用在自己存在之前就已建立的授权策略。第二行动者问题就是：当智能体继承的历史已经塑造了其现在承担责任的结果时，问责制会发生什么。</p>
+
+        <p>问题不在于继承智能体对历史不知情。它可能可以访问先前记录、配置快照以及早期操作的审计日志。问题是结构性的：智能体的问责记录从其开始时开始，但产生当前结果的因果链可能延伸得更远。当发生不良结果时，调查必须跨越问责架构并非设计来穿越的边界进行因果归因。早期决定——由较早的智能体版本、人类操作员或系统集成商做出——通常不以支持因果归因的形式在当前智能体的记录中体现。继承的后果已经成为智能体的起始条件，而起始条件从当前日志来看就像是客观事实。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>密码密钥材料有一个生命周期，很少与智能体部署周期对齐。接管密钥管理中途的智能体继承了它未在自己设定的条件下生成的密钥材料。如果密钥是在现在被认为存在漏洞的经典算法下生成的，或在早于当前标准的实践下生成的，那么第二行动者智能体的安全保证受到该继承材料的限制——无论当前智能体自身的实践如何。智能体可能在完全符合当前标准的情况下运作，同时依赖于在其到来之前就已被破坏的信任根。</p>
+
+        <p>这造成了问责不对称。如果解密失败或密钥泄露后来被追溯到继承的材料，归因问题——谁的实践产生了弱点？——无法仅通过检查当前智能体的记录来回答。第二行动者智能体的日志是干净的。漏洞早于日志的第一条记录。对当前操作的后量子签名证明了它们自身的完整性；它们不能证明操作所建立的底层基础的完整性。继承问责要求将移交时刻记录为一个独立事件，其中包含密钥材料状态的明确快照、来源断言以及移交时承认的任何已知弱点。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>部署时建立的硬件配置在设备的延长使用寿命中持续存在。当新的智能体实例开始在其未调试的硬件上运行时，它继承了该设备配置中编码的安全属性和安全债务。初始部署时可接受的固件版本可能在智能体任期内低于当前标准。在早期假设下生成的认证密钥可能比当前规范要求的保证更弱。安装时建立的物理安全控制可能因磨损、环境暴露或智能体无法观察的设施变化而退化。</p>
+
+        <p>硬件证明回答了这个问题：该设备当前是否在已验证状态下运行授权固件？它没有回答：谁决定了什么固件是被授权的，或者今天是否会做出同样的决定？当前智能体发出基于证明的声明时，它断言该设备与其当前授权配置文件匹配。它不断言授权配置文件本身是按照当前安全要求设计的。第二行动者智能体继承了硬件状态和授权基线。如果该基线设置不正确或此后已变得不足，智能体的证明声明在形式上是正确的，但在实质上是不完整的。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>护理连续性意味着大多数临床智能体在患者轨迹中途遇到患者。智能体正在执行的护理计划是在其部署之前建立的。药物已经开具。已采取的干预措施无法逆转。来自先前护理事件的临床观察为当前风险评估提供信息。智能体不仅继承数据，还继承临床义务——在不同操作背景下做出的行动承诺，没有智能体本身可能无法提供的临床理由，就无法单方面修订。</p>
+
+        <p>当发生不良结果时，临床问责审查必须询问：该结果是由当前决定、继承的护理计划要素，还是两者之间的相互作用所塑造的？这个问题很少能仅凭当前智能体的记录来回答。先前的护理记录是一个独立的系统，具有独立的来源，在不同的问责标准下生成。第二行动者智能体基于它未发起的信息和约束采取行动。其日志反映了它所做的事；它不反映为什么那些是可用的选择。不明确代表移交状态的护理问责架构——智能体收到了什么、在什么条件下、已有哪些义务在执行——无法可靠地回答哪些决定实际上驱动了结果。</p>
+
+        <h2>继承记录作为问责原语</h2>
+        <p>第二行动者问题的设计回应是继承记录：一种在智能体对正在进行的部署承担责任时生成的结构化、签名快照。继承记录捕获智能体收到的状态——密钥材料来源和年龄、硬件配置以及与当前标准的已知偏差、已生效的护理计划义务及其发起背景。它不是免责声明，而是使后续调查可行的问责锚点。</p>
+
+        <p>没有继承记录，对第二行动者结果的调查会退化为考古：从碎片来源拼凑先前状态，每个来源都有其自己的来源和可靠性特征。有了继承记录，移交时刻就是一个有文件记录的事实，因果归因可以清晰地分为智能体继承的内容和随后引入的内容。继承记录并不能修复潜在的问责差距——先前的决定仍然可以产生未来的后果——但它使继承和发起的后果之间的边界在审计追踪中可见。在三个交叉点，这种可见性是可问责部署的最低条件。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>大多数AI智能体不是第一行动者：它们继承未自行生成的密码材料、未自行配置的硬件以及未自行制定的护理计划。当发生不良结果时，因果链跨越了问责架构并非设计来穿越的边界。设计回应是继承记录——一个在移交时生成的结构化快照，捕获智能体收到的状态、该状态的来源以及移交时承认的任何已知弱点。没有它，审计追踪将继承的后果视为智能体自身的起始条件，使合理的因果归因变得不可能。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>AI智能體的標準問責模型假設一個清晰的起源點：智能體被部署、採取行動、記錄日誌，出現問題時查閱日誌。當智能體的完整運營歷史是其自己的時候，這個模型運作良好。然而在實踐中，大多數智能體不是第一行動者。它們繼承。它們接手處於照護中途的患者。它們操作並非自己調試的硬件。它們管理並非自己生成的密碼材料。它們應用在自己存在之前就已建立的授權策略。第二行動者問題就是：當智能體繼承的歷史已經塑造了其現在承擔責任的結果時，問責制會發生什麼。</p>
+
+        <p>問題不在於繼承智能體對歷史不知情。它可能可以存取先前記錄、配置快照以及早期操作的稽核日誌。問題是結構性的：智能體的問責記錄從其開始時開始，但產生當前結果的因果鏈可能延伸得更遠。當發生不良結果時，調查必須跨越問責架構並非設計來穿越的邊界進行因果歸因。早期決定——由較早的智能體版本、人類操作員或系統整合商做出——通常不以支持因果歸因的形式在當前智能體的記錄中體現。繼承的後果已經成為智能體的起始條件，而起始條件從當前日誌來看就像是客觀事實。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>密碼金鑰材料有一個生命週期，很少與智能體部署週期對齊。接管金鑰管理中途的智能體繼承了它未在自己設定的條件下生成的金鑰材料。如果金鑰是在現在被認為存在漏洞的經典演算法下生成的，或在早於當前標準的實踐下生成的，那麼第二行動者智能體的安全保證受到該繼承材料的限制——無論當前智能體自身的實踐如何。智能體可能在完全符合當前標準的情況下運作，同時依賴於在其到來之前就已被破壞的信任根。</p>
+
+        <p>這造成了問責不對稱。如果解密失敗或金鑰洩露後來被追溯到繼承的材料，歸因問題——誰的實踐產生了弱點？——無法僅通過檢查當前智能體的記錄來回答。第二行動者智能體的日誌是乾淨的。漏洞早於日誌的第一條記錄。對當前操作的後量子簽名證明了它們自身的完整性；它們不能證明操作所建立的底層基礎的完整性。繼承問責要求將移交時刻記錄為一個獨立事件，其中包含金鑰材料狀態的明確快照、來源斷言以及移交時承認的任何已知弱點。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>部署時建立的硬件配置在設備的延長使用壽命中持續存在。當新的智能體實例開始在其未調試的硬件上運行時，它繼承了該設備配置中編碼的安全屬性和安全債務。初始部署時可接受的韌體版本可能在智能體任期內低於當前標準。在早期假設下生成的認證金鑰可能比當前規範要求的保證更弱。安裝時建立的實體安全控制可能因磨損、環境暴露或智能體無法觀察的設施變化而退化。</p>
+
+        <p>硬件證明回答了這個問題：該設備當前是否在已驗證狀態下運行授權韌體？它沒有回答：誰決定了什麼韌體是被授權的，或者今天是否會做出同樣的決定？當前智能體發出基於證明的聲明時，它斷言該設備與其當前授權配置文件匹配。它不斷言授權配置文件本身是按照當前安全要求設計的。第二行動者智能體繼承了硬件狀態和授權基線。如果該基線設置不正確或此後已變得不足，智能體的證明聲明在形式上是正確的，但在實質上是不完整的。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>護理連續性意味著大多數臨床智能體在患者軌跡中途遇到患者。智能體正在執行的護理計畫是在其部署之前建立的。藥物已經開具。已採取的干預措施無法逆轉。來自先前護理事件的臨床觀察為當前風險評估提供資訊。智能體不僅繼承數據，還繼承臨床義務——在不同操作背景下做出的行動承諾，沒有智能體本身可能無法提供的臨床理由，就無法單方面修訂。</p>
+
+        <p>當發生不良結果時，臨床問責審查必須詢問：該結果是由當前決定、繼承的護理計畫要素，還是兩者之間的相互作用所塑造的？這個問題很少能僅憑當前智能體的記錄來回答。先前的護理記錄是一個獨立的系統，具有獨立的來源，在不同的問責標準下生成。第二行動者智能體基於它未發起的資訊和約束採取行動。其日誌反映了它所做的事；它不反映為什麼那些是可用的選擇。不明確代表移交狀態的護理問責架構——智能體收到了什麼、在什麼條件下、已有哪些義務在執行——無法可靠地回答哪些決定實際上驅動了結果。</p>
+
+        <h2>繼承記錄作為問責原語</h2>
+        <p>第二行動者問題的設計回應是繼承記錄：一種在智能體對正在進行的部署承擔責任時生成的結構化、簽名快照。繼承記錄捕獲智能體收到的狀態——金鑰材料來源和年齡、硬件配置以及與當前標準的已知偏差、已生效的護理計畫義務及其發起背景。它不是免責聲明，而是使後續調查可行的問責錨點。</p>
+
+        <p>沒有繼承記錄，對第二行動者結果的調查會退化為考古：從碎片來源拼湊先前狀態，每個來源都有其自己的來源和可靠性特徵。有了繼承記錄，移交時刻就是一個有文件記錄的事實，因果歸因可以清晰地分為智能體繼承的內容和隨後引入的內容。繼承記錄並不能修復潛在的問責差距——先前的決定仍然可以產生未來的後果——但它使繼承和發起的後果之間的邊界在稽核追蹤中可見。在三個交叉點，這種可見性是可問責部署的最低條件。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>大多數AI智能體不是第一行動者：它們繼承未自行生成的密碼材料、未自行配置的硬件以及未自行制定的護理計畫。當發生不良結果時，因果鏈跨越了問責架構並非設計來穿越的邊界。設計回應是繼承記錄——一個在移交時生成的結構化快照，捕獲智能體收到的狀態、該狀態的來源以及移交時承認的任何已知弱點。沒有它，稽核追蹤將繼承的後果視為智能體自身的起始條件，使合理的因果歸因變得不可能。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-06</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
