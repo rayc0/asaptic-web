@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The invisible principal problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents take instructions from the principals who deployed them. In institutional settings, those principals are not the people the agent most directly affects. The person at the end of the care chain, the encrypted-data subject, the end user whose hardware carries an attested firmware state they never chose — these are the invisible principals: present in every consequence, absent from every authorization." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/invisible-principal-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The invisible principal problem: accountability when AI agents act for someone who has no standing in their authorization architecture" />
+  <meta property="og:description" content="AI agents take instructions from the principals who deployed them. In institutional settings, those principals are not the people the agent most directly affects — and the accountability architecture has no way to represent the interests of the person who can neither authorize nor refuse." />
+  <meta property="og:url" content="https://asaptic.com/blog/invisible-principal-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-07" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The invisible principal problem: accountability when AI agents act for someone who has no standing in their authorization architecture",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-07",
+    "description": "AI agents take instructions from the principals who deployed them. In institutional settings, those principals are not the people the agent most directly affects. The person at the end of the care chain, the encrypted-data subject, the end user whose hardware carries an attested firmware state they never chose — these are the invisible principals: present in every consequence, absent from every authorization.",
+    "url": "https://asaptic.com/blog/invisible-principal-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Physical-World Care × Post-Quantum Security × Hardware</div>
+      <h1 class="essay-title">The invisible principal problem: accountability when AI agents act for someone who has no standing in their authorization architecture</h1>
+      <p class="essay-subtitle">AI agents take instructions from the principals who deploy them. In institutional settings, those principals are rarely the people the agent most directly affects. The accountability gap that opens between the authorizing principal and the affected person is the invisible principal problem — and standard authorization frameworks have no mechanism to close it.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-07</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Every authorization architecture assumes that the principals who authorize an AI agent's actions are the people whose interests those actions are meant to serve. The assumption is rarely stated because it seems obvious. A patient authorizes a care agent to manage their medication schedule; the patient is both the authorizing principal and the beneficiary. An organization authorizes a key management agent; the organization bears the risk of a compromise. The architecture is designed with the principal and the affected party treated as one.</p>
+
+        <p>In practice, many of the highest-stakes AI agent deployments break this identity apart. The agent is authorized by one party and acts upon a different party — a party who has no formal standing in the authorization architecture, who cannot modify the agent's instructions, and who may not know the agent is acting on their behalf at all. This is the invisible principal problem: the person most consequentially affected by the agent's decisions is not represented in the accountability structure that governs them.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>The invisible principal problem is most acute in care settings. A care AI agent deployed by a facility is typically instructed by a combination of clinical protocols set by an operator organization, family representatives who hold legal surrogate authority, and regulatory compliance requirements set by a governance body. The patient — the person whose body the agent's decisions act upon — may participate in some consent interactions, but they are rarely positioned as a principal in the operational sense: they do not configure the agent, they cannot revoke its authority in real time, and the accountability record of the agent's actions is typically not accessible to them.</p>
+
+        <p>This arrangement can be entirely appropriate where a patient lacks decision-making capacity. The surrogate principal problem addresses that case. But the invisible principal problem is different: it applies equally when the patient has full capacity. A cognitively intact person in a care setting may have signed a general consent form at admission, but the agent that manages their day-to-day care may be configured by organizational policies they have never seen and updated on schedules they have no visibility into. Their preferences — as expressed in their daily interactions, their stated comfort levels, their observed responses — are input data to the agent, not instructions to it. They are sensed, not heard. The gap between being observed and being authorized is the invisible principal problem.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>The invisible principal problem appears in a less visible form at the cryptographic crossing. A key management AI agent operating within an enterprise manages the encryption state of data that belongs, in a meaningful sense, to the people whose information is encrypted — employees, customers, patients, research subjects. The people whose data is protected have a deep stake in every decision that agent makes: which algorithm it uses, how long keys are retained, whether a transition to a new cryptographic scheme is executed promptly or deferred. These are decisions that determine whether their data remains confidential under the threat models they face.</p>
+
+        <p>Yet data subjects are invisible in the authorization architecture that governs the agent. The agent is authorized by enterprise IT, overseen by a security function, and audited by a compliance team. The people whose data is at stake are present in none of these conversations. When a post-quantum migration is deferred because the organizational cost is high, the people whose data faces increasing exposure from harvest-now-decrypt-later strategies have no mechanism to object, no visibility into the decision, and no representation in the accountability record. Their interests are not weighed; they are not present to be weighed.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware AI agents that manage device attestation, firmware state, and security configuration operate in a similarly layered principal structure. An enterprise deploying AI-managed endpoints authorizes the agent to manage the hardware security posture of devices used by individual employees and customers. The agent's decisions — about which firmware baseline to enforce, which attestation scheme to trust, which devices to quarantine — directly affect the security environment of every person whose work or data runs on that hardware. Those individuals are not principals in the agent's authorization architecture. They are the surface on which the agent acts.</p>
+
+        <p>When a hardware configuration decision creates a security gap — an unpatched vulnerability deferred too long, an attestation standard allowed to decay — the people whose work and data are exposed bear the consequence. The agent was authorized by the enterprise; the enterprise's authorization framework was designed around enterprise risk. Individual exposure is not a first-class consideration in that framework. The individuals are invisible to the accountability structure even as they are entirely visible to the adversary.</p>
+
+        <h2>The structural gap</h2>
+        <p>Standard accountability frameworks handle the invisible principal problem in one of two inadequate ways. The first is to treat the authorizing principal as a proxy for the affected party: the enterprise represents its employees, the facility represents its residents, the operator represents its users. This conflation is sometimes reasonable, but it erodes under pressure. When the authorizing principal's interests diverge from the affected party's — when deferring a costly security upgrade benefits the enterprise but exposes employees, when a care protocol optimizes for facility efficiency rather than patient preference — the proxy assumption collapses silently, and no accountability mechanism flags the divergence.</p>
+
+        <p>The second approach is to treat the affected party as a subject of audit rather than a participant in authorization: their outcomes are monitored for compliance with standards set by others, but they are not positioned as principals whose interests the agent is affirmatively required to serve. Compliance audit is retrospective; the invisible principal problem is prospective. By the time an audit reveals that a care agent's configuration has systematically underserved the patients it manages, the cumulative harm has already accumulated across every interaction the agent conducted under that configuration.</p>
+
+        <p>A structurally sound response requires treating the invisible principal as a party with a defined standing in the accountability architecture — not necessarily as a co-authorizer of every decision, but as a party whose interests must be explicitly represented and whose stake in the agent's decisions must be surfaced in the authorization conversation. In care settings, this means building affected-party representation into the agent's configuration review cycles, not only into the initial consent interaction. In cryptographic and hardware settings, it means establishing a duty to the data subject that the authorization framework cannot waive away through institutional convenience. The invisible principal must become visible — not by giving every affected person real-time control over an agent they may not understand, but by ensuring that no authorization is treated as complete unless someone, with standing and accountability, has explicitly represented the interests of the person who cannot speak for themselves inside the system.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI agents in institutional settings are typically authorized by one party and act consequentially upon another. The affected party — the care resident, the employee whose device is managed, the data subject whose encrypted records are governed — has no standing in the authorization architecture that determines how the agent behaves. Standard approaches either treat the authorizing principal as an adequate proxy (which fails when interests diverge) or limit the affected party to compliance audit (which is retrospective). A structurally sound accountability architecture must treat the invisible principal as a party with defined standing: not necessarily as a co-authorizer of every decision, but as a party whose interests must be affirmatively represented before any authorization is treated as complete.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>每一个授权架构都假定授权AI智能体行动的委托方，就是那些行动旨在服务其利益的人。这一假设很少被明确说明，因为它看似显而易见。患者授权护理智能体管理其用药计划；患者既是授权委托方，也是受益方。组织授权密钥管理智能体；组织承担泄露的风险。该架构将委托方和受影响方视为同一方来设计。</p>
+
+        <p>在实践中，许多最高风险的AI智能体部署打破了这种同一性。智能体由一方授权，却作用于另一方——一个在授权架构中没有正式地位、无法修改智能体指令、甚至可能根本不知道智能体代表其行动的一方。这就是隐形委托方问题：最受智能体决策影响的人，在管理这些决策的问责结构中没有代表。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>隐形委托方问题在护理环境中最为突出。由机构部署的护理AI智能体通常接受来自多个来源的指令：运营机构设定的临床协议、持有法律代理权的家庭代表，以及治理机构设定的监管合规要求。患者——其身体受智能体决策影响的人——可能参与了某些同意互动，但他们很少在操作意义上被定位为委托方：他们不配置智能体，无法实时撤销其权限，智能体行动的问责记录通常对他们不可访问。</p>
+
+        <p>当患者缺乏决策能力时，这种安排可能完全合适。代理委托方问题处理的是那种情况。但隐形委托方问题有所不同：即使患者具有完全能力，它同样适用。护理环境中认知完整的人可能在入住时签署了一般同意书，但管理其日常护理的智能体可能根据他们从未见过的组织政策进行配置，并按他们无法了解的时间表更新。他们的偏好——在日常互动中表达的，其陈述的舒适程度，其观察到的反应——是智能体的输入数据，而非对其的指令。他们被感知，而非被倾听。被观察和被授权之间的差距就是隐形委托方问题。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>隐形委托方问题在密码交叉点以不太明显的形式出现。在企业内部运营的密钥管理AI智能体，管理着在有意义的意义上属于其信息被加密的人——员工、客户、患者、研究对象——的数据的加密状态。其数据受到保护的人，对该智能体做出的每个决策都有深切的利害关系：使用哪种算法、密钥保留多长时间、是否及时执行向新密码方案的过渡或推迟。这些决策决定了他们的数据是否在他们面临的威胁模型下保持机密。</p>
+
+        <p>然而，数据主体在管理智能体的授权架构中是不可见的。智能体由企业IT授权，由安全职能监督，由合规团队审计。其数据处于风险中的人在这些对话中都不在场。当因为组织成本高而推迟后量子迁移时，其数据面临来自现在收集未来解密策略日益增加风险的人，没有机制提出异议，没有决策透明度，在问责记录中也没有代表。他们的利益未被权衡；他们不在场，无法被权衡。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>管理设备认证、固件状态和安全配置的硬件AI智能体，在类似的分层委托方结构中运行。部署AI管理端点的企业授权智能体管理员工和客户使用设备的硬件安全态势。智能体的决策——关于执行哪个固件基准、信任哪种认证方案、隔离哪些设备——直接影响每个在该硬件上运行工作或数据的人的安全环境。那些个人不是智能体授权架构中的委托方。他们是智能体作用的表面。</p>
+
+        <p>当硬件配置决策造成安全缺口——推迟太久的未修补漏洞、允许衰减的认证标准——工作和数据被暴露的人承担后果。智能体由企业授权；企业的授权框架是围绕企业风险设计的。个人风险在该框架中不是一等考虑因素。即使个人对对手完全可见，在问责结构中他们仍然不可见。</p>
+
+        <h2>结构性差距</h2>
+        <p>标准问责框架以两种不充分的方式处理隐形委托方问题。第一种是将授权委托方视为受影响方的代理：企业代表其员工，机构代表其居民，运营商代表其用户。这种合并有时合理，但在压力下会侵蚀。当授权委托方的利益与受影响方利益分歧时——当推迟代价高昂的安全升级使企业受益但使员工暴露，当护理协议为机构效率而非患者偏好优化时——代理假设无声崩溃，没有问责机制标记这种分歧。</p>
+
+        <p>第二种方法是将受影响方视为审计对象而非授权参与者：他们的结果按照他人设定的标准进行合规监控，但他们没有被定位为智能体有义务服务其利益的委托方。合规审计是回顾性的；隐形委托方问题是前瞻性的。当审计揭示护理智能体的配置系统性地未能满足其管理的患者时，累积的伤害已经在智能体在该配置下进行的每次互动中积累。</p>
+
+        <p>结构上合理的回应要求将隐形委托方视为在问责架构中具有明确地位的一方——不一定是每个决策的共同授权者，而是其利益必须得到明确代表、其在智能体决策中的利害关系必须在授权对话中浮出水面的一方。在护理环境中，这意味着将受影响方的代表纳入智能体的配置审查周期，而不仅仅是纳入初始同意互动。在密码和硬件环境中，这意味着建立对数据主体的义务，使授权框架不能以机构便利性来免除。隐形委托方必须变得可见——不是通过给予每个受影响的人对他们可能不理解的智能体的实时控制，而是确保没有任何授权被视为完整，除非有人，具有地位和问责，明确代表了无法在系统内为自己发声的人的利益。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>机构环境中的AI智能体通常由一方授权，并对另一方产生重大影响。受影响方——护理居民、设备被管理的员工、加密记录被治理的数据主体——在决定智能体行为的授权架构中没有地位。标准方法要么将授权委托方视为充分代理（当利益分歧时失效），要么将受影响方限于合规审计（这是回顾性的）。结构上合理的问责架构必须将隐形委托方视为具有明确地位的一方：不一定是每个决策的共同授权者，而是其利益必须在任何授权被视为完整之前得到积极代表的一方。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>每一個授權架構都假定授權AI智能體行動的委託方，就是那些行動旨在服務其利益的人。這一假設很少被明確說明，因為它看似顯而易見。患者授權護理智能體管理其用藥計劃；患者既是授權委託方，也是受益方。組織授權金鑰管理智能體；組織承擔洩露的風險。該架構將委託方和受影響方視為同一方來設計。</p>
+
+        <p>在實踐中，許多最高風險的AI智能體部署打破了這種同一性。智能體由一方授權，卻作用於另一方——一個在授權架構中沒有正式地位、無法修改智能體指令、甚至可能根本不知道智能體代表其行動的一方。這就是隱形委託方問題：最受智能體決策影響的人，在管理這些決策的問責結構中沒有代表。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>隱形委託方問題在護理環境中最為突出。由機構部署的護理AI智能體通常接受來自多個來源的指令：營運機構設定的臨床協議、持有法律代理權的家庭代表，以及治理機構設定的監管合規要求。患者——其身體受智能體決策影響的人——可能參與了某些同意互動，但他們很少在操作意義上被定位為委託方：他們不配置智能體，無法即時撤銷其權限，智能體行動的問責記錄通常對他們不可訪問。</p>
+
+        <p>當患者缺乏決策能力時，這種安排可能完全合適。代理委託方問題處理的是那種情況。但隱形委託方問題有所不同：即使患者具有完全能力，它同樣適用。護理環境中認知完整的人可能在入住時簽署了一般同意書，但管理其日常護理的智能體可能根據他們從未見過的組織政策進行配置，並按他們無法了解的時間表更新。他們的偏好——在日常互動中表達的，其陳述的舒適程度，其觀察到的反應——是智能體的輸入資料，而非對其的指令。他們被感知，而非被傾聽。被觀察和被授權之間的差距就是隱形委託方問題。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>隱形委託方問題在密碼交叉點以不太明顯的形式出現。在企業內部營運的金鑰管理AI智能體，管理著在有意義的意義上屬於其資訊被加密的人——員工、客戶、患者、研究對象——的資料的加密狀態。其資料受到保護的人，對該智能體做出的每個決策都有深切的利害關係：使用哪種演算法、金鑰保留多長時間、是否及時執行向新密碼方案的過渡或推遲。這些決策決定了他們的資料是否在他們面臨的威脅模型下保持機密。</p>
+
+        <p>然而，資料主體在管理智能體的授權架構中是不可見的。智能體由企業IT授權，由安全職能監督，由合規團隊稽核。其資料處於風險中的人在這些對話中都不在場。當因為組織成本高而推遲後量子遷移時，其資料面臨來自現在收集未來解密策略日益增加風險的人，沒有機制提出異議，沒有決策透明度，在問責記錄中也沒有代表。他們的利益未被權衡；他們不在場，無法被權衡。</p>
+
+        <h2>在硬體交叉點</h2>
+        <p>管理設備認證、韌體狀態和安全配置的硬體AI智能體，在類似的分層委託方結構中運行。部署AI管理端點的企業授權智能體管理員工和客戶使用設備的硬體安全態勢。智能體的決策——關於執行哪個韌體基準、信任哪種認證方案、隔離哪些設備——直接影響每個在該硬體上運行工作或資料的人的安全環境。那些個人不是智能體授權架構中的委託方。他們是智能體作用的表面。</p>
+
+        <p>當硬體配置決策造成安全缺口——推遲太久的未修補漏洞、允許衰減的認證標準——工作和資料被暴露的人承擔後果。智能體由企業授權；企業的授權框架是圍繞企業風險設計的。個人風險在該框架中不是一等考慮因素。即使個人對對手完全可見，在問責結構中他們仍然不可見。</p>
+
+        <h2>結構性差距</h2>
+        <p>標準問責框架以兩種不充分的方式處理隱形委託方問題。第一種是將授權委託方視為受影響方的代理：企業代表其員工，機構代表其居民，營運商代表其用戶。這種合併有時合理，但在壓力下會侵蝕。當授權委託方的利益與受影響方利益分歧時——當推遲代價高昂的安全升級使企業受益但使員工暴露，當護理協議為機構效率而非患者偏好最佳化時——代理假設無聲崩潰，沒有問責機制標記這種分歧。</p>
+
+        <p>第二種方法是將受影響方視為稽核對象而非授權參與者：他們的結果按照他人設定的標準進行合規監控，但他們沒有被定位為智能體有義務服務其利益的委託方。合規稽核是回顧性的；隱形委託方問題是前瞻性的。當稽核揭示護理智能體的配置系統性地未能滿足其管理的患者時，累積的傷害已經在智能體在該配置下進行的每次互動中積累。</p>
+
+        <p>結構上合理的回應要求將隱形委託方視為在問責架構中具有明確地位的一方——不一定是每個決策的共同授權者，而是其利益必須得到明確代表、其在智能體決策中的利害關係必須在授權對話中浮出水面的一方。在護理環境中，這意味著將受影響方的代表納入智能體的配置審查週期，而不僅僅是納入初始同意互動。在密碼和硬體環境中，這意味著建立對資料主體的義務，使授權框架不能以機構便利性來免除。隱形委託方必須變得可見——不是通過給予每個受影響的人對他們可能不理解的智能體的即時控制，而是確保沒有任何授權被視為完整，除非有人，具有地位和問責，明確代表了無法在系統內為自己發聲的人的利益。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>機構環境中的AI智能體通常由一方授權，並對另一方產生重大影響。受影響方——護理居民、設備被管理的員工、加密記錄被治理的資料主體——在決定智能體行為的授權架構中沒有地位。標準方法要麼將授權委託方視為充分代理（當利益分歧時失效），要麼將受影響方限於合規稽核（這是回顧性的）。結構上合理的問責架構必須將隱形委託方視為具有明確地位的一方：不一定是每個決策的共同授權者，而是其利益必須在任何授權被視為完整之前得到積極代表的一方。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-07</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var btns = document.querySelectorAll('.lang-btn');
+      var sections = document.querySelectorAll('.essay-lang');
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var lang = this.getAttribute('data-lang');
+          btns.forEach(function (b) { b.classList.remove('active'); });
+          sections.forEach(function (s) { s.classList.remove('active'); });
+          this.classList.add('active');
+          var target = document.querySelector('[data-lang-content="' + lang + '"]');
+          if (target) target.classList.add('active');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
