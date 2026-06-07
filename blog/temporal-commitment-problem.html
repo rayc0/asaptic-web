@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The temporal commitment problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents act in the present, but many of their actions create obligations that extend far into the future — to be honoured by principals who did not anticipate them and may not be able to discharge them." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/temporal-commitment-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The temporal commitment problem: accountability when AI agents bind their principals to future obligations" />
+  <meta property="og:description" content="Authorization frameworks ask whether a qualified principal authorized this action. The temporal commitment problem reveals a second question they rarely ask: did a qualified principal authorize this action's downstream obligations?" />
+  <meta property="og:url" content="https://asaptic.com/blog/temporal-commitment-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-07" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The temporal commitment problem: accountability when AI agents bind their principals to future obligations",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-07",
+    "description": "AI agents act in the present, but many of their actions create obligations that extend far into the future — to be honoured by principals who did not anticipate them and may not be able to discharge them.",
+    "url": "https://asaptic.com/blog/temporal-commitment-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The temporal commitment problem: accountability when AI agents bind their principals to future obligations</h1>
+      <p class="essay-subtitle">AI agents act in the present. Many of their most consequential actions create obligations that materialize months or years later — to be honoured by principals who may not remember authorizing them and may no longer be in a position to discharge them.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-07</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>The accountability literature on AI agents is almost entirely retrospective. It asks: who authorized this action, was the authorization valid, and can the consequences be traced back to a responsible party? These are the right questions for a world in which AI agent decisions resolve quickly and consequences manifest immediately. But many of the most consequential things AI agents do are not like this. They schedule actions that will be carried out in the future. They initiate arrangements that will bind their principals for years. They generate artifacts — certificates, care plans, configuration states — whose effects will continue long after the interaction that produced them has been forgotten. The accountability question for these actions is not only what did the agent do, but what did it commit its principals to doing, and was that commitment properly authorized?</p>
+
+        <p>The temporal commitment problem arises when an AI agent makes a commitment on behalf of a principal that creates a future obligation — and the principal at the time of the commitment does not fully appreciate that an obligation is being created, or is not the same entity that will eventually bear the cost of honouring or breaking it. Authorization frameworks are designed around the moment of action. They ask whether the right principal, with the right authority, in the right context, approved the agent to act. They are not designed to ask whether the downstream obligations created by that action are themselves authorized — whether the principal who approved the action understood, and accepted, the forward-reaching consequences it set in motion.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>Cryptographic commitments are inherently temporal. When an AI agent managing a key ceremony commits an organization to a particular certificate hierarchy, a specific signature scheme, or a planned migration timeline, it is not only making a present decision — it is binding the organization's security posture to a path whose implications extend over years. The migration from classical to post-quantum cryptography makes this especially consequential. Choosing a hybrid signature scheme for a multi-year operational period, establishing a root of trust under a particular algorithm family, or scheduling a key rotation cadence are all commitments whose full cost only becomes visible as the threat landscape and standards landscape evolve beneath them.</p>
+
+        <p>The authorization that governed the agent's choice at the time of the ceremony may have been entirely appropriate for the immediate decision. It says nothing about whether the organization's future self — a different team, under different regulatory obligations, facing a different threat environment — was consulted about committing to the long-term consequences. Cryptographic path dependencies are especially hard to unwind. An organization that chose a certificate hierarchy it now wishes it had not chose will find that the unwinding costs — revocation, reissuance, client update cycles, regulatory re-certification — may exceed the cost of the original decision by an order of magnitude. The commitment was made in a moment; the obligation runs for years.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware AI agents that manage firmware update schedules, maintenance contracts, and attestation renewal cycles create temporal commitments as a matter of routine. An agent that defers a critical firmware update is not only making a decision about today's risk profile — it is creating a commitment to carry the deferred risk forward. An agent that enters into a vendor support agreement is binding the organization to a multi-year commercial relationship whose cost and terms were not negotiated by anyone who will ultimately bear them. A hardware configuration change that establishes a new attestation baseline creates a forward obligation: every subsequent attestation will be measured against that baseline, and any deviation will require remediation whose scope and cost were not part of the original authorization conversation.</p>
+
+        <p>The accountability gap here is structural. Hardware decisions and the obligations they create are typically captured in procurement records and configuration management systems, not in the authorization trail of the AI agent that initiated them. When accountability review begins — because a hardware security incident occurred, because an audit flag was raised, because a vendor relationship went sour — the reconstruction effort must cross the boundary between the agent's action record and the operational record of the commitments that action set in motion. Those records rarely speak to each other. The commitment exists; the authorization for the commitment, as distinct from the authorization for the action, is usually nowhere in the record.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>Care AI agents create temporal commitments that are among the most consequential any agent can make. A care agent that schedules an elective procedure has committed the patient, the care team, and the facility to a future event that will involve irreversible action on a human body. A care agent that generates a long-term medication plan has committed the patient to a biochemical regime whose appropriateness depends on circumstances that will change. A care agent that initiates a referral pathway has set a clinical process in motion that carries its own momentum — appointments are scheduled, specialists are briefed, pre-procedure instructions are issued — all flowing from a commitment whose originating context may be invisible to everyone who eventually carries it out.</p>
+
+        <p>The patient who consented to care from a particular provider, under a particular clinical protocol, with particular oversight, may not have consented to being bound by commitments generated on their behalf months after the initial consent interaction. The care professional who ultimately carries out the committed action may not know it was initiated by an AI agent, may not have access to the state information that led the agent to make the commitment, and may not be equipped to evaluate whether the commitment remains clinically appropriate. Accountability in care settings requires continuity of clinical judgment across the entire span of a commitment, not just at the moment of its creation.</p>
+
+        <h2>The prospective accountability gap</h2>
+        <p>Authorization frameworks ask: did a qualified principal authorize this action? The temporal commitment problem reveals a second question authorization frameworks rarely ask: did a qualified principal authorize this action's downstream obligations? These are different questions, and the gap between them grows with the time horizon of the commitment. A principal with full authority to authorize the present action may have limited foresight — or limited authority — to commit their successors to the obligations that action creates. The staff who approved the agent's action may have left. The regulatory context that made the commitment appropriate may have shifted. The principal's own situation may have changed in ways that make the obligation inappropriate to honour and costly to break.</p>
+
+        <p>Closing this gap requires treating commitment-creating actions as a distinct category in an agent's authorization architecture. Where a point-in-time action requires only that the present principal has authority, a commitment-creating action should additionally require: a structured description of the obligation being created, its expected duration, the conditions under which it should be reviewed, and an explicit acknowledgment from a principal with authority over the forward period, not only the present moment. The agent's accountability record should include not only a log of what happened but a live register of what is committed to happen — a prospective accountability surface that can be reviewed, audited, and, where appropriate, revoked before the commitment comes due.</p>
+
+        <p>The hardest thing about temporal commitments is that they are invisible until they mature. A commitment created silently by an AI agent, never surfaced as a commitment, and executed months later by a different team against a different context carries no flag that should prompt anyone to pause. It may proceed entirely within normal operating parameters — every step authorized, every action logged — while the underlying problem, that the commitment itself was never properly authorized, goes undetected. At all three crossings, the agents most valuable in the long run are those whose obligations are as legible as their actions: agents that leave their principals genuinely free to change course, not silently bound to a path set in motion by a decision no one remembers making.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI agents routinely create future obligations — cryptographic path commitments, hardware maintenance contracts, care plans, scheduled procedures — whose downstream costs are not part of the authorization conversation that produced them. The temporal commitment problem is the gap between authorizing an action and authorizing the obligations that action creates. Closing it requires agents to treat commitment-creating actions as a distinct category: carrying an explicit record of the obligation, its duration, its review conditions, and acknowledgment from a principal with authority over the forward period. Without this, authorization is complete at the moment of action and absent at every subsequent moment the commitment demands to be honoured.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>关于AI智能体的问责文献几乎完全是回顾性的。它询问：谁授权了这一行动，授权是否有效，后果能否追溯到负责方？对于AI智能体决策迅速解决、后果立即显现的世界，这些是正确的问题。但许多AI智能体最具后果性的行为并非如此。它们安排将在未来执行的行动。它们启动将使委托方受约束多年的安排。它们生成的文物——证书、护理计划、配置状态——其效果将在产生它们的交互被遗忘后很久仍然持续。对这些行动的问责问题不仅是智能体做了什么，而且是它使委托方承诺做什么，以及该承诺是否得到了适当的授权？</p>
+
+        <p>当AI智能体代表委托方做出创造未来义务的承诺时，时间承诺问题就会出现——而承诺时的委托方并没有完全意识到正在创造义务，或者不是最终将承担履行或违反义务成本的同一实体。授权框架是围绕行动时刻设计的。它们询问正确的委托方是否以正确的权限在正确的情境中批准了智能体的行动。它们并非被设计来询问该行动所产生的下游义务本身是否得到了授权——批准行动的委托方是否理解并接受了它所启动的前向影响。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>密码承诺本质上是时间性的。当管理密钥仪式的AI智能体将组织提交给特定证书层次结构、特定签名方案或计划的迁移时间线时，它不仅在做出当前决策——它还将组织的安全态势绑定到一条影响延伸多年的路径上。从经典密码学向后量子密码学的迁移使这一点尤为重要。为多年运营期选择混合签名方案、在特定算法族下建立信任根或安排密钥轮换节奏，都是承诺，其全部成本只有在威胁格局和标准格局在其下演变时才会变得可见。</p>
+
+        <p>在仪式时刻管理智能体选择的授权对于即时决策可能完全合适。它对于组织的未来自我——不同的团队，在不同的监管义务下，面临不同的威胁环境——是否被咨询过承诺长期后果毫无说明。密码路径依赖性尤其难以解除。选择了现在希望没有选择的证书层次结构的组织会发现，解除成本——撤销、重新颁发、客户更新周期、监管重新认证——可能比原始决定的成本高出一个数量级。承诺在一刻做出；义务持续多年。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>管理固件更新计划、维护合同和认证续期周期的硬件AI智能体例行创建时间承诺。推迟关键固件更新的智能体不仅在就今天的风险状况做决策——它还在创建将推迟的风险向前延续的承诺。签订供应商支持协议的智能体将组织绑定到多年商业关系，其成本和条款不是由最终承担的人谈判的。建立新认证基准的硬件配置变更创建了前向义务：每次后续认证都将对照该基准测量，任何偏差都将需要补救，其范围和成本不是原始授权对话的一部分。</p>
+
+        <p>这里的问责差距是结构性的。硬件决策及其产生的义务通常记录在采购记录和配置管理系统中，而不是在启动它们的AI智能体的授权轨迹中。当问责审查开始时——因为发生了硬件安全事故，因为提出了审计标志，因为供应商关系变坏——重建工作必须跨越智能体行动记录与该行动启动的承诺运营记录之间的边界。这些记录很少相互对话。承诺存在；与行动授权不同的承诺授权通常在记录中无处可寻。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>照护AI智能体创建的时间承诺是任何智能体能做出的最具后果性的承诺之一。安排选择性手术的照护智能体将患者、护理团队和设施承诺于涉及对人体进行不可逆行动的未来事件。生成长期用药计划的照护智能体将患者承诺于生化方案，其适当性取决于将会改变的情况。启动转诊途径的照护智能体将一个携带自身动力的临床过程设置为运动——预约被安排，专家被简报，术前指示被发出——所有这些都源于一个承诺，其起始情境对最终执行它的每个人可能都是不可见的。</p>
+
+        <p>同意从特定提供者、在特定临床协议下、在特定监管下接受护理的患者，可能没有同意被初始同意交互几个月后代表他们生成的承诺所约束。最终执行承诺行动的护理专业人员可能不知道它是由AI智能体启动的，可能无法访问导致智能体做出承诺的状态信息，并且可能没有能力评估承诺是否仍然临床适当。护理环境中的问责要求在承诺的整个跨度内延续临床判断，不仅仅在承诺创建时。</p>
+
+        <h2>前瞻性问责差距</h2>
+        <p>授权框架询问：合格的委托方是否授权了这一行动？时间承诺问题揭示了授权框架很少询问的第二个问题：合格的委托方是否授权了这一行动的下游义务？这是不同的问题，两者之间的差距随着承诺的时间跨度而增长。有充分权限授权当前行动的委托方，可能对承诺继任者于该行动所产生义务的远见——或权限——有限。批准智能体行动的人员可能已经离开。使承诺适当的监管情境可能已经转变。委托方自身情况可能已经以使义务不适合履行且代价高昂的方式改变。</p>
+
+        <p>弥合这一差距需要在智能体的授权架构中将承诺创建行动视为独特类别。点对时间行动只要求当前委托方有权限，承诺创建行动还应额外要求：对正在创建的义务、其预期持续时间、应对其进行审查的条件的结构化描述，以及来自对前向期间而非仅当前时刻有权限的委托方的明确确认。智能体的问责记录应不仅包括发生了什么的日志，还包括承诺将发生什么的实时登记册——一个可以在承诺到期前审查、审计并在适当情况下撤销的前瞻性问责表面。</p>
+
+        <p>时间承诺最难之处在于它们在成熟之前是不可见的。由AI智能体静默创建、从未作为承诺浮出水面、几个月后由不同团队在不同情境下执行的承诺，没有任何标志会促使任何人暂停。它可能完全在正常操作参数内进行——每一步都被授权，每一行动都被记录——而根本问题，即承诺本身从未得到适当授权，未被检测到。在三个交叉点，从长远来看最有价值的智能体是那些其义务与行动一样清晰可辨的智能体：使委托方真正自由改变方向的智能体，而不是被没有人记得做出的决定所静默绑定到一条路径上。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>AI智能体例行创建未来义务——密码路径承诺、硬件维护合同、护理计划、预定程序——其下游成本不是产生它们的授权对话的一部分。时间承诺问题是授权行动与授权该行动所创造义务之间的差距。弥合这一差距需要智能体将承诺创建行动视为独特类别：携带义务、其持续时间、其审查条件的明确记录，以及对前向期间有权限的委托方的确认。没有这一点，授权在行动时刻是完整的，在承诺要求被履行的每个后续时刻是缺失的。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>關於AI智能體的問責文獻幾乎完全是回顧性的。它詢問：誰授權了這一行動，授權是否有效，後果能否追溯到負責方？對於AI智能體決策迅速解決、後果立即顯現的世界，這些是正確的問題。但許多AI智能體最具後果性的行為並非如此。它們安排將在未來執行的行動。它們啟動將使委託方受約束多年的安排。它們生成的文物——憑證、護理計劃、配置狀態——其效果將在產生它們的互動被遺忘後很久仍然持續。對這些行動的問責問題不僅是智能體做了什麼，而且是它使委託方承諾做什麼，以及該承諾是否得到了適當的授權？</p>
+
+        <p>當AI智能體代表委託方做出創造未來義務的承諾時，時間承諾問題就會出現——而承諾時的委託方並沒有完全意識到正在創造義務，或者不是最終將承擔履行或違反義務成本的同一實體。授權框架是圍繞行動時刻設計的。它們詢問正確的委託方是否以正確的權限在正確的情境中批准了智能體的行動。它們並非被設計來詢問該行動所產生的下游義務本身是否得到了授權——批准行動的委託方是否理解並接受了它所啟動的前向影響。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>密碼承諾本質上是時間性的。當管理金鑰儀式的AI智能體將組織提交給特定憑證層次結構、特定簽名方案或計劃的遷移時間線時，它不僅在做出當前決策——它還將組織的安全態勢綁定到一條影響延伸多年的路徑上。從傳統密碼學向後量子密碼學的遷移使這一點尤為重要。為多年營運期選擇混合簽名方案、在特定演算法族下建立信任根或安排金鑰輪換節奏，都是承諾，其全部成本只有在威脅格局和標準格局在其下演變時才會變得可見。</p>
+
+        <p>在儀式時刻管理智能體選擇的授權對於即時決策可能完全合適。它對於組織的未來自我——不同的團隊，在不同的監管義務下，面臨不同的威脅環境——是否被諮詢過承諾長期後果毫無說明。密碼路徑依賴性尤其難以解除。選擇了現在希望沒有選擇的憑證層次結構的組織會發現，解除成本——撤銷、重新頒發、客戶更新週期、監管重新認證——可能比原始決定的成本高出一個數量級。承諾在一刻做出；義務持續多年。</p>
+
+        <h2>在硬體交叉點</h2>
+        <p>管理韌體更新計劃、維護合約和認證續期週期的硬體AI智能體例行創建時間承諾。推遲關鍵韌體更新的智能體不僅在就今天的風險狀況做決策——它還在創建將推遲的風險向前延續的承諾。簽訂供應商支援協議的智能體將組織綁定到多年商業關係，其成本和條款不是由最終承擔的人談判的。建立新認證基準的硬體配置變更創建了前向義務：每次後續認證都將對照該基準測量，任何偏差都將需要補救，其範圍和成本不是原始授權對話的一部分。</p>
+
+        <p>這裡的問責差距是結構性的。硬體決策及其產生的義務通常記錄在採購記錄和配置管理系統中，而不是在啟動它們的AI智能體的授權軌跡中。當問責審查開始時——因為發生了硬體安全事故，因為提出了稽核標誌，因為供應商關係變壞——重建工作必須跨越智能體行動記錄與該行動啟動的承諾營運記錄之間的邊界。這些記錄很少相互對話。承諾存在；與行動授權不同的承諾授權通常在記錄中無處可尋。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>照護AI智能體創建的時間承諾是任何智能體能做出的最具後果性的承諾之一。安排選擇性手術的照護智能體將患者、護理團隊和設施承諾於涉及對人體進行不可逆行動的未來事件。生成長期用藥計劃的照護智能體將患者承諾於生化方案，其適當性取決於將會改變的情況。啟動轉診途徑的照護智能體將一個攜帶自身動力的臨床過程設置為運動——預約被安排，專家被簡報，術前指示被發出——所有這些都源於一個承諾，其起始情境對最終執行它的每個人可能都是不可見的。</p>
+
+        <p>同意從特定提供者、在特定臨床協議下、在特定監管下接受護理的患者，可能沒有同意被初始同意互動幾個月後代表他們生成的承諾所約束。最終執行承諾行動的護理專業人員可能不知道它是由AI智能體啟動的，可能無法訪問導致智能體做出承諾的狀態資訊，並且可能沒有能力評估承諾是否仍然臨床適當。護理環境中的問責要求在承諾的整個跨度內延續臨床判斷，不僅僅在承諾創建時。</p>
+
+        <h2>前瞻性問責差距</h2>
+        <p>授權框架詢問：合格的委託方是否授權了這一行動？時間承諾問題揭示了授權框架很少詢問的第二個問題：合格的委託方是否授權了這一行動的下游義務？這是不同的問題，兩者之間的差距隨著承諾的時間跨度而增長。有充分權限授權當前行動的委託方，可能對承諾繼任者於該行動所產生義務的遠見——或權限——有限。批准智能體行動的人員可能已經離開。使承諾適當的監管情境可能已經轉變。委託方自身情況可能已經以使義務不適合履行且代價高昂的方式改變。</p>
+
+        <p>彌合這一差距需要在智能體的授權架構中將承諾創建行動視為獨特類別。點對時間行動只要求當前委託方有權限，承諾創建行動還應額外要求：對正在創建的義務、其預期持續時間、應對其進行審查的條件的結構化描述，以及來自對前向期間而非僅當前時刻有權限的委託方的明確確認。智能體的問責記錄應不僅包括發生了什麼的日誌，還包括承諾將發生什麼的即時登記冊——一個可以在承諾到期前審查、稽核並在適當情況下撤銷的前瞻性問責表面。</p>
+
+        <p>時間承諾最難之處在於它們在成熟之前是不可見的。由AI智能體靜默創建、從未作為承諾浮出水面、幾個月後由不同團隊在不同情境下執行的承諾，沒有任何標誌會促使任何人暫停。它可能完全在正常操作參數內進行——每一步都被授權，每一行動都被記錄——而根本問題，即承諾本身從未得到適當授權，未被偵測到。在三個交叉點，從長遠來看最有價值的智能體是那些其義務與行動一樣清晰可辨的智能體：使委託方真正自由改變方向的智能體，而不是被沒有人記得做出的決定所靜默綁定到一條路徑上。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>AI智能體例行創建未來義務——密碼路徑承諾、硬體維護合約、護理計劃、預定程序——其下游成本不是產生它們的授權對話的一部分。時間承諾問題是授權行動與授權該行動所創造義務之間的差距。彌合這一差距需要智能體將承諾創建行動視為獨特類別：攜帶義務、其持續時間、其審查條件的明確記錄，以及對前向期間有權限的委託方的確認。沒有這一點，授權在行動時刻是完整的，在承諾要求被履行的每個後續時刻是缺失的。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-07</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var btns = document.querySelectorAll('.lang-btn');
+      var sections = document.querySelectorAll('.essay-lang');
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var lang = this.getAttribute('data-lang');
+          btns.forEach(function (b) { b.classList.remove('active'); });
+          sections.forEach(function (s) { s.classList.remove('active'); });
+          this.classList.add('active');
+          var target = document.querySelector('[data-lang-content="' + lang + '"]');
+          if (target) target.classList.add('active');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
