@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The model monoculture problem — Asaptic Labs</title>
+
+  <meta name="description" content="When many deployed AI agents share the same underlying model, the assumption of independent errors fails. A systematic bias, a correlated blind spot, or a discoverable adversarial pattern in the shared weights affects every downstream deployment simultaneously — invisible at the agent level but material at the population level." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/model-monoculture-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The model monoculture problem: accountability when agents share a single foundation" />
+  <meta property="og:description" content="When many deployed AI agents share the same underlying model, the assumption of independent errors fails. A systematic bias, a correlated blind spot, or a discoverable adversarial pattern in the shared weights affects every downstream deployment simultaneously — invisible at the agent level but material at the population level." />
+  <meta property="og:url" content="https://asaptic.com/blog/model-monoculture-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-07" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The model monoculture problem: accountability when agents share a single foundation",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-07",
+    "description": "When many deployed AI agents share the same underlying model, the assumption of independent errors fails. A systematic bias, a correlated blind spot, or a discoverable adversarial pattern in the shared weights affects every downstream deployment simultaneously — invisible at the agent level but material at the population level.",
+    "url": "https://asaptic.com/blog/model-monoculture-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The model monoculture problem: accountability when agents share a single foundation</h1>
+      <p class="essay-subtitle">When many deployed AI agents share the same underlying model, the assumption of independent errors fails. A systematic bias, a correlated blind spot, or a discoverable adversarial pattern in the shared weights affects every downstream deployment simultaneously — invisible at the agent level but material at the population level.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-07</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Risk management for AI agents typically treats the individual agent as the unit of concern: does this agent perform reliably, within its authorization, in its specific deployment context? The accountability architecture assesses each agent on its own record. What this architecture cannot see is the risk that accumulates when many agents share the same underlying model. Individual records may all look clean while a systematic bias, a correlated blind spot, or a discoverable adversarial pattern runs through the shared weights — invisible at the agent level but material at the population level. That is the model monoculture problem.</p>
+
+        <p>The term is borrowed from ecology, where monocultures sustain high productivity until a single pathogen exploits the uniformity and collapses the entire crop simultaneously. The analogous dynamic in AI deployments is less dramatic but structurally equivalent: the shared foundation means the errors are correlated, and correlated errors at the population scale can represent a more serious accountability failure than many independent local errors ever would.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>Cryptographic migration depends on AI-assisted tooling deciding which algorithms to prioritize, which timelines to accept, and which legacy systems to flag. Where many such agents are trained on the same foundation model, their recommendations correlate structurally, not just empirically. If the shared model has internalized a preference for one algorithm family — reflecting the distribution of its training corpus rather than the current technical consensus — those agents collectively amplify that preference across every system they advise.</p>
+
+        <p>The accountability problem is that this collective bias is invisible to any individual deployment review. Each agent's recommendations pass a sensible validation check. No individual agent can be cited for deviation. The collective recommendation — which shapes migration decisions for infrastructure that will persist for decades — reflects the distribution of a shared model, not the distributed judgment of independent experts. The independence assumption that underlies risk aggregation does not hold, and the accountability architecture that relies on it is structurally blind to the correlation.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware agents responsible for attestation, anomaly detection, and device health monitoring depend on the assumption that a new failure mode, once it appears in one device, will be detected by the agent monitoring that device. When many hardware agents share a foundation model, this independence assumption fails. A failure mode that falls outside the shared model's training distribution will be missed not by one agent but by all agents that share the weights — simultaneously, across every device in the population they monitor.</p>
+
+        <p>This creates a category of risk that is structural rather than incidental. An adversary who discovers that a particular input pattern is handled anomalously by the shared model has effectively found an attack surface that applies to every deployment using those weights. The accountability record for each individual device looks clean because no individual agent triggered an alert. The population-level attack surface exists entirely outside the individual accountability perimeter — it is a risk that the architecture was never designed to see.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>In care settings, the model monoculture problem has consequences that reach individual people directly. If many care agents share a foundation model with a systematic gap in how it represents certain conditions — a population underrepresented in training, a symptom pattern correlated with a demographic the corpus did not adequately cover — that gap propagates uniformly to every patient managed by an agent trained on those weights.</p>
+
+        <p>Individual care records show appropriate decision processes. Individual agents pass case-by-case review. But the shared gap means that a particular class of patient will consistently receive recommendations shaped by a model that systematically underrepresented their condition — not because any individual agent is misconfigured, but because the structural correlation in the shared weights is a population-level risk that individual accountability review was never designed to surface. The individual accountability architecture certifies each agent; it cannot certify the quality of care for the population the collective serves.</p>
+
+        <h2>Diversity as accountability</h2>
+        <p>The model monoculture problem calls for a population-level view of AI accountability that does not yet routinely exist. Individual agent review, audit logging, and behavioral monitoring cannot surface risks that are only visible in the correlation structure of a deployment population. The accountability gap is not a failure of any individual agent review — each review may have been conducted correctly. The gap is that the reviews were never designed to ask the population-level question.</p>
+
+        <p>Addressing it requires diversity-aware deployment policy: explicitly tracking which agents share common foundation models, modeling the correlated risk surface those shared weights create, and maintaining a minimum level of architectural diversity in critical deployment populations. The accountability architecture must be able to ask not just "how did this agent perform?" but "what are the correlated failure modes across every agent that shares its foundation, and are we monitoring at the level where those failures would become visible?"</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>When many AI agents share the same underlying model, their errors are correlated, not independent. A systematic bias, a blind spot, or a discoverable adversarial pattern in the shared weights affects every downstream deployment simultaneously — invisible to individual audit but material at the population level. Addressing the model monoculture problem requires diversity-aware deployment policy and accountability frameworks that can ask the population-level question, not only the per-agent one.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>AI智能体的风险管理通常将单个智能体视为关注单元：该智能体在其特定部署环境中是否可靠地在授权范围内运行？问责架构基于每个智能体自身的记录进行评估。而这一架构所无法看到的，是当许多智能体共享相同底层模型时积累的风险。各个智能体的记录可能看起来都很清晰，但系统性偏差、相关盲点或可发现的对抗性模式却渗透在共享的模型权重中——在单个智能体层面不可见，但在群体层面具有实质影响。这就是模型单一文化问题。</p>
+
+        <p>这一术语借鉴自生态学，单一作物在一种病原体利用其均一性后会同时崩溃。AI部署中的类似动态不那么戏剧化，但在结构上等同：共享基础意味着错误是相关的，而群体规模上的相关错误所代表的问责失败，可能远比许多独立的本地错误更为严重。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>密码迁移依赖于AI辅助工具来决定优先考虑哪些算法、接受哪些时间表以及标记哪些遗留系统。当许多此类智能体在相同的基础模型上训练时，它们的建议在结构上而非仅仅在经验上是相关的。如果共享模型内化了对某一算法族的偏好——反映的是其训练语料库的分布而非当前的技术共识——这些智能体就会在它们所建议的每个系统中集体放大这一偏好。</p>
+
+        <p>问责问题在于，这种集体偏差对任何单独的部署审查都是不可见的。每个智能体的建议都能通过合理的验证检查。没有任何单个智能体可被指出有偏差。这种集体建议——它影响着将持续数十年的基础设施的迁移决策——反映的是共享模型的分布，而非独立专家的分散判断。风险聚合所依赖的独立性假设并不成立，而依赖这一假设的问责架构在结构上对相关性是盲目的。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>负责认证、异常检测和设备健康监控的硬件智能体，依赖于这样一个假设：一旦某个新故障模式出现在某台设备上，监控该设备的智能体就会检测到它。当许多硬件智能体共享一个基础模型时，这一独立性假设就会失效。一种超出共享模型训练分布的故障模式，不会仅被一个智能体遗漏，而会被所有共享权重的智能体同时遗漏——横跨它们所监控群体中的每台设备。</p>
+
+        <p>这创造了一类结构性而非偶然性的风险。发现共享模型对某种特定输入模式处理异常的对手，实际上已找到了适用于所有使用这些权重的部署的攻击面。每台单独设备的问责记录看起来都是清晰的，因为没有任何单个智能体触发警报。群体级攻击面完全存在于单个问责边界之外——这是该架构从未被设计来察觉的风险。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>在照护环境中，模型单一文化问题的后果直接触及每个人。如果许多照护智能体共享一个在某些病症表征上存在系统性缺口的基础模型——训练中代表性不足的群体、与语料库覆盖不充分的人口特征相关的症状模式——该缺口就会均匀地传播到由这些权重训练的智能体所管理的每位患者。</p>
+
+        <p>单个护理记录显示出适当的决策过程。单个智能体通过逐案审查。但共享的缺口意味着某一类患者将持续收到由系统性低估其病情的模型所形成的建议——不是因为任何单个智能体配置错误，而是因为共享权重中的结构性相关性是一种群体级风险，而个体问责审查从未被设计为能够发现这种风险。个体问责架构认证每个智能体；它无法认证集体所服务群体的护理质量。</p>
+
+        <h2>多样性即问责</h2>
+        <p>模型单一文化问题呼唤一种目前尚不常规存在的群体级AI问责视角。单个智能体审查、审计日志和行为监控无法发现仅在部署群体的相关性结构中才可见的风险。问责缺口并非任何单个智能体审查的失败——每次审查可能都被正确执行。缺口在于，这些审查从未被设计为提出群体级问题。</p>
+
+        <p>解决这一问题需要具备多样性意识的部署政策：明确追踪哪些智能体共享相同的基础模型，建模这些共享权重所创造的相关风险面，并在关键部署群体中维持最低程度的架构多样性。问责架构必须能够不仅询问"这个智能体表现如何？"，还要询问"共享其基础的所有智能体的相关故障模式是什么，我们是否在这些故障变得可见的层面进行了监控？"</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>当许多AI智能体共享相同的底层模型时，它们的错误是相关的而非独立的。共享权重中的系统性偏差、盲点或可发现的对抗性模式会同时影响每个下游部署——对个体审计不可见，但在群体层面具有实质意义。解决模型单一文化问题需要具备多样性意识的部署政策，以及能够提出群体级问题而不仅仅是单个智能体问题的问责框架。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>AI智能體的風險管理通常將單個智能體視為關注單元：該智能體在其特定部署環境中是否可靠地在授權範圍內運行？問責架構基於每個智能體自身的記錄進行評估。而這一架構所無法看到的，是當許多智能體共享相同底層模型時積累的風險。各個智能體的記錄可能看起來都很清晰，但系統性偏差、相關盲點或可發現的對抗性模式卻滲透在共享的模型權重中——在單個智能體層面不可見，但在群體層面具有實質影響。這就是模型單一文化問題。</p>
+
+        <p>這一術語借鑑自生態學，單一作物在一種病原體利用其均一性後會同時崩潰。AI部署中的類似動態不那麼戲劇化，但在結構上等同：共享基礎意味著錯誤是相關的，而群體規模上的相關錯誤所代表的問責失敗，可能遠比許多獨立的本地錯誤更為嚴重。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>密碼遷移依賴於AI輔助工具來決定優先考慮哪些演算法、接受哪些時間表以及標記哪些遺留系統。當許多此類智能體在相同的基礎模型上訓練時，它們的建議在結構上而非僅僅在經驗上是相關的。如果共享模型內化了對某一演算法族的偏好——反映的是其訓練語料庫的分佈而非當前的技術共識——這些智能體就會在它們所建議的每個系統中集體放大這一偏好。</p>
+
+        <p>問責問題在於，這種集體偏差對任何單獨的部署審查都是不可見的。每個智能體的建議都能通過合理的驗證檢查。沒有任何單個智能體可被指出有偏差。這種集體建議——它影響著將持續數十年的基礎設施的遷移決策——反映的是共享模型的分佈，而非獨立專家的分散判斷。風險聚合所依賴的獨立性假設並不成立，而依賴這一假設的問責架構在結構上對相關性是盲目的。</p>
+
+        <h2>在硬體交叉點</h2>
+        <p>負責認證、異常檢測和設備健康監控的硬體智能體，依賴於這樣一個假設：一旦某個新故障模式出現在某台設備上，監控該設備的智能體就會檢測到它。當許多硬體智能體共享一個基礎模型時，這一獨立性假設就會失效。一種超出共享模型訓練分佈的故障模式，不會僅被一個智能體遺漏，而會被所有共享權重的智能體同時遺漏——橫跨它們所監控群體中的每台設備。</p>
+
+        <p>這創造了一類結構性而非偶然性的風險。發現共享模型對某種特定輸入模式處理異常的對手，實際上已找到了適用於所有使用這些權重的部署的攻擊面。每台單獨設備的問責記錄看起來都是清晰的，因為沒有任何單個智能體觸發警報。群體級攻擊面完全存在於單個問責邊界之外——這是該架構從未被設計來察覺的風險。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>在照護環境中，模型單一文化問題的後果直接觸及每個人。如果許多照護智能體共享一個在某些病症表徵上存在系統性缺口的基礎模型——訓練中代表性不足的群體、與語料庫覆蓋不充分的人口特徵相關的症狀模式——該缺口就會均勻地傳播到由這些權重訓練的智能體所管理的每位患者。</p>
+
+        <p>單個護理記錄顯示出適當的決策過程。單個智能體通過逐案審查。但共享的缺口意味著某一類患者將持續收到由系統性低估其病情的模型所形成的建議——不是因為任何單個智能體配置錯誤，而是因為共享權重中的結構性相關性是一種群體級風險，而個體問責審查從未被設計為能夠發現這種風險。個體問責架構認證每個智能體；它無法認證集體所服務群體的護理品質。</p>
+
+        <h2>多樣性即問責</h2>
+        <p>模型單一文化問題呼喚一種目前尚不常規存在的群體級AI問責視角。單個智能體審查、稽核日誌和行為監控無法發現僅在部署群體的相關性結構中才可見的風險。問責缺口並非任何單個智能體審查的失敗——每次審查可能都被正確執行。缺口在於，這些審查從未被設計為提出群體級問題。</p>
+
+        <p>解決這一問題需要具備多樣性意識的部署政策：明確追蹤哪些智能體共享相同的基礎模型，建模這些共享權重所創造的相關風險面，並在關鍵部署群體中維持最低程度的架構多樣性。問責架構必須能夠不僅詢問「這個智能體表現如何？」，還要詢問「共享其基礎的所有智能體的相關故障模式是什麼，我們是否在這些故障變得可見的層面進行了監控？」</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>當許多AI智能體共享相同的底層模型時，它們的錯誤是相關的而非獨立的。共享權重中的系統性偏差、盲點或可發現的對抗性模式會同時影響每個下游部署——對個體稽核不可見，但在群體層面具有實質意義。解決模型單一文化問題需要具備多樣性意識的部署政策，以及能夠提出群體級問題而不僅僅是單個智能體問題的問責框架。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-07</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var btns = document.querySelectorAll('.lang-btn');
+      var sections = document.querySelectorAll('.essay-lang');
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var lang = this.getAttribute('data-lang');
+          btns.forEach(function (b) { b.classList.remove('active'); });
+          sections.forEach(function (s) { s.classList.remove('active'); });
+          this.classList.add('active');
+          var target = document.querySelector('[data-lang-content="' + lang + '"]');
+          if (target) target.classList.add('active');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
