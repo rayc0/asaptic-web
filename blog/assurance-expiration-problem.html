@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The assurance expiration problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents are deployed under certifications, attestations, and clinical validations that were valid at the time of deployment. When the underlying conditions shift, the assurance decays — but the agent keeps running as though it has not." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/assurance-expiration-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The assurance expiration problem: accountability when the confidence behind a deployed AI agent silently decays" />
+  <meta property="og:description" content="AI agents are deployed under certifications, attestations, and clinical validations that were valid at the time of deployment. When the underlying conditions shift, the assurance decays — but the agent keeps running as though it has not." />
+  <meta property="og:url" content="https://asaptic.com/blog/assurance-expiration-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-07" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The assurance expiration problem: accountability when the confidence behind a deployed AI agent silently decays",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-07",
+    "description": "AI agents are deployed under certifications, attestations, and clinical validations that were valid at the time of deployment. When the underlying conditions shift, the assurance decays — but the agent keeps running as though it has not.",
+    "url": "https://asaptic.com/blog/assurance-expiration-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The assurance expiration problem: accountability when the confidence behind a deployed AI agent silently decays</h1>
+      <p class="essay-subtitle">AI agents are deployed under certifications, attestations, and clinical validations that were valid at the moment of deployment. The world then moves on — threat models evolve, evidence accumulates, standards change — while the assurance stays frozen. The agent keeps running. The accountability framework treats it as still assured.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-07</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Assurances are point-in-time claims. A security certification states that, as of the evaluation date and against the threat model in force at that time, the system met the specified requirements. A clinical validation states that, as of the study period and under the patient population and care protocols examined, the agent's outputs were within acceptable accuracy bounds. An attestation report states that, when the audit was conducted, the hardware and software configuration matched the reference baseline. None of these claims assert that the conditions underlying them will remain stable. All of them are routinely treated as though they will.</p>
+
+        <p>The assurance expiration problem is not about credentials with explicit expiry dates, which at least signal their own obsolescence. It is about the gap between the formal validity of an assurance and the practical validity of the confidence that assurance was meant to encode. When the threat landscape shifts beneath a security certification, the certificate does not change. When new clinical evidence revises the accuracy profile of a diagnostic agent, the regulatory clearance does not change. When a hardware vulnerability is discovered in a component class that was trusted at attestation time, the attestation record does not change. The assurance is formally intact. The underlying confidence has silently decayed.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>Cryptographic assurances are uniquely vulnerable to expiration because the conditions that make an algorithm secure are external to the algorithm itself. A signature scheme that was approved as quantum-resistant under the threat model of three years ago may be facing meaningfully different adversary capabilities today — not because the algorithm changed, but because the adversary did. Security certifications, compliance approvals, and algorithm endorsements are issued against a threat model that is current at the time of issuance. Post-quantum standardization is still evolving; the assurance that an organization's key management infrastructure meets the current standard is a claim whose half-life is difficult to estimate and whose expiration is rarely tracked.</p>
+
+        <p>The accountability gap here is precise: the principals who authorized the agent's deployment did so based on a certification that encoded a confidence level appropriate to the threat model at that time. If the threat model has materially shifted and no one has re-evaluated the certification against the new landscape, the authorization conversation that deployed the agent is no longer supported by the assurance it cited. The agent continues to operate. Decisions continue to be taken in reliance on its outputs. The accountability record reflects a certification that no longer means what it meant when it was issued. No flag is raised.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware security assurances expire in two distinct ways. The first is the standard end-of-support lifecycle: manufacturer endorsements, vulnerability monitoring programs, and firmware update availability all terminate at defined dates. An agent running on hardware whose manufacturer support has ended is running on a platform whose assurance is actively degrading — new vulnerabilities will be discovered and will not be patched, while the attestation report that was produced before the support window closed remains formally valid. The second mode of expiration is more subtle: hardware that was assurance-valid when deployed can become assurance-invalid through the discovery of vulnerabilities in the component class itself, even while the hardware and its endorsement remain unchanged in every formal sense.</p>
+
+        <p>In neither case does the hardware accountability record self-correct. The attestation chain reflects the state at evaluation time. An agent whose hardware trust foundation has eroded since deployment will continue to produce attestation reports that reference a baseline established when the foundation was sound. Operational review of those reports will not detect the erosion unless the review process is specifically designed to compare current hardware assurance status against the status at the time each baseline was established — a comparison that standard audit workflows do not perform.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>Clinical assurances expire against a different background: the accumulation of real-world evidence that may diverge from the controlled conditions of the original validation study. An AI agent cleared for a diagnostic or care-support function was validated against a study population, under study protocols, with a study-era clinical evidence base. As the agent is deployed into wider populations with different demographic profiles, as clinical guidelines are revised, as the evidence base for treatment pathways evolves, the accuracy and appropriateness profile that justified the original clearance may shift substantially — while the clearance itself remains in force and is routinely cited as the accountability basis for continuing deployment.</p>
+
+        <p>This expiration mode is particularly consequential in physical-world care because the people most affected by it — patients served by the agent in deployment populations that differ from the study population — are precisely the people least able to assess it. A care agent that performs well in a validation study conducted on a specific population and then is deployed into a population with meaningfully different characteristics carries its assurance forward intact. The care team relying on that assurance has no mechanism within the standard accountability architecture to determine whether the clearance still represents an adequate basis for the reliance they are placing on it.</p>
+
+        <h2>Designing for expiration awareness</h2>
+        <p>The assurance expiration problem is not solved by adding expiry dates to certifications, though explicit validity windows help by at least surfacing the issue. The deeper requirement is that accountability architectures treat assurances as living claims with ongoing validity conditions, not as permanent facts that decay only when a document expires. This means: assurance records should carry not only the conclusion of the evaluation but the conditions under which that conclusion was reached — the threat model, the evidence base, the population characteristics, the hardware generation. Accountability review should include a routine comparison between those conditions and current conditions. And the principals responsible for deployment decisions should receive structured notification when the gap between assurance conditions and current conditions has grown beyond a defined threshold.</p>
+
+        <p>At all three crossings, the hardest part of the assurance expiration problem is that nothing breaks in the moment of expiration. The agent produces outputs. The outputs are processed. Decisions are made. Every step is within normal parameters — because the normal parameters were calibrated against a confidence level that no longer obtains. The accountability failure, when it is eventually discovered, will typically be characterized as a governance failure — someone should have updated the certification, someone should have commissioned a new validation study, someone should have tracked the hardware support status. The structural answer is to build expiration tracking into the accountability architecture from the start, so that the decay is made visible before the consequence arrives, rather than excavated from the record after it does.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI agents are deployed under assurances — security certifications, hardware attestations, clinical clearances — whose formal validity outlasts the practical confidence they were meant to encode. When threat models shift, hardware support lapses, or real-world evidence diverges from validation conditions, the assurance decays while the accountability record stays frozen. No flag is raised; no authorization is revisited. Closing this gap requires accountability architectures that carry the conditions of each assurance, not just its conclusion, and that compare those conditions against the current state on an ongoing basis — so expiration becomes visible before it becomes consequential.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>保证是基于特定时间点的声明。安全认证声明：截至评估日期，针对当时有效的威胁模型，该系统符合规定要求。临床验证声明：在研究期间及所检查的患者群体和护理协议下，智能体的输出在可接受的精度范围内。认证报告声明：在审计进行时，硬件和软件配置与参考基准一致。这些声明都不断言其基础条件将保持稳定。但它们通常都被视为将保持稳定。</p>
+
+        <p>保证过期问题不是关于具有明确到期日期的凭证——至少这些凭证会发出自身已过时的信号。它关于的是保证的正式有效性与该保证所要编码的信心实际有效性之间的差距。当威胁格局在安全认证之下发生变化时，证书不会改变。当新的临床证据修订诊断智能体的精度特征时，监管许可不会改变。当在认证时受信任的组件类别中发现硬件漏洞时，认证记录不会改变。保证在形式上是完整的。基础信心已悄然衰减。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>密码保证对过期特别脆弱，因为使算法安全的条件是算法本身的外部条件。三年前被批准为抗量子的签名方案，今天可能面临着实质上不同的对手能力——不是因为算法改变了，而是因为对手改变了。安全认证、合规批准和算法背书都是针对发布时当前的威胁模型发布的。后量子标准化仍在发展；组织的密钥管理基础设施符合当前标准的保证是一个难以估计半衰期且其过期很少被跟踪的声明。</p>
+
+        <p>这里的问责差距是精确的：授权智能体部署的委托方是基于一个认证进行的，该认证编码了当时适合于威胁模型的信心水平。如果威胁模型已实质性转变，而没有人针对新格局重新评估认证，那么部署该智能体的授权对话不再受其所引用保证的支持。智能体继续运行。决策继续基于其输出做出。问责记录反映了一个认证，该认证不再意味着发布时的含义。没有任何标志被提出。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件安全保证以两种不同的方式过期。第一种是标准的生命周期终止支持：制造商背书、漏洞监控程序和固件更新可用性都在规定日期终止。运行在制造商支持已终止的硬件上的智能体，是在其保证正在积极衰减的平台上运行——新的漏洞将被发现并不会被修补，而在支持窗口关闭之前产生的认证报告仍然在形式上有效。第二种过期模式更为微妙：部署时保证有效的硬件，可能因为在组件类别本身中发现漏洞而变得无效——即使硬件及其背书在所有形式意义上保持不变。</p>
+
+        <p>在这两种情况下，硬件问责记录都不会自我纠正。认证链反映的是评估时的状态。自部署以来硬件信任基础已经侵蚀的智能体，将继续产生引用基础健全时建立的基准的认证报告。除非审查流程专门设计为将当前硬件保证状态与每个基准建立时的状态进行比较，否则对这些报告的操作审查不会检测到侵蚀——而这是标准审计工作流程不会执行的比较。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>临床保证针对不同的背景过期：可能偏离原始验证研究受控条件的真实世界证据的积累。获得诊断或护理支持功能许可的AI智能体是针对一个研究群体、在研究协议下、以研究时代的临床证据基础进行验证的。随着智能体被部署到具有不同人口特征的更广泛群体，随着临床指南的修订，随着治疗路径的证据基础的发展，支持原始许可的精度和适当性特征可能会实质性地转变——而许可本身仍然有效，并被常规引用为继续部署的问责基础。</p>
+
+        <p>这种过期模式在物理世界照护中尤为重要，因为受影响最大的人——在部署群体中与研究群体不同的被智能体服务的患者——恰恰是最无法评估它的人。在特定群体的验证研究中表现良好，然后被部署到具有实质不同特征的群体中的照护智能体，其保证保持完整地延续。依赖该保证的护理团队没有标准问责架构内的机制来确定许可是否仍然代表对其所施加依赖的充分基础。</p>
+
+        <h2>为过期意识而设计</h2>
+        <p>保证过期问题不是通过向认证添加到期日来解决的，尽管明确的有效期窗口通过至少使问题浮出水面而有所帮助。更深层的要求是，问责架构将保证视为具有持续有效条件的活动声明，而不是只有在文件到期时才衰减的永久事实。这意味着：保证记录应携带不仅是评估的结论，还有达成该结论的条件——威胁模型、证据基础、群体特征、硬件代。问责审查应包括对这些条件与当前条件的常规比较。负责部署决策的委托方应在保证条件与当前条件之间的差距超过规定阈值时收到结构化通知。</p>
+
+        <p>在所有三个交叉点，保证过期问题最难的部分是在过期的那一刻什么都不会中断。智能体产生输出。输出被处理。决策被做出。每一步都在正常参数范围内——因为正常参数是根据不再适用的信心水平校准的。当问责失败最终被发现时，通常会被描述为治理失败——有人应该更新认证，有人应该委托新的验证研究，有人应该跟踪硬件支持状态。结构性答案是从一开始就将过期跟踪构建到问责架构中，使衰减在后果到来之前变得可见，而不是在后果发生后从记录中挖掘。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>AI智能体在保证下部署——安全认证、硬件认证、临床许可——其正式有效性超过了它们所要编码的实际信心。当威胁模型转变、硬件支持失效或真实世界证据偏离验证条件时，保证衰减而问责记录保持冻结。没有标志被提出；没有授权被重新审视。弥合这一差距需要问责架构携带每个保证的条件，而不仅仅是其结论，并持续将这些条件与当前状态进行比较——使过期在产生后果之前变得可见。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>保證是基於特定時間點的聲明。安全認證聲明：截至評估日期，針對當時有效的威脅模型，該系統符合規定要求。臨床驗證聲明：在研究期間及所檢查的患者群體和護理協議下，智能體的輸出在可接受的精度範圍內。認證報告聲明：在稽核進行時，硬體和軟體配置與參考基準一致。這些聲明都不斷言其基礎條件將保持穩定。但它們通常都被視為將保持穩定。</p>
+
+        <p>保證過期問題不是關於具有明確到期日期的憑證——至少這些憑證會發出自身已過時的信號。它關於的是保證的正式有效性與該保證所要編碼的信心實際有效性之間的差距。當威脅格局在安全認證之下發生變化時，憑證不會改變。當新的臨床證據修訂診斷智能體的精度特徵時，監管許可不會改變。當在認證時受信任的元件類別中發現硬體漏洞時，認證記錄不會改變。保證在形式上是完整的。基礎信心已悄然衰減。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>密碼保證對過期特別脆弱，因為使演算法安全的條件是演算法本身的外部條件。三年前被批准為抗量子的簽名方案，今天可能面臨著實質上不同的對手能力——不是因為演算法改變了，而是因為對手改變了。安全認證、合規批准和演算法背書都是針對發布時當前的威脅模型發布的。後量子標準化仍在發展；組織的金鑰管理基礎設施符合當前標準的保證是一個難以估計半衰期且其過期很少被追蹤的聲明。</p>
+
+        <p>這裡的問責差距是精確的：授權智能體部署的委託方是基於一個認證進行的，該認證編碼了當時適合於威脅模型的信心水準。如果威脅模型已實質性轉變，而沒有人針對新格局重新評估認證，那麼部署該智能體的授權對話不再受其所引用保證的支持。智能體繼續運行。決策繼續基於其輸出做出。問責記錄反映了一個認證，該認證不再意味著發布時的含義。沒有任何標誌被提出。</p>
+
+        <h2>在硬體交叉點</h2>
+        <p>硬體安全保證以兩種不同的方式過期。第一種是標準的生命週期終止支援：製造商背書、漏洞監控程式和韌體更新可用性都在規定日期終止。運行在製造商支援已終止的硬體上的智能體，是在其保證正在積極衰減的平台上運行——新的漏洞將被發現並不會被修補，而在支援窗口關閉之前產生的認證報告仍然在形式上有效。第二種過期模式更為微妙：部署時保證有效的硬體，可能因為在元件類別本身中發現漏洞而變得無效——即使硬體及其背書在所有形式意義上保持不變。</p>
+
+        <p>在這兩種情況下，硬體問責記錄都不會自我糾正。認證鏈反映的是評估時的狀態。自部署以來硬體信任基礎已經侵蝕的智能體，將繼續產生引用基礎健全時建立的基準的認證報告。除非審查流程專門設計為將當前硬體保證狀態與每個基準建立時的狀態進行比較，否則對這些報告的操作審查不會檢測到侵蝕——而這是標準稽核工作流程不會執行的比較。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>臨床保證針對不同的背景過期：可能偏離原始驗證研究受控條件的真實世界證據的積累。獲得診斷或護理支援功能許可的AI智能體是針對一個研究群體、在研究協議下、以研究時代的臨床證據基礎進行驗證的。隨著智能體被部署到具有不同人口特徵的更廣泛群體，隨著臨床指南的修訂，隨著治療路徑的證據基礎的發展，支持原始許可的精度和適當性特徵可能會實質性地轉變——而許可本身仍然有效，並被常規引用為繼續部署的問責基礎。</p>
+
+        <p>這種過期模式在物理世界照護中尤為重要，因為受影響最大的人——在部署群體中與研究群體不同的被智能體服務的患者——恰恰是最無法評估它的人。在特定群體的驗證研究中表現良好，然後被部署到具有實質不同特徵的群體中的照護智能體，其保證保持完整地延續。依賴該保證的護理團隊沒有標準問責架構內的機制來確定許可是否仍然代表對其所施加依賴的充分基礎。</p>
+
+        <h2>為過期意識而設計</h2>
+        <p>保證過期問題不是通過向認證添加到期日來解決的，儘管明確的有效期窗口通過至少使問題浮出水面而有所幫助。更深層的要求是，問責架構將保證視為具有持續有效條件的活動聲明，而不是只有在文件到期時才衰減的永久事實。這意味著：保證記錄應攜帶不僅是評估的結論，還有達成該結論的條件——威脅模型、證據基礎、群體特徵、硬體代。問責審查應包括對這些條件與當前條件的常規比較。負責部署決策的委託方應在保證條件與當前條件之間的差距超過規定閾值時收到結構化通知。</p>
+
+        <p>在所有三個交叉點，保證過期問題最難的部分是在過期的那一刻什麼都不會中斷。智能體產生輸出。輸出被處理。決策被做出。每一步都在正常參數範圍內——因為正常參數是根據不再適用的信心水準校準的。當問責失敗最終被發現時，通常會被描述為治理失敗——有人應該更新認證，有人應該委託新的驗證研究，有人應該追蹤硬體支援狀態。結構性答案是從一開始就將過期追蹤構建到問責架構中，使衰減在後果到來之前變得可見，而不是在後果發生後從記錄中挖掘。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>AI智能體在保證下部署——安全認證、硬體認證、臨床許可——其正式有效性超過了它們所要編碼的實際信心。當威脅模型轉變、硬體支援失效或真實世界證據偏離驗證條件時，保證衰減而問責記錄保持凍結。沒有標誌被提出；沒有授權被重新審視。彌合這一差距需要問責架構攜帶每個保證的條件，而不僅僅是其結論，並持續將這些條件與當前狀態進行比較——使過期在產生後果之前變得可見。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-07</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var btns = document.querySelectorAll('.lang-btn');
+      var sections = document.querySelectorAll('.essay-lang');
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var lang = this.getAttribute('data-lang');
+          btns.forEach(function (b) { b.classList.remove('active'); });
+          sections.forEach(function (s) { s.classList.remove('active'); });
+          this.classList.add('active');
+          var target = document.querySelector('[data-lang-content="' + lang + '"]');
+          if (target) target.classList.add('active');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
