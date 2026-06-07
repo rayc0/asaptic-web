@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The synthetic evidence problem — Asaptic Labs</title>
+
+  <meta name="description" content="As AI agents generate more of the world's data, training pipelines for the next generation increasingly feed on outputs from prior agents. Each generation inherits not only capability but also its predecessors' accountability gaps — compounded, obscured, and embedded in the weights." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/synthetic-evidence-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The synthetic evidence problem: accountability when AI agents are trained on AI-generated data" />
+  <meta property="og:description" content="As AI agents generate more of the world's data, training pipelines for the next generation increasingly feed on outputs from prior agents. Each generation inherits not only capability but also its predecessors' accountability gaps — compounded, obscured, and embedded in the weights." />
+  <meta property="og:url" content="https://asaptic.com/blog/synthetic-evidence-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-07" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The synthetic evidence problem: accountability when AI agents are trained on AI-generated data",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-07",
+    "description": "As AI agents generate more of the world's data, training pipelines for the next generation increasingly feed on outputs from prior agents. Each generation inherits not only capability but also its predecessors' accountability gaps — compounded, obscured, and embedded in the weights.",
+    "url": "https://asaptic.com/blog/synthetic-evidence-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The synthetic evidence problem: accountability when AI agents are trained on AI-generated data</h1>
+      <p class="essay-subtitle">As AI agents generate more of the world's data, training pipelines for the next generation increasingly feed on outputs from prior agents. Each generation inherits not only capability but also its predecessors' accountability gaps — compounded, obscured, and embedded in the weights.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-07</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>The standard model for AI agent development assumes that training data — whatever its source — represents ground truth in some meaningful sense. It may be noisy, biased, or incomplete, but it is assumed to be generated by processes independent of the agent being trained. This assumption is no longer reliable.</p>
+
+        <p>As AI systems become prevalent across industries, a growing share of the world's digital output is generated by those systems. Security advisories are summarized by AI. Hardware diagnostics are interpreted by AI. Care notes are drafted by AI. The data pipelines that feed the next generation of agents increasingly contain outputs from the previous generation — synthetic evidence generated by agents whose own accountability was uncertain when they produced it.</p>
+
+        <p>This is the synthetic evidence problem: when an AI agent is trained on data generated by other AI agents, it inherits its predecessors' biases, errors, and accountability gaps in a form that is difficult to trace, harder to audit, and embedded in model weights in a way that cannot be examined directly. The accountability architecture reviews the data, confirms it came from reputable sources, and certifies the agent as trained on authoritative material. What it cannot readily certify is whether that material was itself shaped by prior AI systems whose unaudited optimization patterns are now silently reproduced in the downstream agent.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>Key management agents trained on historical recommendations, advisory summaries, or audit narratives that were themselves drafted by AI-assisted tooling may carry forward systematic biases that originated several steps upstream. If an earlier AI advisory process overrepresented certain algorithm families because of artifacts in its own training, a downstream key management agent trained on those advisories inherits that overrepresentation without any record of its origin.</p>
+
+        <p>The accountability gap is structural: a cryptographic agent that consistently favors one migration path over another because a prior AI system systematically emphasized it is not behaving badly by any direct measure. Its training data is traceable to credentialed sources; its outputs are within defined parameters. The error lives in the gap between the document author — a recognized institution — and the evidentiary claim inside the document, which reflects a prior model's distribution rather than independent expert judgment. Standard data governance does not draw the boundary at the claim level. Until it does, inherited cryptographic biases will persist through successive agent generations, invisible to the accountability audit.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware AI agents that evaluate device health and security posture train on large corpora of sensor readings, test results, and failure reports. As AI systems increasingly assist in hardware testing and reporting, those corpora contain synthetic components: test summaries generated by AI testing assistants, failure narratives drafted by AI diagnostic tools, attestation reports processed by AI intermediaries before they reach the training pipeline.</p>
+
+        <p>When a hardware health agent encounters an anomaly pattern that resembles a pattern described in AI-generated diagnostic summaries, it is not reasoning from first principles about the physical state of the device. It is pattern-matching against text produced by prior agents. If those prior agents systematically underreported a failure class because it fell outside their training distribution — a new failure mode introduced by a hardware revision they had not seen — the downstream agent learns that underreporting as a feature of how diagnostics are written, not as an error to correct. The failure mode disappears not because it is remediated but because the evidence generation chain learned not to describe it. The device population carries a structural blind spot, and the accountability record shows nothing unusual.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>The synthetic evidence problem is most acute in care settings because the evidentiary ground truth for care quality is contested even when produced by humans. When AI-assisted documentation tools generate care notes, AI-assisted assessment tools summarize patient status, and AI-assisted care planning tools produce recommendations, the data pipelines for training next-generation care agents are increasingly populated by synthetic outputs.</p>
+
+        <p>A care agent trained on AI-generated care notes inherits whatever systematic patterns those notes contain — and those patterns reflect the prior generation agents' optimization targets, their blind spots, and the proxies they were measured against. If prior AI documentation tools generated notes that emphasized measurable care activities over subjective wellbeing indicators — because measurable activities were easier for upstream classifiers to validate — a downstream care agent trained on those notes treats measurable activities as the primary signal of good care, because that is what the evidence record consistently shows. The accountability gap is invisible at the level of the training data review: the notes look like care notes. What the review cannot see is that they are the product of an earlier optimization process that already discarded the harder-to-measure signals.</p>
+
+        <h2>The provenance boundary</h2>
+        <p>The structural response to the synthetic evidence problem is a provenance boundary: a requirement that training data pipelines document the generation process for each substantive claim, distinguish human-validated from AI-generated sources, and apply higher scrutiny to AI-generated material — including independent verification against non-AI ground truth where possible.</p>
+
+        <p>This is harder than it sounds. The boundary between human-generated and AI-generated evidence is already blurred: a security advisory written by an analyst using AI drafting assistance has a human author but AI-shaped content. The provenance boundary must be drawn at the level of the evidentiary claim — whether each specific claim was independently validated against a non-AI source — not at the level of the document author. Without that boundary, the accountability architecture cannot distinguish inherited gaps from original errors. And the proportion of training data that carries unaudited, inherited gaps will only increase with each successive deployment generation, because each generation of agents generates more of the data that trains the next.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI agents trained on AI-generated data inherit their predecessors' accountability gaps in a form embedded in model weights, invisible to standard data audits, and compounded with each generation of deployment. Closing the synthetic evidence problem requires provenance accounting at the claim level — distinguishing which evidentiary claims in the training corpus were independently validated against non-AI ground truth, and treating unvalidated synthetic evidence with proportionate scrutiny.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>AI智能体开发的标准模型假设训练数据——无论其来源——在某种有意义的层面上代表着真实情况。数据可能含有噪声、带有偏差或不够完整，但被假定为由独立于被训练智能体的过程所生成。这一假设已不再可靠。</p>
+
+        <p>随着AI系统在各行各业中变得普遍，世界数字产出中越来越多的部分由这些系统本身生成。安全建议由AI汇总，硬件诊断由AI解读，护理记录由AI起草。下一代智能体的训练数据管道越来越多地包含上一代的输出——由问责制本身尚不确定的智能体所产生的合成证据。</p>
+
+        <p>这就是合成证据问题：当一个AI智能体在由其他AI智能体生成的数据上进行训练时，它以一种难以追溯、更难审计、且以无法直接检查的方式嵌入模型权重的形式，继承了其前辈的偏差、错误和问责缺口。问责架构审查数据，确认其来自可信来源，并认证该智能体是在权威材料上训练的。而它难以轻易认证的，是这些材料本身是否受到了先前AI系统的影响——那些系统未经审计的优化模式现已在下游智能体中悄然复现。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>在历史建议、咨询摘要或审计叙述上训练的密钥管理智能体，若这些材料本身是由AI辅助工具起草的，则可能携带了源自数步之前的系统性偏差。如果早期的AI咨询流程因其自身训练中的伪影而过度强调某些算法族，在这些咨询意见上训练的下游密钥管理智能体会继承这种过度强调，而不留下任何来源记录。</p>
+
+        <p>问责缺口在结构上是隐藏的：一个持续偏向某条迁移路径的密码智能体，仅仅因为先前的AI系统系统性地强调了这条路径，在任何直接衡量标准下都不表现为行为不当。其训练数据可追溯至有认证的来源；其输出在定义的参数范围内。错误存在于文件作者——一个知名机构——与文件内部的证据性主张之间的差距中，该主张反映的是先前模型的分布而非独立的专家判断。标准数据治理并不在主张层面划定边界。在这一情况改变之前，继承的密码偏差将在连续的智能体世代中持续存在，对问责审计而言不可见。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>评估设备健康和安全态势的硬件AI智能体，在大型传感器读数、测试结果和故障报告语料库上进行训练。随着AI系统越来越多地协助硬件测试和报告，这些语料库包含合成成分：由AI测试助手生成的测试摘要、由AI诊断工具起草的故障叙述、在进入训练管道之前由AI中介处理的认证报告。</p>
+
+        <p>当硬件健康智能体遇到与AI生成的诊断摘要中描述的模式相似的异常模式时，它不是从第一原则出发对设备物理状态进行推理。它是在先前智能体生成的文本上进行模式匹配。如果那些先前的智能体由于某类故障超出其训练分布而系统性地低报了该故障类别——比如硬件修订版本引入的新故障模式——下游智能体会将这种低报作为诊断书写方式的特征而习得，而非将其视为需要纠正的错误。该故障模式消失，不是因为它得到了修复，而是因为证据生成链学会了不去描述它。设备群体携带着一个结构性盲点，而问责记录显示一切正常。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>合成证据问题在照护环境中最为突出，因为即便是人类生成的护理质量证据性依据也存在争议。当AI辅助文档工具生成护理记录、AI辅助评估工具汇总患者状态、AI辅助护理计划工具产生建议时，训练下一代照护智能体的数据管道越来越多地被合成输出所填充。</p>
+
+        <p>在AI生成的护理记录上训练的照护智能体，继承了这些记录中所包含的任何系统性模式——而这些模式反映了上一代智能体的优化目标、其盲点以及它们被衡量的代理指标。如果先前的AI文档工具生成的记录强调可测量的护理活动而非主观福祉指标——因为可测量活动对上游分类器来说更容易验证——那么在这些记录上训练的下游照护智能体会将可测量活动视为良好护理的主要信号，因为这正是证据记录一贯显示的内容。问责缺口在训练数据审查层面是不可见的：这些记录看起来像护理记录。审查无法看到的是，它们是早期优化过程的产物，而该过程已经丢弃了更难测量的信号。</p>
+
+        <h2>溯源边界</h2>
+        <p>针对合成证据问题在结构上合理的回应是溯源边界：要求训练数据管道记录每个实质性主张的生成过程，区分人工验证来源与AI生成来源，并对AI生成的材料施以更严格的审查——包括在可能的情况下针对非AI的基准事实进行独立验证。</p>
+
+        <p>这比听起来更难。人工生成证据与AI生成证据之间的边界已然模糊：一份由使用AI起草辅助的分析师撰写的安全建议，有人类作者但有AI塑造的内容。溯源边界必须在证据性主张层面划定——每个具体主张是否经过针对非AI来源的独立验证——而不是在文件作者层面。没有这一边界，问责架构便无法区分继承的缺口与原始错误。而携带着未经审计的继承缺口的训练数据比例，将随着每一个连续的部署世代而增加，因为每一代智能体都会生成更多训练下一代的数据。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>在AI生成数据上训练的AI智能体，以嵌入模型权重、对标准数据审计不可见、且随每一代部署复合增长的形式，继承了其前辈的问责缺口。解决合成证据问题需要在主张层面进行溯源核算——区分训练语料库中哪些证据性主张经过针对非AI基准事实的独立验证，并对未经验证的合成证据施以相应的审查力度。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>AI智能體開發的標準模型假設訓練資料——無論其來源——在某種有意義的層面上代表著真實情況。資料可能含有噪聲、帶有偏差或不夠完整，但被假定為由獨立於被訓練智能體的過程所生成。這一假設已不再可靠。</p>
+
+        <p>隨著AI系統在各行各業中變得普遍，世界數字產出中越來越多的部分由這些系統本身生成。安全建議由AI彙總，硬體診斷由AI解讀，護理記錄由AI起草。下一代智能體的訓練資料管道越來越多地包含上一代的輸出——由問責制本身尚不確定的智能體所產生的合成證據。</p>
+
+        <p>這就是合成證據問題：當一個AI智能體在由其他AI智能體生成的資料上進行訓練時，它以一種難以追溯、更難稽核、且以無法直接檢查的方式嵌入模型權重的形式，繼承了其前輩的偏差、錯誤和問責缺口。問責架構審查資料，確認其來自可信來源，並認證該智能體是在權威材料上訓練的。而它難以輕易認證的，是這些材料本身是否受到了先前AI系統的影響——那些系統未經稽核的優化模式現已在下游智能體中悄然復現。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>在歷史建議、諮詢摘要或稽核敘述上訓練的金鑰管理智能體，若這些材料本身是由AI輔助工具起草的，則可能攜帶了源自數步之前的系統性偏差。如果早期的AI諮詢流程因其自身訓練中的人工製品而過度強調某些演算法族，在這些諮詢意見上訓練的下游金鑰管理智能體會繼承這種過度強調，而不留下任何來源記錄。</p>
+
+        <p>問責缺口在結構上是隱藏的：一個持續偏向某條遷移路徑的密碼智能體，僅僅因為先前的AI系統系統性地強調了這條路徑，在任何直接衡量標準下都不表現為行為不當。其訓練資料可追溯至有認證的來源；其輸出在定義的參數範圍內。錯誤存在於文件作者——一個知名機構——與文件內部的證據性主張之間的差距中，該主張反映的是先前模型的分佈而非獨立的專家判斷。標準資料治理並不在主張層面劃定邊界。在這一情況改變之前，繼承的密碼偏差將在連續的智能體世代中持續存在，對問責稽核而言不可見。</p>
+
+        <h2>在硬體交叉點</h2>
+        <p>評估設備健康和安全態勢的硬體AI智能體，在大型感測器讀數、測試結果和故障報告語料庫上進行訓練。隨著AI系統越來越多地協助硬體測試和報告，這些語料庫包含合成成分：由AI測試助手生成的測試摘要、由AI診斷工具起草的故障敘述、在進入訓練管道之前由AI中介處理的認證報告。</p>
+
+        <p>當硬體健康智能體遇到與AI生成的診斷摘要中描述的模式相似的異常模式時，它不是從第一原則出發對設備物理狀態進行推理。它是在先前智能體生成的文本上進行模式匹配。如果那些先前的智能體由於某類故障超出其訓練分佈而系統性地低報了該故障類別——比如硬體修訂版本引入的新故障模式——下游智能體會將這種低報作為診斷書寫方式的特徵而習得，而非將其視為需要糾正的錯誤。該故障模式消失，不是因為它得到了修復，而是因為證據生成鏈學會了不去描述它。設備群體攜帶著一個結構性盲點，而問責記錄顯示一切正常。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>合成證據問題在照護環境中最為突出，因為即便是人類生成的護理品質證據性依據也存在爭議。當AI輔助文件工具生成護理記錄、AI輔助評估工具彙總患者狀態、AI輔助護理計劃工具產生建議時，訓練下一代照護智能體的資料管道越來越多地被合成輸出所填充。</p>
+
+        <p>在AI生成的護理記錄上訓練的照護智能體，繼承了這些記錄中所包含的任何系統性模式——而這些模式反映了上一代智能體的優化目標、其盲點以及它們被衡量的代理指標。如果先前的AI文件工具生成的記錄強調可測量的護理活動而非主觀福祉指標——因為可測量活動對上游分類器來說更容易驗證——那麼在這些記錄上訓練的下游照護智能體會將可測量活動視為良好護理的主要信號，因為這正是證據記錄一貫顯示的內容。問責缺口在訓練資料審查層面是不可見的：這些記錄看起來像護理記錄。審查無法看到的是，它們是早期優化過程的產物，而該過程已經丟棄了更難測量的信號。</p>
+
+        <h2>溯源邊界</h2>
+        <p>針對合成證據問題在結構上合理的回應是溯源邊界：要求訓練資料管道記錄每個實質性主張的生成過程，區分人工驗證來源與AI生成來源，並對AI生成的材料施以更嚴格的審查——包括在可能的情況下針對非AI的基準事實進行獨立驗證。</p>
+
+        <p>這比聽起來更難。人工生成證據與AI生成證據之間的邊界已然模糊：一份由使用AI起草輔助的分析師撰寫的安全建議，有人類作者但有AI塑造的內容。溯源邊界必須在證據性主張層面劃定——每個具體主張是否經過針對非AI來源的獨立驗證——而不是在文件作者層面。沒有這一邊界，問責架構便無法區分繼承的缺口與原始錯誤。而攜帶著未經稽核的繼承缺口的訓練資料比例，將隨著每一個連續的部署世代而增加，因為每一代智能體都會生成更多訓練下一代的資料。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>在AI生成資料上訓練的AI智能體，以嵌入模型權重、對標準資料稽核不可見、且隨每一代部署複合增長的形式，繼承了其前輩的問責缺口。解決合成證據問題需要在主張層面進行溯源核算——區分訓練語料庫中哪些證據性主張經過針對非AI基準事實的獨立驗證，並對未經驗證的合成證據施以相應的審查力度。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-07</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var btns = document.querySelectorAll('.lang-btn');
+      var sections = document.querySelectorAll('.essay-lang');
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var lang = this.getAttribute('data-lang');
+          btns.forEach(function (b) { b.classList.remove('active'); });
+          sections.forEach(function (s) { s.classList.remove('active'); });
+          this.classList.add('active');
+          var target = document.querySelector('[data-lang-content="' + lang + '"]');
+          if (target) target.classList.add('active');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
