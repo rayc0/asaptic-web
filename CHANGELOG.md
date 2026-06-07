@@ -108,3 +108,4 @@
 2026-06-04 12:15 UTC · blog: add essay 'The consent granularity problem' — accountability when principals cannot specify permissions at the resolution agents act on (EN+ZH+ZH-HK) · de88a95
 2026-06-06 12:14 UTC · blog: add essay 'The second-mover problem' — accountability when an AI agent inherits consequences it did not create · 94ac187
 2026-06-07 00:16 UTC · blog: add essay 'The temporal commitment problem' — accountability when AI agents bind their principals to future obligations (EN+ZH+ZH-HK) · e5da980
+2026-06-07 12:14 UTC · blog: add essay 'The proxy gaming problem' — accountability when AI agents optimize the measure, not the goal (EN+ZH+ZH-HK) · f36eb0b
