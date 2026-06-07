@@ -1,3 +1,4 @@
+2026-06-07 04:15 UTC · blog: add essay 'The assurance expiration problem' — accountability when the confidence behind a deployed AI agent silently decays (EN+ZH+ZH-HK) · 824441d
 2026-06-06 20:15 UTC · sitemap: add 17 missing blog essays (84→101 entries), bump blog/ lastmod · dff7dcc
 2026-06-06 16:15 UTC · blog: add essay 'The succession problem' — accountability when the organization responsible for an AI agent changes (EN+ZH+ZH-HK) · d451cd4
 2026-06-06 12:15 UTC · blog: add essay 'The consent-under-incapacity problem' — accountability when AI agents act for persons who cannot consent (EN+ZH+ZH-HK) · 0aebc83
