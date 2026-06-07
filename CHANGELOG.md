@@ -1,3 +1,4 @@
+2026-06-07 12:15 UTC · blog: add essay 'The synthetic evidence problem' — accountability when AI agents are trained on AI-generated data (EN+ZH+ZH-HK) · 7b680c5
 2026-06-07 08:15 UTC · blog: add essay 'The invisible principal problem' — accountability when AI agents act for someone who has no standing in their authorization architecture (EN+ZH+ZH-HK) · f416a04
 2026-06-07 04:15 UTC · blog: add essay 'The assurance expiration problem' — accountability when the confidence behind a deployed AI agent silently decays (EN+ZH+ZH-HK) · 824441d
 2026-06-06 20:15 UTC · sitemap: add 17 missing blog essays (84→101 entries), bump blog/ lastmod · dff7dcc
