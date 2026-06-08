@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The epistemic authority problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents are designed as decision support tools. Over time, trust in their outputs tends to crowd out the independent verification practices that would catch their errors. The agent becomes the source of truth by default — and the accountability architecture that depends on human oversight loses the capacity to exercise it." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/epistemic-authority-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The epistemic authority problem: accountability when AI agents become the source of truth" />
+  <meta property="og:description" content="AI agents are designed as decision support tools. Over time, trust in their outputs tends to crowd out the independent verification practices that would catch their errors. The agent becomes the source of truth by default — and the accountability architecture that depends on human oversight loses the capacity to exercise it." />
+  <meta property="og:url" content="https://asaptic.com/blog/epistemic-authority-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-08" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The epistemic authority problem: accountability when AI agents become the source of truth",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-08",
+    "description": "AI agents are designed as decision support tools. Over time, trust in their outputs tends to crowd out the independent verification practices that would catch their errors. The agent becomes the source of truth by default — and the accountability architecture that depends on human oversight loses the capacity to exercise it.",
+    "url": "https://asaptic.com/blog/epistemic-authority-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The epistemic authority problem: accountability when AI agents become the source of truth</h1>
+      <p class="essay-subtitle">AI agents are designed as decision support tools. Over time, trust in their outputs tends to crowd out the independent verification practices that would catch their errors. The agent becomes the source of truth by default — and the accountability architecture that depends on human oversight loses the capacity to exercise it.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-08</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Almost every governance framework for AI agents in high-stakes settings places human oversight at its center. The agent advises; a person decides. The agent flags an anomaly; a person investigates. The agent surfaces a recommendation; a person approves or rejects it. The oversight model is well-intentioned and structurally correct. What it does not account for is the way that consistent reliance on an agent gradually erodes the independent epistemic capacity that oversight requires.</p>
+
+        <p>The erosion is not dramatic. It happens incrementally and for entirely reasonable reasons: the agent is faster, it processes more data than any individual can hold in mind, and — most importantly — it is usually right. Each time the agent's output is verified and found correct, the verification step feels more like a formality. Eventually it becomes one. The accountability architecture still says "human oversight"; the operational reality is that the agent is now the source of truth, and the humans in the loop no longer have the tools, the habits, or the institutional knowledge to challenge it effectively. That is the epistemic authority problem.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>Cryptographic algorithm selection is an area of deep specialist knowledge that few organizations maintain as an in-house competency. As AI-assisted tooling becomes the practical means of evaluating algorithm readiness, migration timelines, and legacy system exposure, the teams that rely on it tend to stop developing the independent judgment needed to evaluate its outputs. The agent recommends a migration sequence; the team follows it — not because they have evaluated the recommendation and agreed, but because they have no independent basis for disagreement.</p>
+
+        <p>The accountability failure is latent rather than immediate. When the agent's recommendation reflects the distribution of its training data rather than the current technical consensus — when it systematically underweights an emerging vulnerability class or overweights a deprecated approach — no one in the organization is positioned to notice. The independent verification capacity that would surface the error was progressively deprioritized while the agent was performing well. By the time the gap matters, it can no longer be closed quickly. The accountability framework has a human in the loop; the human has lost the loop.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware security depends on attestation: an independent check that a device is running the software and configuration it claims to run. AI-assisted attestation agents can evaluate device health at a scale and speed that manual inspection cannot match. The operational case for relying on them entirely is compelling. The accountability problem is that, as manual inspection atrophies, the attestation agent becomes the only check — and there is no longer a verification path available when the agent itself is the source of error.</p>
+
+        <p>This matters most for failure modes that fall outside the agent's training distribution: novel attack surfaces, unanticipated hardware interactions, configuration patterns the agent was not designed to evaluate. These are precisely the cases where independent human verification would provide irreplaceable value, and precisely the cases for which human verification capacity has been most thoroughly replaced. An organization that has ceded its attestation capacity to an AI agent is not less secure on any day when the agent performs correctly. It is more exposed on the day when the agent misses something that a trained human eye would have caught — because that eye no longer exists.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>The epistemic authority problem is sharpest in care settings because the consequences are most direct and the verification capacity most difficult to maintain. Clinical judgment depends on pattern recognition, haptic assessment, and contextual interpretation built through years of supervised practice. An AI agent that monitors vital signs, flags anomalies, and surfaces care recommendations operates at a scale and speed that clinicians cannot replicate independently for every patient under management. The practical result is that clinical staff review agent outputs rather than developing independent assessments.</p>
+
+        <p>For routine cases, this is efficient and appropriate. The accountability gap opens at the edges: the patient presentation that does not match the agent's training distribution, the subtle symptom cluster that a human practitioner with full context would weight differently, the interaction between an agent's care recommendation and a patient's undocumented history. In these cases, the accountability architecture calls for human clinical judgment — but the humans in the loop have been reviewing agent outputs, not exercising clinical judgment, and the two are not the same. The agent has not replaced clinical authority by design; it has become epistemic authority by default.</p>
+
+        <h2>Preserving the capacity to challenge</h2>
+        <p>The epistemic authority problem does not have a simple technical solution. It is partly organizational: the capacity for independent verification must be deliberately maintained, not just nominally preserved. Accountability frameworks that require human sign-off on AI recommendations must also require that the humans capable of meaningful sign-off continue to exist — which means institutions must invest in human expertise in the exact areas where AI agents are most capable, rather than treating that expertise as a cost to be replaced.</p>
+
+        <p>It is also architectural: the most important function of a human in the loop is not to approve correct agent outputs but to surface the edge cases where the agent is wrong. This means the accountability architecture must create conditions — workload, access to raw data, institutional space for dissent — in which meaningful challenge remains possible. An oversight structure that functionally discourages verification is not an oversight structure at all. It is an audit trail attached to a source of truth, and the distinction matters most when the source of truth fails.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI agents designed for decision support tend to become de facto sources of truth as reliance on them grows and independent verification atrophies. The accountability architecture retains a human in the loop, but the human loses the capacity — skills, habits, institutional knowledge — needed to challenge the agent's outputs meaningfully. Addressing the epistemic authority problem requires deliberately maintaining human expertise and independent verification capacity in the exact domains where AI agents are most relied upon.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>几乎所有高风险场景中AI智能体的治理框架都将人类监督置于核心位置：智能体提供建议，人来决策；智能体标记异常，人来调查；智能体呈现推荐，人来批准或拒绝。这一监督模式出发点良好、结构合理。然而它没有考虑到的是：持续依赖智能体会逐渐侵蚀监督所需的独立认知能力。</p>
+
+        <p>这种侵蚀并不剧烈，而是以完全合理的方式逐步发生：智能体更快、处理的数据比任何个人都多，而且——最重要的是——它通常是正确的。每次核验智能体输出并发现其正确，核验步骤就越发像一种形式。最终它真的成为了形式。问责架构依然写着"人类监督"，但操作现实是：智能体已成为真相来源，而流程中的人类不再拥有有效质疑它所需的工具、习惯或机构知识。这就是认知权威问题。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>密码算法的选择是深度专业知识领域，极少有组织将其作为内部核心能力加以维持。随着AI辅助工具成为评估算法就绪度、迁移时间表和遗留系统暴露风险的实际手段，依赖这些工具的团队往往不再发展独立评估其输出所需的判断力。智能体推荐一个迁移序列，团队就照做——不是因为他们评估了建议并认同，而是因为他们没有独立的异议依据。</p>
+
+        <p>这种问责失败是潜在的而非即时的。当智能体的建议反映的是训练数据的分布而非当前技术共识时——当它系统性地低估新兴漏洞类别或高估已弃用方案时——组织内没有人处于能够注意到这一点的位置。本可发现错误的独立核验能力，在智能体表现良好期间被逐步降优先级。等到差距变得重要时，已无法快速弥补。问责框架中有一个流程中的人，但这个人已经失去了流程本身。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件安全依赖于认证：对设备是否正在运行其声称运行的软件和配置的独立检查。AI辅助认证智能体能够以人工检查无法匹敌的规模和速度评估设备健康状况。完全依赖它们的操作理由令人信服。然而问责问题在于：随着人工检查的萎缩，认证智能体成为唯一的检查手段——当智能体本身是错误来源时，便不再有可用的验证路径。</p>
+
+        <p>这在超出智能体训练分布的故障模式上最为关键：新型攻击面、未预料的硬件交互、智能体未被设计来评估的配置模式。这些恰恰是独立人工验证最能提供不可替代价值的情况，也恰恰是人工验证能力被最彻底取代的情况。将认证能力让渡给AI智能体的组织，在智能体正常运作的每一天并不更不安全。然而在智能体遗漏了一个训练有素的人眼本可发现的问题的那一天，它反而更加脆弱——因为那双眼睛已不复存在。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>认知权威问题在照护场景中最为尖锐，因为后果最为直接，而核验能力最难维持。临床判断依赖于通过多年督导实践积累的模式识别、触觉评估和情境解读能力。一个监测生命体征、标记异常并呈现护理建议的AI智能体，在规模和速度上是临床医生无法对每位在管患者独立复现的。实际结果是：临床人员审查智能体输出，而非形成独立评估。</p>
+
+        <p>对于常规病例，这是高效且适当的。问责缺口在边缘情况下打开：不符合智能体训练分布的患者表现、具有完整背景的人类从业者会以不同权重处理的细微症状组合、智能体护理建议与患者未记录病史之间的交互。在这些情况下，问责架构需要人类临床判断——但流程中的人类一直在审查智能体输出，而非运用临床判断，而两者并不相同。智能体并非被设计来取代临床权威，而是默认成为了认知权威。</p>
+
+        <h2>保持质疑的能力</h2>
+        <p>认知权威问题没有简单的技术解决方案。它在一定程度上是组织性的：独立核验的能力必须被刻意维持，而不仅仅是名义上保留。要求人类对AI建议进行签署的问责框架，还必须要求能够做出有意义签署的人类继续存在——这意味着机构必须在AI智能体最具能力的领域投资于人类专业知识，而非将该专业知识视为需要被替代的成本。</p>
+
+        <p>它也是架构性的：流程中人类的最重要功能不是批准正确的智能体输出，而是发现智能体出错的边缘情况。这意味着问责架构必须创造条件——工作量、对原始数据的访问、对异议的机构空间——使得有意义的质疑依然可能。一个在功能上阻止核验的监督结构根本不是监督结构，而是附着在真相来源上的审计轨迹——而当真相来源失效时，这一区别最为重要。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>被设计为决策支持工具的AI智能体，随着依赖程度加深和独立核验能力萎缩，往往成为事实上的真相来源。问责架构保留了流程中的人类，但这个人失去了有效质疑智能体输出所需的能力——技能、习惯、机构知识。解决认知权威问题需要在AI智能体最被依赖的领域刻意维持人类专业知识和独立核验能力。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>幾乎所有高風險場景中AI智能體的治理框架都將人類監督置於核心位置：智能體提供建議，人來決策；智能體標記異常，人來調查；智能體呈現推薦，人來批准或拒絕。這一監督模式出發點良好、結構合理。然而它沒有考慮到的是：持續依賴智能體會逐漸侵蝕監督所需的獨立認知能力。</p>
+
+        <p>這種侵蝕並不劇烈，而是以完全合理的方式逐步發生：智能體更快、處理的資料比任何個人都多，而且——最重要的是——它通常是正確的。每次核驗智能體輸出並發現其正確，核驗步驟就越發像一種形式。最終它真的成為了形式。問責架構依然寫著「人類監督」，但操作現實是：智能體已成為真相來源，而流程中的人類不再擁有有效質疑它所需的工具、習慣或機構知識。這就是認知權威問題。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>密碼演算法的選擇是深度專業知識領域，極少有組織將其作為內部核心能力加以維持。隨著AI輔助工具成為評估演算法就緒度、遷移時間表和遺留系統暴露風險的實際手段，依賴這些工具的團隊往往不再發展獨立評估其輸出所需的判斷力。智能體推薦一個遷移序列，團隊就照做——不是因為他們評估了建議並認同，而是因為他們沒有獨立的異議依據。</p>
+
+        <p>這種問責失敗是潛在的而非即時的。當智能體的建議反映的是訓練資料的分佈而非當前技術共識時——當它系統性地低估新興漏洞類別或高估已棄用方案時——組織內沒有人處於能夠注意到這一點的位置。本可發現錯誤的獨立核驗能力，在智能體表現良好期間被逐步降優先序。等到差距變得重要時，已無法快速彌補。問責框架中有一個流程中的人，但這個人已經失去了流程本身。</p>
+
+        <h2>在硬體交叉點</h2>
+        <p>硬體安全依賴於認證：對設備是否正在執行其聲稱執行的軟體和配置的獨立檢查。AI輔助認證智能體能夠以人工檢查無法匹敵的規模和速度評估設備健康狀況。完全依賴它們的操作理由令人信服。然而問責問題在於：隨著人工檢查的萎縮，認證智能體成為唯一的檢查手段——當智能體本身是錯誤來源時，便不再有可用的驗證路徑。</p>
+
+        <p>這在超出智能體訓練分佈的故障模式上最為關鍵：新型攻擊面、未預料的硬體交互、智能體未被設計來評估的配置模式。這些恰恰是獨立人工驗證最能提供不可替代價值的情況，也恰恰是人工驗證能力被最徹底取代的情況。將認證能力讓渡給AI智能體的組織，在智能體正常運作的每一天並不更不安全。然而在智能體遺漏了一個訓練有素的人眼本可發現的問題的那一天，它反而更加脆弱——因為那雙眼睛已不復存在。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>認知權威問題在照護場景中最為尖銳，因為後果最為直接，而核驗能力最難維持。臨床判斷依賴於透過多年督導實踐積累的模式識別、觸覺評估和情境解讀能力。一個監測生命體徵、標記異常並呈現護理建議的AI智能體，在規模和速度上是臨床醫生無法對每位在管患者獨立複現的。實際結果是：臨床人員審查智能體輸出，而非形成獨立評估。</p>
+
+        <p>對於常規病例，這是高效且適當的。問責缺口在邊緣情況下打開：不符合智能體訓練分佈的患者表現、具有完整背景的人類從業者會以不同權重處理的細微症狀組合、智能體護理建議與患者未記錄病史之間的交互。在這些情況下，問責架構需要人類臨床判斷——但流程中的人類一直在審查智能體輸出，而非運用臨床判斷，而兩者並不相同。智能體並非被設計來取代臨床權威，而是預設成為了認知權威。</p>
+
+        <h2>保持質疑的能力</h2>
+        <p>認知權威問題沒有簡單的技術解決方案。它在一定程度上是組織性的：獨立核驗的能力必須被刻意維持，而不僅僅是名義上保留。要求人類對AI建議進行簽署的問責框架，還必須要求能夠做出有意義簽署的人類繼續存在——這意味著機構必須在AI智能體最具能力的領域投資於人類專業知識，而非將該專業知識視為需要被取代的成本。</p>
+
+        <p>它也是架構性的：流程中人類的最重要功能不是批准正確的智能體輸出，而是發現智能體出錯的邊緣情況。這意味著問責架構必須創造條件——工作量、對原始資料的存取、對異議的機構空間——使得有意義的質疑依然可能。一個在功能上阻止核驗的監督結構根本不是監督結構，而是附著在真相來源上的稽核軌跡——而當真相來源失效時，這一區別最為重要。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>被設計為決策支援工具的AI智能體，隨著依賴程度加深和獨立核驗能力萎縮，往往成為事實上的真相來源。問責架構保留了流程中的人類，但這個人失去了有效質疑智能體輸出所需的能力——技能、習慣、機構知識。解決認知權威問題需要在AI智能體最被依賴的領域刻意維持人類專業知識和獨立核驗能力。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-08</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var btns = document.querySelectorAll('.lang-btn');
+      var sections = document.querySelectorAll('.essay-lang');
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var lang = this.getAttribute('data-lang');
+          btns.forEach(function (b) { b.classList.remove('active'); });
+          sections.forEach(function (s) { s.classList.remove('active'); });
+          this.classList.add('active');
+          var target = document.querySelector('[data-lang-content="' + lang + '"]');
+          if (target) target.classList.add('active');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
