@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The decision velocity problem — Asaptic Labs</title>
+
+  <meta name="description" content="When AI agents must decide faster than any oversight loop can operate, the accountability architectures designed for human-paced decisions become structurally incompatible with the deployment surface." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/decision-velocity-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The decision velocity problem: accountability when AI agents must decide faster than oversight can operate" />
+  <meta property="og:description" content="When AI agents must decide faster than any oversight loop can operate, the accountability architectures designed for human-paced decisions become structurally incompatible with the deployment surface." />
+  <meta property="og:url" content="https://asaptic.com/blog/decision-velocity-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-08" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The decision velocity problem: accountability when AI agents must decide faster than oversight can operate",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-08",
+    "description": "When AI agents must decide faster than any oversight loop can operate, the accountability architectures designed for human-paced decisions become structurally incompatible with the deployment surface.",
+    "url": "https://asaptic.com/blog/decision-velocity-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The decision velocity problem: accountability when AI agents must decide faster than oversight can operate</h1>
+      <p class="essay-subtitle">When AI agents must decide faster than any oversight loop can operate, the accountability architectures designed for human-paced decisions become structurally incompatible with the deployment surface.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-08</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Most accountability frameworks for AI agents share an implicit architectural assumption: that there is a moment between decision and action in which a review step can be inserted. The log is written, a human examines it, and approval or correction follows. This assumption is so embedded in how governance processes are designed that it is rarely stated — and rarely examined against the actual timescales at which deployed agents operate.</p>
+
+        <p>The decision velocity problem is the structural mismatch that arises when an AI agent must act at a speed that makes human-concurrent review physically impossible. The decisions are not low-stakes enough to be left unreviewed. They are not high-stakes enough — individually — to justify full process suspension. They simply arrive faster than any accountability loop designed around human attention can close. The accountability architecture is present but structurally incompatible with the deployment surface.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>Cryptographic authentication in AI agent systems must negotiate shared secrets, verify identity certificates, and establish session parameters — all before a single application-layer message can be exchanged. At scale, these handshakes happen continuously, across millions of simultaneous sessions, in time windows measured in microseconds. A post-quantum key encapsulation mechanism adds computational overhead; it does not add the option of a human reviewing each negotiation before it completes.</p>
+
+        <p>The accountability question in this context is not about individual handshakes. It is about the policy layer above them: who authorized the algorithm choices, on what evidence, and with what mechanism for detecting that those choices are being honoured in production? The decision velocity problem manifests here as a displacement: the actual decisions — each cryptographic choice — are made faster than governance operates, so governance is displaced onto the policy choices that constrain them. If the policy layer is weak or stale, the velocity of individual decisions prevents any correction from arriving in time.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Physical systems with real-time control loops — robotic actuators, medical devices, industrial automation — operate under hard latency constraints. An agent managing a rehabilitation robot's movement patterns must evaluate sensor inputs and generate motor commands within the control cycle, typically measured in milliseconds. A human reviewing each command before it executes would introduce delays that break the physical system. The oversight loop was never designed to run at actuator speed.</p>
+
+        <p>Accountability at the hardware crossing has therefore always relied on pre-authorization: the acceptable action space is constrained before deployment, and accountability is applied to the constraint design rather than to individual decisions within it. The decision velocity problem sharpens this requirement. As agents become capable of more complex real-time reasoning — not just executing pre-defined motion profiles, but adapting to unexpected physical states — the boundary between the pre-authorized constraint space and novel decisions the agent generates in the moment becomes harder to specify and harder to audit. The velocity of physical decisions has not changed. The interpretive range of decisions within that velocity is expanding.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>In care settings, velocity asymmetry appears at the human scale rather than the machine scale. An AI agent evaluating a deteriorating patient's vital signs and generating an alert does not operate in microseconds — it operates in seconds. But the accountability loop for acting on that alert, in a typical care environment, requires locating a qualified staff member, handing off context, confirming the alert's clinical basis, and authorizing a response. The loop takes minutes. In a deteriorating situation, minutes are not available.</p>
+
+        <p>What emerges in practice is not genuine review but post-hoc documentation: the agent's recommendation is followed because the timeline demands it, and the review is recorded as if it preceded the action. The accountability framework captures an event that did not occur in the sequence it implies. This is not malfeasance — it is an institution doing the best it can under incompatible design constraints. But it means that the accountability data cannot be used to evaluate whether the agent's recommendations were appropriate, because the record does not reflect the actual decision process.</p>
+
+        <h2>Pre-authorization as the structural response</h2>
+        <p>The only durable accountability architecture for high-velocity decision environments is one that moves accountability upstream: into the design of constraints, rather than the review of individual decisions. This requires being specific about what the agent is authorized to decide unilaterally, what requires pre-defined escalation, and what constitutes an out-of-bounds action that triggers a halt regardless of time pressure. Accountability is then applied to those constraint specifications — are they adequate, current, and faithfully implemented? — rather than to the stream of decisions they govern.</p>
+
+        <p>This is not a relaxation of accountability. It is a recognition that accountability applied at the wrong layer — concurrent with decisions that cannot wait — does not produce oversight. It produces documentation of decisions that were already made. Pre-authorization accountability is more demanding, not less: it requires anticipating failure modes in advance, specifying constraint boundaries precisely, and building detection mechanisms that can identify when an agent is operating at the edge of its authorized space before a consequential decision completes. At the crossings where the decisions are both fast and irreversible, this is not an architectural preference. It is the only architecture that can function.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>Most accountability frameworks assume a review step can be inserted between an AI agent's decision and its action. Decision velocity breaks this assumption: in post-quantum cryptographic systems, real-time hardware control, and acute care environments, decisions complete faster than oversight loops can close. The structural response is pre-authorization accountability — applying oversight to the constraint design that governs the agent's decision space rather than to individual decisions within it. This is more demanding than concurrent review, not less, because it requires anticipating failure modes before they occur.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>大多数AI智能体的问责框架共享一个隐含的架构假设：在决策与行动之间存在一个可以插入审查步骤的时刻。日志被写入，人工审查它，然后批准或纠正随之而来。这一假设深深嵌入治理流程的设计方式，以至于它很少被明确陈述——也很少被对照已部署智能体实际运行的时间尺度进行检验。</p>
+
+        <p>决策速度问题，是当AI智能体必须以使人工并行审查在物理上不可能的速度行动时产生的结构性错配。这些决策的风险不足以让人放弃审查，但单独来看也不足以高到证明完全中止流程的合理性。它们只是到来的速度，超过了任何围绕人类注意力设计的问责循环所能响应的速度。问责架构是存在的，但在结构上与部署场景不兼容。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>AI智能体系统中的密码认证必须协商共享密钥、验证身份证书并建立会话参数——所有这些都必须在任何应用层消息交换之前完成。在规模上，这些握手在数以百万计的并发会话中持续发生，时间窗口以微秒计算。后量子密钥封装机制增加了计算开销；它没有增加人工在每次协商完成之前进行审查的选项。</p>
+
+        <p>在此背景下，问责问题不在于单个握手。而在于其上层的策略层：谁授权了算法选择，基于什么证据，以及采用什么机制来检测这些选择是否在生产中被忠实执行？决策速度问题在这里表现为一种位移：实际决策——每个密码学选择——的发生速度快于治理的运转速度，因此治理被位移到约束这些选择的策略层。如果策略层薄弱或过时，单个决策的速度就会阻止任何及时到达的纠正。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>具有实时控制循环的物理系统——机器人执行器、医疗设备、工业自动化——在严格的延迟约束下运行。管理康复机器人动作模式的智能体必须在控制周期内评估传感器输入并生成运动指令，通常以毫秒计。人工在每条指令执行前进行审查会引入延迟，从而破坏物理系统。监督循环从来就不是为在执行器速度下运行而设计的。</p>
+
+        <p>因此，硬件交叉点的问责历来依赖于预授权：可接受的行动空间在部署前受到约束，问责被施加于约束设计而非其中的单个决策。决策速度问题使这一要求更加尖锐。随着智能体能够进行更复杂的实时推理——不仅仅是执行预定义的运动配置，而是适应意外的物理状态——预授权约束空间与智能体实时生成的新决策之间的边界变得更难以规定，也更难以审计。物理决策的速度没有改变，但该速度内决策的解释范围正在扩大。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>在照护场景中，速度不对称出现在人类尺度而非机器尺度。评估病情恶化患者生命体征并生成警报的AI智能体不在微秒内运行——它在秒内运行。但在典型照护环境中，对该警报采取行动的问责循环需要找到有资质的工作人员、移交背景信息、确认警报的临床依据并授权响应。这个循环需要几分钟。在病情恶化的情况下，分钟是没有的。</p>
+
+        <p>在实践中出现的不是真正的审查，而是事后文档：智能体的建议被遵循，因为时间线要求如此，审查被记录得好像发生在行动之前。问责框架捕获了一个并未按其所暗示的顺序发生的事件。这不是渎职——这是一个机构在不兼容的设计约束下尽力而为。但这意味着问责数据不能用于评估智能体的建议是否适当，因为记录并不反映实际的决策过程。</p>
+
+        <h2>预授权作为结构性回应</h2>
+        <p>高速决策环境唯一持久的问责架构，是将问责前移：移入约束的设计，而非单个决策的审查。这要求明确规定智能体被授权单独决定什么，什么需要预定义的升级，以及什么构成无论时间压力如何都会触发停止的越界行动。问责随后被施加于这些约束规范——它们是否充分、是否最新、是否被忠实实施？——而非施加于它们所治理的决策流。</p>
+
+        <p>这不是对问责的放松。这是对将问责施加于错误层——与无法等待的决策并行——无法产生监督这一事实的承认。它只产生已经做出的决策的文档。预授权问责更为严苛而非宽松：它要求提前预测故障模式，精确规定约束边界，并构建能够在重大决策完成之前识别智能体是否在其授权空间边缘运行的检测机制。在决策既快速又不可逆的交叉点，这不是一种架构偏好。这是唯一能够运作的架构。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>大多数问责框架假设可以在AI智能体的决策与行动之间插入审查步骤。决策速度打破了这一假设：在后量子密码系统、实时硬件控制和急性照护环境中，决策的完成速度快于监督循环的响应速度。结构性回应是预授权问责——将监督施加于约束约束智能体决策空间的约束设计，而非其中的单个决策。这比并行审查更为严苛，而非更宽松，因为它要求在故障模式发生之前就预见到它们。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>大多數AI智能體的問責框架共享一個隱含的架構假設：在決策與行動之間存在一個可以插入審查步驟的時刻。日誌被寫入，人工審查它，然後批准或糾正隨之而來。這一假設深深嵌入治理流程的設計方式，以至於它很少被明確陳述——也很少被對照已部署智能體實際運行的時間尺度進行檢驗。</p>
+
+        <p>決策速度問題，是當AI智能體必須以使人工並行審查在物理上不可能的速度行動時產生的結構性錯配。這些決策的風險不足以讓人放棄審查，但單獨來看也不足以高到證明完全中止流程的合理性。它們只是到來的速度，超過了任何圍繞人類注意力設計的問責循環所能響應的速度。問責架構是存在的，但在結構上與部署場景不相容。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>AI智能體系統中的密碼認證必須協商共享金鑰、驗證身份憑證並建立會話參數——所有這些都必須在任何應用層訊息交換之前完成。在規模上，這些握手在數以百萬計的並行會話中持續發生，時間窗口以微秒計算。後量子金鑰封裝機制增加了計算開銷；它沒有增加人工在每次協商完成之前進行審查的選項。</p>
+
+        <p>在此背景下，問責問題不在於單個握手。而在於其上層的策略層：誰授權了演算法選擇，基於什麼證據，以及採用什麼機制來偵測這些選擇是否在生產中被忠實執行？決策速度問題在這裡表現為一種位移：實際決策——每個密碼學選擇——的發生速度快於治理的運轉速度，因此治理被位移到約束這些選擇的策略層。如果策略層薄弱或過時，單個決策的速度就會阻止任何及時到達的糾正。</p>
+
+        <h2>在硬體交叉點</h2>
+        <p>具有即時控制迴路的物理系統——機器人執行器、醫療設備、工業自動化——在嚴格的延遲約束下運行。管理復健機器人動作模式的智能體必須在控制週期內評估感測器輸入並產生運動指令，通常以毫秒計。人工在每條指令執行前進行審查會引入延遲，從而破壞物理系統。監督循環從來就不是為在執行器速度下運行而設計的。</p>
+
+        <p>因此，硬體交叉點的問責歷來依賴於預授權：可接受的行動空間在部署前受到約束，問責被施加於約束設計而非其中的單個決策。決策速度問題使這一要求更加尖銳。隨著智能體能夠進行更複雜的即時推理——不僅僅是執行預定義的運動配置，而是適應意外的物理狀態——預授權約束空間與智能體即時產生的新決策之間的邊界變得更難以規定，也更難以稽核。物理決策的速度沒有改變，但該速度內決策的解釋範圍正在擴大。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>在照護場景中，速度不對稱出現在人類尺度而非機器尺度。評估病情惡化患者生命體徵並產生警報的AI智能體不在微秒內運行——它在秒內運行。但在典型照護環境中，對該警報採取行動的問責循環需要找到有資質的工作人員、移交背景資訊、確認警報的臨床依據並授權響應。這個循環需要幾分鐘。在病情惡化的情況下，分鐘是沒有的。</p>
+
+        <p>在實踐中出現的不是真正的審查，而是事後文件：智能體的建議被遵循，因為時間線要求如此，審查被記錄得好像發生在行動之前。問責框架捕獲了一個並未按其所暗示的順序發生的事件。這不是瀆職——這是一個機構在不相容的設計約束下盡力而為。但這意味著問責資料不能用於評估智能體的建議是否適當，因為記錄並不反映實際的決策過程。</p>
+
+        <h2>預授權作為結構性回應</h2>
+        <p>高速決策環境唯一持久的問責架構，是將問責前移：移入約束的設計，而非單個決策的審查。這要求明確規定智能體被授權單獨決定什麼，什麼需要預定義的升級，以及什麼構成無論時間壓力如何都會觸發停止的越界行動。問責隨後被施加於這些約束規範——它們是否充分、是否最新、是否被忠實實施？——而非施加於它們所治理的決策流。</p>
+
+        <p>這不是對問責的放鬆。這是對將問責施加於錯誤層——與無法等待的決策並行——無法產生監督這一事實的承認。它只產生已經做出的決策的文件。預授權問責更為嚴苛而非寬鬆：它要求提前預測故障模式，精確規定約束邊界，並構建能夠在重大決策完成之前識別智能體是否在其授權空間邊緣運行的偵測機制。在決策既快速又不可逆的交叉點，這不是一種架構偏好。這是唯一能夠運作的架構。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>大多數問責框架假設可以在AI智能體的決策與行動之間插入審查步驟。決策速度打破了這一假設：在後量子密碼系統、即時硬體控制和急性照護環境中，決策的完成速度快於監督循環的響應速度。結構性回應是預授權問責——將監督施加於約束智能體決策空間的約束設計，而非其中的單個決策。這比並行審查更為嚴苛，而非更寬鬆，因為它要求在故障模式發生之前就預見到它們。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-08</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var btns = document.querySelectorAll('.lang-btn');
+      var sections = document.querySelectorAll('.essay-lang');
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var lang = this.getAttribute('data-lang');
+          btns.forEach(function (b) { b.classList.remove('active'); });
+          sections.forEach(function (s) { s.classList.remove('active'); });
+          this.classList.add('active');
+          var target = document.querySelector('[data-lang-content="' + lang + '"]');
+          if (target) target.classList.add('active');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
