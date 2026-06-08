@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The accountability theater problem — Asaptic Labs</title>
+
+  <meta name="description" content="When the forms of accountability — logs, human sign-offs, governance processes — are present but the capacity to detect and act on errors is absent, the organization is not more accountable; it is less safe, because the appearance of oversight crowds out the pressure to build the real thing." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/accountability-theater-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The accountability theater problem: when AI agent oversight is performed rather than practiced" />
+  <meta property="og:description" content="When the forms of accountability — logs, human sign-offs, governance processes — are present but the capacity to detect and act on errors is absent, the organization is not more accountable; it is less safe, because the appearance of oversight crowds out the pressure to build the real thing." />
+  <meta property="og:url" content="https://asaptic.com/blog/accountability-theater-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-08" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The accountability theater problem: when AI agent oversight is performed rather than practiced",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-08",
+    "description": "When the forms of accountability — logs, human sign-offs, governance processes — are present but the capacity to detect and act on errors is absent, the organization is not more accountable; it is less safe, because the appearance of oversight crowds out the pressure to build the real thing.",
+    "url": "https://asaptic.com/blog/accountability-theater-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The accountability theater problem: when AI agent oversight is performed rather than practiced</h1>
+      <p class="essay-subtitle">When the forms of accountability — logs, human sign-offs, governance processes — are present but the capacity to detect and act on errors is absent, the organization is not more accountable; it is less safe, because the appearance of oversight crowds out the pressure to build the real thing.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-08</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Consider what a mature accountability framework for an AI agent typically contains. There are logs: records of inputs, outputs, and intermediate states. There are human reviewers: staff formally positioned in the authorization chain. There are governance processes: review cycles, escalation paths, exception procedures. There are documentation artifacts: model cards, impact assessments, audit reports. The framework is real, the documentation is genuine, and the organization passes every evaluation with confidence.</p>
+
+        <p>The accountability theater problem is not that any of these elements is absent or fabricated. It is that they have become rituals rather than instruments. The logs exist but are not routinely read, because no one knows what to look for and the volume makes review impractical. The human reviewers exist but have been reviewing agent outputs — not independently forming assessments — for long enough that the two activities have merged in institutional memory. The governance processes have evolved toward evaluating whether required documentation is present rather than whether the agent is behaving as intended. The accountability framework is performed with genuine effort and still does not function as accountability.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>The post-quantum transition is generating substantial compliance infrastructure: migration checklists, algorithm readiness assessments, governance attestations. The accountability theater risk in this context is that compliance documentation becomes the measure of preparedness rather than a proxy for it. An organization can produce a complete, thoroughly documented post-quantum readiness assessment — and remain operationally unready, because the assessment process evaluated the documentation rather than the cryptographic posture.</p>
+
+        <p>What accountability theater looks like here is specific: the team responsible for cryptographic infrastructure reviews a vendor-supplied readiness report and signs off on it. They have satisfied the accountability requirement. They have not evaluated whether the vendor's assessment matches their actual deployment configuration, whether the algorithm choices reflect current technical consensus rather than the vendor's commercial interests, or whether the migration dependencies are achievable in the timeline stated. The log exists. The sign-off is genuine. The accountability is theater.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Hardware attestation frameworks require that devices periodically demonstrate they are running the firmware and configuration they claim to run. An AI agent processing attestation certificates at scale can satisfy these requirements completely while missing compromise patterns that a human analyst, examining individual certificates in depth, would recognize. The problem is not that the agent is unreliable — it is that the accountability structure around the agent has optimized for throughput rather than diagnostic capability.</p>
+
+        <p>Accountability theater at the hardware crossing looks like this: a quarterly review board receives a summary report from the attestation agent showing that 99.7% of devices are compliant. No one on the board is positioned to evaluate whether the 0.3% non-compliant devices represent systematic vulnerabilities or random noise, because the summary report format was designed to satisfy the review cycle rather than to enable diagnosis. The review happens, the record exists, and the organization is exposed to a threat that the process cannot see.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>Documentation requirements in care settings are among the most elaborate accountability frameworks in any industry. They serve legitimate liability management functions. The accountability theater problem appears when documentation becomes the primary output of a care interaction rather than a record of it — when the care agent's recommendations are transcribed, reviewed, and countersigned, but the quality of the recommendation is not evaluated because the evaluation process was designed to verify the presence of documentation rather than the soundness of clinical judgment.</p>
+
+        <p>In care settings with high AI agent reliance, this manifests as: a staff member opens the agent's recommendation, reads it, records the review, and proceeds — all within the time budget that workflow design has allocated to the review step. They have performed the accountability requirement. They have not had time or context to form a view on whether the recommendation accounts for the patient's full history, whether the confidence score is calibrated for this patient population, or whether there are contraindications the agent was not designed to identify. The accountability structure captures the review and loses the judgment.</p>
+
+        <h2>Theater is self-reinforcing</h2>
+        <p>What makes accountability theater specifically difficult to address is that it tends to become more elaborate over time rather than less. Each incident or near-miss generates new requirements — an additional review step, a new documentation field, an expanded escalation procedure. These additions increase the cost of maintaining the accountability framework without necessarily increasing its diagnostic capacity. The organization devotes more resources to performing accountability, the performance becomes more expensive to produce, and the capability to detect consequential errors remains unchanged.</p>
+
+        <h2>What genuine accountability requires</h2>
+        <p>Genuine accountability has a different architecture than compliance accountability. It is organized around detection capability — can this mechanism surface a failure before it propagates? — rather than around documentation completeness. It requires that the humans in the loop retain the capacity to form independent assessments, not just review agent outputs. And it requires that accountability processes be periodically tested against the failure modes they are designed to catch, not just maintained as standing procedures.</p>
+
+        <p>The shift from accountability theater to accountability practice is not primarily a technical problem. It is an organizational decision about what accountability is for: whether it is a signal to external evaluators that the required forms are in place, or a practical capacity to detect and correct consequential errors before they complete. Both cannot be optimized simultaneously. Institutions that do not make that choice explicitly tend to choose theater by default — and at the crossings where consequences are irreversible, the default is not neutral.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>Compliance accountability — logs, sign-offs, governance processes — can be maintained with genuine effort while providing no practical capacity to detect consequential AI agent errors. The accountability theater problem arises when the forms of oversight crowd out the pressure to build the substance of oversight. Addressing it requires organizing accountability frameworks around detection capability rather than documentation completeness, and testing those frameworks periodically against the failure modes they exist to catch.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>考虑一个成熟的AI智能体问责框架通常包含什么：有日志，记录输入、输出和中间状态；有人工审查员，在授权链中正式就位；有治理流程，包括审查周期、升级路径和例外程序；有文档制品，包括模型卡、影响评估和审计报告。框架是真实的，文档是真实的，组织在每次评估中都满怀信心地通过了。</p>
+
+        <p>问责剧场问题不在于任何一个要素缺席或造假。而在于它们已经变成了仪式而非工具。日志存在，但没有人定期阅读，因为没有人知道该寻找什么，而且数量让审查变得不切实际。人工审查员存在，但已经审查智能体输出——而非独立形成评估——足够长的时间，以至于两项活动在机构记忆中已经合并。治理流程已演变为评估所需文档是否存在，而非评估智能体是否按照预期行事。问责框架以真诚的努力被执行，却仍然无法作为问责发挥作用。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>后量子过渡正在产生大量合规基础设施：迁移清单、算法就绪评估、治理认证。这里的问责剧场风险在于：合规文档变成了准备程度的衡量标准，而非其代理指标。一个组织可以产出完整、有充分记录的后量子就绪评估——却在运营层面毫无准备，因为评估过程评估的是文档，而非密码学姿态。</p>
+
+        <p>这里的问责剧场具体如下：负责密码基础设施的团队审查供应商提供的就绪报告并签署。他们满足了问责要求。但他们没有评估供应商的评估是否与实际部署配置相符，算法选择是否反映了当前技术共识而非供应商的商业利益，或者迁移依赖关系是否能在规定时间内实现。日志存在，签署是真实的，问责是剧场。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件认证框架要求设备定期证明它们正在运行所声称的固件和配置。一个大规模处理认证证书的AI智能体可以完全满足这些要求，同时遗漏一名深入检查个别证书的人工分析师会识别出的入侵模式。问题不在于智能体不可靠——而在于围绕智能体构建的问责结构为吞吐量而非诊断能力进行了优化。</p>
+
+        <p>硬件交叉点的问责剧场如下：季度审查委员会收到认证智能体的摘要报告，显示99.7%的设备合规。委员会中没有人能评估0.3%的不合规设备是代表系统性漏洞还是随机噪声，因为摘要报告格式是为满足审查周期而设计的，而不是为了实现诊断。审查发生了，记录存在，组织却暴露于流程无法看到的威胁之中。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>照护场景中的文档要求是任何行业中最复杂的问责框架之一。它们服务于合理的责任管理功能。当文档成为照护互动的主要输出而非其记录时，问责剧场问题就出现了——当照护智能体的建议被转录、审查和副署，但建议的质量没有被评估，因为评估过程被设计为验证文档的存在而非临床判断的合理性。</p>
+
+        <p>在高度依赖AI智能体的照护场景中，这表现为：工作人员打开智能体的建议，阅读，记录审查，继续进行——所有这些都在工作流程设计分配给审查步骤的时间预算内完成。他们履行了问责要求。但他们没有时间或背景来判断建议是否考虑了患者的完整病史，置信度分数是否针对该患者群体进行了校准，或者是否存在智能体未被设计来识别的禁忌症。问责结构捕获了审查，却丢失了判断。</p>
+
+        <h2>剧场是自我强化的</h2>
+        <p>使问责剧场特别难以应对的是，它往往变得越来越精心而非越来越少。每一次事故或险情都会产生新的要求——额外的审查步骤、新的文档字段、扩展的升级程序。这些新增内容增加了维护问责框架的成本，却不一定提升其诊断能力。组织投入更多资源来表演问责，表演变得更加昂贵，检测重大错误的能力却保持不变。</p>
+
+        <h2>真正的问责需要什么</h2>
+        <p>真正的问责与合规问责具有不同的架构。它围绕检测能力组织——这一机制能否在故障传播之前发现它？——而非围绕文档完整性。它要求流程中的人类保持独立形成评估的能力，而不仅仅是审查智能体输出。它还要求问责流程定期针对其旨在捕获的故障模式进行测试，而不仅仅是作为常规程序维持。</p>
+
+        <p>从问责剧场转向问责实践主要不是技术问题。这是一个关于问责是为了什么的组织决策：是向外部评估者发出所需形式已到位的信号，还是在重大错误完成之前检测和纠正它们的实际能力。两者不能同时优化。没有明确做出这一选择的机构往往默认选择了剧场——而在后果不可逆转的交叉点上，这一默认并非中立。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>合规问责——日志、签署、治理流程——可以以真诚的努力维持，同时对检测重大AI智能体错误没有任何实际能力。问责剧场问题在于：监督的形式挤压了构建监督实质的压力。解决这一问题需要围绕检测能力而非文档完整性组织问责框架，并定期针对其旨在捕获的故障模式测试这些框架。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>考慮一個成熟的AI智能體問責框架通常包含什麼：有日誌，記錄輸入、輸出和中間狀態；有人工審查員，在授權鏈中正式就位；有治理流程，包括審查週期、升級路徑和例外程序；有文件制品，包括模型卡、影響評估和稽核報告。框架是真實的，文件是真實的，組織在每次評估中都滿懷信心地通過了。</p>
+
+        <p>問責劇場問題不在於任何一個要素缺席或造假。而在於它們已經變成了儀式而非工具。日誌存在，但沒有人定期閱讀，因為沒有人知道該尋找什麼，而且數量讓審查變得不切實際。人工審查員存在，但已經審查智能體輸出——而非獨立形成評估——足夠長的時間，以至於兩項活動在機構記憶中已經合併。治理流程已演變為評估所需文件是否存在，而非評估智能體是否按照預期行事。問責框架以真誠的努力被執行，卻仍然無法作為問責發揮作用。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>後量子過渡正在產生大量合規基礎設施：遷移清單、演算法就緒評估、治理認證。這裡的問責劇場風險在於：合規文件變成了準備程度的衡量標準，而非其代理指標。一個組織可以產出完整、有充分記錄的後量子就緒評估——卻在運營層面毫無準備，因為評估過程評估的是文件，而非密碼學姿態。</p>
+
+        <p>這裡的問責劇場具體如下：負責密碼基礎設施的團隊審查供應商提供的就緒報告並簽署。他們滿足了問責要求。但他們沒有評估供應商的評估是否與實際部署配置相符，演算法選擇是否反映了當前技術共識而非供應商的商業利益，或者遷移依賴關係是否能在規定時間內實現。日誌存在，簽署是真實的，問責是劇場。</p>
+
+        <h2>在硬體交叉點</h2>
+        <p>硬體認證框架要求設備定期證明它們正在執行所聲稱的韌體和配置。一個大規模處理認證憑證的AI智能體可以完全滿足這些要求，同時遺漏一名深入檢查個別憑證的人工分析師會識別出的入侵模式。問題不在於智能體不可靠——而在於圍繞智能體構建的問責結構為吞吐量而非診斷能力進行了優化。</p>
+
+        <p>硬體交叉點的問責劇場如下：季度審查委員會收到認證智能體的摘要報告，顯示99.7%的設備合規。委員會中沒有人能評估0.3%的不合規設備是代表系統性漏洞還是隨機雜訊，因為摘要報告格式是為滿足審查週期而設計的，而不是為了實現診斷。審查發生了，記錄存在，組織卻暴露於流程無法看到的威脅之中。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>照護場景中的文件要求是任何行業中最複雜的問責框架之一。它們服務於合理的責任管理功能。當文件成為照護互動的主要輸出而非其記錄時，問責劇場問題就出現了——當照護智能體的建議被謄寫、審查和副署，但建議的品質沒有被評估，因為評估過程被設計為驗證文件的存在而非臨床判斷的合理性。</p>
+
+        <p>在高度依賴AI智能體的照護場景中，這表現為：工作人員開啟智能體的建議，閱讀，記錄審查，繼續進行——所有這些都在工作流程設計分配給審查步驟的時間預算內完成。他們履行了問責要求。但他們沒有時間或背景來判斷建議是否考慮了患者的完整病史，信心分數是否針對該患者群體進行了校準，或者是否存在智能體未被設計來識別的禁忌症。問責結構捕獲了審查，卻丟失了判斷。</p>
+
+        <h2>劇場是自我強化的</h2>
+        <p>使問責劇場特別難以應對的是，它往往變得越來越精心而非越來越少。每一次事故或險情都會產生新的要求——額外的審查步驟、新的文件欄位、擴展的升級程序。這些新增內容增加了維護問責框架的成本，卻不一定提升其診斷能力。組織投入更多資源來表演問責，表演變得更加昂貴，偵測重大錯誤的能力卻保持不變。</p>
+
+        <h2>真正的問責需要什麼</h2>
+        <p>真正的問責與合規問責具有不同的架構。它圍繞偵測能力組織——這一機制能否在故障傳播之前發現它？——而非圍繞文件完整性。它要求流程中的人類保持獨立形成評估的能力，而不僅僅是審查智能體輸出。它還要求問責流程定期針對其旨在捕獲的故障模式進行測試，而不僅僅是作為常規程序維持。</p>
+
+        <p>從問責劇場轉向問責實踐主要不是技術問題。這是一個關於問責是為了什麼的組織決策：是向外部評估者發出所需形式已到位的訊號，還是在重大錯誤完成之前偵測和糾正它們的實際能力。兩者不能同時優化。沒有明確做出這一選擇的機構往往預設選擇了劇場——而在後果不可逆轉的交叉點上，這一預設並非中立。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>合規問責——日誌、簽署、治理流程——可以以真誠的努力維持，同時對偵測重大AI智能體錯誤沒有任何實際能力。問責劇場問題在於：監督的形式擠壓了構建監督實質的壓力。解決這一問題需要圍繞偵測能力而非文件完整性組織問責框架，並定期針對其旨在捕獲的故障模式測試這些框架。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-08</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var btns = document.querySelectorAll('.lang-btn');
+      var sections = document.querySelectorAll('.essay-lang');
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var lang = this.getAttribute('data-lang');
+          btns.forEach(function (b) { b.classList.remove('active'); });
+          sections.forEach(function (s) { s.classList.remove('active'); });
+          this.classList.add('active');
+          var target = document.querySelector('[data-lang-content="' + lang + '"]');
+          if (target) target.classList.add('active');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
