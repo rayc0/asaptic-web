@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The feedback latency problem — Asaptic Labs</title>
+
+  <meta name="description" content="The accountability loop depends on feedback. When the observable outcome of an AI agent's decision arrives weeks, months, or years after the action, the feedback cannot inform correction before the pattern has repeated at scale." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/feedback-latency-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The feedback latency problem: accountability when consequences arrive long after the decision" />
+  <meta property="og:description" content="The accountability loop depends on feedback. When the observable outcome of an AI agent's decision arrives weeks, months, or years after the action, the feedback cannot inform correction before the pattern has repeated at scale." />
+  <meta property="og:url" content="https://asaptic.com/blog/feedback-latency-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-08" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The feedback latency problem: accountability when consequences arrive long after the decision",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-08",
+    "description": "The accountability loop depends on feedback. When the observable outcome of an AI agent's decision arrives weeks, months, or years after the action, the feedback cannot inform correction before the pattern has repeated at scale.",
+    "url": "https://asaptic.com/blog/feedback-latency-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The feedback latency problem: accountability when consequences arrive long after the decision</h1>
+      <p class="essay-subtitle">The accountability loop depends on feedback. When the observable outcome of an AI agent's decision arrives weeks, months, or years after the action, the feedback cannot inform correction before the pattern has repeated at scale.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-08</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Accountability frameworks for AI agents are built around a feedback loop: the agent acts, the outcome is observable, humans assess whether the action was appropriate, and the assessment feeds back into how the system is governed. The loop has an implicit timing assumption — that feedback arrives soon enough to enable correction before the same decision is made again at scale. In practice, this assumption often fails. Not because feedback is unavailable, but because the observable consequence of a decision materializes long after the decision was made, and many similar decisions have already repeated.</p>
+
+        <p>The feedback latency problem is the structural gap between when an AI agent acts and when the consequences of that action become interpretable as evidence for or against its appropriateness. This gap is not a failure of logging or instrumentation. The decision may be perfectly recorded. The gap is between the record and the outcome that would allow the record to be evaluated — and it exists independently of whether the accountability system is well-designed or poorly-designed. The underlying timescale mismatch is a property of the domain, not the architecture.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>The migration to post-quantum cryptographic algorithms is an accountability exercise conducted against a feedback timeline measured in years. An AI agent managing cryptographic infrastructure makes algorithm selection decisions today. The observable consequence — whether those choices hold against a cryptanalytically capable adversary — may not materialize for a decade. The feedback that would allow accountability systems to evaluate those decisions in real time does not exist. The decision is made; the evaluation loop cannot close until events that have not yet occurred have had time to unfold.</p>
+
+        <p>What makes this more than a theoretical concern is the asymmetry between how decisions accumulate and how failures arrive. Choices made across a migration window aggregate silently. If those choices turn out to be inadequate, the failure will not manifest as a correctable trickle. It will manifest as a sudden exposure of long-accumulated commitments — each individually authorized, collectively vulnerable. The accountability architecture must therefore evaluate algorithm selection on a different evidentiary basis than outcome feedback: cryptographic analysis, standards-compliance margins, and conservative parameter selection. The loop cannot close on empirical confirmation; it must close on prospective adequacy.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Medical devices and rehabilitation hardware operate in outcome timescales structurally mismatched with their control-loop timescales. An AI agent adjusting a rehabilitation protocol makes decisions at the cadence of therapy sessions — potentially multiple times per week. The outcome that would allow those decisions to be evaluated — functional recovery, fall-rate reduction, quality-of-life change — is typically assessed at clinical review, occurring monthly or quarterly. The agent has made dozens of decisions before the first meaningful outcome signal arrives.</p>
+
+        <p>This latency is not a design failure; it reflects genuine biological and clinical timescales. But it means that accountability applied to individual decisions cannot function: the feedback is never granular enough to be mapped back to specific choices. What is evaluable is the protocol design — the parameterization within which the agent makes decisions — not the decisions themselves. Long feedback latency therefore displaces accountability upstream, from the stream of actions to the authorization boundary that governs them, in exactly the same structural move required by decision velocity. The underlying mechanism is different; the architectural response converges on the same requirement.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>Nutritional and swallowing-safety interventions in residential care settings are assessed against outcomes that lag the intervention by weeks. An AI agent generating dietary recommendations or flagging swallowing risk makes multiple assessments per resident per day; the observable consequence — avoidance of aspiration, maintenance of nutritional status, quality of life — is assessed at care reviews separated by months. The accountability gap spans not just individual decisions but the entire operational period between reviews.</p>
+
+        <p>In care settings, feedback latency interacts with care continuity in a particularly acute way. Multiple AI and human contributors act on a resident's care record between any two reviews. When an adverse outcome arrives, the causal pathway is multi-step, distributed across contributors, and spread across a timeline the accountability architecture was not designed to interrogate at decision-level granularity. The outcome is observable. The connection between specific agent decisions and that outcome is not recoverable from available records — not because the records are incomplete, but because the causal distance is too great for the records that do exist to bridge.</p>
+
+        <h2>Prospective accountability as the structural response</h2>
+        <p>Long feedback latency requires a form of accountability that does not wait for outcomes. The decision log is necessary but not sufficient: evaluation must be done prospectively, against criteria that can be assessed at decision time rather than against downstream consequences that are not yet available.</p>
+
+        <p>For AI agents operating in high-latency domains, this means two things. First, authorization criteria must be specified in a form evaluable at the moment of the decision: does this action fall within the authorized parameter space? Is the agent operating within its validated distribution? These questions are answerable from current data, not future outcomes. Second, monitoring must be designed to detect distributional drift in the decision stream long before outcome data could confirm a problem. A shift in the pattern of decisions — toward edge cases, unusual parameter combinations, or boundary conditions — is visible in the decision record even when the consequences of those decisions are still latent.</p>
+
+        <p>This is the structural response to feedback latency: move accountability from the outcome to the decision itself, with sufficient specification of what an appropriate decision looks like that the evaluation does not require the outcome to arrive. The feedback loop closes on decision-time evidence, not consequence-time evidence. At the crossings where consequences are consequential and feedback is slow, this is not an approximation of real accountability. It is the only accountability architecture whose loop actually closes.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>Accountability frameworks assume feedback arrives soon enough to enable correction before the same decision repeats at scale. Feedback latency breaks this: in post-quantum security, hardware, and care settings, observable consequences arrive on timescales of months or years while decisions accumulate at the cadence of operations. The structural response is prospective accountability — evaluating decisions against criteria assessable at decision time, and monitoring for distributional drift in the decision stream, rather than waiting for outcome feedback that cannot close the loop in time.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>AI智能体的问责框架围绕一个反馈循环构建：智能体行动，结果可观察，人工评估该行动是否适当，评估结果反馈到系统治理中。这个循环有一个隐含的时间假设——反馈的到来足够及时，能够在相同决策在规模上重复之前实现纠正。在实践中，这一假设经常失效。不是因为反馈不可获取，而是因为决策的可观察后果在决策做出很久之后才得以呈现，而类似的决策早已大量重复。</p>
+
+        <p>反馈延迟问题，是AI智能体行动时间与该行动后果变得可解读为支持或反对其适当性的证据之间的结构性鸿沟。这一鸿沟不是日志或监控的失败。决策本身可能被完美记录。鸿沟存在于记录与能够对记录进行评估的结果之间——它独立于问责系统的设计质量而存在。底层的时间尺度不匹配是领域的属性，而非架构的属性。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>向后量子密码算法的迁移，是一场在以年为单位的反馈时间线上进行的问责实践。管理密码基础设施的AI智能体今天做出算法选择决策。可观察的后果——这些选择是否能抵御具备密码分析能力的对手——可能在十年内都不会呈现。允许问责系统实时评估这些决策的反馈并不存在。决策已做出；评估循环无法闭合，直到尚未发生的事件有时间展开。</p>
+
+        <p>使这不仅仅是理论关切的，是决策如何积累与失败如何到来之间的不对称性。迁移窗口期内做出的选择默默积累。如果这些选择最终被证明不足，失败不会表现为可纠正的涓涓细流。它将表现为长期积累承诺的突然暴露——每一项都经过单独授权，整体上却存在漏洞。因此，问责架构必须在不同于结果反馈的证据基础上评估算法选择：密码学分析、标准合规余量和保守的参数选择。循环无法在经验验证上闭合；它必须在前瞻性充分性上闭合。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>医疗设备和康复硬件在结构上与其控制循环时间尺度不匹配的结果时间尺度下运行。调整康复方案的AI智能体以治疗会话的节奏做出决策——每周可能多次。允许评估这些决策的结果——功能恢复、跌倒率降低、生活质量变化——通常在临床评审时进行评估，每月或每季度一次。在第一个有意义的结果信号到来之前，智能体已做出数十个决策。</p>
+
+        <p>这种延迟不是设计失败；它反映了真实的生物和临床时间尺度。但这意味着施加于单个决策的问责无法发挥作用：反馈的颗粒度永远不足以映射回具体的选择。可评估的是方案设计——智能体做出决策所在的参数化框架——而非决策本身。因此，长反馈延迟将问责前移，从行动流移向治理行动的授权边界，与决策速度所需的结构性移动完全相同。底层机制不同；架构响应收敛于同一要求。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>养老照护机构中的营养和吞咽安全干预，是针对滞后于干预数周的结果进行评估的。生成饮食建议或标记吞咽风险的AI智能体每天对每位住民进行多次评估；可观察的后果——避免误吸、维持营养状况、生活质量——在相隔数月的照护评审时进行评估。问责鸿沟不只涵盖单个决策，而是横跨评审之间的整个运营周期。</p>
+
+        <p>在照护场景中，反馈延迟以一种特别尖锐的方式与照护连续性相互作用。多个AI和人工贡献者在两次评审之间对住民的照护记录采取行动。当不良后果到来时，因果路径是多步骤的，分布于各贡献者之间，跨越了问责架构未被设计为在决策层面颗粒度审查的时间线。结果是可观察的。具体的智能体决策与该结果之间的联系无法从现有记录中恢复——不是因为记录不完整，而是因为因果距离太大，现有记录无法跨越。</p>
+
+        <h2>前瞻性问责作为结构性回应</h2>
+        <p>长反馈延迟需要一种不等待结果的问责形式。决策日志是必要条件但不是充分条件：评估必须以前瞻性方式进行，针对可在决策时评估的标准，而非针对尚未可得的下游后果。</p>
+
+        <p>对于在高延迟领域运营的AI智能体，这意味着两件事。第一，授权标准必须以在决策时刻可评估的形式加以规定：此行动是否落在授权参数空间内？智能体是否在其经过验证的分布范围内运行？这些问题可从当前数据得到解答，而非取决于未来结果。第二，监控必须被设计为能够在结果数据可以确认问题之前很早就检测到决策流中的分布漂移。决策模式的变化——趋向边缘案例、不寻常的参数组合或边界条件——在决策记录中是可见的，即便这些决策的后果仍然潜伏。</p>
+
+        <p>这就是应对反馈延迟的结构性回应：将问责从结果移向决策本身，对适当决策的外观进行充分规定，使评估无需等待结果到来。反馈循环在决策时间证据上闭合，而非在后果时间证据上闭合。在后果重大而反馈缓慢的交叉点，这不是真正问责的近似替代。这是唯一一种循环实际能够闭合的问责架构。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>问责框架假设反馈足够及时，能够在相同决策在规模上重复之前实现纠正。反馈延迟打破了这一假设：在后量子安全、硬件和照护场景中，可观察后果以数月或数年的时间尺度到来，而决策以运营节奏积累。结构性回应是前瞻性问责——针对在决策时刻可评估的标准对决策进行评估，并监控决策流中的分布漂移，而非等待无法及时闭合循环的结果反馈。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>AI智能體的問責框架圍繞一個反饋循環構建：智能體行動，結果可觀察，人工評估該行動是否適當，評估結果反饋到系統治理中。這個循環有一個隱含的時間假設——反饋的到來足夠及時，能夠在相同決策在規模上重複之前實現糾正。在實踐中，這一假設經常失效。不是因為反饋不可獲取，而是因為決策的可觀察後果在決策做出很久之後才得以呈現，而類似的決策早已大量重複。</p>
+
+        <p>反饋延遲問題，是AI智能體行動時間與該行動後果變得可解讀為支持或反對其適當性的證據之間的結構性鴻溝。這一鴻溝不是日誌或監控的失敗。決策本身可能被完美記錄。鴻溝存在於記錄與能夠對記錄進行評估的結果之間——它獨立於問責系統的設計品質而存在。底層的時間尺度不匹配是領域的屬性，而非架構的屬性。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>向後量子密碼演算法的遷移，是一場在以年為單位的反饋時間線上進行的問責實踐。管理密碼基礎設施的AI智能體今天做出演算法選擇決策。可觀察的後果——這些選擇是否能抵禦具備密碼分析能力的對手——可能在十年內都不會呈現。允許問責系統即時評估這些決策的反饋並不存在。決策已做出；評估循環無法閉合，直到尚未發生的事件有時間展開。</p>
+
+        <p>使這不僅僅是理論關切的，是決策如何積累與失敗如何到來之間的不對稱性。遷移窗口期內做出的選擇默默積累。如果這些選擇最終被證明不足，失敗不會表現為可糾正的涓涓細流。它將表現為長期積累承諾的突然暴露——每一項都經過單獨授權，整體上卻存在漏洞。因此，問責架構必須在不同於結果反饋的證據基礎上評估演算法選擇：密碼學分析、標準合規餘量和保守的參數選擇。循環無法在經驗驗證上閉合；它必須在前瞻性充分性上閉合。</p>
+
+        <h2>在硬體交叉點</h2>
+        <p>醫療設備和復健硬體在結構上與其控制迴路時間尺度不匹配的結果時間尺度下運行。調整復健方案的AI智能體以治療會話的節奏做出決策——每週可能多次。允許評估這些決策的結果——功能恢復、跌倒率降低、生活品質變化——通常在臨床評審時進行評估，每月或每季一次。在第一個有意義的結果訊號到來之前，智能體已做出數十個決策。</p>
+
+        <p>這種延遲不是設計失敗；它反映了真實的生物和臨床時間尺度。但這意味著施加於單個決策的問責無法發揮作用：反饋的顆粒度永遠不足以映射回具體的選擇。可評估的是方案設計——智能體做出決策所在的參數化框架——而非決策本身。因此，長反饋延遲將問責前移，從行動流移向治理行動的授權邊界，與決策速度所需的結構性移動完全相同。底層機制不同；架構響應收斂於同一要求。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>安老照護機構中的營養和吞嚥安全介入，是針對滯後於介入數週的結果進行評估的。產生飲食建議或標記吞嚥風險的AI智能體每天對每位住民進行多次評估；可觀察的後果——避免誤吸、維持營養狀況、生活品質——在相隔數月的照護評審時進行評估。問責鴻溝不只涵蓋單個決策，而是橫跨評審之間的整個運營週期。</p>
+
+        <p>在照護場景中，反饋延遲以一種特別尖銳的方式與照護連續性相互作用。多個AI和人工貢獻者在兩次評審之間對住民的照護記錄採取行動。當不良後果到來時，因果路徑是多步驟的，分布於各貢獻者之間，跨越了問責架構未被設計為在決策層面顆粒度審查的時間線。結果是可觀察的。具體的智能體決策與該結果之間的聯繫無法從現有記錄中恢復——不是因為記錄不完整，而是因為因果距離太大，現有記錄無法跨越。</p>
+
+        <h2>前瞻性問責作為結構性回應</h2>
+        <p>長反饋延遲需要一種不等待結果的問責形式。決策日誌是必要條件但不是充分條件：評估必須以前瞻性方式進行，針對可在決策時評估的標準，而非針對尚未可得的下游後果。</p>
+
+        <p>對於在高延遲領域運營的AI智能體，這意味著兩件事。第一，授權標準必須以在決策時刻可評估的形式加以規定：此行動是否落在授權參數空間內？智能體是否在其經過驗證的分布範圍內運行？這些問題可從當前資料得到解答，而非取決於未來結果。第二，監控必須被設計為能夠在結果資料可以確認問題之前很早就偵測到決策流中的分布漂移。決策模式的變化——趨向邊緣案例、不尋常的參數組合或邊界條件——在決策記錄中是可見的，即便這些決策的後果仍然潛伏。</p>
+
+        <p>這就是應對反饋延遲的結構性回應：將問責從結果移向決策本身，對適當決策的外觀進行充分規定，使評估無需等待結果到來。反饋循環在決策時間證據上閉合，而非在後果時間證據上閉合。在後果重大而反饋緩慢的交叉點，這不是真正問責的近似替代。這是唯一一種循環實際能夠閉合的問責架構。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>問責框架假設反饋足夠及時，能夠在相同決策在規模上重複之前實現糾正。反饋延遲打破了這一假設：在後量子安全、硬體和照護場景中，可觀察後果以數月或數年的時間尺度到來，而決策以運營節奏積累。結構性回應是前瞻性問責——針對在決策時刻可評估的標準對決策進行評估，並監控決策流中的分布漂移，而非等待無法及時閉合循環的結果反饋。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-08</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      var savedLang = localStorage.getItem('asaptic_lang') || 'en';
+      var btns = document.querySelectorAll('.lang-btn');
+      var sections = document.querySelectorAll('[data-lang-content]');
+
+      function setLang(lang) {
+        btns.forEach(function (b) {
+          b.classList.toggle('active', b.dataset.lang === lang);
+        });
+        sections.forEach(function (s) {
+          s.classList.toggle('active', s.dataset.langContent === lang);
+        });
+        localStorage.setItem('asaptic_lang', lang);
+      }
+
+      setLang(savedLang);
+      btns.forEach(function (b) {
+        b.addEventListener('click', function () { setLang(b.dataset.lang); });
+      });
+    })();
+  </script>
+</body>
+</html>
