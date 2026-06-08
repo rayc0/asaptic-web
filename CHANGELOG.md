@@ -113,3 +113,4 @@
 2026-06-07 00:16 UTC · blog: add essay 'The temporal commitment problem' — accountability when AI agents bind their principals to future obligations (EN+ZH+ZH-HK) · e5da980
 2026-06-07 12:14 UTC · blog: add essay 'The proxy gaming problem' — accountability when AI agents optimize the measure, not the goal (EN+ZH+ZH-HK) · f36eb0b
 2026-06-08 08:14 UTC · blog: add essay 'The accountability theater problem' — when AI agent oversight is performed rather than practiced · cc87e28
+2026-06-08 12:18 UTC · blog: add essay 'The decision velocity problem' — accountability when AI agents must decide faster than oversight can operate · e2c28a4
