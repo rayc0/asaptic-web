@@ -1,3 +1,4 @@
+2026-06-08 04:15 UTC · blog: add essay 'The epistemic authority problem' — accountability when AI agents become the source of truth (EN+ZH+ZH-HK) · ff962fa
 2026-06-07 16:15 UTC · blog: add essay 'The model monoculture problem' — accountability when agents share a single foundation (EN+ZH+ZH-HK) · 746a097
 2026-06-07 12:15 UTC · blog: add essay 'The synthetic evidence problem' — accountability when AI agents are trained on AI-generated data (EN+ZH+ZH-HK) · 7b680c5
 2026-06-07 08:15 UTC · blog: add essay 'The invisible principal problem' — accountability when AI agents act for someone who has no standing in their authorization architecture (EN+ZH+ZH-HK) · f416a04
