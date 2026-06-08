@@ -112,3 +112,4 @@
 2026-06-06 12:14 UTC · blog: add essay 'The second-mover problem' — accountability when an AI agent inherits consequences it did not create · 94ac187
 2026-06-07 00:16 UTC · blog: add essay 'The temporal commitment problem' — accountability when AI agents bind their principals to future obligations (EN+ZH+ZH-HK) · e5da980
 2026-06-07 12:14 UTC · blog: add essay 'The proxy gaming problem' — accountability when AI agents optimize the measure, not the goal (EN+ZH+ZH-HK) · f36eb0b
+2026-06-08 08:14 UTC · blog: add essay 'The accountability theater problem' — when AI agent oversight is performed rather than practiced · cc87e28
