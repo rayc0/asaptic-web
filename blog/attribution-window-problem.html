@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The attribution window problem — Asaptic Labs</title>
+
+  <meta name="description" content="Between the decision and the harm, months pass. Evidence degrades. Context changes. Other interventions occur. When the harm finally arrives, the causal thread connecting it to the original AI agent decision may be too thin to trace." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/attribution-window-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The attribution window problem: accountability when time erases the causal thread" />
+  <meta property="og:description" content="Between the decision and the harm, months pass. Evidence degrades. Context changes. Other interventions occur. When the harm finally arrives, the causal thread connecting it to the original AI agent decision may be too thin to trace." />
+  <meta property="og:url" content="https://asaptic.com/blog/attribution-window-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-09" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The attribution window problem: accountability when time erases the causal thread",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-09",
+    "description": "Between the decision and the harm, months pass. Evidence degrades. Context changes. Other interventions occur. When the harm finally arrives, the causal thread connecting it to the original AI agent decision may be too thin to trace.",
+    "url": "https://asaptic.com/blog/attribution-window-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum · × Hardware · × Physical-World Care</div>
+      <h1 class="essay-title">The attribution window problem: accountability when time erases the causal thread</h1>
+      <p class="essay-subtitle">Between the decision and the harm, months pass. Evidence degrades. Context changes. Other interventions occur. When the harm finally arrives, the causal thread connecting it to the original AI agent decision may be too thin to trace.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-09</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Medical decisions unfold over time. A care AI that adjusted medication dosing in March may have set in motion an adverse outcome that appears in September. A hardware agent that accepted an anomalous calibration reading one quarter may have let a sensor drift accumulate that triggers a clinical alert three quarters later. A key management agent that approved a cryptographic parameter set today may have created a weakness that becomes exploitable when the external threat environment shifts two years from now.</p>
+
+        <p>In each case, the causal chain is real. The AI agent's decision contributed to the outcome. But the connection between decision and harm is separated by time — and time, in the evidentiary sense, is corrosive. Evidence degrades. Systems are updated. Other interventions occur. By the time the harm materializes, the conditions under which the original decision was made may be irrecoverable.</p>
+
+        <h2>What the attribution window is</h2>
+        <p>The attribution window is the interval between an AI agent's decision and the harm that decision contributed to — the period during which the causal thread can be degraded, obscured, or severed. It is defined by two asymmetries. The AI agent's decision is instantaneous and machine-precise: a specific parameter, at a specific timestamp, in a specific context. The causal path from that decision to harm is temporal and mediated: it runs through other systems, other agents, other interventions, and a world that has changed in the intervening time.</p>
+
+        <p>The standard accountability assumption is that decisions can be evaluated in retrospect. The attribution window problem challenges that assumption. When the causal path is long enough and the intervening changes numerous enough, retrospective evaluation may not be technically feasible — not because records were lost, but because the records that survive no longer contain enough information to reconstruct the causal contribution of any single decision.</p>
+
+        <h2>At the post-quantum crossing</h2>
+        <p>Post-quantum migration introduces multi-year implementation timelines during which parameter choices made today will remain in production long after the threat environment has changed. A key management agent that selects cipher parameters now does so in a threat landscape that will shift substantially before those keys are retired. If the parameter choice turns out to be wrong — because a new cryptanalytic result narrowed the assumed security margin, or because hardware advances brought a theoretical attack within reach — the flaw may only manifest when exploitation occurs. By then, the decision is years old, the agent that made it may have been updated multiple times, and the audit record may have been archived, compressed, or migrated across system generations.</p>
+
+        <p>Establishing that the original parameter selection was the proximate cause of an eventual breach requires tracing a causal chain across multiple audit-system generations, each with its own retention policy and data model. The attribution window here is not a data loss problem — it is an evidentiary architecture problem. The records exist, but the linkages between them were never designed to support causal reconstruction over that time scale.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Embedded AI agents manage systems that degrade gradually. A calibration decision that was technically defensible at deployment may become the amplifier of a degradation trajectory as underlying hardware ages, component tolerances drift, and operating conditions change. The device does not fail suddenly — it drifts. Each individual agent decision along that trajectory is locally justifiable; the accumulated effect of those decisions may be what made the eventual failure possible.</p>
+
+        <p>When physical failure occurs, determining whether the agent's decision architecture contributed requires reconstructing a trajectory from point measurements taken over years of operation. Most device logging is designed to support real-time diagnostics and event-level forensics. It is rarely designed to support multi-year causal reconstruction. The sampling frequency, the context captured per event, and the retention period are all calibrated to the expected timescale of immediate failures — not to the timescale of accumulated drift that the attribution window problem demands.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>Care AI systems operate in environments where causal chains are long and interventions are numerous. An agent managing a chronic condition makes hundreds of micro-decisions — alert thresholds, escalation criteria, care transition timing — that individually appear inconsequential but collectively shape a health trajectory over months. An adverse event that occurs eighteen months into a deployment may trace causally to a decision architecture established at the beginning, but by the time it occurs, the patient's condition has been modified by clinician interventions, medication changes, environmental factors, and other AI systems.</p>
+
+        <p>Disentangling the contribution of the original agent decision from the contributions of subsequent interventions is rarely technically feasible with standard logging. The problem is not absence of records but absence of the causal model that would allow the records to be interpreted. A log entry that says "escalation suppressed: confidence below threshold" does not, by itself, support a determination of whether that suppression contributed to harm that appeared four months later.</p>
+
+        <h2>What the attribution window demands</h2>
+        <p>Closing the attribution window requires treating causal traceability as a design constraint, not a retrospective exercise. This means logging not just the decision but the decision's causal model: the variables the agent weighted, the confidence values it assigned, and the state of the world it was acting on. It means designing audit systems for the temporal scale of the potential harm, not just the temporal scale of the decision.</p>
+
+        <p>It also means recognizing that the attribution window is an attack surface. A bad actor with access to an AI agent's decision process can construct choices that produce harm outside the window — decisions that appear locally defensible at the time but contribute to outcomes that will never be conclusively traced back to their source. The attribution window is not merely an evidentiary inconvenience. It is a structural feature of any accountability framework that relies on after-the-fact reconstruction of AI agent behavior across long causal chains.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI agent decisions and the harms they contribute to are often separated by months or years. During that interval, the evidentiary thread connecting decision to outcome degrades: context changes, records are archived, and intervening events make causal reconstruction increasingly difficult. This attribution window is distinct from the feedback latency problem (which addresses correction timing) and the temporal accountability gap (which addresses organizational memory) — it is specifically an evidentiary architecture problem. Closing it requires designing audit systems for the temporal scale of the potential harm, not just the temporal scale of the decision, and recognizing that the window itself is an attack surface that rewards adversaries who can construct decisions whose consequences emerge outside the traceable horizon.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>医疗决策随时间展开。一个在三月调整了用药剂量的照护AI，可能已经启动了九月才显现的不良后果。一个在某季度接受了异常校准读数的硬件智能体，可能让传感器漂移积累，三个季度后触发临床警报。一个今天批准了密码学参数集的密钥管理智能体，可能创造了一个弱点，当两年后外部威胁环境改变时才变得可被利用。</p>
+
+        <p>在每种情况下，因果链都是真实的。AI智能体的决策对结果有所贡献。但决策与伤害之间的联系被时间分隔开来——而从证据意义上说，时间具有腐蚀性。证据降解。系统被更新。其他干预发生。当伤害最终显现时，做出原始决策时的条件可能已无从恢复。</p>
+
+        <h2>归因窗口是什么</h2>
+        <p>归因窗口是AI智能体的决策与该决策所促成的伤害之间的时间间隔——在这段时间里，因果线索可能被降解、遮蔽或切断。它由两种不对称性界定。AI智能体的决策是瞬时的、机器精确的：在特定时间戳、特定上下文中的特定参数。从该决策到伤害的因果路径是时间性的、有中介的：它穿越其他系统、其他智能体、其他干预，以及在这段时间里已经发生变化的世界。</p>
+
+        <p>标准的问责假设是，决策可以事后评估。归因窗口问题挑战了这一假设。当因果路径足够长、中间变化足够多时，事后评估可能在技术上不可行——不是因为记录丢失，而是因为留存的记录不再包含足够的信息来重建任何单一决策的因果贡献。</p>
+
+        <h2>在后量子交叉点</h2>
+        <p>后量子迁移引入了多年的实施时间线，在此期间，今天做出的参数选择将在威胁环境发生重大变化后很久仍处于生产环境中。当密钥管理智能体现在选择密码参数时，其所处的威胁格局将在这些密钥退役之前发生实质性变化。如果参数选择事后被证明是错误的——因为新的密码分析结果收窄了假设的安全边际，或因为硬件进步使理论攻击变得可行——这一缺陷可能只在利用发生时才显现。到那时，该决策已有数年之久，做出决策的智能体可能已多次更新，审计记录可能已被归档、压缩或跨系统世代迁移。</p>
+
+        <p>证明原始参数选择是最终泄露事件的近因，需要跨越多个审计系统世代追溯因果链，每个世代都有自己的保留策略和数据模型。这里的归因窗口不是数据丢失问题——而是证据架构问题。记录存在，但其之间的关联从未被设计为支持该时间尺度上的因果重建。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>嵌入式AI智能体管理着逐渐退化的系统。在部署时技术上可辩护的校准决策，随着底层硬件老化、组件容差漂移和操作条件变化，可能成为退化轨迹的放大器。设备不会突然失效——它会漂移。沿该轨迹的每个单独智能体决策在局部都是合理的；这些决策的累积效应可能正是使最终失效成为可能的原因。</p>
+
+        <p>当物理故障发生时，确定智能体的决策架构是否有所贡献，需要从多年运行中的点测量重建一条轨迹。大多数设备日志设计用于支持实时诊断和事件级取证，而很少被设计为支持多年因果重建。每次事件捕获的采样频率、上下文以及保留期限，都是根据即时故障的预期时间尺度校准的——而非根据归因窗口问题所要求的累积漂移时间尺度。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>照护AI系统在因果链长、干预措施众多的环境中运行。管理慢性病状况的智能体在数月内做出数百个微决策——警报阈值、升级标准、照护转衔时机——这些决策单独看起来无关紧要，但共同塑造了数月来的健康轨迹。在部署十八个月后发生的不良事件，因果上可能可追溯至最初建立的决策架构，但当其发生时，患者的状况已被临床医生干预、药物变化、环境因素和其他AI系统所改变。</p>
+
+        <p>将原始智能体决策的贡献与后续干预的贡献区分开来，以标准日志记录通常在技术上不可行。问题不在于缺乏记录，而在于缺乏允许解读记录的因果模型。一个写着"升级已抑制：置信度低于阈值"的日志条目，本身并不支持对该抑制是否对四个月后出现的伤害有所贡献做出判断。</p>
+
+        <h2>归因窗口的要求</h2>
+        <p>弥合归因窗口需要将因果可追溯性视为一种设计约束，而非事后工作。这意味着不仅要记录决策，还要记录决策的因果模型：智能体加权的变量、分配的置信度值，以及它所基于的世界状态。这意味着要根据潜在伤害的时间尺度——而非仅根据决策的时间尺度——来设计审计系统。</p>
+
+        <p>这也意味着认识到归因窗口是一个攻击面。能够访问AI智能体决策过程的不良行为者，可以构建出在窗口之外产生伤害的选择——在当时看起来局部可辩护的决策，但对永远无法被确切追溯到其来源的后果有所贡献。归因窗口不仅仅是一种证据上的不便。它是任何依赖于对长因果链上AI智能体行为进行事后重建的问责框架的结构性特征。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>AI智能体的决策与其所促成的伤害往往被数月或数年所分隔。在此期间，连接决策与结果的证据线索降解：背景发生变化，记录被归档，中间事件使因果重建愈发困难。这个归因窗口不同于反馈延迟问题（处理纠错时机）和时间问责缺口（处理组织记忆）——它特指证据架构问题。弥合它需要根据潜在伤害的时间尺度（而非仅仅决策的时间尺度）来设计审计系统，并认识到窗口本身是一个攻击面，奖励那些能够构建出其后果在可追溯范围之外出现的决策的对手。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>醫療決策隨時間展開。一個在三月調整了用藥劑量的照護AI，可能已啟動了九月才顯現的不良後果。一個在某季度接受了異常校準讀數的硬體智能體，可能讓感測器漂移積累，三個季度後觸發臨床警報。一個今天批准了密碼學參數集的金鑰管理智能體，可能創造了一個弱點，當兩年後外部威脅環境改變時才變得可被利用。</p>
+
+        <p>在每種情況下，因果鏈都是真實的。AI智能體的決策對結果有所貢獻。但決策與傷害之間的聯繫被時間分隔開來——而從證據意義上說，時間具有腐蝕性。證據降解。系統被更新。其他干預發生。當傷害最終顯現時，做出原始決策時的條件可能已無從恢復。</p>
+
+        <h2>歸因窗口是什麼</h2>
+        <p>歸因窗口是AI智能體的決策與該決策所促成的傷害之間的時間間隔——在這段時間裡，因果線索可能被降解、遮蔽或切斷。它由兩種不對稱性界定。AI智能體的決策是瞬時的、機器精確的：在特定時間戳記、特定脈絡中的特定參數。從該決策到傷害的因果路徑是時間性的、有中介的：它穿越其他系統、其他智能體、其他干預，以及在這段時間裡已經發生變化的世界。</p>
+
+        <p>標準的問責假設是，決策可以事後評估。歸因窗口問題挑戰了這一假設。當因果路徑足夠長、中間變化足夠多時，事後評估可能在技術上不可行——不是因為記錄遺失，而是因為留存的記錄不再包含足夠的資訊來重建任何單一決策的因果貢獻。</p>
+
+        <h2>在後量子交叉點</h2>
+        <p>後量子遷移引入了多年的實施時間線，在此期間，今天做出的參數選擇將在威脅環境發生重大變化後很久仍處於生產環境中。當金鑰管理智能體現在選擇密碼參數時，其所處的威脅格局將在這些金鑰退役之前發生實質性變化。如果參數選擇事後被證明是錯誤的——因為新的密碼分析結果收窄了假設的安全邊際，或因為硬體進步使理論攻擊變得可行——這一缺陷可能只在利用發生時才顯現。到那時，該決策已有數年之久，做出決策的智能體可能已多次更新，審計記錄可能已被歸檔、壓縮或跨系統世代遷移。</p>
+
+        <p>證明原始參數選擇是最終洩露事件的近因，需要跨越多個審計系統世代追溯因果鏈，每個世代都有自己的保留策略和資料模型。這裡的歸因窗口不是資料遺失問題——而是證據架構問題。記錄存在，但其之間的關聯從未被設計為支援該時間尺度上的因果重建。</p>
+
+        <h2>在硬體交叉點</h2>
+        <p>嵌入式AI智能體管理著逐漸退化的系統。在部署時技術上可辯護的校準決策，隨著底層硬體老化、元件容差漂移和操作條件變化，可能成為退化軌跡的放大器。裝置不會突然失效——它會漂移。沿該軌跡的每個單獨智能體決策在局部都是合理的；這些決策的累積效應可能正是使最終失效成為可能的原因。</p>
+
+        <p>當實體故障發生時，確定智能體的決策架構是否有所貢獻，需要從多年運行中的點測量重建一條軌跡。大多數裝置日誌設計用於支援即時診斷和事件級取證，而很少被設計為支援多年因果重建。每次事件擷取的取樣頻率、脈絡以及保留期限，都是根據即時故障的預期時間尺度校準的——而非根據歸因窗口問題所要求的累積漂移時間尺度。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>照護AI系統在因果鏈長、干預措施眾多的環境中運行。管理慢性病狀況的智能體在數月內做出數百個微決策——警報閾值、升級標準、照護轉銜時機——這些決策單獨看起來無關緊要，但共同塑造了數月來的健康軌跡。在部署十八個月後發生的不良事件，因果上可能可追溯至最初建立的決策架構，但當其發生時，患者的狀況已被臨床醫師干預、藥物變化、環境因素和其他AI系統所改變。</p>
+
+        <p>將原始智能體決策的貢獻與後續干預的貢獻區分開來，以標準日誌記錄通常在技術上不可行。問題不在於缺乏記錄，而在於缺乏允許解讀記錄的因果模型。一個寫著「升級已抑制：置信度低於閾值」的日誌條目，本身並不支援對該抑制是否對四個月後出現的傷害有所貢獻做出判斷。</p>
+
+        <h2>歸因窗口的要求</h2>
+        <p>彌合歸因窗口需要將因果可追溯性視為一種設計約束，而非事後工作。這意味著不僅要記錄決策，還要記錄決策的因果模型：智能體加權的變數、分配的置信度值，以及它所基於的世界狀態。這意味著要根據潛在傷害的時間尺度——而非僅根據決策的時間尺度——來設計審計系統。</p>
+
+        <p>這也意味著認識到歸因窗口是一個攻擊面。能夠存取AI智能體決策過程的不良行為者，可以構建出在窗口之外產生傷害的選擇——在當時看起來局部可辯護的決策，但對永遠無法被確切追溯到其來源的後果有所貢獻。歸因窗口不僅僅是一種證據上的不便。它是任何依賴於對長因果鏈上AI智能體行為進行事後重建的問責框架的結構性特徵。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>AI智能體的決策與其所促成的傷害往往被數月或數年所分隔。在此期間，連接決策與結果的證據線索降解：背景發生變化，記錄被歸檔，中間事件使因果重建愈發困難。這個歸因窗口不同於回饋延遲問題（處理糾錯時機）和時間問責缺口（處理組織記憶）——它特指證據架構問題。彌合它需要根據潛在傷害的時間尺度（而非僅僅決策的時間尺度）來設計審計系統，並認識到窗口本身是一個攻擊面，獎勵那些能夠構建出其後果在可追溯範圍之外出現的決策的對手。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-09</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
