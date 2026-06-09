@@ -1,0 +1,80 @@
+#!/usr/bin/env node
+/**
+ * generate-sitemap.mjs — rebuild sitemap.xml with real git lastmod dates,
+ * the new pillar pages, and hreflang xhtml:link annotations for the
+ * localized clusters (en / zh-Hans / zh-Hant / pt-PT / x-default).
+ * Run from repo root after build-locales.mjs.
+ */
+import { execSync } from "node:child_process";
+import { readdirSync, writeFileSync, existsSync } from "node:fs";
+
+const BASE = "https://asaptic.com";
+const today = process.argv[2] || gitToday();
+function gitToday() {
+  try { return execSync("git log -1 --format=%ad --date=short").toString().trim(); }
+  catch { return "2026-06-10"; }
+}
+function lastmod(file) {
+  try {
+    const d = execSync(`git log -1 --format=%ad --date=short -- "${file}"`).toString().trim();
+    return d || today;
+  } catch { return today; }
+}
+
+// localized clusters: [enLoc, suffix]
+const CLUSTERS = [
+  { en: `${BASE}/`, suffix: "" },
+  { en: `${BASE}/sourcing.html`, suffix: "sourcing.html" },
+];
+const LOCS = [
+  { code: "zh", hreflang: "zh-Hans" },
+  { code: "zht", hreflang: "zh-Hant" },
+  { code: "pt", hreflang: "pt-PT" },
+];
+function altLinks(suffix) {
+  const out = [`    <xhtml:link rel="alternate" hreflang="en" href="${BASE}/${suffix}"/>`];
+  for (const l of LOCS)
+    out.push(`    <xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${BASE}/${l.code}/${suffix}"/>`);
+  out.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE}/${suffix}"/>`);
+  return out.join("\n");
+}
+
+const urls = [];
+const seen = new Set();
+const add = (loc, file, priority, alts) => {
+  if (seen.has(loc)) return;
+  seen.add(loc);
+  urls.push(
+    `  <url><loc>${loc}</loc><lastmod>${lastmod(file)}</lastmod><priority>${priority}</priority>` +
+    (alts ? `\n${alts}\n  ` : "") + `</url>`
+  );
+};
+
+// 1. localized clusters (en + each locale), all carrying the same alt links
+for (const c of CLUSTERS) {
+  const alts = altLinks(c.suffix);
+  const enFile = c.suffix === "" ? "index.html" : c.suffix;
+  add(c.en, enFile, c.suffix === "" ? "1.0" : "0.9", alts);
+  for (const l of LOCS)
+    add(`${BASE}/${l.code}/${c.suffix}`, `${l.code}/${enFile}`, "0.7", alts);
+}
+
+// 2. new pillar pages + other top-level pages
+const pillars = ["heavy-lift-uav.html", "physical-ai-robotics.html", "deep-tech-sourcing.html", "medical-device-sourcing.html"];
+for (const p of pillars) if (existsSync(p)) add(`${BASE}/${p}`, p, "0.8");
+for (const p of ["engage.html", "thesis.html", "press.html", "crossings.html", "privacy.html"])
+  if (existsSync(p)) add(`${BASE}/${p}`, p, "0.7");
+add(`${BASE}/blog/`, "blog", "0.7");
+
+// 3. blog posts (real git dates — fixes uniform fake lastmod)
+if (existsSync("blog")) {
+  for (const f of readdirSync("blog").filter((x) => x.endsWith(".html")).sort())
+    add(`${BASE}/blog/${f}`, `blog/${f}`, "0.6");
+}
+
+const xml =
+  `<?xml version="1.0" encoding="UTF-8"?>\n` +
+  `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n` +
+  urls.join("\n") + `\n</urlset>\n`;
+writeFileSync("sitemap.xml", xml);
+console.log(`generate-sitemap: wrote ${urls.length} urls.`);
