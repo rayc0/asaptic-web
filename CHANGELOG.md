@@ -1,3 +1,4 @@
+2026-06-09 00:15 UTC · blog: add essay 'The normative gap problem' — accountability when the standard that should govern the decision is itself contested (EN+ZH+ZH-HK) · afe4547
 2026-06-08 08:00 UTC · sitemap: add 2 missing blog essays (proxy-gaming-problem, accountability-theater-problem) · cfa03a8
 2026-06-08 04:15 UTC · blog: add essay 'The epistemic authority problem' — accountability when AI agents become the source of truth (EN+ZH+ZH-HK) · ff962fa
 2026-06-07 16:15 UTC · blog: add essay 'The model monoculture problem' — accountability when agents share a single foundation (EN+ZH+ZH-HK) · 746a097
