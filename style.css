@@ -900,3 +900,17 @@ section {
 @media (max-width: 820px) {
   .aiops-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Robust reveal (fix: content must never stay blank on load) ────────────── */
+/* Default = visible (no-JS, slow-JS, crawlers, link previews, screenshots all see content). */
+.fade-in { opacity: 1; transform: none; }
+/* Only hide for the fade animation when JS has explicitly enabled it (class set in <head>). */
+html.js-anim .fade-in { opacity: 0; transform: translateY(24px); }
+html.js-anim .fade-in.visible { opacity: 1; transform: none; }
+
+/* ── Fix: section-head was a 2-col grid scattering label/title/intro into ──────
+   separate columns (big dead space, title floating off-side). Stack it. */
+.section-head { display: block; }
+.section-head .section-label { margin-bottom: 16px; }
+.section-head .section-title { max-width: 860px; }
+.section-head .section-intro { max-width: 720px; margin-top: 18px; }
