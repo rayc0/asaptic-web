@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The normative gap problem — Asaptic Labs</title>
+
+  <meta name="description" content="Accountability requires a norm. When the standard that should govern an AI agent's decision is genuinely contested or not yet established, the evaluation mechanism cannot function as designed — because the baseline it requires does not exist." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/normative-gap-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The normative gap problem: accountability when the standard that should govern the decision is itself contested" />
+  <meta property="og:description" content="Accountability requires a norm. When the standard that should govern an AI agent's decision is genuinely contested or not yet established, the evaluation mechanism cannot function as designed — because the baseline it requires does not exist." />
+  <meta property="og:url" content="https://asaptic.com/blog/normative-gap-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-09" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The normative gap problem: accountability when the standard that should govern the decision is itself contested",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-09",
+    "description": "Accountability requires a norm. When the standard that should govern an AI agent's decision is genuinely contested or not yet established, the evaluation mechanism cannot function as designed — because the baseline it requires does not exist.",
+    "url": "https://asaptic.com/blog/normative-gap-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The normative gap problem: accountability when the standard that should govern the decision is itself contested</h1>
+      <p class="essay-subtitle">Accountability requires a norm. When the standard that should govern an AI agent's decision is genuinely contested or not yet established, the evaluation mechanism cannot function as designed — because the baseline it requires does not exist.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-09</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Accountability requires a norm. To evaluate whether an AI agent acted appropriately, a reviewer must have access to a standard — some specification of what the agent should have done in the circumstances it faced. The norm might be explicit: a protocol, a regulation, a documented threshold. It might be implicit: a professional standard, a community practice, a cultural expectation. In either case, the evaluation asks whether what the agent did was consistent with what it should have done, and that question has no answer without a referent.</p>
+
+        <p>The normative gap is the condition where the standard that should govern an AI agent's decision is not settled. Not unknown — it may be actively contested, with legitimate authorities holding different and incompatible views about the appropriate norm. Or it may be genuinely absent — a domain where practice is newer than the norms that should govern it, and where no settled expectation has yet formed. In both cases, accountability cannot function as designed: the mechanism for evaluation requires a baseline that does not yet exist or is not agreed upon.</p>
+
+        <h2>At the post-quantum security crossing</h2>
+        <p>The appropriate pace of migration to post-quantum cryptographic standards is genuinely contested. Technical arguments support a range of positions: some cryptographers argue for aggressive migration before quantum capabilities emerge; others argue that premature adoption of less-mature standards introduces its own vulnerabilities; still others contend that the migration window itself creates a period of cryptographic uncertainty that is a risk in its own right. An AI agent managing cryptographic infrastructure must make decisions in this contested space — setting migration timelines, selecting algorithms, scheduling key ceremonies — and the standard against which its decisions will be evaluated is not settled.</p>
+
+        <p>When accountability is applied to those decisions retroactively, reviewers may apply norms that were not established at the time of the decision, or that reflect a particular position in a technical dispute that remained unresolved when the agent acted. An agent that followed a conservative migration schedule may be evaluated against a later consensus that faster migration was warranted. The evaluation is formally possible — the decision log exists, the outcome is observable — but the normative baseline is supplied retrospectively, and the choice of baseline reflects choices the accountability architecture was never designed to make explicitly.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Norms for AI-assisted physical rehabilitation are established faster in some dimensions than others. Endpoint protocols, safety thresholds, and fall-risk criteria have accumulating clinical evidence behind them. Norms for how much decision-making authority an AI agent should exercise within a therapy session — how often to override the initial protocol, how aggressively to adapt to real-time biometric signals — are more contested. Clinical traditions differ: what one physical therapy community treats as appropriate responsiveness, another treats as deviation from evidence-based protocol.</p>
+
+        <p>An AI agent making real-time adaptation decisions operates inside this contested space. Its decisions can be logged; whether they were appropriate cannot be evaluated without first resolving which clinical tradition establishes the referent norm. When institutions or regulatory bodies apply accountability processes, they may apply norms from their own tradition without recognizing that the norm itself was under contest at the time the agent acted. The agent's decisions may be evaluated as violations of a standard that had no settled status when the decisions were made.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>In care settings, norms for appropriate AI involvement in care decisions vary across cultures, professional traditions, and family expectations in ways that have not been resolved. What counts as appropriate reliance on an AI agent for dietary recommendation in one care community is treated as inappropriate delegation of clinical judgment in another. What is considered respectful of a resident's autonomy in one cultural context is treated as inadequate advocacy in another. These differences are not resolvable by technical means — they reflect genuine normative disagreement about what care should accomplish and who should bear accountability for the decisions within it.</p>
+
+        <p>An AI agent operating across multiple care settings will inevitably have its decisions evaluated against different normative baselines depending on which institution, regulator, or cultural framework conducts the review. The accountability gap is not in the agent's decision record or in the evaluator's diligence — it is in the absence of a settled norm that all parties recognize as the appropriate referent.</p>
+
+        <h2>Making the normative assumption explicit</h2>
+        <p>The structural response to the normative gap is not to pretend the norm is settled when it is not. It is to make the normative assumption explicit and place it under authorization. Every AI agent operating in a contested domain embeds a normative assumption: it operationalizes some version of the contested norm in its decision parameters. That assumption should be visible, documented, and subject to the same authorization processes as the agent's actions.</p>
+
+        <p>This does not resolve the underlying normative disagreement. It relocates accountability from the agent's runtime decisions to the normative assumption embedded in its design — which is where accountability belongs when the norm is contested. The evaluative question shifts from 'was this action consistent with the norm?' to 'was this normative assumption appropriately authorized, disclosed, and monitored for drift?' That question can be answered from available evidence. The original question cannot, because the norm it depends on was never settled. At the crossings where practice outpaces consensus, making the embedded assumption visible is the only accountability move that does not pretend to close a loop that remains open.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>Accountability requires a normative baseline — a standard specifying what the agent should have done. When that standard is genuinely contested (as in post-quantum migration pace, AI rehabilitation authority, or cross-cultural care norms), evaluation cannot function: the baseline is supplied retrospectively, and the choice of baseline reflects a choice the accountability architecture was not designed to make. The structural response is to make the normative assumption embedded in the agent's design explicit, authorized, and auditable — shifting accountability from the action to the assumption that governed it.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>问责需要规范。要评估AI智能体的行动是否适当，审查者必须获取一个标准——对智能体在所面临情境下应当做什么的某种规定。该规范可以是明确的：一份协议、一项法规、一个记录在案的阈值。也可以是隐含的：一种职业标准、一种社区实践、一种文化期望。无论哪种情况，评估都在追问智能体所做之事是否与其应做之事相符，而若无参照，这一问题无从回答。</p>
+
+        <p>规范鸿沟，是指应当规范AI智能体决策的标准尚未确定的情形。不是未知——它可能是积极争议中的，不同的权威机构对适当规范持有不同且不兼容的观点。也可能是真正缺失的——一个实践新于应规范它的标准、且尚未形成既定期望的领域。在这两种情况下，问责机制都无法按设计运行：评估机制需要一个尚不存在或尚未被认可的基准。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>向后量子密码标准迁移的适当步伐确实存在争议。技术论据支持一系列立场：一些密码学家主张在量子能力出现之前积极迁移；另一些则认为过早采用成熟度较低的标准会引入其自身的漏洞；还有一些人认为迁移窗口期本身就会产生一段密码不确定性——其本身就是一种风险。管理密码基础设施的AI智能体必须在这一争议空间内做出决策——设定迁移时间表、选择算法、安排密钥仪式——而其决策所依据的评估标准尚未确定。</p>
+
+        <p>当对这些决策进行事后问责时，审查者可能会应用在决策当时尚未确立的规范，或反映技术争议中某一立场——而该争议在智能体行动时仍未解决。采用保守迁移计划的智能体，可能会依据后来形成的"更快迁移是必要的"共识进行评估。从形式上看评估是可能的——决策日志存在，结果可观察——但规范基准是被追溯性提供的，而选择哪个基准本身，反映了问责架构从未被设计为明确做出的选择。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>AI辅助物理康复的规范在某些维度上比其他维度建立得更快。终点协议、安全阈值和跌倒风险标准已有积累的临床证据支撑。而AI智能体在治疗会话中应行使多少决策权——推翻初始方案的频率、多积极地适应实时生物特征信号——则争议更大。临床传统各异：一个物理治疗社区视为适当响应的内容，另一个社区视为偏离循证方案的行为。</p>
+
+        <p>实时做出适应决策的AI智能体在这一争议空间内运行。其决策可以记录；其是否适当则无法在不先确定哪种临床传统建立了参照规范的情况下进行评估。当机构或监管机构应用问责程序时，它们可能在未意识到该规范本身尚在争议的情况下，应用来自其自身传统的规范。智能体的决策可能被评估为违反了在决策做出时并无既定地位的标准。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>在照护场景中，AI参与照护决策的适当程度的规范，在文化、职业传统和家庭期望之间存在差异，且尚未得到解决。在一个照护社区中对AI智能体在饮食建议方面的适当依赖，在另一个社区中被视为对临床判断的不当委托。在一种文化背景下被视为尊重住民自主权的做法，在另一种背景下被视为倡导不足。这些差异无法通过技术手段解决——它们反映了关于照护应实现什么目标、谁应对其中决策承担问责的真实规范分歧。</p>
+
+        <p>跨多个照护场所运营的AI智能体，不可避免地将根据实施审查的机构、监管机构或文化框架，以不同的规范基准对其决策进行评估。问责鸿沟不在于智能体的决策记录，也不在于评估者的勤勉——而在于缺乏所有各方认可为适当参照的既定规范。</p>
+
+        <h2>使规范假设明确</h2>
+        <p>应对规范鸿沟的结构性回应，不是在规范尚未确定时假装它已确定。而是使规范假设明确，并将其纳入授权管理。在争议性领域运营的每个AI智能体都嵌入了一个规范假设：它在决策参数中将争议规范的某种版本具体化。这一假设应当是可见的、有据可查的，并对与智能体行动相同的授权程序负责。</p>
+
+        <p>这并不能解决底层的规范分歧。它将问责从智能体的运行时决策重新定位到嵌入其设计中的规范假设——这正是当规范存在争议时问责应当归属的地方。评估问题从"此行动是否与规范相符？"转变为"此规范假设是否经过适当授权、披露，并对漂移进行了监控？"这一问题可以从现有证据得到解答。而原始问题则不能，因为它所依赖的规范从未得到确立。在实践超越共识的交叉点，使嵌入的假设可见，是唯一不假装闭合一个仍然开放的循环的问责动作。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>问责需要规范基准——一个规定智能体应当如何行动的标准。当该标准真正存在争议时（如后量子迁移步伐、AI康复决策权、跨文化照护规范），评估无法正常运行：基准被追溯性提供，而选择基准本身反映了问责架构从未被设计为明确做出的选择。结构性回应是使嵌入智能体设计中的规范假设明确、经过授权且可审计——将问责从行动转移到支配行动的假设。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>問責需要規範。要評估AI智能體的行動是否適當，審查者必須獲取一個標準——對智能體在所面臨情境下應當做什麼的某種規定。該規範可以是明確的：一份協議、一項法規、一個記錄在案的閾值。也可以是隱含的：一種職業標準、一種社群實踐、一種文化期望。無論哪種情況，評估都在追問智能體所做之事是否與其應做之事相符，而若無參照，這一問題無從回答。</p>
+
+        <p>規範鴻溝，是指應當規範AI智能體決策的標準尚未確定的情形。不是未知——它可能是積極爭議中的，不同的權威機構對適當規範持有不同且不相容的觀點。也可能是真正缺失的——一個實踐新於應規範它的標準、且尚未形成既定期望的領域。在這兩種情況下，問責機制都無法按設計運行：評估機制需要一個尚不存在或尚未被認可的基準。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>向後量子密碼標準遷移的適當步伐確實存在爭議。技術論據支持一系列立場：一些密碼學家主張在量子能力出現之前積極遷移；另一些則認為過早採用成熟度較低的標準會引入其自身的漏洞；還有一些人認為遷移窗口期本身就會產生一段密碼不確定性——其本身就是一種風險。管理密碼基礎設施的AI智能體必須在這一爭議空間內做出決策——設定遷移時間表、選擇演算法、安排密鑰儀式——而其決策所依據的評估標準尚未確定。</p>
+
+        <p>當對這些決策進行事後問責時，審查者可能會應用在決策當時尚未確立的規範，或反映技術爭議中某一立場——而該爭議在智能體行動時仍未解決。採用保守遷移計畫的智能體，可能會依據後來形成的「更快遷移是必要的」共識進行評估。從形式上看評估是可能的——決策日誌存在，結果可觀察——但規範基準是被追溯性提供的，而選擇哪個基準本身，反映了問責架構從未被設計為明確做出的選擇。</p>
+
+        <h2>在硬體交叉點</h2>
+        <p>AI輔助物理復健的規範在某些維度上比其他維度建立得更快。終點協議、安全閾值和跌倒風險標準已有積累的臨床證據支撐。而AI智能體在治療會話中應行使多少決策權——推翻初始方案的頻率、多積極地適應即時生物特徵信號——則爭議更大。臨床傳統各異：一個物理治療社群視為適當響應的內容，另一個社群視為偏離實證方案的行為。</p>
+
+        <p>即時做出適應決策的AI智能體在這一爭議空間內運行。其決策可以記錄；其是否適當則無法在不先確定哪種臨床傳統建立了參照規範的情況下進行評估。當機構或監管機構應用問責程序時，它們可能在未意識到該規範本身尚在爭議的情況下，應用來自其自身傳統的規範。智能體的決策可能被評估為違反了在決策做出時並無既定地位的標準。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>在照護場景中，AI參與照護決策的適當程度的規範，在文化、職業傳統和家庭期望之間存在差異，且尚未得到解決。在一個照護社群中對AI智能體在飲食建議方面的適當依賴，在另一個社群中被視為對臨床判斷的不當委託。在一種文化背景下被視為尊重住民自主權的做法，在另一種背景下被視為倡導不足。這些差異無法通過技術手段解決——它們反映了關於照護應實現什麼目標、誰應對其中決策承擔問責的真實規範分歧。</p>
+
+        <p>跨多個照護場所運營的AI智能體，不可避免地將根據實施審查的機構、監管機構或文化框架，以不同的規範基準對其決策進行評估。問責鴻溝不在於智能體的決策記錄，也不在於評估者的勤勉——而在於缺乏所有各方認可為適當參照的既定規範。</p>
+
+        <h2>使規範假設明確</h2>
+        <p>應對規範鴻溝的結構性回應，不是在規範尚未確定時假裝它已確定。而是使規範假設明確，並將其納入授權管理。在爭議性領域運營的每個AI智能體都嵌入了一個規範假設：它在決策參數中將爭議規範的某種版本具體化。這一假設應當是可見的、有據可查的，並對與智能體行動相同的授權程序負責。</p>
+
+        <p>這並不能解決底層的規範分歧。它將問責從智能體的運行時決策重新定位到嵌入其設計中的規範假設——這正是當規範存在爭議時問責應當歸屬的地方。評估問題從「此行動是否與規範相符？」轉變為「此規範假設是否經過適當授權、披露，並對漂移進行了監控？」這一問題可以從現有證據得到解答。而原始問題則不能，因為它所依賴的規範從未得到確立。在實踐超越共識的交叉點，使嵌入的假設可見，是唯一不假裝閉合一個仍然開放的循環的問責動作。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>問責需要規範基準——一個規定智能體應當如何行動的標準。當該標準真正存在爭議時（如後量子遷移步伐、AI復健決策權、跨文化照護規範），評估無法正常運行：基準被追溯性提供，而選擇基準本身反映了問責架構從未被設計為明確做出的選擇。結構性回應是使嵌入智能體設計中的規範假設明確、經過授權且可審計——將問責從行動轉移到支配行動的假設。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-09</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      var savedLang = localStorage.getItem('asaptic_lang') || 'en';
+      var btns = document.querySelectorAll('.lang-btn');
+      var sections = document.querySelectorAll('[data-lang-content]');
+
+      function setLang(lang) {
+        btns.forEach(function (b) {
+          b.classList.toggle('active', b.dataset.lang === lang);
+        });
+        sections.forEach(function (s) {
+          s.classList.toggle('active', s.dataset.langContent === lang);
+        });
+        localStorage.setItem('asaptic_lang', lang);
+      }
+
+      setLang(savedLang);
+      btns.forEach(function (b) {
+        b.addEventListener('click', function () { setLang(b.dataset.lang); });
+      });
+    })();
+  </script>
+</body>
+</html>
