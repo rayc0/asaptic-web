@@ -1,3 +1,4 @@
+2026-06-09 20:30 UTC · blog: add essay 'The inference amplification problem' — accountability when combined signals reveal what no individual observation was permitted to disclose (EN+ZH+ZH-HK) · f416b4c
 2026-06-09 20:15 UTC · blog: add essay 'The digital twin accountability gap' — when the model is wrong and the log is clean (EN+ZH+ZH-HK) · 930d99c
 2026-06-09 16:00 UTC · blog: add essay 'The attribution window problem' — accountability when time erases the causal thread (EN+ZH+ZH-HK) · b79fa12
 2026-06-09 12:00 UTC · blog: add essay 'The orphaned device problem' — accountability when an embedded AI care device outlives its governance infrastructure (EN+ZH+ZH-HK); add missing recourse-problem to blog index · e703852
