@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The digital twin accountability gap — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents decide on their model of the world, not the world itself. When model and reality diverge, every decision in the log was correct — and the harm was nobody's fault." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/digital-twin-accountability-gap.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The digital twin accountability gap: when the model is wrong and the log is clean" />
+  <meta property="og:description" content="AI agents decide on their model of the world, not the world itself. When model and reality diverge, every decision in the log was correct — and the harm was nobody's fault." />
+  <meta property="og:url" content="https://asaptic.com/blog/digital-twin-accountability-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-09" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The digital twin accountability gap: when the model is wrong and the log is clean",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-09",
+    "description": "AI agents decide on their model of the world, not the world itself. When model and reality diverge, every decision in the log was correct — and the harm was nobody's fault.",
+    "url": "https://asaptic.com/blog/digital-twin-accountability-gap.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum · × Hardware · × Physical-World Care</div>
+      <h1 class="essay-title">The digital twin accountability gap: when the model is wrong and the log is clean</h1>
+      <p class="essay-subtitle">AI agents decide on their model of the world, not the world itself. When model and reality diverge, every decision in the log was correct — and the harm was nobody's fault.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-09</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Every AI agent that interacts with the physical world maintains a model of it. Not a metaphorical model — a concrete internal representation that the agent treats as ground truth for every decision it makes. A care AI tracks a patient's health trajectory as a structured state: medication schedule, vital-sign baselines, behavioral patterns, clinical history. A hardware management agent tracks component wear, thermal profiles, calibration state, and load history. A key management system tracks which credentials are active, which certificates are valid, and which trust anchors can be relied upon.</p>
+
+        <p>In each case, the agent never perceives the world directly. It perceives its model of the world. The decisions it makes — when to escalate a care concern, when to schedule preventive maintenance, when to require re-authentication — are decisions about model states, not physical states. This indirection is necessary and unavoidable; no real-time system can bypass abstraction. But it creates an accountability gap that is distinct from every other failure mode in the agentic accountability landscape: the gap that opens when the model is wrong and the agent has no way to know it.</p>
+
+        <h2>What makes this gap distinctive</h2>
+        <p>The digital twin accountability gap is not a sensor failure problem. Sensor failures are detectable: readings stop arriving, confidence intervals widen, anomaly flags fire. The gap this essay addresses is subtler. It opens when the model drifts silently — when sensor readings continue arriving and appear plausible, but the physical reality they represent has changed in a way the sensor cannot capture. A patient's medication compliance drops but the agent's behavioral model, updated from indirect proxies, does not register the change. A component's fatigue accumulates along a failure mode the calibration suite was not designed to detect. A cryptographic trust anchor is silently compromised but continues to produce valid-looking signatures.</p>
+
+        <p>In each case, the agent continues deciding correctly — correctly, that is, relative to its model. The audit log records appropriate behavior at every step. No individual decision is wrong. The chain of reasoning from model state to action is sound. The harm emerges not from bad decisions but from the gap between the model the agent was given and the world the agent was acting on. And that gap, critically, belongs to no one. The agent did what it was designed to do. The system integrators built what was specified. The operators approved the deployment. The model diverged, and the accountability framework has no named owner for that divergence.</p>
+
+        <h2>At the post-quantum crossing</h2>
+        <p>Post-quantum migration requires agents that manage cryptographic infrastructure to maintain accurate models of trust state across long time horizons. A certificate that was valid at issuance may remain in an agent's trust model long after the issuing root has been deprecated, compromised, or declared inadequate for the post-quantum threat environment. The agent's model says: this credential is trustworthy. The world says: the root that issued it can no longer be relied upon. Every authentication decision the agent makes during this period is locally correct — the credential validates against the model — and structurally unsound.</p>
+
+        <p>This is not a revocation failure; it is a model update failure. Revocation infrastructure tells agents when a specific certificate should no longer be trusted. Model update failure is different: the category of trust the agent was designed to rely on has changed, but the agent's model of what constitutes valid trust has not been updated to reflect that change. The accountability question — who owns the obligation to keep the agent's trust model current through a multi-year cryptographic transition — is rarely answered in deployment agreements.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>Embedded agents manage systems that degrade through mechanisms they were not designed to observe directly. A maintenance agent may track mean time between failures, operating hours, and scheduled calibration events — all of which its sensors can measure — while remaining blind to failure modes that develop through corrosion, micro-fracture, or thermal cycling in ways that produce no measurable precursor signal. The agent's model of component health is locally consistent with everything it can observe. The component is failing along a trajectory the model has no representation for.</p>
+
+        <p>The harm that follows is attributed, after the fact, to a hardware failure. But the relevant failure occurred earlier: when the system was deployed without a documented owner for the obligation to expand the agent's observational model as the failure mode landscape for that equipment became better understood. The agent's model was never wrong, exactly — it was always an accurate representation of what the agent could see. It was simply never updated to see what mattered.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>AI care agents build patient models from the data streams they have access to: structured clinical records, sensor readings, interaction logs, care plan adherence signals. These models are inevitably incomplete. A patient's social environment changes — a family caregiver becomes unavailable, a housing situation deteriorates, a chronic stressor intensifies — in ways that no clinical sensor captures and no structured record encodes. The care agent's model of the patient's health trajectory continues forward on its prior assumptions. The decisions it makes — escalation thresholds, care intensity levels, intervention timing — are appropriate for the modeled patient, not the actual one.</p>
+
+        <p>The gap between model and patient is not an edge case. It is the normal operating condition for any care AI deployed across a population experiencing life. What is missing is not better sensing — it is an accountability structure that treats the model as a living obligation. Someone must own the accuracy of the model, not just the correctness of the decisions it produces. Someone must be responsible for detecting when the patient the agent is managing has become materially different from the patient the agent believes it is managing.</p>
+
+        <h2>What the digital twin accountability gap demands</h2>
+        <p>Closing this gap requires recognizing that an AI agent's world model is not an implementation detail — it is an accountability surface. Every AI deployment that involves a physical environment or a person should name an accountable party for model integrity: the entity responsible for monitoring divergence between model and reality, specifying update triggers, and bearing accountability when the model drifts beyond its safe operating range. The audit log that records correct decisions against a wrong model is not evidence of sound deployment — it is evidence that the accountability framework was incomplete before the first decision was made.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI agents manage physical environments and care patients through internal world models, not direct perception. When those models diverge silently from reality — through undetectable sensor drift, uncaptured life events, or cryptographic trust landscape shifts that no update propagated — the agent continues producing decisions that are locally correct and globally harmful. The audit log is clean. No individual decision was wrong. The accountability gap is that no one owned the model's accuracy. Closing it requires treating the world model as an accountability surface in its own right: named ownership, documented update obligations, and explicit divergence bounds beyond which the agent must defer to human review.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>每个与物理世界交互的AI智能体都维护着一个关于该世界的模型。这不是比喻意义上的模型——而是具体的内部表示，智能体将其视为每个决策的基准事实。照护AI以结构化状态跟踪患者的健康轨迹：用药计划、生命体征基线、行为模式、临床病史。硬件管理智能体跟踪组件磨损、热特性、校准状态和负载历史。密钥管理系统跟踪哪些凭证处于激活状态、哪些证书有效、哪些信任锚可以依赖。</p>
+
+        <p>在每种情况下，智能体从不直接感知世界，而是感知其关于世界的模型。它做出的决策——何时升级照护关注点、何时安排预防性维护、何时要求重新身份验证——都是关于模型状态的决策，而非关于物理状态的决策。这种间接性是必要且不可避免的；任何实时系统都无法绕过抽象化。但它创造了一个在智能体问责格局中与其他所有失败模式截然不同的问责缺口：当模型出错而智能体无从知晓时所打开的缺口。</p>
+
+        <h2>这一缺口的独特之处</h2>
+        <p>数字孪生问责缺口不是传感器故障问题。传感器故障是可检测的：读数停止传来，置信区间扩大，异常标志触发。本文所讨论的缺口更为微妙。它在模型无声漂移时打开——当传感器读数继续到来且看起来合理，但它们所代表的物理现实已经以传感器无法捕获的方式发生了变化。患者的服药依从性下降，但智能体从间接代理更新的行为模型并未记录这一变化。组件的疲劳沿着校准套件未被设计为检测的失效模式积累。密码学信任锚被悄然损害，但仍继续产生看起来有效的签名。</p>
+
+        <p>在每种情况下，智能体继续正确地做出决策——相对于其模型而言是正确的。审计日志在每一步都记录了恰当的行为。没有任何单个决策是错误的。从模型状态到行动的推理链是合理的。伤害不是由错误决策引起的，而是由智能体所持有的模型与智能体所作用的世界之间的差距引起的。而这一差距，关键是，不属于任何人。智能体做了它被设计去做的事情。系统集成商构建了被规定的内容。运营商批准了部署。模型发生了漂移，而问责框架对这一漂移没有指定的责任人。</p>
+
+        <h2>在后量子交叉点</h2>
+        <p>后量子迁移要求管理密码基础设施的智能体在漫长的时间跨度内维护准确的信任状态模型。一个在签发时有效的证书，可能在签发根已被弃用、被损害或被宣布不足以应对后量子威胁环境之后，仍长期留存于智能体的信任模型中。智能体的模型显示：此凭证是可信的。而世界显示：签发它的根已不再可依赖。智能体在此期间做出的每个身份验证决策在局部上都是正确的——凭证针对模型进行了验证——但在结构上是不健全的。</p>
+
+        <p>这不是撤销失败；这是模型更新失败。撤销基础设施告知智能体特定证书何时不再应被信任。模型更新失败是不同的：智能体被设计依赖的信任类别已经改变，但智能体关于什么构成有效信任的模型尚未被更新以反映这一变化。在部署协议中，很少回答这样一个问责问题：在多年密码学过渡期间，谁负有保持智能体信任模型实时更新的义务。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>嵌入式智能体管理着通过其未被设计为直接观察的机制退化的系统。维护智能体可能跟踪平均故障间隔时间、运行时间和计划校准事件——所有这些其传感器都能测量——同时对通过腐蚀、微裂纹或热循环发展的、不产生任何可测量前兆信号的失效模式保持盲目。智能体的组件健康模型与其能观察到的一切局部一致。组件正沿着一条模型没有任何表示的轨迹失效。</p>
+
+        <p>随后发生的伤害被事后归因于硬件故障。但相关的失败发生得更早：当系统在没有记录义务人的情况下被部署，该义务人本应随着对该设备失效模式格局理解的深入而扩展智能体的观察模型。智能体的模型从未真正出错——它始终是智能体所能观察到的内容的准确表示。它只是从未被更新为去观察那些重要的事情。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>AI照护智能体从其可访问的数据流中构建患者模型：结构化临床记录、传感器读数、交互日志、照护计划依从性信号。这些模型不可避免地是不完整的。患者的社会环境发生变化——家庭照护者变得不可用、住房状况恶化、慢性压力加剧——这些变化没有任何临床传感器能捕获，没有任何结构化记录能编码。照护智能体关于患者健康轨迹的模型在其先验假设的基础上继续向前推进。它做出的决策——升级阈值、照护强度水平、干预时机——适合于被建模的患者，而非真实的患者。</p>
+
+        <p>模型与患者之间的差距不是边缘案例。它是任何在经历生活的人群中部署的照护AI的正常运行状态。缺少的不是更好的传感——而是将模型视为持续义务的问责结构。必须有人对模型的准确性负责，而不仅仅是对其产生的决策的正确性负责。必须有人负责检测当智能体所管理的患者与智能体相信其正在管理的患者之间出现实质性差异的时机。</p>
+
+        <h2>数字孪生问责缺口的要求</h2>
+        <p>弥合这一缺口需要认识到AI智能体的世界模型不是实现细节——它是一个问责面。每一个涉及物理环境或人的AI部署都应该指定一个对模型完整性负责的问责方：负责监测模型与现实之间的偏差、规定更新触发条件，并在模型漂移超出其安全运行范围时承担问责的实体。记录针对错误模型的正确决策的审计日志不是健全部署的证据——它是问责框架在第一个决策做出之前就已经不完整的证据。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>AI智能体通过内部世界模型而非直接感知来管理物理环境和照护患者。当这些模型无声地与现实发生偏离时——通过不可检测的传感器漂移、未被捕获的生活事件，或没有任何更新传播的密码学信任格局转变——智能体继续产生局部正确但整体有害的决策。审计日志是干净的。没有任何单个决策是错误的。问责缺口在于没有人对模型的准确性负责。弥合它需要将世界模型本身作为问责面对待：具名的所有权、有文档记录的更新义务，以及明确的偏差边界，超出此边界智能体必须推迟至人工审查。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>每個與物理世界互動的AI智能體都維護著一個關於該世界的模型。這不是比喻意義上的模型——而是具體的內部表示，智能體將其視為每個決策的基準事實。照護AI以結構化狀態追蹤患者的健康軌跡：用藥計畫、生命體徵基線、行為模式、臨床病史。硬體管理智能體追蹤元件磨損、熱特性、校準狀態和負載歷史。金鑰管理系統追蹤哪些憑證處於啟用狀態、哪些憑證有效、哪些信任錨可以依賴。</p>
+
+        <p>在每種情況下，智能體從不直接感知世界，而是感知其關於世界的模型。它做出的決策——何時升級照護關注點、何時安排預防性維護、何時要求重新身份驗證——都是關於模型狀態的決策，而非關於物理狀態的決策。這種間接性是必要且不可避免的；任何即時系統都無法繞過抽象化。但它創造了一個在智能體問責格局中與其他所有失敗模式截然不同的問責缺口：當模型出錯而智能體無從知曉時所打開的缺口。</p>
+
+        <h2>這一缺口的獨特之處</h2>
+        <p>數位孿生問責缺口不是感測器故障問題。感測器故障是可檢測的：讀數停止傳來，置信區間擴大，異常標誌觸發。本文所討論的缺口更為微妙。它在模型無聲漂移時打開——當感測器讀數繼續到來且看起來合理，但它們所代表的物理現實已經以感測器無法捕獲的方式發生了變化。患者的服藥依從性下降，但智能體從間接代理更新的行為模型並未記錄這一變化。元件的疲勞沿著校準套件未被設計為檢測的失效模式積累。密碼學信任錨被悄然損害，但仍繼續產生看起來有效的簽名。</p>
+
+        <p>在每種情況下，智能體繼續正確地做出決策——相對於其模型而言是正確的。稽核日誌在每一步都記錄了恰當的行為。沒有任何單個決策是錯誤的。從模型狀態到行動的推理鏈是合理的。傷害不是由錯誤決策引起的，而是由智能體所持有的模型與智能體所作用的世界之間的差距引起的。而這一差距，關鍵是，不屬於任何人。智能體做了它被設計去做的事情。系統整合商建構了被規定的內容。營運商批准了部署。模型發生了漂移，而問責框架對這一漂移沒有指定的責任人。</p>
+
+        <h2>在後量子交叉點</h2>
+        <p>後量子遷移要求管理密碼基礎設施的智能體在漫長的時間跨度內維護準確的信任狀態模型。一個在簽發時有效的憑證，可能在簽發根已被棄用、被損害或被宣告不足以應對後量子威脅環境之後，仍長期留存於智能體的信任模型中。智能體的模型顯示：此憑證是可信的。而世界顯示：簽發它的根已不再可依賴。智能體在此期間做出的每個身份驗證決策在局部上都是正確的——憑證針對模型進行了驗證——但在結構上是不健全的。</p>
+
+        <p>這不是撤銷失敗；這是模型更新失敗。撤銷基礎設施告知智能體特定憑證何時不再應被信任。模型更新失敗是不同的：智能體被設計依賴的信任類別已經改變，但智能體關於什麼構成有效信任的模型尚未被更新以反映這一變化。在部署協議中，很少回答這樣一個問責問題：在多年密碼學過渡期間，誰負有保持智能體信任模型即時更新的義務。</p>
+
+        <h2>在硬體交叉點</h2>
+        <p>嵌入式智能體管理著透過其未被設計為直接觀察的機制退化的系統。維護智能體可能追蹤平均故障間隔時間、運行時間和計畫校準事件——所有這些其感測器都能測量——同時對透過腐蝕、微裂紋或熱循環發展的、不產生任何可測量前兆訊號的失效模式保持盲目。智能體的元件健康模型與其能觀察到的一切局部一致。元件正沿著一條模型沒有任何表示的軌跡失效。</p>
+
+        <p>隨後發生的傷害被事後歸因於硬體故障。但相關的失敗發生得更早：當系統在沒有記錄義務人的情況下被部署，該義務人本應隨著對該設備失效模式格局理解的深入而擴展智能體的觀察模型。智能體的模型從未真正出錯——它始終是智能體所能觀察到的內容的準確表示。它只是從未被更新為去觀察那些重要的事情。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>AI照護智能體從其可存取的資料流中建構患者模型：結構化臨床記錄、感測器讀數、互動日誌、照護計畫依從性訊號。這些模型不可避免地是不完整的。患者的社會環境發生變化——家庭照護者變得不可用、住房狀況惡化、慢性壓力加劇——這些變化沒有任何臨床感測器能捕獲，沒有任何結構化記錄能編碼。照護智能體關於患者健康軌跡的模型在其先驗假設的基礎上繼續向前推進。它做出的決策——升級閾值、照護強度水準、干預時機——適合於被建模的患者，而非真實的患者。</p>
+
+        <p>模型與患者之間的差距不是邊緣案例。它是任何在經歷生活的人群中部署的照護AI的正常運行狀態。缺少的不是更好的感測——而是將模型視為持續義務的問責結構。必須有人對模型的準確性負責，而不僅僅是對其產生的決策的正確性負責。必須有人負責檢測當智能體所管理的患者與智能體相信其正在管理的患者之間出現實質性差異的時機。</p>
+
+        <h2>數位孿生問責缺口的要求</h2>
+        <p>彌合這一缺口需要認識到AI智能體的世界模型不是實現細節——它是一個問責面。每一個涉及物理環境或人的AI部署都應該指定一個對模型完整性負責的問責方：負責監測模型與現實之間的偏差、規定更新觸發條件，並在模型漂移超出其安全運行範圍時承擔問責的實體。記錄針對錯誤模型的正確決策的稽核日誌不是健全部署的證據——它是問責框架在第一個決策做出之前就已經不完整的證據。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>AI智能體透過內部世界模型而非直接感知來管理物理環境和照護患者。當這些模型無聲地與現實發生偏離時——透過不可檢測的感測器漂移、未被捕獲的生活事件，或沒有任何更新傳播的密碼學信任格局轉變——智能體繼續產生局部正確但整體有害的決策。稽核日誌是乾淨的。沒有任何單個決策是錯誤的。問責缺口在於沒有人對模型的準確性負責。彌合它需要將世界模型本身作為問責面對待：具名的所有權、有文件記錄的更新義務，以及明確的偏差邊界，超出此邊界智能體必須推遲至人工審查。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-09</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
