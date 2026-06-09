@@ -27,6 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <script>document.documentElement.classList.add('js-anim');</script>
   <link rel="stylesheet" href="style.css" />
 
   <script type="application/ld+json">
@@ -357,6 +358,8 @@
     }, { threshold: 0.12 });
 
     document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+    // Safety net: never let content stay hidden (reveal any stragglers shortly after load)
+    addEventListener('load', () => setTimeout(() => document.querySelectorAll('.fade-in:not(.visible)').forEach(el => el.classList.add('visible')), 2500));
 
     (async () => applyLang(await detectLang()))();
   </script>
