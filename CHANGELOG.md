@@ -1,3 +1,4 @@
+2026-06-09 16:00 UTC · blog: add essay 'The attribution window problem' — accountability when time erases the causal thread (EN+ZH+ZH-HK) · b79fa12
 2026-06-09 12:00 UTC · blog: add essay 'The orphaned device problem' — accountability when an embedded AI care device outlives its governance infrastructure (EN+ZH+ZH-HK); add missing recourse-problem to blog index · e703852
 2026-06-09 04:15 UTC · blog: add essay 'The recourse problem' — accountability when the harmed party has no path to remedy (EN+ZH+ZH-HK) · f0dff39
 2026-06-09 00:15 UTC · blog: add essay 'The normative gap problem' — accountability when the standard that should govern the decision is itself contested (EN+ZH+ZH-HK) · afe4547
