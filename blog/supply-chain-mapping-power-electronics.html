@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapping the Power-Electronics Supply Chain to Tier-2 — Asaptic Labs</title>
+
+  <meta name="description" content="Tier-1 visibility is table stakes. In power electronics, the risks that materialise — wafer shortages, substrate bottlenecks, geographic concentration — live at tier-2 and tier-3. Here is how to find them." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/supply-chain-mapping-power-electronics.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Why Tier-1 Visibility Isn't Enough in Power-Electronics Sourcing" />
+  <meta property="og:description" content="Tier-1 visibility is table stakes. In power electronics, the risks that materialise — wafer shortages, substrate bottlenecks, geographic concentration — live at tier-2 and tier-3. Here is how to find them." />
+  <meta property="og:url" content="https://asaptic.com/blog/supply-chain-mapping-power-electronics.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-10" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Why Tier-1 Visibility Isn't Enough in Power-Electronics Sourcing",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-10",
+    "description": "Tier-1 visibility is table stakes. In power electronics, the risks that materialise — wafer shortages, substrate bottlenecks, geographic concentration — live at tier-2 and tier-3. Here is how to find them.",
+    "url": "https://asaptic.com/blog/supply-chain-mapping-power-electronics.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× SUPPLY CHAIN</span>
+      <h1 class="essay-title">Why Tier-1 Visibility Isn't Enough in Power-Electronics Sourcing</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">6 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Most procurement teams in power electronics believe they have good supply chain visibility because they know their module vendors. They have approved vendor lists, lead-time agreements, and quarterly business reviews with the names at the top of the BOM. What they often do not have is any meaningful view of what sits underneath those names — and that is precisely where the disruptions originate.</p>
+
+        <p>Power electronics is structurally a multi-tier industry. A finished module — an IGBT half-bridge, a SiC power module, a GaN driver stage — is itself the output of several distinct upstream processes, each with its own supply constraints. The module integrates one or more power semiconductor dies. Those dies are sliced from epitaxial wafers grown on a substrate. The substrate is either silicon, silicon carbide boule, or GaN-on-silicon, each with a handful of global producers. Alongside the semiconductor stack, the module draws on passive components — gate resistors, DC-link capacitors, current-sense elements — whose supply chains run entirely separately. Copper leadframes, direct-bonded copper substrates, and encapsulant resins add further dependency layers before the module reaches a box-build assembler and eventually appears on a tier-1 vendor's datasheet.</p>
+
+        <p>The practical consequence is that your tier-1 vendor relationship, however strong, insulates you from almost none of this. When a SiC boule grower tightens allocation, every module maker drawing from that grower is affected simultaneously. When a specialty capacitor house faces a factory incident, dozens of module vendors discover the same gap in the same quarter. The disruption that surfaces in your delivery schedule was determined two or three tiers back, months earlier, by actors who have no contractual relationship with you and no reason to communicate their situation to your tier-1.</p>
+
+        <p>Understanding this structure is the starting point for <a href="/deep-tech-sourcing.html">deep-tech sourcing</a> in power electronics. The mapping exercise has to trace materials and processes all the way to the point of genuine constraint — not to where your PO stops.</p>
+
+        <p>There are four specific risk categories that appear repeatedly in power-electronics supply chains once you begin mapping below tier-1.</p>
+
+        <p>The first is single-source concentration. It is common for a critical input — a specific substrate grade, a packaged die at a particular voltage class, a specialised gate-driver IC — to have only one or two qualified producers globally. Qualification in power electronics is expensive and time-consuming; process-qualified sources do not proliferate quickly. A module vendor may have dual-sourced at the module level while remaining entirely single-sourced at the die or wafer level. That dual-source strategy provides no actual resilience against the constraint that matters.</p>
+
+        <p>The second is geographic concentration. Significant portions of SiC boule growth, epitaxial deposition, and advanced packaging for power modules are concentrated in a small number of geographies. Logistics disruption, export policy change, or a regional power event can trigger simultaneous allocation pressure on dozens of module vendors who may have believed their supply chains were geographically diverse because their tier-1s ship from different countries.</p>
+
+        <p>The third is allocation risk at constrained nodes. In periods of demand surge — electrification programs, grid investment cycles, defence build-ups — certain wafer and substrate nodes go into tight allocation. Module vendors manage their own allocation positions with upstream suppliers. If your tier-1 has a smaller allocation share at a constrained node than a larger competitor, your lead times extend even when the module vendor never flags an issue to you. The risk is invisible until it hits.</p>
+
+        <p>The fourth is process-change opacity. A tier-2 or tier-3 supplier making a process change — a new furnace run, a revised metallisation stack, a reformulated encapsulant — may not trigger a formal change notification at the module level. The change propagates silently. By the time a field reliability issue surfaces, the causal process change at tier-3 may be six to twelve months in the past and difficult to reconstruct.</p>
+
+        <p>Mapping these risks requires more than looking at your vendor's datasheet. A rigorous tier-2 mapping exercise typically involves sub-supplier disclosure requests structured into sourcing agreements, single-source flags embedded in approved vendor list management, geographic concentration analysis across the full bill-of-materials, and ongoing allocation risk monitoring that draws on broader market intelligence rather than just your tier-1's stated lead times.</p>
+
+        <p>None of this is straightforward to operationalise, particularly for teams that source power electronics alongside dozens of other component families. The discipline required — structured disclosure, flag management, allocation monitoring — has to be embedded in the sourcing workflow rather than conducted as a one-off audit. This is where the nature of the sourcing relationship matters. A sourcing gateway that operates as a trust and compliance layer, rather than simply as a transactional conduit, can maintain the sub-supplier map continuously, surface flag changes as they emerge, and bring allocation intelligence gathered across a broader order base than any single buyer could accumulate alone.</p>
+
+        <p>The point of <a href="/deep-tech-sourcing.html">deep-tech sourcing</a> is not to replace the buyer's engineering judgment or the buyer's vendor relationships. It is to extend the buyer's visibility to the tier where the real constraints live, and to make that visibility systematic rather than reactive. In power electronics, tier-1 is the surface. The risk is underneath it.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>功率电子供应链是典型的多层结构：模块之下是裸片，裸片之下是晶圆，晶圆之下是衬底与无源器件，每一层均有其独立的供应约束。仅掌握一级供应商关系，几乎无法抵御真正的中断风险。关键风险集中于四类：单一来源集中、地理集中、受限节点的配额风险，以及工艺变更的不透明传导。有效的风险管控需要将次级供应商披露、单一来源标记、地理集中度分析与配额监测纳入采购工作流，而非作为一次性审计。以信任与合规为核心的采购网关，可将这一可见性延伸至真正存在约束的层级，并使其系统化而非被动应对。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>功率電子供應鏈是典型的多層結構：模組之下是裸片，裸片之下是晶圓，晶圓之下是基板與無源元件，每一層均有其獨立的供應約束。僅掌握一級供應商關係，幾乎無法抵禦真正的中斷風險。關鍵風險集中於四類：單一來源集中、地理集中、受限節點的配額風險，以及製程變更的不透明傳導。有效的風險管控需要將次級供應商揭露、單一來源標記、地理集中度分析與配額監測納入採購工作流，而非作為一次性稽核。以信任與合規為核心的採購閘道，可將此一能見度延伸至真正存在約束的層級，並使其系統化而非被動應對。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/override-log-as-moat.html">Next: The override log →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 供应链</span>
+      <h1 class="essay-title">为什么一级供应商可见性在功率电子采购中远远不够</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>功率电子供应链是典型的多层结构：一个成品模块——无论是 IGBT 半桥、碳化硅功率模块还是氮化镓驱动级——本身即是多个上游独立工序的集成产物。模块集成功率半导体裸片，裸片切自外延晶圆，晶圆生长于硅、碳化硅或氮化镓衬底之上，而每类衬底在全球范围内的生产商屈指可数。与此并行，模块还依赖栅极电阻、直流母线电容等无源器件，以及铜引线框架、直接键合铜基板和封装树脂——每条支线均运行着完全独立的供应链。</p>
+        <p>这一结构意味着，一级供应商关系再稳固，也几乎无法为你隔离真正的风险。当碳化硅晶棒生长商收紧配额时，所有从该供应商取货的模块厂商同时受到影响；当一家特种电容厂发生产能事故，数十家模块厂商在同一季度发现同一缺口。最终反映在你交付计划上的中断，早在两三个层级之前、数月前已经注定——而造成这一切的各方与你没有任何合同关系，也没有向你的一级供应商主动通报的动力。</p>
+        <p>功率电子供应链中反复出现的风险集中于四类：一是单一来源集中，关键输入项（特定衬底等级、特定电压等级的封装裸片、专用栅极驱动 IC）往往仅有一两家全球认证生产商；二是地理集中，碳化硅晶棒生长、外延沉积和先进封装高度集聚于少数地区；三是受限节点的配额风险，需求激增期间，晶圆与衬底节点进入紧张配额状态，一级供应商从未主动预警；四是工艺变更的不透明传导，二级或三级供应商的工艺调整可能在不触发正式变更通知的情况下静默传导，待现场可靠性问题浮现时，因果工艺变更已是半年至一年前的事。</p>
+        <p>有效管控上述风险，需要将次级供应商披露要求嵌入采购协议，将单一来源标记纳入认可供应商名单管理，并持续开展地理集中度分析与配额风险监测。以信任与合规为核心的采购网关，能够持续维护次级供应商图谱，在标记变化出现时即时预警，并凭借跨客户订单的规模优势汇集任何单一买方无法独立获取的配额情报，将供应链可见性延伸至真正存在约束的层级。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/override-log-as-moat.html">下一篇：覆写日志 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 供應鏈</span>
+      <h1 class="essay-title">為什麼一級供應商能見度在功率電子採購中遠遠不夠</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>功率電子供應鏈是典型的多層結構：一個成品模組——無論是 IGBT 半橋、碳化矽功率模組還是氮化鎵驅動級——本身即是多個上游獨立工序的整合產物。模組整合功率半導體裸片，裸片切自磊晶晶圓，晶圓生長於矽、碳化矽或氮化鎵基板之上，而每類基板在全球範圍內的生產商屈指可數。與此並行，模組還依賴閘極電阻、直流母線電容等無源元件，以及銅引線框架、直接鍵合銅基板和封裝樹脂——每條支線均運行著完全獨立的供應鏈。</p>
+        <p>這一結構意味著，一級供應商關係再穩固，也幾乎無法為你隔離真正的風險。當碳化矽晶棒生長商收緊配額時，所有從該供應商取貨的模組廠商同時受到影響；當一家特種電容廠發生產能事故，數十家模組廠商在同一季度發現同一缺口。最終反映在你交付計畫上的中斷，早在兩三個層級之前、數月前已經注定——而造成這一切的各方與你沒有任何合約關係，也沒有向你的一級供應商主動通報的動力。</p>
+        <p>功率電子供應鏈中反覆出現的風險集中於四類：一是單一來源集中，關鍵輸入項（特定基板等級、特定電壓等級的封裝裸片、專用閘極驅動 IC）往往僅有一兩家全球認證生產商；二是地理集中，碳化矽晶棒生長、磊晶沉積和先進封裝高度聚集於少數地區；三是受限節點的配額風險，需求激增期間，晶圓與基板節點進入緊張配額狀態，一級供應商從未主動預警；四是製程變更的不透明傳導，二級或三級供應商的製程調整可能在不觸發正式變更通知的情況下靜默傳導，待現場可靠性問題浮現時，因果製程變更已是半年至一年前的事。</p>
+        <p>有效管控上述風險，需要將次級供應商揭露要求嵌入採購協議，將單一來源標記納入認可供應商名單管理，並持續開展地理集中度分析與配額風險監測。以信任與合規為核心的採購閘道，能夠持續維護次級供應商圖譜，在標記變化出現時即時預警，並憑藉跨客戶訂單的規模優勢匯集任何單一買方無法獨立獲取的配額情報，將供應鏈能見度延伸至真正存在約束的層級。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/override-log-as-moat.html">下一篇：覆寫日誌 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
