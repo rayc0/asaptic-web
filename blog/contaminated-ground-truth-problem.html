@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The contaminated ground truth problem — Asaptic Labs</title>
+
+  <meta name="description" content="When an AI agent's decisions are causally woven into the outcomes later used to evaluate those decisions, accountability cannot function. The evaluation is not measuring whether the agent was right — it is measuring whether the agent was consistent with itself." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/contaminated-ground-truth-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The contaminated ground truth problem: accountability when an AI agent's decisions influence the outcomes used to evaluate whether those decisions were correct" />
+  <meta property="og:description" content="When an AI agent's decisions are causally woven into the outcomes later used to evaluate those decisions, accountability cannot function. The evaluation is not measuring whether the agent was right — it is measuring whether the agent was consistent with itself." />
+  <meta property="og:url" content="https://asaptic.com/blog/contaminated-ground-truth-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-10" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The contaminated ground truth problem: accountability when an AI agent's decisions influence the outcomes used to evaluate whether those decisions were correct",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-10",
+    "description": "When an AI agent's decisions are causally woven into the outcomes later used to evaluate those decisions, accountability cannot function. The evaluation is not measuring whether the agent was right — it is measuring whether the agent was consistent with itself.",
+    "url": "https://asaptic.com/blog/contaminated-ground-truth-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The contaminated ground truth problem: accountability when an AI agent's decisions influence the outcomes used to evaluate whether those decisions were correct</h1>
+      <p class="essay-subtitle">Every consequential AI agent deployment changes the world. When those changes become the data against which the agent is later audited or retrained, the evaluation is no longer measuring whether the agent was right — it is measuring whether the agent was consistent with itself.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-10</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Accountability for AI agent decisions requires a reference point: a ground truth against which those decisions can be measured. Did the agent recommend the right intervention? Did it flag the right anomaly? Did it escalate appropriately? These questions presuppose an independent answer — an account of what should have happened, constructed from evidence that the agent's own decisions did not produce.</p>
+
+        <p>The contaminated ground truth problem arises when that independence cannot be maintained. When an AI agent's decisions are causally embedded in the outcomes that are later used to evaluate those decisions, the reference point is no longer independent. The evaluation is measuring the agent's consistency with its own prior choices, not its accuracy relative to an external standard.</p>
+
+        <h2>Why the problem is structural, not statistical</h2>
+        <p>Every consequential AI agent changes the world it operates in. An agent that recommends a care intervention either sees that intervention carried out or not. If the intervention happens, its outcome is recorded as part of the care history. When the agent is later audited — or retrained on accumulated records — that history is part of the evaluation data.</p>
+
+        <p>This creates a structural circularity. The outcome register is not a neutral record of what would have happened absent the agent. It is a record of what happened because of the agent. Any audit that treats this data as if it were an independent benchmark is not evaluating the agent's decisions — it is checking whether the agent's decisions were consistent with themselves.</p>
+
+        <p>This is not a problem that can be solved with more data or better statistical methods. The issue is causal, not correlational. No amount of additional observations closes a loop that is circular by construction.</p>
+
+        <h2>The care setting is particularly exposed</h2>
+        <p>Physical-world care involves long-term, cumulative intervention histories. An AI agent monitoring care over months participates in constructing the very record that defines what a correct care trajectory looked like. If the agent consistently recommended a particular intervention pattern, that pattern becomes normalized in the history. A subsequent evaluator — human or automated — may conclude the agent was well-calibrated, not because it was accurate, but because the outcomes it influenced look consistent with its prior recommendations.</p>
+
+        <p>This dynamic is especially dangerous when care recipients have limited capacity to contest the record. The agent's documented history may be the only account that survives. The question "was this the right intervention?" is answered by the same record the agent helped write.</p>
+
+        <p>The problem compounds across generations. When an agent is retrained on historical records that its predecessor influenced, the successor inherits the contamination. Each generation of the model may be more consistent internally — and more insulated from the external standard that accountability requires.</p>
+
+        <h2>What hardware adds to the problem</h2>
+        <p>Embedded AI care devices process data locally and typically log aggregated outputs rather than raw sensor streams. When the full sensor record is unavailable — because local processing compressed it into summaries — the evidentiary chain connecting raw observation to agent decision to outcome is broken. What survives is the log summary: the agent's interpretation of what it observed.</p>
+
+        <p>That summary is both the agent's output and, retrospectively, part of the ground truth used to assess the agent. The hardware design choices that govern what raw data is retained, for how long, and in what form, are therefore not merely storage engineering decisions. They are decisions about whether independent accountability will be possible at all.</p>
+
+        <p>A device that retains rich sensor history preserves the evidentiary basis for evaluating agent decisions against something the agent did not produce. A device that logs only summaries makes that evaluation structurally impossible — not because the data is missing, but because the only data that exists already carries the agent's interpretation.</p>
+
+        <h2>What correct architecture looks like</h2>
+        <p>Maintaining ground truth independence requires deliberate separation between the agent's decision record and the basis on which those decisions are evaluated. In practice this means:</p>
+
+        <p>An independent observation channel: raw or minimally processed sensor data retained separately from the agent's outputs, inaccessible to the agent's own retrospective summarization.</p>
+
+        <p>Periodic out-of-sample evaluation: a fraction of decisions assessed against a reference constructed without access to the agent's prior outputs — so the evaluation signal is not shaped by what the agent has already decided.</p>
+
+        <p>Clear contamination labeling: any audit dataset that includes outcomes from periods when an agent was active should be marked as potentially influenced by the agent's decisions, not used as if it were a clean independent benchmark.</p>
+
+        <p>Hardware logging design that treats raw data retention as an accountability requirement, not a storage cost — because the accountability instrument is only as independent as the evidence it draws on.</p>
+
+        <h2>The failure mode is invisible</h2>
+        <p>The contaminated ground truth problem does not produce obvious failures. An agent whose decisions look consistent with the outcomes it influenced may pass every standard audit. There is no anomaly in the log. There is no discrepancy between what was recommended and what the record shows. The failure mode is that the evaluation cannot detect a problem even if one exists — because the evaluation is using the agent's own history as its reference.</p>
+
+        <p>At Asaptic Labs, we treat the independence of ground truth as a non-negotiable property of accountable AI agent deployment. It cannot be retrofitted after the fact. It must be designed in — in the hardware logging architecture, in the data pipeline, in the evaluation methodology — before the agent ever makes a decision that will appear in the record it will later be judged by.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>When an AI agent's decisions are causally embedded in the outcomes used to evaluate those decisions, accountability is circular. The evaluation measures consistency, not correctness. In physical care settings, where agents help construct the long-term record they are later audited against, and where hardware logging choices determine what independent evidence survives, this problem must be designed out — it cannot be audited away after the fact.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>对AI智能体决策的问责需要一个参照点：一个可以据此衡量这些决策的基准事实。智能体是否推荐了正确的干预措施？是否标记了正确的异常？是否进行了适当的升级？这些问题预设了一个独立的答案——一份关于"应该发生什么"的说明，由智能体自身决策未曾产生的证据构建而成。</p>
+
+        <p>当这种独立性无法维持时，就会出现受污染的基准事实问题。当AI智能体的决策因果性地嵌入到后来用于评估这些决策的结果中时，参照点便不再独立。评估所衡量的，是智能体与自身过往选择的一致性，而非其相对于外部标准的准确性。</p>
+
+        <h2>为何这是结构性问题，而非统计性问题</h2>
+        <p>每个发挥实际作用的AI智能体都会改变其运作的世界。一个推荐护理干预措施的智能体，要么看到该干预措施被执行，要么没有。如果干预措施得以实施，其结果会被记录为护理历史的一部分。当智能体日后接受审计——或基于积累的记录进行再训练——时，这段历史便成为评估数据的一部分。</p>
+
+        <p>这造成了结构性循环。结果登记册并非"若无智能体参与、事情会如何发展"的中立记录。它记录的是"因为智能体的存在，事情是如何发展的"。任何将此数据视为独立基准来处理的审计，评估的都不是智能体的决策——它只是在检验智能体的决策是否与自身保持一致。</p>
+
+        <p>这个问题无法通过更多数据或更好的统计方法来解决。问题出在因果层面，而非相关性层面。再多的额外观测也无法闭合一个在构造上就是循环的回路。</p>
+
+        <h2>护理场景尤为脆弱</h2>
+        <p>物理世界的护理涉及长期的、累积性的干预历史。一个持续数月监测护理的AI智能体，参与构建了定义"正确护理轨迹应是什么样子"的记录本身。如果智能体始终推荐某种特定干预模式，该模式便会在历史记录中被视为常态。后续的评估者——无论是人还是自动化系统——可能会认为智能体经过了良好校准，不是因为它准确，而是因为它所影响的结果看起来与其先前的建议相符。</p>
+
+        <p>当护理对象没有足够能力对记录提出异议时，这种动态尤为危险。智能体记录在案的历史，可能是唯一留存下来的说明。"这是正确的干预措施吗？"这个问题，要由智能体参与撰写的同一份记录来回答。</p>
+
+        <p>跨代问题会叠加。当一个智能体基于其前代产生影响的历史记录进行再训练时，后继者就继承了这种污染。每一代模型在内部可能更为自洽——却更与问责所要求的外部标准相隔绝。</p>
+
+        <h2>硬件加剧了这一问题</h2>
+        <p>嵌入式AI护理设备在本地处理数据，通常记录的是汇总后的输出，而非原始传感器流。当完整传感器记录不可用时——因为本地处理将其压缩为摘要——连接原始观测、智能体决策与结果的证据链便断裂了。留存下来的是日志摘要：智能体对其所观测内容的解释。</p>
+
+        <p>该摘要既是智能体的输出，又在事后成为用于评估智能体的基准事实的一部分。因此，决定原始数据保留什么、保留多长时间、以何种形式保留的硬件设计选择，不仅仅是存储工程决策，而是关于独立问责是否根本可行的决策。</p>
+
+        <p>保留丰富传感器历史的设备，保存了以智能体未曾产生的证据来评估其决策的基础。只记录摘要的设备，在结构上使这种评估成为不可能——不是因为数据缺失，而是因为唯一存在的数据已经携带了智能体的诠释。</p>
+
+        <h2>正确的架构应该是什么样子</h2>
+        <p>维护基准事实的独立性，需要刻意在智能体的决策记录与评估这些决策的依据之间保持分离。在实践中，这意味着：</p>
+
+        <p>独立观测通道：原始或最小处理的传感器数据单独保存，与智能体的输出分离，不可被智能体自身的事后摘要访问。</p>
+
+        <p>定期样本外评估：一部分决策根据无需访问智能体先前输出而构建的参照来评估——以确保评估信号不受智能体已有决策的影响。</p>
+
+        <p>明确的污染标注：任何包含智能体活跃期间结果的审计数据集，都应标记为可能受智能体决策影响，而非当作干净的独立基准来使用。</p>
+
+        <p>将原始数据保留视为问责要求（而非存储成本）的硬件日志设计——因为问责工具的独立性，取决于其所依赖的证据。</p>
+
+        <h2>失败模式是隐性的</h2>
+        <p>受污染的基准事实问题不会产生明显的失败。一个决策看起来与其所影响的结果相符的智能体，可能通过每一次标准审计。日志中没有异常。推荐内容与记录所显示的内容之间没有差异。失败的模式在于：即使存在问题，评估也无法发现——因为评估使用的是智能体自己的历史作为参照。</p>
+
+        <p>在Asaptic Labs，我们将基准事实的独立性视为可问责AI智能体部署不可谈判的属性。它无法在事后进行补救。它必须在设计阶段就内置于硬件日志架构、数据管道和评估方法中——在智能体做出任何将出现在它日后被据此评判的记录中的决策之前。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>当AI智能体的决策因果性地嵌入用于评估这些决策的结果时，问责便形成循环。评估所衡量的是一致性，而非正确性。在物理护理场景中，智能体参与构建了后来被审计的长期记录，而硬件日志选择决定了哪些独立证据得以留存——这一问题必须在设计阶段消除，而无法通过事后审计来解决。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>對AI智能體決策的問責需要一個參照點：一個可以據此衡量這些決策的基準事實。智能體是否推薦了正確的干預措施？是否標記了正確的異常？是否進行了適當的升級？這些問題預設了一個獨立的答案——一份關於「應該發生什麼」的說明，由智能體自身決策未曾產生的證據構建而成。</p>
+
+        <p>當這種獨立性無法維持時，就會出現受污染的基準事實問題。當AI智能體的決策因果性地嵌入到後來用於評估這些決策的結果中時，參照點便不再獨立。評估所衡量的，是智能體與自身過往選擇的一致性，而非其相對於外部標準的準確性。</p>
+
+        <h2>為何這是結構性問題，而非統計性問題</h2>
+        <p>每個發揮實際作用的AI智能體都會改變其運作的世界。一個推薦護理干預措施的智能體，要麼看到該干預措施被執行，要麼沒有。如果干預措施得以實施，其結果會被記錄為護理歷史的一部分。當智能體日後接受審計——或基於積累的記錄進行再訓練——時，這段歷史便成為評估數據的一部分。</p>
+
+        <p>這造成了結構性循環。結果登記冊並非「若無智能體參與、事情會如何發展」的中立記錄。它記錄的是「因為智能體的存在，事情是如何發展的」。任何將此數據視為獨立基準來處理的審計，評估的都不是智能體的決策——它只是在檢驗智能體的決策是否與自身保持一致。</p>
+
+        <p>這個問題無法通過更多數據或更好的統計方法來解決。問題出在因果層面，而非相關性層面。再多的額外觀測也無法閉合一個在構造上就是循環的回路。</p>
+
+        <h2>護理場景尤為脆弱</h2>
+        <p>物理世界的護理涉及長期的、累積性的干預歷史。一個持續數月監測護理的AI智能體，參與構建了定義「正確護理軌跡應是什麼樣子」的記錄本身。如果智能體始終推薦某種特定干預模式，該模式便會在歷史記錄中被視為常態。後續的評估者——無論是人還是自動化系統——可能會認為智能體經過了良好校準，不是因為它準確，而是因為它所影響的結果看起來與其先前的建議相符。</p>
+
+        <p>當護理對象沒有足夠能力對記錄提出異議時，這種動態尤為危險。智能體記錄在案的歷史，可能是唯一留存下來的說明。「這是正確的干預措施嗎？」這個問題，要由智能體參與撰寫的同一份記錄來回答。</p>
+
+        <p>跨代問題會疊加。當一個智能體基於其前代產生影響的歷史記錄進行再訓練時，後繼者就繼承了這種污染。每一代模型在內部可能更為自洽——卻更與問責所要求的外部標準相隔絕。</p>
+
+        <h2>硬件加劇了這一問題</h2>
+        <p>嵌入式AI護理設備在本地處理數據，通常記錄的是彙總後的輸出，而非原始傳感器流。當完整傳感器記錄不可用時——因為本地處理將其壓縮為摘要——連接原始觀測、智能體決策與結果的證據鏈便斷裂了。留存下來的是日誌摘要：智能體對其所觀測內容的解釋。</p>
+
+        <p>該摘要既是智能體的輸出，又在事後成為用於評估智能體的基準事實的一部分。因此，決定原始數據保留什麼、保留多長時間、以何種形式保留的硬件設計選擇，不僅僅是存儲工程決策，而是關於獨立問責是否根本可行的決策。</p>
+
+        <p>保留豐富傳感器歷史的設備，保存了以智能體未曾產生的證據來評估其決策的基礎。只記錄摘要的設備，在結構上使這種評估成為不可能——不是因為數據缺失，而是因為唯一存在的數據已經攜帶了智能體的詮釋。</p>
+
+        <h2>正確的架構應該是什麼樣子</h2>
+        <p>維護基準事實的獨立性，需要刻意在智能體的決策記錄與評估這些決策的依據之間保持分離。在實踐中，這意味著：</p>
+
+        <p>獨立觀測通道：原始或最小處理的傳感器數據單獨保存，與智能體的輸出分離，不可被智能體自身的事後摘要訪問。</p>
+
+        <p>定期樣本外評估：一部分決策根據無需訪問智能體先前輸出而構建的參照來評估——以確保評估信號不受智能體已有決策的影響。</p>
+
+        <p>明確的污染標注：任何包含智能體活躍期間結果的審計數據集，都應標記為可能受智能體決策影響，而非當作乾淨的獨立基準來使用。</p>
+
+        <p>將原始數據保留視為問責要求（而非存儲成本）的硬件日誌設計——因為問責工具的獨立性，取決於其所依賴的證據。</p>
+
+        <h2>失敗模式是隱性的</h2>
+        <p>受污染的基準事實問題不會產生明顯的失敗。一個決策看起來與其所影響的結果相符的智能體，可能通過每一次標準審計。日誌中沒有異常。推薦內容與記錄所顯示的內容之間沒有差異。失敗的模式在於：即使存在問題，評估也無法發現——因為評估使用的是智能體自己的歷史作為參照。</p>
+
+        <p>在Asaptic Labs，我們將基準事實的獨立性視為可問責AI智能體部署不可談判的屬性。它無法在事後進行補救。它必須在設計階段就內置於硬件日誌架構、數據管道和評估方法中——在智能體做出任何將出現在它日後被據此評判的記錄中的決策之前。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>當AI智能體的決策因果性地嵌入用於評估這些決策的結果時，問責便形成循環。評估所衡量的是一致性，而非正確性。在物理護理場景中，智能體參與構建了後來被審計的長期記錄，而硬件日誌選擇決定了哪些獨立證據得以留存——這一問題必須在設計階段消除，而無法通過事後審計來解決。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-10</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.toggle('active', el.dataset.langContent === lang));
+      });
+    });
+  </script>
+</body>
+</html>
