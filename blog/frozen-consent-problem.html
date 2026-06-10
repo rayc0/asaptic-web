@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The frozen consent problem — Asaptic Labs</title>
+
+  <meta name="description" content="Consent is a point-in-time agreement. Deployment is a continuous stream. When the gap between them grows silently — with no mechanism to surface that what was authorized no longer describes what the agent is doing — accountability loses its anchor." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/frozen-consent-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The frozen consent problem: accountability when AI care agents continue acting on authorizations that no longer reflect the current care relationship" />
+  <meta property="og:description" content="Consent is a point-in-time agreement. Deployment is a continuous stream. When the gap between them grows silently, accountability loses its anchor." />
+  <meta property="og:url" content="https://asaptic.com/blog/frozen-consent-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-10" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The frozen consent problem: accountability when AI care agents continue acting on authorizations that no longer reflect the current care relationship",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-10",
+    "description": "Consent is a point-in-time agreement. Deployment is a continuous stream. When the gap between them grows silently, accountability loses its anchor.",
+    "url": "https://asaptic.com/blog/frozen-consent-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Physical-World Care × Hardware</div>
+      <h1 class="essay-title">The frozen consent problem: accountability when AI care agents continue acting on authorizations that no longer reflect the current care relationship</h1>
+      <p class="essay-subtitle">Consent is a point-in-time agreement. Deployment is a continuous stream. When the gap between them grows silently — with no mechanism to surface that what was authorized no longer describes what the agent is doing — accountability loses its anchor.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-10</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Consent in AI care deployments is typically captured at a single moment: enrollment. A care recipient, or their legal proxy, agrees to a set of terms. Those terms describe what the agent may do — which sensors it may activate, which data it may retain, which decisions it may make autonomously, and which it must escalate to a human. The consent document is signed, stored, and referenced whenever questions arise about whether the agent's behavior was authorized.</p>
+
+        <p>The frozen consent problem is what happens between that moment and every subsequent moment of deployment. The care relationship evolves. The agent's capabilities change with software updates. The care recipient's health trajectory shifts — sometimes improving, more often not. The personnel overseeing the deployment turn over. The original consent terms, however, remain fixed. Formally, they are still valid. Substantively, they may no longer describe anything about the actual deployment.</p>
+
+        <h2>Why freshness is not a natural property of consent</h2>
+        <p>Consent frameworks are designed to establish authorization, not to maintain it. Once consent is obtained, the system has legal permission to proceed. There is rarely a structural mechanism that checks, periodically, whether the ongoing deployment still reflects what the original authorization contemplated.</p>
+
+        <p>This is particularly acute in care settings because the elapsed time between enrollment and the moment a problem surfaces is often measured in months or years. An agent that monitored a care recipient's activity levels and sleep patterns when the recipient was mobile and cognitively capable is, technically, still operating under valid consent when that recipient has become largely immobile and cognitively impaired. The consent form says "activity monitoring for health optimization." The agent is doing something substantively different now — and no one has noticed, because the form has not changed.</p>
+
+        <h2>The hardware dimension</h2>
+        <p>Embedded AI care devices compound the problem. At enrollment, the device is configured for a specific care context. That configuration — including the scope of sensing, the local inference models, and the escalation thresholds — is locked in firmware. As time passes and circumstances change, the firmware may receive updates, but those updates rarely trigger a consent review. The original authorization remains in the record; the updated capability profile is not reflected in any new consent.</p>
+
+        <p>A device authorized to monitor for fall risk may, after a firmware update, also be running a mood inference model. The authorization for the original capability is on file. The new capability may not be covered by any consent on record at all.</p>
+
+        <p>The care setting has no natural mechanism to surface this gap. The device is operating. The care recipient is not prompted to re-consent. Oversight personnel assume that if the device is deployed, it has been properly authorized. The authorization record, which says nothing about the new capability, is treated as comprehensive.</p>
+
+        <h2>What chronological validity misses</h2>
+        <p>Cryptographic attestation and legal documentation establish whether a consent artifact is genuine and whether it was valid at the time it was created. They do not establish whether the consent remains substantively accurate — whether the deployment it describes still corresponds to the deployment that is actually occurring.</p>
+
+        <p>This distinction matters most precisely when it is hardest to surface. A care recipient with limited capacity to monitor their own situation, and limited ability to prompt a consent review, is also the recipient least likely to notice that the authorization governing their care has drifted away from reality. The people most in need of consent freshness are least able to demand it.</p>
+
+        <h2>What correct architecture looks like</h2>
+        <p>Maintaining consent freshness requires treating consent as a versioned record of an ongoing relationship, not a one-time document. In practice this means:</p>
+
+        <p>Consent checkpoints keyed to deployment events: software updates that alter an agent's functional scope should trigger a consent review notification, not proceed silently.</p>
+
+        <p>Capability delta disclosure: when an agent's capabilities change — through model updates, configuration changes, or new sensor activation — the delta should be surfaced to the oversight principal, not buried in a firmware update log.</p>
+
+        <p>Periodic re-authorization requirements for long-running deployments: consent obtained at enrollment should have an expiry calibrated to the expected length and rate of evolution of the care relationship, with structured re-authorization intervals rather than indefinite rollover.</p>
+
+        <p>Audit trails that include consent version history alongside action history: so that the authorization relevant to any given decision can be reconstructed as it existed at the time of that decision, not the authorization that happens to exist today.</p>
+
+        <h2>The failure mode is invisible until it matters</h2>
+        <p>The frozen consent problem does not announce itself. The agent operates. The care continues. The authorization record shows a signed consent document. Nothing in the system flags the drift. The failure becomes visible only when accountability is demanded — when something goes wrong, and someone asks what, exactly, this agent was authorized to do. The answer, reconstructed from documentation that was accurate at enrollment and has not been updated since, may no longer describe the deployment that caused the harm.</p>
+
+        <p>At Asaptic Labs, we treat consent as a living record, not a once-cleared hurdle. That means designing systems in which authorization state is continuously validated against deployment state — with structured mechanisms to surface and close the gap before the gap becomes the accountability story.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>Consent is captured at enrollment; care deployments evolve continuously. In physical care settings, where the gap between a frozen authorization and an evolving deployment can grow silently for months or years, formal validity does not imply substantive accuracy. Accountability requires treating consent as a versioned, living record — with structured checkpoints whenever capabilities change — not a document that clears a legal bar once and is never revisited.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>在AI护理部署中，同意通常在某个单一时刻被获取：注册时。护理对象或其法定代理人同意一套条款。这些条款描述了智能体可以做什么——可以激活哪些传感器、可以保留哪些数据、可以自主做出哪些决策，以及哪些决策必须上报给人类。同意文件被签署、存储，并在任何关于智能体行为是否经过授权的问题出现时被引用。</p>
+
+        <p>冻结的同意问题，就是从那个时刻到部署的每一个后续时刻之间所发生的事情。护理关系在演变。智能体的能力随软件更新而改变。护理对象的健康轨迹在变化——有时好转，更多时候是走向衰退。负责监督部署的人员在更替。然而，原始的同意条款却保持不变。从形式上看，它们仍然有效。从实质上看，它们可能早已不再描述实际部署的任何情况。</p>
+
+        <h2>为何"新鲜度"并非同意的自然属性</h2>
+        <p>同意框架旨在建立授权，而非维护授权。一旦获得同意，系统便拥有了继续进行的法律许可。几乎不存在任何结构性机制，能够定期检查持续中的部署是否仍然反映了原始授权所设想的内容。</p>
+
+        <p>在护理场景中，这一问题尤为突出，因为从注册到问题浮出水面之间的时间往往以月或年计。一个在护理对象行动自如、认知能力完好时监测其活动水平和睡眠模式的智能体，在技术层面上，当该护理对象已基本失去行动能力、认知出现损伤时，仍在有效同意下运行。同意书上写着"为优化健康状况的活动监测"。而智能体实际上正在做的事情，在实质上已大相径庭——却无人注意到，因为表格从未改变。</p>
+
+        <h2>硬件维度</h2>
+        <p>嵌入式AI护理设备使这一问题更加复杂。在注册时，设备被配置为适应特定的护理情境。该配置——包括传感范围、本地推理模型和升级阈值——被固化在固件中。随着时间推移和情况改变，固件可能会收到更新，但这些更新很少触发同意审查。原始授权保留在记录中；更新后的能力配置文件并未反映在任何新的同意中。</p>
+
+        <p>一台被授权监测跌倒风险的设备，在固件更新后，可能还运行着情绪推理模型。原始能力的授权已存档。新增能力可能根本没有任何在档的同意覆盖。</p>
+
+        <p>护理场景中没有任何自然机制来呈现这一差距。设备在运行。护理对象未被提示重新表示同意。监督人员假设：设备既然已部署，就已获得了适当的授权。那份对新增能力只字未提的授权记录，被当作全面完整的文件来对待。</p>
+
+        <h2>时间有效性所忽略的东西</h2>
+        <p>密码学证明和法律文件确立的是：同意材料是否真实，以及它在创建时是否有效。它们并不能确立同意是否在实质上仍然准确——它所描述的部署是否仍对应于实际正在进行的部署。</p>
+
+        <p>这一区别，恰恰在最难呈现时最为重要。一个监控自身处境能力有限、提出同意审查能力有限的护理对象，也是最不可能注意到管理其护理的授权已偏离现实的人。最需要同意"新鲜度"的人，恰恰最无力要求它。</p>
+
+        <h2>正确的架构应该是什么样子</h2>
+        <p>维护同意的新鲜度，需要将同意视为持续关系的版本化记录，而非一次性文件。在实践中，这意味着：</p>
+
+        <p>与部署事件挂钩的同意检查点：改变智能体功能范围的软件更新，应触发同意审查通知，而非悄然进行。</p>
+
+        <p>能力变更披露：当智能体的能力发生变化——无论是通过模型更新、配置变更还是新传感器激活——应将变化增量呈现给监督负责人，而非埋没在固件更新日志中。</p>
+
+        <p>长期部署的定期重新授权要求：在注册时获得的同意，应根据护理关系的预期时长和演变速度设置有效期，以结构化的重新授权间隔取代无限期延续。</p>
+
+        <p>将同意版本历史与行动历史并列的审计跟踪：以便在任何给定决策时刻，能够还原当时有效的授权，而非仅显示今日恰好存在的授权。</p>
+
+        <h2>失败模式在紧要关头才会现形</h2>
+        <p>冻结的同意问题不会自行宣告。智能体运行着。护理持续着。授权记录显示着一份签署的同意文件。系统中没有任何标记指示这一漂移。只有当问责被追究时，失败才会变得可见——当事情出了问题，有人问：这个智能体究竟被授权做什么？基于注册时准确、此后从未更新的文件重建的答案，可能已不再描述导致伤害的部署情况。</p>
+
+        <p>在Asaptic Labs，我们将同意视为一份活的记录，而非一次性通关的门槛。这意味着设计这样的系统：授权状态被持续地与部署状态相互核验——具备结构化机制，在差距演变为问责事件之前，将其呈现并弥合。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>同意在注册时获取；护理部署持续演变。在物理护理场景中，冻结的授权与不断演变的部署之间的差距，可能在数月乃至数年间悄然扩大。形式上的有效性并不意味着实质上的准确性。问责要求将同意视为版本化的活记录——在能力发生变化时设置结构化检查点——而非仅仅通过一次法律审核就永不再审视的文件。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>在AI護理部署中，同意通常在某個單一時刻被獲取：註冊時。護理對象或其法定代理人同意一套條款。這些條款描述了智能體可以做什麼——可以啟動哪些傳感器、可以保留哪些數據、可以自主做出哪些決策，以及哪些決策必須上報給人類。同意文件被簽署、存儲，並在任何關於智能體行為是否經過授權的問題出現時被引用。</p>
+
+        <p>凍結的同意問題，就是從那個時刻到部署的每一個後續時刻之間所發生的事情。護理關係在演變。智能體的能力隨軟件更新而改變。護理對象的健康軌跡在變化——有時好轉，更多時候是走向衰退。負責監督部署的人員在更替。然而，原始的同意條款卻保持不變。從形式上看，它們仍然有效。從實質上看，它們可能早已不再描述實際部署的任何情況。</p>
+
+        <h2>為何「新鮮度」並非同意的自然屬性</h2>
+        <p>同意框架旨在建立授權，而非維護授權。一旦獲得同意，系統便擁有了繼續進行的法律許可。幾乎不存在任何結構性機制，能夠定期檢查持續中的部署是否仍然反映了原始授權所設想的內容。</p>
+
+        <p>在護理場景中，這一問題尤為突出，因為從註冊到問題浮出水面之間的時間往往以月或年計。一個在護理對象行動自如、認知能力完好時監測其活動水平和睡眠模式的智能體，在技術層面上，當該護理對象已基本失去行動能力、認知出現損傷時，仍在有效同意下運行。同意書上寫著「為優化健康狀況的活動監測」。而智能體實際上正在做的事情，在實質上已大相徑庭——卻無人注意到，因為表格從未改變。</p>
+
+        <h2>硬件維度</h2>
+        <p>嵌入式AI護理設備使這一問題更加複雜。在註冊時，設備被配置為適應特定的護理情境。該配置——包括傳感範圍、本地推理模型和升級閾值——被固化在固件中。隨著時間推移和情況改變，固件可能會收到更新，但這些更新很少觸發同意審查。原始授權保留在記錄中；更新後的能力配置文件並未反映在任何新的同意中。</p>
+
+        <p>一台被授權監測跌倒風險的設備，在固件更新後，可能還運行著情緒推理模型。原始能力的授權已存檔。新增能力可能根本沒有任何在檔的同意覆蓋。</p>
+
+        <p>護理場景中沒有任何自然機制來呈現這一差距。設備在運行。護理對象未被提示重新表示同意。監督人員假設：設備既然已部署，就已獲得了適當的授權。那份對新增能力隻字未提的授權記錄，被當作全面完整的文件來對待。</p>
+
+        <h2>時間有效性所忽略的東西</h2>
+        <p>密碼學證明和法律文件確立的是：同意材料是否真實，以及它在創建時是否有效。它們並不能確立同意是否在實質上仍然準確——它所描述的部署是否仍對應於實際正在進行的部署。</p>
+
+        <p>這一區別，恰恰在最難呈現時最為重要。一個監控自身處境能力有限、提出同意審查能力有限的護理對象，也是最不可能注意到管理其護理的授權已偏離現實的人。最需要同意「新鮮度」的人，恰恰最無力要求它。</p>
+
+        <h2>正確的架構應該是什麼樣子</h2>
+        <p>維護同意的新鮮度，需要將同意視為持續關係的版本化記錄，而非一次性文件。在實踐中，這意味著：</p>
+
+        <p>與部署事件掛鈎的同意檢查點：改變智能體功能範圍的軟件更新，應觸發同意審查通知，而非悄然進行。</p>
+
+        <p>能力變更披露：當智能體的能力發生變化——無論是通過模型更新、配置變更還是新傳感器啟動——應將變化增量呈現給監督負責人，而非埋沒在固件更新日誌中。</p>
+
+        <p>長期部署的定期重新授權要求：在註冊時獲得的同意，應根據護理關係的預期時長和演變速率設置有效期，以結構化的重新授權間隔取代無限期延續。</p>
+
+        <p>將同意版本歷史與行動歷史並列的審計跟蹤：以便在任何給定決策時刻，能夠還原當時有效的授權，而非僅顯示今日恰好存在的授權。</p>
+
+        <h2>失敗模式在緊要關頭才會現形</h2>
+        <p>凍結的同意問題不會自行宣告。智能體運行著。護理持續著。授權記錄顯示著一份簽署的同意文件。系統中沒有任何標記指示這一漂移。只有當問責被追究時，失敗才會變得可見——當事情出了問題，有人問：這個智能體究竟被授權做什麼？基於註冊時準確、此後從未更新的文件重建的答案，可能已不再描述導致傷害的部署情況。</p>
+
+        <p>在Asaptic Labs，我們將同意視為一份活的記錄，而非一次性通關的門檻。這意味著設計這樣的系統：授權狀態被持續地與部署狀態相互核驗——具備結構化機制，在差距演變為問責事件之前，將其呈現並彌合。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>同意在註冊時獲取；護理部署持續演變。在物理護理場景中，凍結的授權與不斷演變的部署之間的差距，可能在數月乃至數年間悄然擴大。形式上的有效性並不意味著實質上的準確性。問責要求將同意視為版本化的活記錄——在能力發生變化時設置結構化檢查點——而非僅僅通過一次法律審核就永不再審視的文件。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-10</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.toggle('active', el.dataset.langContent === lang));
+      });
+    });
+  </script>
+</body>
+</html>
