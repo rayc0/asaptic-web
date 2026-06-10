@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How LiDAR Degrades in Rain, Fog &amp; Dust — Asaptic Labs</title>
+
+  <meta name="description" content="Rain, fog, dust and snow scatter and absorb LiDAR pulses in ways that create false positives, dropped points and navigational blind spots. Here is what actually happens inside the sensor — and why ground robots need fusion to survive it." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/lidar-degradation-harsh-environments.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="When LiDAR Lies — Perception Degradation in Harsh Environments" />
+  <meta property="og:description" content="Rain, fog, dust and snow scatter and absorb LiDAR pulses in ways that create false positives, dropped points and navigational blind spots. Here is what actually happens inside the sensor — and why ground robots need fusion to survive it." />
+  <meta property="og:url" content="https://asaptic.com/blog/lidar-degradation-harsh-environments.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-10" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "When LiDAR Lies — Perception Degradation in Harsh Environments",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-10",
+    "description": "Rain, fog, dust and snow scatter and absorb LiDAR pulses in ways that create false positives, dropped points and navigational blind spots. Here is what actually happens inside the sensor — and why ground robots need fusion to survive it.",
+    "url": "https://asaptic.com/blog/lidar-degradation-harsh-environments.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× PERCEPTION</span>
+      <h1 class="essay-title">When LiDAR Lies — Perception Degradation in Harsh Environments</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">6 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>A ground robot navigating a clear warehouse is a controlled experiment. A ground robot navigating a construction site in heavy rain, a harbour perimeter in sea fog, or a field operation in a dust storm is the actual problem. LiDAR — the depth sensor that most autonomous ground vehicles depend on for their primary point cloud — behaves very differently in these two scenarios. Understanding why, at the physics level, is the first step toward building platforms that do not lose their mind the moment conditions get difficult. This matters directly for <a href="/physical-ai-robotics.html">physical AI and ground robotics deployments</a> intended to operate outside controlled environments.</p>
+
+        <p>LiDAR works by firing short pulses of near-infrared or infrared laser light and measuring the time-of-flight of the returned signal. The distance to a surface is calculated from that round-trip time. In clean air, the assumption is that the pulse travels in a straight line to a solid object, reflects, and returns. In the real atmosphere, that assumption starts to erode the moment particulate matter — whether liquid, solid, or suspended — enters the beam path.</p>
+
+        <p><strong>Rain and the backscatter problem.</strong> A raindrop is a spherical lens in the path of a laser beam. As rainfall intensity increases, the probability of a pulse intersecting a drop rises sharply. Scattered energy that returns to the sensor is treated as a range return — the calculated distance corresponds to where the raindrop is, not the obstacle behind it. The result is a dense cloud of false positive points in the 2–15 metre range band. At the same time, pulses that do reach a real surface return attenuated — less energy, wider pulse, lower signal-to-noise — so detection range for real obstacles shrinks. The robot's effective perception radius compresses exactly when it most needs reliable information.</p>
+
+        <p><strong>Fog, aerosols, and the extinction coefficient.</strong> Fog is a different physical regime. Fog droplets are an order of magnitude smaller than raindrops, so they do not produce discrete backscatter events. Instead, they scatter light continuously along the entire beam path — Mie scattering operating in its most efficient regime. The laser pulse loses energy progressively as it travels, and the returns it does receive are temporally broadened, making range estimation noisier. In these conditions, point cloud density drops at range, object edges become indistinct, and segmentation algorithms trained on clean-air data begin to fail silently.</p>
+
+        <p><strong>Dust: the worst of both worlds.</strong> Construction dust, agricultural particulate, and desert sand introduce a regime that combines backscatter (the larger particles act like rain at short range) with extinction (the overall density attenuates range performance). Dust also has a directional component that rain and fog do not: in wind, it is not uniformly distributed. A robot moving into a dust plume may see one sector of its field of view effectively blinded while adjacent sectors remain clear. Segmentation models that assume spatially uniform degradation will misclassify this as a real occupancy pattern. Additionally, dust accumulates on the sensor's optical window, introducing a static occlusion that worsens over a mission rather than varying with atmospheric conditions.</p>
+
+        <p><strong>What the point cloud actually looks like.</strong> The practical consequence of all of the above is a combination of three failure modes: ghost points (false returns from particles that did not originate from solid surfaces), dropped points (real surfaces that the attenuated or extinguished pulse never reached), and range noise (returns from real surfaces that carry higher uncertainty than the sensor's nominal specification). Ghost points cause planners to route around obstacles that do not exist. Dropped points allow robots to walk into obstacles that do exist. Range noise compounds localisation error. None of these failure modes are uniform — they vary by particle size distribution, density, wind, sensor orientation, and wavelength.</p>
+
+        <p><strong>Wavelength choice and multi-echo processing.</strong> Laser wavelength influences weather sensitivity without eliminating it. The 1550 nm band is generally preferred over 905 nm in fog because the scattering regime at that wavelength reduces effective returns from fog droplets relative to solid surfaces. Multi-echo processing captures the first, strongest, and last return per pulse separately — in rain, the first return often originates from a raindrop and the last from the real surface behind it, so separating them substantially reduces false point density without discarding genuine obstacle data.</p>
+
+        <p><strong>Why sensor fusion is not optional.</strong> No single tuning of a LiDAR system resolves all weather failure modes simultaneously. This is the fundamental case for multi-modal fusion on any ground platform intended to operate in uncontrolled conditions. Radar operates at wavelengths orders of magnitude longer than LiDAR, so precipitation and aerosols have negligible scattering effect on it — a radar that cannot resolve a parked bicycle in clear conditions can still detect that something solid exists in a zone the LiDAR has declared empty due to fog attenuation. Thermal cameras detect emitted infrared rather than reflected laser light, and fog and rain are largely transparent to the thermal band. The value of these sensors is not that any one of them is better than LiDAR — it is that their failure modes are physically independent. A fog event that degrades LiDAR does not degrade radar. A dust plume that blinds a camera does not block thermal. Designing for <a href="/physical-ai-robotics.html">robust physical AI in outdoor environments</a> means treating sensor diversity as a first-class engineering requirement, not an add-on.</p>
+
+        <p><strong>Algorithmic mitigations.</strong> Beyond hardware choices, several processing strategies narrow the gap between what the sensor delivers and what the perception stack needs. Dynamic point cloud filtering — using temporal consistency, intensity thresholds, and spatial clustering — suppresses ghost returns by rejecting points that appear only in a single scan frame. Learned weather classifiers flag regions of the point cloud as low-confidence rather than discarding them, letting planners treat those zones with appropriate uncertainty. Ground segmentation algorithms that adapt to surface normal distributions changed by snow accumulation maintain localisation where rigid map-matching would fail. None of these are complete solutions, but in combination they meaningfully extend reliable operating conditions.</p>
+
+        <p>The deeper lesson is architectural. A ground robot designed for all-weather operation is not a fair-weather robot with weather filters bolted on. It is a system built from the start around the assumption that any individual sensor will be unreliable under conditions the platform will regularly encounter. That assumption changes which sensors are specified, how the fusion layer is weighted, how uncertainty propagates to the planner, and when conditions exceed the operational design domain and a safer behaviour — slowing, stopping, requesting remote guidance — is the right response. Getting that architecture right is what separates ground robots that can leave the warehouse from ground robots that cannot.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>雨、雾、扬尘和积雪会通过后向散射、消光和物理遮挡三种机制使激光雷达（LiDAR）性能退化，分别产生虚假点云、漏检障碍物和测距噪声三类故障模式。这三种故障模式在物理上相互独立，无法通过单一传感器或单一调参手段同时消除。因此，面向非受控户外环境的地面机器人必须从架构层面将传感器多样性视为第一优先级——雷达（Radar）不受气溶胶散射影响，热成像相机对雾和雨透明，二者与激光雷达的失效模式在物理上相互解耦。真正的全天候能力，不是在晴天系统上叠加滤波器，而是从设计之初就将"单一传感器随时可能失效"作为系统架构的核心假设。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>雨、霧、揚塵和積雪會透過後向散射、消光和實體遮蔽三種機制使雷射雷達（LiDAR）性能退化，分別產生虛假點雲、漏偵障礙物和測距雜訊三類故障模式。這三種故障模式在物理上相互獨立，無法透過單一感測器或單一調參手段同時消除。因此，面向非受控戶外環境的地面機器人必須從架構層面將感測器多樣性視為第一優先——雷達（Radar）不受氣溶膠散射影響，熱成像相機對霧和雨透明，兩者與雷射雷達的失效模式在物理上相互解耦。真正的全天候能力，不是在晴天系統上疊加濾波器，而是從設計之初就將「單一感測器隨時可能失效」作為系統架構的核心假設。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/override-log-as-moat.html">Prev: The override log →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 感知层</span>
+      <h1 class="essay-title">当激光雷达撒谎——恶劣环境下的感知退化</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>激光雷达（LiDAR）通过发射短脉冲激光并测量飞行时间来计算距离。在洁净空气中，这一假设成立；一旦空气中出现颗粒物——无论是液态、固态还是悬浮态——该假设便开始瓦解。</p>
+        <p>雨水带来后向散射问题。雨滴如同透镜，使激光脉冲在到达真实障碍物之前发生散射，部分散射能量返回传感器，被误报为障碍点。降雨越强，虚假点云越密集，同时穿越雨幕抵达真实表面的脉冲能量衰减，有效探测距离随之压缩。浓雾则属于另一种物理机制——雾滴远小于雨滴，沿整条光束路径持续散射，导致点云在远距离处密度下降、物体轮廓模糊。扬尘兼具两者之短：大颗粒产生短距离后向散射，整体密度压缩测距性能，且尘埃积聚在光学窗口，形成随任务进行而加剧的静态遮挡。积雪则改变地表反射率，使基于地图的定位在已映射环境中失效。</p>
+        <p>上述所有情形归结为三类故障：虚假点（来自颗粒的伪返回）、漏检点（真实表面因脉冲衰减而未被探测）、测距噪声（真实表面的返回携带高于标称规格的不确定性）。这三类故障模式在物理上相互独立，无法通过单一传感器或单一调参手段同时消除。</p>
+        <p>这正是多模态融合对于面向非受控环境的地面平台而言不可或缺的根本原因。雷达工作波长远长于激光雷达，降水和气溶胶对其散射效应可忽略不计。热成像相机探测物体自身发射的红外辐射，而非反射激光，雾和雨对热成像波段基本透明。这两种传感器与激光雷达的失效模式在物理上相互解耦——使激光雷达退化的雾事件不会影响雷达，使摄像头失明的扬尘不会遮蔽热成像。对于面向户外的<a href="/physical-ai-robotics.html">物理AI与地面机器人系统</a>，传感器多样性是第一优先级的架构要求，而非事后添加的选项。</p>
+        <p>在算法层面，动态点云滤波、天气分类器和自适应地面分割等手段可缩小传感器输出与感知栈需求之间的差距。但更深层的教训在于架构：面向全天候运行的地面机器人，从设计之初就应将"任何单一传感器在某些常见条件下可能不可靠"作为核心假设，而非在晴天系统上叠加补丁。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/override-log-as-moat.html">上一篇：覆写日志 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 感知層</span>
+      <h1 class="essay-title">當雷射雷達撒謊——惡劣環境下的感知退化</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>雷射雷達（LiDAR）透過發射短脈衝雷射並測量飛行時間來計算距離。在潔淨空氣中，這一假設成立；一旦空氣中出現顆粒物——無論是液態、固態還是懸浮態——該假設便開始瓦解。</p>
+        <p>雨水帶來後向散射問題。雨滴如同透鏡，使雷射脈衝在抵達真實障礙物之前發生散射，部分散射能量返回感測器，被誤報為障礙點。降雨越強，虛假點雲越密集，同時穿越雨幕抵達真實表面的脈衝能量衰減，有效探測距離隨之壓縮。濃霧屬於另一種物理機制——霧滴遠小於雨滴，沿整條光束路徑持續散射，導致點雲在遠距離處密度下降、物體輪廓模糊。揚塵兼具兩者之短：大顆粒產生短距離後向散射，整體密度壓縮測距性能，且塵埃積聚於光學窗口，形成隨任務進行而加劇的靜態遮蔽。積雪則改變地表反射率，使基於地圖的定位在已映射環境中失效。</p>
+        <p>上述所有情形歸結為三類故障：虛假點（來自顆粒的偽返回）、漏偵點（真實表面因脈衝衰減而未被探測）、測距雜訊（真實表面的返回攜帶高於標稱規格的不確定性）。這三類故障模式在物理上相互獨立，無法透過單一感測器或單一調參手段同時消除。</p>
+        <p>這正是多模態融合對於面向非受控環境的地面平台而言不可或缺的根本原因。雷達工作波長遠長於雷射雷達，降水和氣溶膠對其散射效應可忽略不計。熱成像相機偵測物體自身發射的紅外輻射，而非反射雷射，霧和雨對熱成像波段基本透明。這兩種感測器與雷射雷達的失效模式在物理上相互解耦——使雷射雷達退化的霧事件不會影響雷達，使攝影機失明的揚塵不會遮蔽熱成像。對於面向戶外的<a href="/physical-ai-robotics.html">物理AI與地面機器人系統</a>，感測器多樣性是第一優先級的架構要求，而非事後添加的選項。</p>
+        <p>在演算法層面，動態點雲濾波、天氣分類器和自適應地面分割等手段可縮小感測器輸出與感知棧需求之間的差距。但更深層的教訓在於架構：面向全天候運行的地面機器人，從設計之初就應將「任何單一感測器在某些常見條件下可能不可靠」作為核心假設，而非在晴天系統上疊加補丁。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/override-log-as-moat.html">上一篇：覆寫日誌 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>

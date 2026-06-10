@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quality Control for GaN Wafer Sourcing — Asaptic Labs</title>
+
+  <meta name="description" content="Threading dislocations, bow, epi non-uniformity — the defects that kill GaN power devices, the metrology that catches them, and the sourcing diligence required when buying wide-bandgap wafers from China." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/gan-wafer-sourcing-quality-control.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="What to Test Before You Buy GaN Wafers" />
+  <meta property="og:description" content="Threading dislocations, bow, epi non-uniformity — the defects that kill GaN power devices, the metrology that catches them, and the sourcing diligence required when buying wide-bandgap wafers from China." />
+  <meta property="og:url" content="https://asaptic.com/blog/gan-wafer-sourcing-quality-control.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-10" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "What to Test Before You Buy GaN Wafers",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-10",
+    "description": "Threading dislocations, bow, epi non-uniformity — the defects that kill GaN power devices, the metrology that catches them, and the sourcing diligence required when buying wide-bandgap wafers from China.",
+    "url": "https://asaptic.com/blog/gan-wafer-sourcing-quality-control.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× DEEP TECH SOURCING</span>
+      <h1 class="essay-title">What to Test Before You Buy GaN Wafers</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">7 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Gallium nitride is having its infrastructure moment. Wide-bandgap power electronics have moved from defence and satellite payloads into EV inverters, fast chargers, data-centre power supplies, and industrial motor drives. The device physics are compelling: higher critical electric field, higher electron mobility, higher operating temperature than silicon. But none of those properties are guaranteed by the label on a box. They are properties of a wafer — and wafers vary. When you are buying GaN from a supplier you do not yet know, the question is not whether the material is GaN. It is whether the specific wafer in front of you will yield functional, reliable devices. That question has a testable answer.</p>
+
+        <p>The first thing to understand is the defect landscape. GaN grown by metal-organic chemical vapour deposition (MOCVD) on a foreign substrate — silicon or silicon carbide — is not a single crystal in the way a silicon boule is. The lattice and thermal expansion mismatches between GaN and its substrate generate strain that the crystal relieves by forming defects. The most consequential of these are threading dislocations: one-dimensional defects that propagate from the substrate interface upward through the epitaxial stack and exit at the surface. Threading dislocation densities (TDD) for GaN-on-Si routinely run in the 10⁸–10⁹ cm⁻² range without careful strain management; on SiC substrates that number typically falls an order of magnitude or more. Dislocations at these densities act as scattering centres for electrons, reduce carrier mobility, increase reverse-bias leakage, and, in high-field operation, can become nucleation sites for early breakdown. For a power device targeting a given breakdown voltage, the dislocation density of the starting material is a first-order determinant of whether the device will meet spec.</p>
+
+        <p>Beyond threading dislocations, the surface pit density matters in a related but distinct way. V-pit defects, which form around the cores of screw-component dislocations, are optically visible and electrically active. High pit density correlates with gate leakage in HEMT structures and with premature breakdown in vertical devices. Pit density is cheap to measure — a short etch followed by optical microscopy or AFM — and a supplier unwilling to share it is a supplier you should treat with caution.</p>
+
+        <p>Wafer geometry is the second category of concern. Bow and warp arise from the same thermal mismatch that drives dislocation formation: GaN and silicon have different thermal expansion coefficients, so a wafer that was flat at growth temperature is bowed at room temperature. Both parameters affect lithography depth-of-focus uniformity, translating directly to threshold voltage spread in finished transistors. Ask for bow and warp data from the specific production batch, not from a characterisation lot run under different growth conditions. For 6-inch GaN-on-Si wafers entering a production fab, bow below 50 µm is a reasonable starting expectation.</p>
+
+        <p>Epitaxial uniformity — variation in thickness and composition of the AlGaN/GaN heterostructure across the wafer — drives the third class of failure modes. The two-dimensional electron gas (2DEG) that gives GaN HEMTs their performance is formed at the AlGaN/GaN interface; its sheet carrier concentration and electron mobility depend on AlGaN composition and thickness, both of which vary with MOCVD reactor uniformity. Non-uniform epi means non-uniform threshold voltage, on-resistance, and saturation current — and, when the variation is large enough, binning loss or outright yield failure. Photoluminescence (PL) mapping is the standard non-destructive tool: a full-wafer PL map tracks AlGaN composition spatially. Request wafer-level PL maps with the standard deviation of emission wavelength or peak intensity stated explicitly.</p>
+
+        <p>The electrical tests that follow material characterisation are where the sourcing diligence becomes most directly actionable. X-ray diffraction (XRD) rocking curve measurement quantifies crystalline quality: the full width at half maximum (FWHM) of the GaN (002) and (102) reflections is a standard proxy for screw- and edge-dislocation densities respectively. Narrower rocking curves mean fewer dislocations and better crystal quality. Capacitance-voltage (C-V) profiling gives you the 2DEG sheet charge density and its depth profile — fundamental parameters for any device model. And breakdown voltage testing, either on dedicated test structures or on a sample of finished HEMTs, is the only direct confirmation that the material actually delivers the dielectric strength you need. A supplier who provides XRD FWHMs and C-V profiles alongside the material datasheet is operating at a different level of transparency than one who offers only a nominal specification and a certificate of conformity.</p>
+
+        <p>The choice between GaN-on-Si and GaN-on-SiC is as much an economics question as a materials one. GaN-on-SiC offers better thermal conductivity and lower dislocation density — the preferred combination for RF power amplifiers and high-reliability defence electronics where cost is secondary. GaN-on-Si has the manufacturing cost advantage: silicon substrates are cheaper, larger diameter, and compatible with existing CMOS fabs, which matters for consumer power and automotive applications where cost-per-watt governs. Neither is universally better. The right question is whether the material specification is consistent with your device target, and whether the supplier can prove it with data.</p>
+
+        <p>Sourcing wide-bandgap materials from China introduces diligence requirements specific to the supply chain structure, not to any individual supplier's technical capability. The GaN wafer sector there has grown rapidly and capability spans a wide range. <a href="/deep-tech-sourcing.html">Deep tech sourcing</a> in this context is a compliance and verification problem as much as a procurement one. The questions that matter: who grew the epitaxial layer, and on what reactor platform? Is the characterisation data from the actual production lot or from a qualification run? How does the supplier handle out-of-spec wafers — do they downgrade and label them, or bin them with compliant material? What traceability documentation connects the wafer you receive to the growth run it came from?</p>
+
+        <p>These questions are not expressions of distrust; they are standard audit logic for qualifying a new supplier of a safety-relevant material. A supplier who answers them fluently — with lot-traceable characterisation data, a defined out-of-spec handling procedure, and a documented quality management system — is worth building a relationship with. One who responds to technical questions with commercial pressure is not. The incoming inspection protocol you set with your first qualifying lot becomes the template for every lot that follows.</p>
+
+        <p>The principle that applies across <a href="/deep-tech-sourcing.html">deep tech sourcing</a> engagements applies here without modification: qualification data is the trust substrate. It cannot be replaced by price, delivery speed, or a warm relationship with a distributor. GaN wafer quality is testable, the tests are well understood, and any supplier unable or unwilling to provide the relevant data has already answered your sourcing question.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>氮化镓（GaN）功率晶圆的质量由具体可测的缺陷决定：穿透位错密度（TDD）影响载流子迁移率与击穿性能；V形坑密度与栅极漏电相关；翘曲/弯曲影响光刻均匀性；外延层非均匀性导致阈值电压分布离散。关键计量手段包括：XRD摇摆曲线（晶体质量）、光致发光（PL）全片映射（外延均匀性）、C-V分析（二维电子气片电荷）及击穿测试。GaN-on-SiC热导率更优、位错更少，适合射频及高可靠性应用；GaN-on-Si成本更低，适用于消费类电源与汽车电子。从中国采购宽禁带材料需执行严格的批次溯源与质量管理体系审核——资质数据是建立供应商信任的唯一基础，不可以价格或交期替代。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>氮化鎵（GaN）功率晶圓的品質由具體可測的缺陷決定：穿透位錯密度（TDD）影響載流子遷移率與崩潰性能；V形坑密度與閘極漏電相關；翹曲／彎曲影響微影均勻性；磊晶層非均勻性導致閾值電壓分布離散。關鍵計量手段包括：XRD搖擺曲線（晶體品質）、光致發光（PL）全片映射（磊晶均勻性）、C-V分析（二維電子氣片電荷）及崩潰測試。GaN-on-SiC熱導率更優、位錯更少，適合射頻及高可靠性應用；GaN-on-Si成本更低，適用於消費類電源與汽車電子。從中國採購寬禁帶材料需執行嚴格的批次追溯與品質管理體系稽核——資質數據是建立供應商信任的唯一基礎，不可以價格或交期替代。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/deep-tech-sourcing.html">Deep tech sourcing →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 深科技采购</span>
+      <h1 class="essay-title">购买 GaN 晶圆前，你必须检测什么</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">7 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>氮化镓功率器件已从国防与卫星载荷扩展至电动汽车逆变器、快速充电器、数据中心电源及工业电机驱动。其物理特性引人注目：临界电场更高、电子迁移率更强、工作温度更高。但这些特性并非由包装盒上的标签保证——它们是晶圆的属性，而晶圆之间存在显著差异。</p>
+        <p>首要问题是缺陷图谱。GaN 在异质衬底（硅或碳化硅）上通过金属有机化学气相沉积（MOCVD）生长时，晶格与热膨胀失配产生的应力会导致穿透位错（TDD）的形成。GaN-on-Si 的穿透位错密度通常在 10⁸–10⁹ cm⁻² 量级，若不进行严格的应力管理，这些位错将成为载流子散射中心、增大反偏漏电，并在高场操作中成为早期击穿的核化点。V形坑缺陷在 HEMT 结构中与栅极漏电直接相关，可通过简单腐蚀结合光学显微镜或原子力显微镜低成本检测。</p>
+        <p>晶圆几何形状是第二类关注点。翘曲与弯曲源于热失配，影响光刻均匀性，导致成品晶体管的阈值电压离散。GaN-on-SiC 衬底热导率约为硅的三倍，且位错密度更低，是射频功率放大器与高可靠性国防电子的优选方案；GaN-on-Si 则因衬底成本低、直径大、兼容现有硅 CMOS 产线，在消费类电源与汽车应用中占据显著成本优势。</p>
+        <p>外延均匀性决定了 AlGaN/GaN 异质结中二维电子气（2DEG）的片电荷浓度与电子迁移率分布。标准无损表征工具是全片光致发光（PL）映射——它追踪 AlGaN 组分空间分布，直接映射器件性能离散度。关键电学测试包括：XRD 摇摆曲线（表征晶体质量，以（002）和（102）反射的半高宽衡量）、C-V 分析（获取 2DEG 片电荷密度）以及击穿电压测试。能提供 XRD 半高宽与 C-V 曲线的供应商，其透明度与仅提供名义规格说明书的供应商截然不同。</p>
+        <p>从中国采购宽禁带材料需要额外的尽职调查：谁生长了外延层？计量数据来自实际生产批次还是资质认证批次？超出规格的晶圆如何处理？批次追溯文件是否完整？这些问题是任何负责任买家在认证新供应商时的标准审计逻辑，而非不信任的表达。能够流畅回答这些问题的供应商——提供批次可追溯的计量数据、明确的超规处理程序和文件化质量管理体系——才是值得建立长期关系的合作方。<a href="/deep-tech-sourcing.html">深科技采购</a>的核心原则在此一以贯之：资质数据是信任的基础，无法以价格或交期替代。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/deep-tech-sourcing.html">深科技采购 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 深科技採購</span>
+      <h1 class="essay-title">購買 GaN 晶圓前，你必須檢測什麼</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">7 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>氮化鎵功率器件已從國防與衛星載荷擴展至電動汽車逆變器、快速充電器、資料中心電源及工業電機驅動。其物理特性引人注目：臨界電場更高、電子遷移率更強、工作溫度更高。但這些特性並非由包裝盒上的標籤保證——它們是晶圓的屬性，而晶圓之間存在顯著差異。</p>
+        <p>首要問題是缺陷圖譜。GaN 在異質基板（矽或碳化矽）上透過金屬有機化學氣相沉積（MOCVD）生長時，晶格與熱膨脹失配產生的應力會導致穿透位錯（TDD）的形成。GaN-on-Si 的穿透位錯密度通常在 10⁸–10⁹ cm⁻² 量級，若不進行嚴格的應力管理，這些位錯將成為載流子散射中心、增大反偏漏電，並在高場操作中成為早期崩潰的核化點。V形坑缺陷在 HEMT 結構中與閘極漏電直接相關，可透過簡單腐蝕結合光學顯微鏡或原子力顯微鏡低成本檢測。</p>
+        <p>晶圓幾何形狀是第二類關注點。翹曲與彎曲源於熱失配，影響微影均勻性，導致成品電晶體的閾值電壓離散。GaN-on-SiC 基板熱導率約為矽的三倍，且位錯密度更低，是射頻功率放大器與高可靠性國防電子的優選方案；GaN-on-Si 則因基板成本低、直徑大、相容現有矽 CMOS 產線，在消費類電源與汽車應用中占據顯著成本優勢。</p>
+        <p>磊晶均勻性決定了 AlGaN/GaN 異質結中二維電子氣（2DEG）的片電荷濃度與電子遷移率分布。標準無損表徵工具是全片光致發光（PL）映射——它追蹤 AlGaN 組分空間分布，直接映射器件性能離散度。關鍵電性測試包括：XRD 搖擺曲線（表徵晶體品質，以（002）和（102）反射的半高寬衡量）、C-V 分析（獲取 2DEG 片電荷密度）以及崩潰電壓測試。能提供 XRD 半高寬與 C-V 曲線的供應商，其透明度與僅提供名義規格說明書的供應商截然不同。</p>
+        <p>從中國採購寬禁帶材料需要額外的盡職調查：誰生長了磊晶層？計量數據來自實際生產批次還是資質認證批次？超出規格的晶圓如何處理？批次追溯文件是否完整？這些問題是任何負責任買家在認證新供應商時的標準稽核邏輯，而非不信任的表達。能夠流暢回答這些問題的供應商——提供批次可追溯的計量數據、明確的超規處理程序和文件化品質管理體系——才是值得建立長期關係的合作方。<a href="/deep-tech-sourcing.html">深科技採購</a>的核心原則在此一以貫之：資質數據是信任的基礎，無法以價格或交期替代。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/deep-tech-sourcing.html">深科技採購 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>

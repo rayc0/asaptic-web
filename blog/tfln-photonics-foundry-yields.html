@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Yield Problem in TFLN Photonics Manufacturing — Asaptic Labs</title>
+
+  <meta name="description" content="Thin-film lithium niobate is the material enabling the next generation of high-speed electro-optic devices — but wafer bonding, etch uniformity, poling, and China's foundry capacity all create procurement risk buyers rarely audit." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/tfln-photonics-foundry-yields.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Why Thin-Film Lithium Niobate Is Hard to Manufacture at Yield" />
+  <meta property="og:description" content="Thin-film lithium niobate is the material enabling the next generation of high-speed electro-optic devices — but wafer bonding, etch uniformity, poling, and China's foundry capacity all create procurement risk buyers rarely audit." />
+  <meta property="og:url" content="https://asaptic.com/blog/tfln-photonics-foundry-yields.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-10" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Why Thin-Film Lithium Niobate Is Hard to Manufacture at Yield",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-10",
+    "description": "Thin-film lithium niobate is the material enabling the next generation of high-speed electro-optic devices — but wafer bonding, etch uniformity, poling, and China's foundry capacity all create procurement risk buyers rarely audit.",
+    "url": "https://asaptic.com/blog/tfln-photonics-foundry-yields.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× PHOTONICS MANUFACTURING</span>
+      <h1 class="essay-title">Why Thin-Film Lithium Niobate Is Hard to Manufacture at Yield</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">6 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Lithium niobate has been the workhouse of electro-optic modulation for decades. Its high electro-optic coefficient, wide transparency window, and relative chemical stability made it the default choice for telecom-grade modulators throughout the fibre-optic buildout of the 1990s and 2000s. The problem was geometry: bulk lithium niobate devices are physically large, power-hungry, and fundamentally incompatible with the tight integration density that coherent optical communications — and now, photonic AI accelerators — demand.</p>
+        <p>Thin-film lithium niobate (TFLN) resolves that constraint elegantly in principle. By bonding a sub-micron layer of lithium niobate onto a silicon dioxide handle wafer (the same ion-sliced substrate technique pioneered for silicon-on-insulator), engineers confine the optical mode to a waveguide cross-section small enough to enable millimetre-scale devices with drive voltages below two volts and bandwidths exceeding 100 GHz. The physics is well established. The manufacturing is not.</p>
+        <p>The difficulty is not any single step; it is the compounding of tolerances across a process that has no margin for approximation. Understanding where yield is lost — and why some foundries lose far more of it than others — is the starting point for any serious procurement or <a href="/deep-tech-sourcing.html">deep-tech sourcing</a> exercise in this space.</p>
+        <p><strong>Wafer bonding and the thickness uniformity problem.</strong> TFLN wafers are produced by ion implantation into bulk lithium niobate, then bonding the implanted wafer to a thermally oxidised silicon carrier and cleaving the thin layer free — a process analogous to the SmartCut technique used in the SOI industry. The challenge is that lithium niobate is anisotropic and brittle. The implant dose profile must be extraordinarily uniform across the wafer to achieve a consistent cleavage plane; any gradient in implant depth translates directly into film-thickness variation after cleave. A thickness variation of even a few nanometres shifts the effective refractive index of the waveguide mode, which in turn shifts device performance — phase matching, modulation efficiency, and insertion loss all move. High-quality TFLN foundries report film non-uniformity below one percent of target thickness; lower-tier operations frequently deliver wafers where that figure is several times larger.</p>
+        <p><strong>Etch roughness and sidewall loss.</strong> Patterning the waveguide ridge into TFLN requires dry etching — typically Ar-based ion milling, which is not truly chemical and therefore not selective. Unlike silicon, lithium niobate does not form a self-limiting etch chemistry. The etch proceeds purely by mechanical sputtering, which means the sidewall roughness of the resulting waveguide is a direct function of the etch rate, mask quality, chamber condition, and how consistently both are maintained from wafer to wafer and lot to lot. Sidewall roughness scatters light out of the guided mode: the propagation loss of a TFLN waveguide is the single most diagnostic metric for process quality, and it is exquisitely sensitive to etch condition drift that might be invisible in a process monitor wafer. A well-run foundry will quote and hit propagation losses below 0.1 dB/cm on ridge waveguides; a poorly controlled process can easily be five to ten times worse.</p>
+        <p><strong>Periodic poling and domain uniformity.</strong> Many of the most valuable TFLN devices — optical frequency converters, squeezed-light sources, entangled photon pairs for quantum applications — depend on periodically poled lithium niobate (PPLN) structures. Periodic poling inverts the ferroelectric domain orientation at a precise spatial period to achieve quasi-phase-matching. This requires applying high electric fields through a lithographically defined electrode pattern, a step that must be executed before the waveguide etch, after it, or at a precisely controlled intermediate stage depending on the device architecture. The domain inversion must be uniform in depth across the full wafer and the period must hold to tolerances in the hundreds-of-nanometres range to keep the quasi-phase-matching bandwidth acceptable. Domain merging, incomplete inversion, and depth non-uniformity are common failure modes that are not visible optically and require specialised second-harmonic microscopy to characterise. Foundries that have not built a structured metrology step for poling uniformity are essentially shipping dice without knowing what fraction of them are functional.</p>
+        <p><strong>Why China's TFLN foundry capacity matters — and where the risk sits.</strong> China has made TFLN process development a stated national priority, with academic groups, state-affiliated research institutes, and a growing number of commercial wafer suppliers active in the space. This matters for buyers because it creates a supply chain that is real, increasingly accessible, and priced significantly below Western equivalents. It also creates a buyer qualification problem that is not adequately captured by a standard supplier audit. The relevant risk is not geopolitical in the first instance; it is metrology. TFLN manufacturing yield is a function of process control that is difficult to verify externally. A foundry can produce datasheets and a small number of characterised samples that look excellent while the general lot yield and the tail behaviour of the distribution remain opaque. The metrics that matter — propagation loss distribution across the wafer, film thickness uniformity map, poling domain uniformity image, coupling loss lot-to-lot variation — are not routinely shared in a standard RFQ exchange.</p>
+        <p>A buyer engaging a TFLN supplier for the first time should treat the initial engagement as a characterisation project rather than a production order. That means requesting full-wafer uniformity maps, not just best-site or centre-site measurements. It means asking for loss data from multiple lots and multiple wafers per lot, so the distribution is visible rather than a single quoted number. It means understanding whether the foundry has in-house second-harmonic microscopy for poling verification, or whether it is shipping poled wafers on the assumption that the electrode geometry will produce correct domains. And it means asking what the foundry's response protocol is when a lot fails — does it have the metrology to identify the failure mechanism, or does it replace and respin without diagnosis?</p>
+        <p>This is precisely the kind of verification that general procurement channels are structurally unable to perform. A trading intermediary optimised for price and delivery date cannot run a metrology audit. <a href="/deep-tech-sourcing.html">Deep-tech sourcing</a> — the kind that treats compliance and quality verification as the primary service rather than an administrative overhead — exists because the asymmetry of information between a technically literate buyer and a well-resourced supplier is not bridged by a standard purchase order.</p>
+        <p>TFLN is one of the materials defining the next architectural inflection in photonics. The buyers who understand its manufacturing constraints, and who know what to audit before committing a programme to a foundry relationship, will reach production at yield. Those who treat it as a commodity substrate will not.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>薄膜铌酸锂（TFLN）是下一代高速电光调制器与光子芯片的核心材料，其物理性能远优于块体铌酸锂——但量产良率极难控制。关键挑战包括：晶圆键合与离子注入导致的薄膜厚度不均、干法刻蚀（离子研磨）造成的波导侧壁粗糙度与传播损耗、周期极化（PPLN）的畴翻转均匀性，以及各批次耦合损耗的一致性。中国已有大量 TFLN 晶圆供应商活跃于市场，价格显著低于西方同行，但买家面临严重的计量不对称问题——标准采购流程无法核实真实良率与尾部分布。严肃的采购方应将首次合作定位为定性项目：索取全晶圆均匀性图、多批次损耗数据，并核实供应商是否具备二次谐波显微镜等关键计量能力。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>薄膜鈮酸鋰（TFLN）是下一代高速電光調制器與光子晶片的核心材料，其物理性能遠優於塊體鈮酸鋰——但量產良率極難控制。關鍵挑戰包括：晶圓鍵合與離子注入導致的薄膜厚度不均、乾法刻蝕（離子研磨）造成的波導側壁粗糙度與傳播損耗、週期極化（PPLN）的疇翻轉均勻性，以及各批次耦合損耗的一致性。中國已有大量 TFLN 晶圓供應商活躍於市場，價格顯著低於西方同行，但買家面臨嚴重的計量不對稱問題——標準採購流程無法核實真實良率與尾部分佈。嚴肅的採購方應將首次合作定位為定性項目：索取全晶圓均勻性圖、多批次損耗數據，並核實供應商是否具備二次諧波顯微鏡等關鍵計量能力。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/override-log-as-moat.html">Next: The override log →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 光子制造</span>
+      <h1 class="essay-title">薄膜铌酸锂为何难以实现量产良率</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>薄膜铌酸锂（TFLN）将亚微米厚度的铌酸锂层键合至二氧化硅基底上，理论上可实现毫米级器件、低于 2V 的驱动电压，以及超过 100 GHz 的调制带宽。其物理原理已充分确立，但制造工艺远未成熟。</p>
+        <p>良率损失源于多个工艺环节的公差叠加。晶圆键合阶段，离子注入剂量必须高度均匀，否则劈裂平面不一致，导致薄膜厚度偏差——即便几纳米的偏差也会影响波导有效折射率、相位匹配效率与插入损耗。波导刻蚀阶段，TFLN 缺乏自限制化学刻蚀机制，只能依靠纯物理溅射，侧壁粗糙度直接决定传播损耗，而这一参数对工艺漂移极为敏感。周期极化阶段，PPLN 结构要求畴翻转深度与周期均匀性达到亚微米精度，畴合并、不完全翻转、深度不均等失效模式仅能通过二次谐波显微镜才能有效表征。</p>
+        <p>中国已有大量 TFLN 晶圆供应商活跃于市场，价格显著低于西方同行，但买家面临严重的计量不对称问题。真正重要的指标——全晶圆厚度均匀性图、多批次传播损耗分布、极化畴均匀性图像——在标准询价流程中几乎不会被主动披露。严肃的采购方应将首次合作定位为定性项目：索取全晶圆均匀性图而非单点测量，要求多批次损耗数据以观测分布而非单一报价，并确认供应商具备必要的计量能力与失效诊断协议。<a href="/deep-tech-sourcing.html">深度技术采购</a>的核心价值，正在于将合规与质量核查作为首要服务，而非行政附属环节。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/override-log-as-moat.html">下一篇：覆写日志 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 光子製造</span>
+      <h1 class="essay-title">薄膜鈮酸鋰為何難以實現量產良率</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>薄膜鈮酸鋰（TFLN）將亞微米厚度的鈮酸鋰層鍵合至二氧化矽基底上，理論上可實現毫米級器件、低於 2V 的驅動電壓，以及超過 100 GHz 的調制帶寬。其物理原理已充分確立，但製造工藝遠未成熟。</p>
+        <p>良率損失源於多個工藝環節的公差疊加。晶圓鍵合階段，離子注入劑量必須高度均勻，否則劈裂平面不一致，導致薄膜厚度偏差——即便幾奈米的偏差也會影響波導有效折射率、相位匹配效率與插入損耗。波導刻蝕階段，TFLN 缺乏自限制化學刻蝕機制，只能依靠純物理濺射，側壁粗糙度直接決定傳播損耗，而這一參數對工藝漂移極為敏感。週期極化階段，PPLN 結構要求疇翻轉深度與週期均勻性達到亞微米精度，疇合並、不完全翻轉、深度不均等失效模式僅能透過二次諧波顯微鏡才能有效表徵。</p>
+        <p>中國已有大量 TFLN 晶圓供應商活躍於市場，價格顯著低於西方同行，但買家面臨嚴重的計量不對稱問題。真正重要的指標——全晶圓厚度均勻性圖、多批次傳播損耗分佈、極化疇均勻性圖像——在標準詢價流程中幾乎不會被主動披露。嚴肅的採購方應將首次合作定位為定性項目：索取全晶圓均勻性圖而非單點測量，要求多批次損耗數據以觀測分佈而非單一報價，並確認供應商具備必要的計量能力與失效診斷協議。<a href="/deep-tech-sourcing.html">深度技術採購</a>的核心價值，正在於將合規與質量核查作為首要服務，而非行政附屬環節。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/override-log-as-moat.html">下一篇：覆寫日誌 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>

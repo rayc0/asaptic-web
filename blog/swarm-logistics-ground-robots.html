@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fleet Coordination for Autonomous Mobile Robots — Asaptic Labs</title>
+
+  <meta name="description" content="Moving from a single AMR pilot to a coordinated fleet requires solving traffic management, task allocation, shared maps, and charging orchestration. Here is how it works." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/swarm-logistics-ground-robots.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Fleet Coordination for Autonomous Mobile Robots" />
+  <meta property="og:description" content="Moving from a single AMR pilot to a coordinated fleet requires solving traffic management, task allocation, shared maps, and charging orchestration. Here is how it works." />
+  <meta property="og:url" content="https://asaptic.com/blog/swarm-logistics-ground-robots.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-10" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "From One Robot to a Fleet — Coordinating Autonomous Ground Robots",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-10",
+    "description": "Moving from a single AMR pilot to a coordinated fleet requires solving traffic management, task allocation, shared maps, and charging orchestration.",
+    "url": "https://asaptic.com/blog/swarm-logistics-ground-robots.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× PHYSICAL AI</span>
+      <h1 class="essay-title">From One Robot to a Fleet — Coordinating Autonomous Ground Robots</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">6 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>A single autonomous mobile robot navigating a warehouse aisle is an impressive demonstration. It maps its environment, avoids obstacles, and reaches its destination without a human hand on it. That capability is now well understood. What is far less discussed is how radically the problem changes when you add a second robot — and a third, and a twelfth, and a hundred. The jump from one AMR to a coordinated fleet is not a linear scale. It introduces a family of problems that single-agent autonomy was never designed to solve.</p>
+
+        <p>This essay is a technical and conceptual walkthrough of those problems: how <a href="/physical-ai-robotics.html">industrial autonomous mobile robot fleet management</a> actually works, where the hard parts live, and what architectural choices determine whether a deployment stays reliable as it grows.</p>
+
+        <p><strong>Traffic management: the intersection problem at scale</strong></p>
+
+        <p>The most immediate challenge when multiple AMRs share a space is contention. Two robots trying to use the same aisle segment, doorway, or charging bay at the same moment is the physical equivalent of a deadlock in software — neither can proceed, and without intervention, neither will. In a single-robot world this cannot happen. In a fleet, it is a design constraint that pervades every layer of the system.</p>
+
+        <p>The standard approach is to model the facility as a graph: nodes are named positions (intersections, pick locations, charging stations), and edges are traversable segments. A fleet management system assigns each robot a planned path and issues time-windowed reservations on each edge. Before a robot enters a segment, it — or the central system on its behalf — confirms the segment is free. This reservation protocol works well in sparse traffic. The difficulty arises at high utilisation: when the graph is heavily loaded, robots serialise into queues and throughput collapses. Tuning the graph topology — widening aisle models, adding bypass edges, splitting high-contention nodes — is one of the more underappreciated skills in fleet deployment.</p>
+
+        <p><strong>Task allocation: who goes where, and when</strong></p>
+
+        <p>A fleet is only as useful as its ability to match available robots to pending tasks in real time. Naive approaches — assign the next task to the nearest idle robot — quickly reveal their weakness. The nearest robot today may be the wrong robot thirty seconds from now when three higher-priority tasks appear. Task allocation is fundamentally an online scheduling problem, and like all scheduling problems, it is NP-hard in its general form.</p>
+
+        <p>In practice, most industrial fleet management systems use auction-based allocation: each robot bids a cost estimate for each open task (incorporating travel time, battery state, and current load), and the system assigns to the lowest-cost bidder. The tricky part is that bids must account for tasks that have not yet arrived — a robot should not sprint to the far end of a facility for a low-priority pick if it will likely be needed nearby in the next minute. Predictive models that anticipate task arrival patterns, derived from historical throughput data, are increasingly central to competitive fleet systems.</p>
+
+        <p><strong>Shared maps and localisation consistency</strong></p>
+
+        <p>In a single-robot deployment, the onboard map is the ground truth. In a fleet, maps diverge: Robot A may have scanned a section before a pallet stack was moved; Robot B after. Disagreements in geometry make path plans inconsistent, and the reservation system — which depends on those plans — starts making incorrect predictions about where each robot will be at each moment.</p>
+
+        <p>The solution is a shared, continuously updated global map that all robots contribute to and localise against. Sensor data from dozens of robots must be fused in near-real-time, dynamic obstacles (humans, forklifts, mobile shelving) distinguished from static infrastructure, and localisation drift corrected without interrupting motion. Cloud-hosted fleet brains that aggregate perception across the whole fleet exist partly to solve this — local computation on each robot is not sufficient for map consistency at scale.</p>
+
+        <p><strong>Charging orchestration: the invisible bottleneck</strong></p>
+
+        <p>Battery management in a single AMR is straightforward: return to charge when below a threshold. In a fleet, charging is a scheduling problem of its own. If robots deployed simultaneously share the same charge cycle, they queue at the bays simultaneously and effective fleet capacity drops sharply — and if one runs flat mid-task, that task must be reassigned and the robot physically recovered.</p>
+
+        <p>Good charging orchestration pre-empts this: the fleet management system monitors battery state across all robots and dispatches each one to charge while it still has reserve capacity, informed by predicted task load and current queue depth. The balance — keeping enough robots charged without pulling them from active tasks prematurely — is especially delicate across shift changes, where demand spikes sharply.</p>
+
+        <p><strong>Centralised versus decentralised control</strong></p>
+
+        <p>Centralised control offers global visibility — the server optimises task allocation and resolves contention with full information — but is a single point of failure. Decentralised approaches let robots negotiate path priority directly, improving resilience at the cost of global optimality. The industry has largely settled on a hybrid: a central fleet brain owns task allocation and the global map; each robot runs a local planner for immediate motion. The boundary — what the robot decides unilaterally versus what requires a server round-trip — is a key latency-budget parameter, and mirrors the broader pattern in <a href="/physical-ai-robotics.html">Physical AI systems</a>: global coordination at one layer, local autonomy at another.</p>
+
+        <p><strong>Deadlock avoidance in confined spaces</strong></p>
+
+        <p>Beyond simple traffic contention, fleets in confined yard and warehouse environments face true deadlock: a circular dependency where Robot A is waiting for Robot B to clear a path, Robot B is waiting for Robot C, and Robot C is waiting for Robot A. No robot can move. The reservation system prevents many deadlocks by construction — if reservations are granted in a consistent order, circular waits cannot form — but in practice, dynamic replanning and human-introduced changes to the environment create deadlock scenarios that purely static reservation protocols do not cover.</p>
+
+        <p>Most production systems include a deadlock detection layer that periodically checks for circular waits in the reservation graph and resolves them by instructing one robot to back up and cede its reservation. High deadlock frequency is a diagnostic: it usually means the graph model has bottlenecks not captured in the topology, or the task allocator is routing too many robots through the same chokepoints.</p>
+
+        <p>The jump from a single AMR to a reliable fleet is a distributed systems problem applied to physical space. The robots are the easy part. The hard part is the invisible infrastructure — reservation tables, shared maps, charge queues, deadlock detectors — that makes the fleet behave as a coherent whole rather than independent agents that happen to share a floor.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>将单台自主移动机器人扩展为协调运行的机器人队群，需要解决一系列单体自主无法覆盖的问题：交通管理（基于预约协议的图形化路径冲突消解）、任务分配（拍卖式在线调度）、共享地图与定位一致性、充电编排（避免充电湾排队瓶颈），以及集中式与分布式控制架构之间的权衡。在仓库与场院等封闭空间中，死锁检测与消解同样是不可缺少的生产层能力。工业 AMR 队群管理的核心挑战，本质上是将分布式系统工程应用于物理空间。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>將單台自主移動機器人擴展為協調運行的機器人機隊，需要解決一系列單體自主無法涵蓋的問題：交通管理（基於預約協議的圖形化路徑衝突消解）、任務分配（拍賣式線上排程）、共享地圖與定位一致性、充電編排（避免充電站排隊瓶頸），以及集中式與分散式控制架構之間的取捨。在倉庫與場院等封閉空間中，死鎖偵測與消解同樣是不可或缺的生產層能力。工業 AMR 機隊管理的核心挑戰，本質上是將分散式系統工程應用於實體空間。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/override-log-as-moat.html">Next: The override log →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 物理 AI</span>
+      <h1 class="essay-title">从单台机器人到机器人群——自主地面机器人的队群协调</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>单台自主移动机器人在仓库通道中导航是一项令人印象深刻的演示。它能够绘制环境地图、规避障碍物并到达目的地，无需人工干预。然而，当你将第二台、第三台乃至第一百台机器人加入其中，问题的复杂性会发生质变——这不是线性扩展，而是引入了一整套单体自主从未被设计为解决的问题。</p>
+        <p>工业 AMR 队群管理面临的核心挑战包括以下几个层面。其一是<strong>交通管理</strong>：将设施建模为图结构，通过预约协议分配路径段的时间窗口，在高负荷下需通过优化图拓扑（扩宽通道模型、增加绕行边）来避免吞吐量崩溃。其二是<strong>任务分配</strong>：基于拍卖机制的在线调度，每台机器人对未分配任务进行成本竞标，综合考虑行程时间、电量状态与当前负载，并结合历史数据预测未来任务到达规律。其三是<strong>共享地图与定位一致性</strong>：通过云端队群大脑实时融合全队传感数据，维护统一的全局地图，并将动态障碍物与静态基础设施加以区分。其四是<strong>充电编排</strong>：在机器人仍有储备电量时提前调度充电，根据任务负载预测与充电湾队列深度动态平衡可用性与吞吐量。</p>
+        <p>在集中式与分散式控制架构的权衡上，业界普遍采用混合方案：中央队群大脑负责任务分配与全局地图维护，各机器人本地规划器处理即时运动决策，两者之间的决策分界线是延迟预算的关键调参点。仓库与场院等封闭空间中的死锁检测与消解，同样是生产级队群系统不可或缺的一层。工业 AMR 队群管理的本质，是将分布式系统工程应用于物理空间。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/override-log-as-moat.html">下一篇：覆写日志 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 物理 AI</span>
+      <h1 class="essay-title">從單台機器人到機器人機隊——自主地面機器人的機隊協調</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>單台自主移動機器人在倉庫通道中導航是一項令人印象深刻的演示。它能夠繪製環境地圖、規避障礙物並到達目的地，無需人工干預。然而，當你將第二台、第三台乃至第一百台機器人加入其中，問題的複雜性會發生質變——這不是線性擴展，而是引入了一整套單體自主從未被設計為解決的問題。</p>
+        <p>工業 AMR 機隊管理面臨的核心挑戰包括以下幾個層面。其一是<strong>交通管理</strong>：將設施建模為圖結構，透過預約協議分配路徑段的時間窗口，在高負荷下需透過優化圖拓撲（擴寬通道模型、增加繞行邊）來避免吞吐量崩潰。其二是<strong>任務分配</strong>：基於拍賣機制的線上排程，每台機器人對未分配任務進行成本競標，綜合考量行程時間、電量狀態與當前負載，並結合歷史數據預測未來任務到達規律。其三是<strong>共享地圖與定位一致性</strong>：透過雲端機隊大腦實時融合全隊感測數據，維護統一的全局地圖，並將動態障礙物與靜態基礎設施加以區分。其四是<strong>充電編排</strong>：在機器人仍有儲備電量時提前調度充電，根據任務負載預測與充電站佇列深度動態平衡可用性與吞吐量。</p>
+        <p>在集中式與分散式控制架構的取捨上，業界普遍採用混合方案：中央機隊大腦負責任務分配與全局地圖維護，各機器人本地規劃器處理即時運動決策，兩者之間的決策分界線是延遲預算的關鍵調參點。倉庫與場院等封閉空間中的死鎖偵測與消解，同樣是生產級機隊系統不可或缺的一層。工業 AMR 機隊管理的本質，是將分散式系統工程應用於實體空間。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/override-log-as-moat.html">下一篇：覆寫日誌 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>

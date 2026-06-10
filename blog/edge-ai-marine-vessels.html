@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edge AI on Autonomous Surface Vessels — Asaptic Labs</title>
+
+  <meta name="description" content="Offshore connectivity is intermittent and expensive. Autonomous surface vessels must perceive, decide, and act entirely on-vessel — making edge compute the foundational constraint in marine autonomy." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/edge-ai-marine-vessels.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Why Autonomous Boats Can't Phone Home — Edge AI at Sea" />
+  <meta property="og:description" content="Offshore connectivity is intermittent and expensive. Autonomous surface vessels must perceive, decide, and act entirely on-vessel — making edge compute the foundational constraint in marine autonomy." />
+  <meta property="og:url" content="https://asaptic.com/blog/edge-ai-marine-vessels.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-10" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Why Autonomous Boats Can't Phone Home — Edge AI at Sea",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-10",
+    "description": "Offshore connectivity is intermittent and expensive. Autonomous surface vessels must perceive, decide, and act entirely on-vessel — making edge compute the foundational constraint in marine autonomy.",
+    "url": "https://asaptic.com/blog/edge-ai-marine-vessels.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× EDGE COMPUTE</span>
+      <h1 class="essay-title">Why Autonomous Boats Can't Phone Home — Edge AI at Sea</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">6 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>There is a recurring assumption in land-based robotics that, when a decision is difficult, you can offload it. Push the sensor stream to a cloud endpoint, run the heavy inference there, receive a steering command back within the latency window the application can tolerate. For a factory arm or a warehouse robot, this is often a reasonable trade. For an autonomous surface vessel (USV) operating beyond the horizon, it is a design fiction.</p>
+
+        <p>The connectivity reality offshore is simple and unforgiving. Coastal LTE disappears within a few nautical miles. Beyond that, the options are satellite: VSAT for fixed-dish broadband, or low-earth-orbit constellations for lower latency at lower bandwidth. Either way, you are paying for every megabyte, contending with weather-driven outages, and accepting round-trip latencies that range from several hundred milliseconds on a good day to full link loss during a squall. A perception pipeline that continuously streams high-resolution radar returns, camera frames, and LiDAR point clouds to a remote server is not a serious architecture. It would consume more bandwidth than a vessel's entire satcom budget, and it would fail at precisely the moments when conditions — and therefore collision risk — are worst.</p>
+
+        <p>This is not a temporary problem awaiting a better antenna. It is the environment that marine autonomy must be designed for from the start. The consequence is that every layer of the perception and decision stack — obstacle detection, vessel classification, intent prediction, path planning, emergency manoeuvring — must execute entirely on hardware aboard the vessel. The vessel must be, in the most literal sense, its own data centre.</p>
+
+        <p>That constraint immediately surfaces a second set of problems: edge compute in a marine environment is not the same as edge compute in a server room or even a vehicle. Salt air accelerates corrosion of connectors and PCB traces. Spray ingress into enclosures is not a rare event; it is a design baseline. Temperature swings from a tropical noon to an open-ocean night are wider than most industrial compute certifications assume. Vibration from wave action is continuous and broadband, not the periodic shock loading that automotive platforms plan for. The enclosures, thermal management, and power delivery systems required to keep a GPU cluster running reliably at sea add weight and volume that directly compete with payload capacity — the thing the vessel was built to carry.</p>
+
+        <p>Power is its own constraint. A high-end inference accelerator in a data centre draws from an unlimited grid. On a USV, every watt comes from a generator or a battery bank. Running a perception workload continuously — which you must, because the sea does not pause — means the compute subsystem must be sized against the vessel's energy budget, not against the performance envelope of the best available chip. This drives teams toward purpose-built inference hardware with far better performance-per-watt ratios than general-purpose server GPUs, and toward aggressive model compression: quantisation, pruning, and architecture choices that preserve safety-critical outputs while radically reducing compute demand.</p>
+
+        <p>The sensor suite that feeds these on-vessel models is worth examining. Radar — specifically solid-state marine radar operating in X or S band — provides long-range detection of vessels and obstacles regardless of visibility, rain, or fog. It returns range and bearing but gives limited information about the shape or nature of a target. AIS (Automatic Identification System) transponders broadcast identity, position, heading, and speed for vessels above a certain size; the USV can receive this data passively to build a picture of the cooperative traffic around it. Cameras provide context that radar cannot: vessel type, orientation, and the presence of objects too small or too low-profile to paint a clear radar return. LiDAR fills in close-range three-dimensional structure at precision cameras cannot match. None of these sensors is sufficient alone, and the job of the on-vessel edge AI is to fuse them continuously — weighting each modality by confidence in current conditions — into a single coherent world model that the planner can act on.</p>
+
+        <p>The planning layer must be aware of COLREGs — the International Regulations for Preventing Collisions at Sea, the maritime equivalent of traffic law. COLREGs assign right-of-way and prescribe the geometry of avoidance manoeuvres depending on vessel type, relative bearing, and whether an encounter is a head-on, crossing, or overtaking situation. A land-based motion planner that treats the environment as an obstacle field to navigate around is not a sufficient foundation. The USV's planner must model COLREGs as hard constraints: the vessel is the give-way vessel in this encounter, therefore it must alter course to starboard by at least this much, far enough in advance that the action is clearly intentional to the other vessel's watch officer. That requirement — producing manoeuvres that are interpretable by human observers following a legal framework — is a significant additional constraint on top of collision avoidance alone.</p>
+
+        <p>All of this is why <a href="/physical-ai-robotics.html">physical AI deployed on robotic platforms</a> at sea demands a fundamentally different architecture from cloud-assisted autonomy. The intelligence must be genuinely local: trained offline on large corpora, validated against simulation and real-world encounter data, then frozen and deployed on hardware that can sustain the thermal, power, and reliability demands of the marine environment. Remote connectivity is reserved for low-frequency telemetry, mission updates, and post-mission data offload — not for real-time inference in the loop.</p>
+
+        <p>The emerging discipline for this class of system is sometimes called edge-native autonomy. The design principle is that the vessel must be capable of completing its mission, including encountering and avoiding other traffic, entirely without any uplink for the duration of the deployment. Connectivity, when available, makes the system better over time — uploading encounter logs for retraining, receiving updated charts and weather routing — but the vessel's safety guarantee cannot be contingent on it.</p>
+
+        <p>There is a broader lesson here that extends beyond marine platforms. As autonomous systems move into environments where connectivity is unreliable by physics rather than by engineering failure — offshore, underground, in remote terrain, in contested RF environments — the assumption that edge hardware is a thin client to a cloud brain becomes a liability. <a href="/physical-ai-robotics.html">Physical AI systems</a> designed to operate at the boundary of connectivity must carry the full reasoning stack with them. The ocean makes this requirement impossible to ignore. Other environments will surface it too, in time.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>离岸环境中的卫星通信断续且成本高昂，自主水面船舶（USV）的感知与决策系统无法依赖云端实时推理，必须将完整的 AI 栈部署于船载边缘硬件之上。海洋环境对计算硬件提出了严苛的盐雾、振动、温差与功耗约束。船载传感器融合（雷达、AIS、摄像头、激光雷达）须在无上行连接的条件下持续运行，规划层还须将 COLREGs 国际海上避碰规则作为硬约束嵌入，以确保避让动作对人类观察者具有可解释性。连接性只用于事后数据回传与模型迭代更新，而非实时推理回路。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>離岸環境中的衛星通訊斷續且成本高昂，自主水面船舶（USV）的感知與決策系統無法依賴雲端即時推理，必須將完整的 AI 棧部署於船載邊緣硬體之上。海洋環境對計算硬體提出了嚴苛的鹽霧、振動、溫差與功耗約束。船載感測器融合（雷達、AIS、攝像頭、光達）須在無上行連線的條件下持續運行，規劃層還須將 COLREGs 國際海上避碰規則作為硬約束嵌入，以確保避讓動作對人類觀察者具有可解釋性。連線性只用於事後資料回傳與模型迭代更新，而非即時推理迴路。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/override-log-as-moat.html">Next: The override log →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 边缘计算</span>
+      <h1 class="essay-title">自主船舶为何不能"打电话回家"——海上边缘 AI</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>离岸几海里之外，LTE 信号消失，卫星通信接管。但卫星链路并非可靠的实时推理通道——它断续、昂贵，在恶劣天气时恰好失效，而此时正是碰撞风险最高的时刻。将感知与决策依赖于云端，是一个在海洋环境中根本行不通的架构选择。自主水面船舶（USV）的完整 AI 推理栈，必须部署于船载硬件之上。</p>
+        <p>这一约束随即引出第二组问题：海洋边缘计算与机房或汽车平台上的边缘计算截然不同。盐雾腐蚀连接器与 PCB 走线，浪花侵入机箱是设计基线而非偶发事件，波浪振动持续且宽频，功耗必须与船舶能源预算挂钩而非与最优芯片的性能上限挂钩。这驱使团队转向专用推理加速硬件以及激进的模型压缩方案——量化、剪枝与架构选择——在大幅削减算力需求的同时保留安全关键输出。</p>
+        <p>船载传感器融合是这一架构的核心：海用固态雷达提供全天候远距离探测；AIS 广播合作船只的身份与航行状态；摄像头提供雷达无法给出的目标类型与朝向信息；激光雷达填补近距离三维结构感知。规划层须将 COLREGs 国际海上避碰规则作为硬约束嵌入，生成对人类了望员而言可解释的避让机动。这是<a href="/physical-ai-robotics.html">物理 AI 机器人平台</a>在物理边界处工作的典型挑战——完整推理必须随平台携行，连接性仅用于事后数据回传与模型迭代，而非实时推理回路。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/override-log-as-moat.html">下一篇：覆写日志 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 邊緣運算</span>
+      <h1 class="essay-title">自主船舶為何不能「打電話回家」——海上邊緣 AI</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-10</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>離岸幾海里之外，LTE 訊號消失，衛星通訊接管。但衛星鏈路並非可靠的即時推理通道——它斷續、昂貴，在惡劣天氣時恰好失效，而此時正是碰撞風險最高的時刻。將感知與決策依賴於雲端，是一個在海洋環境中根本行不通的架構選擇。自主水面船舶（USV）的完整 AI 推理棧，必須部署於船載硬體之上。</p>
+        <p>這一約束隨即引出第二組問題：海洋邊緣運算與機房或汽車平台上的邊緣運算截然不同。鹽霧腐蝕連接器與 PCB 走線，浪花侵入機箱是設計基線而非偶發事件，波浪振動持續且寬頻，功耗必須與船舶能源預算掛鉤而非與最優晶片的性能上限掛鉤。這驅使團隊轉向專用推理加速硬體以及激進的模型壓縮方案——量化、剪枝與架構選擇——在大幅削減算力需求的同時保留安全關鍵輸出。</p>
+        <p>船載感測器融合是這一架構的核心：海用固態雷達提供全天候遠距離偵測；AIS 廣播合作船隻的身份與航行狀態；攝像頭提供雷達無法給出的目標類型與朝向資訊；光達填補近距離三維結構感知。規劃層須將 COLREGs 國際海上避碰規則作為硬約束嵌入，生成對人類了望員而言可解釋的避讓機動。這是<a href="/physical-ai-robotics.html">物理 AI 機器人平台</a>在物理邊界處工作的典型挑戰——完整推理必須隨平台攜行，連線性僅用於事後資料回傳與模型迭代，而非即時推理迴路。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/override-log-as-moat.html">下一篇：覆寫日誌 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
