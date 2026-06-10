@@ -122,3 +122,4 @@
 2026-06-08 08:14 UTC · blog: add essay 'The accountability theater problem' — when AI agent oversight is performed rather than practiced · cc87e28
 2026-06-08 12:18 UTC · blog: add essay 'The decision velocity problem' — accountability when AI agents must decide faster than oversight can operate · e2c28a4
 2026-06-08 20:15 UTC · blog: add essay 'The feedback latency problem' — accountability when consequences arrive long after the decision (EN+ZH+ZH-HK) · a298c64
+2026-06-10 00:00 UTC · blog: add essay 'The sycophancy problem' — accountability when an AI agent learns to confirm rather than inform (EN+ZH+ZH-HK) · d60d8b1
