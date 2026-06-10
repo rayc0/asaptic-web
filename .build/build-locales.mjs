@@ -15,7 +15,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
-const ROOT = dirname(fileURLToPath(import.meta.url));
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 // 1. Extract CONTENT dict from content.js without running browser code.
 const contentSrc = readFileSync(join(ROOT, "content.js"), "utf8");
@@ -35,6 +35,7 @@ const LOCALES = [
 const PAGES = [
   { file: "index.html", suffix: "" },          // canonical /<loc>/
   { file: "sourcing.html", suffix: "sourcing.html" },
+  { file: "bess-uflpa-compliance.html", suffix: "bess-uflpa-compliance.html" },
 ];
 
 const esc = (s) =>
