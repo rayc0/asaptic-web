@@ -25,6 +25,7 @@ function lastmod(file) {
 const CLUSTERS = [
   { en: `${BASE}/`, suffix: "" },
   { en: `${BASE}/sourcing.html`, suffix: "sourcing.html" },
+  { en: `${BASE}/bess-uflpa-compliance.html`, suffix: "bess-uflpa-compliance.html" },
 ];
 const LOCS = [
   { code: "zh", hreflang: "zh-Hans" },
