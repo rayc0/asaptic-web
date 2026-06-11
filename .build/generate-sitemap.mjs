@@ -6,7 +6,7 @@
  * Run from repo root after build-locales.mjs.
  */
 import { execSync } from "node:child_process";
-import { readdirSync, writeFileSync, existsSync } from "node:fs";
+import { readdirSync, writeFileSync, existsSync, readFileSync } from "node:fs";
 
 const BASE = "https://asaptic.com";
 const today = process.argv[2] || gitToday();
@@ -32,9 +32,20 @@ const LOCS = [
   { code: "zht", hreflang: "zh-Hant" },
   { code: "pt", hreflang: "pt-PT" },
 ];
+const STANDARD_LOCS = [
+  { code: "zh", hreflang: "zh-Hans" },
+  { code: "zht", hreflang: "zh-Hant" },
+];
 function altLinks(suffix) {
   const out = [`    <xhtml:link rel="alternate" hreflang="en" href="${BASE}/${suffix}"/>`];
   for (const l of LOCS)
+    out.push(`    <xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${BASE}/${l.code}/${suffix}"/>`);
+  out.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE}/${suffix}"/>`);
+  return out.join("\n");
+}
+function standardAltLinks(suffix) {
+  const out = [`    <xhtml:link rel="alternate" hreflang="en" href="${BASE}/${suffix}"/>`];
+  for (const l of STANDARD_LOCS)
     out.push(`    <xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${BASE}/${l.code}/${suffix}"/>`);
   out.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE}/${suffix}"/>`);
   return out.join("\n");
@@ -71,6 +82,19 @@ add(`${BASE}/blog/`, "blog", "0.7");
 if (existsSync("blog")) {
   for (const f of readdirSync("blog").filter((x) => x.endsWith(".html")).sort())
     add(`${BASE}/blog/${f}`, `blog/${f}`, "0.6");
+}
+
+// 4. Cross-Standard public-interest pages. Keep the cluster out of sitemap
+// until a human reviewer has approved the dataset.
+if (existsSync("standard/data/pv-inverter-eu.v2026-06-11.json")) {
+  const data = JSON.parse(readFileSync("standard/data/pv-inverter-eu.v2026-06-11.json", "utf8"));
+  if (data.human_reviewed === true) {
+    const suffix = `standard/${data.slug}.html`;
+    const alts = standardAltLinks(suffix);
+    add(`${BASE}/${suffix}`, suffix, "0.7", alts);
+    for (const l of STANDARD_LOCS)
+      add(`${BASE}/${l.code}/${suffix}`, `${l.code}/${suffix}`, "0.6", alts);
+  }
 }
 
 const xml =
