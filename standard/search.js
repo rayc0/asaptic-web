@@ -31,6 +31,7 @@
       verifyingTitle:  'Under Verification',
       verifyingBody:   'This comparison is being indexed and verified.',
       requestLink:     'Request this comparison →',
+      liveExamplePrefix: 'See a live example: ',
       errorFetch:      'Could not load the comparisons index. Please refresh the page.',
       noMatch:         'No comparison found for this combination.'
     },
@@ -40,6 +41,7 @@
       verifyingTitle:  '数据校验中',
       verifyingBody:   '此对照表正在整理和校验中。',
       requestLink:     '申请此对照表 →',
+      liveExamplePrefix: '查看一个已上线示例：',
       errorFetch:      '无法加载对照表索引，请刷新页面。',
       noMatch:         '未找到此组合的对照表。'
     },
@@ -49,6 +51,7 @@
       verifyingTitle:  '數據校驗中',
       verifyingBody:   '此對照表正在整理和校驗中。',
       requestLink:     '申請此對照表 →',
+      liveExamplePrefix: '查看一個已上線示例：',
       errorFetch:      '無法載入對照表索引，請重新整理頁面。',
       noMatch:         '未找到此組合的對照表。'
     }
@@ -140,7 +143,7 @@
   }
 
   /* ── Result card: "under verification" ───────────────────────────────── */
-  function showVerifyingCard(resultDiv) {
+  function showVerifyingCard(resultDiv, liveExample) {
     // Clear previous content safely
     while (resultDiv.firstChild) {
       resultDiv.removeChild(resultDiv.firstChild);
@@ -148,13 +151,21 @@
 
     var reportHref = reportErrorPath[locale] || reportErrorPath.en;
 
-    var card = el('div', {className: 'cs-verifying'}, [
+    var children = [
       el('p', {className: 'cs-verifying__title'}, [t('verifyingTitle')]),
       el('p', {className: 'cs-verifying__body'},  [t('verifyingBody')]),
       el('a', {href: reportHref, className: 'cs-verifying__link'}, [t('requestLink')])
-    ]);
+    ];
 
-    resultDiv.appendChild(card);
+    // Guide the user to a comparison that IS live, so they can see the real thing.
+    if (liveExample && liveExample.href) {
+      children.push(
+        el('a', {href: liveExample.href, className: 'cs-verifying__example'},
+          [t('liveExamplePrefix') + liveExample.label + ' →'])
+      );
+    }
+
+    resultDiv.appendChild(el('div', {className: 'cs-verifying'}, children));
     resultDiv.hidden = false;
   }
 
@@ -182,6 +193,26 @@
     var products = data.products || [];
     var markets  = data.markets  || [];
     var comparisons = data.comparisons || [];
+
+    /* Pre-compute the first LIVE comparison so we can point testers to it
+       whenever they land on an unpublished combination. */
+    function labelOf(list, id) {
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].id === id) return list[i].label[locale] || list[i].label.en;
+      }
+      return id;
+    }
+    var liveExample = null;
+    for (var k = 0; k < comparisons.length; k++) {
+      var c = comparisons[k];
+      if (c.status === 'live' && c.url) {
+        liveExample = {
+          href: c.url[locale] || c.url.en,
+          label: labelOf(products, c.product) + ' → ' + labelOf(markets, c.market)
+        };
+        break;
+      }
+    }
 
     /* Populate selects */
     populateSelect(productSelect, products, function (p) {
@@ -228,7 +259,7 @@
       }
 
       if (entry && entry.status === 'verifying') {
-        showVerifyingCard(resultDiv);
+        showVerifyingCard(resultDiv, liveExample);
         return;
       }
 
