@@ -1,14 +1,21 @@
+import { cleanStandardUrl, label, t } from "./i18n.mjs";
+
 const site = "https://asaptic.com";
 
-export function jsonld({ data, lang, locale, slug }) {
-  const pathPrefix = locale === "en" ? "" : `/${locale}`;
-  const url = `${site}${pathPrefix}/standard/${slug}.html`;
+export function jsonld({ data, lang, locale, slug, faq = [] }) {
+  const url = cleanStandardUrl({ site, locale, slug });
+  const faqEntries = faq
+    .map((item) => ({
+      question: t(item.question, lang),
+      answer: t(item.answer, lang)
+    }))
+    .filter((item) => item.question && item.answer);
   const graph = [
     {
       "@type": "Dataset",
       "@id": `${url}#dataset`,
-      "name": data.page.title[lang],
-      "description": data.page.description[lang],
+      "name": t(data.page.title, lang),
+      "description": t(data.page.description, lang),
       "identifier": data.dataset_id,
       "version": data.version,
       "isAccessibleForFree": true,
@@ -21,8 +28,8 @@ export function jsonld({ data, lang, locale, slug }) {
     {
       "@type": "TechArticle",
       "@id": `${url}#article`,
-      "headline": data.page.title[lang],
-      "description": data.page.description[lang],
+      "headline": t(data.page.title, lang),
+      "description": t(data.page.description, lang),
       "url": url,
       "isPartOf": { "@id": `${url}#dataset` },
       "author": { "@type": "Organization", "name": "Cross-Standard" },
@@ -31,24 +38,27 @@ export function jsonld({ data, lang, locale, slug }) {
       "inLanguage": locale === "zht" ? "zh-Hant" : locale === "zh" ? "zh-Hans" : "en"
     },
     {
-      "@type": "FAQPage",
-      "@id": `${url}#faq`,
-      "mainEntity": (data.faq || []).map((item) => ({
-        "@type": "Question",
-        "name": item.question?.[lang],
-        "acceptedAnswer": { "@type": "Answer", "text": item.answer?.[lang] }
-      }))
-    },
-    {
       "@type": "BreadcrumbList",
       "@id": `${url}#breadcrumb`,
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": site },
-        { "@type": "ListItem", "position": 2, "name": "Standard", "item": `${site}/standard/` },
-        { "@type": "ListItem", "position": 3, "name": data.page.title[lang], "item": url }
+        { "@type": "ListItem", "position": 1, "name": label("home", lang), "item": site },
+        { "@type": "ListItem", "position": 2, "name": label("standard", lang), "item": `${site}${locale === "en" ? "" : `/${locale}`}/standard/` },
+        { "@type": "ListItem", "position": 3, "name": t(data.page.title, lang), "item": url }
       ]
     }
   ];
+
+  if (faqEntries.length) {
+    graph.splice(2, 0, {
+      "@type": "FAQPage",
+      "@id": `${url}#faq`,
+      "mainEntity": faqEntries.map((item) => ({
+        "@type": "Question",
+        "name": item.question,
+        "acceptedAnswer": { "@type": "Answer", "text": item.answer }
+      }))
+    });
+  }
 
   return JSON.stringify({ "@context": "https://schema.org", "@graph": graph }, null, 2);
 }

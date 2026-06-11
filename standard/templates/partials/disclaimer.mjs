@@ -1,7 +1,9 @@
+import { esc, label, t } from "./i18n.mjs";
+
 export function disclaimer({ data, lang }) {
   return `<aside class="standard-disclaimer">
-    <p class="section-label">INFORMATIONAL ONLY</p>
-    <h2>信息性 · 非认证结论</h2>
-    <p>${data.disclaimer[lang]}</p>
+    <p class="section-label">${esc(label("informationalOnly", lang))}</p>
+    <h2>${esc(label("disclaimerTitle", lang))}</h2>
+    <p>${esc(t(data.disclaimer, lang))}</p>
   </aside>`;
 }
