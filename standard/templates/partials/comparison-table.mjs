@@ -4,11 +4,12 @@ function laws(list = []) {
   return list.map(esc).join("<br />") || "—";
 }
 
-export function comparisonTable({ rows, lang }) {
+export function comparisonTable({ data, rows, lang }) {
+  const targetRequirementLabel = t(data.target_market_label, lang) || label("colEu", lang);
   const columns = {
     topic: label("colTopic", lang),
     cn: label("colCn", lang),
-    eu: label("colEu", lang),
+    target: targetRequirementLabel,
     gap: label("colGap", lang),
     source: label("colSource", lang)
   };
@@ -16,6 +17,7 @@ export function comparisonTable({ rows, lang }) {
   const body = rows.length
     ? rows
         .map((row) => {
+          const targetRequirement = row.target_requirement || row.eu_requirement;
           const sourceUrl = safeHttpsUrl(row.source?.url);
           const sourceName = esc(row.source?.publisher);
           const source = sourceUrl
@@ -27,7 +29,7 @@ export function comparisonTable({ rows, lang }) {
           return `<tr>
           <th scope="row" data-label="${escAttr(columns.topic)}">${esc(t(row.requirement_topic, lang))}</th>
           <td data-label="${escAttr(columns.cn)}">${esc(t(row.cn_common_equivalent?.summary, lang))}<small>${laws(row.cn_common_equivalent?.standards_or_laws)}</small></td>
-          <td data-label="${escAttr(columns.eu)}">${esc(t(row.eu_requirement?.summary, lang))}<small>${laws(row.eu_requirement?.standards_or_laws)}</small></td>
+          <td data-label="${escAttr(columns.target)}">${esc(t(targetRequirement?.summary, lang))}<small>${laws(targetRequirement?.standards_or_laws)}</small></td>
           <td data-label="${escAttr(columns.gap)}">${esc(t(row.gap, lang))}<small>${esc(t(row.compliance_verdict, lang))}</small></td>
           <td data-label="${escAttr(columns.source)}"><span class="source-cell">${source}<small>${esc(row.source?.accessed)} · <span class="status-label" aria-label="${escAttr(statusText)}"><span class="status-dot ${statusClass}" aria-hidden="true"></span>${esc(label(verified ? "verified" : "unverified", lang))}</span></small></span></td>
         </tr>`;
@@ -49,7 +51,7 @@ export function comparisonTable({ rows, lang }) {
         <tr>
           <th scope="col">${esc(columns.topic)}</th>
           <th scope="col">${esc(columns.cn)}</th>
-          <th scope="col">${esc(columns.eu)}</th>
+          <th scope="col">${esc(columns.target)}</th>
           <th scope="col">${esc(columns.gap)}</th>
           <th scope="col">${esc(columns.source)}</th>
         </tr>
