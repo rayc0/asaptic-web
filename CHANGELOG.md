@@ -130,3 +130,4 @@
 2026-06-10 04:00 UTC · blog: add essay 'The contaminated ground truth problem' — accountability when an AI agent's decisions influence the outcomes used to evaluate whether those decisions were correct · 7f84f34
 2026-06-10 08:00 UTC · blog: add essay 'The data minimization paradox' — accountability when the architecture that protects privacy destroys evidence · 24abb66
 2026-06-10 20:15 UTC · blog: add essay 'The dependency creation problem' — accountability when AI care agents shift the balance of agency (EN+ZH+ZH-HK) · 5223f6d
+2026-06-11 12:00 UTC · blog: add essay 'The moral hazard problem' — accountability when AI safety systems reduce the vigilance they were designed to support (EN+ZH+ZH-HK) · 1f95719
