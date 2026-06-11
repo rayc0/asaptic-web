@@ -1,7 +1,7 @@
 import { esc, escAttr, label } from "./i18n.mjs";
 
-export function footer({ lang = "en", locale = "en" } = {}) {
-  const standardHref = locale === "en" ? "/standard/solar-inverter-china-to-eu.html" : `/${locale}/standard/solar-inverter-china-to-eu.html`;
+export function footer({ lang = "en", locale = "en", slug = "solar-inverter-china-to-eu" } = {}) {
+  const standardHref = locale === "en" ? `/standard/${slug}.html` : `/${locale}/standard/${slug}.html`;
   return `<footer class="footer standard-footer">
     <div class="container">
       <div class="footer-top">

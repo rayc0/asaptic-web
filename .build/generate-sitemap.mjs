@@ -50,6 +50,32 @@ function standardAltLinks(suffix) {
   out.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE}/${suffix}"/>`);
   return out.join("\n");
 }
+function standardDatasetFiles() {
+  if (!existsSync("standard/data")) return [];
+  return readdirSync("standard/data")
+    .filter((file) => /^[^_].*\.v2026-06-11\.json$/.test(file))
+    .sort()
+    .map((file) => `standard/data/${file}`);
+}
+function standardFragmentFiles(prefix) {
+  if (!prefix || !existsSync("standard/data/_fragments")) return [];
+  return readdirSync("standard/data/_fragments")
+    .filter((file) => file.startsWith(prefix) && file.endsWith(".json"))
+    .sort()
+    .map((file) => `standard/data/_fragments/${file}`);
+}
+function standardRows(data) {
+  const rows = [...(data.rows || [])];
+  for (const file of standardFragmentFiles(data.fragment_prefix)) {
+    try {
+      const fragment = JSON.parse(readFileSync(file, "utf8"));
+      if (Array.isArray(fragment)) rows.push(...fragment);
+    } catch {
+      return [];
+    }
+  }
+  return rows;
+}
 
 const urls = [];
 const seen = new Set();
@@ -84,12 +110,19 @@ if (existsSync("blog")) {
     add(`${BASE}/blog/${f}`, `blog/${f}`, "0.6");
 }
 
-// 4. Cross-Standard public-interest pages. Keep the cluster out of sitemap
-// until a human reviewer has approved the dataset.
-if (existsSync("standard/data/pv-inverter-eu.v2026-06-11.json")) {
-  const data = JSON.parse(readFileSync("standard/data/pv-inverter-eu.v2026-06-11.json", "utf8"));
-  if (data.human_reviewed === true) {
-    const suffix = `standard/${data.slug}.html`;
+// 4. Cross-Standard public-interest pages. Keep each cluster out of sitemap
+// until a human reviewer has approved it and all row sources are verified.
+for (const file of standardDatasetFiles()) {
+  const data = JSON.parse(readFileSync(file, "utf8"));
+  const slug = data.slug || data.page?.slug;
+  const noindex = String(data.robots || "").replace(/\s+/g, "").toLowerCase().startsWith("noindex");
+  if (!slug || data.human_reviewed !== true || noindex) continue;
+  const rows = standardRows(data);
+  const sitemapEligible =
+    rows.length > 0 &&
+    rows.every((row) => row.source?.verified === true);
+  if (sitemapEligible) {
+    const suffix = `standard/${slug}.html`;
     const alts = standardAltLinks(suffix);
     add(`${BASE}/${suffix}`, suffix, "0.7", alts);
     for (const l of STANDARD_LOCS)
