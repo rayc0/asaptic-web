@@ -32,6 +32,7 @@
       verifyingBody:   'This comparison is being indexed and verified.',
       requestLink:     'Request this comparison →',
       liveExamplePrefix: 'See a live example: ',
+      openComparison:  'View this comparison →',
       errorFetch:      'Could not load the comparisons index. Please refresh the page.',
       noMatch:         'No comparison found for this combination.'
     },
@@ -42,6 +43,7 @@
       verifyingBody:   '此对照表正在整理和校验中。',
       requestLink:     '申请此对照表 →',
       liveExamplePrefix: '查看一个已上线示例：',
+      openComparison:  '查看此对照 →',
       errorFetch:      '无法加载对照表索引，请刷新页面。',
       noMatch:         '未找到此组合的对照表。'
     },
@@ -52,6 +54,7 @@
       verifyingBody:   '此對照表正在整理和校驗中。',
       requestLink:     '申請此對照表 →',
       liveExamplePrefix: '查看一個已上線示例：',
+      openComparison:  '查看此對照 →',
       errorFetch:      '無法載入對照表索引，請重新整理頁面。',
       noMatch:         '未找到此組合的對照表。'
     }
@@ -169,6 +172,16 @@
     resultDiv.hidden = false;
   }
 
+  /* ── Result card: live suggestion (from free-text) ───────────────────── */
+  function showLiveSuggestion(resultDiv, productLabel, marketLabel, href) {
+    while (resultDiv.firstChild) { resultDiv.removeChild(resultDiv.firstChild); }
+    resultDiv.appendChild(el('div', {className: 'cs-verifying'}, [
+      el('p', {className: 'cs-verifying__title'}, [productLabel + ' → ' + marketLabel]),
+      el('a', {href: href, className: 'cs-verifying__example'}, [t('openComparison')])
+    ]));
+    resultDiv.hidden = false;
+  }
+
   /* ── Result card: error / no match ───────────────────────────────────── */
   function showMessage(resultDiv, msg) {
     while (resultDiv.firstChild) {
@@ -222,10 +235,28 @@
       return m.label[locale] || m.label.en;
     });
 
-    /* Free-text search listener */
+    /* Free-text search listener: filter products, and when the typed text
+       resolves to a product that HAS a live comparison, surface a direct
+       clickable result so testers can "just type and go". */
     if (searchInput) {
       searchInput.addEventListener('input', function () {
         filterProducts(searchInput.value, products, productSelect);
+        var q = searchInput.value.trim();
+        var pid = productSelect.value;
+        if (!q || !pid) { resultDiv.hidden = true; return; }
+        var live = null;
+        for (var i = 0; i < comparisons.length; i++) {
+          if (comparisons[i].product === pid && comparisons[i].status === 'live' && comparisons[i].url) {
+            live = comparisons[i]; break;
+          }
+        }
+        if (live) {
+          marketSelect.value = live.market; // keep the guided form in sync
+          showLiveSuggestion(resultDiv, labelOf(products, pid),
+            labelOf(markets, live.market), live.url[locale] || live.url.en);
+        } else {
+          resultDiv.hidden = true;
+        }
       });
     }
 
@@ -273,7 +304,6 @@
     }
     productSelect.addEventListener('change', hideResult);
     marketSelect.addEventListener('change', hideResult);
-    if (searchInput) searchInput.addEventListener('input', hideResult);
   }
 
   /* ── Bootstrap: fetch index ───────────────────────────────────────────── */
