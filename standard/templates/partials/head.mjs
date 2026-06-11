@@ -40,6 +40,7 @@ export function head({ data, lang, locale, slug, rows, faq }) {
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <script>document.documentElement.classList.add('js-anim');</script>
   <link rel="stylesheet" href="/style.css?v=20260609c" />
+  <link rel="stylesheet" href="/standard/standard.css?v=20260611b" />
 
   <script type="application/ld+json">
   ${jsonld({ data, lang, locale, slug, faq })}

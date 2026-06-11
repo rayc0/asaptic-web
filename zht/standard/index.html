@@ -35,6 +35,80 @@
   <link rel="stylesheet" href="/style.css?v=20260611a" />
   <link rel="stylesheet" href="/standard/standard.css?v=20260611a" />
 
+  <style>
+    /* ── ZHT hero finder redesign ── page-scoped, no .css edits ── */
+
+    /* Tighten H1 */
+    .std-hero .hero-title {
+      font-size: clamp(28px, 4.4vw, 52px) !important;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Single-line sub — clamp to one line visually via line-clamp */
+    .std-hero .hero-sub {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 0;
+    }
+
+    /* Finder panel — visual centrepiece */
+    .std-hero .cs-finder-wrap {
+      background: var(--bg-card, #1a1f2e);
+      border: 1px solid var(--border, rgba(255,255,255,0.10));
+      border-radius: 14px;
+      padding: 28px;
+      max-width: 720px;
+      margin-top: 28px;
+      width: 100%;
+    }
+
+    /* Selects + search input */
+    .std-hero .cs-finder-wrap select,
+    .std-hero .cs-finder-wrap #cs-search {
+      min-height: 48px;
+      font-size: 16px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Go button */
+    .std-hero .cs-finder-wrap #cs-go {
+      font-weight: 700;
+      min-height: 48px;
+    }
+
+    /* Search label */
+    .std-hero .cs-search-label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted, rgba(255,255,255,0.45));
+      margin-bottom: 6px;
+      margin-top: 16px;
+    }
+
+    /* Methodology secondary link */
+    .std-hero .hero-method-link {
+      display: inline-block;
+      font-size: 13px;
+      color: var(--text-muted, rgba(255,255,255,0.45));
+      margin-top: 14px;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .std-hero .hero-method-link:hover {
+      color: var(--text-secondary, rgba(255,255,255,0.70));
+    }
+
+    /* Full-width go button on narrow screens */
+    @media (max-width: 640px) {
+      .std-hero .cs-finder-wrap #cs-go {
+        width: 100%;
+      }
+    }
+  </style>
+
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -115,7 +189,7 @@
         <div class="hero-copy fade-in" style="max-width:860px;">
           <p class="hero-eyebrow">公益 · 跨境標準合規對照</p>
           <h1 class="hero-title" style="font-size:clamp(36px,5.4vw,74px);">為中國出口商提供清晰的跨境標準對照地圖。</h1>
-          <p class="hero-sub">在同一處查看適用於特定產品類別的目標市場技術法規、標準及認證——包括核心要求、與中國相應標準的差距，以及最新變動情況。所有條目均連結至官方來源。</p>
+          <p class="hero-sub">按產品與目標市場查詢適用法規、標準及認證要求，所有條目均連結至官方來源。</p>
           <section class="cs-finder-wrap" id="finder">
   <form id="cs-finder" class="cs-finder" role="search" aria-label="按產品和市場查找標準要求">
     <div class="cs-field">
@@ -129,10 +203,12 @@
     <button id="cs-go" type="submit" class="btn-primary">查看合規要求 →</button>
   </form>
   <div class="cs-search-row">
-    <input id="cs-search" type="search" placeholder="…或搜尋產品、HS 編碼、標準號" aria-label="搜尋產品" />
+    <label for="cs-search" class="cs-search-label">或直接搜尋</label>
+    <input id="cs-search" type="search" placeholder="搜尋產品、HS 編碼、標準號…" aria-label="搜尋產品" />
   </div>
   <div id="cs-result" class="cs-result" hidden aria-live="polite"></div>
 </section>
+          <a href="/standard/methodology.html" class="hero-method-link">了解本庫的編輯方法論 →</a>
         </div>
       </div>
     </section>
