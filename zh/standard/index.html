@@ -35,6 +35,78 @@
   <link rel="stylesheet" href="/style.css?v=20260611a" />
   <link rel="stylesheet" href="/standard/standard.css?v=20260611a" />
 
+  <!-- Hero finder redesign — page-scoped overrides (ZH, 2026-06-11) -->
+  <style>
+    /* ── H1 size reduction ─────────────────────────────────────────────── */
+    .std-hero .hero-title {
+      font-size: clamp(28px, 4.4vw, 52px) !important;
+    }
+
+    /* ── Finder panel as visual centrepiece ────────────────────────────── */
+    .std-hero .cs-finder-wrap {
+      background: var(--bg-card, #1a1a2e);
+      border: 1px solid var(--border, rgba(255,255,255,0.1));
+      border-radius: 14px;
+      padding: 28px;
+      max-width: 720px;
+      margin-top: 28px;
+    }
+
+    /* ── Selects + search input: tall, readable, full-width on mobile ─── */
+    .std-hero .cs-finder-wrap select,
+    .std-hero .cs-finder-wrap #cs-search {
+      min-height: 48px;
+      font-size: 16px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* ── CTA button: bold ───────────────────────────────────────────────── */
+    .std-hero #cs-go {
+      font-weight: 700;
+      min-height: 48px;
+    }
+
+    /* ── Search label: small muted text above input ─────────────────────── */
+    .std-hero .cs-search-label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted, rgba(255,255,255,0.45));
+      margin-bottom: 6px;
+      margin-top: 16px;
+    }
+
+    /* ── Methodology subordinate link below finder ──────────────────────── */
+    .std-hero .hero-method-link {
+      display: block;
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--text-muted, rgba(255,255,255,0.45));
+      text-decoration: none;
+    }
+    .std-hero .hero-method-link:hover {
+      color: var(--text-secondary, rgba(255,255,255,0.7));
+      text-decoration: underline;
+    }
+
+    /* ── Mobile: button full-width under 640px ──────────────────────────── */
+    @media (max-width: 640px) {
+      .std-hero #cs-go {
+        width: 100%;
+        margin-top: 8px;
+      }
+      .std-hero .cs-finder-wrap {
+        padding: 20px 16px;
+      }
+    }
+
+    /* ── Ensure 44px+ tap targets on all interactive elements ───────────── */
+    .std-hero .cs-finder-wrap label {
+      min-height: 24px;
+      display: block;
+    }
+  </style>
+
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -114,8 +186,8 @@
       <div class="container">
         <div class="hero-copy fade-in" style="max-width:860px;">
           <p class="hero-eyebrow">公益 · 跨境标准合规对照</p>
-          <h1 class="hero-title" style="font-size:clamp(36px,5.4vw,74px);">为中国出口商提供清晰的跨境标准对照地图。</h1>
-          <p class="hero-sub">在一处查看适用于特定产品类别的目标市场技术法规、标准和认证——包括核心要求、与中国相应标准的差距，以及最新变动情况。所有条目均链接至官方来源。</p>
+          <h1 class="hero-title">为中国出口商提供清晰的跨境标准对照地图。</h1>
+          <p class="hero-sub">按产品类别与目标市场，查看适用法规、与中国标准的差距及官方来源。</p>
           <section class="cs-finder-wrap" id="finder">
             <form id="cs-finder" class="cs-finder" role="search" aria-label="按产品和市场查找标准要求">
               <div class="cs-field">
@@ -129,10 +201,12 @@
               <button id="cs-go" type="submit" class="btn-primary">查看合规要求 →</button>
             </form>
             <div class="cs-search-row">
-              <input id="cs-search" type="search" placeholder="…或搜索产品、HS 编码、标准号" aria-label="搜索产品" />
+              <span class="cs-search-label">或直接搜索</span>
+              <input id="cs-search" type="search" placeholder="产品名称、HS 编码或标准号" aria-label="搜索产品" />
             </div>
             <div id="cs-result" class="cs-result" hidden aria-live="polite"></div>
           </section>
+          <a href="/standard/methodology.html" class="hero-method-link">了解编辑方法论 →</a>
         </div>
       </div>
     </section>

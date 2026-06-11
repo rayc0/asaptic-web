@@ -43,7 +43,7 @@ function rowsFor(data) {
   return rows;
 }
 
-function answerFirst({ data, rows, lang }) {
+function hero({ data, rows, lang }) {
   const reviewed = data.human_reviewed && rows.length > 0 && rows.every((row) => row.source?.verified === true);
   const status = reviewed
     ? {
@@ -52,9 +52,9 @@ function answerFirst({ data, rows, lang }) {
         zht: "已發布經審校來源矩陣。"
       }
     : {
-        en: "Draft spine: no human-reviewed compliance conclusion is published yet.",
-        zh: "草稿骨架：尚未发布经人工审校的合规结论。",
-        zht: "草稿骨架：尚未發布經人工審校的合規結論。"
+        en: label("heroBetaStatus", "en"),
+        zh: label("heroBetaStatus", "zh"),
+        zht: label("heroBetaStatus", "zht")
       };
 
   return `<section class="hero standard-hero" id="top">
@@ -74,12 +74,27 @@ function answerFirst({ data, rows, lang }) {
     </section>`;
 }
 
+function answerFirst({ lang }) {
+  return `<section class="standard-section standard-section--compact">
+    <div class="container">
+      <aside class="answer-first">
+        <span class="answer-first__label">${esc(label("answerFirstLabel", lang))}</span>
+        <p class="answer-first__verdict">${esc(label("answerFirstVerdict", lang))}</p>
+      </aside>
+      <aside class="standard-compact-disclaimer">
+        <strong>${esc(label("informationalOnly", lang))}</strong>
+        <p>${esc(label("compactDisclaimer", lang))}</p>
+      </aside>
+    </div>
+  </section>`;
+}
+
 function eeat({ data, lang }) {
   return `<section class="standard-section">
     <div class="container standard-eeat">
       <div>
         <p class="section-label">${esc(label("eeat", lang))}</p>
-        <h2 class="section-title">${esc(label("namedEditorialReview", lang))}</h2>
+        <h2 class="section-title standard-content-heading">${esc(label("namedEditorialReview", lang))}</h2>
       </div>
       <div class="provenance-panel">
         <strong>${esc(label("pendingNamedReviewer", lang))}</strong>
@@ -101,7 +116,7 @@ function faqSection({ faq, lang }) {
   return `<section class="standard-section" id="faq">
       <div class="container">
         <p class="section-label">${esc(label("faq", lang))}</p>
-        <h2 class="section-title">${esc(label("faqTitle", lang))}</h2>
+        <h2 class="section-title standard-content-heading">${esc(label("faqTitle", lang))}</h2>
         <div class="standard-faq">
           ${entries
             .map(
@@ -125,11 +140,12 @@ ${head({ data, lang, locale, slug, rows, faq })}
   ${nav({ locale })}
 
   <main>
-    ${answerFirst({ data, rows, lang })}
+    ${hero({ data, rows, lang })}
+    ${answerFirst({ lang })}
     <section class="standard-section">
       <div class="container">
         <p class="section-label">${esc(label("gapMatrix", lang))}</p>
-        <h2 class="section-title">${esc(label("gapMatrixTitle", lang))}</h2>
+        <h2 class="section-title standard-content-heading">${esc(label("gapMatrixTitle", lang))}</h2>
         ${comparisonTable({ rows, lang })}
       </div>
     </section>
