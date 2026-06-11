@@ -1,3 +1,4 @@
+2026-06-11 00:00 UTC · blog: add essay 'The governing-the-governor problem' — accountability when AI agents audit AI agents (EN+ZH+ZH-HK) · 3db779c
 2026-06-10 08:00 UTC · blog: add essay 'The frozen consent problem' — accountability when AI care agents continue acting on authorizations that no longer reflect the current care relationship (EN+ZH+ZH-HK) · 4a711ef
 2026-06-10 04:00 UTC · blog: add essay 'The protocol ossification problem' — accountability when cryptographic assumptions are burned into hardware that outlives the standards they implement (EN+ZH+ZH-HK) · f9ffabf
 2026-06-09 20:30 UTC · blog: add essay 'The inference amplification problem' — accountability when combined signals reveal what no individual observation was permitted to disclose (EN+ZH+ZH-HK) · f416b4c
