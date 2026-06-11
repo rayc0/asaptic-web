@@ -34,6 +34,7 @@ function isLocalPdf(url = "") {
 }
 
 const errors = [];
+const warnings = [];
 const data = readJson(DATA_FILE);
 
 if (!data.last_verified) errors.push("page wrapper requires last_verified.");
@@ -48,14 +49,23 @@ rows.forEach((row, index) => {
   if (!row.source?.publisher) errors.push(`${label}: missing source.publisher.`);
   if (!row.source?.accessed) errors.push(`${label}: missing source.accessed.`);
   if (typeof row.source?.verified !== "boolean") errors.push(`${label}: source.verified must be boolean.`);
-  if (row.source?.verified !== true) errors.push(`${label}: source.verified is false; page must remain noindex.`);
+  if (row.source?.verified !== true) warnings.push(`${label}: source.verified is false; page must remain noindex.`);
   if (isLocalPdf(row.source?.url)) errors.push(`${label}: local PDF links are rejected (${row.source.url}).`);
 });
 
-const requiresNoindex = data.human_reviewed === false || rows.some((row) => row.source?.verified === false);
 const robots = String(data.robots || "").replace(/\s+/g, "").toLowerCase();
-if (requiresNoindex && robots !== "noindex,follow") {
-  errors.push("robots must be noindex,follow while human_reviewed=false or any row source.verified=false.");
+const unverifiedRows = rows.filter((row) => row.source?.verified !== true);
+const draftMode = data.human_reviewed === false && robots === "noindex,follow";
+const pageWouldBeIndexable = data.human_reviewed === true || robots.startsWith("index");
+
+if (data.human_reviewed === false && robots !== "noindex,follow") {
+  errors.push("robots must be noindex,follow while human_reviewed=false.");
+}
+
+if (unverifiedRows.length && pageWouldBeIndexable) {
+  errors.push(
+    `page would be indexable while ${unverifiedRows.length} row(s) are unverified; keep human_reviewed=false and robots=noindex,follow until all sources are verified.`
+  );
 }
 
 if (errors.length) {
@@ -64,4 +74,11 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`validate-standard-data: PASS (${rows.length} rows, robots=${data.robots || "index,follow"})`);
+if (warnings.length && draftMode) {
+  console.warn("validate-standard-data: PASS WITH WARNINGS");
+  for (const warning of warnings) console.warn(`- ${warning}`);
+  console.log(`validate-standard-data: PASS (${rows.length} rows, robots=${data.robots || "index,follow"}, draft-mode)`);
+} else {
+  for (const warning of warnings) console.warn(`- ${warning}`);
+  console.log(`validate-standard-data: PASS (${rows.length} rows, robots=${data.robots || "index,follow"})`);
+}

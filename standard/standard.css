@@ -932,3 +932,242 @@ a.std-card:hover {
 .provenance-panel strong{display:block;margin-top:10px;color:var(--white,#fff);font-size:14px;}
 .provenance-panel strong:first-child{margin-top:0;}
 .provenance-panel p{margin:4px 0 0;color:var(--gray-dim,#9aa7b4);font-size:14px;line-height:1.6;}
+
+
+/* ── Cross-Standard finder (search.js) ────────────────────────────────── */
+/*
+   .cs-finder-wrap  — outer section wrapper
+   .cs-finder       — flex row: product select · market select · submit btn
+   .cs-search-row   — full-width free-text search row above the finder
+   .cs-field        — individual field wrapper (label + control)
+   .cs-result       — hidden by default; revealed as live nav or verify card
+   .cs-verifying    — amber "under verification" card
+*/
+
+.cs-finder-wrap {
+  padding: 56px 0 64px;
+  border-top: 1px solid var(--border);
+}
+
+.cs-finder-wrap .section-label {
+  margin-bottom: 14px;
+}
+
+.cs-finder-wrap .section-title {
+  margin-bottom: 28px;
+}
+
+/* Search row (free-text) */
+.cs-search-row {
+  margin-bottom: 20px;
+}
+
+.cs-search-row label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gray-dim);
+  margin-bottom: 8px;
+}
+
+.cs-search-row input {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--white);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.cs-search-row input::placeholder {
+  color: var(--gray-dim);
+}
+
+.cs-search-row input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(41, 182, 246, 0.14);
+}
+
+/* Finder row: product + market + button */
+.cs-finder {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.cs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1 1 200px;
+  min-width: 180px;
+}
+
+.cs-field label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gray-dim);
+}
+
+.cs-field select {
+  width: 100%;
+  padding: 12px 36px 12px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--white);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  outline: none;
+  cursor: pointer;
+  /* native arrow: remove default, add custom SVG caret */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234A5568' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.cs-field select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(41, 182, 246, 0.14);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2329B6F6' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.cs-field select option {
+  background: var(--bg-darker);
+  color: var(--white);
+}
+
+.cs-field select option:disabled {
+  color: var(--gray-dim);
+}
+
+/* Submit button — reuses .btn-primary shape, self-contained here */
+.cs-finder__submit {
+  flex-shrink: 0;
+  align-self: flex-end;
+  padding: 12px 26px;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
+  white-space: nowrap;
+}
+
+.cs-finder__submit:hover {
+  background: var(--cyan);
+  box-shadow: 0 4px 20px rgba(41, 182, 246, 0.32);
+  transform: translateY(-1px);
+}
+
+.cs-finder__submit:active {
+  transform: translateY(0);
+}
+
+/* Stack on narrow viewports */
+@media (max-width: 639px) {
+  .cs-finder {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .cs-field {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .cs-finder__submit {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Result container */
+.cs-result {
+  margin-top: 28px;
+}
+
+.cs-result[hidden] {
+  display: none;
+}
+
+/* "Under verification" card — amber accent */
+.cs-verifying {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px 26px;
+  background: rgba(255, 200, 87, 0.07);
+  border: 1px solid rgba(255, 200, 87, 0.32);
+  border-left: 4px solid var(--amber);
+  border-radius: 6px;
+}
+
+.cs-verifying__title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+.cs-verifying__body {
+  font-size: 15px;
+  color: var(--steel);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.cs-verifying__link {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--amber);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(255, 200, 87, 0.45);
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.cs-verifying__link:hover {
+  color: var(--white);
+  text-decoration-color: var(--white);
+}
+
+/* Generic message (fetch error / no-match) */
+.cs-message {
+  padding: 18px 22px;
+  background: rgba(8, 15, 30, 0.72);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--gray);
+  font-size: 14px;
+  line-height: 1.6;
+}

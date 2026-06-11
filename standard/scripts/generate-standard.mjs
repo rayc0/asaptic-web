@@ -6,12 +6,14 @@ import { comparisonTable } from "../templates/partials/comparison-table.mjs";
 import { disclaimer } from "../templates/partials/disclaimer.mjs";
 import { footer } from "../templates/partials/footer.mjs";
 import { head } from "../templates/partials/head.mjs";
+import { esc, label, t } from "../templates/partials/i18n.mjs";
 import { nav } from "../templates/partials/nav.mjs";
 import { sourceList } from "../templates/partials/source-list.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const DATA_FILE = join(ROOT, "standard/data/pv-inverter-eu.v2026-06-11.json");
 const FRAGMENT_DIR = join(ROOT, "standard/data/_fragments");
+const FAQ_FILE = join(FRAGMENT_DIR, "faq-eu-inverter.json");
 
 const locales = [
   { locale: "en", lang: "en", htmlLang: "en", outDir: "standard" },
@@ -41,13 +43,6 @@ function rowsFor(data) {
   return rows;
 }
 
-function esc(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
-
 function answerFirst({ data, rows, lang }) {
   const reviewed = data.human_reviewed && rows.length > 0 && rows.every((row) => row.source?.verified === true);
   const status = reviewed
@@ -66,13 +61,13 @@ function answerFirst({ data, rows, lang }) {
       <div class="hero-bg"></div>
       <div class="container">
         <div class="hero-copy fade-in">
-          <p class="hero-eyebrow">CROSS-STANDARD 公益 · ${esc(data.category.labels[lang])}</p>
-          <h1 class="hero-title">${esc(data.page.title[lang])}</h1>
-          <p class="hero-sub">${esc(status[lang])} ${esc(data.page.description[lang])}</p>
+          <p class="hero-eyebrow">CROSS-STANDARD ${esc(label("publicInterest", lang))} · ${esc(t(data.category.labels, lang))}</p>
+          <h1 class="hero-title">${esc(t(data.page.title, lang))}</h1>
+          <p class="hero-sub">${esc(t(status, lang))} ${esc(t(data.page.description, lang))}</p>
           <div class="standard-status">
-            <span>Dataset ${esc(data.version)}</span>
-            <span>Last verified ${esc(data.last_verified)}</span>
-            <span>${rows.length} rows</span>
+            <span>${esc(label("dataset", lang))} ${esc(data.version)}</span>
+            <span>${esc(label("lastVerified", lang))} ${esc(data.last_verified)}</span>
+            <span>${rows.length} ${esc(label("rows", lang))}</span>
           </div>
         </div>
       </div>
@@ -80,33 +75,52 @@ function answerFirst({ data, rows, lang }) {
 }
 
 function eeat({ data, lang }) {
-  const labels = {
-    en: ["Named editorial review", "Pending named reviewer", "Editorial controls"],
-    zh: ["具名审校", "待具名审校人", "编辑控制"],
-    zht: ["具名審校", "待具名審校人", "編輯控制"]
-  }[lang];
-
   return `<section class="standard-section">
     <div class="container standard-eeat">
       <div>
-        <p class="section-label">E-E-A-T</p>
-        <h2 class="section-title">${labels[0]}</h2>
+        <p class="section-label">${esc(label("eeat", lang))}</p>
+        <h2 class="section-title">${esc(label("namedEditorialReview", lang))}</h2>
       </div>
       <div class="provenance-panel">
-        <strong>${labels[1]}</strong>
-        <p>${esc(data.editorial_controls.source_policy)}</p>
-        <strong>${labels[2]}</strong>
-        <p>${esc(data.editorial_controls.change_control)}</p>
+        <strong>${esc(label("pendingNamedReviewer", lang))}</strong>
+        <p>${esc(label("sourcePolicyText", lang) || data.editorial_controls.source_policy)}</p>
+        <strong>${esc(label("editorialControls", lang))}</strong>
+        <p>${esc(label("changeControlText", lang) || data.editorial_controls.change_control)}</p>
       </div>
     </div>
   </section>`;
 }
 
-function page({ data, rows, lang, locale, htmlLang }) {
+function validFaqEntries(faq, lang) {
+  return (faq || []).filter((item) => t(item.question, lang) && t(item.answer, lang));
+}
+
+function faqSection({ faq, lang }) {
+  const entries = validFaqEntries(faq, lang);
+  if (!entries.length) return "";
+  return `<section class="standard-section" id="faq">
+      <div class="container">
+        <p class="section-label">${esc(label("faq", lang))}</p>
+        <h2 class="section-title">${esc(label("faqTitle", lang))}</h2>
+        <div class="standard-faq">
+          ${entries
+            .map(
+              (item) => `<details>
+            <summary>${esc(t(item.question, lang))}</summary>
+            <p>${esc(t(item.answer, lang))}</p>
+          </details>`
+            )
+            .join("\n")}
+        </div>
+      </div>
+    </section>`;
+}
+
+function page({ data, rows, faq, lang, locale, htmlLang }) {
   const slug = data.slug;
   return `<!DOCTYPE html>
 <html lang="${htmlLang}">
-${head({ data, lang, locale, slug, rows })}
+${head({ data, lang, locale, slug, rows, faq })}
 <body>
   ${nav({ locale })}
 
@@ -114,21 +128,22 @@ ${head({ data, lang, locale, slug, rows })}
     ${answerFirst({ data, rows, lang })}
     <section class="standard-section">
       <div class="container">
-        <p class="section-label">GAP MATRIX</p>
-        <h2 class="section-title">合规项 / 中国常见已有 / EU要求 / 差距动作</h2>
+        <p class="section-label">${esc(label("gapMatrix", lang))}</p>
+        <h2 class="section-title">${esc(label("gapMatrixTitle", lang))}</h2>
         ${comparisonTable({ rows, lang })}
       </div>
     </section>
+    ${faqSection({ faq, lang })}
     <section class="standard-section">
       <div class="container">
         ${disclaimer({ data, lang })}
       </div>
     </section>
     ${eeat({ data, lang })}
-    ${sourceList({ rows })}
+    ${sourceList({ rows, lang })}
   </main>
 
-  ${footer()}
+  ${footer({ lang, locale })}
   <script>
     document.querySelectorAll('.fade-in').forEach((el) => el.classList.add('visible'));
   </script>
@@ -139,13 +154,15 @@ ${head({ data, lang, locale, slug, rows })}
 
 const data = readJson(DATA_FILE);
 const rows = rowsFor(data);
+const faq = existsSync(FAQ_FILE) ? readJson(FAQ_FILE) : data.faq || [];
+if (!Array.isArray(faq)) throw new Error(`${FAQ_FILE} must contain an array.`);
 for (const locale of locales) {
   const outDir = join(ROOT, locale.outDir);
   mkdirSync(outDir, { recursive: true });
   writeFileSync(
     join(outDir, `${data.slug}.html`),
-    page({ data, rows, ...locale })
+    page({ data, rows, faq, ...locale })
   );
 }
 
-console.log(`generate-standard: wrote ${locales.length} pages for ${data.dataset_id} (${rows.length} rows).`);
+console.log(`generate-standard: wrote ${locales.length} pages for ${data.dataset_id} (${rows.length} rows, ${faq.length} FAQ entries).`);
