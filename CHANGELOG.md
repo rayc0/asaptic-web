@@ -1,3 +1,4 @@
+2026-06-11 16:00 UTC · blog: add essay 'The velocity authority problem' + fix missing moral-hazard index entries (EN+ZH+ZH-HK, firewall clean) · 586e221
 2026-06-11 04:00 UTC · blog: add essay 'The instruction collapse problem' — accountability when AI agents lose the nuance of their authorizing instructions (EN+ZH+ZH-HK) · c81f9bc
 2026-06-11 00:00 UTC · blog: add essay 'The governing-the-governor problem' — accountability when AI agents audit AI agents (EN+ZH+ZH-HK) · 3db779c
 2026-06-10 08:00 UTC · blog: add essay 'The frozen consent problem' — accountability when AI care agents continue acting on authorizations that no longer reflect the current care relationship (EN+ZH+ZH-HK) · 4a711ef
