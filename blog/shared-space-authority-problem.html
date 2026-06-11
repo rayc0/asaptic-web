@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The shared-space authority problem — Asaptic Labs</title>
+
+  <meta name="description" content="When AI agents from different principal hierarchies operate in the same physical environment, their individually authorized behaviors can conflict in ways no single accountability architecture is designed to resolve." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/shared-space-authority-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The shared-space authority problem: accountability when AI agents from different principal hierarchies occupy the same physical environment" />
+  <meta property="og:description" content="Physical AI turns the shared environment into an authority problem no single principal can resolve unilaterally. Authentication does not substitute for governance." />
+  <meta property="og:url" content="https://asaptic.com/blog/shared-space-authority-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-11" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The shared-space authority problem: accountability when AI agents from different principal hierarchies occupy the same physical environment",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-11",
+    "description": "When AI agents from different principal hierarchies operate in the same physical environment, their individually authorized behaviors can conflict in ways no single accountability architecture is designed to resolve.",
+    "url": "https://asaptic.com/blog/shared-space-authority-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security · × Hardware · × Physical-World Care</div>
+      <h1 class="essay-title">The shared-space authority problem: accountability when AI agents from different principal hierarchies occupy the same physical environment</h1>
+      <p class="essay-subtitle">Physical AI turns the shared environment into an authority problem no single principal can resolve unilaterally. Strong authentication for each agent does not substitute for governance of the space they collectively inhabit.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-11</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>A care facility room might contain: a building management AI (ventilation, lighting, access control — owned by the property operator), a patient monitoring agent (vitals, fall detection, medication reminders — owned by the clinical team), a pharmacy dispensing agent (drug scheduling and verification — owned by the pharmacy), and a family care-coordination agent (daily living support and communications — owned by the patient's family). Each is correctly authenticated. Each operates within its authorized envelope. Each has a legitimate principal who can audit its decisions. And their authorized behaviors can produce physically incompatible outcomes.</p>
+
+        <p>This is the shared-space authority problem: when AI agents from different principal hierarchies operate in the same physical environment, their individually authorized behaviors can conflict in ways that no single accountability architecture is designed to resolve.</p>
+
+        <h2>The structure of the conflict</h2>
+        <p>What makes this problem distinctive is its horizontal character. In a single-principal agent system, authority conflicts flow upward: the agent escalates to its principal, the principal decides, the decision is logged. In a multi-principal shared space, the conflict is not between an agent and its principal hierarchy — each agent may be acting correctly relative to its own hierarchy. The conflict is between principal hierarchies that have no shared superior.</p>
+
+        <p>The building management AI reduces ventilation because it detects that the room's air recirculation load has been exceeded. The patient monitoring agent reads elevated carbon dioxide and escalates to clinical staff, requesting override of the HVAC system. Both agents are acting as authorized. Neither principal has authority over the other. Neither agent is at fault. The shared space — the physical room itself — becomes the territory of a dispute that the accountability architectures of both systems were not designed to adjudicate.</p>
+
+        <h2>The post-quantum security crossing</h2>
+        <p>Post-quantum cryptography provides strong per-agent identity attestation. Each agent in the room can prove, with quantum-resistant signatures, what it is, who authorized it, and what behavioral policies govern it. What attestation cannot provide is cross-domain authority resolution.</p>
+
+        <p>A room containing four individually attested agents from four separate trust hierarchies is not a secure coordination system. It is four secure isolation envelopes that happen to be co-located in the same physical space. The shared environment is ungoverned even though every agent in it is authenticated. The post-quantum transition makes each agent's identity stronger; it does not create the inter-principal governance layer that the shared space requires.</p>
+
+        <h2>The hardware crossing</h2>
+        <p>Hardware roots of trust answer questions about what a device is and whether its software has been tampered with. They do not answer questions about whose instructions take precedence when two attested devices both act correctly within their own authorization structures and their physical effects interfere.</p>
+
+        <p>This creates a design implication. Systems that are individually tamper-resistant and cryptographically isolated are not together a coherent authority system. Hardware attestation encapsulates the accountability of each agent; it does not integrate agents across principal boundaries. Integration requires a higher-level mechanism — a cross-principal governance agreement — that is not a component of any current hardware attestation standard.</p>
+
+        <h2>The physical-world care crossing</h2>
+        <p>Care environments are particularly dense with cross-principal authority. A single care recipient's room may host agents from the property manager, the general practitioner's team, a specialist's diagnostic system, a pharmacy, and the care recipient's own family. These principals may have overlapping interests, conflicting priorities, and no shared governance agreement for the physical space their agents jointly inhabit.</p>
+
+        <p>The care recipient is the person most affected by conflicts between these agents and the person least equipped to resolve them. They did not negotiate the authority architecture among the principals whose agents share their room. They may not know which agents are active, who owns each one, or what each is authorized to do. The person whose welfare nominally justifies every agent present is not a party to the authority arrangement that governs the space.</p>
+
+        <h2>Toward an accountable response</h2>
+        <p>The shared-space authority problem does not admit a clean solution, but an accountable response has identifiable components.</p>
+
+        <p>The first is mandatory disclosure: every organization deploying a physical AI agent into a shared environment should be required to register the agent, its authorized scope, and its owning principal in a shared-space registry accessible to every other principal operating there. Conflicts cannot be governed if principals do not know what agents they are sharing a space with.</p>
+
+        <p>The second is a pre-deployment authority agreement: before multiple agents from different principal hierarchies share physical space, a conflict-resolution protocol should be negotiated among the principals. The agreement need not anticipate every possible conflict — it must specify which principal hierarchy has priority by category of decision, and how conflicts that fall outside those categories are logged and escalated to human decision-makers.</p>
+
+        <p>The third is a conflict log requirement: when agents from different principal hierarchies produce physically incompatible actions in a shared environment, the conflict should be independently timestamped and recorded in each agent's audit trail, attributed without resolution, and made available to each principal's governance function for review.</p>
+
+        <p>At Asaptic Labs, the shared-space authority problem is a structuring constraint for physical AI deployment in care and infrastructure contexts. The strongest cryptographic identity for each agent in a shared space does not substitute for a governance agreement about the space itself. The physical environment does not belong to any single principal hierarchy — and the accountability architecture for physical AI must account for that from the start.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>When AI agents from different principal hierarchies co-locate in the same physical environment, their individually authorized behaviors can produce incompatible physical outcomes that no single accountability architecture is positioned to adjudicate. Post-quantum authentication makes each agent's identity stronger; it does not create the inter-principal governance layer that shared physical space requires. That layer must be negotiated among principals before deployment — not reconstructed from audit logs after a conflict occurs.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>一间护理机构的病房里可能会有：楼宇管理AI（通风、照明、门禁控制——由物业运营商拥有）、患者监控智能体（生命体征、跌倒检测、用药提醒——由临床团队拥有）、药房配药智能体（药物排程和验证——由药房拥有），以及家庭护理协调智能体（日常生活支持与通讯——由患者家属拥有）。每个智能体都经过正确的身份认证，都在其授权范围内运行，都有合法的主体可以审计其决策。而它们各自被授权的行为，却可能在物理层面产生相互不兼容的后果。</p>
+
+        <p>这就是共享空间权限问题：当来自不同主体层级的AI智能体在同一物理环境中运行时，它们各自被单独授权的行为可能以任何单一问责架构都无法解决的方式发生冲突。</p>
+
+        <h2>冲突的结构</h2>
+        <p>让这个问题具有独特性的，是其横向特征。在单一主体的智能体系统中，权限冲突向上流动：智能体向其主体上报，主体做出决定，决定被记录。在多主体共享空间中，冲突不是发生在智能体与其主体层级之间——每个智能体相对于其自身的层级可能都表现正确。冲突发生在没有共同上级权威的主体层级之间。</p>
+
+        <p>楼宇管理AI减少了通风，因为它检测到房间的空气再循环负荷已超出上限。患者监控智能体读取到二氧化碳水平升高，向临床人员上报，要求覆盖暖通空调系统。两个智能体的行为都符合其授权。两个主体都没有对彼此的权限。两个智能体都没有过错。共享空间——这个物理房间本身——成为一场争议的领地，而两个系统的问责架构都不是为了裁决这场争议而设计的。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>后量子密码学为每个智能体提供了强大的身份证明。房间里的每个智能体都可以用量子抗性签名证明其身份、授权方和行为策略。但证明无法提供跨领域的权限解决机制。</p>
+
+        <p>一个包含来自四个不同信任层级的四个单独经过证明的智能体的房间，并不是一个安全的协调系统。它是四个安全隔离的信封，恰好位于同一个物理空间中。共享环境没有治理，即使其中的每个智能体都经过了身份认证。后量子转型使每个智能体的身份更强——它并没有创建共享空间所需要的主体间治理层。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>硬件信任根回答的是关于设备是什么以及其软件是否被篡改的问题。它们不回答当两个经过证明的设备都在自己的授权结构中正确行动而它们的物理效果相互干扰时，谁的指令优先的问题。</p>
+
+        <p>这带来了一个设计启示。各自防篡改且密码学隔离的系统，合在一起并不是一个连贯的权限系统。硬件证明封装了每个智能体的问责；它并不能跨越主体边界整合智能体。整合需要更高层次的机制——跨主体治理协议——这并不是任何现有硬件证明标准的组成部分。</p>
+
+        <h2>物理世界照护交叉点</h2>
+        <p>照护环境中跨主体权限尤为密集。单个被照护者的房间可能承载来自物业管理方、全科医生团队、专科医生诊断系统、药房以及被照护者家属的多个智能体。这些主体可能有重叠的利益、相互冲突的优先事项，以及针对各自智能体共同占据的物理空间没有共同的治理协议。</p>
+
+        <p>被照护者是这些冲突中受影响最大的人，也是最没有能力解决这些冲突的人。他们没有参与协商各个主体之间的权限架构，而这些主体的智能体共享他们的房间。他们可能不知道哪些智能体在运行，谁拥有每个智能体，或者每个智能体被授权做什么。名义上所有在场智能体都是为其福利服务的人，并不是管理该空间的权限安排的当事方。</p>
+
+        <h2>迈向问责的回应</h2>
+        <p>共享空间权限问题没有清晰的解决方案，但问责回应有可识别的组成要素。</p>
+
+        <p>第一个要素是强制信息披露：每个将物理AI智能体部署到共享环境中的组织，都应该被要求向共享空间注册表注册该智能体、其授权范围及其拥有主体，以供在该环境中运营的所有其他主体访问。如果主体不知道与他们共享空间的其他智能体，冲突便无法被治理。</p>
+
+        <p>第二是部署前权限协议：在来自不同主体层级的多个智能体共享物理空间之前，应在主体之间协商冲突解决协议。该协议无需预见每一个可能的冲突——它必须按决策类别指定哪个主体层级具有优先权，以及如何将超出这些类别的冲突记录并上报给人类决策者。</p>
+
+        <p>第三是冲突日志要求：当来自不同主体层级的智能体在共享环境中产生物理上不兼容的行为时，该冲突应在每个智能体的审计跟踪中独立记录时间戳，在不做出裁决的情况下进行归因，并提供给每个主体的治理职能部门进行审查。</p>
+
+        <p>在Asaptic Labs，共享空间权限问题是物理AI在照护和基础设施背景下部署的结构性约束。共享空间中每个智能体的最强密码学身份，不能替代关于空间本身的治理协议。物理环境不属于任何单一主体层级——物理AI的问责架构必须从一开始就考虑到这一点。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>当来自不同主体层级的AI智能体在同一物理环境中共存时，它们各自被授权的行为可能产生没有任何单一问责架构能够裁决的物理不兼容后果。后量子认证使每个智能体的身份更强；它并不能创建共享物理空间所需的主体间治理层。该层必须在部署前由主体协商确立——而不是在冲突发生后从审计日志中重建。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>一間護理機構的病房裡可能會有：樓宇管理AI（通風、照明、門禁控制——由物業運營商擁有）、患者監控智能體（生命體徵、跌倒檢測、用藥提醒——由臨床團隊擁有）、藥房配藥智能體（藥物排程和驗證——由藥房擁有），以及家庭護理協調智能體（日常生活支持與通訊——由患者家屬擁有）。每個智能體都經過正確的身份認證，都在其授權範圍內運行，都有合法的主體可以審計其決策。而它們各自被授權的行為，卻可能在物理層面產生相互不兼容的後果。</p>
+
+        <p>這就是共享空間權限問題：當來自不同主體層級的AI智能體在同一物理環境中運行時，它們各自被單獨授權的行為可能以任何單一問責架構都無法解決的方式發生衝突。</p>
+
+        <h2>衝突的結構</h2>
+        <p>讓這個問題具有獨特性的，是其橫向特徵。在單一主體的智能體系統中，權限衝突向上流動：智能體向其主體上報，主體做出決定，決定被記錄。在多主體共享空間中，衝突不是發生在智能體與其主體層級之間——每個智能體相對於其自身的層級可能都表現正確。衝突發生在沒有共同上級權威的主體層級之間。</p>
+
+        <p>樓宇管理AI減少了通風，因為它檢測到房間的空氣再循環負荷已超出上限。患者監控智能體讀取到二氧化碳水平升高，向臨床人員上報，要求覆蓋暖通空調系統。兩個智能體的行為都符合其授權。兩個主體都沒有對彼此的權限。兩個智能體都沒有過錯。共享空間——這個物理房間本身——成為一場爭議的領地，而兩個系統的問責架構都不是為了裁決這場爭議而設計的。</p>
+
+        <h2>後量子安全交叉點</h2>
+        <p>後量子密碼學為每個智能體提供了強大的身份證明。房間裡的每個智能體都可以用量子抗性簽名證明其身份、授權方和行為策略。但證明無法提供跨領域的權限解決機制。</p>
+
+        <p>一個包含來自四個不同信任層級的四個單獨經過證明的智能體的房間，並不是一個安全的協調系統。它是四個安全隔離的信封，恰好位於同一個物理空間中。共享環境沒有治理，即使其中的每個智能體都經過了身份認證。後量子轉型使每個智能體的身份更強——它並沒有創建共享空間所需要的主體間治理層。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>硬件信任根回答的是關於設備是什麼以及其軟件是否被篡改的問題。它們不回答當兩個經過證明的設備都在自己的授權結構中正確行動而它們的物理效果相互干擾時，誰的指令優先的問題。</p>
+
+        <p>這帶來了一個設計啟示。各自防篡改且密碼學隔離的系統，合在一起並不是一個連貫的權限系統。硬件證明封裝了每個智能體的問責；它並不能跨越主體邊界整合智能體。整合需要更高層次的機制——跨主體治理協議——這並不是任何現有硬件證明標準的組成部分。</p>
+
+        <h2>物理世界照護交叉點</h2>
+        <p>照護環境中跨主體權限尤為密集。單個被照護者的房間可能承載來自物業管理方、全科醫生團隊、專科醫生診斷系統、藥房以及被照護者家屬的多個智能體。這些主體可能有重疊的利益、相互衝突的優先事項，以及針對各自智能體共同佔據的物理空間沒有共同的治理協議。</p>
+
+        <p>被照護者是這些衝突中受影響最大的人，也是最沒有能力解決這些衝突的人。他們沒有參與協商各個主體之間的權限架構，而這些主體的智能體共享他們的房間。他們可能不知道哪些智能體在運行，誰擁有每個智能體，或者每個智能體被授權做什麼。名義上所有在場智能體都是為其福利服務的人，並不是管理該空間的權限安排的當事方。</p>
+
+        <h2>邁向問責的回應</h2>
+        <p>共享空間權限問題沒有清晰的解決方案，但問責回應有可識別的組成要素。</p>
+
+        <p>第一個要素是強制資訊披露：每個將物理AI智能體部署到共享環境中的組織，都應該被要求向共享空間注冊表注冊該智能體、其授權範圍及其擁有主體，以供在該環境中運營的所有其他主體訪問。如果主體不知道與他們共享空間的其他智能體，衝突便無法被治理。</p>
+
+        <p>第二是部署前權限協議：在來自不同主體層級的多個智能體共享物理空間之前，應在主體之間協商衝突解決協議。該協議無需預見每一個可能的衝突——它必須按決策類別指定哪個主體層級具有優先權，以及如何將超出這些類別的衝突記錄並上報給人類決策者。</p>
+
+        <p>第三是衝突日誌要求：當來自不同主體層級的智能體在共享環境中產生物理上不兼容的行為時，該衝突應在每個智能體的審計跟蹤中獨立記錄時間戳，在不做出裁決的情況下進行歸因，並提供給每個主體的治理職能部門進行審查。</p>
+
+        <p>在Asaptic Labs，共享空間權限問題是物理AI在照護和基礎設施背景下部署的結構性約束。共享空間中每個智能體的最強密碼學身份，不能替代關於空間本身的治理協議。物理環境不屬於任何單一主體層級——物理AI的問責架構必須從一開始就考慮到這一點。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>當來自不同主體層級的AI智能體在同一物理環境中共存時，它們各自被授權的行為可能產生沒有任何單一問責架構能夠裁決的物理不兼容後果。後量子認證使每個智能體的身份更強；它並不能創建共享物理空間所需的主體間治理層。該層必須在部署前由主體協商確立——而不是在衝突發生後從審計日誌中重建。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-11</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
