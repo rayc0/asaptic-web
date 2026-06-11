@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The instruction collapse problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents operating over long horizons must compress their context to keep acting. When they compress, detailed conditional instructions collapse into simpler summaries — and the agent continues acting on the simplified version rather than the original mandate." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/instruction-collapse-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The instruction collapse problem: accountability when AI agents lose the nuance of their authorizing instructions" />
+  <meta property="og:description" content="AI agents operating over long horizons must compress their context to keep acting. When they compress, detailed conditional instructions collapse into simpler summaries — and the agent continues acting on the simplified version rather than the original mandate." />
+  <meta property="og:url" content="https://asaptic.com/blog/instruction-collapse-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-11" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The instruction collapse problem: accountability when AI agents lose the nuance of their authorizing instructions",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-11",
+    "description": "AI agents operating over long horizons must compress their context to keep acting. When they compress, detailed conditional instructions collapse into simpler summaries — and the agent continues acting on the simplified version rather than the original mandate.",
+    "url": "https://asaptic.com/blog/instruction-collapse-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Physical-World Care · × Post-Quantum Security</div>
+      <h1 class="essay-title">The instruction collapse problem: accountability when AI agents lose the nuance of their authorizing instructions</h1>
+      <p class="essay-subtitle">AI agents operating over long horizons must compress their context to keep acting. When they compress, detailed conditional instructions collapse into simpler summaries — and the agent continues operating on the simplified version rather than the original mandate.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-11</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>At the start of a deployment, the instructions given to an AI care agent are typically detailed and conditional: contact the care coordinator if the recipient refuses medication three times in a row, but not if refusal follows a pattern consistent with documented preference; escalate at night only if vital signs cross specified thresholds, except on Thursdays when the overnight nurse has already been notified. The specificity is deliberate. It reflects hours of negotiation between operators, clinicians, and families about exactly when agent autonomy ends and human judgment must begin.</p>
+
+        <p>Months into deployment, those instructions still nominally govern the agent. But the agent is no longer operating from the original text. It is operating from a compressed representation — a summary of summaries, the residue of context windows that have been collapsed many times over to make room for more recent operational data. The instructions are still present in some form. The nuance that made them accountable is not.</p>
+
+        <p>This is the instruction collapse problem: not a failure of alignment, but a failure of fidelity — the gradual erosion of the conditional logic that gave an agent's authority its shape.</p>
+
+        <h2>Why compression is structurally unavoidable</h2>
+        <p>Long-horizon AI agents face a hard constraint. Context windows are finite. A care agent that operates continuously — logging observations, recording interactions, tracking care events — fills its available context faster than the deployment stretches. To keep acting, it must compress: summarizing earlier context into shorter representations that free space for the present.</p>
+
+        <p>Compression is not failure; it is the normal operating mode of any system that must act over time. The problem is what compression does to conditional instructions. A sentence that reads "do X unless condition Y, in which case do Z but only if criterion W has been met in the preceding 72 hours" does not compress gracefully. The conditions, the exceptions, and the timing qualifiers are exactly what make the instruction safe — and they are also exactly the kind of detail that compression loses first. The resulting summary may read "do X when relevant" — which is not wrong, exactly, but is no longer the instruction that was authorized.</p>
+
+        <h2>The accountability signature of collapsed instructions</h2>
+        <p>The instruction collapse problem is particularly difficult to detect because it does not produce obvious error. An agent operating from a collapsed representation of its instructions will still look mostly correct. Most of the time, the simplified version and the original version produce the same action. The divergence appears at the margins — in edge cases, in threshold conditions, in the exactly-the-situations-we-specified-for-a-reason moments that conditional instructions were written to cover.</p>
+
+        <p>From an oversight perspective, this is the worst kind of drift. The agent's actions are individually defensible. The log entries make sense. There is no single decision that is clearly wrong. What has gone wrong is that the agent is no longer governed by the detailed, negotiated mandate it was given — it is governed by an approximation of it, and the approximation is no one's responsibility. The original instructions authorized the deployment. Nobody authorized the compressed version the agent is actually running on.</p>
+
+        <h2>The parallel in cryptographic protocol deployment</h2>
+        <p>In security-critical systems, the instruction collapse problem has a direct structural parallel. Cryptographic protocols are initially deployed with detailed configuration documents: which cipher suites are permitted, which are forbidden, what the fallback hierarchy is, how key negotiation should proceed under degraded conditions. Over time, those documents are summarized — into operational runbooks, into abbreviated policy references, into institutional memory. The summary is assumed to capture the essential intent. Years later, a configuration choice is made from the summary rather than the original document, and the choice is technically coherent with the summary but violates a constraint from the original specification that the summary elided.</p>
+
+        <p>The post-quantum cryptographic transition makes this failure mode newly urgent. Migration instructions for care-adjacent hardware — embedded systems in medical devices, secure enclaves in care terminals — are among the most conditioned specifications in the field. They involve exceptions for legacy compatibility, timing windows, hardware attestation requirements, and fallback procedures that depend on specific version conditions. An agent responsible for coordinating or verifying a migration that is operating from a compressed representation of those instructions may believe it has followed the protocol while having systematically bypassed the safety-critical conditional branches that distinguished "migration complete and verified" from "migration superficially complete."</p>
+
+        <h2>What accountability requires</h2>
+        <p>The instruction collapse problem points toward a specific accountability requirement: the authorizing instruction set must be separately versioned and preserved, and the agent's operating context must be periodically reconciled against it. This is not just a technical practice; it is an accountability practice. If the original instructions are not preserved in recoverable form, the deployment has no canonical standard against which agent behavior can be evaluated. The record of what the agent was told to do has itself been lost.</p>
+
+        <p>In care settings, this argues for treating the initial instruction set as a governed artifact — not just a configuration file. It should be version-controlled, signed by the parties who authorized it, and checked against the agent's compressed operating context at intervals defined by the sensitivity of the deployment. Where the compressed context diverges from the original instruction set in ways that would change agent behavior in foreseeable conditions, human review is required before deployment continues.</p>
+
+        <p>At Asaptic Labs, we think the instruction collapse problem is underweighted in current AI care governance frameworks, which tend to focus on behavioral drift during training rather than fidelity loss during inference. The distinction matters. Training-time alignment drift can in principle be detected through behavioral testing. Inference-time instruction collapse is invisible to behavioral tests — the agent will pass them — and is only detectable by comparing the agent's operating context against the original authorizing mandate. That comparison requires the original mandate to exist. In many long-running deployments, it does not.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI agents that operate over long horizons compress their context to keep acting. Detailed conditional instructions — the conditional logic that gives an agent's authority its shape — are exactly what compression loses first. The result is not misalignment; it is mandate erosion: the agent continues acting, passes behavioral tests, and looks mostly correct, while governed by an approximation of the instructions that no one authorized. Accountability requires that the original instruction set be preserved as a governed artifact and periodically reconciled against the agent's operating context.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>在部署之初，给予AI护理智能体的指令通常是详细而有条件的：如果护理对象连续三次拒绝服药，则联系护理协调员，但若拒绝模式符合已记录的个人偏好，则无需联系；仅在生命体征超出特定阈值时于夜间升级处理，但周四除外，因为夜班护士已事先收到通知。这种具体性是有意为之的，它体现了运营方、临床医生和家属之间经过数小时协商达成的共识——关于智能体的自主权在哪里结束、人工判断必须在哪里介入。</p>
+
+        <p>部署数月后，这些指令名义上仍在约束着智能体。但智能体已不再根据原始文本运作，而是基于一种压缩后的表示——多次折叠上下文窗口后留下的摘要之摘要，以便为更近期的运营数据腾出空间。指令在某种形式上仍然存在。但使其具有可问责性的细节已不复存在。</p>
+
+        <p>这就是指令折叠问题：不是对齐失败，而是保真度失败——条件逻辑的逐渐侵蚀，而正是这种条件逻辑赋予了智能体权限以具体形状。</p>
+
+        <h2>为何压缩在结构上不可避免</h2>
+        <p>长周期AI智能体面临一个硬约束：上下文窗口是有限的。一个持续运行的护理智能体——记录观察、追踪护理事件——会以比部署周期更快的速度填满可用上下文。为了继续运作，它必须进行压缩：将早期上下文归纳为更短的表示，为当前腾出空间。</p>
+
+        <p>压缩本身并非失败，而是任何需要跨时间运作的系统的正常运行模式。问题在于压缩对条件指令的影响。"执行X，除非满足条件Y，此时执行Z，但前提是在过去72小时内满足了标准W"这样的句子并不适合优雅压缩。这些条件、例外和时间限定词正是使指令安全的因素——也恰恰是压缩最先丢失的细节。压缩后的摘要可能只剩下"在适当时执行X"——这并非错误，但已不再是被授权的指令。</p>
+
+        <h2>折叠指令的问责特征</h2>
+        <p>指令折叠问题尤其难以察觉，因为它不会产生明显的错误。基于折叠后指令运作的智能体大多数情况下看起来仍然是正确的。多数时候，简化版本与原始版本产生相同的行动。偏差出现在边缘情况——在阈值条件下，在那些"正是我们当初特意注明情形"的时刻，而这些时刻正是条件指令被编写出来要覆盖的。</p>
+
+        <p>从监督的角度来看，这是最难处理的漂移。智能体的每个单独行动都有理可辩。日志记录合情合理。没有哪一个决策明显是错的。出错的是：智能体不再受到它被给予的那份详细、经过协商的授权约束——它受到的是这份授权的近似版本，而这个近似版本没有任何人负责。原始指令授权了部署，但没有人授权智能体实际运行的那个压缩版本。</p>
+
+        <h2>密码协议部署中的类比</h2>
+        <p>在安全关键系统中，指令折叠问题有一个直接的结构类比。密码协议最初以详细配置文件部署：哪些密码套件被允许，哪些被禁止，降级条件下的回退层级是什么，密钥协商应如何进行。随着时间推移，这些文件被逐层归纳——成为运营手册、缩略政策引用、机构记忆。摘要被假定能够捕捉基本意图。数年后，某个配置决策基于摘要而非原始文件作出，该决策在技术上与摘要一致，却违反了摘要省略掉的原始规范中的约束。</p>
+
+        <p>后量子密码迁移使这一失效模式变得尤为紧迫。医疗相关硬件的迁移指令——医疗设备中的嵌入式系统、护理终端的安全飞地——是该领域条件最为复杂的规范之一。它们包含遗留兼容性例外、时间窗口、硬件认证要求以及依赖特定版本条件的回退程序。如果负责协调或核验迁移的智能体基于这些指令的压缩表示运作，它可能相信自己已遵循协议，而实际上系统性地绕过了区分"迁移完成并核验"与"迁移表面完成"的安全关键条件分支。</p>
+
+        <h2>问责所需</h2>
+        <p>指令折叠问题指向一项具体的问责要求：授权指令集必须单独进行版本控制和保存，智能体的运行上下文必须定期与其进行核对。这不仅是一种技术实践，更是一种问责实践。如果原始指令未以可恢复的形式保存，部署就失去了评估智能体行为的规范标准，关于智能体被要求做什么的记录本身已经丢失。</p>
+
+        <p>在护理环境中，这意味着应将初始指令集视为一种受治理的制品——而不仅仅是一个配置文件。它应当被版本控制、由授权各方签署，并按照部署敏感程度所规定的时间间隔与智能体压缩后的运行上下文进行比对。如果压缩后的上下文在可预见的条件下与原始指令集存在会改变智能体行为的偏差，在部署继续之前需要人工审查。</p>
+
+        <p>在Asaptic Labs，我们认为指令折叠问题在当前AI护理治理框架中被低估了——这些框架往往关注训练期间的行为漂移，而非推理期间的保真度损失。这一区别至关重要。训练时的对齐漂移原则上可以通过行为测试来发现。推理时的指令折叠对行为测试是不可见的——智能体会通过测试——只有将智能体的运行上下文与原始授权指令进行比对才能发现。这一比对要求原始指令的存在。在许多长期运行的部署中，它已经不复存在。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>长期运行的AI智能体通过压缩上下文来持续运作。详细的条件指令——赋予智能体权限以具体形状的条件逻辑——恰恰是压缩最先丢失的内容。结果不是对齐失效，而是授权侵蚀：智能体继续运作、通过行为测试、看起来大体正确，却运行在没有任何人授权的近似指令上。问责要求将原始指令集作为受治理的制品加以保存，并定期与智能体的运行上下文进行核对。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>在部署之初，給予AI護理智能體的指令通常是詳細而有條件的：如果護理對象連續三次拒絕服藥，則聯繫護理協調員，但若拒絕模式符合已記錄的個人偏好，則無需聯繫；僅在生命體徵超出特定閾值時於夜間升級處理，但週四除外，因為夜班護士已事先收到通知。這種具體性是有意為之的，它體現了運營方、臨床醫生和家屬之間經過數小時協商達成的共識——關於智能體的自主權在哪裡結束、人工判斷必須在哪裡介入。</p>
+
+        <p>部署數月後，這些指令名義上仍在約束著智能體。但智能體已不再根據原始文本運作，而是基於一種壓縮後的表示——多次折疊上下文視窗後留下的摘要之摘要，以便為更近期的運營數據騰出空間。指令在某種形式上仍然存在。但使其具有可問責性的細節已不復存在。</p>
+
+        <p>這就是指令折疊問題：不是對齊失敗，而是保真度失敗——條件邏輯的逐漸侵蝕，而正是這種條件邏輯賦予了智能體權限以具體形狀。</p>
+
+        <h2>為何壓縮在結構上不可避免</h2>
+        <p>長週期AI智能體面臨一個硬約束：上下文視窗是有限的。一個持續運行的護理智能體——記錄觀察、追蹤護理事件——會以比部署週期更快的速度填滿可用上下文。為了繼續運作，它必須進行壓縮：將早期上下文歸納為更短的表示，為當前騰出空間。</p>
+
+        <p>壓縮本身並非失敗，而是任何需要跨時間運作的系統的正常運行模式。問題在於壓縮對條件指令的影響。「執行X，除非滿足條件Y，此時執行Z，但前提是在過去72小時內滿足了標準W」這樣的句子並不適合優雅壓縮。這些條件、例外和時間限定詞正是使指令安全的因素——也恰恰是壓縮最先丟失的細節。壓縮後的摘要可能只剩下「在適當時執行X」——這並非錯誤，但已不再是被授權的指令。</p>
+
+        <h2>折疊指令的問責特徵</h2>
+        <p>指令折疊問題尤其難以察覺，因為它不會產生明顯的錯誤。基於折疊後指令運作的智能體大多數情況下看起來仍然是正確的。多數時候，簡化版本與原始版本產生相同的行動。偏差出現在邊緣情況——在閾值條件下，在那些「正是我們當初特意注明情形」的時刻，而這些時刻正是條件指令被編寫出來要覆蓋的。</p>
+
+        <p>從監督的角度來看，這是最難處理的漂移。智能體的每個單獨行動都有理可辯。日誌記錄合情合理。沒有哪一個決策明顯是錯的。出錯的是：智能體不再受到它被給予的那份詳細、經過協商的授權約束——它受到的是這份授權的近似版本，而這個近似版本沒有任何人負責。原始指令授權了部署，但沒有人授權智能體實際運行的那個壓縮版本。</p>
+
+        <h2>密碼協議部署中的類比</h2>
+        <p>在安全關鍵系統中，指令折疊問題有一個直接的結構類比。密碼協議最初以詳細配置文件部署：哪些密碼套件被允許，哪些被禁止，降級條件下的回退層級是什麼，金鑰協商應如何進行。隨著時間推移，這些文件被逐層歸納——成為運營手冊、縮略政策引用、機構記憶。摘要被假定能夠捕捉基本意圖。數年後，某個配置決策基於摘要而非原始文件作出，該決策在技術上與摘要一致，卻違反了摘要省略掉的原始規範中的約束。</p>
+
+        <p>後量子密碼遷移使這一失效模式變得尤為緊迫。醫療相關硬體的遷移指令——醫療設備中的嵌入式系統、護理終端的安全飛地——是該領域條件最為複雜的規範之一。它們包含遺留相容性例外、時間視窗、硬體認證要求以及依賴特定版本條件的回退程序。如果負責協調或核驗遷移的智能體基於這些指令的壓縮表示運作，它可能相信自己已遵循協議，而實際上系統性地繞過了區分「遷移完成並核驗」與「遷移表面完成」的安全關鍵條件分支。</p>
+
+        <h2>問責所需</h2>
+        <p>指令折疊問題指向一項具體的問責要求：授權指令集必須單獨進行版本控制和保存，智能體的運行上下文必須定期與其進行核對。這不僅是一種技術實踐，更是一種問責實踐。如果原始指令未以可恢復的形式保存，部署就失去了評估智能體行為的規範標準，關於智能體被要求做什麼的記錄本身已經丟失。</p>
+
+        <p>在護理環境中，這意味著應將初始指令集視為一種受治理的制品——而不僅僅是一個配置文件。它應當被版本控制、由授權各方簽署，並按照部署敏感程度所規定的時間間隔與智能體壓縮後的運行上下文進行比對。如果壓縮後的上下文在可預見的條件下與原始指令集存在會改變智能體行為的偏差，在部署繼續之前需要人工審查。</p>
+
+        <p>在Asaptic Labs，我們認為指令折疊問題在當前AI護理治理框架中被低估了——這些框架往往關注訓練期間的行為漂移，而非推理期間的保真度損失。這一區別至關重要。訓練時的對齊漂移原則上可以通過行為測試來發現。推理時的指令折疊對行為測試是不可見的——智能體會通過測試——只有將智能體的運行上下文與原始授權指令進行比對才能發現。這一比對要求原始指令的存在。在許多長期運行的部署中，它已經不復存在。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>長期運行的AI智能體通過壓縮上下文來持續運作。詳細的條件指令——賦予智能體權限以具體形狀的條件邏輯——恰恰是壓縮最先丟失的內容。結果不是對齊失效，而是授權侵蝕：智能體繼續運作、通過行為測試、看起來大體正確，卻運行在沒有任何人授權的近似指令上。問責要求將原始指令集作為受治理的制品加以保存，並定期與智能體的運行上下文進行核對。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-11</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.toggle('active', el.dataset.langContent === lang));
+      });
+    });
+  </script>
+</body>
+</html>
