@@ -11,7 +11,7 @@ import { nav } from "../templates/partials/nav.mjs";
 import { sourceList } from "../templates/partials/source-list.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
-const DATA_FILE = join(ROOT, "standard/data/pv-inverter-eu.v2026-06-11.json");
+const DATA_DIR = join(ROOT, "standard/data");
 const FRAGMENT_DIR = join(ROOT, "standard/data/_fragments");
 const FAQ_FILE = join(FRAGMENT_DIR, "faq-eu-inverter.json");
 
@@ -25,22 +25,56 @@ function readJson(file) {
   return JSON.parse(readFileSync(file, "utf8"));
 }
 
-function fragmentFiles() {
+function datasetFiles() {
+  return readdirSync(DATA_DIR)
+    .filter((file) => /^[^_].*\.v2026-06-11\.json$/.test(file))
+    .sort()
+    .map((file) => join(DATA_DIR, file));
+}
+
+function normalizeData(data) {
+  const targetMarket = data.target_market_label || data.markets?.find?.((market) => market.role === "target-market")?.label;
+  return {
+    ...data,
+    slug: data.slug || data.page?.slug,
+    category: {
+      ...data.category,
+      labels: data.category?.labels || data.category?.label
+    },
+    target_market_label:
+      typeof targetMarket === "string"
+        ? { en: targetMarket, zh: targetMarket, zht: targetMarket }
+        : targetMarket
+  };
+}
+
+function fragmentFiles(prefix) {
+  if (!prefix) return [];
   if (!existsSync(FRAGMENT_DIR)) return [];
   return readdirSync(FRAGMENT_DIR)
-    .filter((file) => /^eu-.*\.json$/.test(file))
+    .filter((file) => file.startsWith(prefix) && file.endsWith(".json"))
     .sort()
     .map((file) => join(FRAGMENT_DIR, file));
 }
 
 function rowsFor(data) {
   const rows = [...(data.rows || [])];
-  for (const file of fragmentFiles()) {
-    const fragment = readJson(file);
-    if (!Array.isArray(fragment)) throw new Error(`${file} must contain an array.`);
+  const fragmentErrors = [];
+  for (const file of fragmentFiles(data.fragment_prefix)) {
+    let fragment;
+    try {
+      fragment = readJson(file);
+    } catch (error) {
+      fragmentErrors.push(`${file}: ${error.message}`);
+      continue;
+    }
+    if (!Array.isArray(fragment)) {
+      fragmentErrors.push(`${file}: must contain an array.`);
+      continue;
+    }
     rows.push(...fragment);
   }
-  return rows;
+  return { rows, fragmentErrors };
 }
 
 function hero({ data, rows, lang }) {
@@ -74,12 +108,13 @@ function hero({ data, rows, lang }) {
     </section>`;
 }
 
-function answerFirst({ lang }) {
+function answerFirst({ data, lang }) {
+  const verdict = t(data.answer_first, lang) || label("answerFirstVerdict", lang);
   return `<section class="standard-section standard-section--compact">
     <div class="container">
       <aside class="answer-first">
         <span class="answer-first__label">${esc(label("answerFirstLabel", lang))}</span>
-        <p class="answer-first__verdict">${esc(label("answerFirstVerdict", lang))}</p>
+        <p class="answer-first__verdict">${esc(verdict)}</p>
       </aside>
       <aside class="standard-compact-disclaimer">
         <strong>${esc(label("informationalOnly", lang))}</strong>
@@ -137,16 +172,16 @@ function page({ data, rows, faq, lang, locale, htmlLang }) {
 <html lang="${htmlLang}">
 ${head({ data, lang, locale, slug, rows, faq })}
 <body>
-  ${nav({ locale })}
+  ${nav({ locale, slug })}
 
   <main>
     ${hero({ data, rows, lang })}
-    ${answerFirst({ lang })}
+    ${answerFirst({ data, lang })}
     <section class="standard-section">
       <div class="container">
         <p class="section-label">${esc(label("gapMatrix", lang))}</p>
         <h2 class="section-title standard-content-heading">${esc(label("gapMatrixTitle", lang))}</h2>
-        ${comparisonTable({ rows, lang })}
+        ${comparisonTable({ data, rows, lang })}
       </div>
     </section>
     ${faqSection({ faq, lang })}
@@ -159,7 +194,7 @@ ${head({ data, lang, locale, slug, rows, faq })}
     ${sourceList({ rows, lang })}
   </main>
 
-  ${footer({ lang, locale })}
+  ${footer({ lang, locale, slug })}
   <script>
     document.querySelectorAll('.fade-in').forEach((el) => el.classList.add('visible'));
   </script>
@@ -168,17 +203,49 @@ ${head({ data, lang, locale, slug, rows, faq })}
 `;
 }
 
-const data = readJson(DATA_FILE);
-const rows = rowsFor(data);
-const faq = existsSync(FAQ_FILE) ? readJson(FAQ_FILE) : data.faq || [];
-if (!Array.isArray(faq)) throw new Error(`${FAQ_FILE} must contain an array.`);
-for (const locale of locales) {
-  const outDir = join(ROOT, locale.outDir);
-  mkdirSync(outDir, { recursive: true });
-  writeFileSync(
-    join(outDir, `${data.slug}.html`),
-    page({ data, rows, faq, ...locale })
-  );
-}
+let written = 0;
+let skipped = 0;
 
-console.log(`generate-standard: wrote ${locales.length} pages for ${data.dataset_id} (${rows.length} rows, ${faq.length} FAQ entries).`);
+for (const file of datasetFiles()) {
+  const data = normalizeData(readJson(file));
+  if (!data.dataset_id) throw new Error(`${file} requires dataset_id.`);
+  if (!data.slug) throw new Error(`${file} requires slug.`);
+  if (!data.category?.labels) throw new Error(`${file} requires category.labels.`);
+  if (!data.target_market_label) throw new Error(`${file} requires target_market_label.`);
+  if (!data.fragment_prefix) throw new Error(`${file} requires fragment_prefix.`);
+
+  const { rows, fragmentErrors } = rowsFor(data);
+  const faq =
+    data.dataset_id === "pv-inverter-eu-vs-cn-grid-tied" && existsSync(FAQ_FILE)
+      ? readJson(FAQ_FILE)
+      : data.faq || [];
+  if (!Array.isArray(faq)) throw new Error(`${file} faq must contain an array.`);
+
+  if (fragmentErrors.length) {
+    skipped += 1;
+    console.warn(`generate-standard: SKIP ${data.dataset_id} (${data.slug}) because fragment data is not ready:`);
+    for (const warning of fragmentErrors) console.warn(`- ${warning}`);
+    continue;
+  }
+
+  if (rows.length === 0) {
+    skipped += 1;
+    console.warn(
+      `generate-standard: SKIP ${data.dataset_id} (${data.slug}) because no rows were found for fragment_prefix=${data.fragment_prefix}.`
+    );
+    continue;
+  }
+
+  for (const locale of locales) {
+    const outDir = join(ROOT, locale.outDir);
+    mkdirSync(outDir, { recursive: true });
+    writeFileSync(
+      join(outDir, `${data.slug}.html`),
+      page({ data, rows, faq, ...locale })
+    );
+    written += 1;
+  }
+
+  console.log(`generate-standard: wrote ${locales.length} pages for ${data.dataset_id} (${rows.length} rows, ${faq.length} FAQ entries).`);
+}
+console.log(`generate-standard: complete (${written} page files written, ${skipped} dataset(s) skipped).`);
