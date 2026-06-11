@@ -103,9 +103,9 @@
         <a href="/standard/report-error.html" data-key="nav_report">Report an error</a>
       </div>
       <div class="lang-switcher">
-        <button class="lang-btn" data-lang="en">EN</button>
-        <button class="lang-btn" data-lang="zh">简</button>
-        <button class="lang-btn" data-lang="zht">繁</button>
+        <a class="lang-btn active" href="/standard/">EN</a>
+        <a class="lang-btn" href="/zh/standard/">简</a>
+        <a class="lang-btn" href="/zht/standard/">繁</a>
       </div>
     </div>
   </nav>
@@ -249,58 +249,7 @@
     </div>
   </footer>
 
-  <script src="/content.js?v=20260611a"></script>
-  <!-- Standard-specific i18n keys loaded after global content.js -->
-  <script src="/standard/standard-content.js?v=20260611a"></script>
   <script>
-    async function detectLang() {
-      const stored = localStorage.getItem('asaptic-lang');
-      if (stored && ['en','zh','zht'].includes(stored)) return stored;
-
-      try {
-        const res = await fetch('https://workers.asaptic.com/geo', { signal: AbortSignal.timeout(2000) });
-        if (res.ok) {
-          const { country } = await res.json();
-          if (['HK','MO','TW'].includes(country)) return 'zht';
-          if (country === 'CN') return 'zh';
-          return 'en';
-        }
-      } catch {}
-
-      const lang = (navigator.language || '').toLowerCase();
-      if (lang.startsWith('zh-tw') || lang.startsWith('zh-hk') || lang.startsWith('zh-mo')) return 'zht';
-      if (lang.startsWith('zh')) return 'zh';
-      return 'en';
-    }
-
-    function applyLang(lang) {
-      if (typeof STD_CONTENT !== 'undefined' && STD_CONTENT[lang]) {
-        const dict = STD_CONTENT[lang];
-        document.querySelectorAll('[data-key]').forEach(el => {
-          const key = el.getAttribute('data-key');
-          if (dict[key] !== undefined) el.textContent = dict[key];
-        });
-      } else if (typeof CONTENT !== 'undefined' && CONTENT[lang]) {
-        // Fallback to global content.js for shared nav/footer keys
-        const dict = CONTENT[lang];
-        document.querySelectorAll('[data-key]').forEach(el => {
-          const key = el.getAttribute('data-key');
-          if (dict[key] !== undefined) el.textContent = dict[key];
-        });
-      }
-
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
-      });
-
-      document.documentElement.lang = lang === 'zht' ? 'zh-TW' : lang === 'zh' ? 'zh-CN' : 'en';
-      localStorage.setItem('asaptic-lang', lang);
-    }
-
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-      btn.addEventListener('click', () => applyLang(btn.getAttribute('data-lang')));
-    });
-
     const fadeObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -314,8 +263,6 @@
     addEventListener('load', () => setTimeout(() => {
       document.querySelectorAll('.fade-in:not(.visible)').forEach(el => el.classList.add('visible'));
     }, 2500));
-
-    (async () => applyLang(await detectLang()))();
   </script>
 </body>
 </html>
