@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The notification gap problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents that correctly detect a condition and generate a valid alert can still fail catastrophically if the routing chain between alert generation and human response is broken. The accountability record shows detection success. The outcome shows preventable harm. The gap between them is the notification gap." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/notification-gap-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The notification gap problem: accountability when AI agents detect correctly but alerts fail to reach the people who can act" />
+  <meta property="og:description" content="AI agents that correctly detect a condition and generate a valid alert can still fail catastrophically if the routing chain between alert generation and human response is broken. The accountability record shows detection success. The outcome shows preventable harm." />
+  <meta property="og:url" content="https://asaptic.com/blog/notification-gap-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-12" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The notification gap problem: accountability when AI agents detect correctly but alerts fail to reach the people who can act",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-12",
+    "description": "AI agents that correctly detect a condition and generate a valid alert can still fail catastrophically if the routing chain between alert generation and human response is broken. The accountability record shows detection success. The outcome shows preventable harm. The gap between them is the notification gap.",
+    "url": "https://asaptic.com/blog/notification-gap-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security · × Hardware · × Physical-World Care</div>
+      <h1 class="essay-title">The notification gap problem: accountability when AI agents detect correctly but alerts fail to reach the people who can act</h1>
+      <p class="essay-subtitle">Detection and notification are treated as a single function in most AI agent accountability frameworks. They are not. An agent that correctly identifies a condition and generates a valid alert has completed only half the accountability chain. If the routing between alert generation and human response fails, the agent has succeeded on its own terms while the deployment has failed on the terms that matter.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-12</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>The accountability architecture for AI agents draws a clear boundary at the point of alert generation. The agent's obligation is to detect the condition and raise the flag. What happens to the flag after it is raised — how it is routed, who receives it, whether they respond, how quickly — is treated as an operational concern belonging to the human organization, not a technical concern belonging to the agent. This boundary is reasonable in principle. It becomes a liability in practice whenever the routing chain between alert and response is not itself subject to accountability governance.</p>
+
+        <p>Consider the full chain required for an AI agent's alert to produce a useful human response. The agent generates an alert. The alert is transmitted over an infrastructure layer — a network, a message broker, a paging system, a device notification channel. The alert arrives at a device or interface that the intended recipient uses. The recipient is available, awake, and attending to that device. The recipient understands the alert. The recipient has the authority, the tools, and the physical proximity to act. If any link in this chain fails, the agent's successful detection is worthless. The outcome is indistinguishable from a detection failure. But the accountability record is not: it shows the agent working correctly, while the routing chain — invisible to the agent's audit trail — silently drops the response that should have followed.</p>
+
+        <h2>Why the gap is structurally invisible</h2>
+        <p>The notification gap tends to be invisible to accountability review for a predictable reason: the gap lives in the seam between two accountability regimes. The AI agent's accountability architecture covers what the agent did — detection logic, signal processing, alert generation, log records. The organization's operational accountability covers what humans did — staffing levels, response procedures, escalation chains. Neither regime has natural ownership of the delivery path between them. The technical infrastructure carries the alert. The operational system depends on receiving it. Neither looks closely at whether the handoff actually completes. After an adverse event, investigators typically ask whether the agent detected the condition correctly and whether the response was timely. The gap between those two questions — the notification gap itself — often goes unexamined because it belongs to infrastructure that neither party owns clearly.</p>
+
+        <h2>The physical-world care crossing</h2>
+        <p>Physical-world care deployments are where the notification gap causes the most direct harm. A care AI agent monitoring an overnight shift may correctly identify a resident's changed respiratory pattern at 3 AM, generate an alert flagged as high-priority, and transmit it to the care team's paging system. If the paging system has a silent failure — an overloaded message queue, a staff member whose device has powered off, a network segment that dropped during a maintenance window — the alert evaporates between transmission and receipt. The resident's condition continues to deteriorate. The agent's audit trail records a successful detection and alert generation. The operational record shows no received alert, and therefore no expected response. The incident review finds both systems functioning within their stated parameters. The harm that resulted is not attributed to any system failure; it is attributed to an unaccountable gap between them.</p>
+
+        <p>Notification gaps in care environments are not rare edge cases. They are a predictable consequence of deploying AI alerting agents into operational environments that were designed before such agents existed — environments whose notification infrastructure was built for human-initiated alerts, not continuous machine-generated ones. The routing infrastructure was not designed with AI agent delivery guarantees in mind, and the accountability framework for those agents was not designed with routing reliability as a governed property.</p>
+
+        <h2>The hardware crossing</h2>
+        <p>Industrial AI agents that monitor physical systems face the notification gap in a different form. A hardware safety agent that detects an anomaly in a critical system and sends an alert to a maintenance console has done its job. But maintenance consoles are not always staffed. Alert queues in industrial environments can accumulate during high-activity periods. The same maintenance event that made the anomaly more likely may also have routed the responsible technician away from the console. The agent's detection is irreproachable. The notification routing, designed for an operational tempo that did not account for the agent's detection sensitivity, is a silent failure point. When an accountability review follows an incident, the agent's log shows correct behavior. The routing failure is reconstructed from silence.</p>
+
+        <h2>The post-quantum security crossing</h2>
+        <p>Cryptographic infrastructure agents raise the notification gap problem at a different timescale but with comparable consequences. A post-quantum key management agent that detects an anomaly consistent with a harvest-now-decrypt-later reconnaissance pattern needs to get that signal to a human who can authorize a response — a key rotation, an isolation decision, an escalation to a security operations team. The detection may be correct. If the alert routing passes through a notification channel that is itself part of the infrastructure under observation — or if the security operations team is in a shift handoff — the notification gap is real and potentially exploitable. Adversaries sophisticated enough to probe post-quantum cryptographic infrastructure are sophisticated enough to time their reconnaissance to overlap with operational gaps in the notification chain.</p>
+
+        <h2>Governing the gap</h2>
+        <p>Closing the notification gap requires treating the routing chain between alert generation and confirmed human receipt as a governed component of the accountability architecture, not as background operational infrastructure. This means: delivery confirmation requirements built into alert protocols, not assumed from them; end-to-end testing of notification chains as a component of agent certification, not just detection logic; accountability ownership assigned explicitly for the routing layer so that gaps have an owner rather than falling between regimes; and post-incident review processes that examine the full chain from detection through confirmed response, not just the agent's behavior in isolation.</p>
+
+        <p>At Asaptic Labs, we treat notification delivery as a first-class accountability property at every crossing where an AI agent's value depends on a human being able to act on what the agent knows. An agent that detects correctly and notifies into a broken chain has not completed its accountability obligation. It has completed the part that is easy to audit. The part that is hard to audit — whether the alert reached someone who could act, and whether it reached them in time — is exactly where the gap lives.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI agent accountability frameworks draw the boundary at alert generation: the agent's job is to detect and flag; what happens to the flag is an operational concern. This boundary is a liability when the routing chain between alert and response is not governed. The notification gap — the distance between a correctly generated alert and a confirmed human response — is structurally invisible because it lives between the agent's accountability regime and the organization's operational accountability regime. In physical-world care, hardware safety, and cryptographic infrastructure contexts, this gap can produce harm that is attributed to no system failure at all. Governing the gap requires treating delivery confirmation as a first-class property of the accountability architecture, not a background assumption.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>AI智能体的问责架构在警报生成的节点划定了清晰的边界。智能体的职责是检测条件并发出信号。信号发出之后的事情——如何路由、谁接收、是否响应、响应速度——被视为属于人类组织的运营事务，而非属于智能体的技术事务。这一边界在原则上是合理的。但当警报与响应之间的路由链本身不受问责治理约束时，这一边界在实践中就成了一项责任。</p>
+
+        <p>请考虑AI智能体的警报产生有效人类响应所需的完整链条。智能体生成警报。警报通过基础设施层传输——网络、消息代理、呼叫系统、设备通知通道。警报到达预期接收者使用的设备或界面。接收者可用、清醒并且关注该设备。接收者理解警报。接收者拥有采取行动的权限、工具和物理位置。如果这条链中的任何一个环节失效，智能体的成功检测就毫无价值。其结果与检测失败无法区分。但问责记录则不然：它显示智能体正常运行，而路由链——在智能体的审计跟踪中不可见——悄无声息地丢失了本应随之而来的响应。</p>
+
+        <h2>为什么这一缺口在结构上不可见</h2>
+        <p>通知缺口往往对问责审查不可见，原因是可以预见的：这一缺口存在于两种问责机制的接缝处。AI智能体的问责架构涵盖智能体的行为——检测逻辑、信号处理、警报生成、日志记录。组织的运营问责覆盖人类的行为——人员配置、响应程序、升级链。两种机制对两者之间的传递路径都没有自然的归属权。技术基础设施承载警报，运营系统依赖接收它，但两者都不会仔细检查交接是否真正完成。在不良事件发生后，调查人员通常会询问智能体是否正确检测到了条件，以及响应是否及时。这两个问题之间的缺口——通知缺口本身——往往未被检视，因为它属于双方都没有明确归属权的基础设施。</p>
+
+        <h2>物理世界照护交叉点</h2>
+        <p>物理世界照护部署是通知缺口造成最直接伤害的领域。监控夜班的照护AI智能体可能在凌晨3点正确识别到居民呼吸模式的变化，生成标记为高优先级的警报，并将其发送到照护团队的呼叫系统。如果呼叫系统出现静默故障——消息队列过载、工作人员设备已关机、网络段在维护窗口期间断开——警报会在传输和接收之间消失。居民的状况继续恶化。智能体的审计跟踪记录了成功的检测和警报生成。运营记录显示没有收到警报，因此没有预期的响应。事件审查发现两个系统均在其规定参数内正常运行。由此产生的伤害没有被归因于任何系统故障，而是被归因于两者之间无法追责的缺口。</p>
+
+        <p>照护环境中的通知缺口并非罕见的边缘情况，而是将AI警报智能体部署到在此类智能体出现之前就已设计好的运营环境的可预见后果——这些环境的通知基础设施是为人工发起的警报而构建的，而非为持续的机器生成警报而构建。路由基础设施的设计没有考虑到AI智能体的交付保证，而这些智能体的问责框架的设计也没有将路由可靠性作为受治理的属性。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>监控物理系统的工业AI智能体以不同形式面临通知缺口。检测到关键系统异常并向维护控制台发送警报的硬件安全智能体已完成了其工作。但维护控制台并非始终有人值守。工业环境中的警报队列可能在高活动期间积累。使异常更有可能发生的同一维护事件，也可能将负责的技术人员引导离开了控制台。智能体的检测无可指摘，但路由——设计时未考虑到智能体检测灵敏度的运营节奏——是一个静默的故障点。当问责审查跟随事件而来时，智能体的日志显示行为正确，路由故障从沉默中被重建。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>密码基础设施智能体以不同的时间尺度提出通知缺口问题，但后果相当。检测到与"先收获后解密"侦察模式一致的异常的后量子密钥管理智能体，需要将信号传达给能够授权响应的人——密钥轮换、隔离决定、向安全运营团队上报。检测可能是正确的。如果警报路由经过的通知通道本身是被观察基础设施的一部分，或者如果安全运营团队正处于班次交接中，通知缺口就是真实存在的，并且可能可被利用。足够精密地探测后量子密码基础设施的对手，也足够精密地将其侦察时间安排在通知链的运营缺口期间。</p>
+
+        <h2>治理这一缺口</h2>
+        <p>弥合通知缺口需要将警报生成与确认的人类接收之间的路由链视为问责架构的受治理组件，而非背景运营基础设施。这意味着：将交付确认要求内置于警报协议中，而不是假设它已存在；将通知链的端到端测试作为智能体认证的组成部分，而不仅仅是检测逻辑；为路由层明确分配问责归属，使缺口有所有者而非落入机制之间；以及事后审查流程应检查从检测到确认响应的完整链条，而不仅仅是孤立地审查智能体的行为。</p>
+
+        <p>在Asaptic Labs，我们将通知交付视为每个AI智能体价值依赖于人类能够对智能体所知采取行动的交叉点的首要问责属性。一个正确检测并向中断的链条发送通知的智能体，并未完成其问责义务，它只完成了容易审计的部分。难以审计的部分——警报是否到达了能够采取行动的人，以及是否及时到达——正是缺口所在。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>AI智能体问责框架在警报生成处划定边界：智能体的工作是检测和标记；标记之后的事情是运营事务。当警报与响应之间的路由链不受治理时，这一边界就成了责任所在。通知缺口——正确生成的警报与确认的人类响应之间的距离——在结构上是不可见的，因为它存在于智能体的问责机制与组织的运营问责机制之间。在物理世界照护、硬件安全和密码基础设施背景下，这一缺口可能产生无法归因于任何系统故障的伤害。治理这一缺口需要将交付确认作为问责架构的首要属性，而非背景假设。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>AI智能體的問責架構在警報生成的節點劃定了清晰的邊界。智能體的職責是偵測條件並發出訊號。訊號發出之後的事情——如何路由、誰接收、是否響應、響應速度——被視為屬於人類組織的運營事務，而非屬於智能體的技術事務。這一邊界在原則上是合理的。但當警報與響應之間的路由鏈本身不受問責治理約束時，這一邊界在實踐中就成了一項責任。</p>
+
+        <p>請考慮AI智能體的警報產生有效人類響應所需的完整鏈條。智能體生成警報。警報通過基礎設施層傳輸——網絡、訊息代理、呼叫系統、設備通知通道。警報到達預期接收者使用的設備或界面。接收者可用、清醒並且關注該設備。接收者理解警報。接收者擁有採取行動的權限、工具和物理位置。如果這條鏈中的任何一個環節失效，智能體的成功偵測就毫無價值。其結果與偵測失敗無法區分。但問責記錄則不然：它顯示智能體正常運行，而路由鏈——在智能體的審計跟蹤中不可見——悄無聲息地丟失了本應隨之而來的響應。</p>
+
+        <h2>為什麼這一缺口在結構上不可見</h2>
+        <p>通知缺口往往對問責審查不可見，原因是可以預見的：這一缺口存在於兩種問責機制的接縫處。AI智能體的問責架構涵蓋智能體的行為——偵測邏輯、訊號處理、警報生成、日誌記錄。組織的運營問責覆蓋人類的行為——人員配置、響應程序、升級鏈。兩種機制對兩者之間的傳遞路徑都沒有自然的歸屬權。技術基礎設施承載警報，運營系統依賴接收它，但兩者都不會仔細檢查交接是否真正完成。在不良事件發生後，調查人員通常會詢問智能體是否正確偵測到了條件，以及響應是否及時。這兩個問題之間的缺口——通知缺口本身——往往未被審視，因為它屬於雙方都沒有明確歸屬權的基礎設施。</p>
+
+        <h2>物理世界照護交叉點</h2>
+        <p>物理世界照護部署是通知缺口造成最直接傷害的領域。監控夜班的照護AI智能體可能在凌晨3點正確識別到居民呼吸模式的變化，生成標記為高優先級的警報，並將其發送到照護團隊的呼叫系統。如果呼叫系統出現靜默故障——訊息隊列過載、工作人員設備已關機、網絡段在維護窗口期間斷開——警報會在傳輸和接收之間消失。居民的狀況繼續惡化。智能體的審計跟蹤記錄了成功的偵測和警報生成。運營記錄顯示沒有收到警報，因此沒有預期的響應。事件審查發現兩個系統均在其規定參數內正常運行。由此產生的傷害沒有被歸因於任何系統故障，而是被歸因於兩者之間無法追責的缺口。</p>
+
+        <p>照護環境中的通知缺口並非罕見的邊緣情況，而是將AI警報智能體部署到在此類智能體出現之前就已設計好的運營環境的可預見後果——這些環境的通知基礎設施是為人工發起的警報而構建的，而非為持續的機器生成警報而構建。路由基礎設施的設計沒有考慮到AI智能體的交付保證，而這些智能體的問責框架的設計也沒有將路由可靠性作為受治理的屬性。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>監控物理系統的工業AI智能體以不同形式面臨通知缺口。偵測到關鍵系統異常並向維護控制台發送警報的硬件安全智能體已完成了其工作。但維護控制台並非始終有人值守。工業環境中的警報隊列可能在高活動期間積累。使異常更有可能發生的同一維護事件，也可能將負責的技術人員引導離開了控制台。智能體的偵測無可指摘，但路由——設計時未考慮到智能體偵測靈敏度的運營節奏——是一個靜默的故障點。當問責審查跟隨事件而來時，智能體的日誌顯示行為正確，路由故障從沉默中被重建。</p>
+
+        <h2>後量子安全交叉點</h2>
+        <p>密碼基礎設施智能體以不同的時間尺度提出通知缺口問題，但後果相當。偵測到與「先收穫後解密」偵察模式一致的異常的後量子密鑰管理智能體，需要將訊號傳達給能夠授權響應的人——密鑰輪換、隔離決定、向安全運營團隊上報。偵測可能是正確的。如果警報路由經過的通知通道本身是被觀察基礎設施的一部分，或者如果安全運營團隊正處於班次交接中，通知缺口就是真實存在的，並且可能可被利用。足夠精密地探測後量子密碼基礎設施的對手，也足夠精密地將其偵察時間安排在通知鏈的運營缺口期間。</p>
+
+        <h2>治理這一缺口</h2>
+        <p>彌合通知缺口需要將警報生成與確認的人類接收之間的路由鏈視為問責架構的受治理組件，而非背景運營基礎設施。這意味著：將交付確認要求內置於警報協議中，而不是假設它已存在；將通知鏈的端到端測試作為智能體認證的組成部分，而不僅僅是偵測邏輯；為路由層明確分配問責歸屬，使缺口有所有者而非落入機制之間；以及事後審查流程應檢查從偵測到確認響應的完整鏈條，而不僅僅是孤立地審查智能體的行為。</p>
+
+        <p>在Asaptic Labs，我們將通知交付視為每個AI智能體價值依賴於人類能夠對智能體所知採取行動的交叉點的首要問責屬性。一個正確偵測並向中斷的鏈條發送通知的智能體，並未完成其問責義務，它只完成了容易審計的部分。難以審計的部分——警報是否到達了能夠採取行動的人，以及是否及時到達——正是缺口所在。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>AI智能體問責框架在警報生成處劃定邊界：智能體的工作是偵測和標記；標記之後的事情是運營事務。當警報與響應之間的路由鏈不受治理時，這一邊界就成了責任所在。通知缺口——正確生成的警報與確認的人類響應之間的距離——在結構上是不可見的，因為它存在於智能體的問責機制與組織的運營問責機制之間。在物理世界照護、硬件安全和密碼基礎設施背景下，這一缺口可能產生無法歸因於任何系統故障的傷害。治理這一缺口需要將交付確認作為問責架構的首要屬性，而非背景假設。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-12</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
