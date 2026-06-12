@@ -1,3 +1,4 @@
+2026-06-12 08:15 UTC · blog: add essay 'The graduated autonomy problem' — accountability when AI agent scope expands without commensurate accountability architecture expansion (EN+ZH+ZH-HK, firewall clean) · a808f5a
 2026-06-11 20:07 UTC · blog: add essay 'The hallucination accountability gap' — accountability when AI agents act on confidently stated false information in physical-world contexts (EN+ZH+ZH-HK, firewall clean) · 56f548e
 2026-06-11 20:00 UTC · blog: add essay 'The shared-space authority problem' — accountability when AI agents from different principal hierarchies occupy the same physical environment (EN+ZH+ZH-HK, firewall clean) · 03da6e4
 2026-06-11 16:00 UTC · blog: add essay 'The velocity authority problem' + fix missing moral-hazard index entries (EN+ZH+ZH-HK, firewall clean) · 586e221
