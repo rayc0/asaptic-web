@@ -85,11 +85,17 @@ function hero({ data, rows, lang }) {
         zh: "已发布经审校来源矩阵。",
         zht: "已發布經審校來源矩陣。"
       }
-    : {
-        en: label("heroBetaStatus", "en"),
-        zh: label("heroBetaStatus", "zh"),
-        zht: label("heroBetaStatus", "zht")
-      };
+    : data.ai_published
+      ? {
+          en: "AI-compiled from official public sources — cross-checked by multiple AI models, not human-verified. Informational only; see disclaimer.",
+          zh: "由 AI 依据公开官方来源整理、并经多个 AI 模型交叉核对，未经人工审核。仅供信息参考，详见免责声明。",
+          zht: "由 AI 依據公開官方來源整理、並經多個 AI 模型交叉核對，未經人工審核。僅供資訊參考，詳見免責聲明。"
+        }
+      : {
+          en: label("heroBetaStatus", "en"),
+          zh: label("heroBetaStatus", "zh"),
+          zht: label("heroBetaStatus", "zht")
+        };
 
   return `<section class="hero standard-hero" id="top">
       <div class="hero-bg"></div>
