@@ -138,3 +138,4 @@
 2026-06-11 12:00 UTC · blog: add essay 'The moral hazard problem' — accountability when AI safety systems reduce the vigilance they were designed to support (EN+ZH+ZH-HK) · 1f95719
 2026-06-12 00:00 UTC · blog: add essay 'The post-incident modification problem' — accountability when operational response destroys incident evidence (EN+ZH+ZH-HK) + blog index ZH/ZHT parity fix · 0696829
 2026-06-12 04:14 UTC · blog: add essay 'The third-party accountability gap' — accountability when AI agents cause harm to people outside their authorization chain (EN+ZH+ZH-HK) · 5a6f63c
+2026-06-12 16:15 UTC · blog: add essay 'The notification gap problem' — accountability when AI agents detect correctly but alerts fail to reach the people who can act (EN+ZH+ZH-HK) · 26d6817
