@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The operational-envelope problem — Asaptic Labs</title>
+
+  <meta name="description" content="Certified operating envelopes are static documents. Real conditions vary continuously. Accountability for AI agents at the edge of their limits requires more than a binary in/out determination." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/operational-envelope-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The operational-envelope problem" />
+  <meta property="og:description" content="Certified operating envelopes are static documents. Real conditions vary continuously. Accountability for AI agents at the edge of their limits requires more than a binary in/out determination." />
+  <meta property="og:url" content="https://asaptic.com/blog/operational-envelope-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-12" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The operational-envelope problem: accountability when an AI agent must decide at the edge of its certified operating limits",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-12",
+    "description": "Certified operating envelopes are static documents. Real conditions vary continuously. Accountability for AI agents at the edge of their limits requires more than a binary in/out determination.",
+    "url": "https://asaptic.com/blog/operational-envelope-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      line-height: 1.8;
+      color: var(--fg);
+      margin-bottom: 24px;
+    }
+    .essay-summary {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 32px;
+      margin-top: 48px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× HARDWARE · × PHYSICAL-WORLD CARE · × POST-QUANTUM SECURITY</span>
+      <h1 class="essay-title">The operational-envelope problem: accountability when an AI agent must decide at the edge of its certified operating limits</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-06-12</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Every autonomous system deployed in the physical world carries a certified operating envelope — a bounded set of conditions under which the system has been shown to perform reliably. For an aerial vehicle, the envelope might specify maximum wind speed, minimum visibility, temperature range, and payload limits. For a marine vessel, it covers sea state, current, and proximity to navigation hazards. For a ground robot working alongside people, it includes floor grade, lighting, obstacle density, and the bounds of its trained sensor domain. The envelope is the accountability contract between the designer and the operator: operate here, and the system's behaviour is well-characterised.</p>
+        <p>The problem is that envelopes are static documents written at design time. Conditions in the world are continuous and degrading. When an autonomous system is operating in conditions that are deteriorating toward its certified limits — wind speed rising, visibility falling, battery reserve dropping — at some point the system must decide whether to proceed or abort. That decision is never cleanly inside or outside the envelope. It is always a judgment about proximity to the limit, made under uncertainty, by a system whose sensor readings become less reliable precisely as the conditions approach the boundary.</p>
+        <p>This is where the accountability gap opens. If the system proceeds and something goes wrong, the post-incident investigation will ask: was the system operating within its certified envelope at the time of the event? That question sounds answerable. It is not. The envelope specifies limits in terms of physical parameters — wind speed in m/s, visibility in metres — but the system's knowledge of those parameters comes through sensors with their own uncertainty bounds, which grow at the envelope edge. The wind anemometer reading that showed 14 m/s when the limit was 15 m/s does not tell you whether the actual wind speed was 13 m/s or 16 m/s. The system was inside the certified limit by one reading. Whether it was inside the actual condition depends on a question the audit trail cannot answer.</p>
+        <p>The gap has a second dimension. Even when the sensor reading is accurate, the relevant question is not "was this reading inside the envelope?" but "what did the system know about its proximity to the limit, and what weight did it give that proximity in its proceed/abort decision?" A system that proceeds at 14.9 m/s when the limit is 15 m/s is making a different decision than one that proceeds at 10 m/s with the same reading. The first is gambling on the sensor's accuracy at the worst possible moment. The second has margin to spare. If both systems are certified to the same envelope, and both carry audit logs showing they were within the limit when they departed, nothing in that record distinguishes them.</p>
+        <p>The post-quantum security crossing makes this harder. The environmental sensor data that feeds the go/no-go decision — wind readings, position fixes, depth soundings — travels through communication paths whose integrity cannot be taken for granted. A sensor node that transmits manipulated readings, placing the system inside the envelope when it is actually outside, is a different failure mode from a mechanical limit exceedance, and it produces a different accountability problem. The manipulated reading creates a clean audit trail: the system saw 14 m/s, decided to proceed, and was within certified limits. The forensic question of whether those readings were authentic requires a chain of custody for sensor data that almost no current autonomous system maintains. Signed, timestamped sensor attestations — the hardware security crossing — are the primitive that makes the audit trail meaningful. Without them, the envelope record documents what the system was told about conditions, not what conditions actually were.</p>
+        <p>The human-override path does not close the gap. Envelope-limit decisions are precisely the cases where operators are most likely to be consulted. But the human making the proceed/abort call is working from the same sensor readings, the same weather forecast, the same uncertainty estimate as the autonomous system. Adding a human to the chain changes who makes the decision; it does not improve the underlying epistemic situation. What it does change — critically — is who carries the accountability. A system that proceeds autonomously near its limits and fails has a design accountability question. A system that presents the limit condition to a human operator who authorises proceed, then fails, has converted a design question into an operational judgment question. These are not equivalent, and the difference matters enormously in post-incident proceedings.</p>
+        <p>The structural implication is that envelope accountability cannot rest on a binary within/outside determination. It requires continuous proximity logging: at each decision point, what was the system's estimated distance to each envelope parameter, what was the uncertainty on that estimate, and how did that uncertainty enter the proceed/abort calculation? Systems that log only the raw sensor reading create a record that can say "within limits" when the more honest answer is "within reading, with uncertainty that puts the actual condition outside limits with non-trivial probability." That distinction is where physical-world AI accountability will be litigated as autonomous systems scale — not in the clear cases of obvious limit exceedance, but in the gradient zone where the certified envelope and the real envelope diverge.</p>
+        <p>The accountable autonomous system is not the one that never exceeds its envelope. It is the one whose record can show, at every moment of decision near the edge, exactly what it knew, exactly how confident it was, and exactly how that knowledge entered the decision. That level of logging is a design requirement, not a post-incident enhancement. By the time conditions have degraded past the limit, it is too late to instrument the go/no-go reasoning that mattered.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>每个物理世界中的自主系统都有一个认证运行包线——一套已证明其可靠运行的条件边界。然而包线是设计阶段的静态文件，真实条件是连续变化的。当系统在接近认证极限的条件下运行时，必须作出继续执行或中止的判断——而这一判断恰恰发生于传感器不确定性最高的时刻。问责缺口在于：事故后调查通常只问"系统是否在包线内"，而非"系统对自身与极限距离的估计是什么，不确定性如何"。传感器数据的完整性验证（后量子签名）是解决这一问题的基础原语；持续的邻近度日志记录——而非仅记录原始读数——是有意义审计追踪的必要设计要求。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>每個物理世界中的自主系統都有一個認證運行包線——一套已證明其可靠運行的條件邊界。然而包線是設計階段的靜態文件，真實條件是連續變化的。當系統在接近認證極限的條件下運行時，必須作出繼續執行或中止的判斷——而這一判斷恰恰發生於感測器不確定性最高的時刻。問責缺口在於：事故後調查通常只問「系統是否在包線內」，而非「系統對自身與極限距離的估計是什麼，不確定性如何」。感測器資料的完整性驗證（後量子簽章）是解決這一問題的基礎原語；持續的鄰近度日誌記錄——而非僅記錄原始讀數——是有意義審計追蹤的必要設計要求。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/">&larr; All essays</a>
+        <a href="/blog/notification-gap-problem.html">Next: Notification gap →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 硬件 · × 物理世界照护 · × 后量子安全</span>
+      <h1 class="essay-title">运行包线问题：当AI智能体必须在认证运行极限边缘作出决策时的问责</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-12</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>每个部署于物理世界的自主系统，都带有一份认证运行包线——一套已证明系统可靠运行的有界条件集合。对于无人机，包线可能规定最大风速、最低能见度、温度范围和载荷限制；对于无人船，它涵盖海况、流速和与航行障碍的安全距离；对于与人协同工作的地面机器人，则包括地面坡度、照明条件、障碍密度以及其训练传感域的边界。包线是设计方与运营方之间的问责契约：在此范围内运行，系统的行为即得到充分描述。</p>
+        <p>问题在于，包线是设计阶段写就的静态文件，而世界中的条件是连续且可能持续恶化的。当自主系统在条件向认证极限劣化的环境中运行时——风速上升、能见度下降、电量储备减少——系统在某一时刻必须决定是继续执行还是中止任务。这一决定从来不是干净的"在包线内"或"在包线外"的二元判断。它始终是一种关于与极限距离的判断，在不确定性下作出，而系统的传感器读数恰恰在条件接近边界时变得最不可靠。</p>
+        <p>这正是问责缺口开启之处。如果系统继续运行并发生事故，事后调查将询问：事件发生时系统是否在其认证包线内运行？这个问题听起来可以回答，实则不然。包线以物理参数定义极限——风速以米每秒计、能见度以米计——但系统对这些参数的感知来自具有自身不确定性的传感器，而这种不确定性在包线边缘正急剧增大。当极限为15 m/s时，风速计读数14 m/s并不能告知实际风速究竟是13 m/s还是16 m/s。系统的读数在认证极限内，但实际条件是否也在极限内，则是审计追踪无法回答的问题。</p>
+        <p>这一缺口还有第二个维度。即便传感器读数准确，关键问题也不是"此读数是否在包线内"，而是"系统对自身与极限距离的了解是什么，以及这种了解在继续/中止决策中的权重如何"。在极限为15 m/s时以14.9 m/s继续运行的系统，与在同一读数下以10 m/s继续运行的系统，作出的是完全不同的决策。前者在最糟糕的时刻赌注于传感器的精度；后者则有足够的余量。如果两个系统持有相同的包线认证，且审计日志均显示出发时在极限内，这份记录对二者毫无区分。</p>
+        <p>在问责记录层面，所需的是持续的邻近度日志记录：在每个决策时刻，系统对各包线参数的估计距离是多少，该估计的不确定性是多少，这种不确定性如何进入继续/中止的计算？仅记录原始传感器读数的系统，创造的是一份可以说"在极限内"的记录，而更诚实的答案应是"在读数内，但实际条件以不可忽视的概率超出极限"。</p>
+        <p>可信赖的自主系统，不是从不超越包线的系统，而是其记录能够在每一个接近边缘的决策时刻清晰呈现：系统当时了解什么、确定程度如何、以及这些信息如何进入决策过程。这种层次的日志记录是设计要求，而非事后改进——等到条件劣化超过极限，已为时晚矣。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/notification-gap-problem.html">下一篇：通知缺口 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 硬件 · × 物理世界照護 · × 後量子安全</span>
+      <h1 class="essay-title">運行包線問題：當AI智能體必須在認證運行極限邊緣作出決策時的問責</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-12</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>每個部署於物理世界的自主系統，都帶有一份認證運行包線——一套已證明系統可靠運行的有界條件集合。對於無人機，包線可能規定最大風速、最低能見度、溫度範圍和載荷限制；對於無人船，它涵蓋海況、流速和與航行障礙的安全距離；對於與人協同工作的地面機器人，則包括地面坡度、照明條件、障礙密度以及其訓練感測域的邊界。包線是設計方與營運方之間的問責契約：在此範圍內運行，系統的行為即得到充分描述。</p>
+        <p>問題在於，包線是設計階段寫就的靜態文件，而世界中的條件是連續且可能持續劣化的。當自主系統在條件向認證極限劣化的環境中運行時——風速上升、能見度下降、電量儲備減少——系統在某一時刻必須決定是繼續執行還是中止任務。這一決定從來不是乾淨的「在包線內」或「在包線外」的二元判斷。它始終是一種關於與極限距離的判斷，在不確定性下作出，而系統的感測器讀數恰恰在條件接近邊界時變得最不可靠。</p>
+        <p>這正是問責缺口開啟之處。如果系統繼續運行並發生事故，事後調查將詢問：事件發生時系統是否在其認證包線內運行？這個問題聽起來可以回答，實則不然。包線以物理參數定義極限——風速以米每秒計、能見度以米計——但系統對這些參數的感知來自具有自身不確定性的感測器，而這種不確定性在包線邊緣正急劇增大。當極限為15 m/s時，風速計讀數14 m/s並不能告知實際風速究竟是13 m/s還是16 m/s。系統的讀數在認證極限內，但實際條件是否也在極限內，則是審計追蹤無法回答的問題。</p>
+        <p>這一缺口還有第二個維度。即便感測器讀數準確，關鍵問題也不是「此讀數是否在包線內」，而是「系統對自身與極限距離的了解是什麼，以及這種了解在繼續/中止決策中的權重如何」。在極限為15 m/s時以14.9 m/s繼續運行的系統，與在同一讀數下以10 m/s繼續運行的系統，作出的是完全不同的決策。前者在最糟糕的時刻賭注於感測器的精度；後者則有足夠的餘量。如果兩個系統持有相同的包線認證，且審計日誌均顯示出發時在極限內，這份記錄對二者毫無區分。</p>
+        <p>在問責記錄層面，所需的是持續的鄰近度日誌記錄：在每個決策時刻，系統對各包線參數的估計距離是多少，該估計的不確定性是多少，這種不確定性如何進入繼續/中止的計算？僅記錄原始感測器讀數的系統，創造的是一份可以說「在極限內」的記錄，而更誠實的答案應是「在讀數內，但實際條件以不可忽視的概率超出極限」。</p>
+        <p>可信賴的自主系統，不是從不超越包線的系統，而是其記錄能夠在每一個接近邊緣的決策時刻清晰呈現：系統當時了解什麼、確定程度如何、以及這些資訊如何進入決策過程。這種層次的日誌記錄是設計要求，而非事後改進——等到條件劣化超過極限，已為時晚矣。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/">&larr; 全部文章</a>
+        <a href="/blog/notification-gap-problem.html">下一篇：通知缺口 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
