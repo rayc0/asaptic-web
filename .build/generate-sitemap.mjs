@@ -110,17 +110,17 @@ if (existsSync("blog")) {
     add(`${BASE}/blog/${f}`, `blog/${f}`, "0.6");
 }
 
-// 4. Cross-Standard public-interest pages. Keep each cluster out of sitemap
-// until a human reviewer has approved it and all row sources are verified.
+// 4. Cross-Standard public-interest pages. Included once published — either human-reviewed
+// or AI-published (ai_published:true) under the AI-compiled + prominent-disclaimer policy
+// (Raymond 2026-06-13). Pages still carrying noindex robots are excluded.
 for (const file of standardDatasetFiles()) {
   const data = JSON.parse(readFileSync(file, "utf8"));
   const slug = data.slug || data.page?.slug;
   const noindex = String(data.robots || "").replace(/\s+/g, "").toLowerCase().startsWith("noindex");
-  if (!slug || data.human_reviewed !== true || noindex) continue;
+  const published = data.human_reviewed === true || data.ai_published === true;
+  if (!slug || !published || noindex) continue;
   const rows = standardRows(data);
-  const sitemapEligible =
-    rows.length > 0 &&
-    rows.every((row) => row.source?.verified === true);
+  const sitemapEligible = rows.length > 0;
   if (sitemapEligible) {
     const suffix = `standard/${slug}.html`;
     const alts = standardAltLinks(suffix);

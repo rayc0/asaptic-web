@@ -7,10 +7,13 @@ export function head({ data, lang, locale, slug, rows, faq }) {
   const title = t(data.page.title, lang);
   const description = t(data.page.description, lang);
   const canonical = cleanStandardUrl({ site, locale, slug });
+  // Publication policy (Raymond 2026-06-13): pages publish under an AI-compiled +
+  // prominent-disclaimer policy via `ai_published`, OR after human review. verified:false /
+  // human_reviewed:false are kept as honest provenance (the disclaimer states AI-compiled).
   const robots =
-    data.human_reviewed === false || rows.some((row) => row.source?.verified === false)
-      ? "noindex, follow"
-      : data.robots || "index, follow";
+    data.human_reviewed === true || data.ai_published === true
+      ? data.robots || "index, follow"
+      : "noindex, follow";
 
   return `<head>
   <meta charset="UTF-8" />

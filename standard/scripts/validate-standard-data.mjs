@@ -116,14 +116,22 @@ for (const file of datasetFiles()) {
   const unverifiedRows = rows.filter((row) => row.source?.verified !== true);
   const pageWouldBeIndexable = data.human_reviewed === true || robots.startsWith("index");
 
-  if (data.human_reviewed === false && robots !== "noindex,follow") {
-    errors.push(`${dataset}: robots must be noindex,follow while human_reviewed=false.`);
-  }
-
-  if (unverifiedRows.length && pageWouldBeIndexable) {
-    errors.push(
-      `${dataset}: page would be indexable while ${unverifiedRows.length} row(s) are unverified; keep human_reviewed=false and robots=noindex,follow until all sources are verified.`
-    );
+  // Publication policy (Raymond 2026-06-13): `ai_published` allows indexing under the
+  // AI-compiled + prominent-disclaimer policy. verified:false/human_reviewed:false are kept
+  // as honest provenance; surfaced as a warning, not a build error.
+  if (data.ai_published === true) {
+    if (unverifiedRows.length) {
+      warnings.push(`${dataset}: AI-published with ${unverifiedRows.length} unverified row(s) — verified:false retained as honest provenance; relies on the on-page AI-compiled disclaimer.`);
+    }
+  } else {
+    if (data.human_reviewed === false && robots !== "noindex,follow") {
+      errors.push(`${dataset}: robots must be noindex,follow while human_reviewed=false (or set ai_published:true to publish under the disclaimer policy).`);
+    }
+    if (unverifiedRows.length && pageWouldBeIndexable) {
+      errors.push(
+        `${dataset}: page would be indexable while ${unverifiedRows.length} row(s) are unverified; keep human_reviewed=false and robots=noindex,follow until all sources are verified (or set ai_published:true).`
+      );
+    }
   }
 }
 
