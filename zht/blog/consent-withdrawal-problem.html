@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>同意撤回問題：當一個人在智能體已开始執行后改變主意 — Asaptic Labs</title>
+  <meta name="description" content="AI智能體系統通常将同意視為工作流啟動時的一次性閘門。當同意在工作流執行中途被撤回時，智能體可能無法收到信號、無法驗證其真實性，也沒有停止已在執行中的行動的架構機制。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/consent-withdrawal-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/consent-withdrawal-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/consent-withdrawal-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/consent-withdrawal-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/consent-withdrawal-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/consent-withdrawal-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="同意撤回問題：當一個人在智能體已开始執行后改變主意" />
+  <meta property="og:description" content="AI智能體系統通常将同意視為工作流啟動時的一次性閘門。同意撤回問題揭示了架構性缺口：沒有可靠的渠道将撤回信號推送给正在執行工作流的智能體，沒有密碼學保证信號真實性，也沒有架構來中斷已在執行的行動。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/consent-withdrawal-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "同意撤回問題：當一個人在智能體已开始執行后改變主意",
+      "description": "AI智能體系統通常将同意視為工作流啟動時的一次性閘門。當同意在工作流執行中途被撤回時，智能體可能無法收到信號、無法驗證其真實性，也沒有停止已在執行中的行動的架構機制。",
+      "url": "https://asaptic.com/zht/blog/consent-withdrawal-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/consent-withdrawal-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "description": "聯絡頁面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯絡"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "同意撤回問題", "item": "https://asaptic.com/zht/blog/consent-withdrawal-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:15px;line-height:1.65;color:var(--gray);margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">同意撤回問題：當一個人在智能體已开始執行后改變主意</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>AI智能體問責架構花费了大量精力關注註冊時的同意：谁授權了這個智能體，在何种範圍內，代表谁。設計完善的系統中存在的同意层，是工作流啟動時授權的表示——在智能體开始之前，記錄正確的人已经同意。這一层很重要。但它将同意視為閘門，而非持續條件。一旦閘門打开，智能體便繼續執行。同意撤回問題恰恰從閘門打开的那一刻开始。</p>
+
+        <p>人们會改變主意。情況會發生變化。今天早上同意AI輔助照護方案的患者，今天下午可能會撤回同意——因為臨床狀況發生了變化，因為家属提出了疑慮，或者只是因為重新考慮了。"同意即閘門"架構無法回答的問題是：當撤回發生時，信號如何到達已经处于工作流執行中的智能體，智能體收到信號后该怎麼辦？</p>
+
+        <h2>同意撤回失效的解剖</h2>
+        <p>一個AI智能體正在為長期照護機構的一位住戶管理多步骤照護協調工作流。上午10点，住戶的授權代理人審閱了照護計劃，并同意了當天預約的AI輔助調度和溝通。智能體开始執行：確認交通、通知現場臨床團隊、準備下午的用药計劃，并為住戶的專科醫生排队發送通訊。</p>
+
+        <p>下午1点30分，住戶代理人直接致電照護機構，口頭撤回了對當天剩餘AI管理計劃的同意。一名護理協調员在住戶記錄中記錄了這一撤回。執行下午工作流的智能體無法連接到该記錄。下午2点15分，它發送了排队中的给專科醫生的通訊——這些行動完全处于早上同意的範圍內，也完全超出了已撤回同意的範圍。智能體并沒有出故障，它在執行一個啟動時被授權的工作流，针對的是數小時前已经改變的同意狀態。</p>
+
+        <p>這一失效模式與惡意智能體或配置錯誤无关。它是同意建模方式的結構性缺口：同意被視為进入工作流的前提條件，而非工作流在整个執行過程中必须保持在其範圍內的持續授權狀態。</p>
+
+        <h2>信號傳遞問題</h2>
+        <p>最直接的挑戰是渠道：撤回信號如何到達正在運行的智能體？在當前大多数架構中，同意表示為數據庫中的一個標誌，在註冊時設置，在工作流啟動時讀取。沒有訂閱機制——沒有办法让智能體接收该標誌已更改的推送通知。智能體不會持續輪詢同意存储；它在啟動時讀取一次值，然后在緩存狀態下繼續執行，直到工作流完成或遇到明确的檢查點。</p>
+
+        <p>即使在定期輪詢同意狀態的系統中，輪詢間隔也會產生窗口期。如果智能體每五分鐘检查一次同意，而撤回在上次检查后四分鐘五十秒到達，智能體将在授權已被撤回的情況下繼續運行五秒钟。在物理世界照護中，錯誤時刻的五秒钟足以發送一條通訊、触發用药提醒或確認一次臨床預約——這些行動的後果比輪詢週期持續更長。</p>
+
+        <p>正確的架構是推送模型：同意撤回產生一個事件，该事件被傳遞给所有當前在该同意下執行工作流的智能體。這要求智能體具有狀態可達性——維護持久連接或消息隊列，同意基礎設施可以向其寫入。這與無狀態工作流執行是本質上不同的架構，而當前大多数系統并非如此構建。</p>
+
+        <h2>認證問題</h2>
+        <p>假設傳遞渠道存在，还有第二个問題：接收撤回信號的智能體必须能夠驗證该信號是真实的。虛假撤回——由希望破坏智能體運作的攻擊者注入——是偽裝成同意事件的拒絕服務攻擊。接受任何撤回信號而不進行密碼學驗證的智能體容易受到操縱。在采取行動之前要求驗證的智能體可能延遲足夠長的時間，使傷害無論如何都會發生。</p>
+
+        <p>處理授權授予的同一基礎設施需要處理撤回：帶簽名、帶時間戳、不可否認的信號，智能體可以在采取行動之前针對已知密鑰進行驗證。在后量子部署環境中，這些簽名必须使用能夠抵禦量子能力對手的算法生成和驗證。后量子驗證的計算開銷——在许多併發智能體實例的聚合下并非微不足道——意味著撤回信號密碼學的設計與智能體執行延遲預算的設計是不可分割的。</p>
+
+        <p>硬件信任根環境在特定方面有所帮助：智能體的硬件認證可以将同意狀態作為已認證執行上下文的一部分，這意味著任何试图注入非由合法同意機構生成的虛假撤回信號的嘗試都将透過認證检查失敗。但這要求從一开始就将同意基礎設施與硬件認證鏈集成——一個容易推遲但难以改造的設計選择。</p>
+
+        <h2>在途行動問題</h2>
+        <p>即使有有效的傳遞渠道和经過驗證的認證，第三个問題依然存在：對于在同意撤回時刻與撤回信號到達時刻之間智能體已经分發的行動，该如何處理？這些行動并非因疏忽或錯誤而未经授權。它们是智能體在采取行動時被授權采取的行動，授權在其效果落地之前已经失效。</p>
+
+        <p>下午2点10分發送给專科醫生的通訊可能要到2点30分才會被讀取。下午2点12分發送的用药提醒在2点15分到達護理團隊。智能體在2点20分收到撤回信號并停止了。停止是正確的。但已分發的通訊繼續在世界中傳播并產生效果——安排了一次臨床通話，触發了一次照護行動——這些都是撤回同意的人未曾授權的。智能體在行動時采取了正確的行動。結果不是這個人會授權的。</p>
+
+        <p>這是同意撤回問題與回滾問題和交接問題交汇的地方。已经傳播到外部系統的行動無法透過停止智能體來召回。對于這些在途行動的問責問題确实很难：智能體在行動時在其授權範圍內行動；授權在效果落地之前失效；沒有任何一個參與者犯了錯誤。缺口是架構性的。</p>
+
+        <h2>将同意視為持續的授權狀態</h2>
+        <p>由此得出的設計原則與TOCTOU分析和撤銷分析得出的原則相同：授權不能被視為一次检查就假設永久存在的條件。具體而言，同意是一种具有持續表達的人類關係——不是簽署一次就永久有效的文件。在架構上，這意味著同意必须被建模為智能體執行上下文的流式屬性，而非工作流在初始化時透過的閘門。</p>
+
+        <p>在實踐中，這需要三件事。首先，具有推送能力的同意基礎設施：能夠生成撤回事件并以足夠短的延遲将其傳遞给正在運行的智能體，在相关部署域中"足夠短"意味著秒級，而非分鐘級。其次，可密碼學驗證的撤回信號，與覆蓋授權授予的同一認證鏈集成，以便智能體能夠在不引入无界驗證延遲的情況下區分真实撤回和對抗性干扰。第三，针對在途行動的明确處置策略：智能體必须在設計時知道，當撤回到達時已经分發的行動该如何處理——哪類行動可以召回，哪類不能，以及在任何一种情況下必须通知谁。</p>
+
+        <p>最重要的同意层不是在工作流啟動時記錄同意的那個，而是在工作流執行的每一個時刻追蹤同意是否仍然有效、并在同意不再有效時及時到達智能體以便采取行動的那個。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>AI智能體系統通常将同意視為工作流啟動時的一次性閘門：在正確的人同意之后，智能體开始執行，并在整个工作流期間按照初始授權狀態運行。同意撤回問題揭示了這一架構中的結構性缺口：當一個人在智能體已开始執行后改變主意，撤回信號如何到達正在運行中的智能體？智能體如何驗證该信號是真实的而非對抗性干扰？對于已在撤回到達前分發的行動又该如何處理？正確的設計原則是：将同意視為智能體執行狀態的持續屬性，而非入口检查——這需要推送式同意基礎設施、可驗證密碼學簽名的撤回信號，以及對在途行動的明确處理策略。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zht/blog/">&larr; 全部文章</a>
+        <a href="/zht/blog/consent-granularity-problem.html">同意粒度問題 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

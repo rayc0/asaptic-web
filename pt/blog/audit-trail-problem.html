@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da trilha de auditoria: registos à prova de adulteração são o piso, não o teto — Asaptic Labs</title>
+  <meta name="description" content="Quadros de responsabilização para agentes de IA assumem que existem logs, mas dizem quase nada sobre se esses logs são fiáveis. Registos resistentes a adulteração, enraizados em hardware e assinados para o mundo pós-quântico são o piso." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/audit-trail-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/audit-trail-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/audit-trail-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/audit-trail-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/audit-trail-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/audit-trail-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da trilha de auditoria: registos à prova de adulteração são o piso, não o teto" />
+  <meta property="og:description" content="Quadros de responsabilização para agentes de IA assumem que existem logs, mas dizem quase nada sobre se esses logs são fiáveis. Registos resistentes a adulteração, enraizados em hardware e assinados para o mundo pós-quântico são o piso." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/audit-trail-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema da trilha de auditoria: registos à prova de adulteração são o piso, não o teto",
+      "description": "Quadros de responsabilização para agentes de IA assumem que existem logs, mas dizem quase nada sobre se esses logs são fiáveis. Registos resistentes a adulteração, enraizados em hardware e assinados para o mundo pós-quântico são o piso.",
+      "url": "https://asaptic.com/pt/blog/audit-trail-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/audit-trail-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar a Asaptic sobre governação de IA",
+        "target": [
+          { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/mcp", "contentType": "application/json", "description": "MCP server, tool: submit_rfq" },
+          { "@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "Contactar a Asaptic Labs por e-mail" }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "pt",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema da trilha de auditoria", "item": "https://asaptic.com/pt/blog/audit-trail-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× SEGURANÇA QUÂNTICA × HARDWARE × CUIDADOS HUMANOS</span>
+      <h1 class="essay-title">O problema da trilha de auditoria: registos à prova de adulteração são o piso, não o teto</h1>
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 min de leitura</span></div>
+      <div class="essay-body">
+        <p>A linguagem da responsabilização na governação de agentes de IA está cheia de garantias sobre supervisão e revisão. Haverá logs. As ações serão registadas. Auditorias serão possíveis. Esta linguagem é necessária, mas não é suficiente. Diz-nos que existem registos. Diz quase nada sobre se esses registos podem ser confiados.</p>
+        <p>A suposição escondida na maioria dos quadros de responsabilização é que a existência de um log equivale à disponibilidade de evidência. Em circunstâncias normais, essa suposição é inofensiva. Em circunstâncias contestadas, falha. E as circunstâncias mais suscetíveis de contestação são exatamente aquelas em que a responsabilização mais importa.</p>
+        <h2>A lacuna de prova contra adulteração</h2>
+        <p>Um log só é útil na medida da sua integridade. Um agente que mantém registos das suas próprias ações não é o mesmo que um agente cujos registos não possam ser alterados depois do facto. A distinção importa porque a parte mais motivada para alterar uma trilha de auditoria, o operador que a implantou ou o próprio agente sob direção desse operador, é normalmente a parte que controla a infraestrutura onde o registo reside.</p>
+        <p>A lacuna de prova contra adulteração é a distância entre "existem registos" e "os registos podem ser verificados de forma independente". É aí que a responsabilização morre em silêncio. Uma trilha de auditoria numa base de dados controlada pelo operador dá visibilidade em casos normais e nada oferece em casos contestados.</p>
+        <h2>A dimensão pós-quântica</h2>
+        <p>A prática atual para prova contra adulteração depende de assinaturas criptográficas. Uma entrada de log é assinada com uma chave privada; qualquer alteração invalida a assinatura; a chave pública serve de âncora de verificação. Isto é sólido no modelo clássico de ameaça. Não é sólido no modelo pós-quântico.</p>
+        <p>Os registos que um agente acumula hoje podem ser contestados daqui a anos, num mundo em que adversários com capacidade quântica conseguem falsificar assinaturas digitais clássicas sobre dados históricos. Uma trilha assinada hoje com RSA ou ECDSA não é um instrumento fiável de responsabilização a longo prazo se esses registos ainda importarem daqui a uma década.</p>
+        <p>No cruzamento da segurança pós-quântica, isto é um requisito ativo de desenho. Um agente em ambientes regulados, infraestrutura de segurança, sistemas financeiros, registos de saúde, gera hoje registos que serão auditados em processos legais ou regulatórios com horizontes longos. Adiar a atualização de assinatura é aceitar registos não verificáveis.</p>
+        <h2>Hardware como âncora</h2>
+        <p>A forma mais forte disponível de registo resistente a adulteração enraíza os registos em hardware. Um módulo de segurança de hardware ou ambiente de execução confiável pode assinar entradas com uma chave que nunca sai da fronteira segura, que é atestada no fabrico e cuja cadeia de atestação pode ser verificada por qualquer parte com o certificado raiz.</p>
+        <p>Trilhas de auditoria enraizadas em hardware fazem três coisas que logs apenas em software não conseguem. Tornam a chave de assinatura comprovadamente separada do agente e do operador. Tornam o momento da assinatura verificável sem depender do relógio do sistema. E tornam o registo portátil: qualquer parte com o certificado de atestação pode verificar o registo sem confiar na infraestrutura de origem.</p>
+        <h2>O contexto dos cuidados: completude e acesso</h2>
+        <p>Para agentes que operam em cuidados no mundo físico, a integridade da trilha de auditoria não é uma preferência de engenharia. É condição de confiança para todos cuja vida o agente influencia: residentes, famílias, defensores nomeados, entidades de supervisão e reguladores que podem rever decisões meses ou anos depois.</p>
+        <p>O contexto dos cuidados revela dois requisitos além da prova contra adulteração. O primeiro é completude. Registar que um agente concluiu uma tarefa não é o mesmo que registar o que observou, que opções avaliou, o que recusou fazer e qual foi a base declarada da decisão.</p>
+        <p>O segundo requisito é acesso. Um registo à prova de adulteração que só o operador pode ler serve apenas o operador. Para agentes de cuidados, o registo de auditoria deve ser legível independentemente por pessoas sem relação com o operador: familiares com procuração, defensores de pacientes, inspetores designados.</p>
+        <h2>O que é necessário para fechar a lacuna</h2>
+        <p>Daqui decorrem três requisitos. Primeiro, registos de auditoria em domínios consequentes devem ser assinados na criação com algoritmos resistentes ao pós-quântico. Segundo, a chave de assinatura deve ser gerada e mantida em hardware, com uma cadeia de atestação independente do operador. Terceiro, em cuidados e outros domínios de alto risco, o formato do registo deve especificar conteúdo, não apenas existência.</p>
+        <p>Registos à prova de adulteração são o piso da responsabilização de agentes. A pergunta para o campo é quando deixamos de tratar o piso como teto.</p>
+      </div>
+      <div class="essay-summary"><span class="essay-summary-label">Resumo</span><p>Quadros de responsabilização assumem que a existência de logs equivale à disponibilidade de evidência. Não equivale: um log só é útil quando a sua integridade pode ser verificada independentemente. O requisito mínimo é assinatura resistente ao pós-quântico, chave enraizada em hardware e formato de registo suficientemente completo para auditoria real.</p></div>
+      <div class="essay-nav"><a href="/pt/blog/">&larr; Todos os artigos</a><a href="/pt/blog/specification-gap.html">Também: lacuna de especificação &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

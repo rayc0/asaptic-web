@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>法定人数问题 — Asaptic Labs</title>
+  <meta name="description" content="哪些决策足够重要，以至于单个AI智能体永远不应被允许单独行动？法定人数问题，是随之而来的架构命题。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/quorum-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/quorum-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/quorum-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/quorum-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/quorum-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/quorum-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="法定人数问题：单个AI智能体永远不应被允许单独行动的情形" />
+  <meta property="og:description" content="哪些决策足够重要，以至于单个AI智能体永远不应被允许单独行动？法定人数问题，是随之而来的架构命题。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/quorum-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "法定人数问题：单个AI智能体永远不应被允许单独行动的情形",
+      "description": "哪些决策足够重要，以至于单个AI智能体永远不应被允许单独行动？法定人数问题，是随之而来的架构命题。",
+      "url": "https://asaptic.com/zh/blog/quorum-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/quorum-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "法定人数问题", "item": "https://asaptic.com/zh/blog/quorum-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .essay-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+      margin-bottom: 56px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 40px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--gray-dim);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray);
+      transition: color 0.2s;
+    }
+    .essay-footer-back:hover { color: var(--accent); }
+    .page-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 博客</a>
+
+    <span class="essay-label">交叉点笔记 · 2026-06-14</span>
+    <h1 class="essay-title">法定人数问题</h1>
+    <p class="essay-subtitle">单个AI智能体永远不应被允许单独行动的情形</p>
+
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>5 分钟阅读</span>
+      <span>× 量子安全 × 硬件 × 人类照护</span>
+    </div>
+
+    <div class="essay-body">
+      <p>每个授权架构最终都会面临一个阈值问题：哪些决策足够重要，以至于单个智能体的判断不够充分？这个问题的答案定义了法定人数要求的起点。法定人数是独立权威的最低数量——智能体、系统或人工审查员——其一致同意是行动的前提条件。人类机构几个世纪以来已将这种逻辑应用于高风险决策：法院合议庭、委员会投票、双密钥授权。AI智能体部署的问题不是法定人数逻辑是否适用，而是如何在智能体以机器速度在分布式基础设施中行动的系统中实施它。</p>
+
+      <h2>单智能体授权缺口</h2>
+      <p>单个智能体授权高风险行动会产生单点问责失败。如果智能体被攻陷、出现故障或只是判断错误，行动就会在没有独立检查的情况下进行。这种失败模式不是理论上的——它与银行业双重保管规则所解决的失败模式相同，与高后果物理环境中两人完整性规则所解决的相同，与法律文书中联署要求所解决的相同。在所有这些情况下，对高后果的结构性回应不是更好的单一权威，而是至少两个独立权威，需要其同时同意才能继续。</p>
+
+      <p>AI智能体部署通常默认绕过这种逻辑。智能体被授权行动，它行动，之后重建问责。对于低风险、高频率的决策，这是正确的权衡。对于不可逆转的、影响当时无法同意的一方的、或超过定义后果阈值的决策，单智能体授权不是效率选择——它是结构性缺口。法定人数要求不损耗效率；它是与被授权行动的不可逆性相称的最低结构性回应。</p>
+
+      <h2>在后量子安全交叉点</h2>
+      <p>实施法定人数授权需要多重签名方案：每个参与权威对提议的行动产生密码签名，只有在积累了足够数量的有效签名后，行动才被执行。在必须在多年或数十年时间跨度内保持问责的系统中——物理基础设施、受监管护理或长周期工业部署的时间跨度——这些签名必须是抗量子的。NIST标准化的ML-DSA系列中的基于格的签名方案支持阈值变体，允许在没有集中式协调者的情况下实施法定人数逻辑，而集中式协调者本身会成为单点失败。</p>
+
+      <p>后量子要求对法定人数特别重要，因为法定人数产生的证据——授权行动上的一组签名——是可能需要在事后数年的审计、监管审查或法律程序中经受考验的问责记录。其签名对足够强大的对手易受攻击的法定人数方案产生的问责证据可能无法在其所治理系统的运营生命周期内存续。在决策时使用在系统全生命周期内保持有效的算法签名，不是对遥远威胁的对冲；它是法定人数记录保持有意义的条件。</p>
+
+      <h2>在硬件交叉点</h2>
+      <p>应用于硬件智能体的法定人数逻辑引入了物理约束：每个参与智能体必须在其投票有效之前可独立证明。如果三个智能体中的两个运行在同一个被攻陷的硬件堆栈上，三个智能体的法定人数与单个智能体没有实质差别。以硬件为根的证明——每个智能体提供其运行时环境的签名测量，根据法定人数协调者接受的信任根进行验证——将名义上分布的法定人数转变为真正独立的法定人数。</p>
+
+      <p>在嵌入式硬件上下文中，这产生了设计要求：对高后果驱动拥有权威的智能体必须被架构为法定人数参与者在单独的可信执行环境中运行，在单独的物理基底上，或具有单独的证明根。共享硬件平台上的软件冗余不满足独立性要求。无论名义上涉及多少软件组件，可以单独授权物理行动的智能体，或作为独立性未经证明的法定人数的一部分的智能体，在结构上等同于单个未验证的智能体。</p>
+
+      <h2>在物理世界照护交叉点</h2>
+      <p>物理世界照护呈现了法定人数要求不是可选的最具体案例。授权药物调整、更改紧急护理方案或抑制升级警报的智能体正在做出后果由一个人承担的决策，而这个人在那一刻无法验证智能体的推理或纠正其判断。智能体的委托人层级——部署它的组织、配置它的临床医生、批准其使用的监管机构——代替那个人对该决策负责。</p>
+
+      <p>护理情境中的法定人数要求不需要计算代价高昂的多方计算。阈值可以通过要求AI智能体、在不同数据上操作的独立规则安全检查以及超过定义后果阈值的决策的人工审查员之间的同时同意来实现。人工审查员是一个法定人数成员，不是唯一权威。结构效果才是重要的：没有单个智能体单独授权高后果行动，每次授权都产生一组可以在争议中重建的独立证明。</p>
+
+      <p>特定于护理的设计问题是在哪里设置阈值。太低，每个常规决策都会触发护理工作流无法吸收且审查员会绕过的法定人数开销。太高，重要决策作为常规通过。校准阈值需要明确参与部署的后果配置——哪些决策是不可逆的，哪些影响无法实时同意的人，哪些产生法定人数记录需要解决的责任。该校准本身是一个问责行为，独立于法定人数系统的工程，不能推迟到运行时或被视为智能体自行设置的参数。</p>
+
+      <h2>法定人数不解决什么</h2>
+      <p>共享训练谱系、配置源或部署环境的智能体法定人数可能在重要的失败模式上完全相关。如果三个智能体都因共享微调数据集而表现出相同的系统性偏见，它们对有偏见行动的一致同意不是正确性的证据——它是相关失败的证据。真正的法定人数独立性要求每个参与者可用的错误来源不相同。对于AI智能体来说，这比硬件系统更难保证，在硬件系统中可以验证物理独立性。智能体的法定人数架构必须将训练相关性、提示相关性和共享上下文作为可以破坏表面独立性的失败模式来考虑。</p>
+
+      <p>这不是反对法定人数要求的论点——而是支持在明确关注参与者独立性的情况下设计它们的论点。由独立训练的模型组成、在独立收集的输入上操作、具有独立证明的执行环境、产生独立可验证签名的法定人数，是比单智能体授权实质上更强的问责结构。正确构建它也实质上更昂贵。正确构建它的成本与它旨在防止的后果成本成正比——这正是问责基础设施值得投资的条件。</p>
+    </div>
+
+    <div class="essay-summary">
+      <span class="essay-summary-label">摘要</span>
+      <p>法定人数问题是哪些AI智能体决策足够重要以至于在执行前需要独立同意的问题。单智能体授权产生单点问责失败；法定人数要求——来自双重保管、两人完整性和联署逻辑——是相称的结构性回应。在后量子安全交叉点，法定人数签名必须使用抗量子算法，以便问责记录在系统的完整运营生命周期内存续。在硬件交叉点，每个法定人数参与者必须独立证明——共享硬件上的软件冗余不满足独立性。在物理世界照护中，阈值必须根据部署的后果配置校准，该校准本身是问责行为。真正的法定人数独立性还需要关注相关失败模式：共享训练、配置或上下文的智能体可能在不起帮助作用的方式上一致。</p>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zh/blog/" class="essay-footer-back">&larr; 所有笔记</a>
+    </div>
+  </main>
+
+  <footer class="page-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>歸因窗口問題：時間抹去因果線索時的問責機制 — Asaptic Labs</title>
+  <meta name="description" content="在決策與傷害之間，數月流逝。證據降解，情境改變，其他干預發生。当傷害最終顯現時，將其與原始AI智能體決策相連接的因果線索可能已細如蛛絲，難以追溯。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/attribution-window-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/attribution-window-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/attribution-window-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/attribution-window-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/attribution-window-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/attribution-window-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="歸因窗口問題：時間抹去因果線索時的問責機制" />
+  <meta property="og:description" content="在決策與傷害之間，數月流逝。證據降解，情境改變，其他干預發生。当傷害最終顯現時，將其與原始AI智能體決策相連接的因果線索可能已細如蛛絲，難以追溯。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/attribution-window-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "歸因窗口問題：時間抹去因果線索時的問責機制",
+      "description": "在決策與傷害之間，數月流逝。證據降解，情境改變，其他干預發生。当傷害最終顯現時，將其與原始AI智能體決策相連接的因果線索可能已細如蛛絲，難以追溯。",
+      "url": "https://asaptic.com/zht/blog/attribution-window-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/attribution-window-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯繫 Asaptic 了解 AI 治理",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯繫 Asaptic Labs"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "歸因窗口問題", "item": "https://asaptic.com/zht/blog/attribution-window-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 後量子 &nbsp;×&nbsp; 硬件 &nbsp;×&nbsp; 物理世界照護</span>
+      <h1 class="essay-title">歸因窗口問題：時間抹去因果線索時的問責機制</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>醫療決策随時間展開。一個在三月调整了用藥劑量的照護AI，可能已經啟动了九月才顯現的不良後果。一個在某季度接受了異常校準讀數的硬件智能體，可能讓傳感器漂移積累，三個季度後觸發臨床警報。一個今天批准了密碼學參數集的密鑰管理智能體，可能創造了一個弱點，当两年後外部威脅環境改變時才變得可被利用。</p>
+
+        <p>在每種情况下，因果鏈都是真實的。AI智能體的決策對結果有所貢獻。但決策與傷害之間的聯繫被時間分隔開來——而從證據意义上說，時間具有腐蝕性。證據降解。系統被更新。其他干預發生。当傷害最終顯現時，做出原始決策時的條件可能已無從恢復。</p>
+
+        <h2>歸因窗口是甚麼</h2>
+        <p>歸因窗口是AI智能體的決策與该決策所促成的傷害之間的時間間隔——在這段時間里，因果線索可能被降解、遮蔽或切斷。它由两種不對稱性界定。AI智能體的決策是瞬時的、機器精確的：在特定時間戳、特定上下文中的特定參數。從该決策到傷害的因果路徑是時間性的、有中介的：它穿越其他系統、其他智能體、其他干預，以及在這段時間里已經發生變化的世界。</p>
+
+        <p>標準的問責假設是，決策可以事後評估。歸因窗口問題挑戰了這一假設。当因果路徑足夠长、中間變化足夠多時，事後評估可能在技術上不可行——不是因為記錄丟失，而是因為留存的記錄不再包含足夠的資訊來重建任何單一決策的因果貢獻。</p>
+
+        <h2>在後量子交叉点</h2>
+        <p>後量子遷移引入了多年的實施時間線，在此期間，今天做出的參數選擇將在威脅環境發生重大變化後很久仍處於生產環境中。当密鑰管理智能體現在選擇密碼參數時，其所處的威脅格局將在這些密鑰退役之前發生實質性變化。如果參數選擇事後被證明是錯誤的——因為新的密碼分析結果收窄了假設的安全邊際，或因為硬件進步使理論攻擊變得可行——這一缺陷可能只在利用發生時才顯現。到那時，该決策已有數年之久，做出決策的智能體可能已多次更新，審計記錄可能已被歸檔、壓縮或跨系統世代遷移。</p>
+
+        <p>證明原始參數選擇是最終洩露事件的近因，需要跨越多個審計系統世代追溯因果鏈，每個世代都有自己的保留策略和數據模型。這里的歸因窗口不是數據丟失問题——而是證據架構問题。記錄存在，但其之間的關聯從未被設計為支持该時間尺度上的因果重建。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>嵌入式AI智能體管理着逐漸退化的系統。在部署時技術上可辯護的校準決策，隨著底層硬件老化、組件容差漂移和操作條件變化，可能成為退化軌跡的放大器。設備不會突然失效——它會漂移。沿该軌跡的每個單獨智能體決策在局部都是合理的；這些決策的累積效應可能正是使最終失效成為可能的原因。</p>
+
+        <p>当物理故障發生時，確定智能體的決策架構是否有所貢獻，需要從多年運行中的点測量重建一条軌跡。大多數設備日誌設計用於支持實時診斷和事件级取證，而很少被設計為支持多年因果重建。每次事件捕獲的採樣頻率、上下文以及保留期限，都是根據即時故障的預期時間尺度校準的——而非根據歸因窗口問題所要求的累積漂移時間尺度。</p>
+
+        <h2>在物理世界照護交叉点</h2>
+        <p>照護AI系統在因果鏈长、干預措施眾多的環境中運行。管理慢性病狀況的智能體在數月内做出數百個微決策——警報閾值、升級標準、照護轉銜時机——這些決策單獨看起來無關緊要，但共同塑造了數月來的健康軌跡。在部署十八個月後發生的不良事件，因果上可能可追溯至最初建立的決策架構，但当其發生時，患者的狀況已被臨床醫生干預、藥物變化、環境因素和其他AI系統所改變。</p>
+
+        <p>將原始智能體決策的貢獻與後續干預的貢獻區分開來，以標準日誌記錄通常在技術上不可行。問题不在於缺乏記錄，而在於缺乏允許解讀記錄的因果模型。一個寫着"升級已抑制：置信度低於閾值"的日誌條目，本身並不支持對该抑制是否對四個月後出現的傷害有所貢獻做出判斷。</p>
+
+        <h2>歸因窗口的要求</h2>
+        <p>彌合歸因窗口需要將因果可追溯性视為一種設計約束，而非事後工作。這意味着不僅要記錄決策，還要記錄決策的因果模型：智能體加權的變量、分配的置信度值，以及它所基於的世界状態。這意味着要根據潛在傷害的時間尺度——而非僅根據決策的時間尺度——來設計審計系統。</p>
+
+        <p>這也意味着認識到歸因窗口是一個攻擊面。能够訪問AI智能體決策過程的不良行為者，可以構建出在窗口之外產生傷害的選擇——在当時看起來局部可辯護的決策，但對永远無法被確切追溯到其來源的後果有所貢獻。歸因窗口不僅僅是一種證據上的不便。它是任何依賴於對长因果鏈上AI智能體行為进行事後重建的問責框架的結構性特徵。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>AI智能體的決策與其所促成的傷害往往被數月或數年所分隔。在此期間，連接決策與結果的證據線索降解：背景發生變化，記錄被歸檔，中間事件使因果重建愈發困難。這個歸因窗口不同於反馈延迟問题（處理纠错時机）和時間問責缺口（處理組織记忆）——它特指證據架構問题。彌合它需要根據潛在傷害的時間尺度（而非僅僅決策的時間尺度）來設計審計系統，並認識到窗口本身是一個攻擊面，奖励那些能够構建出其後果在可追溯範圍之外出現的決策的對手。</p>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

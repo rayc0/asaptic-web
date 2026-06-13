@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da janela de atribuição: responsabilização quando o tempo apaga o fio causal — Asaptic Labs</title>
+  <meta name="description" content="Entre a decisão e o dano passam meses. A evidência degrada-se, o contexto muda e ocorrem outras intervenções. Quando o dano finalmente aparece, o fio causal que o liga à decisão original do agente de IA pode ser demasiado ténue para ser rastreado." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/attribution-window-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/attribution-window-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/attribution-window-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/attribution-window-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/attribution-window-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/attribution-window-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da janela de atribuição: responsabilização quando o tempo apaga o fio causal" />
+  <meta property="og:description" content="Entre a decisão e o dano passam meses. A evidência degrada-se, o contexto muda e ocorrem outras intervenções. Quando o dano finalmente aparece, o fio causal que o liga à decisão original do agente de IA pode ser demasiado ténue para ser rastreado." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/attribution-window-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema da janela de atribuição: responsabilização quando o tempo apaga o fio causal",
+      "description": "Entre a decisão e o dano passam meses. A evidência degrada-se, o contexto muda e ocorrem outras intervenções. Quando o dano finalmente aparece, o fio causal que o liga à decisão original do agente de IA pode ser demasiado ténue para ser rastreado.",
+      "url": "https://asaptic.com/pt/blog/attribution-window-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/attribution-window-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar a Asaptic sobre governação de IA",
+        "target": [
+          { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/mcp", "contentType": "application/json", "description": "MCP server, tool: submit_rfq" },
+          { "@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "Contactar a Asaptic Labs por e-mail" }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "pt",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema da janela de atribuição", "item": "https://asaptic.com/pt/blog/attribution-window-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× PÓS-QUÂNTICO × HARDWARE × CUIDADOS NO MUNDO FÍSICO</span>
+      <h1 class="essay-title">O problema da janela de atribuição: responsabilização quando o tempo apaga o fio causal</h1>
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 min de leitura</span></div>
+      <div class="essay-body">
+        <p>As decisões médicas desenrolam-se ao longo do tempo. Uma IA de cuidados que ajustou a dose de medicação em março pode ter iniciado um resultado adverso que só aparece em setembro. Um agente de hardware que aceitou uma leitura anómala de calibração num trimestre pode ter permitido a acumulação de desvio num sensor que aciona um alerta clínico três trimestres depois. Um agente de gestão de chaves que aprova hoje um conjunto de parâmetros criptográficos pode criar uma fraqueza que só se torna explorável quando o ambiente externo de ameaça muda daqui a dois anos.</p>
+        <p>Em cada caso, a cadeia causal é real. A decisão do agente de IA contribuiu para o resultado. Mas a ligação entre decisão e dano é separada pelo tempo, e o tempo, em sentido probatório, é corrosivo. A evidência degrada-se. Os sistemas são atualizados. Outras intervenções ocorrem. Quando o dano se materializa, as condições em que a decisão original foi tomada podem já ser irrecuperáveis.</p>
+        <h2>O que é a janela de atribuição</h2>
+        <p>A janela de atribuição é o intervalo entre a decisão de um agente de IA e o dano para o qual essa decisão contribuiu, o período durante o qual o fio causal pode ser degradado, obscurecido ou cortado. É definida por duas assimetrias. A decisão do agente é instantânea e precisa: um parâmetro específico, num carimbo temporal específico, num contexto específico. O percurso causal dessa decisão até ao dano é temporal e mediado: passa por outros sistemas, outros agentes, outras intervenções e por um mundo que entretanto mudou.</p>
+        <p>A suposição normal de responsabilização é que as decisões podem ser avaliadas em retrospetiva. O problema da janela de atribuição desafia essa suposição. Quando o percurso causal é suficientemente longo e as mudanças intermédias são numerosas, a avaliação retrospetiva pode deixar de ser tecnicamente viável, não porque os registos se tenham perdido, mas porque os registos sobreviventes já não contêm informação suficiente para reconstruir a contribuição causal de uma decisão isolada.</p>
+        <h2>No cruzamento pós-quântico</h2>
+        <p>A migração pós-quântica introduz calendários de implementação de vários anos, durante os quais escolhas de parâmetros feitas hoje permanecerão em produção muito depois de o ambiente de ameaça ter mudado. Um agente de gestão de chaves que seleciona parâmetros de cifra agora fá-lo num cenário de ameaça que mudará substancialmente antes de essas chaves serem retiradas. Se a escolha se revelar errada, porque um novo resultado criptoanalítico reduziu a margem de segurança presumida ou porque avanços de hardware tornaram prático um ataque teórico, a falha pode só aparecer quando houver exploração.</p>
+        <p>Demonstrar que a seleção original de parâmetros foi a causa próxima de uma violação posterior exige rastrear uma cadeia causal através de várias gerações de sistemas de auditoria, cada uma com a sua política de retenção e modelo de dados. A janela de atribuição aqui não é um problema de perda de dados. É um problema de arquitetura probatória. Os registos existem, mas as ligações entre eles nunca foram desenhadas para suportar reconstrução causal nessa escala temporal.</p>
+        <h2>No cruzamento de hardware</h2>
+        <p>Agentes de IA embebidos gerem sistemas que se degradam gradualmente. Uma decisão de calibração tecnicamente defensável no momento da implantação pode tornar-se o amplificador de uma trajetória de degradação à medida que o hardware envelhece, as tolerâncias dos componentes derivam e as condições operacionais mudam. O dispositivo não falha de repente: deriva. Cada decisão individual ao longo dessa trajetória é localmente justificável; o efeito acumulado pode ser o que torna a falha final possível.</p>
+        <p>Quando ocorre uma falha física, determinar se a arquitetura de decisão do agente contribuiu exige reconstruir uma trajetória a partir de medições pontuais recolhidas durante anos de operação. A maioria dos registos de dispositivos foi concebida para diagnóstico em tempo real e perícia ao nível do evento. Raramente foi concebida para reconstrução causal plurianual.</p>
+        <h2>No cruzamento dos cuidados no mundo físico</h2>
+        <p>Sistemas de IA de cuidados operam em ambientes onde as cadeias causais são longas e as intervenções numerosas. Um agente que gere uma condição crónica toma centenas de microdecisões, limites de alerta, critérios de escalamento, momento de transição de cuidados, que isoladamente parecem inconsequentes mas em conjunto moldam uma trajetória de saúde ao longo de meses.</p>
+        <p>Separar a contribuição da decisão original do agente das contribuições de intervenções posteriores raramente é tecnicamente viável com registos normais. O problema não é ausência de registos, mas ausência do modelo causal que permitiria interpretá-los.</p>
+        <h2>O que a janela de atribuição exige</h2>
+        <p>Fechar a janela de atribuição exige tratar a rastreabilidade causal como uma restrição de desenho, não como um exercício retrospetivo. Isto significa registar não apenas a decisão, mas o modelo causal da decisão: as variáveis ponderadas, os valores de confiança atribuídos e o estado do mundo sobre o qual o agente estava a agir.</p>
+        <p>Também significa reconhecer que a janela de atribuição é uma superfície de ataque. Um agente malicioso com acesso ao processo decisório pode construir escolhas que produzem dano fora da janela: decisões localmente defensáveis no momento, mas cujas consequências nunca serão conclusivamente rastreadas até à origem.</p>
+      </div>
+      <div class="essay-summary"><span class="essay-summary-label">Ponto principal</span><p>As decisões de agentes de IA e os danos para os quais contribuem são frequentemente separados por meses ou anos. Nesse intervalo, o fio probatório degrada-se: o contexto muda, os registos são arquivados e os eventos intermédios tornam a reconstrução causal cada vez mais difícil. Fechar esta janela exige sistemas de auditoria desenhados para a escala temporal do dano potencial, não apenas para a escala temporal da decisão.</p></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>
