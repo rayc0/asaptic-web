@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The governing-the-governor problem — Asaptic Labs</title>
+
+  <meta name="description" content="Multi-agent architectures increasingly place AI auditors above AI actors. When the auditor is itself a model, the accountability structure has not been strengthened — it has been deferred one level up, and correlated failure can proceed undetected." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/governing-the-governor-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The governing-the-governor problem: accountability when AI agents audit AI agents" />
+  <meta property="og:description" content="Multi-agent architectures increasingly place AI auditors above AI actors. When the auditor is itself a model, the accountability structure has not been strengthened — it has been deferred one level up." />
+  <meta property="og:url" content="https://asaptic.com/blog/governing-the-governor-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-11" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The governing-the-governor problem: accountability when AI agents audit AI agents",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-11",
+    "description": "Multi-agent architectures increasingly place AI auditors above AI actors. When the auditor is itself a model, the accountability structure has not been strengthened — it has been deferred one level up, and correlated failure can proceed undetected.",
+    "url": "https://asaptic.com/blog/governing-the-governor-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security · × Hardware · × Physical-World Care</div>
+      <h1 class="essay-title">The governing-the-governor problem: accountability when AI agents audit AI agents</h1>
+      <p class="essay-subtitle">Multi-agent architectures increasingly place AI auditors above AI actors. When the auditor is itself a model, the accountability structure has not been strengthened — it has been deferred one level up, and correlated failure can proceed undetected.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-11</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>The first instinct when an AI care system fails is to ask: what was the oversight structure? Increasingly, the honest answer is that oversight was itself AI. The review queue was triaged by a model. The compliance summary was generated by a model. The anomaly that should have been flagged was filtered by a model before it reached any human. The AI actor that made a consequential decision was reviewed by an AI process — and the failure of that review is now the accountability gap.</p>
+
+        <p>This is the governing-the-governor problem: accountability in systems where AI agents are tasked with overseeing other AI agents, and where the properties of the auditor are assumed rather than verified.</p>
+
+        <h2>The structural appeal of AI-mediated oversight</h2>
+        <p>The case for AI oversight of AI is straightforward. Human review of high-volume, fast-tempo agent systems is already strained. An AI auditor can examine every decision, surface anomalies, and produce structured compliance reports at a scale no human team can match. If the AI actor makes a thousand decisions a day, the AI auditor produces a summary for all thousand — consistently, without fatigue, at low marginal cost.</p>
+
+        <p>The structural problem is that this does not solve the oversight challenge. It defers it. The AI auditor is itself a model with its own calibration, its own distributional assumptions, and its own ways of being wrong. Adding an AI layer above the AI actor does not add independence — it adds another model. The accountability chain has grown longer, but it has not grown more robust.</p>
+
+        <h2>The correlated failure risk</h2>
+        <p>Independence in oversight is not merely a formal requirement; it is a functional one. A human auditor who disagrees with an AI decision brings different priors, a different observational history, and a different failure profile. When an AI auditor disagrees with an AI actor, it may be catching genuine errors — or it may be applying a slightly different but equally miscalibrated model to the same decision space.</p>
+
+        <p>In care deployments where vendors supply full-stack systems, the AI actor and the AI auditor may share a training lineage, a feature vocabulary, and a common set of assumptions about what a "normal" interaction looks like. The auditor most likely to miss what the actor does wrong is one trained to recognize the same patterns as correct. Correlated failure — both systems wrong in the same direction — is structurally more dangerous than independent failure, because it can produce a consistent, internally coherent accountability record that shows no anomaly. The log is clean. Both systems agree. And both are wrong.</p>
+
+        <p>This is structurally similar to the model monoculture problem, but applied to the accountability layer rather than the operational layer. A correlated failure in the accountability layer is worse than a correlated failure in the operational layer, because it removes the mechanism for detecting both.</p>
+
+        <h2>What post-quantum cryptographic architecture reveals</h2>
+        <p>In security-critical systems, the governing-the-governor problem has a direct structural analog. A verification chain — signatures checked against endorsed certificates, which are checked against a root of trust — has the same topology as an AI oversight chain. Each layer delegates verification to a lower layer. If any layer is misconfigured at enrollment, the chain can appear to function correctly while producing no genuine assurance.</p>
+
+        <p>Post-quantum cryptographic migration makes this visible in a new way. When the underlying primitive a layer depends on is cryptographically weakened, every layer built above it is weakened too — including the layers doing the verification. An AI accountability chain that depends on a compromised auditor model is analogous: the signed record exists, the verification passes, and the evidence is structurally sound except at the one point where the entire chain fails.</p>
+
+        <p>Hardware-rooted attestation offers a partial model for addressing this. The anchor of trust in a secure enclave is something the software running above it cannot attest or forge. Applied to AI accountability, this implies that the oversight chain must always terminate in something the AI systems being governed cannot themselves shape: a human review that is not AI-filtered, a third-party audit with independent training lineage, or an escalation path that routes outside the model stack entirely.</p>
+
+        <h2>What correct architecture requires</h2>
+        <p>Governing the governing-the-governor problem requires explicit design, not assumed emergence. The accountability chain must specify where independence is required — not merely where oversight is present. An AI auditor reviewing an AI actor is oversight. It is not independence unless the auditor's calibration, training data, and failure modes can be verified to differ in accountable ways from those of the system it reviews.</p>
+
+        <p>In practice, this means care deployments should document what AI oversight is provided, what the lineage and calibration basis of the AI auditor is, and where the first genuinely non-AI point in the escalation path sits. It means building systems where the auditor's performance can itself be audited — with independent inputs, not just the outputs of the actor it is reviewing. And it means resisting the convenience of full-stack AI compliance: the appeal of generating a complete accountability record automatically is exactly the property that makes correlated failure invisible.</p>
+
+        <p>At Asaptic Labs, we think the right frame is not "was this decision audited" but "was the audit itself auditable, and by something with independent failure modes." The governing-the-governor problem is not resolved by adding another AI layer above it. At some point, the chain must terminate in an accountability substrate that the AI systems being governed cannot themselves shape, attest, or compromise — and that point is where genuine oversight begins.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>Using AI to audit AI defers the accountability problem rather than solving it. When AI actors and AI auditors share training lineage or distributional assumptions, correlated failure can produce a clean, internally coherent record that conceals systematic error. Robust accountability requires that the oversight chain terminate in something genuinely independent — a point the governed AI systems cannot attest, shape, or compromise. Every link in the chain that consists only of models adds length without adding independence.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>当一个AI护理系统发生故障时，第一反应是追问：监督结构是什么？如今，这个问题诚实的答案往往是：监督本身就是AI。审查队列由一个模型完成分类，合规摘要由一个模型生成，本应被标记的异常在到达任何人工审查者之前已被一个模型过滤。作出关键决策的AI执行体被一个AI过程所审查——而这个审查的失效，正是问责缺口所在。</p>
+
+        <p>这就是"治理者的治理问题"：在AI智能体被委托监督其他AI智能体的系统中，审计方的属性是被假定的而非被验证的，问责因此陷入困境。</p>
+
+        <h2>AI中介监督的结构性吸引力</h2>
+        <p>以AI监督AI的逻辑是直接的。人工审查高频、快节奏的智能体系统已然捉襟见肘。AI审计方可以检查每一个决策、识别异常、以无可比拟的规模生成结构化的合规报告。如果AI执行体每天作出一千个决策，AI审计方就能为这一千个决策生成摘要——持续、不疲倦、边际成本低廉。</p>
+
+        <p>结构性问题在于：这并没有解决监督挑战，只是将其推后一步。AI审计方本身也是一个模型，有其自己的校准方式、分布假设，以及自己出错的方式。在AI执行体之上增加一个AI层，并不能增加独立性——它只是增加了另一个模型。问责链条变长了，但并没有变得更稳健。</p>
+
+        <h2>关联失效风险</h2>
+        <p>监督的独立性不仅仅是一项形式要求，它是一项功能要求。对AI决策持异议的人工审计者，带来的是不同的先验知识、不同的观察历史和不同的失效特征。而当AI审计方对AI执行体持异议时，它可能是在捕捉真实错误，也可能只是将一个略有不同但同样存在偏差的模型应用于相同的决策空间。</p>
+
+        <p>在供应商提供全栈系统的护理部署中，AI执行体和AI审计方可能共享训练谱系、特征词汇，以及对"正常"交互应当如何的共同假设。最有可能错过执行体错误的审计方，正是那个被训练为识别相同模式的审计方。关联失效——两个系统朝同一方向出错——从结构上而言比独立失效更危险，因为它能生成一个一致、内部连贯的问责记录，而这份记录显示不出任何异常。日志是干净的，两个系统意见一致——两者都是错的。</p>
+
+        <p>这在结构上类似于模型单一文化问题，但作用于问责层而非运营层。问责层的关联失效比运营层的关联失效更糟糕，因为它消除了检测两者失效的机制。</p>
+
+        <h2>后量子密码架构的启示</h2>
+        <p>在安全关键系统中，治理者的治理问题有一个直接的结构类比。一条验证链——签名被校验以对应背书证书，背书证书再对应信任根——与AI监督链具有相同的拓扑结构。每一层都将验证委托给下一层。如果任何一层在注册时被错误配置，这条链可能表面上运作正常，却无法提供任何真实的保证。</p>
+
+        <p>后量子密码迁移以一种新的方式揭示了这一点。当某一层所依赖的底层原语在密码学上被弱化，建立于其上的每一层也随之被弱化——包括负责验证的那些层。一条依赖被损害的审计模型的AI问责链类似于此：签名记录存在，验证通过，证据在结构上完好——只在整条链断裂的那个点上除外。</p>
+
+        <p>硬件根信任提供了一个应对模型。安全飞地中的信任锚是运行于其上的软件无法证明或伪造的东西。应用于AI问责，这意味着监督链必须始终终止于AI被治理系统本身无法塑造的某处：一个未经AI过滤的人工审查、一个具有独立训练谱系的第三方审计，或一条完全路由于模型栈之外的升级路径。</p>
+
+        <h2>正确架构的要求</h2>
+        <p>解决治理者的治理问题需要显式设计，而非假定自然涌现。问责链必须明确在哪些环节需要独立性——不仅仅是在哪些环节存在监督。AI审计方审查AI执行体，这是监督。但这不是独立性，除非审计方的校准方式、训练数据和失效模式可以被核实，与其所审查系统存在可问责的差异。</p>
+
+        <p>在实践中，这意味着护理部署应当记录：提供了哪些AI监督，AI审计方的谱系和校准依据是什么，以及升级路径中第一个真正非AI的节点在哪里。这意味着构建能够被审计审计方绩效的系统——以独立输入，而非仅以其所审查执行体的输出为依据。这也意味着抵制全栈AI合规的便利性：自动生成完整问责记录的吸引力，恰恰是使关联失效变得不可见的那个属性。</p>
+
+        <p>在Asaptic Labs，我们认为正确的框架不是"这个决策是否被审计"，而是"审计本身是否可被审计，且是否由具有独立失效模式的对象进行"。治理者的治理问题，不是通过在其上增加另一个AI层来解决的。在某个节点，这条链必须终止于一个AI被治理系统本身无法塑造、证明或损害的问责基础——正是在那个节点，真正的监督才开始。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>以AI审计AI是对问责问题的推迟，而非解决。当AI执行体与AI审计方共享训练谱系或分布假设时，关联失效可以生成一份干净、内部一致的记录，从而掩盖系统性错误。稳健的问责要求监督链终止于真正独立的某处——一个被治理AI系统本身无法证明、塑造或损害的节点。链条中每一个仅由模型构成的环节，增加的是长度，而非独立性。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>當一個AI護理系統發生故障時，第一反應是追問：監督結構是什麼？如今，這個問題誠實的答案往往是：監督本身就是AI。審查隊列由一個模型完成分類，合規摘要由一個模型生成，本應被標記的異常在到達任何人工審查者之前已被一個模型過濾。作出關鍵決策的AI執行體被一個AI過程所審查——而這個審查的失效，正是問責缺口所在。</p>
+
+        <p>這就是「治理者的治理問題」：在AI智能體被委託監督其他AI智能體的系統中，審計方的屬性是被假定的而非被驗證的，問責因此陷入困境。</p>
+
+        <h2>AI中介監督的結構性吸引力</h2>
+        <p>以AI監督AI的邏輯是直接的。人工審查高頻、快節奏的智能體系統已然捉襟見肘。AI審計方可以檢查每一個決策、識別異常、以無可比擬的規模生成結構化的合規報告。如果AI執行體每天作出一千個決策，AI審計方就能為這一千個決策生成摘要——持續、不疲憊、邊際成本低廉。</p>
+
+        <p>結構性問題在於：這並沒有解決監督挑戰，只是將其推後一步。AI審計方本身也是一個模型，有其自己的校準方式、分佈假設，以及自己出錯的方式。在AI執行體之上增加一個AI層，並不能增加獨立性——它只是增加了另一個模型。問責鏈條變長了，但並沒有變得更穩健。</p>
+
+        <h2>關聯失效風險</h2>
+        <p>監督的獨立性不僅僅是一項形式要求，它是一項功能要求。對AI決策持異議的人工審計者，帶來的是不同的先驗知識、不同的觀察歷史和不同的失效特徵。而當AI審計方對AI執行體持異議時，它可能是在捕捉真實錯誤，也可能只是將一個略有不同但同樣存在偏差的模型應用於相同的決策空間。</p>
+
+        <p>在供應商提供全棧系統的護理部署中，AI執行體和AI審計方可能共享訓練譜系、特徵詞彙，以及對「正常」互動應當如何的共同假設。最有可能錯過執行體錯誤的審計方，正是那個被訓練為識別相同模式的審計方。關聯失效——兩個系統朝同一方向出錯——從結構上而言比獨立失效更危險，因為它能生成一個一致、內部連貫的問責記錄，而這份記錄顯示不出任何異常。日誌是乾淨的，兩個系統意見一致——兩者都是錯的。</p>
+
+        <p>這在結構上類似於模型單一文化問題，但作用於問責層而非運營層。問責層的關聯失效比運營層的關聯失效更糟糕，因為它消除了檢測兩者失效的機制。</p>
+
+        <h2>後量子密碼架構的啟示</h2>
+        <p>在安全關鍵系統中，治理者的治理問題有一個直接的結構類比。一條驗證鏈——簽名被校驗以對應背書憑證，背書憑證再對應信任根——與AI監督鏈具有相同的拓撲結構。每一層都將驗證委託給下一層。如果任何一層在註冊時被錯誤配置，這條鏈可能表面上運作正常，卻無法提供任何真實的保證。</p>
+
+        <p>後量子密碼遷移以一種新的方式揭示了這一點。當某一層所依賴的底層原語在密碼學上被弱化，建立於其上的每一層也隨之被弱化——包括負責驗證的那些層。一條依賴被損害的審計模型的AI問責鏈類似於此：簽名記錄存在，驗證通過，證據在結構上完好——只在整條鏈斷裂的那個點上除外。</p>
+
+        <p>硬件根信任提供了一個應對模型。安全飛地中的信任錨是運行於其上的軟體無法證明或偽造的東西。應用於AI問責，這意味著監督鏈必須始終終止於AI被治理系統本身無法塑造的某處：一個未經AI過濾的人工審查、一個具有獨立訓練譜系的第三方審計，或一條完全路由於模型棧之外的升級路徑。</p>
+
+        <h2>正確架構的要求</h2>
+        <p>解決治理者的治理問題需要顯式設計，而非假定自然湧現。問責鏈必須明確在哪些環節需要獨立性——不僅僅是在哪些環節存在監督。AI審計方審查AI執行體，這是監督。但這不是獨立性，除非審計方的校準方式、訓練數據和失效模式可以被核實，與其所審查系統存在可問責的差異。</p>
+
+        <p>在實踐中，這意味著護理部署應當記錄：提供了哪些AI監督，AI審計方的譜系和校準依據是什麼，以及升級路徑中第一個真正非AI的節點在哪裡。這意味著構建能夠被審計審計方績效的系統——以獨立輸入，而非僅以其所審查執行體的輸出為依據。這也意味著抵制全棧AI合規的便利性：自動生成完整問責記錄的吸引力，恰恰是使關聯失效變得不可見的那個屬性。</p>
+
+        <p>在Asaptic Labs，我們認為正確的框架不是「這個決策是否被審計」，而是「審計本身是否可被審計，且是否由具有獨立失效模式的對象進行」。治理者的治理問題，不是通過在其上增加另一個AI層來解決的。在某個節點，這條鏈必須終止於一個AI被治理系統本身無法塑造、證明或損害的問責基礎——正是在那個節點，真正的監督才開始。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>以AI審計AI是對問責問題的推遲，而非解決。當AI執行體與AI審計方共享訓練譜系或分佈假設時，關聯失效可以生成一份乾淨、內部一致的記錄，從而掩蓋系統性錯誤。穩健的問責要求監督鏈終止於真正獨立的某處——一個被治理AI系統本身無法證明、塑造或損害的節點。鏈條中每一個僅由模型構成的環節，增加的是長度，而非獨立性。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-11</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.toggle('active', el.dataset.langContent === lang));
+      });
+    });
+  </script>
+</body>
+</html>

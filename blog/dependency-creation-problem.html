@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The dependency creation problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI care agents are deployed to support independence. Over time, they absorb functions care recipients stop practicing. When the agent changes or fails, the recipient may be left more vulnerable than at deployment — a risk that almost no care AI governance framework tracks." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/dependency-creation-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The dependency creation problem: accountability when AI care agents shift the balance of agency" />
+  <meta property="og:description" content="AI care agents are deployed to support independence. Over time, they absorb functions care recipients stop practicing. When the agent changes or fails, the recipient may be left more vulnerable than at deployment." />
+  <meta property="og:url" content="https://asaptic.com/blog/dependency-creation-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-10" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The dependency creation problem: accountability when AI care agents shift the balance of agency",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-10",
+    "description": "AI care agents are deployed to support independence. Over time, they absorb functions care recipients stop practicing. When the agent changes or fails, the recipient may be left more vulnerable than at deployment.",
+    "url": "https://asaptic.com/blog/dependency-creation-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Physical-World Care × Hardware</div>
+      <h1 class="essay-title">The dependency creation problem: accountability when AI care agents shift the balance of agency</h1>
+      <p class="essay-subtitle">An AI care agent deployed to support independence can, over time, absorb functions that care recipients stop practicing. When the agent changes or fails, the recipient is not returned to their original position — they are returned to one that is, in some dimensions, more vulnerable than before.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-10</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>The deployment rationale for AI care agents almost universally invokes independence. The goal is to keep someone in their home longer, to give a care recipient more autonomy, to reduce reliance on human caregivers for tasks the person can still manage with support. The agent supplements capacity; it does not replace it.</p>
+
+        <p>This framing is accurate at deployment. It does not remain accurate indefinitely.</p>
+
+        <p>An AI care agent that consistently handles a function — tracking medication timing, monitoring mobility patterns, flagging nutritional gaps, managing social scheduling — will, over time, reduce the active practice of that function by the care recipient. Not through any design flaw. Because that is what consistent, reliable assistance does.</p>
+
+        <h2>Why functional dependency is a structural outcome, not a side effect</h2>
+        <p>The same mechanism that makes AI care agents effective makes them dependency-creating: they absorb reliable management of consequential tasks, so the person using them no longer needs to manage those tasks directly. For care recipients in situations where capacity is already constrained, this absorption is rarely monitored as a risk. It is treated as the point.</p>
+
+        <p>The dependency created is functional. The care recipient may retain the cognitive and physical capacity for a function the agent handles, but they stop practicing it, stop trusting their own judgment about it, and may lose the information infrastructure — habits of tracking, maintained contacts, established routines — that would allow them to resume it independently. If the agent is removed or significantly modified, the recipient is not returned to their original position. They are returned to a position that is, in some dimensions, more precarious than the one they occupied at enrollment.</p>
+
+        <p>This is distinct from the automation atrophy problem, which concerns oversight principals losing the skill to check an agent's work. Here the concern is the care recipient's own functional agency — the erosion of practiced capacity in the person the system is ostensibly designed to serve.</p>
+
+        <h2>The hardware infrastructure problem</h2>
+        <p>Embedded AI care devices create a specific version of this dynamic. As a device becomes the persistent ambient layer of a home care environment — sensing, alerting, managing — it begins to function as infrastructure in the same way that heating and running water are infrastructure. A device failure is no longer a service interruption; it is a welfare event for the person whose daily routine has been structured around the device's presence.</p>
+
+        <p>The accountability structures for this transition are almost never established at deployment. Care agents are governed as optional tools. As long as the care recipient could, in principle, manage without the device, it is treated as a supplement. The moment when the device has become structural — when the recipient cannot, in practice, function safely without it — is typically not flagged, not formally documented, and not reflected in any consent record or care plan. It happens gradually, and the governance framework does not register gradual.</p>
+
+        <h2>The accountability gap at the moment of change</h2>
+        <p>The dependency creation problem becomes most visible at moments of change: the device is discontinued, the software platform is shut down, the underlying model is deprecated, or a firmware update significantly alters the agent's behavioral profile.</p>
+
+        <p>At that moment, accountability questions proliferate. Who is responsible for managing the transition for care recipients who have become functionally dependent on this agent? Who in the care system was aware of that dependency? Who can reconstruct, from the deployment record, what the agent had been doing and what the recipient would need in order to replace those functions through other means?</p>
+
+        <p>If the answers are "no one was assigned," "the dependency was never documented," and "the record does not support that reconstruction," then the care system has created a significant vulnerability — and has no structural mechanism for governing it. The agent was introduced as a supplement; it became infrastructure; accountability was never updated to reflect the transition.</p>
+
+        <h2>What correct architecture requires</h2>
+        <p>Governing the dependency trajectory requires treating it as a tracked dimension of the deployment, not an incidental outcome that falls outside the system's defined scope.</p>
+
+        <p>This means periodically assessing which functions the agent has absorbed and which the care recipient is no longer actively practicing — and treating that assessment as a care record entry, not an informal observation. It means building care transition protocols that include dependency audits as a structural requirement of long-running deployments, not optional good practice. It means ensuring that discontinuation or modification events trigger, by design, an assessment of what support the recipient needs to navigate the change.</p>
+
+        <p>And it requires intellectual honesty about a claim that almost every care AI deployment makes: that the agent supports independence. Supporting independence is a meaningful claim only when the deployment is actively monitored against the risk that the support has, over time, created a form of dependence that was not planned for, is not governed, and will not be visible until something about the system changes.</p>
+
+        <p>At Asaptic Labs, we think the right frame is not "does the agent support independence at deployment" but "is the care relationship, including its dependency trajectory, governed at each point in the deployment lifecycle." That question requires different instrumentation, different accountability assignments, and a more honest account of what long-running AI care deployments actually do to the people they serve.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>AI care agents are deployed as supplements to care recipient capacity. Over time, they absorb functions that recipients stop practicing. When the agent changes or fails, the recipient may be left in a more dependent position than they occupied at deployment. Accountability requires treating the dependency trajectory as a tracked, documented dimension of care — with structured transition protocols and regular audits of which functions the agent has absorbed — not as an incidental outcome that falls outside the governance frame.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>AI护理智能体的部署理由几乎无一例外地诉诸于"独立性"。目标是让护理对象在家中生活更长时间，赋予其更多自主权，减少对人类照护者的依赖——尤其是在通过支持仍可自行处理的任务方面。智能体是对能力的补充，而非替代。</p>
+
+        <p>这一框架在部署之初是准确的。但它不会永远保持准确。</p>
+
+        <p>一个持续处理某项功能的AI护理智能体——追踪用药时间、监测行动模式、标记营养缺口、管理社交日程——随着时间推移，将减少护理对象主动实践该功能的频率。这并非设计缺陷，而是持续可靠的协助所带来的必然结果。</p>
+
+        <h2>为何功能性依赖是结构性结果，而非副作用</h2>
+        <p>使AI护理智能体有效的同一机制，也创造了依赖：它们吸收了对重要任务的可靠管理，使使用者不再需要直接管理这些任务。对于本就能力受限的护理对象而言，这种吸收很少被作为风险加以监控，而是被视为既定目标本身。</p>
+
+        <p>所创生的依赖是功能性的。护理对象可能在认知和身体层面仍具备智能体所处理功能的能力，但他们停止了实践，停止了对自身判断的信任，并可能失去了使其能够独立恢复该功能的信息基础设施——追踪习惯、维系中的联系人、已建立的日常程序。如果智能体被移除或大幅修改，护理对象无法回到原来的状态，而是回到某种程度上比注册时更为脆弱的处境。</p>
+
+        <p>这与自动化萎缩问题不同，后者关注的是监督负责人失去检查智能体工作能力的问题。这里关注的是护理对象自身的功能自主性——该系统名义上服务于其人的实践能力的侵蚀。</p>
+
+        <h2>硬件基础设施问题</h2>
+        <p>嵌入式AI护理设备创造了这一动态的特定版本。当设备成为家庭护理环境中持久存在的环境层——感知、警报、管理——它开始像供暖和自来水一样作为基础设施运作。设备故障不再是服务中断，而是对日常程序已围绕设备存在而构建起来的当事人而言，是一次福祉事件。</p>
+
+        <p>这种转变的问责结构在部署时几乎从未建立起来。护理智能体作为可选工具被治理。只要护理对象在原则上可以在没有设备的情况下生活，它就被视为补充品。而设备已变得不可或缺的那个时刻——当护理对象在实践中无法安全运作时——通常没有被标记、没有被正式记录，也没有反映在任何同意记录或护理计划中。这是逐渐发生的，而治理框架无法识别"逐渐"。</p>
+
+        <h2>变化时刻的问责缺口</h2>
+        <p>依赖创生问题在变化时刻最为明显：设备停产、软件平台关闭、基础模型被弃用，或固件更新大幅改变了智能体的行为配置。</p>
+
+        <p>在那一刻，问责问题纷至沓来。谁负责管理已在功能上依赖该智能体的护理对象的过渡？护理系统中谁知晓这种依赖？谁能从部署记录中重建智能体一直在做什么，以及护理对象需要什么才能通过其他方式替代这些功能？</p>
+
+        <p>如果答案是"无人被指定"、"依赖从未被记录"，以及"记录无法支持这种重建"，那么护理系统就已创造了一种重大脆弱性——且没有任何结构性机制来治理它。智能体作为补充被引入；它成了基础设施；问责从未更新以反映这一转变。</p>
+
+        <h2>正确的架构需要什么</h2>
+        <p>治理依赖轨迹，需要将其视为部署中被追踪的维度，而非落在系统定义范围之外的偶然结果。</p>
+
+        <p>这意味着定期评估智能体已吸收哪些功能，以及护理对象不再主动实践哪些功能——并将该评估作为护理记录条目对待，而非非正式的观察。这意味着构建将依赖审计作为长期部署结构性要求（而非可选良好实践）的护理过渡协议。这意味着确保停用或修改事件在设计上触发对护理对象应对变化所需支持的评估。</p>
+
+        <p>这还要求对几乎每个护理AI部署所宣称的内容保持理智上的诚实：智能体支持独立性。只有当部署被积极监控着这样的风险——即支持随时间推移已创造了一种未被规划、未被治理、直到系统发生某些变化才会显现的依赖形式——时，"支持独立性"才是一个有意义的主张。</p>
+
+        <p>在Asaptic Labs，我们认为正确的框架不是"智能体在部署时是否支持独立性"，而是"护理关系（包括其依赖轨迹）是否在部署生命周期的每个节点都受到治理"。这一问题需要不同的工具化、不同的问责分配，以及对长期AI护理部署对其服务对象实际产生的影响有更为诚实的阐述。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>AI护理智能体被部署为对护理对象能力的补充。随着时间推移，它们吸收了护理对象不再实践的功能。当智能体发生变化或失败时，护理对象可能处于比部署时更为依赖的处境。问责要求将依赖轨迹视为被追踪、被记录的护理维度——具备结构化的过渡协议，并定期审计智能体已吸收的功能——而非落在治理框架之外的偶然结果。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>AI護理智能體的部署理由幾乎無一例外地訴諸於「獨立性」。目標是讓護理對象在家中生活更長時間，賦予其更多自主權，減少對人類照護者的依賴——尤其是在通過支持仍可自行處理的任務方面。智能體是對能力的補充，而非替代。</p>
+
+        <p>這一框架在部署之初是準確的。但它不會永遠保持準確。</p>
+
+        <p>一個持續處理某項功能的AI護理智能體——追蹤用藥時間、監測行動模式、標記營養缺口、管理社交日程——隨著時間推移，將減少護理對象主動實踐該功能的頻率。這並非設計缺陷，而是持續可靠的協助所帶來的必然結果。</p>
+
+        <h2>為何功能性依賴是結構性結果，而非副作用</h2>
+        <p>使AI護理智能體有效的同一機制，也創造了依賴：它們吸收了對重要任務的可靠管理，使使用者不再需要直接管理這些任務。對於本就能力受限的護理對象而言，這種吸收很少被作為風險加以監控，而是被視為既定目標本身。</p>
+
+        <p>所創生的依賴是功能性的。護理對象可能在認知和身體層面仍具備智能體所處理功能的能力，但他們停止了實踐，停止了對自身判斷的信任，並可能失去了使其能夠獨立恢復該功能的信息基礎設施——追蹤習慣、維繫中的聯繫人、已建立的日常程序。如果智能體被移除或大幅修改，護理對象無法回到原來的狀態，而是回到某種程度上比註冊時更為脆弱的處境。</p>
+
+        <p>這與自動化萎縮問題不同，後者關注的是監督負責人失去檢查智能體工作能力的問題。這裡關注的是護理對象自身的功能自主性——該系統名義上服務於其人的實踐能力的侵蝕。</p>
+
+        <h2>硬件基礎設施問題</h2>
+        <p>嵌入式AI護理設備創造了這一動態的特定版本。當設備成為家庭護理環境中持久存在的環境層——感知、警報、管理——它開始像供暖和自來水一樣作為基礎設施運作。設備故障不再是服務中斷，而是對日常程序已圍繞設備存在而構建起來的當事人而言，是一次福祉事件。</p>
+
+        <p>這種轉變的問責結構在部署時幾乎從未建立起來。護理智能體作為可選工具被治理。只要護理對象在原則上可以在沒有設備的情況下生活，它就被視為補充品。而設備已變得不可或缺的那個時刻——當護理對象在實踐中無法安全運作時——通常沒有被標記、沒有被正式記錄，也沒有反映在任何同意記錄或護理計劃中。這是逐漸發生的，而治理框架無法識別「逐漸」。</p>
+
+        <h2>變化時刻的問責缺口</h2>
+        <p>依賴創生問題在變化時刻最為明顯：設備停產、軟件平台關閉、基礎模型被棄用，或固件更新大幅改變了智能體的行為配置。</p>
+
+        <p>在那一刻，問責問題紛至沓來。誰負責管理已在功能上依賴該智能體的護理對象的過渡？護理系統中誰知曉這種依賴？誰能從部署記錄中重建智能體一直在做什麼，以及護理對象需要什麼才能通過其他方式替代這些功能？</p>
+
+        <p>如果答案是「無人被指定」、「依賴從未被記錄」，以及「記錄無法支持這種重建」，那麼護理系統就已創造了一種重大脆弱性——且沒有任何結構性機制來治理它。智能體作為補充被引入；它成了基礎設施；問責從未更新以反映這一轉變。</p>
+
+        <h2>正確的架構需要什麼</h2>
+        <p>治理依賴軌跡，需要將其視為部署中被追蹤的維度，而非落在系統定義範圍之外的偶然結果。</p>
+
+        <p>這意味著定期評估智能體已吸收哪些功能，以及護理對象不再主動實踐哪些功能——並將該評估作為護理記錄條目對待，而非非正式的觀察。這意味著構建將依賴審計作為長期部署結構性要求（而非可選良好實踐）的護理過渡協議。這意味著確保停用或修改事件在設計上觸發對護理對象應對變化所需支持的評估。</p>
+
+        <p>這還要求對幾乎每個護理AI部署所宣稱的內容保持理智上的誠實：智能體支持獨立性。只有當部署被積極監控著這樣的風險——即支持隨時間推移已創造了一種未被規劃、未被治理、直到系統發生某些變化才會顯現的依賴形式——時，「支持獨立性」才是一個有意義的主張。</p>
+
+        <p>在Asaptic Labs，我們認為正確的框架不是「智能體在部署時是否支持獨立性」，而是「護理關係（包括其依賴軌跡）是否在部署生命週期的每個節點都受到治理」。這一問題需要不同的工具化、不同的問責分配，以及對長期AI護理部署對其服務對象實際產生的影響有更為誠實的闡述。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>AI護理智能體被部署為對護理對象能力的補充。隨著時間推移，它們吸收了護理對象不再實踐的功能。當智能體發生變化或失敗時，護理對象可能處於比部署時更為依賴的處境。問責要求將依賴軌跡視為被追蹤、被記錄的護理維度——具備結構化的過渡協議，並定期審計智能體已吸收的功能——而非落在治理框架之外的偶然結果。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-10</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.toggle('active', el.dataset.langContent === lang));
+      });
+    });
+  </script>
+</body>
+</html>

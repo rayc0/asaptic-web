@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The orphaned device problem — Asaptic Labs</title>
+
+  <meta name="description" content="Physical AI care devices are built to last a decade. The governance infrastructure that authorizes and oversees them is built on a quarterly budget. When the vendor disappears and the device keeps running, accountability has no institutional home." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/orphaned-device-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The orphaned device problem: accountability when an embedded AI care device outlives its governance infrastructure" />
+  <meta property="og:description" content="Physical AI care devices are built to last a decade. The governance infrastructure that authorizes and oversees them is built on a quarterly budget. When the vendor disappears and the device keeps running, accountability has no institutional home." />
+  <meta property="og:url" content="https://asaptic.com/blog/orphaned-device-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-09" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The orphaned device problem: accountability when an embedded AI care device outlives its governance infrastructure",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-09",
+    "description": "Physical AI care devices are built to last a decade. The governance infrastructure that authorizes and oversees them is built on a quarterly budget. When the vendor disappears and the device keeps running, accountability has no institutional home.",
+    "url": "https://asaptic.com/blog/orphaned-device-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings.html">Crossings</a>
+      <a href="/thesis.html">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage.html">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Hardware × Physical-World Care</div>
+      <h1 class="essay-title">The orphaned device problem: accountability when an embedded AI care device outlives its governance infrastructure</h1>
+      <p class="essay-subtitle">Physical AI care devices are built to last a decade. The governance infrastructure that authorizes and oversees them is built on a quarterly budget. When the vendor disappears and the device keeps running, accountability has no institutional home.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-09</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Medical hardware has long lifespans. An implanted device may function for ten to fifteen years. A home monitoring platform, once installed and trusted by a care team, tends to persist well past its first software generation. The care recipient builds a routine around it. The clinical staff integrate it into their workflow. The family learns to rely on its alerts. The device becomes infrastructure — part of the care environment rather than a product under active evaluation.</p>
+
+        <p>The AI governance infrastructure layered on top of that hardware does not have the same tenure expectations. The vendor maintaining the cloud audit API, the consent record system, the model update pipeline, and the incident reporting channel is subject to the same pressures as any other software company: pivot decisions, acquisition by a competitor, runway exhaustion, regulatory changes in its home jurisdiction that alter its unit economics. The expected lifespan of a venture-backed AI health software vendor is measured in years. The expected lifespan of the device it governs is measured in decades.</p>
+
+        <p>When those two timelines diverge, the device becomes orphaned. The hardware continues to function. The AI agent continues to make decisions. The care recipient continues to receive care. But the institutional infrastructure that made those decisions accountable — the audit trail with live access, the consent record with a human custodian, the incident report channel, the key management service, the model update that would have patched a known behavioral flaw — no longer exists.</p>
+
+        <h2>At the hardware crossing</h2>
+        <p>A hardware-based AI agent establishes its trustworthiness through a chain of attestation: the device cryptographically proves that its software matches what was reviewed and authorized. That chain runs back through a certificate hierarchy maintained by the vendor. When the vendor's certificate authority is shut down or its domain lapses, the attestation chain breaks. An auditor, a regulator, or a clinical risk manager who asks "is this device running what we authorized?" no longer has a mechanism to verify the answer. The hardware may be physically unchanged, but its verifiable identity — the thing that distinguishes a properly operating device from a compromised one — has dissolved.</p>
+
+        <p>Software vulnerabilities discovered after vendor closure cannot be patched. A behavioral flaw in the AI decision logic, a cryptographic weakness in the key derivation scheme, a bias in the model's calibration that skews decisions toward lower-cost interventions — any of these, if identified after the vendor is gone, will persist in every deployed device for the remainder of its operational life. The device has no update path. The care recipient has no notice. The clinical team has no remediation option.</p>
+
+        <h2>At the physical-world care crossing</h2>
+        <p>The accountability gap manifests most acutely in the care setting. An AI agent managing medication timing, monitoring vital signs, or coordinating care transitions makes thousands of decisions over the device's lifetime. Each of those decisions was, at deployment, backed by a governance structure: a vendor with a support team, a regulatory approval with a post-market surveillance obligation, a cloud system holding the consent record. When the vendor dissolves, the decisions that follow are made by an agent that no longer has an accountable principal behind it.</p>
+
+        <p>The care recipient does not know this has happened. There is typically no notification obligation when a vendor closes a non-safety-critical service. The clinical team may not know either — the device continues to function, alerts continue to arrive, and nothing in the interface indicates that the governance infrastructure has gone dark. The information asymmetry is total: the care recipient trusts the device precisely because they believe it is overseen, when in fact oversight has ended.</p>
+
+        <p>When an adverse event occurs — a missed alert, a wrong dosing recommendation, a care transition that fails because the coordination agent is no longer syncing with the care network — the injured party will discover that there is no vendor to contact, no support line to call, no incident report to file. The accountable party has evaporated. The device is still in the home. The harm is real. The remedy pathway is empty.</p>
+
+        <h2>Why this is structurally distinct</h2>
+        <p>The orphaned device problem is not the same as the decommissioning problem, which addresses how an agent should be intentionally retired. It is not the hardware lifecycle problem, which addresses planned upgrades and end-of-support transitions. The orphaned device scenario is distinguished by the fact that no one made an intentional decision to end the device's governance. The device was not decommissioned — it was abandoned. The governance infrastructure was not retired — it simply closed.</p>
+
+        <p>This creates accountability conditions that the existing device safety framework was not designed to handle. Regulatory post-market surveillance assumes there is a manufacturer who can be reached. Product liability doctrine assumes a defendant who still exists. Warranty law assumes a warrantor. When all of these institutional anchors disappear simultaneously, the harmed patient faces the same recourse gap that results from any vacuum of institutional responsibility — but in a context where the device in their home still carries the credibility marks of its original authorization.</p>
+
+        <h2>What governance continuity requires</h2>
+        <p>Closing the orphaned device gap requires treating governance continuity as a product safety obligation from the beginning. This means requiring, as a condition of regulatory approval for any AI-embedded care device with a multi-year lifespan, a governance continuation plan: an escrow arrangement for audit logs, a designated custodian for consent records, a mechanism for pushing critical security updates even after commercial operations cease, and a public registry entry that signals when governance status has changed.</p>
+
+        <p>It also means that the hardware itself should be designed to emit a verifiable governance status signal — a periodic attestation that the device's oversight infrastructure is live, that the audit trail has a reachable custodian, and that the model has not reached an end-of-support state. A device that cannot produce that signal should be flagged to the clinical team, not trusted silently. Silence in a governance signal should not be treated as assurance. It should be treated as a warning.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>Physical AI care devices have decade-long lifespans; the software vendors governing their AI layers have much shorter ones. When a vendor closes and the device continues operating, the governance infrastructure — audit trail access, consent record custody, model update pipeline, incident reporting — disappears while the AI agent keeps making consequential decisions. The care recipient has no notice that oversight has ended. The clinical team has no remediation path for discovered flaws. The harmed party, when an adverse event occurs, finds no institutional anchor for a remedy. Closing this gap requires treating governance continuity as a product safety obligation at the time of regulatory approval — not as an afterthought when the vendor shuts the lights off.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>医疗硬件拥有漫长的使用寿命。一个植入式设备可能运作十五年。一个居家监护平台，一旦被安装并获得照护团队信任，往往会持续使用到其第一代软件早已过时之后。照护对象围绕它建立日常程序。临床工作人员将它整合进工作流程。家属学会依赖它的警报。设备成为基础设施——照护环境的组成部分，而非仍处于积极评估中的产品。</p>
+
+        <p>叠加在这些硬件之上的AI治理基础设施，则不享有同等的任期预期。维护云端审计API、同意记录系统、模型更新管道和事件报告渠道的供应商，与其他任何软件公司一样面临着相同的压力：战略转型决策、被竞争对手收购、资金耗尽、其主体管辖区内改变盈利模型的监管变化。风险投资支持的AI医疗软件供应商的预期寿命以年计。它所治理的设备的预期寿命以十年计。</p>
+
+        <p>当这两条时间线出现偏差，设备就成了孤儿。硬件继续运行。AI智能体继续做出决策。照护对象继续接受照护。但使这些决策具有可追责性的制度基础设施——拥有实时访问权限的审计记录、有人类保管人的同意记录、事件报告渠道、密钥管理服务、原本会修补已知行为缺陷的模型更新——不复存在。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>基于硬件的AI智能体通过一条验证链建立其可信度：设备以密码学方式证明其软件与经过审查和授权的内容相匹配。该链条追溯至供应商维护的证书层级体系。当供应商的证书颁发机构关闭或其域名失效，验证链就断裂了。审计人员、监管机构或临床风险管理人员若询问"该设备运行的是我们授权的内容吗？"，将不再有机制来验证答案。硬件在物理层面可能未有任何改变，但其可验证身份——区分正常运行设备与被入侵设备的东西——已经消解。</p>
+
+        <p>在供应商关闭后发现的软件漏洞无法修补。AI决策逻辑中的行为缺陷、密钥派生方案中的密码学弱点、模型校准中将决策偏向低成本干预的偏差——如果这些问题在供应商消失后才被识别，将在每台已部署设备上持续存在，贯穿其剩余运行寿命。设备没有更新路径。照护对象未获任何通知。临床团队没有任何补救选项。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>问责缺口在照护场景中表现最为尖锐。管理用药时间、监控生命体征或协调照护转衔的AI智能体，在设备寿命周期内会做出数千次决策。这些决策在部署时，每一项背后都有一套治理结构：拥有支持团队的供应商、具有上市后监测义务的监管审批、持有同意记录的云端系统。当供应商解散时，此后的决策将由一个背后不再有可问责委托人的智能体做出。</p>
+
+        <p>照护对象不知道这已经发生。当供应商关闭非安全关键性服务时，通常没有通知义务。临床团队可能也不知道——设备持续正常运行，警报持续送达，界面上没有任何迹象表明治理基础设施已经熄灭。信息不对称是彻底的：照护对象信任设备，恰恰是因为他们相信它处于监督之下，而事实上监督已经终止。</p>
+
+        <p>当不良事件发生时——漏报警报、错误的剂量建议、因协调智能体不再与照护网络同步而导致的照护转衔失败——受伤方将发现没有供应商可以联系、没有支持热线可以拨打、没有事件报告可以提交。可问责方已经蒸发。设备仍在家中。伤害是真实的。救济途径是空的。</p>
+
+        <h2>为何这在结构上是独特的</h2>
+        <p>孤儿设备问题与停用问题不同，后者讨论的是如何有意退役一个智能体。它也不同于硬件生命周期问题，后者讨论的是有计划的升级和支持终止过渡。孤儿设备场景的区别在于：没有人做出结束设备治理的有意决定。设备不是被停用的——它是被遗弃的。治理基础设施不是被退役的——它只是关闭了。</p>
+
+        <p>这产生了现有设备安全框架不是为之设计的问责条件。监管上市后监测假设存在可以联系的制造商。产品责任原则假设存在仍然存在的被告。保修法假设存在担保方。当所有这些制度锚点同时消失时，受伤患者面临与任何制度责任真空所导致的相同的救济缺口——但在一个背景下：他家中的设备仍然携带着其原始授权的可信度标志。</p>
+
+        <h2>治理连续性需要什么</h2>
+        <p>弥合孤儿设备缺口，需要从一开始就将治理连续性视为产品安全义务。这意味着将以下内容作为任何嵌入AI的多年期照护设备获得监管批准的前提条件：治理延续计划——包括审计日志的托管安排、同意记录的指定保管人、即便在商业运营停止后仍能推送关键安全更新的机制，以及在治理状态发生变化时发出信号的公开注册条目。</p>
+
+        <p>这也意味着硬件本身应被设计为发出可验证的治理状态信号——定期验证设备的监督基础设施处于活跃状态、审计记录有可联系的保管人，以及模型尚未达到支持终止状态。无法产生该信号的设备应向临床团队标记，而不是被默默信任。治理信号中的沉默不应被视为保证。它应被视为警告。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>物理AI照护设备有着长达十年的使用寿命；治理其AI层的软件供应商则寿命短得多。当供应商关闭而设备继续运行时，治理基础设施——审计记录访问权、同意记录保管、模型更新管道、事件报告——消失了，而AI智能体仍在持续做出重大决策。照护对象不知道监督已经终止。临床团队对已发现的缺陷没有补救路径。当不良事件发生时，受伤方找不到任何制度锚点可以寻求救济。弥合这一缺口，需要在监管审批时就将治理连续性视为产品安全义务——而不是等到供应商关灯时才去考虑。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>醫療硬體擁有漫長的使用壽命。一個植入式設備可能運作十五年。一個居家監護平台，一旦被安裝並獲得照護團隊信任，往往會持續使用到其第一代軟體早已過時之後。照護對象圍繞它建立日常程序。臨床工作人員將它整合進工作流程。家屬學會依賴它的警報。設備成為基礎設施——照護環境的組成部分，而非仍處於積極評估中的產品。</p>
+
+        <p>疊加在這些硬體之上的AI治理基礎設施，則不享有同等的任期預期。維護雲端審計API、同意記錄系統、模型更新管道和事件報告渠道的供應商，與其他任何軟體公司一樣面臨著相同的壓力：戰略轉型決策、被競爭對手收購、資金耗盡、其主體管轄區內改變盈利模型的監管變化。風險投資支持的AI醫療軟體供應商的預期壽命以年計。它所治理的設備的預期壽命以十年計。</p>
+
+        <p>當這兩條時間線出現偏差，設備就成了孤兒。硬體繼續運行。AI智能體繼續做出決策。照護對象繼續接受照護。但使這些決策具有可追責性的制度基礎設施——擁有即時存取權限的審計記錄、有人類保管人的同意記錄、事件報告渠道、金鑰管理服務、原本會修補已知行為缺陷的模型更新——不復存在。</p>
+
+        <h2>在硬體交叉點</h2>
+        <p>基於硬體的AI智能體透過一條驗證鏈建立其可信度：設備以密碼學方式證明其軟體與經過審查和授權的內容相匹配。該鏈條追溯至供應商維護的憑證層級體系。當供應商的憑證頒發機構關閉或其網域失效，驗證鏈就斷裂了。審計人員、監管機構或臨床風險管理人員若詢問「該設備運行的是我們授權的內容嗎？」，將不再有機制來驗證答案。硬體在實體層面可能未有任何改變，但其可驗證身份——區分正常運行設備與被入侵設備的東西——已經消解。</p>
+
+        <p>在供應商關閉後發現的軟體漏洞無法修補。AI決策邏輯中的行為缺陷、金鑰派生方案中的密碼學弱點、模型校準中將決策偏向低成本干預的偏差——如果這些問題在供應商消失後才被識別，將在每台已部署設備上持續存在，貫穿其剩餘運行壽命。設備沒有更新路徑。照護對象未獲任何通知。臨床團隊沒有任何補救選項。</p>
+
+        <h2>在物理世界照護交叉點</h2>
+        <p>問責缺口在照護場景中表現最為尖銳。管理用藥時間、監控生命體徵或協調照護轉銜的AI智能體，在設備壽命週期內會做出數千次決策。這些決策在部署時，每一項背後都有一套治理結構：擁有支援團隊的供應商、具有上市後監測義務的監管審批、持有同意記錄的雲端系統。當供應商解散時，此後的決策將由一個背後不再有可問責委託人的智能體做出。</p>
+
+        <p>照護對象不知道這已經發生。當供應商關閉非安全關鍵性服務時，通常沒有通知義務。臨床團隊可能也不知道——設備持續正常運行，警報持續送達，介面上沒有任何跡象表明治理基礎設施已經熄滅。資訊不對稱是徹底的：照護對象信任設備，恰恰是因為他們相信它處於監督之下，而事實上監督已經終止。</p>
+
+        <p>當不良事件發生時——漏報警報、錯誤的劑量建議、因協調智能體不再與照護網絡同步而導致的照護轉銜失敗——受傷方將發現沒有供應商可以聯絡、沒有支援熱線可以撥打、沒有事件報告可以提交。可問責方已經蒸發。設備仍在家中。傷害是真實的。救濟途徑是空的。</p>
+
+        <h2>為何這在結構上是獨特的</h2>
+        <p>孤兒設備問題與停用問題不同，後者討論的是如何有意退役一個智能體。它也不同於硬體生命週期問題，後者討論的是有計劃的升級和支援終止過渡。孤兒設備場景的區別在於：沒有人做出結束設備治理的有意決定。設備不是被停用的——它是被遺棄的。治理基礎設施不是被退役的——它只是關閉了。</p>
+
+        <p>這產生了現有設備安全框架不是為之設計的問責條件。監管上市後監測假設存在可以聯絡的製造商。產品責任原則假設存在仍然存在的被告。保修法假設存在擔保方。當所有這些制度錨點同時消失時，受傷患者面臨與任何制度責任真空所導致的相同的救濟缺口——但在一個背景下：他家中的設備仍然攜帶著其原始授權的可信度標誌。</p>
+
+        <h2>治理連續性需要什麼</h2>
+        <p>彌合孤兒設備缺口，需要從一開始就將治理連續性視為產品安全義務。這意味著將以下內容作為任何嵌入AI的多年期照護設備獲得監管批准的前提條件：治理延續計劃——包括審計日誌的託管安排、同意記錄的指定保管人、即便在商業營運停止後仍能推送關鍵安全更新的機制，以及在治理狀態發生變化時發出信號的公開登記條目。</p>
+
+        <p>這也意味著硬體本身應被設計為發出可驗證的治理狀態信號——定期驗證設備的監督基礎設施處於活躍狀態、審計記錄有可聯絡的保管人，以及模型尚未達到支援終止狀態。無法產生該信號的設備應向臨床團隊標記，而不是被默默信任。治理信號中的沉默不應被視為保證。它應被視為警告。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>物理AI照護設備有著長達十年的使用壽命；治理其AI層的軟體供應商則壽命短得多。當供應商關閉而設備繼續運行時，治理基礎設施——審計記錄存取權、同意記錄保管、模型更新管道、事件報告——消失了，而AI智能體仍在持續做出重大決策。照護對象不知道監督已經終止。臨床團隊對已發現的缺陷沒有補救路徑。當不良事件發生時，受傷方找不到任何制度錨點可以尋求救濟。彌合這一缺口，需要在監管審批時就將治理連續性視為產品安全義務——而不是等到供應商關燈時才去考慮。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-09</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      var savedLang = localStorage.getItem('asaptic_lang') || 'en';
+      var btns = document.querySelectorAll('.lang-btn');
+      var sections = document.querySelectorAll('[data-lang-content]');
+
+      function setLang(lang) {
+        btns.forEach(function (b) {
+          b.classList.toggle('active', b.dataset.lang === lang);
+        });
+        sections.forEach(function (s) {
+          s.classList.toggle('active', s.dataset.langContent === lang);
+        });
+        localStorage.setItem('asaptic_lang', lang);
+      }
+
+      setLang(savedLang);
+      btns.forEach(function (b) {
+        b.addEventListener('click', function () { setLang(b.dataset.lang); });
+      });
+    })();
+  </script>
+</body>
+</html>

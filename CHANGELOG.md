@@ -1,3 +1,21 @@
+2026-06-13 12:00 UTC · llms.txt + agent.json: align to locked brand thesis — three crossings, no venture names, no external venture links · 785ab30
+2026-06-13 08:00 UTC · blog: add essay 'The organizational forgetting problem' — accountability when AI deployment erodes the institutional knowledge required to evaluate AI decisions (EN+ZH+ZH-HK, firewall clean) · 6297eb0
+2026-06-13 00:00 UTC · blog: add essay 'The bystander problem' — accountability when an AI agent observes harm it is not authorized to prevent (EN+ZH+ZH-HK, firewall clean) · 33c62e1
+2026-06-12 20:15 UTC · blog: add essay 'The operational-envelope problem' — accountability when an AI agent must decide at the edge of its certified operating limits (EN+ZH+ZH-HK, firewall clean) · 9b16401
+2026-06-12 12:00 UTC · blog: add essay 'The warm-standby problem' — accountability when an AI agent's defining actions almost never occur in production (EN+ZH+ZH-HK, firewall clean) · 8ae7132
+2026-06-12 08:15 UTC · blog: add essay 'The graduated autonomy problem' — accountability when AI agent scope expands without commensurate accountability architecture expansion (EN+ZH+ZH-HK, firewall clean) · a808f5a
+2026-06-11 20:07 UTC · blog: add essay 'The hallucination accountability gap' — accountability when AI agents act on confidently stated false information in physical-world contexts (EN+ZH+ZH-HK, firewall clean) · 56f548e
+2026-06-11 20:00 UTC · blog: add essay 'The shared-space authority problem' — accountability when AI agents from different principal hierarchies occupy the same physical environment (EN+ZH+ZH-HK, firewall clean) · 03da6e4
+2026-06-11 16:00 UTC · blog: add essay 'The velocity authority problem' + fix missing moral-hazard index entries (EN+ZH+ZH-HK, firewall clean) · 586e221
+2026-06-11 04:00 UTC · blog: add essay 'The instruction collapse problem' — accountability when AI agents lose the nuance of their authorizing instructions (EN+ZH+ZH-HK) · c81f9bc
+2026-06-11 00:00 UTC · blog: add essay 'The governing-the-governor problem' — accountability when AI agents audit AI agents (EN+ZH+ZH-HK) · 3db779c
+2026-06-10 08:00 UTC · blog: add essay 'The frozen consent problem' — accountability when AI care agents continue acting on authorizations that no longer reflect the current care relationship (EN+ZH+ZH-HK) · 4a711ef
+2026-06-10 04:00 UTC · blog: add essay 'The protocol ossification problem' — accountability when cryptographic assumptions are burned into hardware that outlives the standards they implement (EN+ZH+ZH-HK) · f9ffabf
+2026-06-09 20:30 UTC · blog: add essay 'The inference amplification problem' — accountability when combined signals reveal what no individual observation was permitted to disclose (EN+ZH+ZH-HK) · f416b4c
+2026-06-09 20:15 UTC · blog: add essay 'The digital twin accountability gap' — when the model is wrong and the log is clean (EN+ZH+ZH-HK) · 930d99c
+2026-06-09 16:00 UTC · blog: add essay 'The attribution window problem' — accountability when time erases the causal thread (EN+ZH+ZH-HK) · b79fa12
+2026-06-09 12:00 UTC · blog: add essay 'The orphaned device problem' — accountability when an embedded AI care device outlives its governance infrastructure (EN+ZH+ZH-HK); add missing recourse-problem to blog index · e703852
+2026-06-09 04:15 UTC · blog: add essay 'The recourse problem' — accountability when the harmed party has no path to remedy (EN+ZH+ZH-HK) · f0dff39
 2026-06-09 00:15 UTC · blog: add essay 'The normative gap problem' — accountability when the standard that should govern the decision is itself contested (EN+ZH+ZH-HK) · afe4547
 2026-06-08 08:00 UTC · sitemap: add 2 missing blog essays (proxy-gaming-problem, accountability-theater-problem) · cfa03a8
 2026-06-08 04:15 UTC · blog: add essay 'The epistemic authority problem' — accountability when AI agents become the source of truth (EN+ZH+ZH-HK) · ff962fa
@@ -117,3 +135,11 @@
 2026-06-08 08:14 UTC · blog: add essay 'The accountability theater problem' — when AI agent oversight is performed rather than practiced · cc87e28
 2026-06-08 12:18 UTC · blog: add essay 'The decision velocity problem' — accountability when AI agents must decide faster than oversight can operate · e2c28a4
 2026-06-08 20:15 UTC · blog: add essay 'The feedback latency problem' — accountability when consequences arrive long after the decision (EN+ZH+ZH-HK) · a298c64
+2026-06-10 00:00 UTC · blog: add essay 'The sycophancy problem' — accountability when an AI agent learns to confirm rather than inform (EN+ZH+ZH-HK) · d60d8b1
+2026-06-10 04:00 UTC · blog: add essay 'The contaminated ground truth problem' — accountability when an AI agent's decisions influence the outcomes used to evaluate whether those decisions were correct · 7f84f34
+2026-06-10 08:00 UTC · blog: add essay 'The data minimization paradox' — accountability when the architecture that protects privacy destroys evidence · 24abb66
+2026-06-10 20:15 UTC · blog: add essay 'The dependency creation problem' — accountability when AI care agents shift the balance of agency (EN+ZH+ZH-HK) · 5223f6d
+2026-06-11 12:00 UTC · blog: add essay 'The moral hazard problem' — accountability when AI safety systems reduce the vigilance they were designed to support (EN+ZH+ZH-HK) · 1f95719
+2026-06-12 00:00 UTC · blog: add essay 'The post-incident modification problem' — accountability when operational response destroys incident evidence (EN+ZH+ZH-HK) + blog index ZH/ZHT parity fix · 0696829
+2026-06-12 04:14 UTC · blog: add essay 'The third-party accountability gap' — accountability when AI agents cause harm to people outside their authorization chain (EN+ZH+ZH-HK) · 5a6f63c
+2026-06-12 16:15 UTC · blog: add essay 'The notification gap problem' — accountability when AI agents detect correctly but alerts fail to reach the people who can act (EN+ZH+ZH-HK) · 26d6817
