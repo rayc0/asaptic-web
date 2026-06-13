@@ -1,3 +1,4 @@
+2026-06-13 00:00 UTC · blog: add essay 'The bystander problem' — accountability when an AI agent observes harm it is not authorized to prevent (EN+ZH+ZH-HK, firewall clean) · 33c62e1
 2026-06-12 20:15 UTC · blog: add essay 'The operational-envelope problem' — accountability when an AI agent must decide at the edge of its certified operating limits (EN+ZH+ZH-HK, firewall clean) · 9b16401
 2026-06-12 12:00 UTC · blog: add essay 'The warm-standby problem' — accountability when an AI agent's defining actions almost never occur in production (EN+ZH+ZH-HK, firewall clean) · 8ae7132
 2026-06-12 08:15 UTC · blog: add essay 'The graduated autonomy problem' — accountability when AI agent scope expands without commensurate accountability architecture expansion (EN+ZH+ZH-HK, firewall clean) · a808f5a
