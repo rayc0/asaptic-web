@@ -84,6 +84,14 @@ function standardPillarFiles(kind) {
     .sort()
     .map((file) => `${dir}/${file}`);
 }
+function standardGuideFiles() {
+  const dir = "standard/guides";
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((file) => file.endsWith(".html"))
+    .sort()
+    .map((file) => `${dir}/${file}`);
+}
 
 const urls = [];
 const seen = new Set();
@@ -155,6 +163,14 @@ for (const dir of ["standard/product", "standard/market"]) {
     for (const l of STANDARD_LOCS)
       add(`${BASE}/${l.code}/${suffix}`, `${l.code}/${suffix}`, "0.6", alts);
   }
+}
+
+// 4c. Cross-Standard guide pages — explanatory article hubs with localized alternates.
+for (const suffix of standardGuideFiles()) {
+  const alts = standardAltLinks(suffix);
+  add(`${BASE}/${suffix}`, suffix, "0.7", alts);
+  for (const l of STANDARD_LOCS)
+    add(`${BASE}/${l.code}/${suffix}`, `${l.code}/${suffix}`, "0.6", alts);
 }
 
 const xml =
