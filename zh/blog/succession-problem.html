@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>继承问题：当负责AI智能体的组织发生变更时的问责 — Asaptic Labs</title>
+  <meta name="description" content="AI智能体由可能在问责需要之前被收购、重组或解散的组织部署。当负责组织发生变更时，智能体设计所依赖的问责链可能无声断裂。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/succession-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/succession-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/succession-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/succession-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/succession-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/succession-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="继承问题：当负责AI智能体的组织发生变更时的问责" />
+  <meta property="og:description" content="AI智能体由可能在问责需要之前被收购、重组或解散的组织部署。当负责组织发生变更时，智能体设计所依赖的问责链可能无声断裂。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/succession-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "继承问题：当负责AI智能体的组织发生变更时的问责",
+      "description": "AI智能体由可能在问责需要之前被收购、重组或解散的组织部署。当负责组织发生变更时，智能体设计所依赖的问责链可能无声断裂。",
+      "url": "https://asaptic.com/zh/blog/succession-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/succession-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "description": "参与页面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "继承问题", "item": "https://asaptic.com/zh/blog/succession-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-wrap{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <header class="essay-header">
+        <div class="essay-tag">× 后量子安全 × 硬件 × 物理世界照护</div>
+        <h1 class="essay-title">继承问题：当负责AI智能体的组织发生变更时的问责</h1>
+        <p class="essay-subtitle">每个AI智能体都由一个组织部署。该组织可能在智能体继续运行期间被收购、重组或解散。当这发生时，围绕原始部署方构建的问责架构可能没有继承者。</p>
+        <div class="essay-meta">
+          <span>Asaptic Labs</span>
+          <span>2026-06-14</span>
+          <span>5 分钟阅读</span>
+        </div>
+      </header>
+      <div class="essay-body">
+        <p>AI智能体的标准问责模型将责任分配给部署组织：一个具有义务、保险、监管地位和可被质询员工的法律实体。当出现问题时，问责沿着从智能体行动到部署它的组织的链条流动。这个模型假设问责需要时部署组织仍然存在。然而在实践中，这一假设比问责框架预期的更频繁地失败。组织被收购、重组、外包和解散。以前组织形式部署的AI智能体在新形式下继续运行。为旧实体设计的问责链不会自动转移到新实体。</p>
+
+        <p>继承问题不同于停用问题，后者涉及智能体在使用寿命结束时如何退役。继承发生在智能体仍然活跃时：委托它的委托方、控制其授权策略、持有其审计日志并对其行动负责的实体已经改变——但智能体没有。从智能体的角度来看，什么都没有改变。它继续在相同配置下运行，提供相同功能，生成相同的日志条目。从问责角度来看，部署时负责的实体可能与后果显现时负责的实体没有任何关系。两者之间的差距就是继承问题。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>密码问责依赖于持久的组织身份。根密钥、签名权威和密钥托管安排是在具有特定监管地位的特定法律实体的授权下建立的。当组织被收购或重组时，这些安排不会自动转移到收购实体。原始签名权威可能不再存在。负责密钥管理的员工可能已经离开。赋予原始问责声明其效力的监管关系——其断言密码操作在符合特定制度的情况下进行的地位——可能由不再控制智能体的实体持有。</p>
+
+        <p>这造成了后量子签名无法弥合的差距。签名证明使用了密钥；它不证明当前负责该系统的组织按照仍然有效的程序授权了密钥的存在。在后量子迁移期间，新算法的全部问责价值依赖于正确建立的信任链，未记录在密码问责架构中的组织继承可能在根部断裂该链。收购组织可能发现自己在运营密码基础设施，其完整问责来源可追溯至其无法强制提供记录的实体。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件安全问责依赖于与特定供应商、认证机构和监管登记处的持久关系。当硬件供应商被收购时，支持义务、固件签名权威和认证证书层次结构可能以智能体部署方不立即可见的方式易手。依赖已被吸收的供应商签发的证书层次结构进行认证有效性的设备群，可能发现续签路径不清晰，新母公司的签名基础设施不同，或监管认证转移需要未预料到的额外步骤。</p>
+
+        <p>操作该硬件群的智能体没有经历操作中断。其认证调用继续根据其现有授权配置文件返回有效结果。改变的是那些结果与必须对其负责的组织之间的问责关系。如果硬件安全事件后来需要重建完整的问责链——谁认证了这个硬件、谁维护了它、谁负责漏洞披露——组织继承会造成工程记录单独无法填补的差距。硬件群的问责跨越了从制造到运营的整个供应商关系链，该链中任何地方的组织变化都可能在需要时使链变得无法穿越。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>照护智能体在持续履行对其服务对象的义务。这些义务由部署组织持有——通常是医疗服务提供者、照护技术供应商或两者兼有。当该组织改变时，义务不会消失，但负责履行义务的实体会消失。在部署中途被收购的照护技术供应商可能有一个新母组织，该组织尚未被介绍给智能体服务的患者，尚未建立在相关司法管辖区运营所需的监管关系，也尚未在其自身风险和合规框架下审查照护智能体的授权策略。</p>
+
+        <p>照护智能体服务的患者可能不知道负责组织已经改变。智能体继续其预定互动，生成其日志，并将其警报上报给本身的组织关系可能已经改变的护理协调员。当发生不良结果并开始问责审查时，调查不仅必须重建智能体所做的事，还必须重建在其运营的每个时点谁负责其治理——答案在时间线的不同点可能不同。照护环境中的问责连续性要求将组织继承视为临床治理事件，而不仅仅是商业交易。</p>
+
+        <h2>继承差距及其结构性补救措施</h2>
+        <p>继承问题不能通过合同解决。收购协议通常包含转移现有部署责任的条款，但法律责任转移与问责架构转移不同。收购组织可能在法律上负责，但不拥有实际履行该责任所需的操作知识、员工专业知识、监管地位或历史记录访问权。问责链不是法律声明，而是一套有文件记录的实践、持续关系和机构知识，使问责得以在实践中而非仅在纸面上履行。</p>
+
+        <p>结构性补救措施要求将组织继承视为AI智能体问责记录中的一等事件——其重要性相当于软件更新或重大配置变更。在继承时刻，问责架构应生成继承记录：智能体授权策略、密钥材料来源、硬件认证状态、未了义务和已知风险的结构化快照，明确转移给继承实体，并附有有文件记录的确认。继承组织的接受应以其审查该记录并证明其有能力履行其所承担义务为条件。没有这一点，继承就是伪装成常规商业交易的问责空白。在三个交叉点，具有长运营寿命的智能体将比创建它们的组织活得更久。这不是要事后管理的失败模式——而是从一开始就需要预料的设计条件。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>由随后被收购、重组或解散的组织部署的AI智能体面临继承问题：围绕原始部署方建立的问责架构没有自动继承者。在后量子交叉点，签名权威和密钥托管安排可追溯至可能不再控制该系统的实体。在硬件交叉点，供应商认证链可能在收购后变得无法穿越。在照护交叉点，患者可能继续接受其从未同意的治理组织管理的智能体的照护。补救措施是将组织继承视为一等问责事件，要求明确转移给进入实体的结构化继承记录——而不仅仅是收购协议中的法律责任条款。</p>
+      </div>
+
+      <div class="essay-footer-wrap">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+        <a href="/zh/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

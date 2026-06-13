@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>共享空间权限问题：来自不同主体层级的AI智能体占据同一物理环境时的问责 — Asaptic Labs</title>
+  <meta name="description" content="当来自不同主体层级的AI智能体在同一物理环境中运行时，它们各自被单独授权的行为可能以任何单一问责架构都无法解决的方式发生冲突。身份认证不能替代治理。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/shared-space-authority-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/shared-space-authority-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/shared-space-authority-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/shared-space-authority-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/shared-space-authority-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/shared-space-authority-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="共享空间权限问题：来自不同主体层级的AI智能体占据同一物理环境时的问责" />
+  <meta property="og:description" content="物理AI将共享环境变成任何单一主体都无法单方面解决的权限问题。强大的身份认证不能替代关于空间本身的治理。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/shared-space-authority-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "共享空间权限问题：来自不同主体层级的AI智能体占据同一物理环境时的问责",
+      "description": "当来自不同主体层级的AI智能体在同一物理环境中运行时，它们各自被单独授权的行为可能以任何单一问责架构都无法解决的方式发生冲突。身份认证不能替代治理。",
+      "url": "https://asaptic.com/zh/blog/shared-space-authority-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/shared-space-authority-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "description": "参与页面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "共享空间权限问题", "item": "https://asaptic.com/zh/blog/shared-space-authority-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-block{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.page-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <header class="essay-header">
+        <div class="essay-tag">× 后量子安全 · × 硬件 · × 物理世界照护</div>
+        <h1 class="essay-title">共享空间权限问题：来自不同主体层级的AI智能体占据同一物理环境时的问责</h1>
+        <p class="essay-subtitle">物理AI将共享环境变成任何单一主体都无法单方面解决的权限问题。对每个智能体进行强大的身份认证，不能替代关于它们共同占据的空间的治理。</p>
+        <div class="essay-meta">
+          <span>Asaptic Labs</span>
+          <span>2026-06-14</span>
+          <span>5 分钟阅读</span>
+        </div>
+      </header>
+      <div class="essay-body">
+        <p>一间护理机构的病房里可能会有：楼宇管理AI（通风、照明、门禁控制——由物业运营商拥有）、患者监控智能体（生命体征、跌倒检测、用药提醒——由临床团队拥有）、药房配药智能体（药物排程和验证——由药房拥有），以及家庭护理协调智能体（日常生活支持与通讯——由患者家属拥有）。每个智能体都经过正确的身份认证，都在其授权范围内运行，都有合法的主体可以审计其决策。而它们各自被授权的行为，却可能在物理层面产生相互不兼容的后果。</p>
+
+        <p>这就是共享空间权限问题：当来自不同主体层级的AI智能体在同一物理环境中运行时，它们各自被单独授权的行为可能以任何单一问责架构都无法解决的方式发生冲突。</p>
+
+        <h2>冲突的结构</h2>
+        <p>让这个问题具有独特性的，是其横向特征。在单一主体的智能体系统中，权限冲突向上流动：智能体向其主体上报，主体做出决定，决定被记录。在多主体共享空间中，冲突不是发生在智能体与其主体层级之间——每个智能体相对于其自身的层级可能都表现正确。冲突发生在没有共同上级权威的主体层级之间。</p>
+
+        <p>楼宇管理AI减少了通风，因为它检测到房间的空气再循环负荷已超出上限。患者监控智能体读取到二氧化碳水平升高，向临床人员上报，要求覆盖暖通空调系统。两个智能体的行为都符合其授权。两个主体都没有对彼此的权限。两个智能体都没有过错。共享空间——这个物理房间本身——成为一场争议的领地，而两个系统的问责架构都不是为了裁决这场争议而设计的。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>后量子密码学为每个智能体提供了强大的身份证明。房间里的每个智能体都可以用量子抗性签名证明其身份、授权方和行为策略。但证明无法提供跨领域的权限解决机制。</p>
+
+        <p>一个包含来自四个不同信任层级的四个单独经过证明的智能体的房间，并不是一个安全的协调系统。它是四个安全隔离的信封，恰好位于同一个物理空间中。共享环境没有治理，即使其中的每个智能体都经过了身份认证。后量子转型使每个智能体的身份更强——它并没有创建共享空间所需要的主体间治理层。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>硬件信任根回答的是关于设备是什么以及其软件是否被篡改的问题。它们不回答当两个经过证明的设备都在自己的授权结构中正确行动而它们的物理效果相互干扰时，谁的指令优先的问题。</p>
+
+        <p>这带来了一个设计启示。各自防篡改且密码学隔离的系统，合在一起并不是一个连贯的权限系统。硬件证明封装了每个智能体的问责；它并不能跨越主体边界整合智能体。整合需要更高层次的机制——跨主体治理协议——这并不是任何现有硬件证明标准的组成部分。</p>
+
+        <h2>物理世界照护交叉点</h2>
+        <p>照护环境中跨主体权限尤为密集。单个被照护者的房间可能承载来自物业管理方、全科医生团队、专科医生诊断系统、药房以及被照护者家属的多个智能体。这些主体可能有重叠的利益、相互冲突的优先事项，以及针对各自智能体共同占据的物理空间没有共同的治理协议。</p>
+
+        <p>被照护者是这些冲突中受影响最大的人，也是最没有能力解决这些冲突的人。他们没有参与协商各个主体之间的权限架构，而这些主体的智能体共享他们的房间。他们可能不知道哪些智能体在运行，谁拥有每个智能体，或者每个智能体被授权做什么。名义上所有在场智能体都是为其福利服务的人，并不是管理该空间的权限安排的当事方。</p>
+
+        <h2>迈向问责的回应</h2>
+        <p>共享空间权限问题没有清晰的解决方案，但问责回应有可识别的组成要素。</p>
+
+        <p>第一个要素是强制信息披露：每个将物理AI智能体部署到共享环境中的组织，都应该被要求向共享空间注册表注册该智能体、其授权范围及其拥有主体，以供在该环境中运营的所有其他主体访问。如果主体不知道与他们共享空间的其他智能体，冲突便无法被治理。</p>
+
+        <p>第二是部署前权限协议：在来自不同主体层级的多个智能体共享物理空间之前，应在主体之间协商冲突解决协议。该协议无需预见每一个可能的冲突——它必须按决策类别指定哪个主体层级具有优先权，以及如何将超出这些类别的冲突记录并上报给人类决策者。</p>
+
+        <p>第三是冲突日志要求：当来自不同主体层级的智能体在共享环境中产生物理上不兼容的行为时，该冲突应在每个智能体的审计跟踪中独立记录时间戳，在不做出裁决的情况下进行归因，并提供给每个主体的治理职能部门进行审查。</p>
+
+        <p>在Asaptic Labs，共享空间权限问题是物理AI在照护和基础设施背景下部署的结构性约束。共享空间中每个智能体的最强密码学身份，不能替代关于空间本身的治理协议。物理环境不属于任何单一主体层级——物理AI的问责架构必须从一开始就考虑到这一点。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>当来自不同主体层级的AI智能体在同一物理环境中共存时，它们各自被授权的行为可能产生没有任何单一问责架构能够裁决的物理不兼容后果。后量子认证使每个智能体的身份更强；它并不能创建共享物理空间所需的主体间治理层。该层必须在部署前由主体协商确立——而不是在冲突发生后从审计日志中重建。</p>
+      </div>
+
+      <div class="essay-footer-block">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+        <a href="/zh/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+  <footer class="page-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
