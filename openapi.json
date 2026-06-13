@@ -1,0 +1,64 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Asaptic Sourcing API",
+    "version": "1.0.0",
+    "description": "Agent-facing interface to Asaptic (HK) Ltd — factory-direct, deposit-first sourcing of certified clinical devices and deep-tech components for Western and Global-South B2B buyers. Principal-reseller with a compliance/QA layer. Live endpoints: GET /agent/capabilities.json, POST /mcp (MCP JSON-RPC). A REST /rfq endpoint is planned.",
+    "contact": { "email": "engage@asaptic.com", "url": "https://asaptic.com" }
+  },
+  "servers": [ { "url": "https://asaptic.com" } ],
+  "paths": {
+    "/agent/capabilities.json": {
+      "get": {
+        "operationId": "getCapabilities",
+        "summary": "Machine-readable sourcing-lane capabilities feed",
+        "responses": { "200": { "description": "Capabilities document (lanes, markets, compliance, deposit-first model)", "content": { "application/json": {} } } }
+      }
+    },
+    "/mcp": {
+      "get": {
+        "operationId": "mcpDiscovery",
+        "summary": "MCP server discovery manifest",
+        "responses": { "200": { "description": "Server info, transport, tool names", "content": { "application/json": {} } } }
+      },
+      "post": {
+        "operationId": "mcpJsonRpc",
+        "summary": "MCP server (JSON-RPC 2.0, Streamable HTTP). Tools: list_sourcing_lanes, get_lane_capability, get_engagement, submit_rfq.",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "jsonrpc": { "type": "string", "const": "2.0" }, "id": {}, "method": { "type": "string" }, "params": { "type": "object" } }, "required": ["jsonrpc", "method"] } } } },
+        "responses": { "200": { "description": "JSON-RPC result", "content": { "application/json": {} } } }
+      }
+    },
+    "/rfq": {
+      "post": {
+        "operationId": "submitRfq",
+        "summary": "Submit a request for quote (PLANNED REST endpoint; today use POST /mcp tools/call submit_rfq).",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RFQ" } } } },
+        "responses": { "200": { "description": "RFQ received", "content": { "application/json": { "schema": { "type": "object", "properties": { "received": { "type": "boolean" }, "reference": { "type": "string" }, "next": { "type": "string" } } } } } } }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RFQ": {
+        "type": "object",
+        "required": ["product", "buyer_contact"],
+        "properties": {
+          "product": { "type": "string", "description": "Product or lane (e.g. 'TFLN wafers', 'clinical bioimpedance device')" },
+          "quantity": { "type": "string" },
+          "target_market": { "type": "string", "description": "ISO country or region (e.g. US, EU, CA, AU, Saudi, Brazil)" },
+          "buyer_contact": { "type": "string", "description": "Email or contact for Asaptic to respond (within 4 hours)" }
+        }
+      },
+      "Lane": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "sources": { "type": "string" },
+          "markets": { "type": "array", "items": { "type": "string" } },
+          "compliance": { "type": "array", "items": { "type": "string" } },
+          "page": { "type": "string", "format": "uri" }
+        }
+      }
+    }
+  }
+}
