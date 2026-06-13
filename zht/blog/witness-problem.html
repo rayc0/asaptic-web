@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>目擊者問題 — Asaptic Labs</title>
+  <meta name="description" content="當AI智能體是其所報告事件的唯一有權訪問的實體時，問責制完全依賴於智能體自身的陳述。密碼簽名和硬體證明可以保證該陳述在生成後未被修改，但無法保證它在生成時是準確的。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/witness-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/witness-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/witness-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/witness-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/witness-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/witness-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="目擊者問題：當AI智能體是唯一觀察者時的問責" />
+  <meta property="og:description" content="完整性與準確性是不同的屬性。後量子簽名和硬體證明保證智能體記錄在生成後未被更改。當智能體是唯一觀察者時，沒有任何機制能保證記錄在生成時是正確的。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/witness-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "目擊者問題：當AI智能體是唯一觀察者時的問責",
+      "description": "當AI智能體是其所報告事件的唯一有權訪問的實體時，問責制完全依賴於智能體自身的陳述。密碼簽名和硬體證明可以保證該陳述在生成後未被修改，但無法保證它在生成時是準確的。",
+      "url": "https://asaptic.com/zht/blog/witness-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/witness-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "description": "參與頁面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯絡"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "目擊者問題", "item": "https://asaptic.com/zht/blog/witness-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-wrap{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× 後量子安全 × 硬體 × 物理世界護理</div>
+      <h1 class="essay-title">目擊者問題：當AI智能體是唯一觀察者時的問責</h1>
+      <p class="essay-subtitle">完整性與準確性是不同的屬性。後量子簽名和硬體證明保證智能體記錄在生成後未被更改。當智能體是唯一觀察者時，沒有任何機制能保證記錄在生成時是正確的。</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-14</span>
+        <span>5 分鐘閱讀</span>
+      </div>
+    </header>
+
+    <div class="essay-body">
+      <p>大多數AI智能體問責架構依賴一個隱含假設：智能體的記錄可以與某些外部內容進行核對。人類監督者可能會將日誌與自己的記憶進行比對。第二個系統可能已從不同角度捕獲了同一事件。物理證據可能可以印證記錄所聲稱的內容。在這種模型下，問責是一個關聯問題——智能體的陳述是否與其他觀察者所見相符？</p>
+
+      <p>當智能體是唯一目擊者時，這一假設便會失效。在智能體獨自運行的部署中——在沒有人類在場時通宵監控設施、在沒有第二系統獨立訪問的情況下管理密碼過程、在沒有臨床醫師看守時為患者提供床旁觀察——問責記錄是智能體關於其作為唯一能夠描述這些事件的實體所發生事情的報告。沒有外部內容可以與之關聯。日誌、證明和審計都依賴於智能體選擇記錄的只有智能體觀察到的事件。</p>
+
+      <h2>在後量子安全交叉點</h2>
+      <p>應用於智能體問責記錄的後量子簽名提供了一個具有精確和有限範圍的保證：它們確認簽署內容在生成後未被修改。如果私鑰管理良好且算法健全，有效簽名證明了完整性。但完整性——記錄在生成後未被更改的保證——與準確性截然不同：記錄在生成時是正確的保證。</p>
+
+      <p>當智能體是唯一目擊者時，無論密碼強度如何，記錄的準確性都無法通過任何下游驗證機制確立。來自唯一目擊者部署的後量子簽名問責記錄攜帶完整的完整性保證，以及對任何外部準確性檢查的完全缺失。後量子遷移將產生在密碼上抵禦攻擊數十年的簽名。但一條記錄可以被完美簽署卻在實質上是錯誤的。當觀察事件的唯一實體也是生成記錄的實體時，簽名強度的任何進步都無法彌合完整性與準確性之間的差距。</p>
+
+      <h2>在硬體交叉點</h2>
+      <p>硬體證明向下進一步擴展了完整性保證：經過證明的記錄不僅可以證明內容在生成後未被修改，還可以證明它是由特定驗證系統在特定驗證硬體狀態下生成的。證明為完整性添加了來源。但來源——確認哪個系統生成了記錄——不擴展到該系統觀察的準確性。</p>
+
+      <p>由於校準漂移、環境干擾或軟件故障而錯誤讀取感測器的裝置智能體，會生成硬體證明的、密碼簽名的不對應於物理世界的觀察記錄。證明是完整的，記錄是錯誤的。沒有任何硬體機制在經過證明的系統狀態與該系統感知輸出的準確性之間建立經過驗證的對應關係。硬體交叉點恰恰是這一點最重要的地方：嵌入物理基礎設施的智能體通常是與其報告的環境接觸的唯一系統，其硬體身份的證明對於驗證其環境讀數的準確性沒有任何作用。</p>
+
+      <h2>在物理世界照護交叉點</h2>
+      <p>在照護環境中，唯一目擊者條件是結構性的且預期的。在大多數設施配置中，通宵監控患者的監控智能體是該時段大部分時間的唯一在場實體。它記錄的生命體徵讀數、它升級或抑制的警報、它在不上報的情況下回應的患者互動——這些事件構成了照護記錄。對於例行的夜間觀察，沒有人類共同目擊者。沒有獨立感測器系統從單獨視角捕獲相同的生理測量值。</p>
+
+      <p>這是設計，不是設計失敗。智能體在照護環境中部署，正是因為所需分辨率和持續時間的持續人類存在不可用或不可持續。但適用於人類照護文件的問責實踐——臨床醫師的記錄可以與另一名臨床醫師的獨立檢查進行比較，患者可以證實或反駁其經歷的事件——不適用於唯一目擊者智能體部署。智能體的記錄就是發生事情的記錄。如果它不完整、不準確，或因未被檢測到的校準問題而系統性偏差，可能沒有糾正來源。</p>
+
+      <h2>設計回應</h2>
+      <p>目擊者問題沒有密碼學解決方案。更強的簽名無法解決它，更好的證明也無法解決它。在唯一目擊者部署中，完整性與準確性之間的差距是結構性的。彌合它需要架構干預：智能體無法生成的獨立防篡改物理環境日誌；即使單個感測器在操作上已足夠，也需要冗餘觀察路徑；使用智能體不控制的信號對智能體自身報告進行異常檢測；以及當智能體作為重要事件的唯一觀察者運行時，向監督主體明確披露。這些措施不能恢復獨立目擊者驗證——它們使唯一目擊者條件可見且受約束，從而可以在準確了解哪些內容可以被驗證、哪些不能的情況下應用監督。</p>
+    </div>
+
+    <div class="essay-summary">
+      <span class="essay-summary-label">核心觀點</span>
+      <p>當AI智能體是唯一觀察者時，問責記錄攜帶完整的完整性保證，以及外部準確性驗證的完全缺失。後量子簽名和硬體證明證明智能體自身的陳述未被更改——而非其在生成時是正確的。在所有三個交叉點，唯一目擊者條件需要明確的架構認可：智能體無法生成的防篡改環境日誌、冗餘觀察路徑、對智能體生成記錄的異常檢測，以及在獨立驗證結構上不可用時向主體明確披露。</p>
+    </div>
+
+    <div class="essay-footer-wrap">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zht/blog/" class="essay-footer-back">&larr; 返回博客</a>
+    </div>
+  </main>
+
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da testemunha — Asaptic Labs</title>
+  <meta name="description" content="Quando um agente de IA é a única entidade com acesso aos eventos que relata, a responsabilidade assenta inteiramente no relato do próprio agente. As assinaturas criptográficas e a atestação de hardware podem garantir que esse relato não foi modificado. Não podem garantir que era preciso quando produzido." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/witness-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/witness-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/witness-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/witness-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/witness-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/witness-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da testemunha: responsabilidade quando um agente de IA é o único observador" />
+  <meta property="og:description" content="Integridade e exactidão são propriedades diferentes. As assinaturas pós-quânticas e a atestação de hardware garantem que o registo de um agente não foi alterado após ser produzido. Quando o agente é o único observador, nenhum mecanismo garante que o registo era correcto quando produzido." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/witness-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema da testemunha: responsabilidade quando um agente de IA é o único observador",
+      "description": "Quando um agente de IA é a única entidade com acesso aos eventos que relata, a responsabilidade assenta inteiramente no relato do próprio agente. As assinaturas criptográficas e a atestação de hardware podem garantir que esse relato não foi modificado. Não podem garantir que era preciso quando produzido.",
+      "url": "https://asaptic.com/pt/blog/witness-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/witness-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar a Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/pt/engage.html",
+            "description": "Página de contacto"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "Contactar por e-mail"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "pt",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema da testemunha", "item": "https://asaptic.com/pt/blog/witness-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-wrap{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contacto</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Segurança Pós-Quântica × Hardware × Cuidado no Mundo Físico</div>
+      <h1 class="essay-title">O problema da testemunha: responsabilidade quando um agente de IA é o único observador</h1>
+      <p class="essay-subtitle">Integridade e exactidão são propriedades diferentes. As assinaturas pós-quânticas e a atestação de hardware garantem que o registo de um agente não foi alterado após ser produzido. Quando o agente é o único observador, nenhum mecanismo garante que o registo era correcto quando produzido.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-14</span>
+        <span>5 min de leitura</span>
+      </div>
+    </header>
+
+    <div class="essay-body">
+      <p>A maior parte da arquitectura de responsabilidade de agentes de IA assenta numa suposição implícita: o registo do agente pode ser verificado contra algo externo. Um supervisor humano pode rever o registo contra a sua própria recordação. Um segundo sistema pode ter capturado o mesmo evento de um ponto de vista diferente. Evidência física pode corroborar o que o registo afirma. A responsabilidade, neste modelo, é uma questão de correlação — o relato do agente corresponde ao que outros observaram?</p>
+
+      <p>Essa suposição falha sempre que o agente é a única testemunha. Em implantações onde o agente opera sozinho — monitorizar uma instalação durante a noite quando não há humanos presentes, gerir um processo criptográfico onde nenhum segundo sistema tem acesso independente, fornecer observação ao lado do paciente quando nenhum clínico está a observar — o registo de responsabilidade é o relato do próprio agente sobre eventos em que é a única entidade posicionada para descrever. Não há nada externo com o qual correlacioná-lo. Registos, atestações e auditorias dependem do que o agente escolheu registar sobre eventos que apenas o agente observou.</p>
+
+      <h2>No cruzamento da segurança pós-quântica</h2>
+      <p>As assinaturas pós-quânticas aplicadas a registos de responsabilidade de agentes fornecem uma garantia com um âmbito preciso e limitado: confirmam que o conteúdo assinado não foi modificado após ser produzido. Se a chave privada for bem gerida e o algoritmo for sólido, uma assinatura válida prova integridade. Mas integridade — a garantia de que o registo não foi alterado após a produção — é categoricamente diferente de exactidão: a garantia de que o registo era correcto quando produzido.</p>
+
+      <p>Quando um agente é a única testemunha, a exactidão do registo não pode ser estabelecida por qualquer mecanismo de verificação a jusante, independentemente da força criptográfica. Um registo de responsabilidade assinado com PQ proveniente de uma implantação de testemunha única carrega uma garantia completa de integridade e uma ausência completa de qualquer verificação externa de exactidão. A migração pós-quântica produzirá assinaturas que são criptograficamente resistentes a ataques durante décadas. Mas um registo pode ser perfeitamente assinado e substancialmente errado. Nenhum avanço na força de assinatura fecha o intervalo entre integridade e exactidão quando a única entidade que observou os eventos é também a entidade que produziu o registo.</p>
+
+      <h2>No cruzamento do hardware</h2>
+      <p>A atestação de hardware estende a garantia de integridade mais abaixo na pilha: um registo atestado pode carregar prova não apenas de que o conteúdo não foi modificado após a produção, mas de que foi produzido por um sistema verificado específico num estado de hardware verificado específico. A atestação adiciona proveniência à integridade. Mas proveniência — confirmação de qual sistema produziu o registo — não se estende à exactidão do que esse sistema observou.</p>
+
+      <p>Um agente de dispositivo que lê incorrectamente um sensor devido a deriva de calibração, interferência ambiental ou falha de software produz um registo de observação com atestação de hardware, assinado criptograficamente, de uma observação que não correspondeu ao mundo físico. A atestação está completa. O registo está errado. Nenhum mecanismo de hardware estabelece uma correspondência verificada entre um estado de sistema atestado e a exactidão das saídas perceptuais desse sistema. O cruzamento do hardware é precisamente onde isto mais importa: os agentes incorporados em infra-estrutura física são frequentemente o único sistema em contacto com o ambiente que relatam, e a atestação da sua identidade de hardware não faz nada para verificar a exactidão das suas leituras ambientais.</p>
+
+      <h2>No cruzamento do cuidado no mundo físico</h2>
+      <p>Em contextos de cuidado, a condição de testemunha única é estrutural e esperada. Um agente de monitorização que observa um paciente durante a noite é, na maioria das configurações de instalações, a única entidade presente durante a maior parte desse período. As leituras de sinais vitais que regista, os alertas que eleva ou suprime, as interacções com pacientes a que responde sem escalar — estes eventos constituem o registo de cuidado. Não há co-testemunha humana para a observação nocturna de rotina. Não há sistema de sensor independente a capturar as mesmas medições fisiológicas de um ponto de vista separado.</p>
+
+      <p>Este é o design, não uma falha do mesmo. Os agentes são implantados em contextos de cuidado precisamente porque a presença humana contínua na resolução e duração necessárias não está disponível ou é sustentável. Mas as práticas de responsabilidade que funcionam para a documentação de cuidado humano — onde as notas de um clínico podem ser comparadas com o exame independente de outro clínico, onde um paciente pode corroborar ou contestar eventos que experienciou — não se traduzem para implantações de agentes de testemunha única. O registo do agente é o registo do que aconteceu. Se estiver incompleto, inexacto, ou sistematicamente enviesado por um problema de calibração não detectado, pode não haver fonte correctora.</p>
+
+      <h2>A resposta de design</h2>
+      <p>O problema da testemunha não tem solução criptográfica. Assinaturas mais fortes não o resolvem. Melhor atestação não o resolve. O intervalo entre integridade e exactidão, numa implantação de testemunha única, é estrutural. Fechá-lo requer intervenções arquitecturais: registo de ambiente físico independente inviolável que o agente não pode elaborar; caminhos de observação redundantes mesmo onde um único sensor é operacionalmente suficiente; detecção de anomalias sobre os próprios relatórios do agente usando sinais que o agente não controla; e divulgação explícita aos principais de supervisão quando um agente está a operar como único observador de eventos consequentes. Estas medidas não restauram a verificação independente de testemunhas — tornam a condição de testemunha única visível e restrita, para que a supervisão possa ser aplicada com conhecimento preciso do que pode e não pode ser verificado.</p>
+    </div>
+
+    <div class="essay-summary">
+      <span class="essay-summary-label">Ponto-chave</span>
+      <p>Quando um agente de IA é o único observador, os registos de responsabilidade carregam uma garantia completa de integridade e uma ausência completa de verificação externa de exactidão. As assinaturas pós-quânticas e a atestação de hardware certificam que o próprio relato do agente não foi alterado — não que era correcto quando produzido. Em todos os três cruzamentos, a condição de testemunha única requer reconhecimento arquitectural explícito: registo ambiental inviolável que o agente não pode elaborar, caminhos de observação redundantes, detecção de anomalias sobre registos elaborados pelo agente, e divulgação explícita aos principais quando a verificação independente está estruturalmente indisponível.</p>
+    </div>
+
+    <div class="essay-footer-wrap">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/pt/blog/" class="essay-footer-back">&larr; Voltar ao blog</a>
+    </div>
+  </main>
+
+  <footer class="site-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contacto</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>
