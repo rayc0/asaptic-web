@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>多實例問題 — Asaptic Labs</title>
+  <meta name="description" content="生產AI智能體在單一授權下以大量並發實例運行。當問責框架以單數智能體為前提設計時，多實例破壞了歸因、放大了範圍漂移，並產生了當前框架無法解決的身份空白。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/multiplicity-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/multiplicity-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/multiplicity-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/multiplicity-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/multiplicity-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/multiplicity-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="多實例問題——當一個AI智能體以大量並發實例運行時，問責何處安放" />
+  <meta property="og:description" content="授權是發給「這個智能體」的，而這個智能體現在是五十個並發實例。哪個實例的操作在授權範圍之內？在後果性決策發生之前，這個問題需要一個答案。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/multiplicity-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-05-25" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "多實例問題——當一個AI智能體以大量並發實例運行時，問責何處安放",
+      "description": "生產AI智能體以水平擴展的並發實例運行，而授權通常發放給智能體類型而非具體實例。多實例破壞歸因、放大範圍漂移，並產生當前問責框架無法解決的身份空白。",
+      "url": "https://asaptic.com/zht/blog/multiplicity-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-05-25",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/multiplicity-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯絡"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "多實例問題", "item": "https://asaptic.com/zht/blog/multiplicity-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:16px;line-height:1.8;color:var(--text);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:600;color:var(--text);margin:48px 0 16px;line-height:1.3}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">多實例問題：當一個AI智能體以大量並發實例運行時，問責何處安放</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-25</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>授權是發給這個智能體的。而現在這個智能體是五十個並發實例。哪個實例的操作在授權範圍之內？這個問題在AI智能體問責框架中幾乎從未被提出——因為這些框架誕生於一個「智能體」概念仍是單數的時代：一個實例、一次會話、一條操作流。在生產環境中，這種單數心智模型無法經受基礎設施的檢驗。真實的智能體會水平擴展。一旦擴展，問責的基本要素——身份、授權、歸因、審計——都需要重新思考。</p>
+
+        <h2>多實例如何破壞歸因</h2>
+        <p>歸因是這樣一種主張：特定實體在特定時刻、憑藉特定授權、產生了特定效果。在單實例智能體中，歸因鏈是緊密的：智能體有唯一身份、唯一憑證集和唯一操作日誌。審計員可以完整重建歸因鏈。而當同一智能體規格以並發實例組的形式運行時，這條鏈就開始分叉。每個實例可能接收不同輸入、遇到不同狀態、做出不同決策——同時向外部系統呈現相同身份。操作日誌是五十個實例日誌的並集。當某個後果性操作需要歸因時，你要指向哪一條日誌？在大多數當前部署中，答案是：第一個完成的實例所屬的日誌——以會話ID標識，如果會話ID被記錄的話。</p>
+        <p>更深層的問題在於，授權並非發給某個實例，而是發給了智能體類型、或智能體配置、或部署版本。這些稱謂中沒有任何一個能確定：具體是哪個實例被授權執行了正在受審查的特定後果性操作。類型級授權與實例級操作的結合，產生了一個隨實例數量線性擴大的歸因空白。</p>
+
+        <h2>多實例如何放大範圍漂移</h2>
+        <p>單個智能體在授權範圍外運行，是一次範圍違規。五十個智能體各自輕微越界，則產生五十個同步發生的範圍違規——每一個都微小，每一個都容易淹沒在龐大操作日誌的噪聲中；而合在一起，構成一種系統性的授權偏離，任何單實例級別的審查都無法察覺。多實例艦隊中的範圍漂移是一種聚合屬性，需要聚合度量：不是單一實例的操作分佈，而是給定運行窗口內整個實例群的操作分佈。大多數部署不具備支持這種視角的審計基礎設施，只有會話級日誌——而會話級日誌不足以支撐多實例問責。</p>
+        <p>最小足跡問題進一步加劇了這一困境。最小足跡原則要求智能體只申請當前任務所需的權限。當大量實例並發運行、每個實例各自為當前任務申請權限時，聚合後的權限面遠超任何單項任務所能合理化的範圍。整個實例組集體持有的權力遠超任何單個授權所預想的邊界。這種集體權力面才是需要被治理的對象，也是大多數授權框架所忽視的對象。</p>
+
+        <h2>三個交叉點如何暴露這一問題</h2>
+        <p>在後量子安全交叉點，多實例問題體現為金鑰使用模式的違規。為某個授權範圍頒發給某個智能體的簽名金鑰，其設計前提是一個簽名實體。當大量實例並發使用同一憑證簽名時，密碼審計軌跡匯聚了整個實例組的簽名，而非單一智能體的簽名。授權範圍與特定簽名操作之間的綁定關係因此弱化：你知道該憑證授權了這一操作，但該憑證從未被設計成要在規模化並發場景下授權操作。向後量子密碼學的過渡，是一個機會：將金鑰發放的粒度從部署級改為實例級——頒發短期有效的實例級金鑰，將每個簽名綁定到產生它的特定實例與時刻。</p>
+        <p>在硬件交叉點，認證問題與金鑰問題如出一轍。硬件認證通常針對部署而非實例發放。當五十個實例並發運行——可能在不同硬件、不同韌體、不同認證狀態的執行環境中——部署級認證並不能說明實例級的執行環境。某個在認證硬件邊界之外運行的實例所產生的操作，會被當作已受認證覆蓋來處理，因為授權系統沒有可供核查的實例級認證。結果是一支實例組，每個實例都出示有效的部署認證，而該認證所應支撐的問責主張，對任何具體實例而言都可能並不成立。</p>
+        <p>在物理世界照護交叉點，多實例問題在倫理層面最為緊迫。被授權與某位住戶互動的照護智能體，是在一份為單一關係設計的照護計劃框架下運作的。當同一類型的智能體以大量並發實例運行——每個實例與不同住戶互動，或與同一住戶在不同照護時刻互動——照護計劃關於情境連續性、先前狀態識別和適當升級閾值的假設，可能以任何單一實例日誌都無法揭示的方式被違反。照護智能體組的聚合問責，需要將實例級操作關聯回具體的照護關係——而這種粒度，是大多數照護部署日誌所不支持的。</p>
+
+        <h2>架構必須做什麼</h2>
+        <p>解決方案不是減少實例數量——規模化擴展是操作上的必要條件。解決方案是從一開始就為規模化設計的問責體系。實例級身份意味著每個被創建的實例在生成時獲得唯一的、短期有效的標識符，與其授權範圍、硬件認證狀態和操作上下文綁定。實例級操作歸因意味著每個後果性操作都攜帶該實例標識符，使日誌不再是會話條目的平鋪並集，而是一棵結構化的樹：部署→實例→操作。聚合範圍監控意味著治理層不僅追蹤每實例的操作分佈，還追蹤整個實例組的分佈，並在聚合結果偏離預期範圍時發出警報——即便沒有任何單個實例在可見層面超出其授權。</p>
+        <p>授權是發給這個智能體的。但實際採取行動的，永遠是特定實例——在特定時刻、在特定執行上下文中。規模化場景下的問責，要求在身份、授權和審計層面承認這一區分——在某個從未被單獨問責的實例做出後果性決策之前。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>生產AI智能體以水平擴展的並發實例運行，而授權通常發放給「智能體類型」而非具體實例。這造成三重問題：歸因斷鏈（哪個實例被授權執行特定的後果性操作？）、範圍漂移放大（每個實例的微小越界在實例級別不可見，但在整體層面構成系統性越界），以及權限足跡累積（並發實例的合併權限面遠超任何單個授權所預想的範圍）。在後量子安全交叉點，問題體現為金鑰在實例級別的誤用；在硬件交叉點，體現為部署級認證無法覆蓋實例級執行環境；在物理照護交叉點，體現為照護關係的連續性假設在多實例場景中被隱性違反。解決方案是為規模化而設計的問責架構：實例級身份綁定、實例級操作歸因，以及跨實例的聚合範圍監控。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zht/blog/">&larr; 全部文章</a>
+        <a href="/zht/blog/measurement-problem.html">上篇：度量問題 →</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema de isolamento multi-inquilino — Asaptic Labs</title>
+  <meta name="description" content="Quando um agente de IA serve muitos principais em simultâneo, as propriedades de responsabilidade que precisamos para uma implementação de principal único não se aplicam automaticamente. O isolamento tem de ser aplicado em três camadas: contexto, autoridade e atestação." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/multi-tenancy-isolation-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/multi-tenancy-isolation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/multi-tenancy-isolation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/multi-tenancy-isolation-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/multi-tenancy-isolation-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/multi-tenancy-isolation-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema de isolamento multi-inquilino — quando um agente serve muitos" />
+  <meta property="og:description" content="Quando um agente de IA serve muitos principais em simultâneo, as propriedades de responsabilidade que precisamos para uma implementação de principal único não se aplicam automaticamente." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/multi-tenancy-isolation-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-05-24" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema de isolamento multi-inquilino — quando um agente serve muitos",
+      "description": "Quando um agente de IA serve muitos principais em simultâneo, o isolamento tem de se verificar nas camadas de contexto, autoridade e atestação — ou a responsabilidade colapsa para cada principal ao mesmo tempo.",
+      "url": "https://asaptic.com/pt/blog/multi-tenancy-isolation-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-05-24",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/multi-tenancy-isolation-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar a Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/pt/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "Enviar consulta por e-mail"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "pt",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema de isolamento multi-inquilino", "item": "https://asaptic.com/pt/blog/multi-tenancy-isolation-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin:48px 0 16px;line-height:1.3}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+
+    <article>
+      <span class="essay-topic">× SEGURANÇA QUÂNTICA · × HARDWARE · × CUIDADOS NO MUNDO FÍSICO</span>
+      <h1 class="essay-title">O problema de isolamento multi-inquilino: quando um agente serve muitos principais</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">Por Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">6 min de leitura</span>
+      </div>
+      <div class="essay-body">
+        <p>A maioria dos quadros de responsabilidade para agentes de IA é escrita com um único principal em mente. Um utilizador. Um operador. Uma hierarquia de principais claramente encadeada. Não é assim que os agentes implementados realmente funcionam.</p>
+        <p>Um agente de cuidados que serve vinte residentes numa instalação residencial está simultaneamente integrado em vinte relações de consentimento, vinte planos de cuidados, as expectativas de vinte famílias e vinte histórias clínicas. Um agente de operações financeiras que gere faturas numa empresa de portfólio serve dezenas de contas num único ambiente de execução. Um agente de fluxo de trabalho empresarial processa pedidos de centenas de funcionários, cada um com diferente antiguidade, nível de acesso e espaço de ação adequado. Na prática, o modo de operação predefinido para qualquer agente em escala é multi-inquilino: um motor de inferência, um modelo, uma implementação, muitos principais.</p>
+        <p>O problema de isolamento é este: as propriedades de responsabilidade que precisamos para uma implementação de principal único não se aplicam automaticamente quando a mesma instância de agente processa pedidos de múltiplos principais. Os modos de falha são subtis, difíceis de detetar e graves.</p>
+
+        <h2>As três camadas que têm de se verificar</h2>
+        <p>O isolamento nas implementações de agentes multi-inquilino tem de se verificar em três camadas, e a maioria das arquiteturas atuais aplica apenas uma.</p>
+        <p>A primeira é o <em>isolamento de contexto</em>. A janela de contexto do agente, o histórico de chamadas de ferramentas e as memórias recuperadas têm de ser estritamente delimitadas ao principal atual. Um agente de cuidados que recuperou a avaliação de deglutição de um residente na vez anterior não deve transportar qualquer detalhe dessa avaliação quando transita para um pedido sobre o próximo residente. Isto parece óbvio. Também é violado rotineiramente. Os repositórios de recuperação partilhados, as camadas de cache que atravessam os limites dos principais e os buffers de memória de longo horizonte criam superfícies para contaminação de contexto. Mesmo quando não existe malícia, uma instrução de cuidados calibrada para um residente — "pedir sempre antes das refeições, o residente tende a recusar as ofertas iniciais" — pode colorir invisivelmente as respostas do agente para o próximo residente, que tem necessidades de cuidados completamente diferentes.</p>
+        <p>A segunda é o <em>isolamento de autoridade</em>. As permissões concedidas por um principal não devem ser transportadas nem acumuladas através dos limites dos principais. Se um tutor concedeu ao agente autoridade para enviar um alerta não urgente ao pessoal clínico, essa concessão não se estende aos dados de qualquer outro residente ou ao contexto do alerta. Isto parece evidente por si só, mas as arquiteturas de permissões multi-inquilino são difíceis de construir corretamente. O controlo de acesso baseado em funções estático, que concede permissão à função do agente em vez de à sessão delimitada pelo principal, viola-o sistematicamente. A arquitetura correta anexa permissões a uma credencial com âmbito no principal, não à instância do agente. O agente não detém autoridade; a sessão detém.</p>
+        <p>A terceira é o <em>isolamento de atestação</em>. Numa implementação com atestação de hardware, o relatório de atestação cobre o binário do agente e o ambiente de execução. Não cobre automaticamente os dados de qual principal estão a ser processados no momento da operação atestada. Para que um recibo assinado seja significativo numa implementação multi-inquilino, tem de vincular a operação não apenas à identidade do agente e à ação realizada, mas ao principal específico cuja autoridade e dados estavam em âmbito no momento. Sem essa vinculação, o recibo prova que o agente correu num ambiente de confiança — não prova que correu em nome do principal correto com os dados corretos.</p>
+
+        <h2>Como os modos de falha se apresentam</h2>
+        <p>A contaminação de contexto raramente se apresenta como uma divulgação catastrófica. Apresenta-se como uma miscalibração subtil: um agente que é ligeiramente mais deferente à recusa depois de uma sequência de sobreposições assertivas de um principal diferente. Um agente cujo limiar de risco para um alerta de escalonamento derivou porque os últimos dez casos que processou eram todos de alta acuidade. Um agente cujo registo linguístico mudou em direção ao idioma de uma comunidade após processar uma longa sessão com essa comunidade, e depois se dirige a uma população diferente de forma inadequada. Estas falhas passam na maioria das suites de teste porque o resultado é plausível. Só se tornam visíveis quando o resultado está errado para esta pessoa, neste momento — e a essa altura, a consequência pode já ter ocorrido.</p>
+        <p>A contaminação de autoridade tende a apresentar-se como proliferação de capacidades. Um agente que recebeu acesso elevado para uma operação urgente de um principal ainda transporta a credencial de sessão elevada ao processar o pedido seguinte, porque a sessão nunca foi corretamente terminada e delimitada. Num contexto de cuidados, isto pode significar que um agente age sobre dados que nunca foi autorizado a ler, porque a janela de acesso da interação anterior não foi fechada.</p>
+        <p>A contaminação de atestação é a mais perigosa em escala. Um recibo assinado que não codifica a identidade do principal torna-se uma atestação em massa: afirma que o agente correu corretamente em agregado, mas não consegue responder à questão que qualquer regulador acabará por colocar — esta ação específica, que afeta esta pessoa específica, ocorreu num contexto de execução corretamente delimitado e autorizado?</p>
+
+        <h2>Porque é que o cruzamento dos cuidados é o caso mais difícil</h2>
+        <p>Cada um dos três cruzamentos eleva as apostas de isolamento numa dimensão diferente. O cruzamento pós-quântico torna-o um requisito criptográfico: as chaves baseadas em reticulados têm de ser específicas do principal para impedir que um adversário futuro recupere o material de chave de um inquilino a partir da pegada criptográfica de outro. Misturar contextos de chave entre principais numa implementação pós-quântica não é apenas uma falha de privacidade atual — é um passivo criptográfico diferido que se torna mais perigoso à medida que as capacidades quânticas melhoram.</p>
+        <p>O cruzamento do hardware torna o isolamento um problema de engenharia de atestação. Os enclaves seguros que abrangem múltiplos inquilinos têm de ser arquitetados para produzir relatórios de atestação com âmbito na sessão, não apenas relatórios ao nível do dispositivo. O TPM atesta o que estava a correr no arranque; a implementação tem de estender essa cadeia para atestar o que estava a correr em nome de quem, no momento de cada ação consequente.</p>
+        <p>Mas o cruzamento dos cuidados no mundo físico torna o isolamento multi-inquilino um requisito de consentimento e segurança que não tem solução técnica alternativa. Um agente de cuidados não está apenas a processar dados — está a mediar decisões de cuidados físicos. Uma contaminação de contexto que atribui erroneamente uma restrição de mobilidade de um residente a outro não produz um bug de software. Produz um erro de cuidados. Em ambientes de alta acuidade, os erros de cuidados têm consequências diretas para o bem-estar humano. O requisito de isolamento nos cuidados de IA não é uma conveniência de engenharia. É a condição fundamental sob a qual o consentimento permanece significativo, os planos de cuidados permanecem individualizados e o agente pode ser responsabilizado por qualquer decisão específica.</p>
+
+        <h2>Como é uma arquitetura de isolamento correta</h2>
+        <p>O isolamento multi-inquilino para implementações de agentes consequentes exige que cada principal mapeie para uma credencial de sessão com âmbito criptográfico, emitida no início de cada interação e expirada no seu término. Os sistemas de recuperação e memória do agente são controlados por essa credencial, não pela instância do agente. As concessões de autoridade estão anexadas à credencial de sessão, não à função do agente. Cada recibo de ação atestada vincula o identificador de sessão do principal juntamente com a identidade do agente e a ação realizada. O material de chave pós-quântica é por sessão e nunca partilhado entre limites de inquilinos.</p>
+        <p>O resultado é um agente cujo registo de responsabilidade é decomposto: cada ação pode ser rastreada a um principal específico, uma concessão de consentimento específica, um momento específico no tempo e um contexto de execução atestado por hardware. Nenhum contexto ou autoridade transportado da sessão de um inquilino pode contaminar a de outro. O agente serve muitos principais e é responsável perante cada um deles individualmente — não como um agregado estatístico, mas como uma resposta específica a uma pergunta específica sobre uma ação específica.</p>
+        <p>Esse é o patamar. É mais elevado do que a maioria das implementações multi-inquilino atuais atinge. Nos cuidados no mundo físico, não é negociável.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Ponto-chave</span>
+        <p>A maioria dos quadros de responsabilidade de agentes de IA foi concebida para um único principal, mas na prática os agentes operam quase sempre em ambientes multi-inquilino — uma instância a servir múltiplos principais em simultâneo. O isolamento multi-inquilino tem de se verificar em três camadas: isolamento de contexto (impedir que a memória e as instruções de um principal contaminem o próximo), isolamento de autoridade (autorização vinculada à credencial de sessão, não à função do agente) e isolamento de atestação (os recibos assinados têm de vincular a identidade do principal específico). Nos cuidados de saúde, este requisito é especialmente rigoroso — a contaminação de contexto não é apenas um bug de software, é um erro de cuidados direto. A arquitetura multi-inquilino correta emite credenciais de sessão com âmbito criptográfico para cada principal, expirando no final da sessão, e o material de chave pós-quântica nunca é partilhado entre inquilinos.</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/pt/blog/">&larr; Todos os artigos</a>
+        <a href="/pt/blog/alignment-drift-problem.html">Mais recente: Deriva de alinhamento →</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp;
+    <a href="/pt/privacy.html">Privacidade</a>
+  </footer>
+</body>
+</html>

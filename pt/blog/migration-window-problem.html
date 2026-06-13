@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da janela de migração: responsabilidade quando a criptografia clássica e pós-quântica coexistem — Asaptic Labs</title>
+  <meta name="description" content="Cada organização que migra para criptografia pós-quântica tem de operar protocolos antigos e novos em paralelo. Durante esta janela de transição, a arquitetura de responsabilidade tem de validar afirmações em dois sistemas de confiança incompatíveis em simultâneo — e a maioria das implementações de agentes não foi construída para isso." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/migration-window-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/migration-window-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/migration-window-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/migration-window-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/migration-window-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/migration-window-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da janela de migração: responsabilidade quando a criptografia clássica e pós-quântica coexistem" />
+  <meta property="og:description" content="Cada organização que migra para criptografia pós-quântica tem de operar protocolos antigos e novos em paralelo. Durante esta janela de transição, a arquitetura de responsabilidade tem de validar afirmações em dois sistemas de confiança incompatíveis em simultâneo — e a maioria das implementações de agentes não foi construída para isso." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/migration-window-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-05" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema da janela de migração: responsabilidade quando a criptografia clássica e pós-quântica coexistem",
+      "description": "Cada organização que migra para criptografia pós-quântica tem de operar protocolos antigos e novos em paralelo. Durante esta janela de transição, a arquitetura de responsabilidade tem de validar afirmações em dois sistemas de confiança incompatíveis em simultâneo — e a maioria das implementações de agentes não foi construída para isso.",
+      "url": "https://asaptic.com/pt/blog/migration-window-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-05",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/migration-window-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar a Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/pt/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "Enviar consulta por e-mail"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "pt",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema da janela de migração", "item": "https://asaptic.com/pt/blog/migration-window-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-nav{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Segurança Pós-Quântica × Hardware × Cuidados no Mundo Físico</div>
+      <h1 class="essay-title">O problema da janela de migração: responsabilidade quando a criptografia clássica e pós-quântica coexistem</h1>
+      <p class="essay-subtitle">Cada organização que migra para criptografia pós-quântica tem de operar protocolos antigos e novos em paralelo. Durante esta janela de transição, a arquitetura de responsabilidade tem de validar afirmações em dois sistemas de confiança incompatíveis em simultâneo — e a maioria das implementações de agentes não foi construída para isso.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-05</span>
+        <span>5 min de leitura</span>
+      </div>
+    </header>
+
+    <article>
+      <div class="essay-body">
+        <p>Cada transição cria uma lacuna. Quando as organizações migram da criptografia clássica para a pós-quântica, nem o sistema antigo nem o novo têm cobertura completa de responsabilidade durante a transferência. A infraestrutura clássica não consegue validar atestações pós-quânticas. A infraestrutura pós-quântica não consegue verificar assinaturas clássicas. A janela de migração é o período em que ambos os sistemas estão parcialmente implementados, e os agentes de IA que operam nela enfrentam afirmações de responsabilidade que passam por infraestrutura concebida para um mundo que já não existe plenamente.</p>
+
+        <p>A janela de migração não é um caso extremo breve. As transições pós-quânticas ao nível da infraestrutura devem demorar anos: o NIST finalizou os padrões pós-quânticos em 2024, mas a implementação total nos sistemas governamentais, financeiros e de cuidados de saúde estender-se-á bem para a próxima década. Para os agentes de IA que operam em domínios de alto risco nos três cruzamentos, esta janela não é um desafio de interoperabilidade passageiro — é o ambiente operacional que habitarão no futuro previsível.</p>
+
+        <h2>A estrutura do problema</h2>
+        <p>Uma cadeia de responsabilidade bem formada exige que cada afirmação nela contida possa ser verificada pelas partes que precisam de confiar nela. A infraestrutura de chave pública clássica produz assinaturas e atestações que os verificadores clássicos conseguem verificar. Os algoritmos pós-quânticos produzem assinaturas e atestações em formatos diferentes com propriedades diferentes. Quando um agente de IA a operar num ambiente misto produz um registo de decisão — um registo de auditoria assinado, um recibo de atestação, uma prova criptográfica de ação — a parte que analisa esse registo precisa de o verificar com as ferramentas de que dispõe.</p>
+
+        <p>Durante a janela de migração, a parte que analisa pode ter ferramentas clássicas, ferramentas pós-quânticas, ou alguma versão de ambas. O agente pode ter assinado com uma chave clássica (ainda válida, mas potencialmente exposta a adversários de longo horizonte), uma chave pós-quântica (válida, mas não verificável pela infraestrutura legada) ou um esquema híbrido (verificável apenas por sistemas que suportam o híbrido). Qualquer incompatibilidade produz uma afirmação de responsabilidade que o destinatário não consegue avaliar completamente. A afirmação não é confirmada nem refutada — é irresolúvel com as ferramentas disponíveis.</p>
+
+        <h2>No cruzamento da segurança pós-quântica</h2>
+        <p>Os agentes de IA que gerem infraestrutura criptográfica durante a janela de migração são simultaneamente responsáveis por operar sistemas clássicos, implementar sucessores pós-quânticos e manter a continuidade durante a transição. A arquitetura de responsabilidade destes agentes herda a complexidade de ambos os sistemas. Cada registo de decisão produzido num ambiente híbrido pode ter de ser verificável anos mais tarde, por partes que completaram a sua própria migração a ritmos diferentes. Uma assinatura criada hoje com um algoritmo clássico pode precisar de suportar uma análise de responsabilidade daqui a uma década, altura em que a infraestrutura que a verificaria pode já não ser mantida. A afirmação de responsabilidade é criada sob um regime de confiança e analisada sob outro. A lacuna entre eles não está registada no próprio registo.</p>
+
+        <h2>No cruzamento do hardware</h2>
+        <p>As cadeias de atestação de hardware estão tipicamente enraizadas em certificados emitidos pelo fabricante incorporados em dispositivos físicos. Os dispositivos construídos antes da transição pós-quântica utilizam algoritmos clássicos na sua infraestrutura de atestação. A atestação pós-quântica requer firmware atualizado ou hardware novo. Um agente de IA que gere uma frota heterogénea durante a migração encontra afirmações de atestação assinadas por uma mistura de chaves clássicas e pós-quânticas. A própria infraestrutura de atestação do agente tem de navegar nesta mistura para produzir registos de responsabilidade consistentes — mas as atualizações de firmware que migram cadeias de atestação têm os seus próprios requisitos de responsabilidade, criando uma circularidade: para atestar a migração, o mecanismo de atestação já deve ter sido migrado. A maioria das frotas não resolverá isto de forma limpa.</p>
+
+        <h2>No cruzamento dos cuidados de saúde</h2>
+        <p>Os sistemas de cuidados de saúde operam em ciclos de aquisição plurianuais, estão sujeitos a requisitos de aprovação regulatória para alterações de software e enfrentam restrições práticas na frequência de atualizações impulsionadas pela validação de segurança clínica. Um agente de IA de cuidados implementado num hospital com infraestrutura mista legada e moderna encontrará afirmações criptográficas de sistemas clínicos, dispositivos médicos e plataformas de identidade em diferentes etapas de migração. O registo de responsabilidade de uma decisão de cuidados pode passar por cadeias de assinatura clássica, atestações pós-quânticas e construções híbridas — nenhuma das quais um único auditor consegue avaliar usando uma cadeia de ferramentas de verificação. A análise de responsabilidade de cuidados durante a janela de migração requer capacidades de verificação paralela que a maioria dos quadros de auditoria não tem, e que os calendários de aquisição de cuidados de saúde não anteciparam.</p>
+
+        <h2>O que a janela de transição exige</h2>
+        <p>Três capacidades estão coletivamente ausentes da maioria das implementações atuais que navegam pela janela de migração. Primeiro, anotação explícita da janela: os registos de responsabilidade devem indicar qual a infraestrutura criptográfica que validou cada afirmação no momento da criação, incluindo o seu estado de migração — para que os revisores futuros compreendam o contexto de confiança sob o qual o registo foi produzido. Segundo, compromisso de verificação de longo horizonte: os sistemas devem ser concebidos para permanecer verificáveis durante o tempo de vida de auditoria esperado dos seus registos, não apenas no momento da criação. Terceiro, agentes conscientes da migração: os agentes de IA que operam em ambientes mistos devem ser concebidos para sinalizar — e não aceitar silenciosamente — afirmações de responsabilidade que não conseguem verificar completamente com as ferramentas disponíveis, tornando a incompletude visível no registo em vez de a ocultar.</p>
+
+        <p>A janela de migração não é um comprometimento temporário que se resolverá quando a transição estiver concluída. É um período sustentado durante o qual a arquitetura de responsabilidade opera com garantias reduzidas, os limites dessas reduções não são claramente comunicados e os agentes que produzem afirmações de responsabilidade não foram concebidos para tornar as limitações visíveis. As organizações que tratam a transição como uma atualização de algoritmo, sem redesenhar a sua arquitetura de responsabilidade para a janela que têm de atravessar, descobrirão a lacuna apenas quando precisarem dos registos.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Ponto-chave</span>
+        <p>Durante a janela de migração pós-quântica, os registos de responsabilidade dos agentes de IA passam por infraestrutura criptográfica concebida para dois sistemas de confiança incompatíveis. Nenhuma das cadeias de ferramentas de verificação — clássica ou pós-quântica — consegue avaliar plenamente afirmações assinadas sob a infraestrutura mista que a maioria das organizações operará durante a transição. A janela não é breve — para agentes de IA nos cruzamentos de cuidados de saúde, hardware e segurança pós-quântica, é o ambiente operacional para o futuro previsível. A arquitetura de responsabilidade que ignora o estado de transição produz registos que parecem completos e não o são.</p>
+      </div>
+
+      <div class="essay-footer-nav">
+        <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+        <a href="/pt/blog/" class="essay-footer-back">&larr; Voltar ao blog</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

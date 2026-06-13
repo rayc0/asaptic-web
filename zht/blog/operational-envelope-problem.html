@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>運行包線問題：AI智能體在認證運行極限邊緣作出決策時的問責 — Asaptic Labs</title>
+  <meta name="description" content="認證運行包線是靜態文件。真實條件持續變化。AI智能體在極限邊緣的問責，需要的不僅是「在包線內/外」的二元判斷。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/operational-envelope-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/operational-envelope-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/operational-envelope-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/operational-envelope-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/operational-envelope-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/operational-envelope-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="運行包線問題" />
+  <meta property="og:description" content="認證運行包線是靜態文件。真實條件持續變化。AI智能體在極限邊緣的問責，需要的不僅是「在包線內/外」的二元判斷。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/operational-envelope-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "運行包線問題：當AI智能體必須在認證運行極限邊緣作出決策時的問責",
+      "description": "認證運行包線是靜態文件。真實條件持續變化。AI智能體在極限邊緣的問責，需要的不僅是「在包線內/外」的二元判斷。",
+      "url": "https://asaptic.com/zht/blog/operational-envelope-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/operational-envelope-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯繫 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: engage"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯繫"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "網誌", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "運行包線問題", "item": "https://asaptic.com/zht/blog/operational-envelope-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray)}.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:17px;line-height:1.8;color:var(--fg);margin-bottom:24px}.essay-summary{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:28px 32px;margin-top:48px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">網誌</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回網誌</a>
+    <article>
+      <span class="essay-topic">× 硬件 · × 物理世界照護 · × 後量子安全</span>
+      <h1 class="essay-title">運行包線問題：當AI智能體必須在認證運行極限邊緣作出決策時的問責</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>每個部署於物理世界的自主系統，都帶有一份認證運行包線——一套已證明系統可靠運行的有界條件集合。對於無人機，包線可能規定最大風速、最低能見度、溫度範圍和載荷限制；對於無人船，它涵蓋海況、流速和與航行障礙的安全距離；對於與人協同工作的地面機器人，則包括地面坡度、照明條件、障礙密度以及其訓練感測域的邊界。包線是設計方與營運方之間的問責契約：在此範圍內運行，系統的行為即得到充分描述。</p>
+        <p>問題在於，包線是設計階段寫就的靜態文件，而世界中的條件是連續且可能持續劣化的。當自主系統在條件向認證極限劣化的環境中運行時——風速上升、能見度下降、電量儲備減少——系統在某一時刻必須決定是繼續執行還是中止任務。這一決定從來不是乾淨的「在包線內」或「在包線外」的二元判斷。它始終是一種關於與極限距離的判斷，在不確定性下作出，而系統的感測器讀數恰恰在條件接近邊界時變得最不可靠。</p>
+        <p>這正是問責缺口開啟之處。如果系統繼續運行並發生事故，事後調查將詢問：事件發生時系統是否在其認證包線內運行？這個問題聽起來可以回答，實則不然。包線以物理參數定義極限——風速以米每秒計、能見度以米計——但系統對這些參數的感知來自具有自身不確定性的感測器，而這種不確定性在包線邊緣正急劇增大。當極限為15 m/s時，風速計讀數14 m/s並不能告知實際風速究竟是13 m/s還是16 m/s。系統的讀數在認證極限內，但實際條件是否也在極限內，則是審計追蹤無法回答的問題。</p>
+        <p>這一缺口還有第二個維度。即便感測器讀數準確，關鍵問題也不是「此讀數是否在包線內」，而是「系統對自身與極限距離的了解是什麼，以及這種了解在繼續/中止決策中的權重如何」。在極限為15 m/s時以14.9 m/s繼續運行的系統，與在同一讀數下以10 m/s繼續運行的系統，作出的是完全不同的決策。前者在最糟糕的時刻賭注於感測器的精度；後者則有足夠的餘量。如果兩個系統持有相同的包線認證，且審計日誌均顯示出發時在極限內，這份記錄對二者毫無區分。</p>
+        <p>後量子安全領域的交叉使問題更為複雜。驅動繼續/中止決策的環境感測器資料——風速讀數、位置定位、深度測量——通過完整性無法想當然的通信路徑傳輸。一個傳輸被篡改讀數、將系統置於實際已超出包線時的包線內的感測器節點，是與機械極限超越截然不同的故障模式，並產生不同的問責問題。被篡改的讀數創造了乾淨的審計追蹤：系統看到14 m/s，決定繼續，並在認證極限內。要弄清這些讀數是否真實，需要一條幾乎所有現有自主系統都未維護的感測器資料監管鏈。已簽名的帶時間戳的感測器認證——硬件安全領域——是使審計追蹤有意義的基礎原語。沒有這些，包線記錄只是記錄了系統被告知的條件，而非實際條件。</p>
+        <p>人工覆蓋路徑並不能彌合這一差距。包線極限決策恰恰是操作員最可能被咨詢的情況。但做出繼續/中止決定的人類，使用的是與自主系統相同的感測器讀數、相同的天氣預報、相同的不確定性估計。將人類加入鏈條改變的是誰做決定，而不是改善底層的認識論狀況。它確實改變了一件至關重要的事——誰承擔問責。在極限附近自主繼續運行並失敗的系統，面臨的是設計問責問題。將極限條件呈現給人類操作員、由其授權繼續、隨後失敗的系統，則將設計問題轉變為了操作判斷問題。這兩者並不等同，在事後調查中這一區別具有極其重要的意義。</p>
+        <p>結構性含義是：包線問責不能依賴「在內/在外」的二元判斷。它需要持續的鄰近度日誌記錄：在每個決策時刻，系統對各包線參數的估計距離是多少，該估計的不確定性是多少，這種不確定性如何進入繼續/中止的計算？僅記錄原始感測器讀數的系統，創造的是一份可以說「在極限內」的記錄，而更誠實的答案應是「在讀數內，但實際條件以不可忽視的概率超出極限」。這一區別，正是隨著自主系統規模擴大，物理世界AI問責將被追究的地方——不在明顯超越極限的清晰案例中，而在認證包線與真實包線發生分歧的梯度地帶。</p>
+        <p>可信賴的自主系統，不是從不超越包線的系統，而是其記錄能夠在每一個接近邊緣的決策時刻清晰呈現：系統當時了解什麼、確定程度如何、以及這些資訊如何進入決策過程。這種層次的日誌記錄是設計要求，而非事後改進——等到條件劣化超過極限，已為時晚矣。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>每個物理世界中的自主系統都有一個認證運行包線——一套已證明其可靠運行的條件邊界。然而包線是設計階段的靜態文件，真實條件是連續變化的。當系統在接近認證極限的條件下運行時，必須作出繼續執行或中止的判斷——而這一判斷恰恰發生於感測器不確定性最高的時刻。問責缺口在於：事故後調查通常只問「系統是否在包線內」，而非「系統對自身與極限距離的估計是什麼，不確定性如何」。感測器資料的完整性驗證（後量子簽章）是解決這一問題的基礎原語；持續的鄰近度日誌記錄——而非僅記錄原始讀數——是有意義審計追蹤的必要設計要求。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zht/blog/">&larr; 全部文章</a>
+        <a href="/zht/blog/offline-agent-problem.html">離線智能體問題 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">網誌</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>
