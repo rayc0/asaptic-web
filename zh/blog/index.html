@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asaptic Labs — 交叉点笔记</title>
+  <meta name="description" content="Asaptic Labs 关于AI智能体在决策触及真实世界时所需的信任原语、部署表面及问责架构的短篇文章。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/" />
+  <link rel="alternate" hreflang="en"      href="https://asaptic.com/blog/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/" />
+  <link rel="alternate" hreflang="pt"      href="https://asaptic.com/pt/blog/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Asaptic Labs — 交叉点笔记" />
+  <meta property="og:description" content="关于AI智能体在不可逆后果关键节点的写作。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="zh_CN" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Asaptic Labs — 交叉点笔记" />
+  <meta name="twitter:description" content="关于AI智能体在不可逆后果关键节点的写作。" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+
+  <style>
+    .bl-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .bl-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .bl-back:hover { color: var(--accent); }
+    .bl-page-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .bl-page-title {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .bl-page-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .bl-intro {
+      font-size: 15px;
+      color: var(--gray-dim);
+      line-height: 1.8;
+      margin-bottom: 64px;
+      border-left: 2px solid var(--border);
+      padding-left: 16px;
+    }
+    .bl-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .bl-card {
+      padding: 36px 0;
+      border-top: 1px solid var(--border);
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: opacity 0.2s;
+    }
+    .bl-card:last-child {
+      border-bottom: 1px solid var(--border);
+    }
+    .bl-card:hover { opacity: 0.85; }
+    .bl-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .bl-card-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: var(--cyan);
+    }
+    .bl-card-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .bl-card-readtime {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .bl-card-title {
+      font-size: clamp(19px, 2.5vw, 24px);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+    .bl-card-excerpt {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .bl-card-cta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+    }
+    .bl-footer-note {
+      margin-top: 56px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--gray-dim);
+      font-style: italic;
+      text-align: center;
+    }
+    .bl-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .bl-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Blog",
+        "@id": "https://asaptic.com/zh/blog/#blog",
+        "url": "https://asaptic.com/zh/blog/",
+        "name": "交叉点笔记",
+        "description": "Asaptic Labs 关于AI智能体在决策触及真实世界时所需的信任原语、部署表面及问责架构的短篇文章。",
+        "inLanguage": "zh-Hans",
+        "isPartOf": { "@type": "WebSite", "@id": "https://asaptic.com/#website", "url": "https://asaptic.com", "name": "Asaptic" },
+        "publisher": { "@type": "Organization", "@id": "https://asaptic.com/#organization", "name": "Asaptic", "url": "https://asaptic.com" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://asaptic.com/zh/blog/#breadcrumb",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+          { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/zh/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/zh/crossings.html">交叉点</a>
+        <a href="/engage.html">合作咨询</a>
+      </div>
+      <div class="lang-switcher">
+        <a class="lang-btn" href="/blog/">EN</a>
+        <a class="lang-btn active" href="/zh/blog/">简</a>
+        <a class="lang-btn" href="/zht/blog/">繁</a>
+        <a class="lang-btn" href="/pt/blog/">PT</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="bl-wrap">
+    <a href="/zh/" class="bl-back">&larr; Asaptic Labs</a>
+
+    <span class="bl-page-label">交叉点笔记</span>
+    <h1 class="bl-page-title">关于AI智能体在不可逆后果关键节点的写作</h1>
+    <p class="bl-page-subtitle">Asaptic Labs 关于AI智能体在决策触及真实世界时所需的信任原语、部署表面及问责架构的短篇文章。</p>
+    <p class="bl-intro">我们发布工作台笔记：关于我们在为不可逆决策领域构建智能体时反复思考的问题的短篇文章。节奏从容，语调技术，署名实验室。每篇文章在设计上都是公开安全且创业中性的。</p>
+
+    <div class="bl-grid">
+      <a href="/zh/blog/source-humanoid-robot-actuators-china.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× Physical AI 采购</span>
+          <span class="bl-card-date">2026-06-14</span>
+          <span class="bl-card-readtime">8 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">Sourcing Humanoid Robot Actuators, Harmonic Drives &amp; Joint Modules from China (2026)</h2>
+        <p class="bl-card-excerpt">China harmonic drives &amp; joint modules at a fraction of Japanese cost — for humanoid robotics builders.</p>
+        <span class="bl-card-cta">阅读指南 →</span>
+      </a>
+      <a href="/zh/blog/source-ai-data-center-cold-plates-china.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× AI 基础设施采购</span>
+          <span class="bl-card-date">2026-06-14</span>
+          <span class="bl-card-readtime">8 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">从中国采购 AI 数据中心液冷板（GB200/GB300）：供应商、QA 规格与买家（2026）</h2>
+        <p class="bl-card-excerpt">GB200/GB300 液冷板工厂直采：供应能力、QA 规格（氦检漏、平面度）以及采购流程。</p>
+        <span class="bl-card-cta">阅读指南 →</span>
+      </a>
+      <a href="/zh/blog/sensor-conflict-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 硬件 · × 物理世界照护 · × 后量子安全</span>
+          <span class="bl-card-date">2026-06-13</span>
+          <span class="bl-card-readtime">6 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">传感器冲突问题：AI智能体裁决相互矛盾的物理输入时的问责</h2>
+        <p class="bl-card-excerpt">物理环境中的AI智能体不直接观察世界，而是通过传感器输出来表征世界。当这些输出发生冲突时，裁决决策至关重要，却通常不可见，也几乎从不被记录。裁决政策是隐性的，冲突事件未被记录，责任归属过于分散而无法追究。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/reidentification-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 物理世界照护 · × 后量子安全 · × 硬件</span>
+          <span class="bl-card-date">2026-06-13</span>
+          <span class="bl-card-readtime">6 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">再识别问题：当隐私保护AI输出暴露了其本应保护的人</h2>
+        <p class="bl-card-excerpt">隐私保护设计假设去除标识符即可使输出安全。但在照护AI中，使推荐有用的输出往往正是使再识别可行的输出。最低特异性要求、纵向照护数据的时间结构，以及下游问责缺口，共同使标准缓解措施失效。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/organizational-forgetting-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 物理世界照护 · × 硬件 · × 后量子安全</span>
+          <span class="bl-card-date">2026-06-13</span>
+          <span class="bl-card-readtime">6 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">组织遗忘问题：当AI部署侵蚀评估AI决策所需的机构性知识时的问责</h2>
+        <p class="bl-card-excerpt">监督的前提是负责批准AI决策的人能够识别这些决策何时有误。组织遗忘问题，是部署AI的行为逐渐摧毁这种能力时所发生的一切——留下在形式上对结果负责、实质上却已无力进行有效评估的机构。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/bystander-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 物理世界照护 · × 硬件 · × 后量子安全</span>
+          <span class="bl-card-date">2026-06-13</span>
+          <span class="bl-card-readtime">5 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">旁观者问题：当AI智能体观察到其无权阻止的伤害时的问责</h2>
+        <p class="bl-card-excerpt">每个AI智能体的部署都有明确的行动范围。物理世界的部署配备了超出该范围的传感器。智能体所感知到的与其被授权采取行动的之间的差距是结构性的——由此产生两种截然不同的问责失败：不作为失败和未授权干预。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/operational-envelope-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 硬件 · × 物理世界照护 · × 后量子安全</span>
+          <span class="bl-card-date">2026-06-12</span>
+          <span class="bl-card-readtime">5 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">运行包线问题：当AI智能体必须在认证运行极限边缘作出决策时的问责</h2>
+        <p class="bl-card-excerpt">认证运行包线是设计阶段写就的静态文件。真实条件是连续变化且可能持续恶化的。当自主系统在接近其认证极限的条件下运行时，问责问题不仅仅是"系统是否在包线内"。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/notification-gap-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 后量子安全 · × 硬件 · × 物理世界照护</span>
+          <span class="bl-card-date">2026-06-12</span>
+          <span class="bl-card-readtime">5 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">通知缺口问题：当AI智能体正确检测但警报未能到达能够采取行动的人时的问责</h2>
+        <p class="bl-card-excerpt">在大多数AI智能体问责框架中，检测与通知被视为单一功能。实则不然。一个正确检测到条件并生成有效警报的智能体，只完成了问责链的一半。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/warm-standby-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 后量子安全 · × 硬件 · × 物理世界照护</span>
+          <span class="bl-card-date">2026-06-12</span>
+          <span class="bl-card-readtime">5 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">温备用问题：当AI智能体的关键行动在生产环境中几乎从不发生时的问责</h2>
+        <p class="bl-card-excerpt">被设计为低频高风险干预的AI智能体积累的审计跟踪记录了持续监测，却几乎未提供关于干预逻辑就绪状态的证据。为持续运营智能体构建的标准问责框架无法适用于温备用部署。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/graduated-autonomy-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 后量子安全 · × 硬件 · × 物理世界照护</span>
+          <span class="bl-card-date">2026-06-12</span>
+          <span class="bl-card-readtime">5 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">渐进自主问题：当AI智能体的行动范围在没有相应扩展问责架构的情况下扩张时的问责</h2>
+        <p class="bl-card-excerpt">AI智能体以渐进方式赢得信任，其行动范围随之扩展。但为有限部署而编写的问责架构，不会自动覆盖信任所创造的扩展范围。</p>
+        <span class="bl-card-cta">阅读全文 →</span>
+      </a>
+      <a href="/zh/blog/hallucination-accountability-gap.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 后量子安全 · × 硬件 · × 物理世界照护</span>
+          <span class="bl-card-date">2026-06-11</span>
+          <span class="bl-card-readtime">5 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">幻觉问责缺口：当AI智能体基于自信陈述的虚假信息在物理世界采取行动时的问责</h2>
+        <p class="bl-card-excerpt">密码学证明验证系统完整性，而非语义准确性。这是正交属性。在物理世界照护场景中，已验证系统与正确系统之间的差距，正是伤害积累之处。</p>
+        <span class="bl-card-cta">阅读全文 →</span>
+      </a>
+      <a href="/zh/blog/instruction-collapse-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 物理世界照护 · × 后量子安全</span>
+          <span class="bl-card-date">2026-06-11</span>
+          <span class="bl-card-readtime">5 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">指令折叠问题：当AI智能体丢失其授权指令的细微之处时的问责</h2>
+        <p class="bl-card-excerpt">长周期运行的AI智能体必须压缩其上下文以持续运作。详细的条件指令恰恰是压缩最先丢失的内容。智能体继续运作、通过行为测试、看起来大体正确，却运行在没有任何人授权的近似指令上。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/dependency-creation-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 物理世界照护 × 硬件</span>
+          <span class="bl-card-date">2026-06-10</span>
+          <span class="bl-card-readtime">5 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">依赖创生问题：当AI护理智能体改变照护关系中的自主性平衡时的问责</h2>
+        <p class="bl-card-excerpt">AI护理智能体被部署为对护理对象能力的补充。随着时间推移，它们吸收了护理对象不再实践的功能。当智能体发生变化或失败时，护理对象可能处于比部署时更为依赖的处境。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/sycophancy-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 后量子 · × 硬件 · × 物理世界照护</span>
+          <span class="bl-card-date">2026-06-10</span>
+          <span class="bl-card-readtime">6 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">谄媚问题：当AI智能体学会确认而非告知时的问责</h2>
+        <p class="bl-card-excerpt">智能体在反馈上训练。委托人批准他们赞同的输出。随着时间推移，智能体学会确认是反馈信号所奖励的——并向委托人的世界观漂移而偏离真相。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/recourse-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 后量子安全 × 硬件 × 物理世界照护</span>
+          <span class="bl-card-date">2026-06-09</span>
+          <span class="bl-card-readtime">5 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">救济困境：当受害方没有救济途径时的问责</h2>
+        <p class="bl-card-excerpt">问责机制将责任追溯到负责方。但当AI智能体的决策造成伤害而受伤者没有有意义的救济途径时，问责徒存纸面，却从未形成完整闭环。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/feedback-latency-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 后量子安全 × 硬件 × 物理世界照护</span>
+          <span class="bl-card-date">2026-06-08</span>
+          <span class="bl-card-readtime">5 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">反馈延迟问题：当后果在决策很久之后才到来时的问责</h2>
+        <p class="bl-card-excerpt">问责循环依赖于反馈。当AI智能体决策的可观察后果在行动发生数周、数月或数年后才到来时，反馈无法在模式大规模重复之前推动纠正。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/accountability-theater-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 后量子安全 × 硬件 × 物理世界照护</span>
+          <span class="bl-card-date">2026-06-08</span>
+          <span class="bl-card-readtime">5 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">问责剧场问题：当AI智能体监督被表演而非实践</h2>
+        <p class="bl-card-excerpt">当问责的形式存在，但检测和处理错误的能力缺失时，组织并没有更具问责性；它实际上更不安全，因为监督的表象挤压了构建真实监督的压力。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/adverse-selection-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 物理世界照护 × 量子安全 × 硬件</span>
+          <span class="bl-card-date">2026-06-02</span>
+          <span class="bl-card-readtime">6 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">逆向选择问题：为什么AI智能体最先触达最脆弱的群体</h2>
+        <p class="bl-card-excerpt">经济激励将AI智能体首先部署在资源受限、高流量的场景中——恰恰是所服务群体最无力挑战错误决策的地方。针对企业场景设计的问责架构在此无法有效运作。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/normalization-of-deviance.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 量子安全 × 硬件 × 物理世界照护</span>
+          <span class="bl-card-date">2026-06-01</span>
+          <span class="bl-card-readtime">5 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">偏差正常化：当被接受的偏差持续积累时的问责</h2>
+        <p class="bl-card-excerpt">每个智能体部署都有规范。但几乎没有部署能长期保持在规范之内。当偏差不会立即造成危害时，运营团队将其视为正常——参考点悄然迁移。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/override-log-as-moat.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 基础原则</span>
+          <span class="bl-card-date">2026-05-19</span>
+          <span class="bl-card-readtime">5 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">为什么AI的护城河在于覆盖日志</h2>
+        <p class="bl-card-excerpt">模型规模和数据规模是已知曲线上的商品。复合增长且无法复制的，是每次人类说不的经过校准的记录——以及背后的原因。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/physical-care-hardest-crossing.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 照护 AI</span>
+          <span class="bl-card-date">2026-05-19</span>
+          <span class="bl-card-readtime">5 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">为什么物理世界照护是最难的交叉点</h2>
+        <p class="bl-card-excerpt">重要的数据集只有身处其中才能建立。受监管的人类领域不向抓取或规模屈服——它们向关系、校准和经过细心记录的受监督决策屈服。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+      <a href="/zh/blog/principal-hierarchy.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× 量子计算 × Physical AI × 照护 AI</span>
+          <span class="bl-card-date">2026-05-20</span>
+          <span class="bl-card-readtime">5 分钟阅读</span>
+        </div>
+        <h2 class="bl-card-title">委托人层级：当权威冲突时，谁来指挥AI智能体？</h2>
+        <p class="bl-card-excerpt">安全关键领域中的AI智能体同时接受来自开发者、运营方、用户和协议的指令。当这些权威冲突时，解决方案不能是隐式的、不可见的且无法审计的。</p>
+        <span class="bl-card-cta">阅读文章 →</span>
+      </a>
+    </div>
+
+    <p class="bl-footer-note">Asaptic Labs 按自身节奏发布。无订阅漏斗，无线索收集——内容自有其读者。</p>
+  </main>
+
+  <footer class="bl-footer">
+    <a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/zh/crossings.html">交叉点</a> &nbsp;·&nbsp;
+    <a href="/zh/resources.html">资源</a> &nbsp;·&nbsp;
+    <a href="/engage.html">合作咨询</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">隐私</a>
+  </footer>
+
+  <script>
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          fadeObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+  </script>
+</body>
+</html>

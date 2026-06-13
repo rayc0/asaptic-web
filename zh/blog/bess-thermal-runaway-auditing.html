@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>审核 BESS 热失控风险：标准、设计层与采购问题 — Asaptic Labs</title>
+  <meta name="description" content="热失控是大型电池储能系统的核心失效模式。了解扩散机理、适用标准，以及在投入资本前应审核的安全架构。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/bess-thermal-runaway-auditing.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/bess-thermal-runaway-auditing.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/bess-thermal-runaway-auditing.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/bess-thermal-runaway-auditing.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/bess-thermal-runaway-auditing.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/bess-thermal-runaway-auditing.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="审核 BESS 热失控风险" />
+  <meta property="og:description" content="热失控是大型电池储能系统的核心失效模式。了解扩散机理、适用标准，以及在投入资本前应审核的安全架构。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/bess-thermal-runaway-auditing.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "预防大型电池储能系统中的热失控",
+      "description": "热失控是大型电池储能系统的核心失效模式。了解扩散机理、适用标准，以及在投入资本前应审核的安全架构。",
+      "url": "https://asaptic.com/zh/blog/bess-thermal-runaway-auditing.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/bess-thermal-runaway-auditing.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "向 Asaptic 提交采购 RFQ",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件发送规格简报"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "inLanguage": "zh-Hans",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "UL 9540A 是否是通过/不通过认证？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不是。UL 9540A 是热失控扩散特性测试方法。它说明在规定条件下事件扩散到什么程度；并不证明系统绝不会发生热失控。" }
+        },
+        {
+          "@type": "Question",
+          "name": "IEC 62619 与 NFPA 855 有何区别？",
+          "acceptedAnswer": { "@type": "Answer", "text": "IEC 62619 关注工业用二次锂电芯和电池的安全要求；NFPA 855 关注固定储能系统安装、防火、通风、气体检测、抑制和运维要求。二者处于不同层级，不能相互替代。" }
+        },
+        {
+          "@type": "Question",
+          "name": "LFP 是否消除了热失控风险？",
+          "acceptedAnswer": { "@type": "Answer", "text": "没有。LFP 的峰值温度和热扩散速度通常低于 NMC，但在电池包设计不佳或早期预警系统失效时，大型 LFP BESS 仍可能维持扩散。" }
+        },
+        {
+          "@type": "Question",
+          "name": "采购 BESS 时应重点审核哪些安全问题？",
+          "acceptedAnswer": { "@type": "Answer", "text": "应审核 UL 9540A 测试数据的层级和条件、电芯间热屏障规格、BMS 采样频率和监测粒度、是否存在不可被 EMS 覆盖的硬件级保护、气体检测系统和响应逻辑，以及同等规模运行记录。" }
+        }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "审核 BESS 热失控风险", "item": "https://asaptic.com/zh/blog/bess-thermal-runaway-auditing.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-faq{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-faq h2{font-size:22px;font-weight:700;margin-bottom:32px}.faq-item{margin-bottom:32px}.faq-item h3{font-size:17px;font-weight:600;color:var(--fg);margin-bottom:10px}.faq-item p{font-size:16px;color:var(--gray);line-height:1.75}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 深度技术采购</span>
+      <h1 class="essay-title">预防大型电池储能系统中的热失控</h1>
+      <div class="essay-meta"><span class="essay-byline">作者：Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">6 分钟阅读</span></div>
+      <div class="essay-body">
+        <p>电池储能系统已经从小众电网试验走向大规模关键基础设施。GWh 级设施如今部署在变电站、工业园区旁，有时也进入高密度城区。支撑其可行性的工程能力已经足够成熟。仍然需要在设计室、保险审查和监管申报中被严肃对待的失效模式，是热失控。</p>
+        <p>热失控不是单一事件。它是锂离子电芯中的自我强化链式反应：热量加速内部材料分解，分解产生更多热量，进而继续加速分解。电解液是一种易燃有机溶剂，可能汽化并起火。隔膜熔化会移除阳极与阴极之间最后一道物理屏障。电芯排气、鼓胀；如果能量释放足够快，就会把燃烧物喷向相邻电芯。在装入机架并置于集装箱式舱体内的软包或方形电芯中，“相邻电芯”意味着数百或数千个共享同一热质量和同一气流路径的邻近单元。</p>
+        <p>一次事故能否被限制住，还是演变成级联事故，关键在于初始热失控是否从电芯到电芯、再到模块、再到机架传播。扩散速度取决于电芯化学体系，lithium iron phosphate (LFP) 的峰值温度和热扩散速度明显低于 nickel manganese cobalt (NMC)；也取决于电芯间距、热界面材料，以及探测和抑制系统多快中断链条。在大型舱体中，即便是 LFP 系统，如果电池包设计不佳或早期预警系统未能动作，也可能持续扩散。</p>
+        <p>标准体系是任何买方或开发商首先需要理解的内容。它不应只是向供应商索取证书的清单，而应成为提出正确问题的词汇表。UL 9540A 是北美最常被引用的测试方法，用于评估电芯、模块、单元和安装层级的热失控扩散。它是扩散特性测试，不是通过/不通过认证。结果告诉你在规定条件下热失控会扩散多远；它不会告诉你系统永远不会热失控。要求系统具备 UL 9540A 测试数据，并不等同于理解数据说明了什么。会阅读测试结果的买方，包括扩散距离、气体体积、排气温度、抑制系统启动时间，处于与只勾选合规框完全不同的位置。</p>
+        <p>IEC 62619 涵盖工业应用中二次锂电芯和电池的安全要求。它处理滥用耐受测试、保护电路要求和文件义务。对于大型 BESS，它在北美以外多数国际市场中构成电芯和电池层级的基础安全规格。与 IEC 62619 并行，IEC 62933 覆盖更广泛的电能储能系统语境，包括系统层级的性能和安全评估。两个标准不能相互替代；它们处理的是技术栈中的不同层级。</p>
+        <p>NFPA 855，即 Standard for the Installation of Stationary Energy Storage Systems，是许多美国州属地主管机关 (AHJs) 使用的参考，也因其防火和安装指引越来越多地被国际项目引用。它设定每个防火分区的最大能量阈值，规定具体间距，要求通风、气体检测和抑制系统，并对运营维护程序提出义务。通过 UL 9540A 扩散测试的系统，仍可能因当地 AHJ 如何解释每个房间或舱体的能量密度限制，而在 NFPA 855 下遇到选址约束。两套框架之间的互动是现实的工程和许可问题，不是理论问题。</p>
+        <p>在电芯到电池包设计层面，对热失控预防最重要的变量是热管理架构和电芯间隔离。直接液冷，无论是底板式还是浸没式，都能比风冷更快带走电芯热量，抑制边缘电芯触发热失控的温升。陶瓷或云母电芯间屏障即便在单体电芯发生热失控后，也能延缓扩散，为 battery management system (BMS) 和抑制系统争取响应时间。设计良好的电池包与设计薄弱的电池包之间的差距不会完全出现在规格表中；它会出现在测试数据中，并最终出现在现场表现中。</p>
+        <p>BMS 是热失控预防的运行中心。合格的 BMS 在单体电芯层级监测电压、温度和荷电状态，而不仅是在模块或机架层级监测。它会识别电芯级应力的早期迹象：电压偏离、内阻升高、异常自放电。更关键的是，它会强制执行运行边界，使电芯远离触发热失控的条件：过充、过放和过温。如果 BMS 的粒度过粗，或者外部控制信号能够在缺乏适当防护的情况下覆盖它，那么这是任何抑制系统都无法完全补偿的缺口。</p>
+        <p>气体检测已经成为有意义的早期预警层，它先于传统温度传感器可感知的温度变化。锂离子电芯在热应力下析气，会在电芯温度升至常规热传感器可检测水平之前释放 hydrogen、carbon monoxide 和 volatile organic compounds。安装在 BESS 舱体内的 hydrogen 检测系统，可以触发报警并启动预抑制流程，包括隔离受影响机架、启动通风，然后才发生热失控扩散。这不能替代设计良好的电池包和合格的 BMS；它是增加时间的检测层，而时间正是抑制系统发挥作用所需的条件。</p>
+        <p>采购大型 BESS 时，最重要的审核问题不是标称规格。日历温度下循环寿命、额定功率下往返效率、质保条款都是基本门槛。区分严谨采购流程和表面流程的问题，集中在安全架构：有哪些 UL 9540A 测试数据，覆盖技术栈哪个层级，在什么条件下取得？电芯间热屏障的规格和测试方法是什么？BMS 的采样频率和粒度如何？BMS 是否有不可被 EMS 覆盖的独立硬件级保护？集成了什么气体检测系统，响应逻辑是什么？系统是否已在可比规模下安装和运行，运行数据和事故记录是否可供审阅？</p>
+        <p>这些答案并不总会被主动提供。如果采购流程把合规文件视为终点，而不是更深技术尽调的起点，就会系统性漏掉真正重要的缺口。这正是 <a href="/zh/deep-tech-sourcing.html">深度技术采购</a> 要解决的动态：用技术流利度进入供应商产品的工程层，而不只是商业层。在 BESS 中，许多供应商的商业层看起来相似。安全架构能否成立，取决于工程层。</p>
+        <p>热失控预防不是可以在调试阶段追加的功能。它是在电芯、电池包、BMS、检测层和安装层级被设计进去的。理解每一层并独立审核每一层，是这个资产类别现在所要求的尽调标准。</p>
+        <div class="essay-faq"><h2>常见问题</h2><div class="faq-item"><h3>UL 9540A 是否是通过/不通过认证？</h3><p>不是。UL 9540A 是热失控扩散特性测试方法。它说明在规定条件下事件扩散到什么程度；并不证明系统绝不会发生热失控。</p></div><div class="faq-item"><h3>IEC 62619 与 NFPA 855 有何区别？</h3><p>IEC 62619 关注工业用二次锂电芯和电池的安全要求；NFPA 855 关注固定储能系统安装、防火、通风、气体检测、抑制和运维要求。二者处于不同层级，不能相互替代。</p></div><div class="faq-item"><h3>LFP 是否消除了热失控风险？</h3><p>没有。LFP 的峰值温度和热扩散速度通常低于 NMC，但在电池包设计不佳或早期预警系统失效时，大型 LFP BESS 仍可能维持扩散。</p></div><div class="faq-item"><h3>采购 BESS 时应重点审核哪些安全问题？</h3><p>应审核 UL 9540A 测试数据的层级和条件、电芯间热屏障规格、BMS 采样频率和监测粒度、是否存在不可被 EMS 覆盖的硬件级保护、气体检测系统和响应逻辑，以及同等规模运行记录。</p></div></div>
+      </div>
+      <div class="essay-nav"><a href="/zh/blog/">&larr; 全部文章</a><a href="/zh/deep-tech-sourcing.html">深度技术采购 &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
