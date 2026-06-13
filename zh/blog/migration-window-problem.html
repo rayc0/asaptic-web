@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>迁移窗口问题：当经典密码学与后量子密码学共存时的问责挑战 — Asaptic Labs</title>
+  <meta name="description" content="每个迁移到后量子密码学的组织都必须并行运行新旧协议。在这一过渡窗口期，问责架构必须同时在两个不兼容的信任系统间验证声明——而大多数智能体部署并非为此而构建。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/migration-window-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/migration-window-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/migration-window-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/migration-window-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/migration-window-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/migration-window-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="迁移窗口问题：当经典密码学与后量子密码学共存时的问责挑战" />
+  <meta property="og:description" content="每个迁移到后量子密码学的组织都必须并行运行新旧协议。在这一过渡窗口期，问责架构必须同时在两个不兼容的信任系统间验证声明——而大多数智能体部署并非为此而构建。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/migration-window-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-05" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "迁移窗口问题：当经典密码学与后量子密码学共存时的问责挑战",
+      "description": "每个迁移到后量子密码学的组织都必须并行运行新旧协议。在这一过渡窗口期，问责架构必须同时在两个不兼容的信任系统间验证声明——而大多数智能体部署并非为此而构建。",
+      "url": "https://asaptic.com/zh/blog/migration-window-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-05",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/migration-window-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "向 Asaptic 提交咨询",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件发送咨询"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "迁移窗口问题", "item": "https://asaptic.com/zh/blog/migration-window-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-nav{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× 后量子安全 × 硬件 × 物理世界照护</div>
+      <h1 class="essay-title">迁移窗口问题：当经典密码学与后量子密码学共存时的问责挑战</h1>
+      <p class="essay-subtitle">每个迁移到后量子密码学的组织都必须并行运行新旧协议。在这一过渡窗口期，问责架构必须同时在两个不兼容的信任系统间验证声明——而大多数智能体部署并非为此而构建。</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-05</span>
+        <span>5 分钟阅读</span>
+      </div>
+    </header>
+
+    <article>
+      <div class="essay-body">
+        <p>每一次过渡都会制造差距。当组织从经典密码学迁移到后量子密码学时，旧系统和新系统在交接期间都没有完整的问责覆盖。经典基础设施无法验证后量子证明。后量子基础设施无法核实经典签名。迁移窗口期是两个系统都处于部分部署状态的时间，在此期间运行的AI智能体面临着经过为已不再完全存在的世界设计的基础设施的问责声明。</p>
+
+        <p>迁移窗口期不是短暂的边缘情况。基础设施层面的后量子迁移预计将持续数年：NIST于2024年确定了后量子标准，但在政府、金融和医疗系统的全面部署将延续到下一个十年。对于在三个交叉点高风险领域运行的AI智能体来说，这个窗口不是短暂的互操作性挑战——而是在可预见的未来它们将持续运作其中的环境。</p>
+
+        <h2>问题的结构</h2>
+        <p>一个完善的问责链要求其中的每个声明都能被需要依赖它的各方所验证。经典公钥基础设施产生经典验证者可以检查的签名和证明。后量子算法产生不同格式、具有不同属性的签名和证明。当在混合环境中运行的AI智能体产生决策记录——已签名的审计日志、证明收据、行动的密码学证明——审查该记录的一方需要能够使用他们拥有的工具来验证它。</p>
+
+        <p>在迁移窗口期，审查方可能拥有经典工具、后量子工具或两者的某个版本。智能体可能使用经典密钥（仍然有效，但可能向长期对手暴露）、后量子密钥（有效，但遗留基础设施无法验证）或混合方案（仅限支持混合方案的系统可验证）进行签名。该链中的任何不匹配都会产生接收方无法完全评估的问责声明。该声明既不能被确认也不能被驳斥——用现有工具无法解决。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>在迁移窗口期管理密码基础设施的AI智能体同时负责操作经典系统、部署后量子继任者并维护过渡期间的连续性。这些智能体的问责架构继承了两个系统的复杂性。在混合环境中产生的每个决策记录，可能需要多年后由按不同速度完成自身迁移的各方进行核实。今天使用经典算法创建的签名，可能需要在十年后支持问责审查——届时可以验证该签名的基础设施可能已不再维护。问责声明在一个信任体系下创建，在另一个信任体系下审查。二者之间的差距不会记录在记录本身中。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件证明链通常根植于嵌入物理设备的制造商颁发的证书。在后量子迁移之前构建的设备，其证明基础设施使用经典算法。后量子证明需要更新固件或新硬件。在迁移期间管理异构集群的AI智能体将遇到使用经典和后量子密钥混合签名的证明声明。智能体自身的证明基础设施必须在这种混合中导航以产生一致的问责记录——但迁移证明链的固件更新本身有问责要求，产生了循环：要证明迁移，证明机制本身必须已经迁移完成。大多数集群无法干净地解决这个问题。</p>
+
+        <h2>在照护交叉点</h2>
+        <p>医疗系统在多年采购周期上运行，软件变更受监管审批要求约束，并在临床安全验证驱动的更新频率上有实际限制。部署在具有遗留和现代基础设施混合的医院中的照护AI智能体，将遇到来自处于不同迁移阶段的临床系统、医疗设备和身份平台的密码声明。照护决策的问责记录可能经过经典签名链、后量子证明和混合构造——没有一个审计员能够使用单一的验证工具链来评估所有这些。迁移窗口期的照护问责审查需要大多数审计框架所没有的并行验证能力，而医疗采购时间表也未曾预见到这种需求。</p>
+
+        <h2>迁移窗口期的要求</h2>
+        <p>在导航迁移窗口期的当前大多数部署中，有三种能力集体缺失。第一，明确的窗口标注：问责记录应注明在创建时哪个密码基础设施验证了每个声明，包括其迁移状态——使未来的审查者能够理解记录产生时的信任背景。第二，长期验证承诺：系统应设计为在其记录的预期审计生命周期内保持可验证——而不仅仅是在创建时。第三，迁移感知智能体：在混合环境中运行的AI智能体应被设计为标记——而不是默默接受——它们无法使用可用工具完全验证的问责声明，从而使不完整性在记录中可见。</p>
+
+        <p>迁移窗口期不是一种将在过渡完成时得到解决的临时损害。它是问责架构在降低的保证下运行的持续时期，这些降低的边界没有被清楚地传达，产生问责声明的智能体没有被设计为使限制可见。将过渡视为算法升级而不为必须操作的窗口重新设计问责架构的组织，将只在需要记录时才发现差距。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>在后量子迁移窗口期，AI智能体问责记录经过为两个不兼容信任系统设计的密码基础设施。经典和后量子验证工具链都无法完全评估大多数组织在迁移期间运行的混合基础设施下签署的声明。窗口期并不短暂——对于在照护、硬件和后量子安全交叉点的AI智能体来说，这是可预见未来的运营环境。忽视过渡状态的问责架构产生看似完整却并不完整的记录。</p>
+      </div>
+
+      <div class="essay-footer-nav">
+        <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+        <a href="/zh/blog/" class="essay-footer-back">&larr; 返回博客</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

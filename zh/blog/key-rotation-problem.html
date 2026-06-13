@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>密钥轮换问题：如何在永不停机的智能体中更新凭证 — Asaptic Labs</title>
+  <meta name="description" content="传统密钥轮换假设服务可以暂停。持续运行的AI智能体无法做到这一点。后量子迁移使这一架构差距愈发紧迫——以下是解决之道。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/key-rotation-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/key-rotation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/key-rotation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/key-rotation-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/key-rotation-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/key-rotation-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="密钥轮换问题：如何在永不停机的智能体中更新凭证" />
+  <meta property="og:description" content="持续运行的AI智能体中的密钥轮换是一个身份连续性问题，而不仅仅是密码学问题。后量子迁移使弥合这一差距变得紧迫。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/key-rotation-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "密钥轮换问题：如何在永不停机的智能体中更新凭证",
+      "description": "持续运行的AI智能体中的密钥轮换是一个身份连续性问题，而不仅仅是密码学问题。后量子迁移使弥合这一差距变得紧迫。",
+      "url": "https://asaptic.com/zh/blog/key-rotation-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/key-rotation-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系我们"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "密钥轮换问题", "item": "https://asaptic.com/zh/blog/key-rotation-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.update-note{border-left:3px solid #29B6F6;padding:1em;background:#f0f8ff;margin:1.5em 0;color:#1a1a2e}.update-note p{margin:0;font-size:15px;line-height:1.7}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子计算 · × 物理 AI</span>
+      <h1 class="essay-title">密钥轮换问题：如何在永不停机的智能体中更新凭证</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="update-note">
+        <p>&#128221; <strong>更新（2026-05-21）：</strong> Asaptic Labs 现已采用四个交叉口框架——量子计算、物理 AI、智能原生企业、照护 AI。详见 <a href="/zh/crossings.html">/crossings</a>。本文基于此前的三交叉口结构撰写；所涉及交叉口的论点仍然有效。</p>
+      </div>
+      <div class="essay-body">
+        <p>密钥轮换看似是一个已解决的问题——直到你将其应用于无法停机的系统。传统流程是：安排维护窗口，吊销当前密钥对，签发替换密钥，更新配置，重启服务。服务离线几分钟到几小时，重启后旧凭证失效、新凭证生效。</p>
+        <p>这一模型有一个前提：系统可以干净地暂停。而在关键领域运行的 AI 智能体无法满足这个前提。持续监控患者术后状态的智能体没有维护窗口；管理长期金融结算流程的智能体无法在会话中途重启；运行于硬件安全飞地内的智能体，其嵌入式证明证书将身份绑定到特定密钥材料——中途更换密钥材料，不是配置变更，而是身份变更。</p>
+        <p>向后量子密码算法的迁移，使这一问题愈发紧迫。这不是传统意义上的"轮换"——而是算法族的更换。在迁移窗口内，一个持续运行的智能体同时处于旧凭证使用中、新凭证迁移中、以及可能受到已完成迁移的对手方质疑的三重状态。</p>
+
+        <h2>三种架构模式及其权衡</h2>
+        <p><strong>静止-轮换模式</strong>：智能体暂停新任务接入，完成或移交所有进行中的任务，交出旧凭证，获取新凭证，再恢复运行。这是最干净的方式，但代价是可用性中断，在持续在线价值高的场景中往往不可接受。</p>
+        <p><strong>双凭证重叠模式</strong>：智能体开始接受新凭证的同时，继续以旧凭证完成已有任务。旧凭证在其所覆盖的最后一个任务关闭后才退休。这保留了可用性，但创造了一个双重身份并存的窗口，使审计追踪和委托链验证更加复杂。</p>
+        <p><strong>层级密钥结构模式</strong>：最适合硬件根身份的智能体。智能体身份锚定于驻留在硬件安全模块中的根密钥，只有在硬件本身被替换时才会改变。操作签名密钥作为叶密钥，由根密钥认证，可频繁轮换（包括跨算法迁移）。叶密钥轮换时，根的证明提供了身份连续性：任何验证方都能确认新密钥是同一硬件锚点的授权派生密钥。</p>
+
+        <h2>硬件锚点是轮换中的不变量</h2>
+        <p>层级方法之所以有效，是因为它将两件在传统模型中混为一谈的事情分开了：用于操作签名的密码材料，与智能体身份本身。在扁平密钥模型中，轮换密钥就是更换身份；在硬件根模型中，安全飞地中的根密钥是身份锚点，操作密钥是身份的表达工具，而非身份的定义。</p>
+        <p>这一分离使后量子迁移对持续运行的智能体变得可管理：根密钥随硬件刷新周期迁移（可计划），叶密钥随对手方基础设施升级而逐步迁移。智能体的硬件根所表达的身份在整个过程中保持稳定。</p>
+
+        <h2>照护域中的同意问题</h2>
+        <p>在照护场景中，密钥轮换还涉及同意问题：轮换凭证是否需要原授权主体的重新同意？硬件证明的层级凭证链提供了有意义的答案：通过证明从硬件根到新操作密钥的认证链条，可以表明"当前行动的智能体"与"原始同意时的智能体"是同一个受证明的身份——操作密钥变了，受证明的身份没有变。这一区别需要在同意架构中明确体现，而不能简单假设。</p>
+
+        <h2>迁移是一个持续的过程</h2>
+        <p>后量子迁移揭示了一个密码基础设施领域长期潜伏的事实：算法与密钥的生命周期是有限的，构建于其上的系统需要将轮换视为持续的运营关切，而非偶发的紧急事件。对于在关键领域运行的 AI 智能体，在架构层面——硬件根身份、层级密钥结构、显式的重叠语义、感知同意的凭证连续性——构建这种运营纪律，是唯一不需要在安全与可用性之间做取舍的路径。</p>
+
+        <div class="essay-summary">
+          <span class="essay-summary-label">摘要</span>
+          <p>传统密钥轮换假设服务可以暂停，而持续运行的 AI 智能体无法满足这一假设。后量子迁移要求更换算法族而非仅更换密钥材料，使这一架构差距愈发紧迫。</p>
+          <p>三种模式各有权衡：静止-轮换（最干净但中断可用性）、双凭证重叠（保留可用性但增加审计复杂度）、硬件根层级密钥（最适合持续运行的智能体）。硬件锚点是轮换中的不变量——它将智能体稳定的身份与表达该身份的操作密钥分开，使算法迁移可在不停机的情况下完成。</p>
+        </div>
+
+        <div class="essay-nav">
+          <a href="/zh/blog/">&larr; 全部文章</a>
+          <a href="/zh/blog/">全部文章 &rarr;</a>
+        </div>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
