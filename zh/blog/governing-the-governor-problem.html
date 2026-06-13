@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>治理者的治理问题：当AI智能体审计AI智能体时的问责困境 — Asaptic Labs</title>
+  <meta name="description" content="多智能体架构越来越多地将AI审计方置于AI执行体之上。当审计方本身也是模型时，问责结构并未得到加强——它只是被推后了一个层级，关联失效可能在无人察觉的情况下发生。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/governing-the-governor-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/governing-the-governor-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/governing-the-governor-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/governing-the-governor-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/governing-the-governor-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/governing-the-governor-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="治理者的治理问题：当AI智能体审计AI智能体时的问责困境" />
+  <meta property="og:description" content="多智能体架构越来越多地将AI审计方置于AI执行体之上。当审计方本身也是模型时，问责结构并未得到加强——它只是被推后了一个层级。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/governing-the-governor-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-11" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "治理者的治理问题：当AI智能体审计AI智能体时的问责困境",
+      "description": "多智能体架构越来越多地将AI审计方置于AI执行体之上。当审计方本身也是模型时，问责结构并未得到加强——它只是被推后了一个层级，关联失效可能在无人察觉的情况下发生。",
+      "url": "https://asaptic.com/zh/blog/governing-the-governor-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-11",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/governing-the-governor-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "治理者的治理问题", "item": "https://asaptic.com/zh/blog/governing-the-governor-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--gray);margin:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 后量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">治理者的治理问题：当AI智能体审计AI智能体时的问责困境</h1>
+      <p class="essay-subtitle">多智能体架构越来越多地将AI审计方置于AI执行体之上。当审计方本身也是模型时，问责结构并未得到加强——它只是被推后了一个层级，关联失效可能在无人察觉的情况下发生。</p>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-11</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>当一个AI护理系统发生故障时，第一反应是追问：监督结构是什么？如今，这个问题诚实的答案往往是：监督本身就是AI。审查队列由一个模型完成分类，合规摘要由一个模型生成，本应被标记的异常在到达任何人工审查者之前已被一个模型过滤。作出关键决策的AI执行体被一个AI过程所审查——而这个审查的失效，正是问责缺口所在。</p>
+
+        <p>这就是"治理者的治理问题"：在AI智能体被委托监督其他AI智能体的系统中，审计方的属性是被假定的而非被验证的，问责因此陷入困境。</p>
+
+        <h2>AI中介监督的结构性吸引力</h2>
+        <p>以AI监督AI的逻辑是直接的。人工审查高频、快节奏的智能体系统已然捉襟见肘。AI审计方可以检查每一个决策、识别异常、以无可比拟的规模生成结构化的合规报告。如果AI执行体每天作出一千个决策，AI审计方就能为这一千个决策生成摘要——持续、不疲倦、边际成本低廉。</p>
+
+        <p>结构性问题在于：这并没有解决监督挑战，只是将其推后一步。AI审计方本身也是一个模型，有其自己的校准方式、分布假设，以及自己出错的方式。在AI执行体之上增加一个AI层，并不能增加独立性——它只是增加了另一个模型。问责链条变长了，但并没有变得更稳健。</p>
+
+        <h2>关联失效风险</h2>
+        <p>监督的独立性不仅仅是一项形式要求，它是一项功能要求。对AI决策持异议的人工审计者，带来的是不同的先验知识、不同的观察历史和不同的失效特征。而当AI审计方对AI执行体持异议时，它可能是在捕捉真实错误，也可能只是将一个略有不同但同样存在偏差的模型应用于相同的决策空间。</p>
+
+        <p>在供应商提供全栈系统的护理部署中，AI执行体和AI审计方可能共享训练谱系、特征词汇，以及对"正常"交互应当如何的共同假设。最有可能错过执行体错误的审计方，正是那个被训练为识别相同模式的审计方。关联失效——两个系统朝同一方向出错——从结构上而言比独立失效更危险，因为它能生成一个一致、内部连贯的问责记录，而这份记录显示不出任何异常。日志是干净的，两个系统意见一致——两者都是错的。</p>
+
+        <p>这在结构上类似于模型单一文化问题，但作用于问责层而非运营层。问责层的关联失效比运营层的关联失效更糟糕，因为它消除了检测两者失效的机制。</p>
+
+        <h2>后量子密码架构的启示</h2>
+        <p>在安全关键系统中，治理者的治理问题有一个直接的结构类比。一条验证链——签名被校验以对应背书证书，背书证书再对应信任根——与AI监督链具有相同的拓扑结构。每一层都将验证委托给下一层。如果任何一层在注册时被错误配置，这条链可能表面上运作正常，却无法提供任何真实的保证。</p>
+
+        <p>后量子密码迁移以一种新的方式揭示了这一点。当某一层所依赖的底层原语在密码学上被弱化，建立于其上的每一层也随之被弱化——包括负责验证的那些层。一条依赖被损害的审计模型的AI问责链类似于此：签名记录存在，验证通过，证据在结构上完好——只在整条链断裂的那个点上除外。</p>
+
+        <p>硬件根信任提供了一个应对模型。安全飞地中的信任锚是运行于其上的软件无法证明或伪造的东西。应用于AI问责，这意味着监督链必须始终终止于AI被治理系统本身无法塑造的某处：一个未经AI过滤的人工审查、一个具有独立训练谱系的第三方审计，或一条完全路由于模型栈之外的升级路径。</p>
+
+        <h2>正确架构的要求</h2>
+        <p>解决治理者的治理问题需要显式设计，而非假定自然涌现。问责链必须明确在哪些环节需要独立性——不仅仅是在哪些环节存在监督。AI审计方审查AI执行体，这是监督。但这不是独立性，除非审计方的校准方式、训练数据和失效模式可以被核实，与其所审查系统存在可问责的差异。</p>
+
+        <p>在实践中，这意味着护理部署应当记录：提供了哪些AI监督，AI审计方的谱系和校准依据是什么，以及升级路径中第一个真正非AI的节点在哪里。这意味着构建能够被审计审计方绩效的系统——以独立输入，而非仅以其所审查执行体的输出为依据。这也意味着抵制全栈AI合规的便利性：自动生成完整问责记录的吸引力，恰恰是使关联失效变得不可见的那个属性。</p>
+
+        <p>在Asaptic Labs，我们认为正确的框架不是"这个决策是否被审计"，而是"审计本身是否可被审计，且是否由具有独立失效模式的对象进行"。治理者的治理问题，不是通过在其上增加另一个AI层来解决的。在某个节点，这条链必须终止于一个AI被治理系统本身无法塑造、证明或损害的问责基础——正是在那个节点，真正的监督才开始。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>以AI审计AI是对问责问题的推迟，而非解决。当AI执行体与AI审计方共享训练谱系或分布假设时，关联失效可以生成一份干净、内部一致的记录，从而掩盖系统性错误。稳健的问责要求监督链终止于真正独立的某处——一个被治理AI系统本身无法证明、塑造或损害的节点。链条中每一个仅由模型构成的环节，增加的是长度，而非独立性。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

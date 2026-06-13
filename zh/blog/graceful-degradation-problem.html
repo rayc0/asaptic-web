@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>渐进式降级问题：当AI智能体无法完成任务时，它对你的义务 — Asaptic Labs</title>
+  <meta name="description" content="AI智能体的问责通常聚焦于正常运行时的行动。渐进式降级提出了更难的问题：当系统无法交付时，智能体对你有何义务？故障模式是问责面，而非仅仅是工程边缘案例。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/graceful-degradation-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/graceful-degradation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/graceful-degradation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/graceful-degradation-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/graceful-degradation-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/graceful-degradation-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="渐进式降级问题：当AI智能体无法完成任务时，它对你的义务" />
+  <meta property="og:description" content="在正常情况下行为正确、却在故障情况下随意行事的智能体，其问责覆盖存在巨大漏洞——而这一漏洞往往在风险最高的时刻才会显现。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/graceful-degradation-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-05-25" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "渐进式降级问题：当AI智能体无法完成任务时，它对你的义务",
+      "description": "AI智能体的问责通常聚焦于正常运行时的行动。渐进式降级提出了更难的问题：当系统无法交付时，智能体对你有何义务？故障模式是问责面，而非仅仅是工程边缘案例。",
+      "url": "https://asaptic.com/zh/blog/graceful-degradation-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-05-25",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/graceful-degradation-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "渐进式降级问题", "item": "https://asaptic.com/zh/blog/graceful-degradation-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">渐进式降级问题：当AI智能体无法完成任务时，它对你的义务</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-25</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>关于AI智能体问责的讨论，通常聚焦于其所采取的行动：它是否在授权范围内行事？是否签发了行动回执？行动是否可归因于正确的委托人？这些都是正确的问题——但前提是智能体处于正常运行状态。</p>
+        <p>这并非全部的问题。系统会出故障，硬件会老化，网络会断连，模型置信度会下降到不宜继续推理的区间。在每一种情形下，智能体都面临着几乎从未被明确指示过如何处理的抉择。它在这些时刻的行为，与正常运行下的行为同样关键。</p>
+        <p>渐进式降级并非附加在问责框架上的可靠性指标，而是问责框架本身的组成部分。一个在正常情况下行为正确、却在异常情况下随意行事的智能体，其问责覆盖存在巨大漏洞——而这一漏洞往往在风险最高的时刻才会显现。</p>
+
+        <h2>三种故障模式</h2>
+        <p>第一是服务降级。当智能体运行在多组件流水线中时，任何一个环节都可能随时失去访问。当授权端点不可达时，大多数现有部署的默认做法是继续运行，因为运营连续性被视为首要目标。正确答案取决于授权端点所把控的内容。对于低风险读取操作，继续运行或许可以接受；但如果是护理环境中的物理操作——实施治疗、调整设备参数、发送临床警报——在未获授权确认的情况下继续执行，并非"有所降级但可接受"的模式，而是一种问责失败。</p>
+        <p>第二是硬件降级。当执行平台出现故障时——传感器失效、安全飞地不可用、TPM停止响应——认证链断裂。一个在认证基础设施失效后仍继续运行的智能体，所产生的行动已无从问责。在物理世界护理部署中，未经认证的行动不只是日志空缺，而是无法验证、无法回溯、无法追溯到具体硬件上下文的行动。</p>
+        <p>第三是模型不确定性。对于分布外输入或对抗性构造的提示，模型输出分布会变得不可靠，而模型本身缺乏可靠的内省能力——主观置信度有时在客观准确性最低时反而最高。安全降级行为的规范，不能依赖智能体的自我检测，而必须依赖外部监控、置信区间和强制停止阈值。</p>
+
+        <h2>为何这是问责要求</h2>
+        <p>只能对正常情况下行动负责的智能体，仅构建了半个问责体系。另一半在于：明确规定智能体在出错时应如何应对，并留下证明其确实如此行事的审计记录。</p>
+        <p>审查AI部署的调查人员和运营方不只会问正常运行时发生了什么，还会问：当智能体遭遇非预期条件时，它是否安全停止？是否上报？是否终止行动？还是假装故障未曾发生地继续运行？这些问题的答案与正常运行时的问题同等重要——如果降级行为从未被明确规定，则更难以给出。</p>
+
+        <h2>在三个交叉点的表现</h2>
+        <p>在后量子安全交叉点，渐进式降级涉及密码学基础设施。无法验证后量子绑定的智能体不应继续执行。正确的降级模式是停止并上报，而非退回到较弱的密码方案——退回经典密码学不是优雅降级，而是伪装成可靠性特性的安全回退。</p>
+        <p>在硬件交叉点，降级是传感器与认证问题。执行环境失去硬件完整性保证的智能体，必须将自身视为已越出问责边界，并停止一切后果性操作，而非假设认证链很快就会恢复。在认证间隙期间采取行动的智能体，对这段时间内的行为没有任何有意义的问责。</p>
+        <p>在物理世界护理交叉点，风险最为直接。在传感器输入或授权链断裂后仍悄然继续运行的护理智能体，不是在艰难条件下尽力而为——它是在完全脱离问责框架的情况下运作。依赖其输出的住客和临床人员，所信赖的系统已不再满足其建议被验证时所依赖的前提条件。护理场景中的静默降级不是软件故障，而是护理失误，对人的福祉有直接影响。</p>
+
+        <h2>规定安全停止点</h2>
+        <p>正确的架构会提前、明确地规定每类后果性操作必须停止的条件。这要求在故障发生前预判故障模式，为每类操作指定降级类别，并建立能够检测阈值越界并触发受控停止的监控基础设施。这一规范是智能体部署问责面的一部分，应与权限模型、委托人层级和认证架构并列记录。</p>
+        <p>无法说明自身在无法完成任务时会如何应对的智能体，其问责设计尚未完成。问题不只是：能完成时，智能体是否正确行事？还在于：无法完成时，智能体是否正确停止？</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>AI智能体的问责讨论通常聚焦于正常运行时的行动，而忽视了同样关键的问题：当系统出故障时，智能体应如何应对？渐进式降级并非可靠性指标，而是问责框架的组成部分。三种核心故障模式——服务降级（授权端点不可达）、硬件降级（认证链断裂）、模型不确定性——在后量子安全、硬件与物理护理三个交叉点上各有不同的严重程度。正确的架构事先明确每类后果性操作必须停止的条件，并将其纳入权限模型与委托人层级文档。一个无法说明自身在无法完成任务时会如何应对的智能体，其问责设计尚未完成。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/multi-tenancy-isolation-problem.html">上篇：多租户隔离问题 →</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

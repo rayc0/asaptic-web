@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>决策速度问题 — Asaptic Labs</title>
+  <meta name="description" content="当AI智能体必须以超过任何监督循环所能响应的速度做出决策时，为人类节奏设计的问责架构，在结构上便与部署场景不兼容。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/decision-velocity-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/decision-velocity-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/decision-velocity-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/decision-velocity-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/decision-velocity-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/decision-velocity-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="决策速度问题：AI智能体必须以超过监督速度做出决策时的问责困境" />
+  <meta property="og:description" content="当AI智能体必须以超过任何监督循环所能响应的速度做出决策时，为人类节奏设计的问责架构在结构上便与部署场景不兼容。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/decision-velocity-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "决策速度问题：AI智能体必须以超过监督速度做出决策时的问责困境",
+      "description": "当AI智能体必须以超过任何监督循环所能响应的速度做出决策时，为人类节奏设计的问责架构在结构上便与部署场景不兼容。",
+      "url": "https://asaptic.com/zh/blog/decision-velocity-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/decision-velocity-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "决策速度问题", "item": "https://asaptic.com/zh/blog/decision-velocity-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--fg)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--gray);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--fg);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--gray);margin:0}.essay-footer{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× 后量子安全 × 硬件 × 物理世界护理</div>
+      <h1 class="essay-title">决策速度问题：AI智能体必须以超过监督速度做出决策时的问责困境</h1>
+      <p class="essay-subtitle">当AI智能体必须以超过任何监督循环所能响应的速度做出决策时，为人类节奏设计的问责架构，在结构上便与部署场景不兼容。</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-14</span>
+        <span>5 分钟阅读</span>
+      </div>
+    </header>
+
+    <article>
+      <div class="essay-body">
+        <p>大多数AI智能体的问责框架共享一个隐含的架构假设：在决策与行动之间存在一个可以插入审查步骤的时刻。日志被写入，人工审查它，然后批准或纠正随之而来。这一假设深深嵌入治理流程的设计方式，以至于它很少被明确陈述——也很少被对照已部署智能体实际运行的时间尺度进行检验。</p>
+
+        <p>决策速度问题，是当AI智能体必须以使人工并行审查在物理上不可能的速度行动时产生的结构性错配。这些决策的风险不足以让人放弃审查，但单独来看也不足以高到证明完全中止流程的合理性。它们只是到来的速度，超过了任何围绕人类注意力设计的问责循环所能响应的速度。问责架构是存在的，但在结构上与部署场景不兼容。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>AI智能体系统中的密码认证必须协商共享密钥、验证身份证书并建立会话参数——所有这些都必须在任何应用层消息交换之前完成。在规模上，这些握手在数以百万计的并发会话中持续发生，时间窗口以微秒计算。后量子密钥封装机制增加了计算开销；它没有增加人工在每次协商完成之前进行审查的选项。</p>
+
+        <p>在此背景下，问责问题不在于单个握手。而在于其上层的策略层：谁授权了算法选择，基于什么证据，以及采用什么机制来检测这些选择是否在生产中被忠实执行？决策速度问题在这里表现为一种位移：实际决策——每个密码学选择——的发生速度快于治理的运转速度，因此治理被位移到约束这些选择的策略层。如果策略层薄弱或过时，单个决策的速度就会阻止任何及时到达的纠正。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>具有实时控制循环的物理系统——机器人执行器、医疗设备、工业自动化——在严格的延迟约束下运行。管理康复机器人动作模式的智能体必须在控制周期内评估传感器输入并生成运动指令，通常以毫秒计。人工在每条指令执行前进行审查会引入延迟，从而破坏物理系统。监督循环从来就不是为在执行器速度下运行而设计的。</p>
+
+        <p>因此，硬件交叉点的问责历来依赖于预授权：可接受的行动空间在部署前受到约束，问责被施加于约束设计而非其中的单个决策。决策速度问题使这一要求更加尖锐。随着智能体能够进行更复杂的实时推理——不仅仅是执行预定义的运动配置，而是适应意外的物理状态——预授权约束空间与智能体实时生成的新决策之间的边界变得更难以规定，也更难以审计。物理决策的速度没有改变，但该速度内决策的解释范围正在扩大。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>在照护场景中，速度不对称出现在人类尺度而非机器尺度。评估病情恶化患者生命体征并生成警报的AI智能体不在微秒内运行——它在秒内运行。但在典型照护环境中，对该警报采取行动的问责循环需要找到有资质的工作人员、移交背景信息、确认警报的临床依据并授权响应。这个循环需要几分钟。在病情恶化的情况下，分钟是没有的。</p>
+
+        <p>在实践中出现的不是真正的审查，而是事后文档：智能体的建议被遵循，因为时间线要求如此，审查被记录得好像发生在行动之前。问责框架捕获了一个并未按其所暗示的顺序发生的事件。这不是渎职——这是一个机构在不兼容的设计约束下尽力而为。但这意味着问责数据不能用于评估智能体的建议是否适当，因为记录并不反映实际的决策过程。</p>
+
+        <h2>预授权作为结构性回应</h2>
+        <p>高速决策环境唯一持久的问责架构，是将问责前移：移入约束的设计，而非单个决策的审查。这要求明确规定智能体被授权单独决定什么，什么需要预定义的升级，以及什么构成无论时间压力如何都会触发停止的越界行动。问责随后被施加于这些约束规范——它们是否充分、是否最新、是否被忠实实施？——而非施加于它们所治理的决策流。</p>
+
+        <p>这不是对问责的放松。这是对将问责施加于错误层——与无法等待的决策并行——无法产生监督这一事实的承认。它只产生已经做出的决策的文档。预授权问责更为严苛而非宽松：它要求提前预测故障模式，精确规定约束边界，并构建能够在重大决策完成之前识别智能体是否在其授权空间边缘运行的检测机制。在决策既快速又不可逆的交叉点，这不是一种架构偏好。这是唯一能够运作的架构。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>大多数问责框架假设可以在AI智能体的决策与行动之间插入审查步骤。决策速度打破了这一假设：在后量子密码系统、实时硬件控制和急性照护环境中，决策的完成速度快于监督循环的响应速度。结构性回应是预授权问责——将监督施加于约束智能体决策空间的约束设计，而非其中的单个决策。这比并行审查更为严苛，而非更宽松，因为它要求在故障模式发生之前就预见到它们。</p>
+      </div>
+    </article>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zh/blog/" class="essay-footer-back">&larr; 返回博客</a>
+    </footer>
+  </main>
+
+  <footer style="border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px">
+    <a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a>
+  </footer>
+</body>
+</html>
