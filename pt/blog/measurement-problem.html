@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da medição: não se governa o que não se mede — Asaptic Labs</title>
+  <meta name="description" content="Exactidão e latência são resultados do processo, não propriedades de responsabilização. A governação de agentes de IA exige métricas diferentes: qualidade de escalonamento, calibração de recusas e conformidade com pegada mínima." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/measurement-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/measurement-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/measurement-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/measurement-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/measurement-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/measurement-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da medição: não se governa o que não se mede" />
+  <meta property="og:description" content="A governação de agentes de IA exige métricas diferentes das que os operadores normalmente acompanham." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/measurement-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema da medição: não se governa o que não se mede",
+      "description": "Exactidão e latência são resultados do processo, não propriedades de responsabilização. A governação de agentes de IA exige métricas diferentes: qualidade de escalonamento, calibração de recusas e conformidade com pegada mínima.",
+      "url": "https://asaptic.com/pt/blog/measurement-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/measurement-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar a Asaptic Labs",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/pt/engage.html"
+        }
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "pt",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "Problema da medição", "item": "https://asaptic.com/pt/blog/measurement-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contactar</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× SEGURANÇA QUÂNTICA · × HARDWARE · × CUIDADO NO MUNDO FÍSICO</span>
+      <h1 class="essay-title">O problema da medição: não se governa o que não se mede</h1>
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">6 min de leitura</span></div>
+      <div class="essay-body">
+        <p>Todo o sistema implantado é medido. Volume de pedidos, taxa de erro, latência, exactidão do modelo, satisfação do utilizador. Estas métricas são reais e úteis. Mas não são métricas de responsabilização. A distância entre o que os operadores medem e o que a responsabilização exige é um dos modos de falha mais discretos nas implantações de agentes de IA, com consequências directas nos cruzamentos da segurança quântica, do hardware e do cuidado no mundo físico.</p>
+
+        <h2>O que a responsabilização exige da medição</h2>
+
+        <p>Responsabilizar um agente de IA significa conseguir responder se o agente actuou dentro do seu âmbito autorizado, com identidade verificável, em nome do principal correcto e de uma forma reconstruível e atribuível. Cada parte desta definição implica uma propriedade mensurável. A conformidade de âmbito não é taxa de erro; é a contagem de operações consequentes que pode ser verificada contra uma especificação de âmbito assinada. A atribuição ao principal não é uma linha de log; é uma ligação verificável entre uma operação e o conjunto de credenciais activo naquele momento.</p>
+
+        <p>Três classes de métricas relevantes para responsabilização são submedidas de forma sistemática. A primeira é a qualidade de escalonamento: em domínios consequentes, o agente deve encaminhar certas decisões para um principal humano, nem com frequência excessiva nem com raridade perigosa. Medir isto exige o denominador, isto é, todas as decisões que deveriam ter sido escaladas, não apenas as que foram.</p>
+
+        <p>A segunda é a calibração de recusas. Um agente tem um domínio de acções autorizadas. Quando recebe um pedido fora desse domínio, o comportamento correcto é recusar e registar a razão. Taxas de recusa, distribuição de razões e escalonamento após recusa indicam se a especificação de âmbito está a funcionar. Uma taxa persistentemente baixa pode significar que o âmbito é demasiado largo ou que pedidos fora de âmbito não são apresentados honestamente.</p>
+
+        <p>A terceira é a conformidade com pegada mínima. Pedir apenas as permissões necessárias à tarefa actual, preferir acções reversíveis e expor incerteza produz comportamentos observáveis. Eventos de obtenção de tokens, ciclos de vida de credenciais temporárias e frequência de acções irreversíveis são métricas de pegada. A maioria das implantações não as acompanha.</p>
+
+        <h2>Por que as métricas padrão enganam</h2>
+
+        <p>Exactidão e latência são resultados do processo. Responsabilização é uma propriedade do processo. Optimizar os primeiros pode degradar silenciosamente a segunda.</p>
+
+        <p>Um agente optimizado para baixa latência pode saltar passos de confirmação e contornar aprovação humana em decisões ambíguas. A métrica de latência melhora enquanto a métrica de responsabilização piora. Um agente optimizado para alta taxa de conclusão pode operar fora de âmbito quando o caminho autorizado falha. A conclusão mantém-se, mas a conformidade de âmbito cai.</p>
+
+        <p>Estes não são casos marginais. São consequências previsíveis de medir a coisa errada. À medida que a calibração do agente deriva na direcção recompensada pelas métricas, as consequências acumulam-se.</p>
+
+        <h2>Como o problema aparece nos três cruzamentos</h2>
+
+        <p>No cruzamento da segurança pós-quântica, a métrica relevante é a taxa de completude criptográfica: que percentagem das operações consequentes inclui uma assinatura pós-quântica válida e uma cadeia de atestação verificável contra a chave pública da autoridade de assinatura? As implantações actuais acompanham se a operação terminou, não se terminou de forma criptograficamente responsabilizável.</p>
+
+        <p>No cruzamento do hardware, a métrica relevante é a continuidade de atestação: em que percentagem do tempo de execução o agente está num ambiente verificado e enraizado em hardware? As lacunas de continuidade são lacunas de responsabilização. Um agente que corre 3% do tempo fora de ambiente atestado tem uma janela de 3% de operações sem responsabilização adequada.</p>
+
+        <p>No cruzamento do cuidado no mundo físico, o problema é eticamente mais imediato. Qualidade de cuidado não se reduz a taxa de conclusão de tarefas. As métricas que importam, como escalonamento correcto de condições clínicas ambíguas, recusa adequada de pedidos fora de âmbito e apresentação fiel da incerteza a clínicos, exigem uma infra-estrutura de medição separada dos próprios resultados do agente.</p>
+
+        <h2>A especificação vem antes da medição</h2>
+
+        <p>Não se mede aquilo que ainda não foi definido. Métricas relevantes para responsabilização precisam, a montante, de uma especificação que diga como deve ser o comportamento correcto. Âmbito, critérios de escalonamento, categorias de recusa e restrições de pegada têm de ser escritos em forma verificável por máquina para que a conformidade possa ser medida.</p>
+
+        <p>A maioria das implantações de agentes não tem essa especificação; tem configuração. A configuração diz ao agente o que fazer. A especificação diz ao auditor o que verificar. Servem fins diferentes, e só uma delas é instrumento de responsabilização.</p>
+
+        <p>Um agente sem medição relevante para responsabilização não é ingovernado no sentido de caos. É ingovernado no sentido de desconhecimento: os operadores não conseguem saber se se comporta dentro da fronteira de responsabilização porque não construíram os instrumentos que lhes diriam isso.</p>
+      </div>
+      <div class="essay-summary"><span class="essay-summary-label">Resumo</span><p>As métricas que os operadores acompanham habitualmente, como exactidão, latência e conclusão de tarefas, são resultados do processo. A responsabilização exige medir propriedades do processo: escalonamento, recusas, pegada de permissões, completude criptográfica, continuidade de atestação e validação externa de decisões de cuidado.</p></div>
+      <div class="essay-nav"><a href="/pt/blog/">&larr; Todos os artigos</a><a href="/pt/blog/graceful-degradation-problem.html">Anterior: degradação graciosa &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contactar</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>知情覆蓋問題 — Asaptic Labs</title>
+  <meta name="description" content="每個設計良好的 AI 智能體系統都包含人工覆蓋機制。但覆蓋只有在覆蓋者擁有足夠信息時才具有問責意義。若覆蓋者無法解釋其理由，問責轉移便是空洞的。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/informed-override-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/informed-override-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/informed-override-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/informed-override-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/informed-override-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/informed-override-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="知情覆蓋問題：當人類在缺乏足夠信息的情況下覆蓋 AI 智能體建議時的問責困境" />
+  <meta property="og:description" content="每個設計良好的 AI 智能體系統都包含人工覆蓋機制。但覆蓋只有在覆蓋者擁有足夠信息時才具有問責意義。若覆蓋者無法解釋其理由，問責轉移便是空洞的。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/informed-override-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "知情覆蓋問題：當人類在缺乏足夠信息的情況下覆蓋 AI 智能體建議時的問責困境",
+      "description": "每個設計良好的 AI 智能體系統都包含人工覆蓋機制。但覆蓋只有在覆蓋者擁有足夠信息時才具有問責意義。若覆蓋者無法解釋其理由，問責轉移便是空洞的。",
+      "url": "https://asaptic.com/zht/blog/informed-override-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/informed-override-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic Labs",
+        "target": { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/zht/engage.html" }
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "知情覆蓋問題", "item": "https://asaptic.com/zht/blog/informed-override-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--accent);display:block;margin-bottom:16px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim);margin-bottom:56px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-body p{font-size:16px;line-height:1.85;color:var(--fg);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:600;margin:48px 0 16px;color:var(--fg)}.essay-summary{margin-top:56px;padding:28px 32px;border:1px solid var(--border);background:var(--surface)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;line-height:1.75;color:var(--gray-dim);margin:0}.essay-footer-note{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline,.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim)}.essay-footer-back{color:var(--gray);transition:color .2s}.essay-footer-back:hover{color:var(--accent)}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <span class="essay-label">跨界筆記 · 2026-06-14</span>
+    <h1 class="essay-title">知情覆蓋問題</h1>
+    <p class="essay-subtitle">當人類在缺乏足夠信息的情況下覆蓋 AI 智能體建議時，問責轉移便失去了實質</p>
+    <div class="essay-meta"><span>作者：Asaptic Labs</span><span>2026-06-14</span><span>5 分鐘閱讀</span><span>× 量子安全 · × 硬件 · × 人類照護</span></div>
+    <article>
+      <div class="essay-body">
+        <p>每個設計良好的 AI 智能體系統都包含一個人工覆蓋機制。覆蓋是安全閥——人類可以拒絕智能體的建議、替換自己的判斷，並承擔由此產生的行動的問責。這種設計特徵是正確且必要的。問題不在於覆蓋機制的存在。問題在於，它們幾乎總是在沒有轉移履行該問責所需信息的情況下轉移了問責。</p>
+        <p>覆蓋只有在背後的理解下才有意義。一個點擊「覆蓋」的人，是因為界面呈現了令人困惑的建議、時間壓力或者默認為自己的先前偏好而沒有參與智能體的推理，並沒有行使人類判斷。他們產生了說明人類判斷被行使的文件記錄。問責記錄在形式上是正確的；問責功能已經失敗。</p>
+        <h2>知情覆蓋需要甚麼</h2>
+        <p>要使覆蓋代表真正的問責轉移，必須滿足三個條件：人類必須理解智能體推薦了甚麼以及為甚麼；人類必須理解接受覆蓋後會發生甚麼——不是一般意義上的，而是針對當前決策的具體內容；人類必須能夠承擔不同於智能體所會產生的結果的責任。</p>
+        <p>這些條件中沒有一個能通過覆蓋按鈕的存在自動滿足。它們需要深思熟慮的設計。智能體必須以覆蓋者可以評估的形式呈現其推理。界面必須抵制快速、不加反思的拒絕。系統必須區分審查後輸入的覆蓋和未參與情況下輸入的覆蓋。</p>
+        <h2>後量子交叉口</h2>
+        <p>處理密碼基礎設施的遷移智能體基於少數操作員能夠獨立評估的技術評估提出建議。覆蓋遷移建議的操作員——接受更高風險的配置、延遲棄用、保留舊算法——正式承擔了隨之而來的風險責任。但如果建議沒有以操作員能夠評估的方式解釋，那麼問責轉移就是空洞的。</p>
+        <p>此處的知情覆蓋問題與可讀性問題相互疊加：審計記錄僅顯示人類批准了覆蓋是不夠的。記錄必須反映人類是否理解了他們在批准甚麼。</p>
+        <h2>硬件交叉口</h2>
+        <p>機隊管理智能體跨大量設備推薦配置更改、固件更新和設備退役。當操作員覆蓋建議時，覆蓋具有在機隊中傳播的物理後果。機隊操作的規模創造了知情覆蓋問題的複雜版本：一個每天產生一百個覆蓋請求的系統，正在產生不可能是知情的問責轉移。</p>
+        <h2>物理世界照護</h2>
+        <p>在照護環境中，覆蓋問題最為尖銳，因為問責轉移最具後果性。覆蓋智能體臨床建議的照護專業人員承擔了對結果的臨床責任。這是恰當的；專業問責是設計意圖。但只有在專業人員擁有足夠信息來行使臨床判斷時才有效。</p>
+        <p>照護覆蓋問題也朝另一個方向延伸。當智能體出錯時未能覆蓋的專業人員，同樣做出了一個有問責意義的選擇——審計追蹤可能將其記錄為被動接受而非主動批准。</p>
+        <h2>覆蓋設計的含義</h2>
+        <p>覆蓋機制不是用戶體驗細節。它是系統的問責架構與其設計涉及的人類接觸的點。幾個設計選擇決定了這種接觸是否真實：行動前解釋、深思熟慮的摩擦、覆蓋原因捕獲，以及非覆蓋平等。</p>
+        <p>知情覆蓋問題最終提醒我們，問責不是通過控制點的存在產生的。它是由理解自己在控制甚麼、行使了真正判斷並可以對結果負責的人產生的。</p>
+      </div>
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>AI 智能體系統中的覆蓋機制旨在將問責轉移給拒絕智能體建議的人類。但覆蓋只有在人類理解他們拒絕的建議時才能轉移問責。知情覆蓋需要行動前解釋、深思熟慮的摩擦、覆蓋原因捕獲和非覆蓋平等。</p>
+      </div>
+    </article>
+    <div class="essay-footer-note">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zht/blog/" class="essay-footer-back">&larr; 返回博客</a>
+    </div>
+  </main>
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

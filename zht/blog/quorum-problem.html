@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>法定人數問題 — Asaptic Labs</title>
+  <meta name="description" content="哪些決策足夠重要，以至於單個AI智能體永遠不應被允許單獨行動？法定人數問題，是隨之而來的架構命題。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/quorum-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/quorum-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/quorum-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/quorum-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/quorum-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/quorum-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="法定人數問題：單個AI智能體永遠不應被允許單獨行動的情形" />
+  <meta property="og:description" content="哪些決策足夠重要，以至於單個AI智能體永遠不應被允許單獨行動？法定人數問題，是隨之而來的架構命題。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/quorum-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "法定人數問題：單個AI智能體永遠不應被允許單獨行動的情形",
+      "description": "哪些決策足夠重要，以至於單個AI智能體永遠不應被允許單獨行動？法定人數問題，是隨之而來的架構命題。",
+      "url": "https://asaptic.com/zht/blog/quorum-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/quorum-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯繫 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯繫"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "網誌", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "法定人數問題", "item": "https://asaptic.com/zht/blog/quorum-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .essay-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+      margin-bottom: 56px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 40px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--gray-dim);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray);
+      transition: color 0.2s;
+    }
+    .essay-footer-back:hover { color: var(--accent); }
+    .page-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">網誌</a><a href="/zht/engage.html">參與</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 網誌</a>
+
+    <span class="essay-label">交叉點筆記 · 2026-06-14</span>
+    <h1 class="essay-title">法定人數問題</h1>
+    <p class="essay-subtitle">單個AI智能體永遠不應被允許單獨行動的情形</p>
+
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>5 分鐘閱讀</span>
+      <span>× 量子安全 × 硬體 × 人類照護</span>
+    </div>
+
+    <div class="essay-body">
+      <p>每個授權架構最終都會面臨一個閾值問題：哪些決策足夠重要，以至於單個智能體的判斷不夠充分？這個問題的答案定義了法定人數要求的起點。法定人數是獨立權威的最低數量——智能體、系統或人工審查員——其一致同意是行動的前提條件。人類機構幾個世紀以來已將這種邏輯應用於高風險決策：法院合議庭、委員會投票、雙金鑰授權。AI智能體部署的問題不是法定人數邏輯是否適用，而是如何在智能體以機器速度在分布式基礎設施中行動的系統中實施它。</p>
+
+      <h2>單智能體授權缺口</h2>
+      <p>單個智能體授權高風險行動會產生單點問責失敗。如果智能體被攻陷、出現故障或只是判斷錯誤，行動就會在沒有獨立檢查的情況下進行。這種失敗模式不是理論上的——它與銀行業雙重保管規則所解決的失敗模式相同，與高後果物理環境中兩人完整性規則所解決的相同，與法律文書中聯署要求所解決的相同。在所有這些情況下，對高後果的結構性回應不是更好的單一權威，而是至少兩個獨立權威，需要其同時同意才能繼續。</p>
+
+      <p>AI智能體部署通常默認繞過這種邏輯。智能體被授權行動，它行動，之後重建問責。對於低風險、高頻率的決策，這是正確的權衡。對於不可逆轉的、影響當時無法同意的一方的、或超過定義後果閾值的決策，單智能體授權不是效率選擇——它是結構性缺口。法定人數要求不損耗效率；它是與被授權行動的不可逆性相稱的最低結構性回應。</p>
+
+      <h2>在後量子安全交叉點</h2>
+      <p>實施法定人數授權需要多重簽名方案：每個參與權威對提議的行動產生密碼簽名，只有在積累了足夠數量的有效簽名後，行動才被執行。在必須在多年或數十年時間跨度內保持問責的系統中——物理基礎設施、受監管護理或長週期工業部署的時間跨度——這些簽名必須是抗量子的。NIST標準化的ML-DSA系列中的基於格的簽名方案支持閾值變體，允許在沒有集中式協調者的情況下實施法定人數邏輯，而集中式協調者本身會成為單點失敗。</p>
+
+      <p>後量子要求對法定人數特別重要，因為法定人數產生的證據——授權行動上的一組簽名——是可能需要在事後數年的稽核、監管審查或法律程序中經受考驗的問責記錄。其簽名對足夠強大的對手易受攻擊的法定人數方案產生的問責證據可能無法在其所治理系統的運營生命週期內存續。在決策時使用在系統全生命週期內保持有效的演算法簽名，不是對遙遠威脅的對沖；它是法定人數記錄保持有意義的條件。</p>
+
+      <h2>在硬體交叉點</h2>
+      <p>應用於硬體智能體的法定人數邏輯引入了物理約束：每個參與智能體必須在其投票有效之前可獨立證明。如果三個智能體中的兩個運行在同一個被攻陷的硬體堆疊上，三個智能體的法定人數與單個智能體沒有實質差別。以硬體為根的證明——每個智能體提供其執行時環境的簽名測量，根據法定人數協調者接受的信任根進行驗證——將名義上分布的法定人數轉變為真正獨立的法定人數。</p>
+
+      <p>在嵌入式硬體情境中，這產生了設計要求：對高後果驅動擁有權威的智能體必須被架構為法定人數參與者在單獨的可信執行環境中運行，在單獨的物理基底上，或具有單獨的證明根。共享硬體平台上的軟體冗余不滿足獨立性要求。無論名義上涉及多少軟體組件，可以單獨授權物理行動的智能體，或作為獨立性未經證明的法定人數的一部分的智能體，在結構上等同於單個未驗證的智能體。</p>
+
+      <h2>在物理世界照護交叉點</h2>
+      <p>物理世界照護呈現了法定人數要求不是可選的最具體案例。授權藥物調整、更改緊急護理方案或抑制升級警報的智能體正在做出後果由一個人承擔的決策，而這個人在那一刻無法驗證智能體的推理或糾正其判斷。智能體的委託人層級——部署它的組織、配置它的臨床醫師、批准其使用的監管機構——代替那個人對該決策負責。</p>
+
+      <p>護理情境中的法定人數要求不需要計算代價高昂的多方計算。閾值可以通過要求AI智能體、在不同資料上操作的獨立規則安全檢查以及超過定義後果閾值的決策的人工審查員之間的同時同意來實現。人工審查員是一個法定人數成員，不是唯一權威。結構效果才是重要的：沒有單個智能體單獨授權高後果行動，每次授權都產生一組可以在爭議中重建的獨立證明。</p>
+
+      <p>特定於護理的設計問題是在哪裡設置閾值。太低，每個常規決策都會觸發護理工作流無法吸收且審查員會繞過的法定人數開銷。太高，重要決策作為常規通過。校準閾值需要明確參與部署的後果配置——哪些決策是不可逆的，哪些影響無法實時同意的人，哪些產生法定人數記錄需要解決的責任。該校準本身是一個問責行為，獨立於法定人數系統的工程，不能推遲到執行時或被視為智能體自行設置的參數。</p>
+
+      <h2>法定人數不解決什麼</h2>
+      <p>共享訓練譜系、配置源或部署環境的智能體法定人數可能在重要的失敗模式上完全相關。如果三個智能體都因共享微調資料集而表現出相同的系統性偏見，它們對有偏見行動的一致同意不是正確性的證據——它是相關失敗的證據。真正的法定人數獨立性要求每個參與者可用的錯誤來源不相同。對於AI智能體來說，這比硬體系統更難保證，在硬體系統中可以驗證物理獨立性。智能體的法定人數架構必須將訓練相關性、提示相關性和共享情境作為可以破壞表面獨立性的失敗模式來考慮。</p>
+
+      <p>這不是反對法定人數要求的論點——而是支持在明確關注參與者獨立性的情況下設計它們的論點。由獨立訓練的模型組成、在獨立收集的輸入上操作、具有獨立證明的執行環境、產生獨立可驗證簽名的法定人數，是比單智能體授權實質上更強的問責結構。正確構建它也實質上更昂貴。正確構建它的成本與它旨在防止的後果成本成正比——這正是問責基礎設施值得投資的條件。</p>
+    </div>
+
+    <div class="essay-summary">
+      <span class="essay-summary-label">摘要</span>
+      <p>法定人數問題是哪些AI智能體決策足夠重要以至於在執行前需要獨立同意的問題。單智能體授權產生單點問責失敗；法定人數要求——來自雙重保管、兩人完整性和聯署邏輯——是相稱的結構性回應。在後量子安全交叉點，法定人數簽名必須使用抗量子演算法，以便問責記錄在系統的完整運營生命週期內存續。在硬體交叉點，每個法定人數參與者必須獨立證明——共享硬體上的軟體冗余不滿足獨立性。在物理世界照護中，閾值必須根據部署的後果配置校準，該校準本身是問責行為。真正的法定人數獨立性還需要關注相關失敗模式：共享訓練、配置或情境的智能體可能在不起幫助作用的方式上一致。</p>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zht/blog/" class="essay-footer-back">&larr; 所有筆記</a>
+    </div>
+  </main>
+
+  <footer class="page-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">網誌</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

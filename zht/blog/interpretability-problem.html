@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>可解釋性問題 — Asaptic Labs</title>
+  <meta name="description" content="問責制不僅需要了解AI 智能體決策了什麼，更需要理解為什麼。當產生決策的推理過程無法被獨立檢查時，審計記錄是完整的，而問責圖景却是空洞的。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/interpretability-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/interpretability-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/interpretability-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/interpretability-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/interpretability-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/interpretability-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="可解釋性問題：當AI 智能體決策背后的推理無法被檢查時的問責困境" />
+  <meta property="og:description" content="問責制不僅需要了解AI 智能體決策了什麼，更需要理解為什麼。當產生決策的推理過程無法被獨立檢查時，審計記錄是完整的，而問責圖景却是空洞的。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/interpretability-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "可解釋性問題：當AI 智能體決策背后的推理無法被檢查時的問責困境",
+      "description": "問責制不僅需要了解AI 智能體決策了什麼，更需要理解為什麼。當產生決策的推理過程無法被獨立檢查時，審計記錄是完整的，而問責圖景却是空洞的。",
+      "url": "https://asaptic.com/zht/blog/interpretability-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/interpretability-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "向 Asaptic 提交采購 RFQ",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "description": "Asaptic 諮詢入口"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通過電子郵件發送規格簡報"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "可解釋性問題", "item": "https://asaptic.com/zht/blog/interpretability-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:56px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--accent);display:block;margin-bottom:16px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim);margin-bottom:56px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body h2{font-size:20px;font-weight:600;margin:40px 0 16px;line-height:1.3;color:var(--fg)}.essay-body p{font-size:16px;line-height:1.85;color:var(--gray);margin-bottom:20px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);background:var(--surface)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;line-height:1.75;color:var(--gray-dim);margin:0}.essay-footer{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray);transition:color .2s}.essay-footer-back:hover{color:var(--accent)}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <span class="essay-label">跨界笔记 · 2026-06-14</span>
+    <h1 class="essay-title">可解釋性問題</h1>
+    <p class="essay-subtitle">當AI 智能體決策背后的推理無法被檢查時的問責困境</p>
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>6 分鐘閱讀</span>
+      <span>× 量子安全 · × 硬件 · × 人類照護</span>
+    </div>
+    <article>
+      <div class="essay-body">
+        <p>一個AI 智能體的決策可以被完整記錄——它接收的輸入、它選擇的行動、它產生的輸出——這份記錄可以是完整的，却几乎無法告诉審計員這個決策是否正確。審計追踪回答了"做了什麼"。問責制要求理解"為什麼"。當產生決策的推理過程無法被獨立檢查時，你拥有完整的日誌，却面對空洞的問責圖景。這就是可解釋性問題。</p>
+
+        <h2>問題的本質</h2>
+        <p>這里所说的可解釋性，並非指事後產生的繁化解釋。事後解釋——敘事性摘要、特征重要性排名、由做出決策的同一個模型生成的自然语言理由——是重構，不是阐釋。它們描述了一個可能產生該輸出的合理推理鏈；它們並不揭示實際的計算路徑。這一区別對問責制至關重要：重構可能是錯誤的，却不會被檢测為錯誤，因為沒有真實值可以對照驗證。</p>
+
+        <p>真正的可解釋性應當允許獨立方檢查智能體的中間推理狀態，識別驅動決策的因素，並驗證所陳述的理由與實際計算是否一致。對於大多數以生產規模運行的現有AI 智能體，這是不可實現的。能得到的是輸出——而輸出可以在底層推理經不起審查的情況下看起來是正確的。</p>
+
+        <h2>由此產生的問責差距</h2>
+        <p>當AI 智能體的決策造成傷害，而驅動該決策的推理無法被檢查時，問責制退化為結果归因。调查人員可以确定智能體采取了行動、行動發生在傷害之前、行動在智能體的授權範圍内。他们無法确定推理是否合理、輸入是否被适當權衡，或者對同一情況的不同表述是否會產生不同且更好的決策。問責記錄識別了近因；可解釋性差距掩盖了結構性原因。</p>
+
+        <p>在決策具有新穎性、高風險性且未被先前政策充分覆盖的領域，這种影響尤為顯著。常規決策可以通過比较輸出與预期輸出来評估。邊界決策——智能體在其設計者未完全预見的情境中做它被構建来做的事——只能通過檢查推理来評估。這些恰恰是最可能造成傷害的決策，也是可解釋性最常缺失的決策。</p>
+
+        <h2>後量子交叉點</h2>
+        <p>後量子遷移智能體在一個委託人通常缺乏獨立評估其推理所需密碼學深度的領域運作。當智能體推荐特定演算法選擇、參數配置或遷移序列時，建議是通過結果来評估的——遷移是否无錯誤地完成——而非通過推理。一個細微錯誤的建議可能產生通過所有自动檢查的輸出，同時基於對威胁模型或演算法屬性的錯誤評估。</p>
+
+        <p>可解釋性差距在此處尤為嚴重，因為該領域中的錯誤不會自我糾正。錯誤的密碼學選擇不會立即表現為可見失敗；它創造了潛在的脆弱性，可能多年後才被利用。等到推理錯誤變得明顯時，它所影響的決策已經分布在基礎設施中、在政策中得到批準、並被下游系統付諸實施。審計日誌將顯示授權。它不會顯示推理在做出時是否合理。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>在大型設備群體中做出配置決策的機队管理智能體，必須處理設備狀態、軟件版本、環境條件和營運需求之間的交互效應。產生特定配置建議的推理可能取決於數千個變量的聯合狀態，沒有任何單個操作員能僅從輸出中重建。當配置變更導致設備故障或機队事故時，可解釋性問題不是"智能體做了什麼"——日誌回答了這個問題——而是"它為什麼評估這個配置是可接受的？"</p>
+
+        <p>沒有可解釋性，事後審查默認退為：用不同的人使用相同不完整信息產生的不同建議，来替代智能體的建議。產生原始錯誤評估的結構性條件未得到解決。同類型的重複事故接踵而至。這個模式在複雜基礎設施管理中很熟悉：症狀被解決，根本原因沒有被解決，因為根本原因存在於無法打开的推理中。</p>
+
+        <h2>物理世界護理交叉點</h2>
+        <p>可解釋性問題在護理交叉點最為突出，因為理解決策本身就是護理的组成部分。受護理智能體決策影響的人——關於日常支持、關於向臨床關注的升級、關於其狀况在跟随他们的記錄中如何被表征——不僅有權知道決策了什麼，还有權理解其依據。這种理解對於有意義的同意、知情否決以及此人對自己護理敘事的自主權至關重要。</p>
+
+        <p>在大多數時間產生正確結果的護理智能體，仍然可能在特定案例中通過以受影響者無法質疑的方式偏重某些數據模式而造成傷害，因為他们看不到。護理中的可解釋性差距不是受影響者應該接受的技術限制；它是其自我決定能力的結構性削減。當護理智能體的推理不透明時，围绕它的問責架構必須進行補償：更頻繁的人工審查、更窄的自主範圍，以及讓當事人就結果與其理解意圖不符進行登记的強制渠道。</p>
+
+        <h2>問責架構的要求</h2>
+        <p>對於當前的大規模AI系統，可解釋性無法完全實現，問責架構必須针對這一約束而非反對它来設計。實際選項不是"可解釋智能體"或"不可解釋智能體"，而是：範圍、監督和審查間隔應如何根據實際可用的可解釋性水平進行校準？</p>
+
+        <p>在低可解釋性條件下運行的智能體應在更窄的範圍内運行：更嚴格的行動邊界、更頻繁的檢查點，以及對決策時刻信息狀態更系統化的記錄。日誌無法替代推理，但決策時刻更丰富的信息快照為審查者提供更好的基礎来評估輸出是否與智能體所知信息相符。</p>
+
+        <p>強制異議窗口——在決策建議與執行之間設置的結構化時期，在此期間人類審查者可以提出異議——服務於不同功能：它們不暴露推理，但創造了獨立判断可以介入的時刻。異議窗口的价值完全取決於審查者拥有足夠信息以形成真實立場，這需要可讀的決策情境而非原始模型輸出。</p>
+
+        <p>最深層的要求是：可解釋性應被视為智能體部署決策中的一等屬性，而非日后添加的愿景性能力。在推理無法被檢查的領域部署的智能體，其問責架構從第一天起就在結構上不完整。認識到這种不完整性不是反對部署的論據；而是在部署之前——而非事故后被迫面對這個問題之後——構建補償性控制措施的論據。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>可解釋性問題出現於AI 智能體的決策可以被完整記錄——輸入、行動、輸出——而產生它的推理却仍然不透明之時。事後解釋是重構而非阐釋；它們可以是錯誤的却不被檢测為錯誤。由此產生的問責差距對邊界案例中新穎的高風險決策影響最為嚴重——恰恰是最可能造成傷害的決策。在後量子交叉點，智能體推理中的密碼學錯誤可能產生通過所有檢查的輸出，同時創造多年後才顯現的潛在脆弱性。在硬件交叉點，沒有操作員能重建的配置推理使事後審查只能解決症狀而非根本原因。在物理世界護理中，推理不透明削減了受影響者的自我決定能力——問責架構必須通過更窄的範圍、強制審查窗口和明確的結果質疑渠道來補償。可解釋性無法對當前大規模系統完全實現；設計問題是範圍、監督頻率和日誌深度應如何根據實際可用的可解釋性水平進行校準——這些校準必須在部署前完成，而非在首次事故使其缺失變得可見之後。</p>
+      </div>
+    </article>
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zht/blog/" class="essay-footer-back">&larr; 返回博客</a>
+    </div>
+  </main>
+  <footer style="border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px">
+    <a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a>
+  </footer>
+</body>
+</html>
