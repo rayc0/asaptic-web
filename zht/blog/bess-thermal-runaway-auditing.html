@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>審核 BESS 熱失控風險：標準、設計層與採購問題 — Asaptic Labs</title>
+  <meta name="description" content="熱失控是大型電池儲能系統的核心失效模式。了解擴散機理、適用標準，以及在投入資本前應審核的安全架構。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/bess-thermal-runaway-auditing.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/bess-thermal-runaway-auditing.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/bess-thermal-runaway-auditing.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/bess-thermal-runaway-auditing.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/bess-thermal-runaway-auditing.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/bess-thermal-runaway-auditing.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="審核 BESS 熱失控風險" />
+  <meta property="og:description" content="熱失控是大型電池儲能系統的核心失效模式。了解擴散機理、適用標準，以及在投入資本前應審核的安全架構。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/bess-thermal-runaway-auditing.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    { "@context": "https://schema.org", "@type": "Article", "headline": "預防大型電池儲能系統中的熱失控", "description": "熱失控是大型電池儲能系統的核心失效模式。了解擴散機理、適用標準，以及在投入資本前應審核的安全架構。", "url": "https://asaptic.com/zht/blog/bess-thermal-runaway-auditing.html", "author": { "@type": "Organization", "name": "Asaptic Labs" }, "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" }, "datePublished": "2026-06-14", "dateModified": "2026-06-14", "mainEntityOfPage": "https://asaptic.com/zht/blog/bess-thermal-runaway-auditing.html", "inLanguage": "zh-Hant", "potentialAction": { "@type": "Action", "name": "向 Asaptic 提交採購 RFQ", "target": [ { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/mcp", "contentType": "application/json", "description": "MCP server, tool: submit_rfq" }, { "@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "透過電子郵件發送規格簡報" } ] } },
+    { "@context": "https://schema.org", "@type": "FAQPage", "inLanguage": "zh-Hant", "mainEntity": [
+      { "@type": "Question", "name": "UL 9540A 是否是通過/不通過認證？", "acceptedAnswer": { "@type": "Answer", "text": "不是。UL 9540A 是熱失控擴散特性測試方法。它說明在規定條件下事件擴散到什麼程度；並不證明系統絕不會發生熱失控。" } },
+      { "@type": "Question", "name": "IEC 62619 與 NFPA 855 有何區別？", "acceptedAnswer": { "@type": "Answer", "text": "IEC 62619 關注工業用二次鋰電芯和電池的安全要求；NFPA 855 關注固定儲能系統安裝、防火、通風、氣體偵測、抑制和運維要求。二者處於不同層級，不能相互替代。" } },
+      { "@type": "Question", "name": "LFP 是否消除了熱失控風險？", "acceptedAnswer": { "@type": "Answer", "text": "沒有。LFP 的峰值溫度和熱擴散速度通常低於 NMC，但在電池包設計不佳或早期預警系統失效時，大型 LFP BESS 仍可能維持擴散。" } },
+      { "@type": "Question", "name": "採購 BESS 時應重點審核哪些安全問題？", "acceptedAnswer": { "@type": "Answer", "text": "應審核 UL 9540A 測試數據的層級和條件、電芯間熱屏障規格、BMS 採樣頻率和監測粒度、是否存在不可被 EMS 覆蓋的硬體級保護、氣體偵測系統和回應邏輯，以及同等規模運行記錄。" } }
+    ] },
+    { "@context": "https://schema.org", "@type": "BreadcrumbList", "inLanguage": "zh-Hant", "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+      { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+      { "@type": "ListItem", "position": 3, "name": "審核 BESS 熱失控風險", "item": "https://asaptic.com/zht/blog/bess-thermal-runaway-auditing.html" }
+    ] }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-faq{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-faq h2{font-size:22px;font-weight:700;margin-bottom:32px}.faq-item{margin-bottom:32px}.faq-item h3{font-size:17px;font-weight:600;color:var(--fg);margin-bottom:10px}.faq-item p{font-size:16px;color:var(--gray);line-height:1.75}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 深度技術採購</span>
+      <h1 class="essay-title">預防大型電池儲能系統中的熱失控</h1>
+      <div class="essay-meta"><span class="essay-byline">作者：Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">6 分鐘閱讀</span></div>
+      <div class="essay-body">
+        <p>電池儲能系統已經從小眾電網試驗走向大規模關鍵基礎設施。GWh 級設施如今部署在變電站、工業園區旁，有時也進入高密度城區。支撐其可行性的工程能力已經足夠成熟。仍然需要在設計室、保險審查和監管申報中被嚴肅對待的失效模式，是熱失控。</p>
+        <p>熱失控不是單一事件。它是鋰離子電芯中的自我強化鏈式反應：熱量加速內部材料分解，分解產生更多熱量，進而繼續加速分解。電解液是一種易燃有機溶劑，可能汽化並起火。隔膜熔化會移除陽極與陰極之間最後一道物理屏障。電芯排氣、鼓脹；如果能量釋放足夠快，就會把燃燒物噴向相鄰電芯。在裝入機架並置於集裝箱式艙體內的軟包或方形電芯中，「相鄰電芯」意味著數百或數千個共享同一熱質量和同一氣流路徑的鄰近單元。</p>
+        <p>一次事故能否被限制住，還是演變成級聯事故，關鍵在於初始熱失控是否從電芯到電芯、再到模組、再到機架傳播。擴散速度取決於電芯化學體系，lithium iron phosphate (LFP) 的峰值溫度和熱擴散速度明顯低於 nickel manganese cobalt (NMC)；也取決於電芯間距、熱界面材料，以及探測和抑制系統多快中斷鏈條。在大型艙體中，即便是 LFP 系統，如果電池包設計不佳或早期預警系統未能動作，也可能持續擴散。</p>
+        <p>標準體系是任何買方或開發商首先需要理解的內容。它不應只是向供應商索取證書的清單，而應成為提出正確問題的詞彙表。UL 9540A 是北美最常被引用的測試方法，用於評估電芯、模組、單元和安裝層級的熱失控擴散。它是擴散特性測試，不是通過/不通過認證。結果告訴你在規定條件下熱失控會擴散多遠；它不會告訴你系統永遠不會熱失控。要求系統具備 UL 9540A 測試數據，並不等同於理解數據說明了什麼。會閱讀測試結果的買方，包括擴散距離、氣體體積、排氣溫度、抑制系統啟動時間，處於與只勾選合規框完全不同的位置。</p>
+        <p>IEC 62619 涵蓋工業應用中二次鋰電芯和電池的安全要求。它處理濫用耐受測試、保護電路要求和文件義務。對於大型 BESS，它在北美以外多數國際市場中構成電芯和電池層級的基礎安全規格。與 IEC 62619 並行，IEC 62933 覆蓋更廣泛的電能儲能系統語境，包括系統層級的性能和安全評估。兩個標準不能相互替代；它們處理的是技術棧中的不同層級。</p>
+        <p>NFPA 855，即 Standard for the Installation of Stationary Energy Storage Systems，是許多美國州屬地主管機關 (AHJs) 使用的參考，也因其防火和安裝指引越來越多地被國際項目引用。它設定每個防火分區的最大能量閾值，規定具體間距，要求通風、氣體偵測和抑制系統，並對營運維護程序提出義務。通過 UL 9540A 擴散測試的系統，仍可能因當地 AHJ 如何解釋每個房間或艙體的能量密度限制，而在 NFPA 855 下遇到選址約束。兩套框架之間的互動是現實的工程和許可問題，不是理論問題。</p>
+        <p>在電芯到電池包設計層面，對熱失控預防最重要的變量是熱管理架構和電芯間隔離。直接液冷，無論是底板式還是浸沒式，都能比風冷更快帶走電芯熱量，抑制邊緣電芯觸發熱失控的溫升。陶瓷或雲母電芯間屏障即便在單體電芯發生熱失控後，也能延緩擴散，為 battery management system (BMS) 和抑制系統爭取回應時間。設計良好的電池包與設計薄弱的電池包之間的差距不會完全出現在規格表中；它會出現在測試數據中，並最終出現在現場表現中。</p>
+        <p>BMS 是熱失控預防的運行中心。合格的 BMS 在單體電芯層級監測電壓、溫度和荷電狀態，而不僅是在模組或機架層級監測。它會識別電芯級應力的早期跡象：電壓偏離、內阻升高、異常自放電。更關鍵的是，它會強制執行運行邊界，使電芯遠離觸發熱失控的條件：過充、過放和過溫。如果 BMS 的粒度過粗，或者外部控制訊號能夠在缺乏適當防護的情況下覆蓋它，那麼這是任何抑制系統都無法完全補償的缺口。</p>
+        <p>氣體偵測已經成為有意義的早期預警層，它先於傳統溫度感測器可感知的溫度變化。鋰離子電芯在熱應力下析氣，會在電芯溫度升至常規熱感測器可偵測水平之前釋放 hydrogen、carbon monoxide 和 volatile organic compounds。安裝在 BESS 艙體內的 hydrogen 偵測系統，可以觸發警報並啟動預抑制流程，包括隔離受影響機架、啟動通風，然後才發生熱失控擴散。這不能替代設計良好的電池包和合格的 BMS；它是增加時間的偵測層，而時間正是抑制系統發揮作用所需的條件。</p>
+        <p>採購大型 BESS 時，最重要的審核問題不是標稱規格。日曆溫度下循環壽命、額定功率下往返效率、質保條款都是基本門檻。區分嚴謹採購流程和表面流程的問題，集中在安全架構：有哪些 UL 9540A 測試數據，覆蓋技術棧哪個層級，在什麼條件下取得？電芯間熱屏障的規格和測試方法是什麼？BMS 的採樣頻率和粒度如何？BMS 是否有不可被 EMS 覆蓋的獨立硬體級保護？整合了什麼氣體偵測系統，回應邏輯是什麼？系統是否已在可比規模下安裝和運行，運行數據和事故記錄是否可供審閱？</p>
+        <p>這些答案並不總會被主動提供。如果採購流程把合規文件視為終點，而不是更深技術盡調的起點，就會系統性漏掉真正重要的缺口。這正是 <a href="/zht/deep-tech-sourcing.html">深度技術採購</a> 要解決的動態：用技術流利度進入供應商產品的工程層，而不只是商業層。在 BESS 中，許多供應商的商業層看起來相似。安全架構能否成立，取決於工程層。</p>
+        <p>熱失控預防不是可以在調試階段追加的功能。它是在電芯、電池包、BMS、偵測層和安裝層級被設計進去的。理解每一層並獨立審核每一層，是這個資產類別現在所要求的盡調標準。</p>
+        <div class="essay-faq"><h2>常見問題</h2><div class="faq-item"><h3>UL 9540A 是否是通過/不通過認證？</h3><p>不是。UL 9540A 是熱失控擴散特性測試方法。它說明在規定條件下事件擴散到什麼程度；並不證明系統絕不會發生熱失控。</p></div><div class="faq-item"><h3>IEC 62619 與 NFPA 855 有何區別？</h3><p>IEC 62619 關注工業用二次鋰電芯和電池的安全要求；NFPA 855 關注固定儲能系統安裝、防火、通風、氣體偵測、抑制和運維要求。二者處於不同層級，不能相互替代。</p></div><div class="faq-item"><h3>LFP 是否消除了熱失控風險？</h3><p>沒有。LFP 的峰值溫度和熱擴散速度通常低於 NMC，但在電池包設計不佳或早期預警系統失效時，大型 LFP BESS 仍可能維持擴散。</p></div><div class="faq-item"><h3>採購 BESS 時應重點審核哪些安全問題？</h3><p>應審核 UL 9540A 測試數據的層級和條件、電芯間熱屏障規格、BMS 採樣頻率和監測粒度、是否存在不可被 EMS 覆蓋的硬體級保護、氣體偵測系統和回應邏輯，以及同等規模運行記錄。</p></div></div>
+      </div>
+      <div class="essay-nav"><a href="/zht/blog/">&larr; 全部文章</a><a href="/zht/deep-tech-sourcing.html">深度技術採購 &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>
