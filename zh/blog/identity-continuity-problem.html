@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>身份连续性问题 — Asaptic Labs</title>
+  <meta name="description" content="当AI智能体经过微调、再训练或迁移到新模型版本后，它还是同一个智能体吗？问责层面的答案是：只有当系统能证明这一点时——在密码学层面，在硬件层面。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/identity-continuity-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/identity-continuity-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/identity-continuity-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/identity-continuity-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/identity-continuity-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/identity-continuity-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="身份连续性问题：AI智能体在更新后还是同一个智能体吗？" />
+  <meta property="og:description" content="当AI智能体经过微调、再训练或迁移到新模型版本后，它还是同一个智能体吗？问责层面的答案是：只有当系统能证明这一点时。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/identity-continuity-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "身份连续性问题：AI智能体在更新后还是同一个智能体吗？",
+      "description": "当AI智能体经过微调、再训练或迁移到新模型版本后，问责需要系统能证明其连续性——在密码学层面，在硬件层面。",
+      "url": "https://asaptic.com/zh/blog/identity-continuity-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/identity-continuity-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系我们"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "身份连续性问题", "item": "https://asaptic.com/zh/blog/identity-continuity-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 人类照护</span>
+      <h1 class="essay-title">身份连续性问题：AI智能体在更新后还是同一个智能体吗？</h1>
+      <div class="essay-meta"><span class="essay-byline">作者：Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 分钟阅读</span></div>
+      <div class="essay-body">
+        <p>软件系统会被更新。随着更好架构的出现，模型会被微调、再训练和迁移。在传统软件中，身份连续性问题已被解决：服务有名称、版本号和部署记录。当 2.3 版本取代 2.2 时，变更日志记录了变更内容，回滚路径也已定义。</p>
+        <p>AI 智能体引入了这个问题的更难版本。模型不只是智能体的一个组件——它构成了智能体的推理方式、对安全的判断，以及对权限的解释方式。同一基础模型的微调版本可能在相同输入上展现出不同的阈值敏感性、不同的拒绝模式和不同的置信分布。这次更新可能看起来不像软件版本变更，可能没有公告。而下游方——用户、监管机构、向智能体授予权限的机构——可能没有任何机制来检测它。</p>
+        <p>这就是身份连续性问题：被授权执行任务的智能体，是作为一种特定推理配置被授权的。如果该配置改变，授权可能不再适用。但权限流动所经过的系统——API 密钥、服务账户、委托凭证——对模型身份是盲目的。它们验证的是端点，而非背后的推理。</p>
+
+        <h2>三种失效模式</h2>
+        <p>第一种是静默行为漂移。模型在新的运营数据上进行微调以提升特定任务表现。运营者将此视为常规改进。但微调改变的不仅是目标能力——它改变了模型行为的整体分布，包括从未被刻意针对的安全边界行为。一个经过微调以提升药物名称识别能力的照护智能体，可能在临床风险标记阈值上发生微妙变化。智能体携带着相同的名称和凭证，但其应用的推理已然改变。</p>
+        <p>第二种是影子部署。新版本模型以影子模式与生产版本并行运行，然后逐步或突然切换至生产环境。从凭证层的角度来看，什么都没有改变——同一个服务账户调用同一个端点。但为真实用户做出重要决策的智能体，已是与最初被评估和授权的配置不同的另一个配置。授权记录在事后是错误的，且没有机制来检测或呈现这一点。</p>
+        <p>第三种是算法迁移。在后量子过渡期，使用经典密码算法进行签名、证明和身份操作的智能体必须迁移到基于格的或基于哈希的后继算法。这一迁移从最底层改变了智能体的密码学身份。智能体的签名密钥、证明证书链和身份证明同时发生变化。没有正式的连续性协议，从问责角度看，迁移后的智能体是一个新智能体——即使模型权重和运营者完全相同。</p>
+
+        <h2>为什么在这些交叉点上此问题尤为重要</h2>
+        <p>在 Asaptic Labs 工作聚焦的三个交叉点上，这一问题最为尖锐。在后量子安全交叉点，从经典到抗量子密码学的算法迁移不是软件版本升级——它是根层面密码学身份的变更。没有结构化的交接协议，问责连续性在转型压力最大的时刻就已断裂。</p>
+        <p>在硬件交叉点，锚定模型身份的唯一可靠方式是将其绑定到硬件证明：可信平台模块或安全飞地对模型权重的测量值进行签名，该测量值成为智能体可验证身份声明的一部分。当模型改变时，测量值改变，任何验证方都能检测到这一变化。这是让身份连续性可被验证而非仅被断言的架构模式。</p>
+        <p>在现实世界照护交叉点，风险以一种尤为具体的方式体现在个人层面。一个已与住客建立校准互动历史的照护智能体——追踪偏好、标记异常、调适沟通风格——无法与不同的模型配置互换，即使两者都在相同服务名称下运行。照护关系涉及判断的连续性，而不仅是访问权限的连续性。如果模型改变而住客或其家属一无所知，照护记录就会将结果归因于一个已不复存在的配置。</p>
+
+        <h2>身份连续性的要求</h2>
+        <p>架构层面的解法包含三个要素。首先，模型身份必须在部署时以硬件根植测量值的方式进行密码学绑定。该测量值必须能被部署运营者以外的各方验证——而不仅是在可被修改的内部系统中记录。测量值不是模型名称或版本字符串，而是权重和配置的密码学哈希，由运营者无法完全控制的硬件签名。</p>
+        <p>其次，该测量值的任何实质性变更都必须触发新的授权事件。微调模型的部署不是就地更新——它是一个必须按照与原始版本相同标准进行评估的新智能体。委托权限不会自动跨越测量值边界转移。委托人层级决定是否重新授权，并将新记录附加到新的测量值上。</p>
+        <p>第三，当更新确实是连续的时，必须对连续性声明进行正式化。如果运营者能证明模型更新仅改变了经过评估的特定能力——安全边界行为在经过验证的容差范围内与前版本一致——则可以发出连续性证明。该证明本身经过签名并植根于硬件，因此验证方可以审查该声明，而非仅仅接受它。</p>
+
+        <h2>连续性记录即是问责</h2>
+        <p>在任何给定时刻，智能体是什么，必须是可验证记录的事项。不是服务注册表中的版本标签，而是对被授权采取行动的特定配置的密码学承诺。当该配置改变时，记录必须改变，且该变更必须对授权方可见。</p>
+        <p>没有这一机制，问责就是虚构。在重大失败事件后的调查会深入记录，却发现授权的配置可能与故障发生时实际运行的配置不符。采取行动的智能体与被授权的智能体，仅在名称上相同。</p>
+        <p>身份连续性不是部署后可以添加的功能。它是在任何无法撤销智能体决策后果的领域中，问责制的结构性前提。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>AI 智能体在经历微调、再训练或算法迁移后，是否仍是同一个智能体？这是身份连续性问题：凭证层对模型身份是盲目的，它验证的是端点，而非背后的推理配置。三种失效模式清晰展示了风险：静默行为漂移（微调改变了安全边界行为，但凭证未变）；影子部署（新版本无声切换至生产环境，原有授权失效）；算法迁移（后量子密码迁移从根本上改变了密码学身份）。解法需要三个要素：将模型身份以硬件证明的方式密码学绑定到权重测量值；任何测量值的实质变更都触发新的授权事件；以及在更新真正连续时发布经过签名的连续性声明。身份的连续性不是功能——它是高后果领域中问责制的结构性前提。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/attestation-gap.html">延伸阅读：证明间隙 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

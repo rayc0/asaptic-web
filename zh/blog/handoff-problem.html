@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>交接问题 — Asaptic Labs</title>
+  <meta name="description" content="每当一个AI智能体将工作传递给另一个，问责也必须随之转移。而实践中几乎从未如此：状态移动了，但授权链依然是隐含的、未签名的、未经验证的。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/handoff-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/handoff-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/handoff-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/handoff-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/handoff-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/handoff-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="交接问题：一个AI智能体将工作传递给另一个时的问责时刻" />
+  <meta property="og:description" content="交接是多智能体系统中最常见的事件，也是最少被审查的问责表面。当智能体A将工作传递给智能体B时，状态转移是明确的，但授权往往是隐含的、未签名的、未经验证的。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/handoff-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "交接问题：一个AI智能体将工作传递给另一个时的问责时刻",
+      "description": "每当一个AI智能体将工作传递给另一个，问责也必须随之转移。而实践中几乎从未如此：状态移动了，但授权链依然是隐含的、未签名的、未经验证的。",
+      "url": "https://asaptic.com/zh/blog/handoff-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/handoff-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系我们"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "交接问题", "item": "https://asaptic.com/zh/blog/handoff-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">交接问题：一个AI智能体将工作传递给另一个时的问责时刻</h1>
+      <div class="essay-meta"><span class="essay-byline">作者：Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 分钟阅读</span></div>
+      <div class="essay-body">
+        <p>多智能体系统中，很少由一个智能体完成所有工作。实践中，智能体A收集信息，智能体B处理信息，智能体C根据结果采取行动。每一次这样的过渡——工作从一个智能体转移到下一个的时刻——就是一次交接。交接如此普遍，以至于在架构中变得隐形。这种隐形，正是问题所在。</p>
+
+        <h2>交接时实际转移了什么</h2>
+        <p>当智能体A将工作传递给智能体B时，发生了两件大多数系统视为同一件事的事：状态转移了，而授权被假设随之转移。但这两者并不相同。状态是数据、上下文、任务描述——接收智能体继续工作所需的一切。授权则是一项声明：智能体B被允许代表原始委托人、在委托人实际授予的范围内继续这项工作。</p>
+
+        <p>状态很容易转移。授权则不然。典型的交接传递状态，并期望智能体B推断交接本身就是足够的授权。当一切正常运作时，这一假设成立。它在最关键的情况下失效：当交接被注入、拦截或重放时，攻击者希望智能体B执行原始委托人从未授权的操作。</p>
+
+        <h2>接收智能体的困境</h2>
+        <p>智能体B在每次交接时都面临一个结构性问题：如果没有已签名、可验证的交接记录，它无法独立验证所接收工作的合法性。如果它信任从智能体A收到的一切，它就成为任何能冒充智能体A或修改交接负载的攻击者的攻击向量。如果它在没有验证的情况下拒绝行动，工作流就会中断。</p>
+
+        <p>大多数智能体系统设计通过隐含地信任内部消息通道上到达的任何内容是合法的来解决这一困境。在严格控制的部署中，这一假设是合理的。在智能体之间的通道跨越网络边界、智能体A本身在形成交接之前正在处理不受信任的输入、或者在智能体A工作期间调用的工具将外部数据引入交接负载的任何部署中，这都是不合理的。上下文污染问题和供应链问题在这里交叉：收到了被污染上下文的智能体，会在其交接中将该污染传递下去，而接收智能体没有机制来检测它。</p>
+
+        <h2>照护环境中的物理世界交接</h2>
+        <p>在临床环境中，交接问题有一个经过数十年研究和标准化的人类类比。临床交接——班次之间、照护团队之间、机构之间——遵循结构化协议，因为不完整转移的后果是可衡量且严重的。用药历史未被准确转移、持续监测未被明确交接的患者，是处于风险中的患者。</p>
+
+        <p>照护环境中的智能体间交接没有等效标准。当监测智能体将责任转移给升级智能体时，什么构成完整的交接？接收智能体在接受对某人照护连续性的责任之前必须验证什么？问责记录在转移时刻会发生什么？在照护中，问责记录不是技术工件——它是做出和审查照护决策的证据基础。一条涵盖了智能体A的观察但在交接时刻存在空白、然后在智能体B的行动中恢复的审计轨迹，无法重建系统在决定升级时所知道的内容。这个空白不是日志记录失败。它是在问责最关键的时刻的问责真空。</p>
+
+        <h2>已签名的交接与后量子角度</h2>
+        <p>设计良好的交接会生成一条交接记录：一份已签名的文件，指定谁在转移、谁在接收、交接携带什么授权及该授权在委托人层级中的来源，以及正在转移什么状态。接收智能体在接受交接之前验证签名。这在概念上并不复杂。但它很少被实现。</p>
+
+        <p>后量子过渡在这里同样重要，原因与它对终止信号和不可否认性同样重要：今天用经典非对称密码学签名的交接记录，未来可能是可伪造的。现在捕获交接流量的攻击者，凭借足够的未来能力，可以构造出看起来可信的交接记录，授权原始委托人从未许可的行动——有效地改写已经运行的管道的授权链。对于长期运行的智能体部署，交接签名机制需要从一开始就具有量子抵抗性，而不是在密码学假设转变后再进行改造。</p>
+
+        <p>硬件认证使情况更为复杂。当交接跨越设备边界——一个嵌入式单元在照护环境中将责任传递给另一个——硬件认证告诉你每个设备运行的是它声称运行的内容。它不认证交接负载本身。固件经过认证的设备仍然可以转发伪造或被污染的交接记录。认证和交接记录是独立的问责声明，两者都必须存在才能使链条成立。</p>
+
+        <h2>完整的交接架构需要什么</h2>
+        <p>一个严肃的交接架构有四个组件，必须在任何多智能体管道处理重要决策之前存在。第一，在转移时刻创建的明确交接记录：指定转移智能体、接收智能体、正在转移的范围，以及原始授权链。第二，接收智能体验证步骤，在对转移状态采取行动之前检查交接记录的签名并验证授权链。第三，状态一致性检查——接收智能体确认转移的状态在内部是连贯的，并且在其被授权处理的范围内。第四，将交接视为一等事件的统一问责日志，以便可以从单个可审计的轨迹重建整个管道中所有智能体行动的完整序列。</p>
+
+        <p>这些组件都不比智能体系统本身的成本昂贵。所有这些都被定期省略，因为交接看起来是管道细节而不是问责表面。交接是问责表面。它是责任从一个智能体转移到另一个的确切时刻——如果该时刻没有文档记录、没有签名、没有验证，之后的审计轨迹就建立在假设上，而不是事实上。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>多智能体系统中，智能体之间的交接是最常见的事件，也是最少被审查的问责表面。当智能体A将工作传递给智能体B时，状态转移是明确的，但授权往往是隐含的、未签名的、未经验证的。接收智能体面临结构性困境：如果信任所收到的一切，它就成为攻击者的向量；如果拒绝未经验证的内容，工作流就会中断。在照护环境中，智能体间的交接与经过数十年研究的临床交接协议不同，缺乏等效标准，而交接时刻的问责空白恰好发生在最关键的决策时刻。后量子过渡增加了一层：今天以经典密码学签名的交接记录未来可能被伪造。完整的交接架构需要四个要素：明确的交接记录、接收智能体的签名验证步骤、状态一致性检查，以及将交接视为一等事件的统一问责日志。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/hallucination-accountability-gap.html">延伸阅读：幻觉问责缺口 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

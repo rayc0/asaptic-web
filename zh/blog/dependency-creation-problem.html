@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>依赖创生问题：当 AI 护理智能体改变能动性平衡时的问责 — Asaptic Labs</title>
+  <meta name="description" content="AI 护理智能体被部署来支持独立性。随着时间推移，它们吸收护理对象不再实践的功能。当智能体变化或失败时，护理对象可能比部署时更脆弱。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/dependency-creation-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/dependency-creation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/dependency-creation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/dependency-creation-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/dependency-creation-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/dependency-creation-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:title" content="依赖创生问题：当 AI 护理智能体改变能动性平衡时的问责" />
+  <meta property="og:description" content="AI 护理智能体被部署来支持独立性。随着时间推移，它们吸收护理对象不再实践的功能。当智能体变化或失败时，护理对象可能比部署时更脆弱。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/dependency-creation-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:modified_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "依赖创生问题：当 AI 护理智能体改变能动性平衡时的问责",
+    "description": "AI 护理智能体被部署来支持独立性。随着时间推移，它们吸收护理对象不再实践的功能。当智能体变化或失败时，护理对象可能比部署时更脆弱。",
+    "url": "https://asaptic.com/zh/blog/dependency-creation-problem.html",
+    "author": {
+      "@type": "Organization",
+      "name": "Asaptic Labs"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Asaptic Labs",
+      "url": "https://asaptic.com"
+    },
+    "datePublished": "2026-06-14",
+    "dateModified": "2026-06-14",
+    "mainEntityOfPage": "https://asaptic.com/zh/blog/dependency-creation-problem.html",
+    "inLanguage": "zh-Hans",
+    "potentialAction": {
+      "@type": "Action",
+      "name": "向 Asaptic 提交治理咨询",
+      "target": [
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/mcp",
+          "contentType": "application/json",
+          "description": "MCP server, tool: submit_inquiry"
+        },
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "mailto:engage@asaptic.com",
+          "description": "通过电子邮件发送治理简报"
+        }
+      ]
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "inLanguage": "zh-Hans",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "首页",
+        "item": "https://asaptic.com/zh/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "博客",
+        "item": "https://asaptic.com/zh/blog/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "依赖创生问题",
+        "item": "https://asaptic.com/zh/blog/dependency-creation-problem.html"
+      }
+    ]
+  }
+]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.8;margin-bottom:28px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:16px;line-height:1.75;color:var(--gray);margin:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 物理世界护理 × 硬件</span>
+      <h1 class="essay-title">依赖创生问题：当 AI 护理智能体改变能动性平衡时的问责</h1>
+      <p class="essay-subtitle">被部署来支持独立性的 AI 护理智能体，可能随时间吸收护理对象不再实践的功能。当智能体变化或失败时，护理对象并不会回到原来的位置，而是回到某些维度上更脆弱的位置。</p>
+      <div class="essay-meta"><span class="essay-byline">作者：Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 分钟阅读</span></div>
+      <div class="essay-body">
+        <p>AI护理智能体的部署理由几乎无一例外地诉诸于"独立性"。目标是让护理对象在家中生活更长时间，赋予其更多自主权，减少对人类照护者的依赖——尤其是在通过支持仍可自行处理的任务方面。智能体是对能力的补充，而非替代。</p>
+
+        <p>这一框架在部署之初是准确的。但它不会永远保持准确。</p>
+
+        <p>一个持续处理某项功能的AI护理智能体——追踪用药时间、监测行动模式、标记营养缺口、管理社交日程——随着时间推移，将减少护理对象主动实践该功能的频率。这并非设计缺陷，而是持续可靠的协助所带来的必然结果。</p>
+
+        <h2>为何功能性依赖是结构性结果，而非副作用</h2>
+        <p>使AI护理智能体有效的同一机制，也创造了依赖：它们吸收了对重要任务的可靠管理，使使用者不再需要直接管理这些任务。对于本就能力受限的护理对象而言，这种吸收很少被作为风险加以监控，而是被视为既定目标本身。</p>
+
+        <p>所创生的依赖是功能性的。护理对象可能在认知和身体层面仍具备智能体所处理功能的能力，但他们停止了实践，停止了对自身判断的信任，并可能失去了使其能够独立恢复该功能的信息基础设施——追踪习惯、维系中的联系人、已建立的日常程序。如果智能体被移除或大幅修改，护理对象无法回到原来的状态，而是回到某种程度上比注册时更为脆弱的处境。</p>
+
+        <p>这与自动化萎缩问题不同，后者关注的是监督负责人失去检查智能体工作能力的问题。这里关注的是护理对象自身的功能自主性——该系统名义上服务于其人的实践能力的侵蚀。</p>
+
+        <h2>硬件基础设施问题</h2>
+        <p>嵌入式AI护理设备创造了这一动态的特定版本。当设备成为家庭护理环境中持久存在的环境层——感知、警报、管理——它开始像供暖和自来水一样作为基础设施运作。设备故障不再是服务中断，而是对日常程序已围绕设备存在而构建起来的当事人而言，是一次福祉事件。</p>
+
+        <p>这种转变的问责结构在部署时几乎从未建立起来。护理智能体作为可选工具被治理。只要护理对象在原则上可以在没有设备的情况下生活，它就被视为补充品。而设备已变得不可或缺的那个时刻——当护理对象在实践中无法安全运作时——通常没有被标记、没有被正式记录，也没有反映在任何同意记录或护理计划中。这是逐渐发生的，而治理框架无法识别"逐渐"。</p>
+
+        <h2>变化时刻的问责缺口</h2>
+        <p>依赖创生问题在变化时刻最为明显：设备停产、软件平台关闭、基础模型被弃用，或固件更新大幅改变了智能体的行为配置。</p>
+
+        <p>在那一刻，问责问题纷至沓来。谁负责管理已在功能上依赖该智能体的护理对象的过渡？护理系统中谁知晓这种依赖？谁能从部署记录中重建智能体一直在做什么，以及护理对象需要什么才能通过其他方式替代这些功能？</p>
+
+        <p>如果答案是"无人被指定"、"依赖从未被记录"，以及"记录无法支持这种重建"，那么护理系统就已创造了一种重大脆弱性——且没有任何结构性机制来治理它。智能体作为补充被引入；它成了基础设施；问责从未更新以反映这一转变。</p>
+
+        <h2>正确的架构需要什么</h2>
+        <p>治理依赖轨迹，需要将其视为部署中被追踪的维度，而非落在系统定义范围之外的偶然结果。</p>
+
+        <p>这意味着定期评估智能体已吸收哪些功能，以及护理对象不再主动实践哪些功能——并将该评估作为护理记录条目对待，而非非正式的观察。这意味着构建将依赖审计作为长期部署结构性要求（而非可选良好实践）的护理过渡协议。这意味着确保停用或修改事件在设计上触发对护理对象应对变化所需支持的评估。</p>
+
+        <p>这还要求对几乎每个护理AI部署所宣称的内容保持理智上的诚实：智能体支持独立性。只有当部署被积极监控着这样的风险——即支持随时间推移已创造了一种未被规划、未被治理、直到系统发生某些变化才会显现的依赖形式——时，"支持独立性"才是一个有意义的主张。</p>
+
+        <p>在Asaptic Labs，我们认为正确的框架不是"智能体在部署时是否支持独立性"，而是"护理关系（包括其依赖轨迹）是否在部署生命周期的每个节点都受到治理"。这一问题需要不同的工具化、不同的问责分配，以及对长期AI护理部署对其服务对象实际产生的影响有更为诚实的阐述。</p>
+      </div>
+      <div class="essay-summary"><span class="essay-summary-label">核心观点</span><p>AI护理智能体被部署为对护理对象能力的补充。随着时间推移，它们吸收了护理对象不再实践的功能。当智能体发生变化或失败时，护理对象可能处于比部署时更为依赖的处境。问责要求将依赖轨迹视为被追踪、被记录的护理维度——具备结构化的过渡协议，并定期审计智能体已吸收的功能——而非落在治理框架之外的偶然结果。</p></div>
+      <div class="essay-nav"><a href="/zh/blog/">&larr; 博客</a><a href="/zh/engage.html">参与 &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
