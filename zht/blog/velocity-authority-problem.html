@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>速度權限問題 — Asaptic Labs</title>
+  <meta name="description" content="高速運行的物理自主系統面臨的決策窗口比任何授權驗證往返都要短。「先驗證」問責模型在結構上失效。問責從單個行動轉移到部署時授權的策略。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/velocity-authority-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/velocity-authority-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/velocity-authority-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/velocity-authority-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/velocity-authority-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/velocity-authority-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="速度權限問題：物理自主系統在授權確認之前必須做出決策時的問責" />
+  <meta property="og:description" content="高速運行的物理自主系統面臨的決策窗口比任何授權驗證往返都要短。問責從單個行動轉移到部署時授權的策略。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/velocity-authority-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "速度權限問題：物理自主系統在授權確認之前必須做出決策時的問責",
+      "description": "高速運行的物理自主系統面臨的決策窗口比任何授權驗證往返都要短。問責從單個行動轉移到部署時授權的策略。",
+      "url": "https://asaptic.com/zht/blog/velocity-authority-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/velocity-authority-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "description": "參與頁面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯絡"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "速度權限問題", "item": "https://asaptic.com/zht/blog/velocity-authority-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-wrap{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× 後量子安全 · × 硬體 · × 物理世界護理</div>
+      <h1 class="essay-title">速度權限問題：物理自主系統在授權確認之前必須做出決策時的問責</h1>
+      <p class="essay-subtitle">大多數AI智能體問責框架假設存在一個窗口——無論多短——智能體可以在行動前驗證其權限。高速物理自主系統從結構上違背了這一假設。問責不會消失，它只是轉移了。</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-14</span>
+        <span>5 分鐘閱讀</span>
+      </div>
+    </header>
+
+    <div class="essay-body">
+      <p>一架無人機在40米處識別到障礙物。以當前空速，它大約有200毫秒來啟動規避動作。到達遠程指揮中心的最小往返延遲是400毫秒。授權鏈——無人機行動權限所來自的權威體系——此刻在物理上無法觸達。這道數學題無解。</p>
+
+      <p>這就是速度權限問題：物理自主系統做出決策所需的時間，與其授權框架確認該決策已獲批准所需的時間之間的缺口。這不是頻寬問題，更多的頻譜解決不了它。這是物理AI的一個結構性屬性，它打破了大多數智能體治理框架所假設的「先驗證」問責模型。</p>
+
+      <h2>結構性不對稱</h2>
+      <p>軟件智能體有一項物理智能體所沒有的特權：它們可以暫停。對自身權限不確定的智能體可以等待，記錄不確定性，然後上報。它正在推理的狀態可以在審查發生期間保持。代價是延遲；收益是監督。</p>
+
+      <p>在現實世界中運行的物理智能體通常無法暫停，因為暫停本身就可能產生後果。在障礙物前停頓的無人機不會懸停；它沿當前軌跡繼續飛行。在碰撞規避決策期間等待授權的自主船艇不是在等待——它是在向某個結果承諾。在高速物理系統中，缺乏決策本身就是一個決策。問責框架必須考慮到這一點。</p>
+
+      <h2>後量子安全交叉點</h2>
+      <p>當認證必須具備量子抗性時，這個問題變得更加尖銳。後量子密碼方案相較於經典簽名增加了延遲。對於必須在數十毫秒內響應的物理系統，後量子認證往返不僅僅是不方便——它創造了完全繞過檢查的結構性激勵。</p>
+
+      <p>這是後量子轉型為物理AI引入的不對稱性：最需要強身份保證的系統——那些採取不可逆物理行動的系統——恰恰是提供這些保證的延遲成本最難消化的系統。如果認證被設計為行動前的門控，它將在風險最高的條件下被跳過。</p>
+
+      <p>正確的應對不是更快的簽名，儘管這有幫助。而是在部署時預先授權：在系統運行之前將後量子證明的響應策略嵌入其中，這樣執行時就不需要針對每個行動進行認證。簽名覆蓋的是策略，而不是單個行為。</p>
+
+      <h2>硬體交叉點</h2>
+      <p>計算基底決定了問責在物理上能做到什麼。一個能在微秒級別——無需網絡往返——評估經認證策略樹的硬體信任根，相比需要軟件棧和雲端驗證的系統，改變了問責架構。</p>
+
+      <p>在這個框架下，硬體證明不僅僅是關於證明身份。它是關於問責能夠以多快的速度被執行。一個具有安全飛地、能以硬體速度評估預授權行為策略的物理智能體，與依賴決策時外部授權的系統相比，是根本不同的問責對象。硬體設計就是權限架構。對於物理AI，這兩者是同一回事。</p>
+
+      <h2>物理世界護理交叉點</h2>
+      <p>在護理環境中，速度權限問題採取了一種不那麼戲劇性但道德負荷更重的形式。對跌倒做出響應的護理機械人沒有時間在開始物理輔助之前確認同意偏好或上報給近親。響應必須開始。</p>
+
+      <p>這不是同意設計的失敗；這是實時護理的固有屬性。在高速響應場景中運行的護理機械人需要預授權響應樹：在註冊時授予的常設授權，涵蓋智能體可能需要在不經每次事件確認的情況下採取的物理行動。問責問題不在於執行時是否發生了確認，而在於常設授權是否設計良好、解釋清楚、並經過有意義的定期審查。</p>
+
+      <h2>問責住在哪裡</h2>
+      <p>速度權限問題不會消除問責，它只是重新定位了問責。在物理自主系統中，可問責的行為不是單個物理決策——障礙規避、護理輔助、航向修正。可問責的行為是在首次部署之前對規範這些決策的策略進行設計和授權。</p>
+
+      <p>這種轉變有實際後果。它要求在部署時對策略授權進行更嚴格的處理：誰簽字批准、預期了哪些場景、預授權範圍的限制是什麼、什麼觸發重新授權。這意味著設計響應策略的工程師和接受它的運營商，對該策略產生的每個行為負責——不是事後的，而是通過設計的。</p>
+
+      <p>在Asaptic Labs，我們將速度權限問題視為物理AI問責架構中的第一優先約束。當系統無法請求許可時，問責就在於規範其無需許可行事的策略中。該策略必須被撰寫、經過證明並可審計——授權該策略的主體必須在硬體離開工作台之前理解他們授權了什麼。</p>
+    </div>
+
+    <div class="essay-summary">
+      <span class="essay-summary-label">核心觀點</span>
+      <p>必須在任何授權驗證往返窗口內行動的物理自主系統，無法使用「先驗證」問責模型。問責從單個行動轉移到規範無實時授權行動的策略上。該策略必須被撰寫、以硬體根後量子簽名證明，並受到與任何其他重大授權同等的審查——在部署前，而非事故後。</p>
+    </div>
+
+    <div class="essay-footer-wrap">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zht/blog/" class="essay-footer-back">&larr; 返回博客</a>
+    </div>
+  </main>
+
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>
