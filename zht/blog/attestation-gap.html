@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>驗證差距：AI 智能體為何需要硬件根身份 — Asaptic Labs</title>
+  <meta name="description" content="大多數已部署的 AI 智能體可以出示憑證，但無法證明自身就是所聲稱的軟件、運行在所聲稱的硬件上。硬件驗證填補了這一差距。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/attestation-gap.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/attestation-gap.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/attestation-gap.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/attestation-gap.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/attestation-gap.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/attestation-gap.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="驗證差距：AI 智能體為何需要硬件根身份" />
+  <meta property="og:description" content="大多數已部署的 AI 智能體可以出示憑證，但無法證明自身就是所聲稱的軟件、運行在所聲稱的硬件上。硬件驗證填補了這一差距。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/attestation-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "驗證差距：AI 智能體為何需要硬件根身份",
+    "description": "大多數已部署的 AI 智能體可以出示憑證，但無法證明自身就是所聲稱的軟件、運行在所聲稱的硬件上。硬件驗證填補了這一差距。",
+    "url": "https://asaptic.com/zht/blog/attestation-gap.html",
+    "author": {
+      "@type": "Organization",
+      "name": "Asaptic Labs"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Asaptic Labs",
+      "url": "https://asaptic.com"
+    },
+    "datePublished": "2026-06-14",
+    "dateModified": "2026-06-14",
+    "mainEntityOfPage": "https://asaptic.com/zht/blog/attestation-gap.html",
+    "inLanguage": "zh-Hant",
+    "potentialAction": {
+      "@type": "Action",
+      "name": "向 Asaptic 提交採購 RFQ",
+      "target": [
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/zht/engage.html",
+          "contentType": "text/html",
+          "description": "聯絡 Asaptic"
+        },
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/mcp",
+          "contentType": "application/json",
+          "description": "MCP server, tool: submit_rfq"
+        },
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "mailto:engage@asaptic.com",
+          "description": "透過電子郵件發送規格簡報"
+        }
+      ]
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "inLanguage": "zh-Hant",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "首頁",
+        "item": "https://asaptic.com/zht/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "博客",
+        "item": "https://asaptic.com/zht/blog/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "驗證差距",
+        "item": "https://asaptic.com/zht/blog/attestation-gap.html"
+      }
+    ]
+  }
+]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-label,.essay-topic,.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:16px;text-transform:uppercase}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.2;margin-bottom:16px;color:var(--fg)}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim);margin-bottom:56px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-body p{font-size:16px;line-height:1.85;color:var(--fg);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:600;margin:48px 0 16px;color:var(--fg)}.essay-summary{margin-top:56px;padding:28px 32px;border:1px solid var(--border);background:var(--surface)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent);display:block;margin-bottom:12px;text-transform:uppercase}.essay-summary p{font-size:14px;line-height:1.75;color:var(--gray-dim);margin:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-label">× 量子計算 × 物理 AI</span>
+      <h1 class="essay-title">驗證差距：AI 智能體為何需要硬件根身份</h1>
+      
+      <div class="essay-meta"><span>作者：Asaptic Labs</span><span>2026-06-14</span><span>6 分鐘閱讀</span></div>
+      <div style="border-left:3px solid #29B6F6;padding:1em;background:#f0f8ff;margin:1.5em 0;color:#1a1a2e;"><p style="margin:0;font-size:15px;line-height:1.7;">&#128221; <strong>更新（2026-05-21）：</strong> Asaptic Labs 現已採用四個交叉口框架：量子計算、物理 AI、AI 原生企業、照護 AI。詳見 <a href="/zht/crossings">/crossings</a>。本文基於此前的三交叉口結構撰寫；所涉及交叉口的論點仍然有效。</p></div><div class="essay-body"><p>大多數已部署的 AI 智能體存在一個命名不當的身份問題。它們可以出示憑證，API 金鑰、會話令牌、簽名斷言，但這些憑證只能證明持有簽名材料的人發出了請求。它無法證明運行智能體的軟件就是其所聲稱的軟件，無法證明軟件所在的硬件未被篡改，也無法證明執行環境與被評估、批准和信任的狀態相符。從「我持有有效憑證」到「我就是所聲稱的，運行在所聲稱的地方，處於被授權的狀態」之間的差距，就是驗證差距。</p><h2>硬件驗證真正提供了什麼</h2><p>硬件驗證是對這一差距的工程回應。硬件驗證機制，可信平台模塊、安全飛地、帶有度量啟動鏈的硬件安全模塊，生成一個經密碼學簽名的聲明：特定軟件以特定配置雜湊值運行在特定硬件上，處於特定韌體狀態。</p><p>這與僅憑軟件的身份聲明有本質區別。JWT 只證明知道金鑰的人簽署了它；硬件驗證報告則證明特定二進位文件以特定度量配置運行在特定硬件上，該硬件具有可追溯到已知製造商的可驗證監管鏈。</p><h2>與三個關鍵領域的交叉</h2><p>硬件驗證恰好處於兩個關鍵領域的交叉點：硬件領域涉及與物理系統接口的智能體；安全領域涉及智能體身份、憑證委派和審計完整性的密碼學基礎。沒有硬件驗證，智能體的身份聲明只是軟件斷言，而軟件斷言永遠弱於硬件根斷言。</p><p>對於物理世界照護領域，這一影響更為直接。接受智能體輔助決策支持的照護機構有義務知道其運行的智能體就是經過評估、批准並承擔責任的智能體，而非評估後更新的版本，也非與測試版本存在偏差的配置。</p><h2>量子維度與關閉差距</h2><p>當前的驗證方案依賴傳統非對稱密碼學，RSA 或橢圓曲線簽名，金鑰存儲在硬件中。隨著後量子過渡的推進，這些方案需要遷移。由於相關簽名金鑰存在於無法通過軟件簡單重新生成的硬件中，這一遷移比大多數密碼學應用更為困難。</p><p>硬件驗證不是研究項目。標準已存在，硬件已存在，工具鏈已存在。缺失的是將驗證作為營運信任前提條件的規範，而非將軟件憑證視為充分條件。</p></div>
+      <div class="essay-nav"><a href="/zht/blog/">&larr; 全部文章</a><a href="/zht/engage.html">討論此議題 &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

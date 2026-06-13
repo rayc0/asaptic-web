@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da correção assimétrica: responsabilidade quando erros de agentes escalam mais depressa do que as correções — Asaptic Labs</title>
+  <meta name="description" content="Um agente de IA pode entregar a mesma decisão errada a dez mil pessoas em milissegundos. Corrigir esse erro exige trabalho humano caso a caso." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/asymmetric-correction-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/asymmetric-correction-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/asymmetric-correction-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/asymmetric-correction-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/asymmetric-correction-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/asymmetric-correction-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da correção assimétrica: responsabilidade quando erros de agentes escalam mais depressa do que as correções" />
+  <meta property="og:description" content="Um agente de IA pode entregar a mesma decisão errada a dez mil pessoas em milissegundos. Corrigir esse erro exige trabalho humano caso a caso." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/asymmetric-correction-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "O problema da correção assimétrica: responsabilidade quando erros de agentes escalam mais depressa do que as correções",
+    "description": "Um agente de IA pode entregar a mesma decisão errada a dez mil pessoas em milissegundos. Corrigir esse erro exige trabalho humano caso a caso.",
+    "url": "https://asaptic.com/pt/blog/asymmetric-correction-problem.html",
+    "author": {
+      "@type": "Organization",
+      "name": "Asaptic Labs"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Asaptic Labs",
+      "url": "https://asaptic.com"
+    },
+    "datePublished": "2026-06-14",
+    "dateModified": "2026-06-14",
+    "mainEntityOfPage": "https://asaptic.com/pt/blog/asymmetric-correction-problem.html",
+    "inLanguage": "pt",
+    "potentialAction": {
+      "@type": "Action",
+      "name": "Contactar a Asaptic sobre governação de IA",
+      "target": [
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/pt/engage.html",
+          "contentType": "text/html",
+          "description": "Contactar a Asaptic"
+        },
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/mcp",
+          "contentType": "application/json",
+          "description": "MCP server, tool: submit_rfq"
+        },
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "mailto:engage@asaptic.com",
+          "description": "Enviar pedido por e-mail"
+        }
+      ]
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "inLanguage": "pt",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Início",
+        "item": "https://asaptic.com/pt/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Blog",
+        "item": "https://asaptic.com/pt/blog/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Correção assimétrica",
+        "item": "https://asaptic.com/pt/blog/asymmetric-correction-problem.html"
+      }
+    ]
+  }
+]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-label,.essay-topic,.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:16px;text-transform:uppercase}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.2;margin-bottom:16px;color:var(--fg)}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim);margin-bottom:56px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-body p{font-size:16px;line-height:1.85;color:var(--fg);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:600;margin:48px 0 16px;color:var(--fg)}.essay-summary{margin-top:56px;padding:28px 32px;border:1px solid var(--border);background:var(--surface)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent);display:block;margin-bottom:12px;text-transform:uppercase}.essay-summary p{font-size:14px;line-height:1.75;color:var(--gray-dim);margin:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contacto</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-label">NOTES FROM THE CROSSINGS · 2026-06-14</span>
+      <h1 class="essay-title">O problema da correção assimétrica</h1>
+      <p class="essay-subtitle">Quando erros de agentes escalam mais depressa do que as correções</p>
+      <div class="essay-meta"><span>Por Asaptic Labs</span><span>2026-06-14</span><span>6 min de leitura</span><span>× Responsabilidade de IA × Erros sistemáticos × Cuidados</span></div>
+      <div class="essay-body"><p>A assimetria é direta: um agente de IA pode entregar uma decisão errada a dez mil pessoas antes de um único revisor humano processar o primeiro caso. Entregar o erro levou milissegundos. Corrigi-lo levará meses.</p><p>Este é o problema da correção assimétrica: a lacuna estrutural entre a escala a que erros agentivos são entregues e a escala a que podem ser corrigidos. Não é uma falha contingente de processo; é uma propriedade geométrica da implantação de agentes.</p><h2>Porque os erros sistemáticos são diferentes</h2><p>Erros aleatórios podem muitas vezes ser corrigidos em escala através do mesmo canal de entrega. Erros sistemáticos não. Os que surgem de desalinhamento da distribuição de treino, deslocação de fronteiras de configuração ou modos de falha partilhados afetam uma classe definida pelas características que causaram a falha.</p><p>Cada pessoa afetada recebeu aconselhamento ajustado ao seu input. Cada correção exige estabelecer qual foi o conselho errado, qual seria o correto e o que a pessoa fez no intervalo antes de o erro ser encontrado.</p><h2>Porque o dano latente agrava a obrigação</h2><p>Quando o dano de uma decisão errada não é imediato, as pessoas afetadas continuam a agir com base no resultado errado enquanto o erro permanece indetetado. A obrigação de correção acumula-se durante todo esse período latente.</p><p>Arquiteturas de responsabilidade desenhadas com o pressuposto de deteção rápida não contemplam a procura de correção que se acumula nesse intervalo.</p><h2>Porque a correção não pode ser automatizada</h2><p>Rollback computacional é simétrico: o sistema que escreveu o estado errado pode reescrevê-lo. Dano humano não. Corrigir exige contactar pessoas afetadas, informá-las do erro, aconselhar sobre a recomendação correta e apoiar as mudanças necessárias.</p><p>Organizações que implantam agentes numa escala que não conseguem corrigir depois não estão apenas a decidir implantar. Estão a tomar uma decisão de responsabilidade.</p><h2>O cruzamento da segurança pós-quântica</h2><p>Quando uma família de algoritmos criptográficos é descontinuada, cada registo assinado sob ela exige revisão individualizada: não se o algoritmo foi descontinuado em geral, mas se aquele registo específico dependia de uma garantia que já não se mantém.</p><h2>O cruzamento de hardware</h2><p>Uma vulnerabilidade de firmware numa frota exige identificar dispositivos afetados, enviar configurações corrigidas e determinar se ações tomadas durante o período vulnerável merecem reexame. As duas primeiras tarefas podem ser automatizadas. A terceira é trabalho caso a caso.</p><h2>O cruzamento dos cuidados no mundo físico</h2><p>Em implantações de cuidados, o problema é mais consequente. Um agente que falhou sistematicamente uma classe de contraindicações ou subponderou um padrão de sintomas distribuiu orientação errada à velocidade da máquina.</p><p>Corrigir exige contactar cada pessoa afetada, rever o seu caso e fornecer orientação corrigida. Esta capacidade é pré-requisito de implantação, não recurso de remediação posterior.</p><h2>O que isto exige no desenho</h2><p>Melhorar a deteção de erros não resolve o problema; apenas acelera o reconhecimento da obrigação. Respostas adequadas incluem limitar o alcance até demonstrar capacidade de correção, construir fluxos de correção como componentes de primeira classe e tratar capacidade de correção como fator de risco antes da implantação.</p></div><div class="essay-summary"><span class="essay-summary-label">Resumo</span><p>Agentes entregam decisões em escala de máquina, mas corrigir erros sistemáticos exige esforço humano por pessoa afetada. Uma implantação responsável deve demonstrar capacidade de correção proporcional antes de ser lançada.</p></div>
+      <div class="essay-nav"><a href="/pt/blog/">&larr; Todos os ensaios</a><a href="/pt/engage.html">Discutir este tema &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contacto</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

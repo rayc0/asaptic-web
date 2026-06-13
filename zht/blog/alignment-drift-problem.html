@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>對齊漂移問题：AI智能體在部署後如何悄然失準 — Asaptic Labs</title>
+  <meta name="description" content="AI智能體在部署時處於對齊状態。但這種對齊並非永久有效。隨着運行上下文變化——患者群體、威脅態勢、硬件老化——智能體的校準會悄然偏離委託方的當前期望。對齊漂移没有任何警報。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/alignment-drift-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/alignment-drift-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/alignment-drift-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/alignment-drift-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/alignment-drift-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/alignment-drift-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="對齊漂移問题：AI智能體在部署後如何悄然失準" />
+  <meta property="og:description" content="AI智能體在部署時處於對齊状態，但這種對齊並非永久有效。隨着運行上下文變化，智能體的校準會悄然偏離委託方的當前期望，且不會觸發任何警報。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/alignment-drift-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "對齊漂移問题：AI智能體在部署後如何悄然失準",
+      "description": "AI智能體在部署時處於對齊状態。但這種對齊並非永久有效。隨着運行上下文變化，智能體的校準會悄然偏離委託方的當前期望，且不會觸發任何警報。",
+      "url": "https://asaptic.com/zht/blog/alignment-drift-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/alignment-drift-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic 了解 AI 治理",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件發送查詢"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "對齊漂移問题", "item": "https://asaptic.com/zht/blog/alignment-drift-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照護</span>
+      <h1 class="essay-title">對齊漂移問题：AI智能體在部署後如何悄然失準</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>AI智能體在部署時處於對齊状態。其行為經過校準，符合委託方在部署時希望實現的目標、約束條件與評估標準。但這種對齊並非永久有效。世界在變化，運行上下文在變化，威脅態勢在變化。智能體的校準参數不會自動隨之更新。由此產生的便是對齊漂移：智能體實際行為與委託方當前期望之間的逐漸背離，且整個過程不會觸發任何明确的審查事件。</p>
+
+        <p>對齊漂移不同於程序錯誤、規範失當與身份變更。程序錯誤產生可被複現和修複的錯誤行為；規範失當產生的是持續满足書面要求但實質不符的行為；身份變更則發生在模型或配置被明确更新時，會觸發重新註冊的檢查点。對齊漂移不屬於上述任何一種。它是在一個悄然變得不同於智能體初始校準時上下文中部署的累積效應。</p>
+
+        <h2>沉默使其成為危險</h2>
+        <p>大多數智能體監控框架旨在檢測行為偏差，通過將智能體當前行為與歷史行為相比較來實現。對齊漂移對這種方法而言是透明的。一個上週失準、本週同样失準的智能體，不會產生任何異常訊號。監控器看到的是一致的行為；而這種一致性本身就是問题所在。</p>
+
+        <p>設想一個针對特定患者群體——具有特定病症分佈、用藥情況和活動能力水平——進行校準的照護智能體。十二個月後，該群體發生了變化：新入住者带來不同的健康檔案。但智能體的校準参數仍然錨定在原始分佈上。其建議開始出現细微偏差——不是災難性的失誤，無法通過單次事件監控檢測到，但對當前患者群體而言持續不夠适當。智能體在做它被训练去做的事；而它正在服務的群體，已不再是它被训练時所针對的群體。</p>
+
+        <h2>後量子维度</h2>
+        <p>後量子安全為對齊漂移增加了特定轴向。一個针對經典對抗威胁模型進行校準的智能體，在面對量子能力的攻擊者時，定義上已處於失準状態。從經典威胁到後量子威胁的過渡不是一個邊界清晰的離散事件，而是一個逐漸變化的概率分佈：隨着量子能力的成熟，經典簽名被偽造的可能性不斷上升。一個被正确校準為信任基於格的簽名方案而非經典密鑰材料的智能體，在特定威胁模型下做出了正确判斷。但隨着威胁模型的演進，信任閾值可能需要重新校準——而智能體没有任何機制察觉其校準正在老化。</p>
+
+        <p>同样的動態适用於智能體自身的簽名行為。一個被校準為使用在部署時強度充分的演算法族進行决策簽名的智能體，可能逐漸使用一個正在變弱的算法。校準本身没有錯；是世界發生了移動。</p>
+
+        <h2>硬件退化即對齊漂移</h2>
+        <p>物理硬件引入了更深一层的维度。傳感器會隨時間退化。一個使用新鲜近距傳感器校準的照護機械人，隨着傳感器老化，可能產生系統性偏差的感知。智能體的世界模型建立在不再精準的傳感器讀數之上。其校準——在部署時對當時的傳感器讀數而言是正确的——與實際物理環境之間的背離日益加剧。</p>
+
+        <p>這是硬件层面的對齊漂移：智能體的行為對於其接收到的傳感器讀數而言是正确的；傳感器讀數對於真實世界而言不再正确。修複不是軟件层面的工作，而需要物理世界的干預。智能體無法自行診斷這一問题；監控也無法通過將當前行為與歷史行為比較來發現它。這需要一套定期對照物理環境真實观察結果來檢验智能體輸出的測試機制。</p>
+
+        <h2>設計應對</h2>
+        <p>將對齊漂移作為一級運營关切來對待，需要三件事。第一，對齊陳舊度計時器：部署記錄應包括最後一次校準的日期以及校準時的環境條件，該計時器在重新校準前持續運行。第二，重新校準觸發條件：運行上下文的特定變化——群體轉變、威脅態勢變化、硬件维護週期——應觸發強制性的重新校準審查，而不僅是性能審查。第三，覆蓋訊號：人工干預是對齊漂移最可靠的證據。記錄不僅是干預內容、還有干預原因的覆蓋日誌，是對齊漂移探測器。當一批覆蓋事件共享同一類失效模式時，這批事件就是智能體校準不再匹配其運行上下文的證據。</p>
+
+        <p>因此，覆蓋日誌不僅僅是審計軌跡，它是對齊漂移的傳感器。僅將其视為合規記錄的組織，會錯過其中蕴含的訊號。</p>
+
+        <p>對齊漂移不是災難性的失效模式，而是一種缓慢的退化，不產生任何值得單獨記錄的事件。這正是它成為最難治理的智能體失效類型的原因——也是從一開始就必須為其設計防護的原因。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/zht/blog/">&larr; 全部文章</a>
+        <a href="/zht/blog/data-provenance-problem.html">延伸阅讀：數據溯源問题 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

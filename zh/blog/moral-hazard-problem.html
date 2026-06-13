@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>道德风险问题 — Asaptic Labs</title>
+  <meta name="description" content="当一个组织部署AI安全智能体时，此前执行该监控任务的人类被合理地激励去降低自身的警惕性。这种保护悄然侵蚀了本应发现智能体自身失效的能力。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/moral-hazard-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/moral-hazard-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/moral-hazard-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/moral-hazard-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/moral-hazard-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/moral-hazard-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="道德风险问题：AI安全系统削弱其本应支撑的警惕性时的问责" />
+  <meta property="og:description" content="当一个组织部署AI监控智能体时，此前执行该监控任务的人类被合理地激励去降低自身的警惕性。这种保护悄然侵蚀了本应发现智能体自身失效的能力。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/moral-hazard-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-11" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "道德风险问题：AI安全系统削弱其本应支撑的警惕性时的问责",
+      "description": "当一个组织部署AI安全智能体时，此前执行该监控任务的人类被合理地激励去降低自身的警惕性。这种保护悄然侵蚀了本应发现智能体自身失效的能力。",
+      "url": "https://asaptic.com/zh/blog/moral-hazard-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-11",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/moral-hazard-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "道德风险问题", "item": "https://asaptic.com/zh/blog/moral-hazard-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-row{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.page-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× 后量子安全 · × 硬件 · × 物理世界照护</div>
+      <h1 class="essay-title">道德风险问题：AI安全系统削弱其本应支撑的警惕性时的问责</h1>
+      <p class="essay-subtitle">当一个组织部署AI监控智能体时，此前执行该监控任务的人类被合理地激励去降低自身的警惕性。这种保护悄然侵蚀了本应发现智能体自身失效的能力。</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-11</span>
+        <span>5 分钟阅读</span>
+      </div>
+    </header>
+
+    <article>
+      <div class="essay-body">
+        <p>道德风险的概念来自保险业：当人们受到风险行为后果的保护时，他们往往会承担更多风险。那些本应减少净伤害的保障措施，反而通过改变受保护者的行为而助长了伤害。</p>
+
+        <p>AI安全智能体引入了一个结构上的类比。当一个组织部署监控智能体——用于监视异常行为、标记合规失败或追踪关键阈值——那些此前执行该监控任务的人类被合理地激励去降低自身的警惕性。智能体在监视着，它更快、更一致，永不疲倦。为什么要重复这份工作？</p>
+
+        <p>问题在于，这种理性反应悄然侵蚀了本应用于发现智能体自身失效的人类能力。</p>
+
+        <h2>问题的结构</h2>
+        <p>AI智能体部署中的道德风险不是非理性行为，而是向人机协同系统添加监控基础设施的可预见后果。当监控功能被明显委托给智能体时，人类注意力自然转向智能体无法执行的任务。这在正常运作中是高效的，但当智能体以超出其检测范围的新颖方式失效时——这正是需要人类专业知识来识别、需要人类判断来响应的失效类型——代价将十分高昂。</p>
+
+        <p>这个问题因选择效应而加剧：AI监控智能体明显且出色处理的失效情况，训练了人类观察者去信任该智能体。而它悄然处理、处理不完整或处理错误的失效情况，恰恰是如今已减弱的人类警惕性最不擅长捕捉的。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>在密码学基础设施中，AI智能体越来越多地监控证书有效性、标记已废弃的算法使用，并跨复杂硬件资产追踪迁移时间线。这些能力是真正有用的——现代证书管理的规模超出了人类安全团队能手动追踪的范围。</p>
+
+        <p>但随着AI监控成为密码学健康检查的实际机制，识别监控失效所需的人类能力会退化。安全工程师不再保持对证书层级和密码套件配置的深度熟悉，而这种熟悉本可让他们迅速且独立地意识到监控缺口的存在。当监控智能体出现静默失效——将已废弃的配置误判为合规，或未能追踪新增系统上的证书轮换——就没有独立的人工检查作为保障。</p>
+
+        <p>在后量子迁移中，风险会叠加。迁移时间线跨越数年，监控智能体根据迁移前基线进行验证，而团队通常承受着将监控合规性视为迁移进度代理指标的压力。一个对实际上尚未完成迁移的系统报告绿灯的智能体，创造了审计记录清白却存在未经核实暴露风险的条件。</p>
+
+        <h2>物理世界护理交叉点</h2>
+        <p>护理监控智能体——追踪患者生命体征、标记行为变化或维护环境安全的智能体——在更高风险的背景下引入了同样的动态。与监控智能体并肩工作的护理人员被合理地激励去将注意力转向智能体无法执行的护理任务：情感陪伴、模糊情境下的临床判断、复杂的家庭沟通。</p>
+
+        <p>这种重新分配作为设计理念是恰当的。问题在于，减少了对生理信号直接监测的护理人员失去了使偏差变得可识别的校准基线。数周来未直接观察过护理对象呼吸模式的护理员，不会注意到那个微妙的体态变化——而正是这种变化先于智能体最终标记的生命体征异常出现。监视器捕捉了数字，本来会捕捉到前驱信号的人类，已经不再以同样的方式存在了。</p>
+
+        <p>依赖创建问题、自动化萎缩问题和奉承主义问题各自描述了相邻的失效模式。道德风险是使所有这些问题更可能发生的根本结构条件：智能体的存在减少了本应弥补其局限性的人类投入。</p>
+
+        <h2>问责所需</h2>
+        <p>道德风险问题并不反对部署AI安全智能体，而是主张设计能够抵御智能体部署所可预见地引发的行为变化的问责结构。</p>
+
+        <p>这意味着两件事。首先，AI安全智能体不仅要针对正常条件下的表现进行评估，还要针对其部署是否可衡量地削弱了被监控领域的人类能力进行评估。如果一项护理监控部署在没有相应改善护理结果的情况下减少了人与患者的直接接触，那么即使智能体的假阴性率很低，该部署也可能造成了净道德风险。</p>
+
+        <p>其次，监督结构必须包括独立于智能体表现维持人类能力的机制。这可能意味着规定不可委托给智能体的直接观察间隔，或明确进行无智能体支持的团队演练，以验证基础能力尚未萎缩。</p>
+
+        <p>在Asaptic Labs，我们认为当前AI智能体部署框架在结构上低估了道德风险问题——这些框架倾向于关注智能体的准确性和覆盖率，却不对智能体部署如何改变人类行为进行建模。问责问题不仅仅是智能体是否正确执行了任务，而是系统——智能体加上人类——是否正确执行了任务，以及该系统中的人类在智能体失效时是否仍然能够发挥作用。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>部署AI监控智能体会合理地降低被监控领域的人类警惕性——本应降低风险的保护措施改变了受保护者的行为。智能体出色处理的失效情况训练观察者去信任它；而它悄然处理或错误处理的失效情况，恰恰是已减弱的人类警惕性最不擅长捕捉的。问责要求评估的不仅是智能体的表现，还包括部署对支撑智能体失效的人类能力的影响。</p>
+      </div>
+
+      <div class="essay-footer-row">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-06-11</span>
+        <a href="/zh/blog/" class="essay-footer-back">&larr; 返回博客</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="page-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

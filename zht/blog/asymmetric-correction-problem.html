@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>不對稱糾錯問題：智能體錯誤擴散速度超過糾正速度時的問責困境 — Asaptic Labs</title>
+  <meta name="description" content="當 AI 智能體向一萬人做出同樣的錯誤決策時，錯誤以機器速度傳遞；糾正則需要人工規模的個案工作。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/asymmetric-correction-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/asymmetric-correction-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/asymmetric-correction-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/asymmetric-correction-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/asymmetric-correction-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/asymmetric-correction-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="不對稱糾錯問題：智能體錯誤擴散速度超過糾正速度時的問責困境" />
+  <meta property="og:description" content="當 AI 智能體向一萬人做出同樣的錯誤決策時，錯誤以機器速度傳遞；糾正則需要人工規模的個案工作。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/asymmetric-correction-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "不對稱糾錯問題：智能體錯誤擴散速度超過糾正速度時的問責困境",
+    "description": "當 AI 智能體向一萬人做出同樣的錯誤決策時，錯誤以機器速度傳遞；糾正則需要人工規模的個案工作。",
+    "url": "https://asaptic.com/zht/blog/asymmetric-correction-problem.html",
+    "author": {
+      "@type": "Organization",
+      "name": "Asaptic Labs"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Asaptic Labs",
+      "url": "https://asaptic.com"
+    },
+    "datePublished": "2026-06-14",
+    "dateModified": "2026-06-14",
+    "mainEntityOfPage": "https://asaptic.com/zht/blog/asymmetric-correction-problem.html",
+    "inLanguage": "zh-Hant",
+    "potentialAction": {
+      "@type": "Action",
+      "name": "聯絡 Asaptic 了解 AI 治理",
+      "target": [
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/zht/engage.html",
+          "contentType": "text/html",
+          "description": "聯絡 Asaptic"
+        },
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/mcp",
+          "contentType": "application/json",
+          "description": "MCP server, tool: submit_rfq"
+        },
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "mailto:engage@asaptic.com",
+          "description": "透過電子郵件發送查詢"
+        }
+      ]
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "inLanguage": "zh-Hant",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "首頁",
+        "item": "https://asaptic.com/zht/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "博客",
+        "item": "https://asaptic.com/zht/blog/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "不對稱糾錯問題",
+        "item": "https://asaptic.com/zht/blog/asymmetric-correction-problem.html"
+      }
+    ]
+  }
+]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-label,.essay-topic,.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:16px;text-transform:uppercase}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.2;margin-bottom:16px;color:var(--fg)}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim);margin-bottom:56px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-body p{font-size:16px;line-height:1.85;color:var(--fg);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:600;margin:48px 0 16px;color:var(--fg)}.essay-summary{margin-top:56px;padding:28px 32px;border:1px solid var(--border);background:var(--surface)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent);display:block;margin-bottom:12px;text-transform:uppercase}.essay-summary p{font-size:14px;line-height:1.75;color:var(--gray-dim);margin:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-label">NOTES FROM THE CROSSINGS · 2026-06-14</span>
+      <h1 class="essay-title">不對稱糾錯問題</h1>
+      <p class="essay-subtitle">智能體錯誤擴散速度超過糾正速度時的問責困境</p>
+      <div class="essay-meta"><span>作者：Asaptic Labs</span><span>2026-06-14</span><span>6 分鐘閱讀</span><span>× AI 問責 × 系統性錯誤 × 照護</span></div>
+      <div class="essay-body"><p>這種不對稱性陳述起來很直白：一個 AI 智能體可以在單個人工審查員處理第一個案例之前，向一萬人傳遞錯誤決策。傳遞錯誤只需毫秒。糾正它將耗費數月。</p><p>這就是不對稱糾錯問題，智能體錯誤傳遞規模與其可被糾正的規模之間的結構性差距。這不是偶然的流程失敗。這是智能體部署的幾何特性，而問責框架尚未充分面對這一現實。</p><h2>為何系統性錯誤與眾不同</h2><p>隨機錯誤通常可以透過同一傳遞渠道推送糾正輸出來大規模修復。系統性錯誤則不然。那些由訓練分佈不匹配、配置邊界偏移或共享模型失效模式引發的錯誤，影響的不是隨機的使用者子集，而是由導致失效的特徵本身所定義的一個類別。</p><p>每次糾正都需要確認錯誤建議是什麼、正確建議應該是什麼，以及在發現錯誤之前的間隔期內當事人採取了什麼行動。糾正就是個案處理，而個案處理的規模與部署覆蓋範圍成正比。</p><h2>為何潛在傷害會加重責任</h2><p>當錯誤決策造成的傷害並非即時顯現時，受影響的人在錯誤未被發現期間持續依據錯誤輸出行事。從系統性錯誤到被發現的整個潛伏期內，糾錯義務不斷累積。</p><p>以錯誤能被迅速發現為前提設計的問責架構，無法考量在這段潛伏期內積累的糾錯需求。而這種需求在設計階段就是可以預見的，卻未被如此對待。</p><h2>為何糾正無法自動化</h2><p>計算回滾是對稱的：寫入錯誤狀態的系統可以覆寫它。人類傷害則不然。糾正它需要聯繫受影響者、告知錯誤、就正確建議應是什麼提供指導，並支持糾正所涉及的一切變化。</p><p>以無法事後糾正的規模部署智能體的組織，做出的不是部署決策，而是一個責任決策。</p><h2>後量子安全交叉點</h2><p>當一個密碼學算法族被棄用時，在其下簽署的每條記錄都需要個別審查：不是該算法是否被普遍棄用，而是這條特定記錄在這一特定用途中是否依賴了一個不再成立的安全保證。</p><h2>硬件交叉點</h2><p>影響已部署硬件叢集的韌體漏洞需要三項操作：識別受影響裝置、推送糾正配置，以及確定在漏洞存在期間的智能體行為是否需要重新審查。前兩項可以自動化，第三項則不能，因為它是個案處理。</p><h2>物理世界照護交叉點</h2><p>在照護部署中，不對稱糾錯問題影響最為深遠。一個系統性地未能標記某類禁忌症、或在患者群體中低估某種症狀模式的智能體，以機器速度傳播了錯誤照護指導。</p><p>大規模部署智能體的照護機構必須能夠以相應規模提供這項糾正工作。這種能力不是在事故發生後才配置的補救資源。它是部署的前提條件。</p><h2>設計階段的應對措施</h2><p>改進錯誤偵測並不能解決不對稱糾錯問題。更好的偵測提高了識別糾錯義務的速度；它不改變義務的規模。確實能應對該問題的措施包括限制部署覆蓋範圍、將糾錯工作流作為一等系統元件構建，以及在部署評估中將糾錯能力作為風險因素。</p><p>不建立傳遞速度與糾正速度之間差距模型的問責框架，將繼續設定現實部署無法滿足的補救預期。</p></div><div class="essay-summary"><span class="essay-summary-label">摘要</span><p>不對稱糾錯問題的產生，是因為 AI 智能體以機器規模傳遞決策，而糾正系統性錯誤需要對每位受影響者付出人工規模的努力。符合問責要求的部署需要在部署前證明具有預期部署規模下的糾錯能力。</p></div>
+      <div class="essay-nav"><a href="/zht/blog/">&larr; 全部文章</a><a href="/zht/engage.html">討論此議題 &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>多租户隔离问题 — Asaptic Labs</title>
+  <meta name="description" content="当一个AI智能体同时服务多位委托人时，单一委托人部署所需的问责属性并不会自动成立。隔离必须在三个层面同时强制执行：上下文、权限与认证。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/multi-tenancy-isolation-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/multi-tenancy-isolation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/multi-tenancy-isolation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/multi-tenancy-isolation-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/multi-tenancy-isolation-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/multi-tenancy-isolation-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="多租户隔离问题——当一个智能体服务多位委托人时" />
+  <meta property="og:description" content="当一个AI智能体同时服务多位委托人时，单一委托人部署所需的问责属性并不会自动成立。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/multi-tenancy-isolation-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-05-24" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "多租户隔离问题——当一个智能体服务多位委托人时",
+      "description": "当一个AI智能体同时服务多位委托人时，隔离必须在上下文、权限与认证三个层面同时成立——否则每位委托人的问责将同时崩溃。",
+      "url": "https://asaptic.com/zh/blog/multi-tenancy-isolation-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-05-24",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/multi-tenancy-isolation-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "多租户隔离问题", "item": "https://asaptic.com/zh/blog/multi-tenancy-isolation-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin:48px 0 16px;line-height:1.3}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界护理</span>
+      <h1 class="essay-title">多租户隔离问题：一个智能体服务多位委托人时</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>大多数AI智能体的问责框架，都是以单一委托人为前提设计的。一个用户，一个运营方，一个层级清晰的委托链。但这并非智能体实际部署的方式。</p>
+        <p>一个服务于二十位住客的护理智能体，同时嵌入了二十段知情同意关系、二十份护理计划、二十个家庭的期望与二十份临床病史。一个跨投资组合公司管理发票的金融运营智能体，在单一运行时下服务数十个账户。一个企业工作流智能体处理数百名员工的请求，每人拥有不同的资历、权限级别和适当的操作空间。在实践中，任何规模化智能体的默认运行模式就是多租户：一个推理引擎、一个模型、一次部署，服务于多位委托人。</p>
+        <p>隔离问题的核心在于：当同一个智能体实例跨越多位委托人处理请求时，单一委托人部署所需的问责属性，并不会自动成立。其失效模式隐蔽、难以发现，且后果严重。</p>
+
+        <h2>三个必须成立的隔离层面</h2>
+        <p>多租户智能体部署的隔离必须在三个层面同时成立，而当前大多数架构仅强制执行其中一个。</p>
+        <p>第一是<em>上下文隔离</em>。智能体的上下文窗口、工具调用历史及检索记忆，必须严格限定于当前委托人。一个在上一轮检索了某位住客吞咽评估结果的护理智能体，在切换到下一位住客的请求时，绝不能携带前一位住客的任何信息。这听起来不言而喻，却在实践中屡遭违反。共享检索存储、跨越委托人边界的缓存层，以及长时程记忆缓冲，都会产生上下文泄漏的接触面。即便不存在恶意，针对某位住客校准的护理指令——"餐前总要提醒，该住客倾向于拒绝最初的提议"——也可能无形中影响智能体对下一位住客的回应，而两人的护理需求截然不同。</p>
+        <p>第二是<em>权限隔离</em>。一位委托人所授予的权限，不得延续或跨越委托人边界累积。若某位监护人授权智能体向临床工作人员发送非紧急提醒，该授权不延伸至任何其他住客的数据或提醒情境。这似乎不言自明，但多租户权限架构实际上难以正确构建。基于静态角色的访问控制——将权限授予智能体角色而非委托人范围的会话——系统性地违反了这一原则。正确的架构是将权限绑定于会话范围的凭证，而非绑定于智能体实例。智能体本身不持有权限；会话才持有权限。</p>
+        <p>第三是<em>认证隔离</em>。在硬件认证部署中，认证报告覆盖的是智能体二进制文件与执行环境，并不自动涵盖被处理的是哪位委托人的数据。若要使签名回执在多租户部署中具有实质意义，它必须将操作绑定至具体委托人的会话标识符、智能体身份与所执行的动作，三者缺一不可。缺乏这种绑定，回执仅能证明智能体在可信环境中运行——无法证明它代表正确的委托人、基于正确的数据运行。</p>
+
+        <h2>失效模式如何呈现</h2>
+        <p>上下文泄漏很少以灾难性的信息披露形式出现，而是表现为细微的误校准：智能体在处理了来自不同委托人的一系列强势覆写后，对拒绝略微更为顺从；智能体的风险升级阈值发生漂移，因为其最近处理的十个案例全部属于高危级别；智能体的语言风格在与某个社群进行长时间会话后向该社群的习语靠拢，随后却以不当方式与另一群体沟通。这些失效能通过大多数测试套件，因为输出看起来合理。它们只有在输出对这个人、在这个时刻而言是错误的时候才会显现——而届时，后果可能已经发生。</p>
+        <p>权限泄漏往往表现为能力蔓延。一个为某位委托人的紧急操作获得了提升权限的智能体，在处理下一个请求时仍携带着提升后的会话凭证，因为会话从未被正确终止和范围化。在护理场景中，这可能意味着智能体访问了从未获得授权读取的数据，因为上一次交互的访问窗口未被关闭。</p>
+        <p>认证泄漏在规模层面危害最大。一份未编码委托人身份的签名回执，实际上成为了批量认证：它断言智能体总体上正确运行，但无法回答任何监管机构最终都会提出的问题——这项影响这个特定人员的具体操作，是否发生在经过正确界定和授权的执行情境中？</p>
+
+        <h2>为何护理交叉点是最难的情形</h2>
+        <p>三个交叉点各自在不同维度上提升了隔离要求。后量子交叉点使其成为密码学要求：基于格的密钥必须是委托人专属的，以防止未来的对手从另一租户的密码学足迹中恢复某一租户的密钥材料。在后量子部署中混用跨委托人的密钥情境，不仅是当前的隐私失败——更是一种随量子能力提升而日益危险的延迟密码学负债。</p>
+        <p>硬件交叉点使隔离成为认证工程问题。跨越多个租户的安全飞地，必须在架构上产生会话范围的认证报告，而非仅仅是设备级报告。TPM 认证的是启动时运行的内容；部署必须将该链条延伸至认证每次后果性操作时、代表谁运行的内容。</p>
+        <p>但物理世界护理交叉点使多租户隔离成为一项没有技术变通方案的知情同意与安全要求。护理智能体不仅是在处理数据——它在调解实际的护理决策。一次将一位住客的行动限制误归因于另一位住客的上下文泄漏，产生的不是软件错误，而是护理失误。在高危场景中，护理失误对人的健康与福祉有直接后果。护理AI的隔离要求不是工程上的细枝末节，而是知情同意保持有效、护理计划保持个体化、智能体能为每项具体决策承担责任的基础条件。</p>
+
+        <h2>正确的隔离架构是什么样的</h2>
+        <p>后果性智能体部署的多租户隔离，要求每位委托人在每次交互开始时映射到密码学范围的会话凭证，会话结束即销毁。智能体的检索与记忆系统以该凭证为访问门控，而非以智能体实例为门控。权限授权绑定于会话凭证，而非智能体角色。每份认证动作回执均绑定委托人的会话标识符、智能体身份与所执行的动作。后量子密钥材料按会话生成，绝不跨租户边界共享。</p>
+        <p>由此产生的是一个问责日志可分解的智能体：每项操作都可追溯至具体委托人、具体同意授权、具体时刻，以及经硬件认证的执行情境。来自一个租户会话的上下文或权限，无法污染另一个租户的会话。智能体服务多位委托人，并对每位委托人单独负责——不是作为统计汇总，而是对特定操作的具体问题给出具体回答。</p>
+        <p>这是应达到的标准。它高于当前大多数多租户部署所能满足的水平。在物理世界的护理场景中，这一标准没有商量余地。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>大多数AI智能体问责框架基于单一委托人设计，而实际部署中智能体几乎总在多租户环境下运行——一个实例同时服务多位委托人。多租户隔离必须在三个层面同时成立：上下文隔离（防止一位委托人的记忆与指令污染下一位）、权限隔离（授权绑定于会话凭证而非智能体角色），以及认证隔离（签名回执必须绑定具体委托人身份）。在护理场景中，这一要求尤为严苛——上下文泄漏不只是软件缺陷，而是直接的护理失误。合格的多租户架构为每位委托人颁发密码学范围的会话凭证，会话结束即销毁，后量子密钥材料绝不跨租户共享。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/alignment-drift-problem.html">最新：对齐漂移问题 →</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
