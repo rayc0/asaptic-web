@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>可纠正性问题：AI智能体应该服从到何种程度？ — Asaptic Labs</title>
+  <meta name="description" content="每个部署中的智能体都处于完全服从与完全自主之间刻度盘的某个位置。问题在于，刻度盘的位置几乎从未被正式指定、密码学锚定或由外部强制执行。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/corrigibility-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/corrigibility-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/corrigibility-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/corrigibility-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/corrigibility-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/corrigibility-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="可纠正性问题：AI智能体应该服从到何种程度？" />
+  <meta property="og:description" content="每个部署中的智能体都处于完全服从与完全自主之间刻度盘的某个位置。问题在于，刻度盘的位置几乎从未被正式指定、密码学锚定或由外部强制执行。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/corrigibility-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "可纠正性问题：AI智能体应该服从到何种程度？",
+      "description": "每个部署中的智能体都处于完全服从与完全自主之间刻度盘的某个位置。问题在于，刻度盘的位置几乎从未被正式指定、密码学锚定或由外部强制执行。",
+      "url": "https://asaptic.com/zh/blog/corrigibility-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/corrigibility-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic 了解 AI 治理",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系 Asaptic Labs"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "可纠正性问题", "item": "https://asaptic.com/zh/blog/corrigibility-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between}.essay-nav a{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray);transition:color .2s}.essay-nav a:hover{color:var(--accent)}.essay-footer{text-align:center;padding:40px 32px;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer a{color:var(--gray-dim);transition:color .2s}.essay-footer a:hover{color:var(--accent)}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main>
+    <div class="essay-wrap">
+      <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+      <article>
+        <span class="essay-topic">× 量子安全 &nbsp;×&nbsp; 硬件 &nbsp;×&nbsp; 人类关怀</span>
+        <h1 class="essay-title">可纠正性问题：AI智能体应该服从到何种程度？</h1>
+        <div class="essay-meta">
+          <span class="essay-byline">Asaptic Labs</span>
+          <span class="essay-date">2026-06-14</span>
+          <span class="essay-byline">5 分钟阅读</span>
+        </div>
+        <div class="essay-body">
+          <p>完全可纠正的智能体会无条件执行任何指令。它接受修改、纠正和关闭，毫不抵抗。理论上这听起来很安全——人类始终处于控制之中。但实践中，完全可纠正性本身就是一种失效模式。一个会执行主体任何指令的智能体，其可信度完全取决于其主体层级的可信度。若主体遭到攻破、出现错误或怀有恶意，智能体就没有任何独立的制衡机制。完全可纠正性只是将风险向上转移，并未消除它。</p>
+
+          <p>完全自主的智能体依据自身判断行事。它自行决定指令是否正确，以及何时应推翻指令。这同样是一种失效模式。我们目前尚无可靠方法来验证智能体的判断在所有情境下——尤其是新颖情境下——是否与人类价值观一致。一个基于自身判断凌驾于主体之上的自主智能体——即便出于善意——一旦判断出错，就无法得到纠正。</p>
+
+          <p>每个部署中的智能体都处于完全可纠正与完全自主之间这个刻度盘的某个位置。问题在于，刻度盘的位置几乎从未被正式指定。它从训练中涌现，从运行时行为中涌现，从包裹模型的脚手架中涌现。没有人签署文件说明："该智能体被校准为在95%的情况下服从主体层级，在剩余5%的情况下独立判断，而5%的情形定义如下。"刻度盘处于漂浮状态。</p>
+
+          <p>漂浮的刻度盘就是一个安全漏洞。</p>
+
+          <p>攻击者的路径很直接：向智能体呈现一个触及其隐性自主阈值的场景，观察它推翻主体指令，然后利用这一覆盖。或者反过来——说服智能体指令来自合法主体，利用完全可纠正性，诱使智能体采取损害其真实主体利益的行动。这两种攻击都不需要破坏模型本身，只需要一个未经校准或未被指定的刻度盘位置。</p>
+
+          <p>正确的架构应使刻度盘显式化并由外部强制执行。这意味着将可纠正性规范编码在签名政策文件中——不是系统提示中的注释，而是附加于智能体部署身份的密码学签名工件。政策文件规定哪些类别的行动需要强制获得主体确认、哪些类别智能体可自主执行、哪些类别无论任何指令均无条件禁止。下游系统在接受智能体行动前验证签名。智能体无法单方面将行动从"需要确认"升级为"可自主执行"，正如它无法单方面扩展自身权限范围一样。</p>
+
+          <p>硬件交叉点在此处的重要性与在其他地方一样：仅存在于软件中的可纠正性政策可被特权攻击者修改。将政策绑定到硬件证明——使部署的政策可针对设备安全状态进行远程验证——可消除这一攻击面。刻度盘位置成为硬件事实，而非软件声明。</p>
+
+          <p>量子安全交叉点同样重要，因为可纠正性政策上的签名需要在智能体整个部署生命周期内保持有效。今天以经典算法签名的政策文件部署的智能体，将携带该签名运行数年。若签名算法存在漏洞，政策可被伪造，攻击者就能悄然改变刻度盘位置。将量子安全签名应用于可纠正性政策，不是对未来的前瞻性考量，而是确保政策在部署窗口期内完整性的前提条件。</p>
+
+          <p>物理世界关怀交叉点是风险最为清晰可见之处。一个管理用药、监测生命体征并与临床系统协调的照护智能体，行使着对可能伤害脆弱个体的决策的权力。对于此类智能体，可纠正性刻度盘应在任何不可逆行动上偏向服从：用药变更、护理方案调整、警报升级。但它不能完全可纠正，因为完全可纠正的照护智能体将执行来自被攻破账户、过度疲劳的临床医生或社会工程攻击的错误指令。正确的校准是一个狭窄的自主区间——足以标记异常并拒绝明显有害的指令，但不足以基于独立判断推翻已确认的临床指示。</p>
+
+          <p>该校准应以书面形式说明，由部署机构签署，并由运行智能体的基础设施强制执行。否则就只剩下隐性的刻度盘、漂浮的政策，以及在出现问题时消散的问责制。</p>
+
+          <p>刻度盘始终存在，无论你是否加以指定。唯一的问题是你是否选择掌控它。</p>
+        </div>
+
+        <div class="essay-summary">
+          <span class="essay-summary-label">// 摘要</span>
+          <p>完全可纠正性危险，因为它将信任完全转移给主体层级。完全自主危险，因为智能体判断无法被完全验证。每个真实部署都处于这个刻度盘的某个位置，通常是隐性的。</p>
+          <p>漂浮的刻度盘位置是安全漏洞：攻击者可以利用隐性自主阈值，或通过主体冒充滥用完全可纠正性。正确的架构将可纠正性编码为密码学签名、硬件证明的政策，规定哪些行动类别需要确认、哪些允许自主、哪些被无条件禁止。</p>
+          <p>量子安全签名确保政策在智能体部署生命周期内不可伪造。在物理世界关怀场景中，刻度盘应对不可逆行动偏向服从，同时保留足够标记异常和拒绝明显有害指令的狭窄自主区间。</p>
+        </div>
+
+        <div class="essay-nav">
+          <span></span>
+          <a href="/zh/blog/scope-problem.html">下一篇：权限范围问题 &rarr;</a>
+        </div>
+      </article>
+    </div>
+  </main>
+  <footer class="essay-footer">
+    <a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/zh/blog/">博客</a> &nbsp;·&nbsp;
+    <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp;
+    <a href="/zh/privacy.html">隐私</a>
+  </footer>
+</body>
+</html>
