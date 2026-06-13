@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>可觀察性差距：智能體行動時你看不到什麼 — Asaptic Labs</title>
+  <meta name="description" content="AI智能體的行動方式難以即時觀察。日誌和認證記錄是事後工具——它們告訴你發生了什麼，卻無法阻止已經發生的錯誤行動。以下是這對關鍵領域智能體意味著什麼。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/observability-gap.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/observability-gap.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/observability-gap.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/observability-gap.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/observability-gap.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/observability-gap.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="可觀察性差距：智能體行動時你看不到什麼" />
+  <meta property="og:description" content="認證、日誌和收據是事後工具——它們告訴你發生了什麼，卻無法阻止已經發生的錯誤行動。即時可觀察性需要不同的架構承諾。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/observability-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "可觀察性差距：智能體行動時你看不到什麼",
+      "description": "AI智能體的行動方式難以即時觀察。日誌和認證記錄是事後工具——它們告訴你發生了什麼，卻無法阻止已經發生的錯誤行動。",
+      "url": "https://asaptic.com/zht/blog/observability-gap.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/observability-gap.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯繫 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: engage"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯繫"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "網誌", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "可觀察性差距", "item": "https://asaptic.com/zht/blog/observability-gap.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--white)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.callout-update{border-left:3px solid #29B6F6;padding:1em;background:#f0f8ff;margin:1.5em 0;color:#1a1a2e}.callout-update p{margin:0;font-size:15px;line-height:1.7}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">網誌</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回網誌</a>
+    <article>
+      <span class="essay-topic">× 物理 AI · × 護理 AI · × 量子計算</span>
+      <h1 class="essay-title">可觀察性差距：智能體行動時你看不到什麼</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="callout-update">
+        <p>&#128221; <strong>更新（2026-05-21）：</strong> Asaptic Labs 現已採用四個交叉口框架——量子計算、物理 AI、AI原生企業、護理 AI。詳見 <a href="/crossings">/crossings</a>。本文基於此前的三交叉口結構撰寫；所涉及交叉口的論點仍然有效。</p>
+      </div>
+      <div class="essay-body">
+        <p>AI 智能體被指令執行的內容與你實際能觀察到的內容之間，存在一個系統性差距。這並非主要是日誌問題、審計問題或可解釋性問題——儘管它與三者均有關聯。這是一個時序問題。在已部署系統中，智能體在任何外部觀察者能夠評估、確認或中斷行動之前就已完成動作。等到日誌條目存在，行動早已結束。</p>
+        <p>大多數關於AI智能體安全的思考都在處理事後問題：如何審計，如何歸因，如何糾正。這些是必要的工具。但它們是事後工具。它們回答「發生了什麼」，而非「正在發生什麼」。在智能體後果不可逆的領域——機器已經移動、藥物已經配發、財務承諾已經做出——事後答案來得太晚，已無關緊要。</p>
+
+        <h2>為何即時可見性比看起來更難實現</h2>
+        <p>部署在生產環境中的智能體通常同時跨多個系統協同運作。在單一邏輯行動的時間跨度內，它可能同時從資料存儲中讀取、呼叫外部API並向記錄系統寫入。沒有任何單一觀察者能在一個視圖中看到所有這些子操作。行動結束後生成的日誌是重構出的敘述，而非即時追蹤。</p>
+        <p>此外，複雜管道中的智能體通常會委託給子智能體或外部工具。授權頂層行動的委託人，可能對該行動如何在更底層被分解和執行毫無可見性。這是可觀察性差距的結構性形式：授權範圍在系統的一個層級定義；實際執行發生在另一個層級、另一個基礎設施、另一個時間軸上。</p>
+        <p>在行動可以回滾的軟件場景中——錯誤的資料庫寫入可以撤銷，誤發的通知可以糾正——這種結構性差距是可管理的。而在 Asaptic Labs 所關注的三大關鍵領域，回滾往往不可用或不夠充分。在已棄用演算法下簽署的金鑰無法被取消簽署。已移動的實體執行機構無法被還原。已發生的照護互動無法被收回。</p>
+
+        <h2>事後替代方案及其局限</h2>
+        <p>應對即時可觀察性有限的標準架構方案是全面的事後日誌記錄。結合硬件證明——將日誌條目與執行智能體的已證明狀態綁定——可以生成難以偽造且可獨立驗證的記錄。與未經證明的軟件日誌相比，這是真正的進步。</p>
+        <p>但事後替代方案有一條硬性限制：它無法將已完成的行動轉變為待定決策。一個在14:03發生了錯誤互動的照護智能體，在14:03:02生成了完整的、已簽名的、硬件證明的日誌條目。日誌條目是正確的，它所描述的事件卻無法恢復。審計是健全的；結果已經固定。</p>
+        <p>這並非反對硬件證明日誌記錄的論據——它對於問責、糾正以及訓練系統在下一次表現更好，仍然不可或缺。但這確實說明：硬件證明與全面日誌記錄是可信智能體部署的必要條件，而非充分條件。它們描述發生了什麼，但無法防止壞事發生。</p>
+
+        <h2>通過設計縮小差距</h2>
+        <p>縮小可觀察性差距需要在部署前做出架構選擇，而非在事後添加監控儀表板。三項原則能最直接地約束這一差距。</p>
+        <p>第一是收窄範圍。授權行動集小的智能體，產生的可觀察性差距也小。授權範圍廣泛的智能體——可以跨大量系統讀取、寫入和行動——產生的差距與其授權範圍成正比。最小足跡原則既是安全原則，也是可觀察性原則：窄足跡意味著你實際上能夠觀察到的足跡。</p>
+        <p>第二是可觀察的檢查點。複雜管道中的某些行動，可以被分解為一系列可觀察的中間狀態，每個狀態都可以在下一步進行之前得到驗證。這在架構上比單一端到端行動更昂貴，但它將可觀察性差距從一個大的盲點轉變為一系列較小的、可中斷的步驟。硬件強制檢查點——受信執行環境在繼續之前暫停並暴露狀態——是最強形式；它們無法被智能體自身繞過。</p>
+        <p>第三是在不可逆步驟設置人工審批門控。在特定領域中真正不可逆的行動集，通常比智能體被授權執行的行動集要小。識別出這個不可逆集，並在每個此類步驟之前要求明確的人工確認，並不會削弱智能體的自主性——它將自主性約束在速度重要的步驟，並在可逆性不存在的步驟恢復人工的深思熟慮控制。</p>
+
+        <h2>為何這在每個關鍵領域的含義不同</h2>
+        <p>在量子關鍵領域，可觀察性差距是一個密碼學漏洞面。無法即時觀察金鑰簽署行動的智能體，可能正在使用已被攻破的憑證運行，簽發的簽名只有在後量子演算法遷移揭示遺留金鑰的弱點後才會受到質疑。後量子遷移本身就是一個可觀察性問題：你無法遷移你看不見的東西。</p>
+        <p>在硬件關鍵領域，差距是實體安全差距。行動速度超過任何人類觀察者評估能力的實體系統，從定義上來說，在傳統意義上是不可監督的。唯一可用的監督是架構性的：系統無法逾越的預定義約束邊界、智能體無法繞過的硬件強制檢查點，以及使每個步驟在事後可歸因的已簽名行動記錄——即使在行動發生的那一刻無法被觀察到。</p>
+        <p>在照護關鍵領域，差距是同意與尊嚴問題。在同意給予的時刻與人類能夠介入的時刻之間行動的照護智能體，大多數時候可能是正確的。但在複雜的照護環境中，同意是動態的，條件會在沒有通知的情況下改變，「在任務開始時授權」與「在行動時適當」之間的差距，正是傷害發生的地方。在照護場景中，可觀察性差距不是工程上的不便，而是系統內的人類最脆弱的地方。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>AI 智能體在行動時，外部觀察者往往無法即時介入：日誌與證明記錄是事後工具，只能告知發生了什麼，而非阻止錯誤行動。在後量子密碼、實體系統和照護三大關鍵領域，行動往往不可逆，這使「可觀察性差距」具有根本性意義。收窄授權範圍、設置可中斷的檢查點、以及在不可逆步驟引入人工確認門控，是從架構層面縮小這一差距的三項核心原則。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zht/blog/">&larr; 全部文章</a>
+        <a href="/zht/blog/offline-agent-problem.html">離線智能體問題 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">網誌</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>
