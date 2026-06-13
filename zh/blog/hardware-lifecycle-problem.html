@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>硬件生命周期问题：当安全硬件在运行中的智能体下方超过其保证期 — Asaptic Labs</title>
+  <meta name="description" content="照护机构和关键基础设施中的 AI 智能体部署被设计为运行十年以上。它们依赖的安全硬件并非如此。当硬件在部署中途进入寿命终止，信任根会悄然降级。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/hardware-lifecycle-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/hardware-lifecycle-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/hardware-lifecycle-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/hardware-lifecycle-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/hardware-lifecycle-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/hardware-lifecycle-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="硬件生命周期问题：当安全硬件在运行中的智能体下方超过其保证期" />
+  <meta property="og:description" content="照护机构和关键基础设施中的 AI 智能体部署被设计为运行十年以上。它们依赖的安全硬件并非如此。当硬件在部署中途进入寿命终止，信任根会悄然降级。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/hardware-lifecycle-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {"@context":"https://schema.org","@type":"Article","headline":"硬件生命周期问题：当安全硬件在运行中的智能体下方超过其保证期","description":"照护机构和关键基础设施中的 AI 智能体部署被设计为运行十年以上。它们依赖的安全硬件并非如此。当硬件在部署中途进入寿命终止，信任根会悄然降级。","url":"https://asaptic.com/zh/blog/hardware-lifecycle-problem.html","author":{"@type":"Organization","name":"Asaptic Labs"},"publisher":{"@type":"Organization","name":"Asaptic Labs","url":"https://asaptic.com"},"datePublished":"2026-06-14","dateModified":"2026-06-14","mainEntityOfPage":"https://asaptic.com/zh/blog/hardware-lifecycle-problem.html","inLanguage":"zh-Hans","potentialAction":{"@type":"Action","name":"向 Asaptic 提交讨论请求","target":[{"@type":"EntryPoint","urlTemplate":"https://asaptic.com/mcp","contentType":"application/json","description":"MCP server, tool: submit_rfq"},{"@type":"EntryPoint","urlTemplate":"mailto:engage@asaptic.com","description":"通过电子邮件发送简报"}]}},
+    {"@context":"https://schema.org","@type":"BreadcrumbList","inLanguage":"zh-Hans","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://asaptic.com/zh/"},{"@type":"ListItem","position":2,"name":"博客","item":"https://asaptic.com/zh/blog/"},{"@type":"ListItem","position":3,"name":"硬件生命周期问题","item":"https://asaptic.com/zh/blog/hardware-lifecycle-problem.html"}]}
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.8;margin-bottom:28px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);display:block;margin-bottom:12px}.essay-summary p{font-size:16px;line-height:1.75;color:var(--gray);margin:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 硬件 × 后量子安全 × 现实世界照护</span>
+      <h1 class="essay-title">硬件生命周期问题：当安全硬件在运行中的智能体下方超过其保证期</h1>
+      <p class="essay-subtitle">照护机构和关键基础设施中的 AI 智能体部署被设计为运行十年以上。它们依赖的安全硬件并非如此。当硬件在部署中途进入寿命终止，信任根会悄然降级。</p>
+      <div class="essay-meta"><span class="essay-byline">作者：Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 分钟阅读</span></div>
+<div class="essay-body">
+        <p>AI智能体部署的安全属性通常被描述为软件的稳定特征。智能体被描述为经过证明的、防篡改的或加密认证的——现在时态，无限期。这些声明建立在硬件基础之上：可信平台模块、安全飞地、硬件安全模块，为智能体做出的每次证明提供信任根。但硬件有生命周期。安全补丁停止到来。固件认证过期。在芯片中实现的算法被弃用。使问责架构得以实现的信任根仍在运行，但其可信程度已不再相同——而问责记录中通常没有任何信号表明有任何变化。</p>
+
+        <p>时间尺度上的不匹配是结构性的。住宅照护环境、医院网络和工业控制环境中的AI智能体部署，其设计和预算的运营寿命为十至十五年。嵌入这些环境中的硬件安全组件——可信平台模块、安全飞地、硬件安全模块——的制造商支持承诺为五至七年。在此窗口之后，硬件继续运行，继续产生证明，继续签名。但供应商不再对其进行漏洞审计、修补固件，也不再根据当前标准认证其加密实现。智能体产生的证明对于任何只检查签名格式而不检查签名硬件来源的观察者来说，与有效证明无法区分。</p>
+
+        <h2>寿命终止对问责的意义</h2>
+        <p>在标准硬件安全模型中，硬件信任根的价值来自两个属性：硬件被假定为防篡改的，其安全态势被假定为得到维护的。寿命终止打破了第二个假设，同时表面上保留了第一个假设。硬件不会宣布它不再被修补。它产生的证明不带有过期时间戳。在寿命终止的安全硬件上运行的智能体生成的审计追踪，与在当前、完全支持的硬件上运行的智能体生成的审计追踪看起来完全相同。</p>
+
+        <p>这造成了一个特定的问责问题。当AI智能体做出的决策被审查时——在监管审计、不良事件调查或事后分析中——审查员通过检查智能体的声明是否被正确证明来评估决策的完整性。证明是有效的。硬件信任根存在。问责架构看似成立。审计记录中不可见的是：提供信任根的硬件已经四年没有收到固件更新，两个影响其证明实现的CVE已发布但未修补，以及它用于签署证明的加密算法在十八个月前已被弃用。问责在形式上是完整的，在实质上却是空洞的。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件交叉点是AI智能体与安全属性建立在硅上的物理基础设施接口的地方。在这个交叉点，硬件生命周期问题最为直接：智能体的问责声明只与锚定它们的硬件一样新。在十年部署中管理设备群的硬件智能体将超过其运行硬件的安全保证。随着时间推移，它产生的证明记录在可信度上逐渐降低，但在结构或内容上没有任何可见变化。在审计记录中，硬件安全组件在第六年进入寿命终止的设备群，看起来与组件完全现代的设备群完全相同——除非运营商独立跟踪硬件生命周期并将其与问责记录相关联，而几乎没有人这样做。</p>
+
+        <p>对于管理其他硬件的智能体，问题会复合。一个对整个设备群的设备完整性进行证明的硬件智能体，隐式地断言其自身完整性是可证明的。如果管理智能体的硬件信任根本身已超出其支持窗口，智能体对下游设备做出的每一个完整性声明都继承了那个空洞的保证。问责链不会明显失败，它会悄悄地在声明与物理现实相遇的层面失败，这种方式只有当有人提出正式记录实际上无法回答的问题时才会变得明显。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>后量子迁移为硬件生命周期问题增加了一个时间关键的维度。向抗量子加密算法的过渡不仅仅是软件迁移。许多必须替换的算法——RSA、椭圆曲线变体——在硬件安全模块和可信平台模块内的专用加密加速器中实现。替换这些算法需要固件更新（仅在硬件处于积极支持状态时可用）或硬件更换。底层安全硬件已达到寿命终止的AI智能体部署，将无法接收实现抗量子算法的固件，将继续使用长期完整性无法被假定的算法进行签名。它现在产生的问责记录将来需要针对签名算法是否已知不足这一问题进行解释——而正式记录将不包含这一背景。</p>
+
+        <p>驱动后量子迁移紧迫性的"现在收集，以后解密"问题对问责记录同样适用。今天用弃用算法签名的证明，在那些算法被破解时，会在回溯性上变得有问题。对于在高风险领域做出决策的AI智能体，问责记录的完整性不仅在决策时相关，还必须在多年后的回顾性审查中经得起考验。2026年代表照护机构患者做出的决策，可能在2033年的监管程序中被审查。如果证明该决策完整性的硬件自2028年以来已经过了寿命终止，正式证明就会成为一个有争议的人工制品，而不是可靠的锚点。</p>
+
+        <h2>在物理世界照护交叉点</h2>
+        <p>物理世界照护部署从两个轴面临硬件生命周期问题：其运营持续时间和采购背景。照护机构不是科技公司，它们没有与安全支持窗口同步的硬件更新周期。2024年在住宅照护环境中部署的平板设备群，很可能在2032年仍在运行，远在这些平板中嵌入的硬件安全组件超过其支持窗口之后。在该基础设施上运行的AI智能体——管理用药计划、监测生命体征、路由护理工作人员任务——将继续产生形式上有效但建立在安全态势不再经认证的硬件上的问责记录。</p>
+
+        <p>采购背景放大了这一问题。照护环境中的硬件更新受到预算周期、医疗设备软件监管批准以及迁移运行中照护系统的运营中断的约束。替换已部署照护智能体的底层硬件，不是照护机构按照安全供应商的时间表做出的决定。在许多司法管辖区，它需要临床验证、员工再培训和监管重新批准。结果是，已部署照护系统中的实际硬件生命周期，因结构性必要性而远超制造商支持窗口，建立在该硬件之上的问责架构也随之降级。</p>
+
+        <h2>生命周期感知问责需要什么</h2>
+        <p>对标准问责架构的三项补充将使硬件生命周期问题可见。第一，硬件来源记录：AI智能体部署的问责架构应将提供信任根的硬件组件的明确记录——品牌、型号、固件版本、制造商支持状态和终止支持日期——作为一等审计对象。这些记录应在硬件状态变化时更新，并与其锚定的问责记录相关联。第二，终止支持警报：当信任根组件进入寿命终止时，问责系统应在审计记录本身中标记。在该日期之后产生的证明应携带元数据，表明支持它们的硬件已超出其支持窗口。这不会使那些证明无效，但为未来的审查员提供了所需的背景。第三，算法弃用追踪：当硬件实现特定加密算法时，问责系统应追踪这些算法的弃用状态，并标记使用已弃用实现产生的证明。</p>
+
+        <p>硬件生命周期问题不是任何单个组件的失败。硬件工作正常，证明在形式上有效，问责记录就其所及范围而言是准确的。问题是问责架构中嵌入的时间假设与支持它的物理组件的实际生命周期之间的结构性差距。弥合这一差距需要将硬件生命周期视为问责维度，而不仅仅是运营维度——并且需要在不匹配只能在回顾中变得可见之前这样做。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>AI智能体部署的设计运营寿命为十至十五年。它们依赖的硬件安全组件——可信平台模块、安全飞地、硬件安全模块——的制造商支持承诺为五至七年。寿命终止后，硬件继续产生在形式上与有效证明无法区分的证明，但不再有主动安全维护、固件补丁或经认证的加密实现作为支撑。问责记录不显示此过渡发生的时间。生命周期感知问责需要将硬件来源记录、终止支持标志和算法弃用追踪作为一等审计对象——而不是存在于问责系统之外的运营元数据。</p>
+      </div>
+      <div class="essay-nav"><a href="/zh/blog/">&larr; 所有笔记</a><a href="/zh/engage.html">参与 &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>硬件信任根问题：当 AI 智能体无法验证其立足之地 — Asaptic Labs</title>
+  <meta name="description" content="AI 智能体的每个安全声明最终都依赖其运行硬件给出的断言。当硬件信任根缺失、受损或未针对智能体设计时，整个问责链就悬挂在软件中。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/hardware-root-of-trust-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/hardware-root-of-trust-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/hardware-root-of-trust-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/hardware-root-of-trust-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/hardware-root-of-trust-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/hardware-root-of-trust-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="硬件信任根问题：当 AI 智能体无法验证其立足之地" />
+  <meta property="og:description" content="AI 智能体的每个安全声明最终都依赖其运行硬件给出的断言。当硬件信任根缺失、受损或未针对智能体设计时，整个问责链就悬挂在软件中。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/hardware-root-of-trust-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {"@context":"https://schema.org","@type":"Article","headline":"硬件信任根问题：当 AI 智能体无法验证其立足之地","description":"AI 智能体的每个安全声明最终都依赖其运行硬件给出的断言。当硬件信任根缺失、受损或未针对智能体设计时，整个问责链就悬挂在软件中。","url":"https://asaptic.com/zh/blog/hardware-root-of-trust-problem.html","author":{"@type":"Organization","name":"Asaptic Labs"},"publisher":{"@type":"Organization","name":"Asaptic Labs","url":"https://asaptic.com"},"datePublished":"2026-06-14","dateModified":"2026-06-14","mainEntityOfPage":"https://asaptic.com/zh/blog/hardware-root-of-trust-problem.html","inLanguage":"zh-Hans","potentialAction":{"@type":"Action","name":"向 Asaptic 提交讨论请求","target":[{"@type":"EntryPoint","urlTemplate":"https://asaptic.com/mcp","contentType":"application/json","description":"MCP server, tool: submit_rfq"},{"@type":"EntryPoint","urlTemplate":"mailto:engage@asaptic.com","description":"通过电子邮件发送简报"}]}},
+    {"@context":"https://schema.org","@type":"BreadcrumbList","inLanguage":"zh-Hans","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://asaptic.com/zh/"},{"@type":"ListItem","position":2,"name":"博客","item":"https://asaptic.com/zh/blog/"},{"@type":"ListItem","position":3,"name":"硬件信任根问题","item":"https://asaptic.com/zh/blog/hardware-root-of-trust-problem.html"}]}
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.8;margin-bottom:28px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);display:block;margin-bottom:12px}.essay-summary p{font-size:16px;line-height:1.75;color:var(--gray);margin:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 后量子安全 × 硬件 × 现实世界照护</span>
+      <h1 class="essay-title">硬件信任根问题：当 AI 智能体无法验证其立足之地</h1>
+      <p class="essay-subtitle">AI 智能体的每个安全声明最终都依赖其运行硬件给出的断言。当硬件信任根缺失、受损或未针对智能体设计时，整个问责链就悬挂在软件中。</p>
+      <div class="essay-meta"><span class="essay-byline">作者：Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 分钟阅读</span></div>
+<div class="essay-body">
+        <p>软件层面的安全声明始终可以被质疑。一个报告自身完整性的进程、记录自身活动的日志、证明自身状态的智能体——这些都可以通过危害其报告层来伪造。硬件信任根是对这种无限倒退的回应：物理层的一个组件，其断言是其上方软件栈无法伪造的。当它存在并正常工作时，为整个问责链提供了立足之地。当它缺失或不足时，链条完全悬挂于软件之中——而软件可以被修改。</p>
+
+        <p>在三个交叉点部署的AI智能体——后量子安全操作、硬件相邻基础设施以及现实世界照护——在对手有充分理由破坏其自身执行环境完整性的环境中做出高风险决策。然而，大多数智能体部署将硬件执行环境视为既定条件，在软件层构建问责架构，而不追问这些软件层本身是否可验证。</p>
+
+        <h2>问题的结构</h2>
+        <p>硬件信任根——在可信平台模块、安全飞地和硬件安全模块中实现——通过将软件栈的测量值锚定到无法从物理设备中提取的密钥来工作。远程验证者可以请求硬件证明当前状态，如果证明通过，则可以确信该设备上运行的软件与被测量的内容一致。这个过程有众所周知的限制：它在特定时刻测量状态，只覆盖证明设计所包含的内容，所传递的信任强度不超过制造商根证书链。但在这些限制内，它为问责提供了物理支撑点。</p>
+
+        <p>今天大多数AI智能体运行在通用云基础设施、共享硬件或商业边缘设备上，这些都不是为智能体级别的证明而设计的。这些智能体的问责基础设施——日志、审计跟踪、决策记录——在与具有主机访问权限的攻击者可以修改的相同软件层中生成和存储。硬件信任根问题并不罕见。它是其余问责架构有意义的前提条件。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>后量子密钥操作正是具有长期时间规划的对手最感兴趣颠覆的操作。"现在收集、日后解密"的策略不需要突破密码算法——它需要获取密文和耐心等待。但存在更直接的路径：在后量子保护到位之前，在硬件层面危害密钥生成或密钥使用环境。在缺乏正常信任根的硬件上执行后量子密钥操作的AI智能体，声称操作被正确执行。这个声明可能是真实的，但它是在软件中做出的，而其下方的硬件层无法确认它。专注于算法选择而将硬件执行环境视为既定条件的后量子迁移工作，只完成了转型的一半。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件相邻AI智能体——那些管理固件更新、供应链完整性或基础设施监控的智能体——负责物理系统的完整性。这些角色中被危害的智能体可以伪造审计跟踪、批准损坏的固件，或在降级硬件上报告正常状态。这些智能体的问责架构要求智能体本身运行在经过验证和证明的硬件上。一个检查硬件完整性但运行在未被检查的硬件上的智能体，存在软件层无法解决的循环问题。</p>
+
+        <p>大规模部署时，AI智能体的硬件证明面临实际困难：证明方案是为相对静态的配置设计的，而AI智能体频繁更新，在容器化或虚拟化环境中运行，通常分布在异构硬件集群中。为固件持久性设计的证明与智能体部署管道的组合并不干净，二者之间的差距正是可验证问责停止的地方。</p>
+
+        <h2>在照护交叉点</h2>
+        <p>照护环境AI智能体在商业医疗级设备、通用边缘设备和按多年采购周期获取的医院网络基础设施上运行。这些环境不是为软件智能体的硬件证明而设计的，将证明改造进现有照护基础设施在操作和财务上都很困难。</p>
+
+        <p>结果是，照护智能体在无法验证完整性的硬件上做出决策——分诊评估、用药建议、警报升级——外部审计员也无法确认。在问责记录中，源于硬件层危害的安全相关故障与模型错误、传感器故障或网络故障无法区分。在软件层工作的调查人员看不到其下方的内容。</p>
+
+        <h2>问责架构的要求</h2>
+        <p>为AI智能体填补硬件信任根差距需要当前大多数部署集体缺失的三件事。第一，证明覆盖：智能体应在支持远程证明的硬件上运行，证明应覆盖完整的执行环境，而不仅仅是底层固件。第二，智能体感知测量：证明方案应测量智能体的特定模型版本、配置和运行时环境——不仅仅是操作系统和启动链。第三，问责链扩展：审计记录应包括证明收据——在决策时硬件信任根验证执行环境的密码学确认。</p>
+
+        <p>没有这些，AI智能体决策的问责链从软件开始，没有物理锚点。这不是额外的软件层控制可以填补的差距。证明无法自我证明的智能体所做决策的日志，是软件谈论软件的记录——内部连贯，作为外部问责的基础毫无意义。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>AI智能体问责依赖于审计日志、决策记录和证明声明——全部在软件中生成。没有将这些声明可验证地锚定到物理执行环境的硬件信任根，整个问责链就悬挂在可以被修改的层中。大多数智能体部署没有这个锚点。填补差距需要覆盖智能体执行环境的证明、智能体感知测量方案，以及包含证明收据的审计记录。忽视硬件层的问责架构，是建立在对手知道如何消除的假设之上的架构。</p>
+      </div>
+      <div class="essay-nav"><a href="/zh/blog/">&larr; 所有笔记</a><a href="/zh/engage.html">参与 &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
