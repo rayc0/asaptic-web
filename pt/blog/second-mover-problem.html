@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema do segundo agente: responsabilidade quando um agente de IA herda consequências que não criou — Asaptic Labs</title>
+  <meta name="description" content="A maioria dos agentes de IA não é primeira ação: herda material criptográfico, hardware e planos de cuidado. Um registo de herança é a condição mínima para implantação responsável." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/second-mover-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/second-mover-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/second-mover-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/second-mover-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/second-mover-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/second-mover-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema do segundo agente: responsabilidade quando um agente de IA herda consequências que não criou" />
+  <meta property="og:description" content="A maioria dos agentes de IA não é primeira ação: herda material criptográfico, hardware e planos de cuidado. Um registo de herança é a condição mínima para implantação responsável." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/second-mover-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    { "@context": "https://schema.org", "@type": "Article", "headline": "O problema do segundo agente: responsabilidade quando um agente de IA herda consequências que não criou", "description": "A maioria dos agentes de IA não é primeira ação: herda material criptográfico, hardware e planos de cuidado. Um registo de herança é a condição mínima para implantação responsável.", "url": "https://asaptic.com/pt/blog/second-mover-problem.html", "author": { "@type": "Organization", "name": "Asaptic Labs" }, "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" }, "datePublished": "2026-06-14", "dateModified": "2026-06-14", "mainEntityOfPage": "https://asaptic.com/pt/blog/second-mover-problem.html", "inLanguage": "pt", "potentialAction": { "@type": "Action", "name": "Contactar a Asaptic", "target": [ { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/pt/engage.html", "contentType": "application/json", "description": "MCP server, tool: submit_rfq" }, { "@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "Contactar a Asaptic por e-mail" } ] } },
+    { "@context": "https://schema.org", "@type": "BreadcrumbList", "inLanguage": "pt", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" }, { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" }, { "@type": "ListItem", "position": 3, "name": "Problema do segundo agente", "item": "https://asaptic.com/pt/blog/second-mover-problem.html" } ] }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px;text-transform:uppercase}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:18px}.essay-subtitle{font-size:1.08rem;font-weight:300;color:var(--gray);line-height:1.65;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px;text-transform:uppercase}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);gap:24px}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contacto</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× Segurança pós-quântica × Hardware × Cuidado no mundo físico</span>
+      <h1 class="essay-title">O problema do segundo agente: responsabilidade quando um agente de IA herda consequências que não criou</h1>
+        <p class="essay-subtitle">Toda implantação de agente de IA tem uma história que o agente não escreveu. O problema surge quando a responsabilidade pelo resultado atual não pode ser separada das consequências de decisões anteriores.</p>
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 min de leitura</span></div>
+      <div class="essay-body">
+        <p>O modelo padrão de responsabilidade para agentes de IA assume um ponto de origem limpo: o agente é implantado, age, as ações são registadas e, se algo corre mal, consulta-se o log. Esse modelo funciona quando toda a história operacional do agente é sua. Na prática, muitos agentes não são primeiros agentes. Herdam. Assumem um paciente a meio do cuidado. Operam hardware que não configuraram. Gerem material criptográfico que não geraram. Aplicam políticas de autorização estabelecidas antes de existirem.</p>
+        <p>O problema não é falta de acesso à história. O agente pode ver registos anteriores, snapshots de configuração e logs de auditoria. O problema é estrutural: o registo de responsabilidade do agente começa quando ele começa, mas a cadeia causal que produz o resultado atual pode vir de muito antes. A consequência herdada torna-se condição inicial e, no log atual, parece verdade de base.</p>
+        <h2>No cruzamento da segurança pós-quântica</h2>
+        <p>Material criptográfico tem ciclos de vida que raramente coincidem com ciclos de implantação de agentes. Um agente que assume gestão de chaves a meio do ciclo herda chaves que não gerou e condições que não definiu. Se foram geradas por algoritmo clássico agora vulnerável, as garantias do agente atual ficam limitadas por esse material herdado, mesmo que as suas práticas atuais estejam corretas.</p>
+        <p>Isto cria assimetria de responsabilidade. Se uma falha ou compromisso de chave for depois atribuído ao material herdado, a pergunta de atribuição não pode ser respondida apenas pelo registo do agente atual. Assinaturas pós-quânticas em operações atuais provam a integridade dessas operações; não certificam a integridade do substrato em que assentam.</p>
+        <h2>No cruzamento do hardware</h2>
+        <p>Configurações de hardware persistem durante vidas úteis prolongadas. Quando uma nova instância de agente começa a operar hardware que não comissionou, herda as propriedades de segurança e as dívidas de segurança codificadas nesse dispositivo. Firmware aceitável na implantação inicial pode ficar abaixo dos padrões atuais. Chaves de atestação geradas sob pressupostos antigos podem oferecer garantias mais fracas.</p>
+        <p>A atestação de hardware responde se o dispositivo está agora a executar firmware autorizado num estado verificado. Não responde quem decidiu o que era autorizado nem se essa decisão seria tomada da mesma forma hoje. O agente herda o estado de hardware e a baseline de autorização.</p>
+        <h2>No cruzamento do cuidado físico</h2>
+        <p>A continuidade do cuidado significa que agentes clínicos encontram pacientes a meio de uma trajetória. O plano que executam foi criado antes. Medicamentos já foram prescritos. Intervenções anteriores não podem ser revertidas. O agente herda dados e obrigações clínicas, compromissos assumidos noutro contexto operacional.</p>
+        <p>Quando ocorre um resultado adverso, a revisão deve perguntar se foi moldado por decisões atuais, por elementos herdados do plano de cuidado ou pela interação entre ambos. Essa pergunta raramente é respondível apenas pelo registo do agente atual.</p>
+        <h2>O registo de herança como primitivo de responsabilidade</h2>
+        <p>A resposta é um registo de herança: um snapshot estruturado e assinado produzido no momento em que o agente assume responsabilidade por uma implantação em curso. Captura o estado recebido, a proveniência desse estado e fragilidades conhecidas reconhecidas no momento da transferência. Sem esse registo, a investigação degrada-se em arqueologia. Com ele, a fronteira entre consequências herdadas e introduzidas fica visível no trilho de auditoria.</p>
+      </div>
+      <div class="essay-summary"><span class="essay-summary-label">Ponto central</span><p>Muitos agentes começam sobre história alheia. Um registo de herança, assinado no handover, torna explícitos estado recebido, proveniência e fragilidades conhecidas, permitindo separar consequências herdadas das introduzidas pelo agente.</p></div>
+      <div class="essay-nav"><a href="/pt/blog/">&larr; Todos os artigos</a><a href="/pt/blog/semantic-gap-problem.html">Próximo: problema da lacuna semântica &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contacto</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

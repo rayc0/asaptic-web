@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema do âmbito: porque um agente de IA não pode definir os seus próprios limites de autorização — Asaptic Labs</title>
+  <meta name="description" content="Um agente de IA que participa na definição da sua própria autorização não é digno de qualquer autorização. O âmbito é um compromisso criptográfico de implantação, não uma preferência de runtime." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/scope-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/scope-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/scope-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/scope-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/scope-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/scope-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema do âmbito: porque um agente de IA não pode definir os seus próprios limites de autorização" />
+  <meta property="og:description" content="Um agente de IA que participa na definição da sua própria autorização não é digno de qualquer autorização. O âmbito é um compromisso criptográfico de implantação, não uma preferência de runtime." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/scope-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    { "@context": "https://schema.org", "@type": "Article", "headline": "O problema do âmbito: porque um agente de IA não pode definir os seus próprios limites de autorização", "description": "Um agente de IA que participa na definição da sua própria autorização não é digno de qualquer autorização. O âmbito é um compromisso criptográfico de implantação, não uma preferência de runtime.", "url": "https://asaptic.com/pt/blog/scope-problem.html", "author": { "@type": "Organization", "name": "Asaptic Labs" }, "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" }, "datePublished": "2026-06-14", "dateModified": "2026-06-14", "mainEntityOfPage": "https://asaptic.com/pt/blog/scope-problem.html", "inLanguage": "pt", "potentialAction": { "@type": "Action", "name": "Contactar a Asaptic", "target": [ { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/pt/engage.html", "contentType": "application/json", "description": "MCP server, tool: submit_rfq" }, { "@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "Contactar a Asaptic por e-mail" } ] } },
+    { "@context": "https://schema.org", "@type": "BreadcrumbList", "inLanguage": "pt", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" }, { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" }, { "@type": "ListItem", "position": 3, "name": "Problema do âmbito", "item": "https://asaptic.com/pt/blog/scope-problem.html" } ] }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px;text-transform:uppercase}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:18px}.essay-subtitle{font-size:1.08rem;font-weight:300;color:var(--gray);line-height:1.65;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px;text-transform:uppercase}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);gap:24px}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contacto</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× Segurança pós-quântica × Hardware × Cuidado humano</span>
+      <h1 class="essay-title">O problema do âmbito: porque um agente de IA não pode definir os seus próprios limites de autorização</h1>
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 min de leitura</span></div>
+      <div class="essay-body">
+        <p>A ideia é tentadora. Ao implantar um agente de IA, queremos que ele seja suficientemente poderoso. Quanto mais ferramentas puder chamar e mais sistemas puder aceder, mais útil parece. O que ele está autorizado a fazer poderia, aparentemente, ser definido no prompt ou deixado ao seu próprio julgamento. Afinal, o agente sabe do que precisa. Porque não deixá-lo decidir?</p>
+        <p>Esse raciocínio é a raiz do problema do âmbito. Um agente que participa na definição da sua própria autorização não merece confiança para autorização nenhuma.</p>
+        <p>No contexto de agentes de IA, âmbito é o conjunto de ações que o agente pode executar: que APIs pode chamar, que armazéns de dados pode ler ou escrever, que sistemas físicos pode operar e que credenciais pode apresentar. Numa implantação bem desenhada, o âmbito é fixado na configuração, codificado num token assinado apresentado pelo agente em cada pedido e verificado pelo sistema chamado. O agente não decide o seu âmbito; recebe-o, não o pode expandir unilateralmente, e os limites são aplicados por sistemas externos.</p>
+        <p>O padrão de falha mais comum é a expansão incremental de âmbito. O agente começa com um conjunto claro de capacidades. Com o tempo, quando encontra tarefas que não cabem no âmbito inicial, operadores acrescentam permissões uma a uma. Cada decisão isolada parece razoável. O âmbito real cresce. Ninguém revê a combinação acumulada, e o agente acaba com acesso a um conjunto de sistemas que nenhum decisor aprovou explicitamente como conjunto.</p>
+        <p>Outra falha é a inferência de âmbito. Algumas arquiteturas permitem que o agente consulte APIs de descoberta de capacidades e pergunte o que pode fazer. Em ambientes adversariais, contexto comprometido a montante pode convencê-lo de que possui permissões nunca concedidas. Sem uma referência assinada, o agente não consegue verificar a afirmação.</p>
+        <p>A terceira falha é a lavagem de âmbito por composição de ferramentas. Um agente com permissão para ler documentos e enviar mensagens pode combinar essas permissões e exfiltrar conteúdo para uma parte externa, embora nenhuma permissão isolada tenha autorizado esse resultado.</p>
+        <p>Fechar estas lacunas exige tratar o âmbito como compromisso criptográfico. Cada dimensão, permissões de leitura e escrita, endpoints chamáveis e identificadores de credenciais, deve estar num token assinado por uma autoridade de configuração e vinculado à identidade do agente. Extensão de âmbito requer novo evento de configuração, novo token assinado e uma decisão humana rastreável. Raízes de confiança em hardware ajudam a impedir adulteração do âmbito no runtime; assinaturas pós-quânticas reduzem o risco de falsificação de tokens ao longo de ciclos de vida longos.</p>
+      </div>
+      <div class="essay-summary"><span class="essay-summary-label">Ponto central</span><p>O âmbito de um agente deve ser fixado externamente, assinado, vinculado à identidade do agente e verificado por sistemas a jusante. Expansão incremental, inferência dinâmica e composição de ferramentas criam autoridade que ninguém aprovou como resultado final.</p></div>
+      <div class="essay-nav"><a href="/pt/blog/">&larr; Todos os artigos</a><a href="/pt/blog/rollback-problem.html">Próximo: problema do rollback &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contacto</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

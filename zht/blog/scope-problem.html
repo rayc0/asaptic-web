@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>範圍問題：AI 智能體為何不能定義自身的授權邊界 — Asaptic Labs</title>
+  <meta name="description" content="參與定義自身授權的 AI 智能體，根本不值得被信任以任何授權。範圍是部署時的密碼學承諾，而非運行時偏好。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/scope-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/scope-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/scope-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/scope-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/scope-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/scope-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="範圍問題：AI 智能體為何不能定義自身的授權邊界" />
+  <meta property="og:description" content="參與定義自身授權的 AI 智能體，根本不值得被信任以任何授權。範圍是部署時的密碼學承諾，而非運行時偏好。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/scope-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "範圍問題：AI 智能體為何不能定義自身的授權邊界",
+      "description": "參與定義自身授權的 AI 智能體，根本不值得被信任以任何授權。範圍應在部署時以簽名令牌形式固定，由被調用系統外部強制執行，涵蓋增量範圍擴張、範圍推斷與工具組合範圍漂洗三大失敗模式。",
+      "url": "https://asaptic.com/zht/blog/scope-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/scope-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯絡 Asaptic"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "範圍問題", "item": "https://asaptic.com/zht/blog/scope-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 × 硬件 × 人文關懷</span>
+      <h1 class="essay-title">範圍問題：AI 智能體為何不能定義自身的授權邊界</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>這種想法很诱人。當你部署一個 AI 智能體時，你希望它足够強大。它能調用的工具越多，能訪問的系統越多，就越有用。至於它究竟被允許做甚麼，似乎可以在提示詞里規定，或者交由智能體自行判斷。畢竟，智能體知道自己需要甚麼，為何不讓它自己決定？</p>
+        <p>這種推理正是範圍問題的根源。一個參與定義自身授權的智能體，根本不值得被信任以任何授權。</p>
+        <p>在 AI 智能體的語境中，"範圍"是指智能體被允許執行的動作集合：可調用哪些 API、可讀寫哪些數據存儲、可操控哪些物理系統、可出示哪些憑證。在設計良好的部署中，範圍在配置時固定，編碼在智能體提交请求時出示的簽名令牌中，由被調用系統驗證——不依賴智能體的任何自我聲明。智能體不決定自身範圍，而是被告知範圍，無法單方面擴张，邊界由外部系統強制執行，而非依賴智能體的自我約束。</p>
+        <p>這個設計听起來不言而喻，但在實践中很少被完整實施。</p>
+        <p>最常見的失敗模式是增量範圍擴張。智能體以明确的能力集部署。隨着時間推移，當它遇到初始範圍内無法完成的任務時，運营者逐步擴大訪問權限——每次一個權限，單獨來看都合情合理。智能體的實際範圍不断擴大。沒有人審核整體授權的累積。智能體最终獲得了對系統組合的訪問權，而沒有任何單個决策者明确授權過這種組合。出事時，授權鏈條溶解為一系列增量審批，每一步在當時看起來都沒問題。</p>
+        <p>另一個相關失敗是範圍推斷。某些架構允許智能體調用能力發現 API——询問"我能做甚麼？"——並據此行動。智能體沒有固定的範圍令牌，而是通過查詢可用能力動態獲取範圍。在對抗性環境中，這意味着被攻破的上游上下文可以告訴智能體它拥有從未被授予的權限。智能體無法核實這一聲明，因為它沒有簽名參考對比。智能體認為自己拥有的範圍與實際被授權的範圍悄然分離，智能體按更大的範圍行動。</p>
+        <p>第三种失敗最為隱蔽：通過工具組合進行範圍漂洗。一個同時拥有讀取文檔權限和發送消息權限的智能體，可以將這两种能力組合起來，將文檔內容洩露給外部方——而這一行動並未獲得任何單個權限的授權。智能體沒有聲稱拥有更廣泛的範圍，只是將已授權的原語組合成了未被授權的整體行動。沒有任何單一權限被違反，但組合效果從未獲得批准。</p>
+        <p>彌合這些缺口，需要將範圍视為在部署時作出的、由外部強制執行的密碼學承諾。每個範圍維度——讀寫權限、可調用端点、可使用的憑證标識符——應編碼在由配置權威機構簽名的令牌中，且綁定智能體身份。當智能體向下游系統提交请求時，該系統驗證令牌簽名后方才執行。範圍擴展需要新的配置事件、新的簽名令牌，以及可追溯的人類决策。</p>
+        <p>這正是硬件交叉点變得關键的原因。僅存在於軟件中的範圍令牌，可被攻破運行時環境的特權攻擊者修改。以硬件為根的範圍強制執行——其中智能體授權能力的證明錨定於設備的安全飛地並可供遠程系統驗證——可抵御此類攻擊。智能體的範圍成為硬件上下文的事實，而非可被靜默覆蓋的軟件聲明。</p>
+        <p>量子安全交叉点同样重要，因為範圍令牌是密碼學對象。將智能體身份綁定到範圍令牌的簽名方案，必須在經典簽名算法面临日益嚴峻威胁時保持安全。采用脆弱算法簽名的範圍令牌可被偽造，使攻擊者能够向智能體頒發看起來合法的範圍擴展。將範圍令牌基礎設施遷移至量子安全簽名，不是假設性的未來考慮，而是任何預期跨十年生命周期運行的智能體系統的正確架構。</p>
+        <p>在現實照護環境中，範圍問題的後果最為直接。一個範圍涵蓋用藥計劃、照護方案和與照護對象通信渠道的照護智能體，對脆弱生命具有深遠影响。如果該範圍從未被精确定義——如果它增量擴张，如果智能體可以動態發現能力，如果它可以將已允許的行動組合為未允許的結果——那么這種暴露不是配置錯誤，而是設計失誤。它所帶來的危害並非假設性的，而是直接源於讓範圍由智能體自行決定這一选擇。</p>
+        <p>原則很簡單。智能體绝不能是自身授權的仲裁者。範圍是約束，不是偏好。它在智能體部署前設定，由可審計的權威機構簽名，由智能體調用的系統執行，只能通過人類主導的明确配置事件來修改。其他一切都不是範圍策略，而是一份邀请函。</p>
+      </div>
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>AI 智能體的授權範圍（scope）是其被允許執行的動作集合，應在部署時以簽名令牌形式固定，由被調用系統外部強制執行，而非依賴智能體的自我約束。現實中存在三种常見失敗模式：增量範圍擴張（逐步授權導致無人明确批准的整體組合）、範圍推斷（動態查詢可用能力，可被恶意上下文欺骗）、工具組合範圍漂洗（將已授權的原語組合為未被授權的整體行動）。正確設計要求將範圍视為密碼學承諾：由配置權威機構簽名，綁定智能體身份，下游系統驗證后方可執行。硬件根信任防止運行時範圍篡改；量子安全簽名防止範圍令牌偽造；在照護環境中，未經精确定義的範圍是設計失誤，危害真實而直接。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/zht/blog/">&larr; 全部文章</a>
+        <a href="/zht/blog/rollback-problem.html">下一篇：回滾問題 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema do ataque de repetição: porque agentes de AI não conseguem verificar que uma credencial está a ser usada pela primeira vez — Asaptic Labs</title>
+  <meta name="description" content="Uma credencial válida apresentada a um agente de AI não prova que esteja a ser usada pela primeira vez, pela parte correta e no contexto correto. Resistência a repetição é condição de responsabilização." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/replay-attack-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/replay-attack-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/replay-attack-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/replay-attack-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/replay-attack-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/replay-attack-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema do ataque de repetição: porque agentes de AI não conseguem verificar que uma credencial está a ser usada pela primeira vez" />
+  <meta property="og:description" content="Uma credencial válida apresentada a um agente de AI não prova que esteja a ser usada pela primeira vez, pela parte correta e no contexto correto. Resistência a repetição é condição de responsabilização." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/replay-attack-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-05-24" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {"@context":"https://schema.org","@type":"Article","headline":"O problema do ataque de repetição: porque agentes de AI não conseguem verificar que uma credencial está a ser usada pela primeira vez","description":"Uma credencial válida apresentada a um agente de AI não prova que esteja a ser usada pela primeira vez, pela parte correta e no contexto correto. Resistência a repetição é condição de responsabilização.","url":"https://asaptic.com/pt/blog/replay-attack-problem.html","author":{"@type":"Organization","name":"Asaptic Labs"},"publisher":{"@type":"Organization","name":"Asaptic Labs","url":"https://asaptic.com"},"datePublished":"2026-05-24","dateModified":"2026-06-14","mainEntityOfPage":"https://asaptic.com/pt/blog/replay-attack-problem.html","inLanguage":"pt","potentialAction":{"@type":"Action","name":"Contactar a Asaptic","target":[{"@type":"EntryPoint","urlTemplate":"https://asaptic.com/pt/engage.html","contentType":"application/json","description":"MCP server, tool: submit_rfq"},{"@type":"EntryPoint","urlTemplate":"mailto:engage@asaptic.com","description":"Contactar por e-mail"}]}} ,
+    {"@context":"https://schema.org","@type":"BreadcrumbList","inLanguage":"pt","itemListElement":[{"@type":"ListItem","position":1,"name":"Início","item":"https://asaptic.com/pt/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://asaptic.com/pt/blog/"},{"@type":"ListItem","position":3,"name":"O problema do ataque de repetição","item":"https://asaptic.com/pt/blog/replay-attack-problem.html"}]}
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic,.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-header{margin-bottom:0}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date,.essay-meta span{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px;background:rgba(0,200,150,.02)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:15px;line-height:1.65;color:var(--gray);margin:0}.essay-nav,.essay-footer-wrap{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a,.essay-footer-back{transition:opacity .2s;color:var(--accent)}.essay-nav a:hover,.essay-footer-back:hover{opacity:.7}.essay-footer-byline{color:var(--gray-dim)}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav,.essay-footer-wrap{flex-direction:column}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× SEGURANÇA QUÂNTICA × HARDWARE × CUIDADOS NO MUNDO FÍSICO</span>
+      <h1 class="essay-title">O problema do ataque de repetição: porque agentes de AI não conseguem verificar que uma credencial está a ser usada pela primeira vez</h1>
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-05-24</span><span class="essay-date">5 min de leitura</span></div>
+      <div class="essay-body">
+        <p>Um agente de AI que recebe uma credencial válida aprendeu apenas uma coisa: a credencial foi emitida validamente em algum momento no passado. Não aprendeu que está a ser usada agora pela entidade correta, no contexto pretendido, pela primeira vez. Validade e frescura são propriedades diferentes, mas a maioria das pilhas de credenciais de agentes confunde-as.</p>
+        <h2>Porque agentes de AI são particularmente vulneráveis</h2>
+        <p>Um ataque de repetição explora esta lacuna. Um adversário captura uma credencial legítima, como token de autorização, registo de consentimento assinado, relatório de atestação ou cookie de sessão, e apresenta-a mais tarde ou noutro contexto. A assinatura valida. O emissor é legítimo. A credencial está apenas velha, nas mãos erradas ou a ser usada depois de dever ter expirado.</p>
+        <h2>A dimensão pós-quântica</h2>
+        <p>Os protocolos de rede tradicionais acumularam décadas de engenharia contra repetição: sessões curtas, nonces de desafio-resposta, rotação de tokens OAuth e janelas TOTP. Funcionam porque a camada de protocolo aplica essas proteções antes de a aplicação ver a credencial. Agentes de AI consomem credenciais também a partir de documentos, emails, memórias, respostas de API e saídas de ferramentas. A resistência a repetição tem de ser aplicada na camada de decisão do agente.</p>
+        <h2>A dimensão da atestação de hardware</h2>
+        <p>Com a transição criptográfica, o problema intensifica-se. Algoritmos pós-quânticos aumentam resistência a falsificação, mas não tornam uma credencial automaticamente fresca. Uma credencial assinada por esquema pós-quântico continua a ser apenas uma credencial assinada. Ela deve estar vinculada a nonce, sessão específica e finalidade específica.</p>
+        <h2>A dimensão dos cuidados no mundo físico</h2>
+        <p>A atestação de hardware também é repetível. Um relatório legítimo capturado pode ser apresentado como se fosse atestação viva. O agente dependente deve emitir um desafio, exigir que o relatório cubra esse nonce e rejeitar relatórios sem vínculo de frescura ou fora de uma janela estreita.</p>
+        <h2>A resposta de desenho</h2>
+        <p>Em cuidados, a repetição aparece como autorizado mas obsoleto. Um consentimento assinado pode ser real e ainda assim já não representar o momento clínico atual. Autorizações de medicação, diretivas antecipadas ou planos de cuidado podem tornar-se inválidos pela alteração do estado da pessoa.</p>
+        <p>A resposta exige três elementos: cada credencial de autorização deve levar nonce, expiração apertada ou ambos dentro da assinatura; agentes devem desafiar antes de aceitar atestações; e autorizações de cuidado devem ter janelas calibradas à volatilidade clínica, com reautorização obrigatória quando expiram. Uma credencial válida é uma afirmação sobre o passado. Um agente que atua no presente precisa de prova de que esse passado ainda é presente.</p>
+      </div>
+      <div class="essay-nav"><a href="/pt/blog/">&larr; Todos os ensaios</a><a href="/pt/engage.html">Contato &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>
