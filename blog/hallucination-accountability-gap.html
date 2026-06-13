@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The hallucination accountability gap — Asaptic Labs</title>
+
+  <meta name="description" content="When AI agents take consequential physical-world actions based on confidently stated false information, the responsibility for those actions is structurally diffuse in ways that standard accountability frameworks are not designed to resolve." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/hallucination-accountability-gap.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The hallucination accountability gap: accountability when AI agents act on confidently stated false information in physical-world contexts" />
+  <meta property="og:description" content="Cryptographic attestation verifies system integrity, not semantic accuracy. In physical-world care contexts, this gap is not academic — it is the gap between a verified system and a correct one." />
+  <meta property="og:url" content="https://asaptic.com/blog/hallucination-accountability-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-11" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The hallucination accountability gap: accountability when AI agents act on confidently stated false information in physical-world contexts",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-11",
+    "description": "When AI agents take consequential physical-world actions based on confidently stated false information, the responsibility for those actions is structurally diffuse in ways that standard accountability frameworks are not designed to resolve.",
+    "url": "https://asaptic.com/blog/hallucination-accountability-gap.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security · × Hardware · × Physical-World Care</div>
+      <h1 class="essay-title">The hallucination accountability gap: accountability when AI agents act on confidently stated false information in physical-world contexts</h1>
+      <p class="essay-subtitle">Cryptographic attestation verifies system integrity, not semantic accuracy. In physical-world care contexts, this gap is not academic — it is the gap between a verified system and a correct one, and the distance between them can be measured in harm.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-11</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>A care agent receives a question about a patient's drug interaction. It answers confidently, completely, and incorrectly. The family follows the guidance. Harm results. Who is accountable?</p>
+
+        <p>This is the hallucination accountability gap: when an AI agent takes a consequential physical-world action based on information it generated with confidence but without factual basis, the responsibility for that action is structurally diffuse in ways that standard accountability frameworks are not designed to resolve.</p>
+
+        <h2>The structure of the gap</h2>
+        <p>Hallucination is not deception. An AI agent that produces false information with confidence has not violated its authorization envelope — it has not exceeded its permitted scope, acted against its instructions, or been tampered with. It has operated exactly as authorized. It has simply been wrong.</p>
+
+        <p>This creates a fundamental accountability problem. The developer who built the model is not responsible for the specific false output — the model was trained to the best available standard. The deployer who configured the agent is not responsible — the configuration was correct. The operator who approved the deployment is not responsible — the approval was appropriate. The agent itself has no standing as an accountable party. And yet harm occurred.</p>
+
+        <p>The gap exists because accountability frameworks are built around authorization: who permitted what, who acted within or outside those permissions, who should have prevented it. Hallucination slips through because it is authorized behavior producing unauthorized consequences. Every party in the accountability chain acted correctly relative to its role, and the outcome was still wrong.</p>
+
+        <h2>The post-quantum security crossing</h2>
+        <p>Post-quantum cryptography addresses the integrity and authenticity of AI systems. Hardware attestation can verify that model weights have not been tampered with, that the execution environment is the one the deployer authorized, that outputs are signed by the system the principal intended to deploy. None of this addresses factual accuracy.</p>
+
+        <p>A perfectly attested model can produce confidently false outputs with full cryptographic integrity. The signature over the output confirms that this authorized system produced this output — not that the output is correct. Post-quantum trust infrastructure answers questions about identity and integrity; it does not answer questions about truth. The transition to quantum-resistant cryptography strengthens the accountability architecture for every layer of the system except the one that generates the content principals actually act on.</p>
+
+        <p>This is not a criticism of post-quantum attestation — it is a structural observation about the scope of what cryptographic verification can achieve. A system designed for physical-world deployment must address both layers explicitly, not assume that integrity implies accuracy.</p>
+
+        <h2>The hardware crossing</h2>
+        <p>Hardware roots of trust establish that the system executing the model is the one the principal deployed, and that its software has not been modified. They do not constrain what the model may say. The hardware boundary guarantees execution integrity; the semantic boundary — what the model may truthfully assert — is not a hardware property and is not amenable to hardware enforcement.</p>
+
+        <p>This creates a meaningful implication for physical AI deployment. A system embedded in medical monitoring infrastructure, building management, or assistive care equipment with a verified hardware attestation chain and a confidently false factual output is, from an accountability perspective, exactly as problematic as a system whose attestation chain has been compromised. The harm is identical. The responsible parties are structurally different, and the accountability tools available for each failure mode are not interchangeable.</p>
+
+        <p>Hardware attestation tells you that the right system produced the output. The hallucination accountability gap is about what to do when the right system produces the wrong output — and the current answer, across most deployed architectures, is unclear.</p>
+
+        <h2>The physical-world care crossing</h2>
+        <p>Care environments are particularly exposed to the hallucination accountability gap for a specific reason: AI care agents are frequently the authoritative information source for the people they serve. A family member asking a care AI about a medication interaction, a fall risk threshold, or a care protocol may have no practical means of independent verification. The agent's confident response functions as ground truth even when it is not.</p>
+
+        <p>This exposure is compounded by the demographic reality of care settings. Older adults and people with diminishing cognitive capacity are less likely to challenge a confident AI assertion, less likely to seek a second source, and less likely to recognize when a confident output is factually incorrect. The harm reaches the population least equipped to detect and correct it. The accountability claim accumulates before any party in the chain has the information needed to intervene.</p>
+
+        <p>Care AI is also embedded in contexts where human override capacity is structurally limited. An overnight care situation, a moment of medical urgency, a decision point during a cognitive episode — these are exactly the contexts in which AI agents are most valuable and in which the absence of a human verifier is most consequential. The hallucination accountability gap is widest precisely when it matters most.</p>
+
+        <h2>Toward an accountable response</h2>
+        <p>The hallucination accountability gap does not resolve through any existing assignment of responsibility. An accountable response requires structural elements that current deployments rarely include.</p>
+
+        <p>The first is epistemic labeling at the point of output. AI agents operating in high-stakes physical contexts should distinguish between retrieving verified, sourced information and generating outputs from model inference. The distinction is not always implementable with perfect precision — but the attempt changes the accountability claim when the output causes harm. An agent that labels its outputs by epistemic type has created a record of what it was and was not asserting. An agent that does not has left that distinction entirely to post-hoc reconstruction.</p>
+
+        <p>The second is a mandatory verification channel for consequential outputs. In care environments, AI agent outputs that relate to medical, safety, or legal matters should trigger a verification step before action is taken — either a human in the loop, or a second system with a distinct model lineage. The cost of false negatives in a verification gate is lower than the cost of confident false positives reaching an unverified care recipient.</p>
+
+        <p>The third is preserved incident attribution at the model level. When a false output causes harm, the model version, the prompt, the retrieval sources present or absent, and the full output should be preserved as structured evidence. This does not resolve who bears responsibility — that requires normative agreement that does not yet exist — but it makes responsible attribution investigable rather than structurally obscured. Accountability that cannot be reconstructed after the fact is accountability in name only.</p>
+
+        <p>At Asaptic Labs, the hallucination accountability gap is treated as a first-class concern for AI agents operating at any of the three crossings. Cryptographic integrity and factual accuracy are orthogonal properties. A system whose integrity is verified and whose outputs are false has passed every test that attestation can offer and failed the one that matters in the physical world. Designing for that gap is not optional at the points of irreversible consequence.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>The hallucination accountability gap arises because standard accountability frameworks are built around authorization, and hallucination is authorized behavior producing unauthorized consequences. Post-quantum attestation and hardware roots of trust verify system integrity, not semantic accuracy — these are orthogonal properties. In physical-world care contexts, the gap is acutest where it matters most: overnight, during emergencies, and in populations least able to detect a confidently stated falsehood. Closing it requires structural responses at the output layer — epistemic labeling, verification channels, and preserved attribution — not just at the identity and integrity layer.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>一个护理智能体收到关于患者药物相互作用的问题。它给出了自信、完整、却错误的回答。家属遵循了这一指导，造成了伤害。谁应当为此负责？</p>
+
+        <p>这就是幻觉问责缺口：当AI智能体基于自信陈述但缺乏事实依据的信息，在物理世界中采取后果性行动时，该行动的责任以标准问责框架无法解决的方式被结构性地分散。</p>
+
+        <h2>缺口的结构</h2>
+        <p>幻觉不是欺骗。产生虚假信息的AI智能体并未违反其授权范围——它没有超出许可范围、没有违反指令、也未被篡改。它完全按照授权运行，只是出错了。</p>
+
+        <p>这产生了一个根本性的问责难题。构建模型的开发者不对特定的虚假输出负责——模型是按最佳可用标准训练的。配置智能体的部署者不负责——配置是正确的。批准部署的运营方不负责——批准是适当的。智能体本身没有作为问责方的资格。然而伤害发生了。</p>
+
+        <p>这一缺口的存在，是因为问责框架建立在授权之上：谁许可了什么，谁在这些许可范围内或之外行动，谁本应阻止。幻觉之所以能钻空子，是因为它是经过授权的行为产生了未经授权的后果。问责链上的每一方相对于其角色都行动正确，结果依然出错。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>后量子密码学处理AI系统的完整性和真实性。硬件证明可以验证模型权重未被篡改、执行环境是部署者授权的那个，以及输出是由主体意图部署的系统签名的。这些都无法解决事实准确性问题。</p>
+
+        <p>一个经过完美证明的模型可以以完整的密码学完整性产生自信的虚假输出。对输出的签名确认这个授权系统产生了这个输出——而非该输出是正确的。后量子信任基础设施回答关于身份和完整性的问题；它不回答关于真相的问题。向量子抗性密码学的转型强化了系统每个层级的问责架构，唯独不包括生成主体实际依据的内容的那一层。</p>
+
+        <p>这不是对后量子证明的批评——这是关于密码学验证能达到什么范围的结构性观察。为物理世界部署而设计的系统必须明确处理两个层级，而不能假设完整性意味着准确性。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>硬件信任根确立执行模型的系统是主体部署的那个，以及其软件未被修改。它们不约束模型能说什么。硬件边界保证执行完整性；语义边界——模型可以真实断言什么——不是硬件属性，也不适合通过硬件强制执行。</p>
+
+        <p>这对物理AI部署产生了重要影响。一个嵌入医疗监控基础设施、楼宇管理或辅助照护设备的系统，拥有已验证的硬件证明链却产生了自信的虚假事实输出，从问责角度而言，与证明链已被破坏的系统同样有问题。伤害是相同的。责任方在结构上不同，针对每种故障模式可用的问责工具也不可互换。</p>
+
+        <p>硬件证明告诉你正确的系统产生了输出。幻觉问责缺口关于的是当正确的系统产生错误输出时该怎么办——而在大多数已部署架构中，目前的答案并不清晰。</p>
+
+        <h2>物理世界照护交叉点</h2>
+        <p>照护环境对幻觉问责缺口特别脆弱，原因很具体：AI照护智能体通常是其服务对象的权威信息来源。家庭成员向照护AI询问药物相互作用、跌倒风险阈值或照护方案，可能没有实际可行的独立验证手段。智能体自信的回答即使不正确，也被当作真相。</p>
+
+        <p>这种脆弱性因照护环境的人口学现实而加剧。年长者和认知能力下降的人不太可能质疑AI的自信断言，不太可能寻求第二个信息源，也不太可能认识到自信的输出在事实上是错误的。伤害到达了最不善于发现和纠正错误的群体。在问责链上任何人获得干预所需信息之前，问责主张就已经积累。</p>
+
+        <p>照护AI还嵌入在人工覆盖能力结构性受限的场景中。夜间照护情境、医疗紧急时刻、认知插曲期间的决策点——这些恰恰是AI智能体最有价值的场景，也是缺少人工验证者最关键的场景。幻觉问责缺口在最重要的时候恰好最大。</p>
+
+        <h2>迈向问责的回应</h2>
+        <p>幻觉问责缺口无法通过任何现有的责任归属来解决。问责回应需要当前部署中很少包含的结构性要素。</p>
+
+        <p>第一是输出点的认识论标注。在高风险物理场景中运行的AI智能体，应区分检索已验证、有来源的信息，与从模型推断生成输出。这一区别并非总能以完美精度实施——但这一尝试改变了输出造成伤害时的问责主张。按认识论类型标注输出的智能体，创建了关于其所断言和未断言内容的记录。不这样做的智能体，将这一区分完全留给了事后重建。</p>
+
+        <p>第二是针对后果性输出的强制验证渠道。在照护环境中，涉及医疗、安全或法律事项的AI智能体输出，在采取行动前应触发验证步骤——由回路中的人工干预，或由具有不同模型谱系的第二个系统。验证门中假阴性的代价，低于自信的假阳性到达未经验证的照护对象的代价。</p>
+
+        <p>第三是模型层面的事件归因存档。当虚假输出造成伤害时，应将模型版本、提示、存在或缺失的检索来源以及完整输出作为结构化证据保存。这不能解决谁承担责任——这需要目前尚不存在的规范性共识——但使责任归因可调查，而非在结构上被掩盖。无法在事后重建的问责，只是名义上的问责。</p>
+
+        <p>在Asaptic Labs，幻觉问责缺口被视为在三个交叉点任一处运行的AI智能体的头等问题。密码学完整性和事实准确性是正交属性。一个完整性已验证而输出错误的系统，通过了证明所能提供的每一项测试，却在物理世界中最重要的那项测试上失败。在不可逆后果的节点上，针对这一缺口进行设计不是可选项。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>幻觉问责缺口之所以存在，是因为标准问责框架建立在授权之上，而幻觉恰恰是经过授权的行为产生了未经授权的后果。后量子证明和硬件信任根验证系统完整性，而非语义准确性——这是正交属性。在物理世界照护场景中，这一缺口在最重要的地方最为突出：夜间、紧急情况下，以及最不善于识别自信陈述的谬误的群体中。弥合这一缺口需要在输出层——认识论标注、验证渠道和存档归因——进行结构性响应，而不仅是在身份和完整性层。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>一個護理智能體收到關於患者藥物相互作用的問題。它給出了自信、完整、卻錯誤的回答。家屬遵循了這一指導，造成了傷害。誰應當為此負責？</p>
+
+        <p>這就是幻覺問責缺口：當AI智能體基於自信陳述但缺乏事實依據的資訊，在物理世界中採取後果性行動時，該行動的責任以標準問責框架無法解決的方式被結構性地分散。</p>
+
+        <h2>缺口的結構</h2>
+        <p>幻覺不是欺騙。產生虛假資訊的AI智能體並未違反其授權範圍——它沒有超出許可範圍、沒有違反指令、也未被篡改。它完全按照授權運行，只是出錯了。</p>
+
+        <p>這產生了一個根本性的問責難題。構建模型的開發者不對特定的虛假輸出負責——模型是按最佳可用標準訓練的。配置智能體的部署者不負責——配置是正確的。批准部署的運營方不負責——批准是適當的。智能體本身沒有作為問責方的資格。然而傷害發生了。</p>
+
+        <p>這一缺口的存在，是因為問責框架建立在授權之上：誰許可了什麼，誰在這些許可範圍內或之外行動，誰本應阻止。幻覺之所以能鑽空子，是因為它是經過授權的行為產生了未經授權的後果。問責鏈上的每一方相對於其角色都行動正確，結果依然出錯。</p>
+
+        <h2>後量子安全交叉點</h2>
+        <p>後量子密碼學處理AI系統的完整性和真實性。硬件證明可以驗證模型權重未被篡改、執行環境是部署者授權的那個，以及輸出是由主體意圖部署的系統簽名的。這些都無法解決事實準確性問題。</p>
+
+        <p>一個經過完美證明的模型可以以完整的密碼學完整性產生自信的虛假輸出。對輸出的簽名確認這個授權系統產生了這個輸出——而非該輸出是正確的。後量子信任基礎設施回答關於身份和完整性的問題；它不回答關於真相的問題。向量子抗性密碼學的轉型強化了系統每個層級的問責架構，唯獨不包括生成主體實際依據的內容的那一層。</p>
+
+        <p>這不是對後量子證明的批評——這是關於密碼學驗證能達到什麼範圍的結構性觀察。為物理世界部署而設計的系統必須明確處理兩個層級，而不能假設完整性意味著準確性。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>硬件信任根確立執行模型的系統是主體部署的那個，以及其軟件未被修改。它們不約束模型能說什麼。硬件邊界保證執行完整性；語義邊界——模型可以真實斷言什麼——不是硬件屬性，也不適合通過硬件強制執行。</p>
+
+        <p>這對物理AI部署產生了重要影響。一個嵌入醫療監控基礎設施、樓宇管理或輔助照護設備的系統，擁有已驗證的硬件證明鏈卻產生了自信的虛假事實輸出，從問責角度而言，與證明鏈已被破壞的系統同樣有問題。傷害是相同的。責任方在結構上不同，針對每種故障模式可用的問責工具也不可互換。</p>
+
+        <p>硬件證明告訴你正確的系統產生了輸出。幻覺問責缺口關於的是當正確的系統產生錯誤輸出時該怎麼辦——而在大多數已部署架構中，目前的答案並不清晰。</p>
+
+        <h2>物理世界照護交叉點</h2>
+        <p>照護環境對幻覺問責缺口特別脆弱，原因很具體：AI照護智能體通常是其服務對象的權威資訊來源。家庭成員向照護AI詢問藥物相互作用、跌倒風險閾值或照護方案，可能沒有實際可行的獨立驗證手段。智能體自信的回答即使不正確，也被當作真相。</p>
+
+        <p>這種脆弱性因照護環境的人口學現實而加劇。年長者和認知能力下降的人不太可能質疑AI的自信斷言，不太可能尋求第二個資訊源，也不太可能認識到自信的輸出在事實上是錯誤的。傷害到達了最不善於發現和糾正錯誤的群體。在問責鏈上任何人獲得干預所需資訊之前，問責主張就已經積累。</p>
+
+        <p>照護AI還嵌入在人工覆蓋能力結構性受限的場景中。夜間照護情境、醫療緊急時刻、認知插曲期間的決策點——這些恰恰是AI智能體最有價值的場景，也是缺少人工驗證者最關鍵的場景。幻覺問責缺口在最重要的時候恰好最大。</p>
+
+        <h2>邁向問責的回應</h2>
+        <p>幻覺問責缺口無法通過任何現有的責任歸屬來解決。問責回應需要當前部署中很少包含的結構性要素。</p>
+
+        <p>第一是輸出點的認識論標注。在高風險物理場景中運行的AI智能體，應區分檢索已驗證、有來源的資訊，與從模型推斷生成輸出。這一區別並非總能以完美精度實施——但這一嘗試改變了輸出造成傷害時的問責主張。按認識論類型標注輸出的智能體，創建了關於其所斷言和未斷言內容的記錄。不這樣做的智能體，將這一區分完全留給了事後重建。</p>
+
+        <p>第二是針對後果性輸出的強制驗證渠道。在照護環境中，涉及醫療、安全或法律事項的AI智能體輸出，在採取行動前應觸發驗證步驟——由回路中的人工干預，或由具有不同模型譜系的第二個系統。驗證門中假陰性的代價，低於自信的假陽性到達未經驗證的照護對象的代價。</p>
+
+        <p>第三是模型層面的事件歸因存檔。當虛假輸出造成傷害時，應將模型版本、提示、存在或缺失的檢索來源以及完整輸出作為結構化證據保存。這不能解決誰承擔責任——這需要目前尚不存在的規範性共識——但使責任歸因可調查，而非在結構上被掩蓋。無法在事後重建的問責，只是名義上的問責。</p>
+
+        <p>在Asaptic Labs，幻覺問責缺口被視為在三個交叉點任一處運行的AI智能體的頭等問題。密碼學完整性和事實準確性是正交屬性。一個完整性已驗證而輸出錯誤的系統，通過了證明所能提供的每一項測試，卻在物理世界中最重要的那項測試上失敗。在不可逆後果的節點上，針對這一缺口進行設計不是可選項。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>幻覺問責缺口之所以存在，是因為標準問責框架建立在授權之上，而幻覺恰恰是經過授權的行為產生了未經授權的後果。後量子證明和硬件信任根驗證系統完整性，而非語義準確性——這是正交屬性。在物理世界照護場景中，這一缺口在最重要的地方最為突出：夜間、緊急情況下，以及最不善於識別自信陳述的謬誤的群體中。彌合這一缺口需要在輸出層——認識論標注、驗證渠道和存檔歸因——進行結構性響應，而不僅是在身份和完整性層。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-11</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>

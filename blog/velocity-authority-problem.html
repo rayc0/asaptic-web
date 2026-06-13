@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The velocity authority problem — Asaptic Labs</title>
+
+  <meta name="description" content="Physical autonomous systems operating at speed face decision windows that are shorter than any authority verification round-trip. The 'check first' model of accountability breaks down structurally. Accountability relocates from the individual action to the policy authorised at deployment." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/velocity-authority-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The velocity authority problem: accountability when physical autonomous systems must decide before authority can be confirmed" />
+  <meta property="og:description" content="Physical autonomous systems operating at speed face decision windows shorter than any authority verification round-trip. Accountability relocates from the individual action to the policy authorised at deployment." />
+  <meta property="og:url" content="https://asaptic.com/blog/velocity-authority-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-11" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The velocity authority problem: accountability when physical autonomous systems must decide before authority can be confirmed",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-11",
+    "description": "Physical autonomous systems operating at speed face decision windows shorter than any authority verification round-trip. Accountability relocates from the individual action to the policy authorised at deployment.",
+    "url": "https://asaptic.com/blog/velocity-authority-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security · × Hardware · × Physical-World Care</div>
+      <h1 class="essay-title">The velocity authority problem: accountability when physical autonomous systems must decide before authority can be confirmed</h1>
+      <p class="essay-subtitle">Most AI agent accountability frameworks assume a window — however brief — in which the agent can verify its authority before acting. Physical autonomous systems at speed violate this assumption structurally. Accountability does not disappear; it relocates.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-11</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>A drone identifies an obstacle at 40 metres. At its current airspeed it has roughly 200 milliseconds to initiate avoidance. The minimum round-trip latency to a remote command centre is 400 milliseconds. The principal hierarchy — the chain of authority from which the drone derives permission to act — is, in this moment, physically unreachable. The math does not close.</p>
+
+        <p>This is the velocity authority problem: the gap between the time a physical autonomous system needs to decide and the time its authority framework requires to confirm that decision is authorised. It is not a bandwidth problem. More spectrum does not solve it. It is a structural property of physical AI, and it breaks the "check first" accountability model that most agent governance frameworks assume.</p>
+
+        <h2>The structural asymmetry</h2>
+        <p>Software agents have a privilege physical agents do not: they can pause. An agent unsure of its authority can hold, log the uncertainty, and escalate. The state it was reasoning about may persist while review happens. The cost is delay; the benefit is oversight.</p>
+
+        <p>Physical agents operating in the world often cannot pause without the pause itself becoming consequential. A drone that holds before an obstacle does not hover; it continues on its current trajectory. An autonomous vessel waiting for authorisation during a collision avoidance decision is not waiting — it is committing to an outcome. In high-velocity physical systems, the absence of a decision is a decision. The accountability framework must account for this.</p>
+
+        <h2>The post-quantum security crossing</h2>
+        <p>The problem sharpens when authentication must be quantum-resistant. Post-quantum cryptographic schemes add latency relative to classical signatures. For a physical system that must respond in tens of milliseconds, a post-quantum authentication round-trip is not just inconvenient — it creates a structural incentive to bypass the check entirely.</p>
+
+        <p>This is the asymmetry the post-quantum transition introduces for physical AI: the systems that most need strong identity guarantees — those taking irreversible physical actions — are precisely those where the latency cost of providing those guarantees is hardest to absorb. If authentication is designed as a pre-action gate, it will be skipped in the conditions where the stakes are highest.</p>
+
+        <p>The correct response is not faster signatures, though that helps. It is pre-authorising at deployment: embedding post-quantum-attested response policies in the system before it operates, so that no per-action authentication is required at execution time. The signature covers the policy, not the individual act.</p>
+
+        <h2>The hardware crossing</h2>
+        <p>The compute substrate determines what accountability is physically possible. A hardware root of trust that can evaluate an authenticated policy tree in microseconds — without a network round-trip — changes the accountability architecture compared to one that requires a software stack and cloud-side validation.</p>
+
+        <p>Hardware attestation, in this framing, is not only about proving identity. It is about the velocity at which accountability can be exercised. A physical agent with a secure enclave that evaluates pre-authorised behavioural policies at hardware speed is a fundamentally different accountability object than one that depends on an external authority at decision time. The hardware design is the authority architecture. For physical AI, those two things are the same thing.</p>
+
+        <h2>The physical-world care crossing</h2>
+        <p>In care environments, the velocity authority problem takes a less dramatic but more ethically loaded form. A care robot responding to a fall does not have time to confirm consent preferences or escalate to a next-of-kin before beginning a physical assist. The response must begin.</p>
+
+        <p>This is not a failure of consent design; it is an inherent property of care in real time. Care robots operating in high-velocity response scenarios need pre-authorised response trees: standing authorisation, granted at enrolment, that covers the physical actions the agent may need to take without per-event confirmation. The accountability question is not whether confirmation occurred at execution time. It is whether the standing authorisation was well-designed, clearly explained, and subject to meaningful periodic review.</p>
+
+        <h2>Where accountability lives</h2>
+        <p>The velocity authority problem does not eliminate accountability. It relocates it. In physical autonomous systems, the accountable act is not the individual physical decision — the obstacle avoidance, the care assist, the course correction. The accountable act is the design and authorisation of the policy that governed those decisions, executed before the first deployment.</p>
+
+        <p>This shift has practical consequences. It demands more rigorous treatment of policy authorisation at deployment time: who signed off, what scenarios were anticipated, what the limits of the pre-authorised envelope are, and what triggers re-authorisation. It means the engineer who designed the response policy and the operator who accepted it are accountable for every action that policy produces — not in hindsight, but by design.</p>
+
+        <p>At Asaptic Labs, we treat the velocity authority problem as a first-order constraint in physical AI accountability architecture. When the system cannot ask permission, accountability lives in the policy that governs what it does without permission. That policy must be authored, attested, and auditable — and the principals who authorised it must have understood what they were authorising before the hardware left the bench.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>Physical autonomous systems that must act in windows shorter than any authority verification round-trip cannot use the "check first" accountability model. Accountability relocates from the individual action to the policy that governs action without real-time authorisation. That policy must be authored, attested with hardware-rooted post-quantum signatures, and held to the same scrutiny as any other consequential authorisation — before deployment, not after an incident.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>一架无人机在40米处识别到障碍物。以当前空速，它大约有200毫秒来启动规避动作。到达远程指挥中心的最小往返延迟是400毫秒。授权链——无人机行动权限所来自的权威体系——此刻在物理上无法触达。这道数学题无解。</p>
+
+        <p>这就是速度权限问题：物理自主系统做出决策所需的时间，与其授权框架确认该决策已获批准所需的时间之间的缺口。这不是带宽问题，更多的频谱解决不了它。这是物理AI的一个结构性属性，它打破了大多数智能体治理框架所假设的"先验证"问责模型。</p>
+
+        <h2>结构性不对称</h2>
+        <p>软件智能体有一项物理智能体所没有的特权：它们可以暂停。对自身权限不确定的智能体可以等待，记录不确定性，然后上报。它正在推理的状态可以在审查发生期间保持。代价是延迟；收益是监督。</p>
+
+        <p>在现实世界中运行的物理智能体通常无法暂停，因为暂停本身就可能产生后果。在障碍物前停顿的无人机不会悬停；它沿当前轨迹继续飞行。在碰撞规避决策期间等待授权的自主船艇不是在等待——它是在向某个结果承诺。在高速物理系统中，缺乏决策本身就是一个决策。问责框架必须考虑到这一点。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>当认证必须具备量子抗性时，这个问题变得更加尖锐。后量子密码方案相较于经典签名增加了延迟。对于必须在数十毫秒内响应的物理系统，后量子认证往返不仅仅是不方便——它创造了完全绕过检查的结构性激励。</p>
+
+        <p>这是后量子转型为物理AI引入的不对称性：最需要强身份保证的系统——那些采取不可逆物理行动的系统——恰恰是提供这些保证的延迟成本最难消化的系统。如果认证被设计为行动前的门控，它将在风险最高的条件下被跳过。</p>
+
+        <p>正确的应对不是更快的签名，尽管这有帮助。而是在部署时预先授权：在系统运行之前将后量子证明的响应策略嵌入其中，这样执行时就不需要针对每个行动进行认证。签名覆盖的是策略，而不是单个行为。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>计算基底决定了问责在物理上能做到什么。一个能在微秒级别——无需网络往返——评估经认证策略树的硬件信任根，相比需要软件栈和云端验证的系统，改变了问责架构。</p>
+
+        <p>在这个框架下，硬件证明不仅仅是关于证明身份。它是关于问责能够以多快的速度被执行。一个具有安全飞地、能以硬件速度评估预授权行为策略的物理智能体，与依赖决策时外部授权的系统相比，是根本不同的问责对象。硬件设计就是权限架构。对于物理AI，这两者是同一回事。</p>
+
+        <h2>物理世界护理交叉点</h2>
+        <p>在护理环境中，速度权限问题采取了一种不那么戏剧性但道德负荷更重的形式。对跌倒做出响应的护理机器人没有时间在开始物理辅助之前确认同意偏好或上报给近亲。响应必须开始。</p>
+
+        <p>这不是同意设计的失败；这是实时护理的固有属性。在高速响应场景中运行的护理机器人需要预授权响应树：在注册时授予的常设授权，涵盖智能体可能需要在不经每次事件确认的情况下采取的物理行动。问责问题不在于执行时是否发生了确认，而在于常设授权是否设计良好、解释清楚、并经过有意义的定期审查。</p>
+
+        <h2>问责住在哪里</h2>
+        <p>速度权限问题不会消除问责，它只是重新定位了问责。在物理自主系统中，可问责的行为不是单个物理决策——障碍规避、护理辅助、航向修正。可问责的行为是在首次部署之前对规范这些决策的策略进行设计和授权。</p>
+
+        <p>这种转变有实际后果。它要求在部署时对策略授权进行更严格的处理：谁签字批准、预期了哪些场景、预授权范围的限制是什么、什么触发重新授权。这意味着设计响应策略的工程师和接受它的运营商，对该策略产生的每个行为负责——不是事后的，而是通过设计的。</p>
+
+        <p>在Asaptic Labs，我们将速度权限问题视为物理AI问责架构中的第一优先约束。当系统无法请求许可时，问责就在于规范其无需许可行事的策略中。该策略必须被撰写、经过证明并可审计——授权该策略的主体必须在硬件离开工作台之前理解他们授权了什么。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>必须在任何授权验证往返窗口内行动的物理自主系统，无法使用"先验证"问责模型。问责从单个行动转移到规范无实时授权行动的策略上。该策略必须被撰写、以硬件根后量子签名证明，并受到与任何其他重大授权同等的审查——在部署前，而非事故后。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>一架無人機在40米處識別到障礙物。以當前空速，它大約有200毫秒來啟動規避動作。到達遠程指揮中心的最小往返延遲是400毫秒。授權鏈——無人機行動權限所來自的權威體系——此刻在物理上無法觸達。這道數學題無解。</p>
+
+        <p>這就是速度權限問題：物理自主系統做出決策所需的時間，與其授權框架確認該決策已獲批准所需的時間之間的缺口。這不是頻寬問題，更多的頻譜解決不了它。這是物理AI的一個結構性屬性，它打破了大多數智能體治理框架所假設的「先驗證」問責模型。</p>
+
+        <h2>結構性不對稱</h2>
+        <p>軟件智能體有一項物理智能體所沒有的特權：它們可以暫停。對自身權限不確定的智能體可以等待，記錄不確定性，然後上報。它正在推理的狀態可以在審查發生期間保持。代價是延遲；收益是監督。</p>
+
+        <p>在現實世界中運行的物理智能體通常無法暫停，因為暫停本身就可能產生後果。在障礙物前停頓的無人機不會懸停；它沿當前軌跡繼續飛行。在碰撞規避決策期間等待授權的自主船艇不是在等待——它是在向某個結果承諾。在高速物理系統中，缺乏決策本身就是一個決策。問責框架必須考慮到這一點。</p>
+
+        <h2>後量子安全交叉點</h2>
+        <p>當認證必須具備量子抗性時，這個問題變得更加尖銳。後量子密碼方案相較於經典簽名增加了延遲。對於必須在數十毫秒內響應的物理系統，後量子認證往返不僅僅是不方便——它創造了完全繞過檢查的結構性激勵。</p>
+
+        <p>這是後量子轉型為物理AI引入的不對稱性：最需要強身份保證的系統——那些採取不可逆物理行動的系統——恰恰是提供這些保證的延遲成本最難消化的系統。如果認證被設計為行動前的門控，它將在風險最高的條件下被跳過。</p>
+
+        <p>正確的應對不是更快的簽名，儘管這有幫助。而是在部署時預先授權：在系統運行之前將後量子證明的響應策略嵌入其中，這樣執行時就不需要針對每個行動進行認證。簽名覆蓋的是策略，而不是單個行為。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>計算基底決定了問責在物理上能做到什麼。一個能在微秒級別——無需網絡往返——評估經認證策略樹的硬件信任根，相比需要軟件棧和雲端驗證的系統，改變了問責架構。</p>
+
+        <p>在這個框架下，硬件證明不僅僅是關於證明身份。它是關於問責能夠以多快的速度被執行。一個具有安全飛地、能以硬件速度評估預授權行為策略的物理智能體，與依賴決策時外部授權的系統相比，是根本不同的問責對象。硬件設計就是權限架構。對於物理AI，這兩者是同一回事。</p>
+
+        <h2>物理世界護理交叉點</h2>
+        <p>在護理環境中，速度權限問題採取了一種不那麼戲劇性但道德負荷更重的形式。對跌倒做出響應的護理機械人沒有時間在開始物理輔助之前確認同意偏好或上報給近親。響應必須開始。</p>
+
+        <p>這不是同意設計的失敗；這是實時護理的固有屬性。在高速響應場景中運行的護理機械人需要預授權響應樹：在注冊時授予的常設授權，涵蓋智能體可能需要在不經每次事件確認的情況下採取的物理行動。問責問題不在於執行時是否發生了確認，而在於常設授權是否設計良好、解釋清楚、並經過有意義的定期審查。</p>
+
+        <h2>問責住在哪裡</h2>
+        <p>速度權限問題不會消除問責，它只是重新定位了問責。在物理自主系統中，可問責的行為不是單個物理決策——障礙規避、護理輔助、航向修正。可問責的行為是在首次部署之前對規範這些決策的策略進行設計和授權。</p>
+
+        <p>這種轉變有實際後果。它要求在部署時對策略授權進行更嚴格的處理：誰簽字批准、預期了哪些場景、預授權範圍的限制是什麼、什麼觸發重新授權。這意味著設計響應策略的工程師和接受它的運營商，對該策略產生的每個行為負責——不是事後的，而是通過設計的。</p>
+
+        <p>在Asaptic Labs，我們將速度權限問題視為物理AI問責架構中的第一優先約束。當系統無法請求許可時，問責就在於規範其無需許可行事的策略中。該策略必須被撰寫、經過證明並可審計——授權該策略的主體必須在硬件離開工作台之前理解他們授權了什麼。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>必須在任何授權驗證往返窗口內行動的物理自主系統，無法使用「先驗證」問責模型。問責從單個行動轉移到規範無實時授權行動的策略上。該策略必須被撰寫、以硬件根後量子簽名證明，並受到與任何其他重大授權同等的審查——在部署前，而非事故後。</p>
+      </div>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-11</span>
+      <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
+    </div>
+  </main>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
