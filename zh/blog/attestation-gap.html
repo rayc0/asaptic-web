@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>验证差距：AI 智能体为何需要硬件根身份 — Asaptic Labs</title>
+  <meta name="description" content="大多数已部署的 AI 智能体可以出示凭证，但无法证明自身就是所声称的软件、运行在所声称的硬件上。硬件验证填补了这一差距——在后果严重的领域，这一点至关重要。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/attestation-gap.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/attestation-gap.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/attestation-gap.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/attestation-gap.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/attestation-gap.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/attestation-gap.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="验证差距：AI 智能体为何需要硬件根身份" />
+  <meta property="og:description" content="大多数已部署的 AI 智能体可以出示凭证，但无法证明自身就是所声称的软件、运行在所声称的硬件上。硬件验证填补了这一差距。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/attestation-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "验证差距：AI 智能体为何需要硬件根身份",
+      "description": "大多数已部署的 AI 智能体可以出示凭证，但无法证明自身就是所声称的软件、运行在所声称的硬件上。硬件验证填补了这一差距——在后果严重的领域，这一点至关重要。",
+      "url": "https://asaptic.com/zh/blog/attestation-gap.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/attestation-gap.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "向 Asaptic 提交采购 RFQ",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件发送规格简报"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "验证差距", "item": "https://asaptic.com/zh/blog/attestation-gap.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子计算 × 物理 AI</span>
+      <h1 class="essay-title">验证差距：AI 智能体为何需要硬件根身份</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div style="border-left:3px solid #29B6F6;padding:1em;background:#f0f8ff;margin:1.5em 0;color:#1a1a2e;">
+        <p style="margin:0;font-size:15px;line-height:1.7;">&#128221; <strong>更新（2026-05-21）：</strong> Asaptic Labs 现已采用四个交叉口框架——量子计算、物理 AI、智能原生企业、照护 AI。详见 <a href="/crossings">/crossings</a>。本文基于此前的三交叉口结构撰写；所涉及交叉口的论点仍然有效。</p>
+      </div>
+      <div class="essay-body">
+        <p>大多数已部署的 AI 智能体存在一个命名不当的身份问题。它们可以出示凭证——API 密钥、会话令牌、签名断言——但这些凭证只能证明持有签名材料的人发出了请求。它无法证明运行智能体的软件就是其所声称的软件，无法证明软件所在的硬件未被篡改，也无法证明执行环境与被评估、批准和信任的状态相符。从"我持有有效凭证"到"我就是所声称的，运行在所声称的地方，处于被授权的状态"之间的差距，就是验证差距。今天大多数智能体部署都落在这个差距之中，且不自知。</p>
+
+        <h2>硬件验证真正提供了什么</h2>
+        <p>硬件验证是对这一差距的工程回应。硬件验证机制——可信平台模块、安全飞地、带有度量启动链的硬件安全模块——生成一个经密码学签名的声明：特定软件以特定配置哈希运行在特定硬件上，处于特定固件状态。该声明由存储在硬件本身中的密钥签名，运行于其上的软件无法提取该密钥。如果验证链完整，依赖方有充分理由相信关于智能体执行上下文的陈述；如果验证链断裂——因为软件被修改、固件被回滚、或硬件并非其所声称——该断裂是可检测的。</p>
+        <p>这与仅凭软件的身份声明有本质区别。JWT 只证明知道密钥的人签署了它；硬件验证报告则证明特定二进制文件以特定度量配置运行在特定硬件上，该硬件具有可追溯到已知制造商的可验证监管链。这一差异至关重要，因为在后果严重领域中，智能体面临的威胁模型既包括凭证盗窃，也包括供应链攻击——而硬件验证能以纯软件方法无法做到的方式应对后者。</p>
+
+        <h2>与三个关键领域的交叉</h2>
+        <p>硬件验证恰好处于两个关键领域的交叉点：× 硬件领域涉及与物理系统接口的智能体；× 安全领域涉及智能体身份、凭证委托和审计完整性的密码学基础。没有硬件验证，智能体的身份声明只是软件断言，而软件断言永远弱于硬件根断言。</p>
+        <p>对于 × 物理世界照护领域，这一影响更为直接。接受智能体辅助决策支持的照护机构有义务知道其运行的智能体就是经过评估、批准并承担责任的智能体——而非评估后更新的版本，也非与测试版本存在偏差的配置。硬件验证结合配置管理和度量启动链，使这种保证在部署时而非仅在评估时成为可能。</p>
+
+        <h2>量子维度与关闭差距</h2>
+        <p>当前的验证方案依赖经典非对称密码学——RSA 或椭圆曲线签名，密钥存储在硬件中。随着后量子过渡的推进，这些方案需要迁移。由于相关签名密钥存在于无法通过软件简单重新生成的硬件中，这一迁移比大多数密码学应用更为困难。未针对算法敏捷性设计的验证基础设施将难以在合理时间内完成迁移。在迁移压力到来之前构建敏捷性，是现在就应着手的工作。</p>
+        <p>硬件验证不是研究项目——标准已存在，硬件已存在，工具链已存在。缺失的是将验证作为运营信任前提条件的规范，而非将软件凭证视为充分条件。关闭验证差距不需要新科学，而需要以关键基础设施对待硬件身份的同等严肃态度对待智能体身份：不是部署后的锦上添花，而是任何后果发生之前信任所依赖的最低条件。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/quantum-agent-identity.html">延伸阅读：量子转型中的智能体身份 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

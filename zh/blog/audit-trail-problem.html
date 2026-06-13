@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>审计轨迹问题：抗篡改记录是底线，而非上限 — Asaptic Labs</title>
+  <meta name="description" content="AI 智能体的问责框架假设日志存在，却几乎未说明这些日志是否可被信任。抗篡改、硬件根植、后量子签名记录才是问责底线——而大多数部署尚未达到这一标准。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/audit-trail-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/audit-trail-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/audit-trail-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/audit-trail-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/audit-trail-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/audit-trail-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="审计轨迹问题：抗篡改记录是底线，而非上限" />
+  <meta property="og:description" content="问责框架假设日志存在，却几乎未说明这些日志是否可被信任。抗篡改记录是智能体问责的底线。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/audit-trail-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "审计轨迹问题：抗篡改记录是底线，而非上限",
+      "description": "AI 智能体的问责框架假设日志存在，却几乎未说明这些日志是否可被信任。抗篡改、硬件根植、后量子签名记录才是问责底线——而大多数部署尚未达到这一标准。",
+      "url": "https://asaptic.com/zh/blog/audit-trail-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/audit-trail-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "向 Asaptic 提交采购 RFQ",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件发送规格简报"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "审计轨迹问题", "item": "https://asaptic.com/zh/blog/audit-trail-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 × 硬件 × 人类照护</span>
+      <h1 class="essay-title">审计轨迹问题：抗篡改记录是底线，而非上限</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>AI 智能体治理的问责语言中，充满了关于监督与审查的保证：日志将被保留，行动将被记录，审计将成为可能。这些表述是必要的——但还不够充分。它们告诉我们记录存在，却几乎没有说明这些记录是否可以被信任。</p>
+        <p>大多数问责框架背后隐藏着一个假设：日志的存在等同于证据的可用性。在正常情况下，这个假设无害。在有争议的情况下，它失效了。而最可能引发争议的，恰恰是问责最为关键的时刻。</p>
+
+        <h2>篡改证明差距</h2>
+        <p>日志的价值取决于其完整性。一个自己记录行动的智能体，与一个其记录无法事后被篡改的智能体，是完全不同的两回事。这一区别至关重要，因为最有动机篡改审计记录的一方——运营方，或在运营方指令下行事的智能体本身——通常也是控制存储记录基础设施的一方。</p>
+        <p>篡改证明差距，是"记录存在"与"记录可被独立核实"之间的距离。这是问责悄然失效之处。存储于运营方控制数据库中的审计轨迹，在正常情况下提供可见性，在有争议时什么也提供不了。独立审计真正起作用的，恰恰是运营方陈述受到质疑的场合——而自我证明的记录无法化解这种争议，它只是以格式化的方式重申了运营方的立场。</p>
+
+        <h2>后量子维度</h2>
+        <p>当前抗篡改的最佳实践依赖密码学签名：日志条目以私钥签名，任何篡改都会使签名失效，公钥充当验证锚点。这在经典威胁模型下是可靠的，在后量子模型下则不然。</p>
+        <p>智能体今天积累的记录，未来数年可能面临质疑——而那时，具备量子能力的对手可以伪造历史数据上的经典数字签名。如果这些记录在十年后仍具意义，那么今天以 RSA 或 ECDSA 签名的审计轨迹，并不是可靠的长期问责工具。解决这一漏洞的标准，是在创建时即以抗量子算法签名，使记录在未来的密码学攻击下仍能抵御伪造。这一标准已经存在，但在智能体系统中尚未成为默认配置。</p>
+        <p>在后量子安全这一关键节点，这是一个主动设计要求。在受监管环境中运作的智能体——安全基础设施、金融系统、健康档案——正在生成今天的记录，这些记录将在具有漫长时间跨度的法律或监管程序下被审查。推迟签名升级，是一种主动选择接受不可验证记录的决定。</p>
+
+        <h2>硬件作为锚点</h2>
+        <p>最强形式的抗篡改日志，将记录根植于硬件。硬件安全模块或可信执行环境，可以用从未离开安全边界的密钥对日志条目进行签名，该密钥在制造时即经过证明，其证明链可以由任何持有根证书的方来核实。这不是理论能力——它是成熟密钥管理基础设施已经提供的功能。差距在于，智能体部署很少将其列为要求。</p>
+        <p>硬件根植的审计轨迹能做到纯软件日志无法做到的三件事：使签名密钥可证明地独立于智能体和运营方，防止任何一方悄然改写历史；使签名时间可在不依赖系统时钟（系统时钟可被操控）的情况下得到核实；使记录具有可携带性——任何持有证明证书的方都可以核实记录，无需信任其所在的基础设施。倡导者、监管者或法院可以自行核查记录，而无需请求运营方代为操作。</p>
+
+        <h2>照护场景：完整性与可访问性</h2>
+        <p>对于在现实世界照护场景中运作的智能体，审计轨迹的完整性不是工程偏好，而是所有受其影响之人信任的前提——住客、家属、指定倡导者、监督机构，以及可能在数月乃至数年后审查相关决定的监管者。</p>
+        <p>照护场景揭示了超越抗篡改之外的两项要求。第一是完整性。记录智能体完成了一项任务，与记录智能体观察到了什么、评估了哪些选项、决定不做什么以及决策依据是什么，是截然不同的两件事。只有结果记录而无推理过程记录的审计轨迹，不是问责工具，而只是收据——可以确认某事发生了，却无从评判它是否应当发生。</p>
+        <p>第二项要求是可访问性。只有运营方能读取的抗篡改记录，只服务于运营方。对于照护领域的智能体，审计记录必须能被与运营方毫无关系的人独立读取——持有授权书的家属成员、患者倡导者、指定检查员。这并非隐私与问责之间的权衡。审计访问可以被界定权限范围。设计要求是：记录架构从一开始就使独立访问成为可能，而非在争议出现后才亡羊补牢。</p>
+
+        <h2>弥合差距需要什么</h2>
+        <p>由此引出三项要求。第一，高后果领域的审计记录，必须在创建时以抗量子算法签名。现在明确这一要求的成本微乎其微；事后发现十年的智能体审计记录在密码学上可被伪造的代价则无法估量。</p>
+        <p>第二，智能体审计记录的签名密钥，应生成并存储于硬件中，且证明链独立于运营方。硬件安全模块是商用组件，技术壁垒并不存在——缺失的是明确的要求。</p>
+        <p>第三，对于照护等高风险领域，审计记录格式必须规定内容，而不只是规定存在。一份记录决策已发生但未记录所考虑的替代方案及选择依据的日志，不是完整的问责记录。记录中必须包含什么，其标准应由依赖该记录的人——倡导者、家属、监管者——来设定，而不是由创建记录的运营方来决定。</p>
+        <p>抗篡改记录是智能体问责的底线。这一领域的问题在于：我们何时才能停止把底线当作上限。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/specification-gap.html">延伸阅读：规范差距 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
