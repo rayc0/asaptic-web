@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da admissibilidade da prova: responsabilizacao quando registos de agentes de AI chegam ao tribunal — Asaptic Labs</title>
+  <meta name="description" content="Os registos de responsabilizacao de agentes de AI foram desenhados para supervisao operacional. Processos judiciais exigem prova mais resistente: proveniencia, integridade e interpretacao que possam ser contestadas por uma parte adversarial." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/evidence-admissibility-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/evidence-admissibility-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/evidence-admissibility-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/evidence-admissibility-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/evidence-admissibility-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/evidence-admissibility-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da admissibilidade da prova: responsabilizacao quando registos de agentes de AI chegam ao tribunal" />
+  <meta property="og:description" content="Gerar um log e produzir prova admissivel sao atividades diferentes. A arquitetura de responsabilizacao de agentes de AI foi desenhada para revisao operacional, nao para contestacao adversarial de terceiros." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/evidence-admissibility-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema da admissibilidade da prova: responsabilizacao quando registos de agentes de AI chegam ao tribunal",
+      "description": "Os registos de responsabilizacao de agentes de AI foram desenhados para supervisao operacional. Processos judiciais exigem prova mais resistente: proveniencia, integridade e interpretacao que possam ser contestadas por uma parte adversarial.",
+      "url": "https://asaptic.com/pt/blog/evidence-admissibility-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/evidence-admissibility-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar a Asaptic",
+        "target": [
+          { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/pt/engage.html", "description": "Contactar a Asaptic" },
+          { "@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "Contactar por e-mail" }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "pt",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema da admissibilidade da prova", "item": "https://asaptic.com/pt/blog/evidence-admissibility-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--fg)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1rem;line-height:1.8;color:var(--gray);margin-bottom:20px}.essay-body h2{font-size:1.1rem;font-weight:600;color:var(--fg);margin:40px 0 16px;letter-spacing:.01em}.essay-summary{margin-top:48px;padding:28px 32px;border:1px solid var(--border);border-left:3px solid var(--accent);background:rgba(0,200,150,.02)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.9rem;line-height:1.7;color:var(--gray);margin:0}.essay-footer-wrap{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <header class="essay-header">
+        <div class="essay-tag">x SEGURANCA POS-QUANTICA x HARDWARE x CUIDADOS NO MUNDO FISICO</div>
+        <h1 class="essay-title">O problema da admissibilidade da prova: responsabilizacao quando registos de agentes de AI chegam ao tribunal</h1>
+        <p class="essay-subtitle">Gerar um log e produzir prova admissivel sao atividades diferentes, com requisitos diferentes. A arquitetura de responsabilizacao de agentes de AI foi desenhada para revisao operacional, nao para contestacao adversarial de terceiros.</p>
+        <div class="essay-meta"><span>Asaptic Labs</span><span>2026-06-14</span><span>5 min de leitura</span></div>
+      </header>
+      <div class="essay-body">
+        <p>Quando um agente de AI toma uma decisao consequente, essa decisao e normalmente registada. O log e o registo de responsabilizacao. Tambem e, quando algo corre mal, a prova. Mas gerar um registo e produzir prova admissivel sao atividades diferentes. A arquitetura usada hoje pela maioria dos sistemas de agentes foi desenhada para supervisao operacional, nao para os padroes probatorios que regem processos judiciais.</p>
+        <h2>O que o tribunal precisa e o log nao fornece</h2>
+        <p>Os padroes de prova variam entre jurisdicoes, mas convergem em perguntas que logs normais de agentes nao respondem: quem produziu este registo? E possivel provar que nao foi modificado desde a producao? Qual era o estado do sistema que o produziu? O log esta completo ou omite decisoes tomadas mas nao registadas? Registos operacionais respondem ao que foi feito, quando, em que estado e com que resultado. Nao foram desenhados para serem atacados por uma parte motivada a mostrar que sao incompletos, alterados ou produzidos por um processo diferente do alegado.</p>
+        <h2>A travessia da seguranca pos-quantica</h2>
+        <p>A transicao pos-quantica introduz um problema probatorio severo. Muitos registos de responsabilizacao sao assinados digitalmente; a assinatura e a garantia de integridade. Se o algoritmo usado para assinar o registo for quebrado mais tarde, todos os registos assinados com esse algoritmo tornam-se artefactos contestaveis. Um registo assinado em 2026 com um algoritmo depreciado em 2030 pode ser analisado num processo em 2031, quando a propria assinatura ja esta sob duvida.</p>
+        <p>A dinamica de recolher agora e explorar mais tarde aplica-se diretamente a registos de responsabilizacao. Um adversario que conserve logs assinados ganha alavancagem se o algoritmo de assinatura for quebrado, nao apenas para ler conteudo confidencial, mas para contestar a integridade desses registos em qualquer processo posterior. O remedio exige agilidade algoritmica na propria camada de responsabilizacao: os registos devem transportar assinaturas renovaveis, para que as garantias possam ser atualizadas sem criar duvidas novas sobre alteracao do registo subjacente.</p>
+        <h2>A travessia do hardware</h2>
+        <p>Registos com atestacao de hardware carregam uma declaracao implicita: este registo foi produzido por um sistema com identidade de hardware especifica e verificada. A atestacao e a cadeia de custodia. Mas ela so e tao duravel quanto o componente de seguranca que a produziu. Quando esse componente e comprometido, substituido ou chega ao fim de vida, a declaracao torna-se contestavel.</p>
+        <p>Nesta travessia, os registos de responsabilizacao sao muitas vezes a unica prova do que um agente de dispositivo fez. Nao ha testemunha humana. Pode nao haver registo secundario. Se a atestacao de hardware for contestada e nao puder ser defendida, o registo probatorio colapsa. O ciclo de vida do hardware tem de ser tratado como materia probatoria: documentacao de estado no momento de producao, registos independentes de firmware e certificacao, e substituicoes que preservem a cadeia de custodia.</p>
+        <h2>A travessia dos cuidados no mundo fisico</h2>
+        <p>Em cuidados, decisoes de agentes de AI podem ter de ser avaliadas em litigio medico, investigacao regulatoria ou inquerito, enquanto a interpretacao juridica desses registos ainda esta pouco estabelecida. A diferenca entre decisao e registo, entre estado interno e representacao externa, e entre versao de modelo e contexto de decisao cria perguntas probatorias que uma arquitetura operacional normal nao permite a terceiros responder.</p>
+        <p>Esta travessia tambem tem os prazos probatorios mais longos. Uma decisao de cuidados tomada em 2026 pode ser revista num processo iniciado em 2034. A arquitetura tem de preservar nao so o registo da decisao, mas contexto suficiente: versao do modelo, atualidade dos dados de treino, calibracao de sensores e cadeia de atestacao de hardware. Desenhar para oito anos de prova e diferente de desenhar para uma auditoria operacional seis meses depois.</p>
+        <h2>A lacuna central</h2>
+        <p>A maioria das arquiteturas atuais assume revisores com o mesmo contexto operacional de quem produziu o registo: os mesmos acessos, vocabulario tecnico e pressupostos sobre significado. A revisao adversarial por tribunais, reguladores ou uma contraparte em litigio tem requisitos diferentes. Uma arquitetura que funcione nos dois contextos tem de ser desenhada para o caso mais dificil desde o inicio.</p>
+      </div>
+      <div class="essay-summary"><span class="essay-summary-label">Resumo</span><p>Registos de agentes de AI foram construidos para supervisao operacional por partes que partilham contexto. Processos judiciais impoem revisao adversarial de terceiros. As lacunas principais sao a depreciacao de assinaturas pos-quanticas, eventos de ciclo de vida de hardware que enfraquecem a cadeia de atestacao e prazos longos em cuidados. A durabilidade probatoria tem de ser requisito de desenho, nao remendo posterior.</p></div>
+      <div class="essay-footer-wrap"><span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span><a href="/pt/blog/" class="essay-footer-back">&larr; Voltar ao blog</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

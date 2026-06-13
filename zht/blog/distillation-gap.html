@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>蒸餾間隙：AI智能體壓縮用於硬件部署時的問責 — Asaptic Labs</title>
+  <meta name="description" content="當大型AI模型被壓縮用於邊緣硬件部署時，其平均行為得以保留，但邊界案例行為可能不會。對原始模型的安全評估不能转移到壓縮版本。這就是蒸餾間隙——連接两者的問責鏈通常並不存在。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/distillation-gap.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/distillation-gap.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zht/blog/distillation-gap.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/distillation-gap.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/distillation-gap.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/distillation-gap.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="og:title" content="蒸餾間隙：AI智能體壓縮用於硬件部署時的問責" />
+  <meta property="og:description" content="當大型AI模型被壓縮用於邊緣硬件部署時，其平均行為得以保留，但邊界案例行為可能不會。對原始模型的安全評估不能转移到壓縮版本。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/distillation-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "蒸餾間隙：AI智能體壓縮用於硬件部署時的問責",
+      "description": "當大型AI模型被壓縮用於邊緣硬件部署時，其平均行為得以保留，但邊界案例行為可能不會。對原始模型的安全評估不能转移到壓縮版本。這就是蒸餾間隙——連接两者的問責鏈通常並不存在。",
+      "url": "https://asaptic.com/zht/blog/distillation-gap.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/distillation-gap.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "contentType": "application/json",
+            "description": "聯絡 Asaptic Labs"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯絡"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "蒸餾間隙", "item": "https://asaptic.com/zht/blog/distillation-gap.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-wrap{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× 硬件 × 物理世界照護</div>
+      <h1 class="essay-title">蒸餾間隙：AI智能體壓縮用於硬件部署時的問責</h1>
+      <p class="essay-subtitle">當大型AI模型被壓縮用於醫療設備、照護机器人或患者家中的邊緣處理器時，模型會變小。一個不那麼顯眼的事情也會發生：在原始系統中評估的安全屬性可能在壓縮版本中不再成立。這就是蒸餾間隙——本應弥合它的問責鏈通常並不存在。</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-14</span>
+        <span>6 分鐘閱讀</span>
+      </div>
+    </header>
+
+    <article>
+      <div class="essay-body">
+        <p>"蒸餾"涵盖了一系列技術——量化、知識蒸餾、剪枝、低秩分解——它們有一個共同的實际目標：將為資料中心設計的模型縮小到足以在口袋大小的設備、病房或墙壁插座上運行。這些技術已經成熟，部署的經济效益也很有吸引力。但過渡期間的問責基礎設施尚未跟上。</p>
+
+        <p>核心問題在於：大型模型經過安全評估、邊界測试和系統性對抗性探測，建立了合理的信任基礎。這种評估费用高昂、耗時，且只针對原始模型進行一次。當模型隨後被壓縮用於硬件部署時，壓縮版本是一個不同的模型。在平均情况下，差异不大——如果壓縮谨慎進行，平均行為會被保留。但在邊界處——低概率輸入、新颖的上下文組合、在安全關鍵場景中最重要的邊界案例——壓縮模型可能會以难以預測且很少重新測试的方式偏离原始模型。</p>
+
+        <p>這种差异就是"蒸餾間隙"。它不是任何特定實現中的缺陷，而是模型容量、邊緣部署需求和將两者連接起來的問責鏈之間关系的結構性特徵。</p>
+
+        <h2>為什麼壓縮會改變邊界案例行為</h2>
+        <p>量化會降低模型權重的數值精度，已知這會在訓練資料稀疏覆盖的輸入空間區域中更明顯地影響模型行為。這是因為模型学習的表示在訓練信号最弱的地方最為精細——因此對精度损失也最為敏感。</p>
+
+        <p>物理世界照護恰恰是稀疏覆盖最為关键的领域：不寻常的药物組合、非典型的生命體徵模式、不適合標准分類的照護需求。模型在這些區域的訓練行為本來就很邊緣，壓縮使這些邊緣更加难以預測。</p>
+
+        <p>剪枝存在類似問題。當從模型中去除贡献最小的權重時，"贡献最小"是相對於訓練分佈衡量的。被剪掉的容量在平均水平上可能什麼都没做，但對於正確處理某類狭窄但重要的案例却至关重要。在照護場景中，那類狭窄案例可能是较大模型隱式学習識別的罕見药物相互作用。在硬件安全場景中，可能是智能體被訓練為可疑處理的角落情况韌體状态。剪枝會悄然去除它，標准壓縮流程中没有任何机制來標记某项能力已經丢失——因為流程没有"哪些能力在訓練分佈之外至关重要"這一概念。</p>
+
+        <h2>硬件交叉點：認證與壓縮接缝</h2>
+        <p>在硬件交叉點，AI智能體對物理設備做出或解釋決策——哪些韌體状态是可接受的、哪些感測器讀數值得發出警報、哪些證明是有效的。這些是嵌入在智能體行為中的策略決策，也是部署前最可能被評估和認證的決策。</p>
+
+        <p>蒸餾間隙在認證中造成了一道接缝。原始開發者認證大型模型，硬件集成商壓縮它，照護運营商部署壓縮版本。認證機構審查的是哪個版本？實际上，壓縮模型是在原始認證的權威下部署的，因為重新評估蒸餾模型的成本與評估原始模型相當。原始評估被引用為支持證據，但那是對不同模型的證據。</p>
+
+        <p>這不是假設性的失敗模式。這是預設的操作模式。當部署在醫療硬件上的壓縮模型——即使一次，在低概率邊界案例中——與認證的原始模型行為不同時，認證鏈已在壓縮步骤處断裂。問責基礎設施不會發現這一点，因為它從未被設計為將壓縮视為獨立的問責节点。它將壓縮视為性能優化——從工程角度看確實如此。但從問責角度看，這是模型替换。</p>
+
+        <h2>照護交叉點：在最关键之處悄然失去的能力</h2>
+        <p>在物理世界照護交叉點，蒸餾間隙具有最直接的人類後果。照護智能體恰恰部署在資源不足的場景：從業者太少、照護對象太多、對人類注意力的需求太大。照護智能體應該弥補這些差距。但如果壓縮後的照護智能體悄然失去了處理原始模型已学習的邊界案例的能力——不寻常的表現、罕見的禁忌症、非典型的症状模式——那麼它恰恰失去了資源不足場景最需要的能力。</p>
+
+        <p>照護場景中蒸餾間隙的反常算術在於：壓縮之所以有吸引力，正是因為它能在資源受限的環境中實現部署。但使壓縮有吸引力的資源限制，也是使邊界案例覆盖最為关键的限制。模型在容错空間最小的地方部署，而形式上使其邊界最难以預測。</p>
+
+        <p>照護對象無法检查模型的壓縮参數，無法將部署版本的行為與認證的原始版本進行比较，也没有可靠的方法知道為他們提供建議的智能體是否具備已驗證的邊界案例覆盖——還是在壓縮步骤中悄然丢失了。</p>
+
+        <h2>弥合差距的要求</h2>
+        <p>第一，評估平等。在安全關鍵或照護場景中部署的壓縮模型應該獨立評估，而不是作為原始模型評估的衍生。舉證責任在於壓縮版本——引用原始認證作為證據與拥有已部署模型的證據不同。</p>
+
+        <p>第二，對壓縮過程進行來源證明。正如硬件證明將信任根植於芯片的物理屬性，模型證明應記錄每個壓縮步骤：應用了哪些技術、基於哪种訓練分佈、保真度閾值是什麼、由谁驗證。這不是额外负担——而是使事後問責成為可能的工程記錄。</p>
+
+        <p>第三，範圍限制部署。評估覆盖特定輸入分佈的壓縮模型應只在該分佈内運行，並對分佈外輸入進行明確監控，在检測到時有明確的升级路徑。"此模型针對場景類別X進行了評估；它不應在場景類別Y上自主運行"是一种可部署的約束。缺少這一約束，運营商實际上是在声稱壓縮模型在原始模型所覆盖的全部輸入範圍内都是安全的——而他們通常没有這方面的證據。</p>
+
+        <p>第四，將壓縮步骤在問責鏈中单獨列出。當已部署智能體造成伤害且根本原因可追溯至壓縮引入的行為差异時，"這是原始模型的失敗還是壓縮過程的失敗？"這個問題應有明確答案。目前没有。壓縮步骤應被视為獨立的問責节点，有其自己的文件和責任鏈——而不是作為技術細节被吸收進部署決策中。</p>
+
+        <p>蒸餾間隙在两個严苛部署要求的交叉点上最為关键：將AI能力帶近物理世界的需要，以及這些能力在物理世界後果最為重大的领域必须值得信賴的需要。當照護智能體因壓縮去除了其最需要的邊界案例覆盖而悄然失敗時，這不是理论风险——而是今天可以部署的產品。</p>
+
+        <p>但問責基礎設施尚未就緒。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>當AI模型被壓縮用於邊緣硬件部署時，其平均案例行為得以保留，但邊界案例行為可能不會。對原始模型進行的安全評估不能转移到壓縮版本。在硬件交叉點，這會破坏認證鏈；在照護交叉點，它會悄然去除在資源不足場景中最关键的罕見高後果案例的覆盖。弥合差距需要對壓縮模型進行評估平等、對壓縮過程進行來源證明、範圍限制部署約束，以及將壓縮步骤视為獨立問責节点而非被吸收進部署決策的技術細节。</p>
+      </div>
+    </article>
+
+    <div class="essay-footer-wrap">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zht/blog/" class="essay-footer-back">&larr; 返回博客</a>
+    </div>
+  </main>
+
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>
