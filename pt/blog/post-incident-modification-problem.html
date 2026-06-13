@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da modificação pós-incidente: responsabilização quando a resposta operacional a um evento adverso de IA destrói as evidências necessárias para investigá-lo — Asaptic Labs</title>
+  <meta name="description" content="Quando um agente de IA de cuidados causa um evento adverso, a resposta operacional — atualização de modelo, correção de configuração, atualização de firmware — destrói o estado pré-incidente que uma investigação posterior exige. A destruição é operações padrão. O custo de responsabilização é invisível até deixar de o ser." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/post-incident-modification-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/post-incident-modification-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/post-incident-modification-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/post-incident-modification-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/post-incident-modification-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/post-incident-modification-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da modificação pós-incidente: responsabilização quando a resposta operacional a um evento adverso de IA destrói as evidências necessárias para investigá-lo" />
+  <meta property="og:description" content="Correção operacional e correção probatória não são a mesma propriedade. Um sistema que corrije a falha rapidamente mas apaga o estado pré-incidente cumpriu a sua obrigação operacional e falhou à sua obrigação de responsabilização — e ambas as afirmações são verdadeiras em simultâneo." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/post-incident-modification-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema da modificação pós-incidente: responsabilização quando a resposta operacional a um evento adverso de IA destrói as evidências necessárias para investigá-lo",
+      "description": "Quando um agente de IA de cuidados causa um evento adverso, a resposta operacional — atualização de modelo, correção de configuração, atualização de firmware — destrói o estado pré-incidente que uma investigação posterior exige. A destruição é operações padrão. O custo de responsabilização é invisível até deixar de o ser.",
+      "url": "https://asaptic.com/pt/blog/post-incident-modification-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/post-incident-modification-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "Servidor MCP, ferramenta: engage"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "Enviar mensagem por e-mail"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema da modificação pós-incidente", "item": "https://asaptic.com/pt/blog/post-incident-modification-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contacto</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security · × Hardware · × Physical-World Care</div>
+      <h1 class="essay-title">O problema da modificação pós-incidente: responsabilização quando a resposta operacional a um evento adverso de IA destrói as evidências necessárias para investigá-lo</h1>
+      <p class="essay-subtitle">Correção operacional e correção probatória não são a mesma propriedade. Um sistema que corrije a falha rapidamente mas apaga o estado pré-incidente cumpriu a sua obrigação operacional e falhou à sua obrigação de responsabilização — e ambas as afirmações são verdadeiras em simultâneo.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-14</span>
+        <span>5 min de leitura</span>
+      </div>
+    </header>
+    <div class="essay-body">
+      <p>Um agente de IA de cuidados interpreta incorretamente um sinal fisiológico de um doente e não aciona um alerta de escalada. A equipa de operações, notificada em poucas horas, implementa uma correção de configuração e aciona uma atualização de modelo. Na manhã seguinte, o sistema funciona corretamente. Quando uma revisão formal tem início três semanas depois, o estado pré-incidente do sistema — a versão do modelo, a configuração, o contexto de inferência — já não existe de forma que qualquer investigação possa examinar.</p>
+
+      <p>Este é o problema da modificação pós-incidente: quando a resposta operacional a um evento adverso de IA destrói o estado probatório que uma investigação subsequente exigiria. A destruição não é maliciosa. É operações padrão. E está estruturalmente em conflito com todas as obrigações de responsabilização que o implementador aceitou aquando da implementação.</p>
+
+      <h2>Três modos de destruição de evidências</h2>
+      <p>A destruição de evidências após um evento adverso de IA ocorre em três modos, cada um individualmente defensável.</p>
+
+      <p>O primeiro é a substituição de modelo. Quando um sistema de IA produz um resultado errado, a resposta operacional correta é atualizá-lo — treinar novamente com dados corrigidos, implementar um novo ponto de controlo, mudar para uma versão diferente. O modelo pré-incidente é sobrescrito ou arquivado de formas que nem sempre são reproduzíveis. O modelo exato que produziu o resultado errado pode já não existir num estado executável quando qualquer investigador o solicitar para análise.</p>
+
+      <p>O segundo é a alteração de configuração. Os agentes de IA em cenários do mundo físico produzem frequentemente resultados adversos devido à forma como foram configurados, não por causa de uma falha no modelo subjacente. A engenharia de prompts, os limiares de recuperação, as definições de sensibilidade de alertas, os parâmetros de integração — cada um molda o comportamento sem tocar nos pesos do modelo. Atualizar a configuração após um evento adverso é tão rotineiro que frequentemente não aciona sequer um registo formal de gestão de alterações. A modificação que causou o incidente e a modificação que o corrigiu podem estar separadas por horas e ser indistinguíveis no registo de alterações.</p>
+
+      <p>O terceiro é a rotação de registos e a renovação da infraestrutura. Os registos de eventos que permitiriam a reconstrução — os prompts exatos, o contexto recuperado, os resultados intermédios, o estado do hardware no momento do incidente — estão sujeitos a políticas padrão de retenção de registos concebidas para conveniência operacional, não para investigação adversarial. Em muitas implementações, noventa dias é considerado generoso. O pressuposto operacional é que os registos são para depuração, não para responsabilização. Estes não são o mesmo requisito.</p>
+
+      <h2>A interseção com a segurança pós-quântica</h2>
+      <p>A assinatura criptográfica pós-quântica dos pesos do modelo aborda a adulteração: estabelece que os pesos em produção hoje são os pesos que o programador assinou. Não estabelece se os pesos em produção hoje são os mesmos que estavam a correr no momento do incidente. Uma versão de modelo assinada é um registo fidedigno do estado atual. Não é um registo do histórico de implementação.</p>
+
+      <p>A transição para infraestruturas de assinatura pós-quânticas introduz um risco específico. As organizações que migram para esquemas de assinatura resistentes a quantum frequentemente reassinam artefactos existentes como parte da migração — o que pode romper a cadeia de assinaturas que de outra forma teria preservado o estado no momento do incidente. Uma organização que completou uma migração de infraestrutura de assinatura entre o evento adverso e a investigação pode descobrir que a cadeia probatória que a investigação exige foi interrompida como efeito colateral rotineiro de uma melhoria de segurança legítima.</p>
+
+      <p>A oportunidade é igualmente estrutural. As arquiteturas de assinatura pós-quânticas que estão a ser concebidas e implementadas agora podem incluir requisitos explícitos de preservação do histórico de versões. Um esquema de assinatura concebido para preservar além de verificar — mantendo um histórico inviolável e de só adição do que foi assinado e quando — altera o cálculo probatório para todas as investigações de eventos adversos que se seguem à implementação.</p>
+
+      <h2>A interseção com o hardware</h2>
+      <p>Os sistemas de IA embebidos em ambientes de cuidados físicos — monitorização de cabeceira, dispositivos de assistência, sensores ambientais com camadas de inferência — recebem atualizações de firmware através de infraestruturas de gestão de dispositivos que são automatizadas, mal documentadas ao nível do dispositivo individual e raramente marcadas com precisão temporal suficiente para permitir a atribuição pré/pós-incidente.</p>
+
+      <p>O atestado de hardware verifica que o firmware atual é autêntico e não modificado. Não fornece um registo histórico do firmware que estava a correr no momento do incidente. Quando um dispositivo recebe uma atualização de firmware nas horas que se seguem a um evento adverso — o que é operacionalmente normal, porque um dispositivo que se comportou incorretamente deve ser atualizado — a cadeia de atestado de hardware para o estado pré-incidente é quebrada sem qualquer registo formal de que a quebra ocorreu. O dispositivo está agora correto e atestado. O estado no momento do incidente desapareceu.</p>
+
+      <h2>A interseção com os cuidados do mundo físico</h2>
+      <p>Os ambientes de cuidados criam a maior pressão operacional contra a preservação de evidências. Um coordenador de cuidados que sabe que um sistema de IA se comportou mal e opta por atrasar a correção para preservar um estado pré-incidente para investigação está a tomar uma decisão que todas as normas operacionais de cuidados classificariam como negligência. O dever de proteger os atuais destinatários de cuidados não pode aguardar pela conveniência investigativa.</p>
+
+      <p>Isto cria um problema estrutural que não pode ser resolvido atribuindo-o como falha de qualquer parte individual. O imperativo operacional de corrigir o problema imediatamente está correto. As evidências necessárias para investigar o problema são destruídas na mesma. A investigação prossegue com base em informação degradada, as reclamações de responsabilização são resolvidas na ausência das evidências que as teriam resolvido, e a lição do incidente — a configuração específica ou o comportamento do modelo que causou a falha — pode nunca ser claramente atribuída.</p>
+
+      <p>A assimetria agrava-se com o tempo. Cada evento adverso que não é investigado porque as evidências foram destruídas no curso da remediação contribui para um ambiente de responsabilização em que os implementadores não conseguem demonstrar diligência devida, os investigadores não conseguem reconstruir a causa, e as populações servidas por sistemas de IA de cuidados não podem confiar na responsabilização formal como mecanismo corretivo.</p>
+
+      <h2>Rumo a uma resposta responsável</h2>
+      <p>O problema da modificação pós-incidente não se resolve abrandando a resposta operacional. Resolve-se desacoplando a resposta operacional da preservação de evidências.</p>
+
+      <p>O requisito prático são instantâneos automáticos pré-modificação: antes de qualquer atualização de modelo, alteração de configuração ou implementação de firmware, o sistema captura e preserva o estado pré-modificação num repositório inviolável fora do caminho de atualização operacional. O instantâneo inclui a versão e hash do modelo, parâmetros de configuração, registos estruturados recentes e o estado do firmware de hardware. O repositório é de escrita única e atestado separadamente — a equipa operacional pode atualizar o sistema em produção sem que a atualização toque no estado preservado.</p>
+
+      <p>Este é um requisito de engenharia, não um requisito de política. A política não pode preservar evidências que o sistema nunca foi concebido para reter. O momento de incorporar a preservação de evidências nos sistemas de IA físicos é antes da implementação, quando os requisitos probatórios podem ser concebidos a par dos requisitos operacionais, em vez de descobertos em oposição a eles após o primeiro incidente grave.</p>
+
+      <p>Na Asaptic Labs, o problema da modificação pós-incidente é tratado como um requisito de conceção em cada interseção. A correção operacional e a correção probatória não são a mesma propriedade, e um sistema que aborda apenas a primeira satisfez a sua obrigação operacional enquanto torna as suas obrigações de responsabilização estruturalmente não investigáveis. Nos pontos de consequência irreversível, esse não é um resultado satisfatório.</p>
+    </div>
+    <div class="essay-summary">
+      <span class="essay-summary-label">Ponto-chave</span>
+      <p>O problema da modificação pós-incidente surge porque a resposta operacional correta a um evento adverso de IA — atualizar o modelo, corrigir a configuração, renovar o firmware — destrói sistematicamente o estado pré-incidente que qualquer investigação significativa exige. Cada modo de destruição é individualmente defensável. O efeito agregado é que a responsabilização é estruturalmente não investigável. Corrigi-lo exige desacoplar a resposta operacional da preservação de evidências: instantâneos pré-modificação automáticos, de escrita única e atestados separadamente antes de qualquer alteração a um sistema envolvido num evento adverso. Este é um requisito de engenharia que deve ser incorporado antes da implementação, não uma política que possa ser aplicada retrospetivamente.</p>
+    </div>
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/pt/blog/" class="essay-footer-back">&larr; Voltar ao blog</a>
+    </div>
+  </main>
+  <footer style="border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contacto</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

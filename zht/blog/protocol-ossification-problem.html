@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>協議骨化問題：密碼學假設被固化於硬件之中，而硬件壽命超越了其所實現標準的有效期 — Asaptic Labs</title>
+  <meta name="description" content="運行在嵌入式硬件上的AI智能體，往往繼承了無法更改的密碼學實現。當這些實現所屬的標準不再成立時，智能體的每一個決策都攜帶著任何軟件補丁都無法解決的問責風險。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/protocol-ossification-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/protocol-ossification-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/protocol-ossification-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/protocol-ossification-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/protocol-ossification-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/protocol-ossification-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="協議骨化問題：密碼學假設被固化於硬件之中，而硬件壽命超越了其所實現標準的有效期" />
+  <meta property="og:description" content="運行在嵌入式硬件上的AI智能體，往往繼承了無法更改的密碼學實現。當這些實現所屬的標準不再成立時，智能體的每一個決策都攜帶著任何軟件補丁都無法解決的問責風險。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/protocol-ossification-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "協議骨化問題：密碼學假設被固化於硬件之中，而硬件壽命超越了其所實現標準的有效期",
+      "description": "運行在嵌入式硬件上的AI智能體，往往繼承了無法更改的密碼學實現。當這些實現所屬的標準不再成立時，智能體的每一個決策都攜帶著任何軟件補丁都無法解決的問責風險。",
+      "url": "https://asaptic.com/zht/blog/protocol-ossification-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/protocol-ossification-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯繫 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: engage"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯繫"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "協議骨化問題", "item": "https://asaptic.com/zht/blog/protocol-ossification-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security × Hardware</div>
+      <h1 class="essay-title">協議骨化問題：密碼學假設被固化於硬件之中，而硬件壽命超越了其所實現標準的有效期</h1>
+      <p class="essay-subtitle">運行在嵌入式硬件上的AI智能體，往往繼承了無法更改的密碼學實現。當這些實現所屬的標準不再成立時——在後量子過渡中或其後——智能體的每一個決策都攜帶著任何軟件補丁都無法解決的問責風險。</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-14</span>
+        <span>6 分鐘閱讀</span>
+      </div>
+    </header>
+    <div class="essay-body">
+      <p>每個運行加密算法的嵌入式設備都預裝了一套密碼學原語——雜湊函數、密鑰協商協議、簽名方案——實現於協議棧的某處。對於成本、功耗和性能約束嚴格的設備，這些實現往往駐留於矽片之中：具有固定能力的硬件安全模塊、加速特定運算的協處理器，或製造後內容不可更改的引導程序ROM。</p>
+
+      <p>在原語健全時，不可更改性是一種安全屬性。當原語不再健全時，它就成了漏洞。協議骨化問題，就是當AI智能體部署在密碼學表面無法改變的硬件上——而該硬件所實現的標準已不再足夠——時所發生的問題。</p>
+
+      <h2>為何後量子過渡使這一問題變得尖銳</h2>
+      <p>過去十年發現的大多數密碼學漏洞都有某種修復路徑：新協議版本、修訂後的密鑰長度、棄用舊密碼套件的軟件補丁。這些修復之所以有效，是因為它們在軟件層運作，變更可以跨已安裝設備群增量部署。</p>
+
+      <p>後量子過渡在性質上截然不同。受威脅的算法——RSA、ECDSA、ECDH以及所有經典非對稱密碼學——不是因為某個可以規避的新攻擊而變得不安全，而是因為一種新的計算模型。當具有密碼學意義的量子計算到來時，每一個用ECDSA生成的簽名都將被追溯性地認定為不可信，每一次用ECDH完成的密鑰協商都將被追溯性地暴露。這一轉變是永久的、單向的。</p>
+
+      <p>在固定矽片中實現這些算法的硬件沒有遷移路徑。一個依托硬件加速經典密碼學來生成授權令牌、證明鏈和審計日誌簽名的AI智能體，無法通過固件更新變得後量子安全。該智能體生成的問責工具——日誌、證明、簽名授權記錄——將在設備運行期間持續攜帶那些經典簽名。</p>
+
+      <h2>無法用補丁修復的問責缺口</h2>
+      <p>問題不僅僅是骨化的硬件會暴露傳輸中的數據，而是它損害了智能體曾經生成的每一條問責記錄的證據完整性。</p>
+
+      <p>在關鍵領域運作的AI智能體會生成簽名記錄：此智能體經此委託人授權，採取了此行動，發生於此時刻。簽名使記錄對第三方——審計員、監管機構、法院——具有可信度。如果簽名方案可以被追溯性破解，記錄的證據價值就取決於何時被審查，而非其是否被正確生成。一個在2026年正當行事的智能體，若簽名該記錄的硬件骨化於已不再受信任的經典原語，可能在2036年無法證明其行為的正當性。</p>
+
+      <p>這是一個沒有追溯性修復方案的問責缺口。記錄存在。簽名存在。但簽名的可信度取決於一個在質疑時刻可能已不成立的計算假設。</p>
+
+      <h2>照護場景放大了風險</h2>
+      <p>部署在物理世界照護環境中的設備服務壽命尤其長。安裝在照護環境中的監測設備，合理預期可能運行十年。它所做的決策——異常檢測、升級到人類照護提供者、用藥依從記錄——對其服務的人員具有直接影響。</p>
+
+      <p>一個硬件密碼層骨化於經典原語的照護AI智能體，會生成無法在後量子過渡中存活的簽名問責記錄。當一項決策在數年後受到質疑，且必須提供智能體當時決策的密碼學證明時，該證明上的簽名可能因質疑時已存在的量子計算能力而被認定為可疑。無法回去用更強的算法重新簽名。審計記錄就是它本來的樣子。</p>
+
+      <h2>正確的架構應該是什麼樣子</h2>
+      <p>解決方案不是避免硬件加速密碼學。硬件安全模塊、安全飛地和硬件根密鑰存儲提供了在智能體部署中確實重要的安全屬性。解決方案是維護最小化且可分離的硬件密碼表面——並從第一個設計決策開始規劃密碼學敏捷性。</p>
+
+      <p>對於其決策需要在長時間內保持可驗證的AI智能體，這意味著：在矽片允許的情況下盡可能算法無關的硬件根；硬件之上可更新的軟件密碼層；從一開始就使用後量子算法生成審計日誌簽名，即使底層硬件無法在傳輸層強制執行PQC；以及包含所用密碼學假設明確記錄的設備級證明，以便任何依賴方都能清楚地瞭解適用的信任模型。</p>
+
+      <p>分離至關重要。存儲密鑰材料的硬件不必與對問責日誌應用簽名方案的組件相同。在簽名算法可以被移至軟件層而不犧牲密鑰存儲安全性的情況下，就應該這樣做。這種分離就是當硬件密碼層無法更改時，允許進行軟件層升級的餘量。</p>
+
+      <h2>設計時刻就是現在</h2>
+      <p>現在正在設計和部署的智能體將運行在整個後量子過渡期間都將在役的硬件上。今天在硬件選型會議上選擇的密碼原語，將是那些要麼在過渡中存活，要麼無法存活的原語。建立在這些選擇上的問責系統，將與其所依賴的硬件假設一樣耐用——或脆弱。</p>
+
+      <p>Asaptic Labs在硬件×後量子安全交叉點的工作，將協議骨化作為一級設計約束，而非邊緣情況。每個限制密碼學敏捷性的硬件選擇，都是關於哪些問責記錄將在過渡中完整存活——哪些不會——的決定。</p>
+
+      <p>今天在硬件中實現的標準，就是設備整個生命週期內承諾遵循的標準。請審慎選擇。</p>
+    </div>
+    <div class="essay-summary">
+      <span class="essay-summary-label">核心觀點</span>
+      <p>嵌入式AI智能體通常運行在密碼學表面無法現場更新的硬件上。在後量子過渡中，這意味著這些智能體生成的簽名問責記錄，可能在設備退役之前就已失去證據效力。正確的設計應對是：最小化、可分離的硬件密碼表面；其上可升級的軟件簽名層；以及從一開始就採用後量子算法生成審計日誌簽名。</p>
+    </div>
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zht/blog/" class="essay-footer-back">&larr; 返回博客</a>
+    </div>
+  </main>
+  <footer style="border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

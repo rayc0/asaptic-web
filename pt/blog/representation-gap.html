@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A lacuna de representação: responsabilização quando agentes de AI atuam sobre modelos em vez da realidade — Asaptic Labs</title>
+  <meta name="description" content="Agentes de AI não conseguem tocar no paciente, inspecionar a placa ou detetar fuga de chave por observação direta. Cada inferência é mediada por uma representação; quando ela está errada, o agente atua com confiança sobre premissas falsas." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/representation-gap.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/representation-gap.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/representation-gap.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/representation-gap.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/representation-gap.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/representation-gap.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="A lacuna de representação: responsabilização quando agentes de AI atuam sobre modelos em vez da realidade" />
+  <meta property="og:description" content="Agentes de AI não conseguem tocar no paciente, inspecionar a placa ou detetar fuga de chave por observação direta. Cada inferência é mediada por uma representação; quando ela está errada, o agente atua com confiança sobre premissas falsas." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/representation-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-04" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {"@context":"https://schema.org","@type":"Article","headline":"A lacuna de representação: responsabilização quando agentes de AI atuam sobre modelos em vez da realidade","description":"Agentes de AI não conseguem tocar no paciente, inspecionar a placa ou detetar fuga de chave por observação direta. Cada inferência é mediada por uma representação; quando ela está errada, o agente atua com confiança sobre premissas falsas.","url":"https://asaptic.com/pt/blog/representation-gap.html","author":{"@type":"Organization","name":"Asaptic Labs"},"publisher":{"@type":"Organization","name":"Asaptic Labs","url":"https://asaptic.com"},"datePublished":"2026-06-04","dateModified":"2026-06-14","mainEntityOfPage":"https://asaptic.com/pt/blog/representation-gap.html","inLanguage":"pt","potentialAction":{"@type":"Action","name":"Contactar a Asaptic","target":[{"@type":"EntryPoint","urlTemplate":"https://asaptic.com/pt/engage.html","contentType":"application/json","description":"MCP server, tool: submit_rfq"},{"@type":"EntryPoint","urlTemplate":"mailto:engage@asaptic.com","description":"Contactar por e-mail"}]}} ,
+    {"@context":"https://schema.org","@type":"BreadcrumbList","inLanguage":"pt","itemListElement":[{"@type":"ListItem","position":1,"name":"Início","item":"https://asaptic.com/pt/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://asaptic.com/pt/blog/"},{"@type":"ListItem","position":3,"name":"A lacuna de representação","item":"https://asaptic.com/pt/blog/representation-gap.html"}]}
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic,.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-header{margin-bottom:0}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date,.essay-meta span{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px;background:rgba(0,200,150,.02)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:15px;line-height:1.65;color:var(--gray);margin:0}.essay-nav,.essay-footer-wrap{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a,.essay-footer-back{transition:opacity .2s;color:var(--accent)}.essay-nav a:hover,.essay-footer-back:hover{opacity:.7}.essay-footer-byline{color:var(--gray-dim)}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav,.essay-footer-wrap{flex-direction:column}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× CUIDADOS NO MUNDO FÍSICO · × HARDWARE · × SEGURANÇA PÓS-QUÂNTICA</span>
+      <h1 class="essay-title">A lacuna de representação: responsabilização quando agentes de AI atuam sobre modelos em vez da realidade</h1>
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-06-04</span><span class="essay-date">6 min de leitura</span></div>
+      <div class="essay-body">
+        <p>Agentes de AI não conseguem tocar diretamente no paciente, inspecionar uma placa de circuito ou detetar fuga de chaves por observação direta. Cada inferência, recomendação e ação é mediada por uma representação: uma aproximação estruturada da realidade física, criada num momento específico, por um processo específico, e que pode deixar de corresponder ao que descreve.</p>
+        <h2>Na travessia dos cuidados</h2>
+        <p>Isto não é exclusivo da AI. Profissionais humanos também trabalham sobre registos. A diferença é que trazem conhecimento tácito para a distância entre registo e realidade: procuram inconsistências, contexto ausente e perguntas que o registo não responde. O agente não tem esse suplemento. Para ele, a representação é tudo. Quando ela diverge, o agente age com confiança sobre premissas erradas.</p>
+        <h2>Na travessia do hardware</h2>
+        <p>Em cuidados, a representação digital de uma pessoa é montada a partir de registos clínicos, leituras de dispositivos, notas de plano de cuidado e avaliações estruturadas. A pessoa mudou desde então: recuperou, deteriorou-se, envelheceu ou tomou uma decisão ainda não refletida. O agente decide de forma localmente coerente com o modelo, mas possivelmente incoerente com a pessoa real.</p>
+        <h2>Na travessia pós-quântica</h2>
+        <p>Em hardware, agentes de segurança operam sobre topologias, inventários de firmware, linhas de base de configuração e resultados de varredura. Entre varreduras, dispositivos são substituídos e configurações mudam. Uma avaliação limpa relativa ao mapa pode estar errada relativamente ao sistema físico.</p>
+        <h2>O que a lacuna exige</h2>
+        <p>Em segurança pós-quântica, identidade criptográfica é representação: uma chave pública afirma que uma entidade controla uma chave. Material de chave envelhece, é comprometido, delegado ou substituído antes de o sistema mais amplo sincronizar. Um agente de migração pode certificar um estado errado com a mesma confiança com que certificaria um estado correto.</p>
+        <p>A lacuna de representação não tem solução que a elimine. Recolha contínua de dados pode reduzi-la; rastreio de frescura pode torná-la visível; deteção de anomalias pode sinalizar divergência. Mas representações continuarão aproximadas. A arquitetura de responsabilização deve nomear a lacuna, definir limites de frescura e fazer a responsabilidade chegar aos guardiões dos modelos de dados que deram ao agente o mundo sobre o qual atuou.</p>
+      </div>
+      <div class="essay-nav"><a href="/pt/blog/">&larr; Todos os ensaios</a><a href="/pt/engage.html">Contato &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

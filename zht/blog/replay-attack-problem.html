@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>重放攻擊問題：為何AI智能體無法驗證憑證是否被首次使用 — Asaptic Labs</title>
+  <meta name="description" content="向AI智能體出示的有效憑證，並不能證明它正在被首次使用、被正確主體使用、在正確場景中使用。抗重放性不是協議細節，而是問責的前提條件。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/replay-attack-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/replay-attack-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/replay-attack-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/replay-attack-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/replay-attack-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/replay-attack-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="重放攻擊問題：為何AI智能體無法驗證憑證是否被首次使用" />
+  <meta property="og:description" content="向AI智能體出示的有效憑證，並不能證明它正在被首次使用、被正確主體使用、在正確場景中使用。抗重放性不是協議細節，而是問責的前提條件。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/replay-attack-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-05-24" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {"@context":"https://schema.org","@type":"Article","headline":"重放攻擊問題：為何AI智能體無法驗證憑證是否被首次使用","description":"向AI智能體出示的有效憑證，並不能證明它正在被首次使用、被正確主體使用、在正確場景中使用。抗重放性不是協議細節，而是問責的前提條件。","url":"https://asaptic.com/zht/blog/replay-attack-problem.html","author":{"@type":"Organization","name":"Asaptic Labs"},"publisher":{"@type":"Organization","name":"Asaptic Labs","url":"https://asaptic.com"},"datePublished":"2026-05-24","dateModified":"2026-06-14","mainEntityOfPage":"https://asaptic.com/zht/blog/replay-attack-problem.html","inLanguage":"zh-Hant","potentialAction":{"@type":"Action","name":"與 Asaptic 洽談","target":[{"@type":"EntryPoint","urlTemplate":"https://asaptic.com/zht/engage.html","contentType":"application/json","description":"MCP server, tool: submit_rfq"},{"@type":"EntryPoint","urlTemplate":"mailto:engage@asaptic.com","description":"透過電子郵件聯絡"}]}} ,
+    {"@context":"https://schema.org","@type":"BreadcrumbList","inLanguage":"zh-Hant","itemListElement":[{"@type":"ListItem","position":1,"name":"首頁","item":"https://asaptic.com/zht/"},{"@type":"ListItem","position":2,"name":"博客","item":"https://asaptic.com/zht/blog/"},{"@type":"ListItem","position":3,"name":"重放攻擊問題","item":"https://asaptic.com/zht/blog/replay-attack-problem.html"}]}
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic,.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-header{margin-bottom:0}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date,.essay-meta span{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px;background:rgba(0,200,150,.02)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:15px;line-height:1.65;color:var(--gray);margin:0}.essay-nav,.essay-footer-wrap{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a,.essay-footer-back{transition:opacity .2s;color:var(--accent)}.essay-nav a:hover,.essay-footer-back:hover{opacity:.7}.essay-footer-byline{color:var(--gray-dim)}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav,.essay-footer-wrap{flex-direction:column}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+
+      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照護</span>
+      <h1 class="essay-title">重放攻擊問題：為何AI智能體無法驗證憑證是否被首次使用</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>收到有效憑證的AI智能體只了解到一件事：該憑證在過去某個時間點被合法簽發。它無從得知該憑證現在是否正由其簽發對象使用、是否處於預期的使用場景中、是否屬於首次使用。有效性與新鮮度是不同的屬性，但大多數智能體憑證體系將二者混為一談。</p>
+
+        <p>重放攻擊正是利用了這一空白。攻擊者捕獲一個合法憑證——授權令牌、簽名同意記錄、認證報告或會話令牌——然後在稍後時刻或不同場景中重新提交，以獲取原始憑證從未打算反覆或無條件授予的存取權限。簽名驗證通過，簽發方合法，憑證只是過期了，或正被錯誤方使用，或在應該失效後被二次使用。智能體無從辨別。</p>
+
+        <h2>為何AI智能體尤其脆弱</h2>
+        <p>傳統網路協議經過數十年的抗重放工程積累：有效期極短的TLS會話令牌、挑戰-回應隨機數、OAuth令牌輪換、TOTP時間窗口。這些保護措施之所以有效，是因為協議層在應用層看到憑證之前就已完成強制執行。</p>
+
+        <p>AI智能體引入了新的攻擊面。它們不僅從網路協議中消費憑證，還從文件、電子郵件、記憶儲存、API回應和工具輸出中取得憑證。當智能體檢索到一個寫有「患者已同意X手術」的文件，或工具回傳上週二簽名的授權記錄時，智能體不會自動追問該斷言是否仍然有效，或該憑證的原始傳輸通道是否執行了抗重放保護。它將內容作為數據讀取並納入推理。抗重放保護如果存在，現在必須在智能體的決策層強制執行，而不能依賴傳輸層的隱性保障。</p>
+
+        <h2>後量子維度</h2>
+        <p>隨著密碼學轉型臨近，重放問題愈加緊迫。當前保護憑證免遭偽造的RSA和橢圓曲線簽名，將在能力足夠強大的量子對手面前變得可破解。現在囤積簽名憑證的攻擊者，未來可以偽造簽名有效但完全捏造的新憑證，或重放背景早已過期的舊有效憑證。</p>
+
+        <p>後量子密碼算法——目前正在標準化的基於格和基於哈希的簽名方案——解決的是抗偽造性，而非自動解決抗重放性。提交給智能體的後量子簽名憑證依然只是帶有有效簽名的憑證。除非簽名方案將憑證綁定到新鮮度隨機數、特定會話和特定預期用途，量子時代的對手同樣可以像當今的經典對手一樣輕鬆重放舊的有效憑證。</p>
+
+        <p>架構應對方案是在每次憑證交換中引入挑戰-回應隨機數：依賴方智能體簽發一個隨機數；憑證僅在對該隨機數進行簽名後才有效。這將憑證綁定到特定交易，使重放失去意義。後量子簽名方案必須在強制執行此綁定的前提下部署，而非將其視為可選項。</p>
+
+        <h2>硬件認證維度</h2>
+        <p>硬件認證是智能體系統最依賴的信任錨點之一。來自安全飛地的認證報告證明，特定軟件配置正運行在特定設備上。這些報告本身經過簽名，這意味著它們同樣可能被重放。</p>
+
+        <p>捕獲合法認證報告的攻擊者可以將其作為當前時刻的實時認證提交。如果依賴方智能體接受該報告時未進行新鮮度綁定——即其簽發的隨機數、或窄有效期時間戳、或二者兼備——它實際上是在接受「軟件此刻正以受信配置運行」的聲明，而這一聲明來自過去某個時刻，對應的設備可能早已不存在或已被攻破。</p>
+
+        <p>正確構建的認證協議會在請求認證報告前簽發一個挑戰隨機數，要求認證覆蓋該隨機數，並拒絕不包含隨機數的報告。這並非罕見做法，而是硬件安全規範中的設計模式。但這要求請求和驗證認證的智能體端軟件正確實現挑戰——且實現本身不可重放。</p>
+
+        <h2>物理世界照護維度</h2>
+        <p>在照護AI部署中，重放問題以一種不那麼明顯具有對抗性、卻同樣危險的形式出現：已授權但已過期。照護AI智能體可能收到一份由患者簽名的同意書。簽名有效，患者確實簽署了該文件。但簽署時間在患者狀況發生變化之前，而這一變化本會促使其撤銷或修改同意。該記錄並非偽造，只是被用於簽署者未預期的場景、代表著其不再適用的臨床時刻。</p>
+
+        <p>類似情形包括：在開具有禁忌症藥物之前簽發的用藥授權；在患者表達新意願之前記錄的預立醫療指示；在功能狀態惡化之前簽署的護理計劃。每種情形都是有效憑證被重放到一個它並非有效當下授權的臨床場景中。危害不來自外部對手，而來自智能體將一份有時間限制的憑證視為無時效性聲明加以接受。</p>
+
+        <p>設計含義是：照護相關授權必須設定與基礎臨床狀態波動性相匹配的有效期。穩定慢性病的同意書有效期可能長於急性干預的同意書。智能體在行動前必須同時驗證簽名和有效期——當有效期已過，必須要求重新授權，而非接受緩存斷言。</p>
+
+        <h2>設計應對</h2>
+        <p>智能體系統的抗重放性需要三個各自已知但尚未一貫綜合應用的要素。第一，每個授權憑證必須在簽名中綁定新鮮度組件——隨機數、嚴格有效期或二者兼備。第二，智能體在接受認證之前必須簽發挑戰，而不是信任緩存的認證報告。第三，照護相關授權必須設定與臨床波動性相匹配的有效期，有效期屆滿時強制要求重新授權。</p>
+
+        <p>基本原則在於：有效憑證是關於過去的聲明。在當下行動的AI智能體需要的是有效憑證加上它所描述的過去仍是當下現實的證明。抗重放性正是使這一證明難以偽造的機制。缺乏抗重放性，憑證層只是歷史授權的記錄，而非對當前許可的實時斷言——基於歷史授權行動的智能體不是可問責的智能體，而是自以為擁有實已失效權限的智能體。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/zht/blog/">&larr; 全部文章</a>
+        <a href="/zht/blog/state-sync-problem.html">延伸閱讀：狀態同步問題 →</a>
+      </div>
+    
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>
