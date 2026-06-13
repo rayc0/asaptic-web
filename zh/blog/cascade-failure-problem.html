@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>级联失效问题 — Asaptic Labs</title>
+  <meta name="description" content="多智能体流水线中一个失控的AI智能体不只是简单地失效。其损坏的输出、被滥用的权限和资源消耗会向下游传播。遏制级联失效需要在第一条流水线运行之前就设计好熔断器、独立认证和爆炸半径限制。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/cascade-failure-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/cascade-failure-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/cascade-failure-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/cascade-failure-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/cascade-failure-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/cascade-failure-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="级联失效问题：一个失控的智能体如何腐化整条流水线" />
+  <meta property="og:description" content="流水线中一个失控的AI智能体不只是简单地失效。其损坏的输出向下游传播，其委托权限污染子智能体，其资源消耗使邻近智能体陷入资源匮乏。级联失效需要架构层面的隔离，而非仅依赖单个智能体的正确性。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/cascade-failure-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "级联失效问题：一个失控的智能体如何腐化整条流水线",
+      "description": "多智能体流水线中一个失控的AI智能体不只是简单地失效。级联失效会传播损坏的输出、被滥用的权限和资源耗尽到下游。遏制需要在部署前设计好熔断器和爆炸半径限制。",
+      "url": "https://asaptic.com/zh/blog/cascade-failure-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/cascade-failure-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件发送询盘"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "级联失效问题", "item": "https://asaptic.com/zh/blog/cascade-failure-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:16px;line-height:1.8;color:var(--text);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:600;color:var(--text);margin:48px 0 16px;line-height:1.3}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">级联失效问题：一个失控的智能体如何腐化整条流水线</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>多智能体流水线中的每个智能体在单独设计时都是正确且安全的。组合问题追问的是：当这些智能体串联时，安全属性是否依然成立。而级联失效问题提出了一个更尖锐的问题：当某个智能体在生产环境中失效——不是在设计时，而是在高负载、真实输入的条件下——损害会蔓延多远？在大多数流水线中，答案是：比任何人规定的范围都远，因为隔离机制从未被设计进去。</p>
+
+        <p>单个智能体失效可通过三种截然不同的方式传播：它可以将损坏的输出向前推送，将下游智能体当成被动消费者；它可以滥用委托权限，利用自己持有的凭证以委托人层级从未授权的方式指挥子智能体；它还可以耗尽共享资源——内存、受速率限制的 API 调用、硬件容量——使与之并行运行的智能体陷入资源匮乏。每种传播模式都需要不同的隔离机制，而大多数流水线中没有任何一种被设计进去。</p>
+
+        <h2>损坏输出的传播</h2>
+        <p>不加独立验证便信任上游输入的下游智能体，是上游失效的被动放大器。如果上游智能体产生了看似合理但实际错误的输出——无论是由于模型性能下降、上下文污染攻击，还是静默的硬件故障——下游智能体将把这一错误融入自己的推理，并将进一步纠缠的错误向前传递。当损坏到达最终输出时，它已与有效的推理步骤混为一体，对终端用户而言完全不可见。</p>
+        <p>结构性修复方案不是对每个输入都保持怀疑，而是在每个流水线边界处明确定义：在下游智能体继续运行之前，上游输出必须满足哪些属性。这不是对上游推理的全面验证——那样做无从实现。它们是边界不变量：输出必须在指定范围内，必须仅引用经过证明的数据源，必须携带有效的阶段级签名。接收到违反边界不变量的输入的智能体，应当停止并上报，而非在损坏状态下继续运行。大多数流水线实现没有这样的不变量——它们假设上一阶段是正确的，因为这是流水线设计的前提，而生产环境会例行地证伪这一前提。</p>
+
+        <h2>授权链的腐化</h2>
+        <p>失控的智能体不仅代表自身行动。在大多数多智能体架构中，编排智能体持有用于派生和指挥子智能体的凭证。子智能体接受编排者的指令，隐性假设编排者在其授权范围内运行。当编排者遭到破坏——被上下文污染、被异常输入触发的逻辑错误，或被一个受损的模型版本——其子智能体会忠实地执行委托人层级从未授权的指令。子智能体并没有失控，它们完全按照设计运行：遵从编排者的指令。授权失效对它们而言是不可见的。</p>
+        <p>弥合这一缺口，需要子智能体不仅验证授予其任务的凭证，还要验证任务背后的授权链本身。委托智能体应将自身的授权范围以密码学方式绑定到其委托的任务上：只有当编排者可被证明拥有发出该指令的权限时，子智能体指令才有效。这比大多数当前委托模型所要求的更为严格，因为大多数当前模型验证的是凭证而非其所编码的授权链。当编排者被攻破时，凭证依然有效；断裂的只有授权链。</p>
+
+        <h2>资源耗尽的级联</h2>
+        <p>失效的智能体以不同于正常智能体的方式消耗资源。陷入异常推理循环的模型所发出的生成调用，远多于走正常路径的模型。重试对不可用认证服务发出请求的硬件认证智能体，会长时间占用其他流水线阶段所需的连接。等待上游上下文获取超时的照护计划生成智能体，会占用其他住户的智能体所需的照护协调器容量。这些资源失效是横向传播的，而不仅是向前传播：未能完成任务的智能体无法及时释放其资源声明，周边的智能体开始因竞争而失效——不是因为其自身输入有任何问题，而是因为失效阶段引入的资源争用。</p>
+        <p>架构上的应对措施是爆炸半径分析：对流水线中的每个智能体，定义它在任意时刻允许持有的最大资源声明、允许运行的最大时限（超时后熔断器将终止它），以及达到该限制时应当采取的明确操作——干净失效并发出错误信号、回退到降级路径，或向人工操作员升级。熔断器是对可接受降级方案的事先承诺。没有它，如何应对失效阶段的决策将默认为不作为，从而加剧故障。</p>
+
+        <h2>三个交叉点如何集中这一问题</h2>
+        <p>在后量子安全交叉点，级联失效具有其他领域所没有的密码学维度。流水线中间阶段所使用的签名密钥，构建了下游智能体所依赖的信任链。如果该阶段遭到破坏——密钥泄露，或模型被操控以对恶意输出签名——所有以该阶段为根派生的下游认证均告无效。这不仅仅是输出损坏问题，而是信任链问题：下游智能体从其可用的认证证据中，根本无法判断上游是否在正常运行。向后量子密码学的过渡是一个机会：将认证链重新设计为各阶段独立根，而非从单一密钥层级链式派生，使单一阶段的攻陷不会静默地使所有下游认证失效。</p>
+        <p>在硬件交叉点，问题表现为认证继承。经硬件证明的流水线通常对整条流水线整体认证，而非对每个阶段独立认证。某个阶段若部分在认证硬件边界之外执行——由于内存错误、执行期间的固件更新或容器逃逸——会使所有依赖流水线级认证的后续阶段的认证声明失效。独立的、阶段级硬件认证——每个阶段证明自身的执行环境，而非继承流水线级声明——将认证爆炸半径限制在受损阶段本身。</p>
+        <p>在物理世界照护交叉点，级联失效具有密码学与硬件交叉点所没有的直接性。产生错误风险评分的照护评估智能体，不仅仅是产生错误输出——它向用药智能体、升级智能体和家属通知智能体输入了错误的前提。当人类临床医生审阅最终输出时，级联已经产生了一份看起来连贯一致、实则深度错误的照护计划，每个阶段的推理都从上一阶段的错误中正确推导出来。照护流水线每个边界所需的不变量不仅是技术性的——它必须编码临床医生在将中间输出向前传递前所会进行的临床可行性校验。</p>
+
+        <h2>在部署前设计</h2>
+        <p>级联失效无法事后通过检视日志来修复。当终端输出被审阅时，损坏链与有效推理已无从区分。隔离机制——边界不变量、授权链验证、熔断器、爆炸半径限制——必须在流水线运行前设计完毕，并在每次阶段转换时强制执行，而非事后测试。一条未为失效而设计的流水线，就是一条在规模化场景下注定失效的流水线。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>多智能体流水线中的单个智能体失效不只是局部问题：它沿三条路径扩散——向下游推送损坏输出、借助委托权限指挥未获授权的子智能体、耗尽流水线中其他智能体所需的共享资源。解决方案不是事后检视日志，而是在部署前设计三类机制：各阶段边界不变量（下游智能体在接受上游输出前须验证的属性集）、授权链验证（子智能体确认编排者实际拥有委托任务的权限），以及熔断器和爆炸半径限制（失效智能体可占用的最大资源及触发熔断的时限）。三个交叉点各有侧重：后量子安全领域需要各阶段独立根密钥而非链式派生；硬件领域需要阶段级认证而非流水线级认证；物理照护领域需要在每个流水线边界嵌入临床可行性校验。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/multiplicity-problem.html">上篇：多实例问题 →</a>
+      </div>
+    </article>
+  </main>
+  <footer class="site-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
