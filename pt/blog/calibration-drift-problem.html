@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da deriva de calibração — Asaptic Labs</title>
+  <meta name="description" content="Agentes de IA em ambientes físicos agem sobre dados de sensores. Sensores derivam. Ao contrário da falha de sensor, a deriva é gradual e plausível: as leituras parecem razoáveis até ao momento em que a decisão que informaram se revela errada." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/calibration-drift-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/calibration-drift-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/calibration-drift-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/calibration-drift-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/calibration-drift-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/calibration-drift-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da deriva de calibração: responsabilidade quando os inputs físicos do agente se degradam em silêncio" />
+  <meta property="og:description" content="Agentes de IA em ambientes físicos agem sobre dados de sensores. Sensores derivam. Ao contrário da falha de sensor, a deriva é gradual e plausível: as leituras parecem razoáveis até ao momento em que a decisão que informaram se revela errada." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/calibration-drift-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema da deriva de calibração: responsabilidade quando os inputs físicos do agente se degradam em silêncio",
+      "description": "Agentes de IA em ambientes físicos agem sobre dados de sensores. Sensores derivam. Ao contrário da falha de sensor, a deriva é gradual e plausível: as leituras parecem razoáveis até ao momento em que a decisão que informaram se revela errada.",
+      "url": "https://asaptic.com/pt/blog/calibration-drift-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/calibration-drift-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar a Asaptic",
+        "target": [
+          { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/pt/engage.html", "contentType": "text/html", "description": "MCP server, tool: submit_rfq" },
+          { "@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "Enviar pedido por e-mail" }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "pt",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema da deriva de calibração", "item": "https://asaptic.com/pt/blog/calibration-drift-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;padding-bottom:32px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray);flex-wrap:wrap;margin-bottom:48px}.essay-body p{font-size:17px;line-height:1.8;color:var(--fg);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:700;margin-top:40px;margin-bottom:16px}.essay-summary{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:28px 32px;margin-top:48px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:0}.essay-footer{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× HARDWARE × CUIDADOS NO MUNDO FÍSICO × SEGURANÇA QUÂNTICA</span>
+      <h1 class="essay-title">O problema da deriva de calibração: responsabilidade quando os inputs físicos do agente se degradam em silêncio</h1>
+      <p class="essay-subtitle">Agentes de IA que atuam em ambientes físicos dependem de sensores. Sensores derivam. Ao contrário da falha, a deriva produz leituras plausíveis até ao momento em que a decisão se revela errada.</p>
+      <div class="essay-meta"><span>Asaptic Labs</span><span>2026-06-14</span><span>6 min de leitura</span></div>
+      <div class="essay-body">
+        <p>Um sensor que falha deixa de produzir leituras, ou produz leituras tão obviamente erradas que acionam alertas. Um sensor que deriva continua a produzir leituras. Elas estão desviadas por uma margem pequena e lentamente crescente. Em cada momento, o valor parece plausível. Isoladamente, nenhuma leitura é suspeita o suficiente para agir. Só em retrospetiva, depois de uma decisão informada por meses de inputs desviados causar dano, o padrão se torna visível.</p>
+
+        <p>Este é o problema da deriva de calibração. Ele fica na junção entre hardware e responsabilidade, e é mais agudo nos domínios em que agentes de IA estão a ser implantados mais depressa: cuidados no mundo físico e infraestruturas críticas. Os quadros de responsabilidade em desenvolvimento para agentes de IA ainda não o tratam adequadamente, em parte porque as categorias jurídicas e filosóficas foram construídas em torno de eventos discretos, não de degradação gradual.</p>
+
+        <h2>Porque a deriva é mais difícil do que a falha</h2>
+
+        <p>A falha de sensor tem uma estrutura clara de responsabilidade. Um agente decide com base numa leitura; depois descobre-se que o sensor falhou; a ação do agente pode ser ligada a um input defeituoso com momento de falha conhecido. A responsabilidade pode ser repartida entre o programador do agente, o fornecedor de hardware e o operador responsável pela manutenção.</p>
+
+        <p>A deriva dissolve essa estrutura. Não há momento de falha. O sensor produzia leituras aceitáveis na última calibração e continua a produzir leituras dentro de uma faixa plausível. O agente não agiu sobre um input partido; agiu sobre um input que se tornou gradualmente menos exato. Sem referência externa, o agente não consegue distinguir. Em muitos casos, o operador também não.</p>
+
+        <p>A pergunta torna-se: quem responde pelo dano causado por um agente que agiu corretamente segundo os inputs disponíveis, quando esses inputs se degradaram em silêncio? A resposta não é óbvia e os quadros atuais não a dão.</p>
+
+        <h2>O cruzamento do hardware: quando raízes de confiança derivam</h2>
+
+        <p>No cruzamento do hardware, a deriva toca as fundações da identidade do agente e da correção criptográfica. Módulos de segurança de hardware dependem de osciladores internos cuja deriva de frequência afeta o timing de operações criptográficas. A deriva temporal em protocolos que assumem relógios sincronizados, incluindo muitos esquemas de troca de chaves pós-quânticos em implantação, pode fazer operações saírem silenciosamente da especificação. A operação tem sucesso porque termina sem erro, mas falha porque as garantias temporais já não se mantêm.</p>
+
+        <p>Isto importa para agentes que gerem estado criptográfico. Um agente responsável por rotação de chaves, gestão de sessões ou ciclo de vida de certificados num sistema ancorado em hardware decide com informação de tempo e estado dependente de hardware calibrado. Se o hardware derivou, a visão do agente sobre o estado criptográfico está subtilmente errada, e ele continuará confiante porque nada no ambiente observável sinaliza problema.</p>
+
+        <p>O desafio de responsabilidade é que o agente não é o ponto de falha e o hardware não está partido de modo detetável. O modo de falha vive no intervalo entre calibrações, intervalo que muitas vezes não é definido, acompanhado ou tratado como artefacto relevante para responsabilidade.</p>
+
+        <h2>O cruzamento dos cuidados: quando as leituras parecem certas mas não são</h2>
+
+        <p>Em cuidados no mundo físico, a deriva cria risco imediato e difícil de defender. Agentes de cuidados decidem sobre horários de medicação, níveis de atividade e limiares de escalada com leituras de sensores embutidos no ambiente. Um oxímetro a ler dois pontos percentuais acima não parece avariado. Uma balança que derivou cinco quilos abaixo não aciona alarme. Um sensor de movimento com raio de deteção reduzido não reporta erro; apenas deixa de registar atividade real.</p>
+
+        <p>Em cada caso, o agente age corretamente dados os seus inputs. Escala quando leituras passam limiares configurados e mantém o plano que as leituras suportam. A falha é invisível até ocorrer dano que, retrospetivamente, as leituras desviadas explicam.</p>
+
+        <p>As pessoas mais expostas são destinatários de cuidados que não conseguem reportar que as leituras estão erradas. Um residente idoso com alterações fisiológicas reais pode não distinguir entre uma decisão incorreta do agente e a situação ser exatamente como o agente descreve. A confiança do agente nas leituras, muitas vezes comunicada à equipa como confiança na decisão, não está calibrada ao estado físico do hardware que fornece a prova.</p>
+
+        <h2>O que a arquitetura de responsabilidade exige</h2>
+
+        <p>Tratar a deriva como problema de responsabilidade, e não apenas de manutenção, muda o que a arquitetura deve fazer. Primeiro, eventos de calibração têm de ser artefactos de auditoria de primeira classe. O estado de calibração de cada sensor usado por um agente deve ser um facto registado, datado e consultável, tão parte do registo de responsabilidade como as decisões tomadas.</p>
+
+        <p>Segundo, os agentes devem propagar a incerteza dos sensores para os outputs. Um agente que atua sobre inputs de hardware cuja última calibração está fora da janela de tolerância deve assinalar essa incerteza no registo de decisão e, quando possível, às pessoas que dependem dos outputs. A confiança numa decisão não deve ser independente do estado físico do hardware que fornece a evidência.</p>
+
+        <p>Terceiro, calendários de calibração devem ser obrigações auditáveis, não recomendações de manutenção adiáveis. Em cuidados, isto significa ligar a autoridade operacional do agente ao estado de calibração dos sensores. Um agente cujos sensores ultrapassaram o limiar de calibração deve operar em modo degradado, com autonomia reduzida e avisos explícitos, até a calibração ser restaurada.</p>
+
+        <p>A deriva de calibração não é exótica. Todo agente de IA implantado num ambiente físico a enfrenta. A arquitetura de responsabilidade terá de a tratar diretamente, não como caso periférico, mas como propriedade estrutural do domínio operacional.</p>
+      </div>
+      <div class="essay-summary"><span class="essay-summary-label">Ponto-chave</span><p>A deriva de sensores produz leituras plausíveis que ficam gradualmente erradas, criando uma lacuna de responsabilidade: o agente agiu corretamente com os inputs que tinha, mas esses inputs tinham-se degradado em silêncio. A arquitetura de responsabilidade deve tratar o estado de calibração como artefacto de auditoria, propagar incerteza e ligar autoridade operacional à atualidade da calibração.</p></div>
+      <footer class="essay-footer"><span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span><a href="/pt/blog/" class="essay-footer-back">&larr; Todos os artigos</a></footer>
+    </article>
+  </main>
+  <footer class="site-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>認證滯後問題：當批准版本並非實際運行版本時的問責 — Asaptic Labs</title>
+  <meta name="description" content="AI認證時間線以年計；模型开發周期以月計。到部署時，经認證的版本通常已经落後。這造成了一個結構性問責差距，現有框架尚未弥合。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/certification-lag-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/certification-lag-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/certification-lag-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/certification-lag-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/certification-lag-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/certification-lag-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="認證滯後問題：當批准版本並非實際運行版本時的問責" />
+  <meta property="og:description" content="AI認證時間線以年計；模型开發周期以月計。到部署時，经認證的版本通常已经落後。這造成了一個結構性問責差距，現有框架尚未弥合。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/certification-lag-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "認證滯後問題：當批准版本並非實際運行版本時的問責",
+      "description": "AI認證時間線以年計；模型开發周期以月計。到部署時，经認證的版本通常已经落後。這造成了一個結構性問責差距，現有框架尚未弥合。",
+      "url": "https://asaptic.com/zht/blog/certification-lag-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/certification-lag-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "contentType": "text/html",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯絡"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "認證滯後問題", "item": "https://asaptic.com/zht/blog/certification-lag-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--gray);margin:0}.essay-footer-wrap{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+
+    <article>
+      <span class="essay-topic">× 後量子安全 × 硬件 × 物理世界照護</span>
+      <h1 class="essay-title">認證滯後問題：當批准版本並非實際運行版本時的問責</h1>
+      <p class="essay-subtitle">AI認證時間線以年計；模型改進周期以月計。當智能體获批高风险部署時，接受審查的版本早已落後。這不是流程失敗——而是認證机制應用於快速演進系統時的結構性特徵。問責框架尚未追上。</p>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+
+      <div class="essay-body">
+        <p>當AI智能體在高风险領域造成損害時，任何問責程序中最先提出的問題之一表面上很簡單：造成損害的版本是否是被批准的版本？在成熟的工程学科中——制药、航空、醫療器械——這個問題有明確的答案。經批准的製品是固定的，部署記錄顯示運行了哪個版本，問責可以從那里推進。</p>
+
+        <p>對於AI智能體，答案几乎总是復杂的。認證需要時間。模型持續改進。某個版本進入認證程序與该程序結束之間的差距可以是十二、十八或三十六個月。在此期間，模型的开發者通常已经發布了几個後續版本，這些版本具有可测量的更好性能、更低的錯誤率，並修復了经認證版本仍存在的失敗模式。當批准到來時，運營商面臨的是任何認證框架都沒有被設計來解決的困境。</p>
+
+        <h2>滯後创造的兩難困境</h2>
+        <p>使用经認證的版本在狭義上是可辩護的——認證有記錄，版本有文檔，審批機構已對其進行驗證。但经認證的版本可能存在較新版本已纠正的已知局限。部署較舊、較差的模型仅因為它已获認證，而更好的版本存在，是一種認證框架使其看起來谨慎但可能為被服務人員產生更差結果的選擇。</p>
+
+        <p>使用未認證的更新则引入了不同的問責差距。運營商可能部署更新是因為它真正降低了风险——例如修復了與安全相關的失敗模式——但随後發生的任何損害都發生在認證邊界之外。運營商無法指向外部驗證。問責記錄顯示的部署偏離了經批准的版本，任何調查都將花费大量精力於该偏離是否造成損害，而非關於智能體實際行為的實質性問題。</p>
+
+        <p>兩条路都不乾淨。認證滯後將關於模型質量的問題转化為關於流程合規的問題，這兩個問題對不同時間的不同各方有不同的答案。</p>
+
+        <h2>在後量子安全交叉點</h2>
+        <p>密碼學標準歷來有漫長的認證周期。向後量子算法的過渡正在跨越以年計算的時間線上展开，標準機構在其審查的算法實際部署很久之後才完成審查。處理後量子密钥操作的AI智能體如果是针對早期威脅模型認證的，今天就是在對抗認證過程未檢查的演變後的威脅格局。認證提供了合法保護；它不提供對認證審查完成後出現的威脅的實際安全保證。利用经認證威脅模型中差距進行的攻击所造成的損害，落入認證機構範圍、部署者範圍和供應商範圍之間的空間——每方都指向其他方。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>硬件認證——针對AI加速器、嵌入式控制器、工業計算平台——涉及针對特定固件版本和運行條件的漫長测试。安全補丁和固件更新是维護任何已部署系統的常規部分。當發現關键漏洞時，運營商會打補丁，而打了補丁的固件通常不是經過認證的固件。另一選擇——運行未打補丁、有漏洞的固件，因為打了補丁的版本還沒有完成重新認證——在大多數操作環境中不是可行的選擇。然而，運行了打補丁的、未認證固件的系統的問責記錄，在結構上與運行了未經授權修改的系統的記錄相似。在認證審計中，改善了安全的補丁和引入了漏洞的修改看起來是一樣的。</p>
+
+        <h2>在照護交叉點</h2>
+        <p>醫療AI面臨這個問題最尖銳的版本。获得市場授權的設備或軟件智能體已经针對定義的预期用途、定義的患者群體和特定模型版本進行了審查。真實世界的部署很少保持在這些邊界内。患者群體發生變化，预期用途擴大，新模型版本發布，運營商將智能體與原始授權未考慮的其他系統集成。在每一步，经授權的製品與運行中的系統之間的差距擴大。當損害發生並开始問責程序時，調查人員必須重建哪個版本在運行、其授權涵盖了什么，以及许多偏離授權邊界的行為中哪些促成了結果。這在理论上是可處理的；在實踐中，回答這些問題所需的記錄很少以必要的精確度维護。</p>
+
+        <h2>問責架構的要求</h2>
+        <p>認證滯後問題沒有簡單的解決方案。更快的認證减少了滯後但不能消除它；模型將继续比任何機構審查流程更快地改進。結構性解決方案是將認證不視為對固定製品的時間點批准，而是視為認證機構、部署者和智能體版本歷史之間的持續關系。</p>
+
+        <p>這需要當前框架在很大程度上缺乏的三件事。首先，部署記錄必須包括版本證明——關於哪個確切版本在何時運行的密碼學證據，以無法被事後修改的形式保存。其次，變更影响評估必須區分使認證失效的變更與次要更新，對分類決定有明確的問責。第三，認證邊界必須在問責程序中明確：調查人員應被要求說明智能體行為的哪些方面在经認證的範圍内，哪些不在，然後再將損害归因於其中任何一個。</p>
+
+        <p>经認證的版本和部署的版本很少是相同的。將兩者視為可互换的問責框架留下了一個認證機構和部署者都沒有完全拥有的結構性差距——而那個差距正是大多數棘手問責問題所在的地方。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>AI認證時間線以年計；模型开發周期以月計。到部署時，经認證的版本通常已经落後。這造成了一個結構性問責差距：使用经認證的版本可能意味著部署具有已知局限的較差模型，而使用更新版本意味著在認證邊界之外運行。兩条路都沒有乾淨的問責。缩小這個差距需要在部署記錄中進行版本證明、明確的變更影响分類，以及區分認證涵盖内容與未涵盖内容的問責程序。</p>
+      </div>
+
+      <div class="essay-footer-wrap">
+        <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+        <a href="/zht/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

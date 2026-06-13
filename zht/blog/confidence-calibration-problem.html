@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>置信度校準問題：AI智能體的確定性失效為監督信號 — Asaptic Labs</title>
+  <meta name="description" content="AI智能體以相同的表面置信度呈現每一項建議。當表達的確定性與實際準確性不匹配時，監督恰恰在最關键的時刻失效。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/confidence-calibration-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/confidence-calibration-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/confidence-calibration-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/confidence-calibration-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/confidence-calibration-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/confidence-calibration-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="置信度校準問題：AI智能體的確定性失效為監督信號" />
+  <meta property="og:description" content="AI智能體以相同的表面置信度呈現每一項建議。當表達的確定性與實際準確性不匹配時，監督恰恰在最關键的時刻失效。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/confidence-calibration-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "置信度校準問題：AI智能體的確定性失效為監督信號",
+      "description": "AI智能體以相同的表面置信度呈現每一項建議。當表達的確定性與實際準確性不匹配時，監督恰恰在最關键的時刻失效。",
+      "url": "https://asaptic.com/zht/blog/confidence-calibration-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/confidence-calibration-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "contentType": "text/html",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯絡"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "置信度校準問題", "item": "https://asaptic.com/zht/blog/confidence-calibration-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:56px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--accent);display:block;margin-bottom:16px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim);margin-bottom:56px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body h2{font-size:20px;font-weight:600;margin:40px 0 16px;line-height:1.3}.essay-body p{font-size:16px;line-height:1.85;color:var(--gray);margin-bottom:20px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);background:var(--surface)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;line-height:1.75;color:var(--gray-dim);margin:0}.essay-footer-wrap{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray);transition:color .2s}.essay-footer-back:hover{color:var(--accent)}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+
+    <article>
+      <span class="essay-label">交叉點筆記 · 2026-06-14</span>
+      <h1 class="essay-title">置信度校準問題</h1>
+      <p class="essay-subtitle">AI智能體的確定性失效為監督信號</p>
+
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>6 分鐘閱讀</span>
+        <span>× 量子安全 × 硬件 × 人類照護</span>
+      </div>
+
+      <div class="essay-body">
+        <p>一個基於強有力證據、有限條件和充分理解先例的AI智能體建議，與一個基於薄弱證據、廣泛外推以及智能體從未遇到過的條件的建議，以完全相同的格式呈現。兩者看起來都是自信的。兩者都沒有發出各自所需審查程度的信號。這就是置信度校準問題，它不是一個表面缺陷——它是每個已部署AI智能體所依赖的監督模型中的結構性失敗。</p>
+
+        <h2>問題的本質</h2>
+        <p>從技術意義上說，校準是系統表達的確定性與其實際準確性的匹配程度。一個校準良好的智能體報告80%的置信度，在该置信度區間的案例中應该大約有80%的時間是正確的。大多數已部署的AI智能體並不是這種意義上的校準。產生輸出的架構——特别是訓練用於生成流畅、自信听起來文本的大型語言模型——不會暴露其背後的不確定性。訓練為听起來權威的模型正是這樣做的，无论底層計算是高置信度還是在其可靠範圍之外運行。</p>
+
+        <p>輸出沒有關於智能體了解多少、當前情況距其訓練分佈有多远，或者有多少替代輸出几乎與被選擇的輸出一樣可能的可靠元數據。试图使用智能體表面確定性作為監督信號的委托人，正在讀取一個不追蹤底層狀態的顯示器。他們無法區分需要轻度審查的常規決策和需要密切檢查的新颖決策——而且他們不知道信號已经失效。</p>
+
+        <h2>它所扭曲的問責結構</h2>
+        <p>監督架構建立在注意力可以分配的假設上。你無法以相同深度審查每一個AI智能體決策；该模型假設信號將把注意力引導到最需要的決策上。校準的置信度是這些信號之一。當它缺失時，基於信號的分配模型會悄悄失敗：監督架構看起來功能正常、按時報告、產生看起來正確的文件，而最需要審查的決策卻與不需要審查的決策获得相同的審查深度。</p>
+
+        <p>這创造了一種在不良結果使其顯現之前不可見的系統性失敗模式。在真正新颖的高风险情況下過度自信的輸出不會被審查，不是因為審查者粗心，而是因為輸出沒有發出需要審查的信號。問責差距事後才會浮現——當調查揭示智能體在其可靠範圍之外運行、輸出是外推而非有充分依據的建議，且沒有人知道需要查看時。</p>
+
+        <h2>後量子交叉點</h2>
+        <p>密碼學遷移決策在證據支持方面差异很大。推荐轮换一個已完成和驗證了數十次可比遷移的證書算法，與推荐為沒有類似歷史先例的新威脅模型配置协議参數，是非常不同的認識论對象。未校準的遷移智能體以相同的表面置信度呈現兩者。操作員無法區分常規执行和在智能體知識前沿的外推。</p>
+
+        <p>风险具有壓缩性。對充分理解的遷移步骤的听起來自信的建議，和對未经测试的配置的听起來自信的建議，將在沒有智能體明確發出差异信號的情況下获得相同的監督。在密碼學基礎設施中，錯誤決策不會立即以揭示錯誤的方式失敗——它创造潜在的脆弱性，可能多年後才被利用。等到校準失敗變得明顯時，決策已在基礎設施中得到批准，且很難逆轉。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>機隊管理智能體遇到的條件從特徵良好到真正新颖各不相同。對於具有數千部署小時經過驗證數據的設備類型的配置建議，比對於刚進入新環境上下文的設備變體的建議更可靠。兩者都可能以相同的表面置信度呈現。硬件故障模式以難以從有限數據中表征的方式交互，導致機隊範圍事故的交互效應，不成比例地可能恰好出現在智能體訓練覆盖最薄弱的新颖條件中。</p>
+
+        <p>以與充分支持的建議相同的置信度呈現不確定外推的智能體，會導致操作員在全部條件範圍内應用相同的干预閾值。新颖條件沒有受到额外審查，即使新颖條件正是最可能發生硬件事故的地方。圍绕基於信號的注意力分配設計的監督模型，已经悄悄地與它被設計來讀取的信號斷开了連接。</p>
+
+        <h2>物理世界護理交叉點</h2>
+        <p>校準問題在護理场景中以其最具倫理意義的形式出現。對於一個不確定观察到的模式是否屬於正常變异或需要臨床升級的護理智能體，其問責義務與该不確定性直接成正比。護理團隊需要知道智能體是不確定的——不是作為系統的抽象屬性，而是作為應當影响其對面前具體建議的響應的實時信號。</p>
+
+        <p>當智能體不暴露其不確定性時，護理團隊無法對是否干预做出校準判斷。智能體的表面置信度取代了團隊的知情評估——這是一種團隊不知道正在發生的替代。在智能體可靠範圍边缘做出的決策，沒有真正不確定性會触發的升級，可能對那些恰恰因為系統看起來確定而信任它的人造成不可挽回的伤害。護理中的校準置信度信號不是便利功能——它是對系統所服務的人有直接後果的安全屬性。</p>
+
+        <h2>問責架構的要求</h2>
+        <p>依赖於基於信號的監督的問責架構要求信號是可靠的。置信度校準——智能體表達的確定性在多大程度上追蹤其實際準確性——必須针對保留數據進行测量，在分佈外輸入上進行驗證，並在任何基於智能體表面確定性做出監督決策的領域部署之前，作為一等部署屬性進行報告。</p>
+
+        <p>在無法將校準證明到足够標準的地方，架構必須進行补偿：更窄的自主範圍、更高的默認審查频率，以及不依赖於智能體自身置信度輸出的強制升級閾值。明確的分佈外檢測——標记當前輸入與以预测較低可靠性的方式不同於訓練分佈的机制——應被視為必需組件，而非可選增強。</p>
+
+        <p>另一種選擇——將未校準的智能體部署到將智能體置信度視為可靠信號的監督模型中——是一種設計上失敗的問責架構。失敗將是不可見的，直到智能體知識边缘的高风险決策未被審查，因為沒有人知道它在边缘。届時，這個差距並不令人惊讶。它一直都在；只是置信度校準問題將其隱藏了。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>置信度校準問題出現於AI智能體以相同的表面置信度呈現每個建議，无论该建議是基於強有力證據還是薄弱外推。監督架構建立在信號將把注意力引導到最需要審查的決策的前提上。當表達的置信度不追蹤實際準確性時，该信號悄悄失效：監督模型看起來功能正常，而最可能造成伤害的決策沒有受到额外審查。在後量子交叉點，未校準的遷移智能體通過以與常規遷移相同的表面確定性呈現未经测试的配置建議，创造潜在的脆弱性。在硬件交叉點，在特徵良好和新颖條件下的等置信度輸出，將機隊事故集中在恰好是智能體可靠性最低的地方。在物理世界護理中，不追蹤不確定性的置信度，用智能體的表面確定性取代了護理團隊的知情評估——這是一種團隊不知道正在發生的替代，具有直接的有害後果。依赖於基於信號的監督的問責架構必須將校準視為一等部署屬性：在任何人類使用智能體置信度來決定多仔细審查其建議的領域部署之前，進行测量、驗證和報告。</p>
+      </div>
+
+      <div class="essay-footer-wrap">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+        <a href="/zht/blog/" class="essay-footer-back">&larr; 返回博客</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>
