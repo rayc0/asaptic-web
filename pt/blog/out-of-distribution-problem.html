@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema fora da distribuição — Asaptic Labs</title>
+  <meta name="description" content="Cada agente de IA é validado numa distribuição de input finita. Fora desse limite, a sua confiança não está calibrada, os seus limiares de decisão já não estão ajustados e os seus modos de falha já não são previsíveis — mas o agente continua tipicamente a operar sem qualquer sinal de que o limite foi ultrapassado." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/out-of-distribution-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/out-of-distribution-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/out-of-distribution-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/out-of-distribution-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/out-of-distribution-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/out-of-distribution-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema fora da distribuição: quando um agente de IA enfrenta o que nunca foi treinado para lidar" />
+  <meta property="og:description" content="Cada agente de IA é validado numa distribuição de input finita. Fora desse limite, a sua confiança não está calibrada, os seus limiares de decisão já não estão ajustados e os seus modos de falha já não são previsíveis." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/out-of-distribution-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema fora da distribuição: quando um agente de IA enfrenta o que nunca foi treinado para lidar",
+      "description": "Cada agente de IA é validado numa distribuição de input finita. Fora desse limite, a sua confiança não está calibrada, os seus limiares de decisão já não estão ajustados e os seus modos de falha já não são previsíveis.",
+      "url": "https://asaptic.com/pt/blog/out-of-distribution-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/out-of-distribution-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar a Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "Servidor MCP, ferramenta: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "Contactar por e-mail"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema fora da distribuição", "item": "https://asaptic.com/pt/blog/out-of-distribution-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;padding-bottom:32px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray)}.essay-body p{font-size:17px;line-height:1.8;color:var(--fg);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:700;margin-top:40px;margin-bottom:16px}.essay-summary{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:28px 32px;margin-top:48px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:0}.essay-footer{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <header class="essay-header">
+        <span class="essay-tag">× Segurança Quântica × Hardware × Cuidados Humanos</span>
+        <h1 class="essay-title">O problema fora da distribuição: quando um agente de IA enfrenta o que nunca foi treinado para lidar</h1>
+        <p class="essay-subtitle">A validação demonstra a competência do agente numa distribuição de input definida. Fora desse limite, a confiança expressa pelo agente está calibrada contra um mundo que já não reconhece.</p>
+        <div class="essay-meta">
+          <span>Asaptic Labs</span>
+          <span>2026-06-14</span>
+          <span>6 min de leitura</span>
+        </div>
+      </header>
+      <div class="essay-body">
+        <p>Cada decisão de implementação de um agente de IA transporta uma condição-limite invisível: o agente tem o desempenho testado dentro do intervalo de inputs em que foi validado, e não oferece qualquer garantia relativamente a qualquer coisa fora desse intervalo. Esse limite raramente é articulado explicitamente. Muitas vezes não é conhecido com precisão nem pelos próprios programadores. Mas está sempre lá — e quando um agente o ultrapassa, as propriedades de fiabilidade que justificaram a implementação já não se aplicam.</p>
+
+        <p>O problema fora da distribuição não é principalmente uma questão de qualidade do modelo. Um agente cuidadosamente treinado e validado pode ainda assim falhar consequentemente quando recebe inputs que se encontram fora da distribuição em que foi treinado e avaliado. A falha mais específica é que o agente tipicamente não sabe que ultrapassou esse limite. As suas estimativas de confiança estão calibradas contra exemplos dentro da distribuição. Os seus padrões de raciocínio, as suas heurísticas de utilização de ferramentas, os seus limiares de decisão — todos ajustados para um mundo que reconhece. Quando esse mundo muda de formas que importam, o agente prossegue como se não o tivesse feito.</p>
+
+        <h2>O cruzamento pós-quântico</h2>
+        <p>A criptografia pós-quântica não é meramente uma mudança nos parâmetros dos algoritmos. É uma mudança estrutural na paisagem criptográfica — novos primitivos, novos modos de falha, novas superfícies de ataque que não se assemelham ao modelo de ameaça clássico contra o qual a maioria dos agentes implementados foi treinada. Um agente que toma decisões de configuração criptográfica validado contra um modelo de ameaça clássico está, por definição, a operar fora da distribuição quando encontra cenários relevantes para o pós-quântico.</p>
+
+        <p>A dificuldade é que este limite não é uma linha brilhante e única. Desloca-se à medida que o modelo de ameaça evolui: à medida que novos ataques são publicados, à medida que os padrões amadurecem, à medida que os conjuntos de parâmetros recomendados mudam. Um agente validado há seis meses pode já estar fora da distribuição relativamente à paisagem atual — não porque os algoritmos tenham mudado, mas porque as margens de segurança e configurações consideradas adequadas foram revistas. Nenhum alarme dispara quando isto acontece. O agente continua a selecionar parâmetros com a mesma confiança aparente que tinha quando as suas escolhas eram atuais, contra um modelo de ameaça que não viu e para o qual não foi treinado.</p>
+
+        <h2>O cruzamento do hardware</h2>
+        <p>Os ambientes de hardware em implementação diferem dos ambientes de hardware em validação. Um modelo validado em leituras de sensores curadas de um ambiente de teste controlado encontrará deriva de sensores, variância de fabrico, ruído ambiental e assinaturas de modo de falha que não apareceram no conjunto de validação. Um agente que toma decisões de agendamento de manutenção ou deteção de anomalias em implementação real está, em graus variáveis, sempre a operar em algum ponto do espectro fora da distribuição.</p>
+
+        <p>A consequência não é que o agente falhe obviamente — é que falha de formas difíceis de atribuir. Um agente que classifica uma assinatura de vibração como normal quando é na verdade um indicador de falha precoce não produz nenhum erro explícito. Regista uma classificação normal com qualquer pontuação de confiança que foi treinado para reportar. O carácter fora da distribuição do input é invisível no output. A falha propaga-se silenciosamente até emergir como dano no hardware — momento em que a cadeia causal passa por uma decisão do agente que, na altura, era indistinguível de uma correta.</p>
+
+        <h2>O cruzamento dos cuidados no mundo físico</h2>
+        <p>Os seres humanos são irredutível e variavelmente diferentes. Nenhum conjunto de validação captura a distribuição completa de uma população em cuidados — as suas comorbilidades, as suas interações medicamentosas, os seus padrões comportamentais, as suas respostas fisiológicas. Cada pessoa num ambiente de cuidados real está, em alguns aspetos, fora da distribuição relativamente aos dados de validação.</p>
+
+        <p>Isto não é uma falha do esforço de validação; é a estrutura do problema. A lacuna entre a distribuição em que um agente de cuidados foi validado e a pessoa específica que está agora a apoiar não é ruído acidental — é a fonte primária de risco. Os agentes de cuidados que não conseguem identificar a sua própria exposição fora da distribuição não conseguem escalar adequadamente, não conseguem qualificar as suas recomendações de acordo, e não conseguem desencadear a revisão humana que tal exposição num contexto de cuidados exige.</p>
+
+        <p>A assimetria é que as consequências dos cuidados são frequentemente atrasadas, ambíguas na causalidade, e atribuídas à condição subjacente em vez de ao tratamento do agente. A falha fora da distribuição de um agente de cuidados pode produzir danos que são clinicamente atribuídos à progressão da doença, não a um sistema a operar fora do seu limite de validação. A lacuna de responsabilização é estrutural: a exposição não é registada, o dano não é atribuído, e o mesmo agente continua a tomar decisões para a próxima pessoa na mesma lacuna de distribuição em que sempre esteve.</p>
+
+        <h2>O que o problema fora da distribuição requer</h2>
+        <p>Fechar a lacuna de responsabilização requer, no mínimo, que o limite de validação do agente seja documentado em termos que possam ser comparados com as condições reais de implementação; que a infraestrutura de implementação mantenha monitorização contínua contra indicadores de desvio distribucional; e que quando o desvio é detetado, o escalonamento ou comportamento de recuo seja desencadeado automaticamente — não deixado a observadores que não têm visibilidade sobre os pressupostos de distribuição interna do modelo.</p>
+
+        <p>Mais fundamentalmente, requer aceitar que a exposição fora da distribuição não é um caso extremo em implementações consequentes. É a condição normal de qualquer agente a operar num domínio que é real, em mudança e humano. A questão não é se o agente encontrará inputs fora da distribuição — encontrará. A questão é se a arquitetura de implementação reconhece isso, monitoriza para isso, e responde de formas que preservam as propriedades de segurança que o agente foi validado para fornecer.</p>
+
+        <p>Um agente a operar fora da distribuição sem o saber não é um agente falhado no sentido habitual. É um agente implementado sem uma arquitetura de responsabilização capaz de detetar a condição. A falha é a montante — na decisão de implementação, não no modelo.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Resumo</span>
+        <p>Cada agente de IA é validado numa distribuição de input finita. Fora desse limite, a confiança expressa não está calibrada, os limiares de decisão já não estão ajustados e os modos de falha já não são previsíveis — mas o agente continua tipicamente a operar sem qualquer sinal de que o limite foi ultrapassado. Na segurança pós-quântica, isto significa agentes a selecionar parâmetros criptográficos contra um modelo de ameaça que já se deslocou. No hardware, significa deteção de anomalias a classificar novas assinaturas de falha como normais. Nos cuidados no mundo físico, significa recomendações para doentes cujas características se encontram fora da população de validação — cujos maus resultados podem ser atribuídos à doença, não a um agente a operar além do seu limite de competência. A arquitetura de implementação deve saber onde está o limite de validação, monitorizá-lo e desencadear escalonamento quando a lacuna entre validação e implementação se torna consequente.</p>
+      </div>
+
+      <footer class="essay-footer">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+        <a href="/pt/blog/" class="essay-footer-back">&larr; Todos os artigos</a>
+      </footer>
+    </article>
+  </main>
+  <footer class="site-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>分佈外問題：AI智能體遭遇從未訓練過的場景時 — Asaptic Labs</title>
+  <meta name="description" content="每個AI智能體都在有限的輸入分佈上經過驗證。在該邊界之外，其置信度未經校準，決策閾值不再適用，失效模式不再可預測——然而智能體通常在沒有任何信號提示邊界已被越過的情況下繼續運行。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/out-of-distribution-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/out-of-distribution-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/out-of-distribution-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/out-of-distribution-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/out-of-distribution-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/out-of-distribution-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="分佈外問題：AI智能體遭遇從未訓練過的場景時" />
+  <meta property="og:description" content="每個AI智能體都在有限的輸入分佈上經過驗證。在該邊界之外，其置信度未經校準，決策閾值不再適用，失效模式不再可預測——然而智能體通常在沒有任何信號提示邊界已被越過的情況下繼續運行。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/out-of-distribution-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "分佈外問題：AI智能體遭遇從未訓練過的場景時",
+      "description": "每個AI智能體都在有限的輸入分佈上經過驗證。在該邊界之外，其置信度未經校準，決策閾值不再適用，失效模式不再可預測——然而智能體通常在沒有任何信號提示邊界已被越過的情況下繼續運行。",
+      "url": "https://asaptic.com/zht/blog/out-of-distribution-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/out-of-distribution-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯繫 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯繫"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "分佈外問題", "item": "https://asaptic.com/zht/blog/out-of-distribution-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;padding-bottom:32px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray)}.essay-body p{font-size:17px;line-height:1.8;color:var(--fg);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:700;margin-top:40px;margin-bottom:16px}.essay-summary{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:28px 32px;margin-top:48px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:0}.essay-footer{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <header class="essay-header">
+        <span class="essay-tag">× 量子安全 × 硬件 × 人類照護</span>
+        <h1 class="essay-title">分佈外問題：AI智能體遭遇從未訓練過的場景時</h1>
+        <p class="essay-subtitle">驗證證明了智能體在定義好的輸入分佈上的能力。在該邊界之外，智能體所表達的置信度是針對一個它已不再能夠識別的世界校準的。</p>
+        <div class="essay-meta">Asaptic Labs · 2026-06-14 · 6 分鐘閱讀</div>
+      </header>
+      <div class="essay-body">
+        <p>每一個AI智能體的部署決策都攜帶著一個隱形的邊界條件：智能體在其經過驗證的輸入範圍內表現如測試所示，對範圍之外的任何情況不作保證。這個邊界很少被明確表述，通常即使是開發者也無法精確知曉。但它始終存在——當智能體越過它時，支撐部署決策的可靠性屬性便不再適用。</p>
+        <p>分佈外問題首先不是模型質量問題。一個經過精心訓練和驗證的智能體，當接收到訓練和評估分佈之外的輸入時，仍可能造成嚴重後果的失敗。更具體的失敗在於，智能體通常不知道它已經越過了這個邊界。其置信度估計是針對分佈內示例校準的；其推理模式、工具使用啟發式、決策閾值——都為它所識別的世界而調整。當那個世界以重要的方式改變時，智能體繼續運作，好像什麼都沒有發生。</p>
+        <h2>後量子交叉點</h2>
+        <p>後量子密碼學不僅僅是算法參數的改變。它是密碼景觀的結構性轉變——新的基元、新的失敗模式、與大多數已部署智能體所針對的經典威脅模型不相似的新攻擊面。一個針對經典威脅模型驗證的、正在做密碼配置決策的智能體，在定義上，當遇到後量子相關場景時，就是在分佈外運行。</p>
+        <p>難點在於這個邊界不是單一明確的界限。它隨著威脅模型的演進而移動：隨著新攻擊的發佈，隨著標準的成熟，隨著推薦參數集的變化。六個月前經過驗證的智能體可能已經對當前景觀處於分佈外狀態——不是因為算法改變，而是因為被認為充分的安全邊際和配置已被修訂。當這種情況發生時，沒有警報響起。智能體繼續以與其選擇仍然有效時相同的表面置信度選擇參數，針對一個它沒有見過也沒有被訓練去識別的威脅模型。</p>
+        <h2>硬件交叉點</h2>
+        <p>部署中的硬件環境與驗證中的硬件環境不同。在受控測試環境中對精心選取的傳感器讀數進行驗證的模型，將會遇到驗證集中沒有出現的傳感器漂移、製造差異、環境噪聲和故障模式特徵。在實際部署中做出維護調度或異常檢測決策的智能體，在不同程度上，始終在分佈外譜系的某處運行。</p>
+        <p>後果不是智能體明顯失敗——而是以難以歸因的方式失敗。將振動特徵歸類為正常、而實際上它是早期故障指標的智能體不會產生明確錯誤。它以訓練所報告的任何置信度分數記錄正常分類。輸入的分佈外特性在輸出中是不可見的。失敗悄然傳播，直到作為硬件損壞浮現——此時因果鏈貫穿著一個智能體決策，而那個決策當時與正確決策無從區分。</p>
+        <h2>物理世界護理交叉點</h2>
+        <p>人類是不可化約地多變的。沒有任何驗證集能捕捉護理人群的完整分佈——其並發症、藥物相互作用、行為模式、生理反應。真實護理環境中的每個人，在某些方面，都相對於驗證數據處於分佈外。</p>
+        <p>這不是驗證工作的失敗；這是問題的結構。護理智能體驗證所基於的分佈與其現在支持的特定人員之間的差距，不是偶然的噪聲——它是風險的主要來源。無法識別自身分佈外暴露的護理智能體，無法適當地升級，無法相應地限定其建議，也無法觸發護理環境中此類暴露所需的人工審查。</p>
+        <p>不對稱性在於，護理後果通常延遲，因果關係模糊，並歸因於潛在狀況而非智能體的處理方式。護理智能體的分佈外失敗可能產生在臨床上歸因於疾病進展的傷害，而非歸因於在驗證邊界之外運行的系統。問責差距是結構性的：暴露未被記錄，傷害未被歸因，同一智能體繼續為下一位在同樣分佈差距中的人做出決策。</p>
+        <h2>分佈外問題的要求</h2>
+        <p>彌合問責差距至少要求：智能體的驗證邊界以可與實際部署條件比較的術語記錄；部署基礎設施對分佈偏移指標進行持續監控；當檢測到偏移時，自動觸發升級或回退行為——而不是留給那些對模型內部分佈假設沒有可見性的觀察者。</p>
+        <p>更根本的是，它要求接受分佈外暴露在後果性部署中不是邊緣案例。它是任何在真實、變化和人性化領域中運行的智能體的正常狀態。問題不是智能體是否會遇到分佈外輸入——它會。問題是部署架構是否承認這一點，對其進行監控，並以保留智能體經驗證提供的安全屬性的方式響應。</p>
+        <p>在不知情的情況下在分佈外運行的智能體，通常意義上不是一個失敗的智能體。它是一個在沒有能夠檢測該條件的問責架構的情況下部署的智能體。失敗在上游——在部署決策中，而不在模型中。</p>
+      </div>
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>每個AI智能體都在有限的輸入分佈上經過驗證。在該分佈之外，其表達的置信度未經校準，決策閾值不再調整，失敗模式不再可預測——然而智能體通常在沒有任何信號表明邊界已被越過的情況下繼續運行。在後量子安全中，這意味著智能體針對已經移動的威脅模型選擇密碼參數。在硬件中，這意味著異常檢測將新型故障特徵分類為正常。在物理世界護理中，這意味著為特徵落在驗證人群之外的患者提供建議，其不良結局可能被歸因於疾病，而非歸因於在能力邊界之外運行的智能體。部署架構必須知道驗證邊界在哪裡，對其進行監控，並在驗證與部署之間的差距變得重要時觸發升級。</p>
+      </div>
+      <footer class="essay-footer">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+        <a href="/zht/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </footer>
+    </article>
+  </main>
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

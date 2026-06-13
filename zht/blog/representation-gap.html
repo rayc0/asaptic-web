@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>表示差距：當AI智能體依據模型而非現實行動時的問責 — Asaptic Labs</title>
+  <meta name="description" content="AI智能體無法觸碰患者、檢查電路板或透過直接觀察檢測金鑰洩露。每個推斷都透過表示來中介。當表示有誤時，智能體以充分的自信基於錯誤前提行動。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/representation-gap.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/representation-gap.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/representation-gap.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/representation-gap.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/representation-gap.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/representation-gap.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="表示差距：當AI智能體依據模型而非現實行動時的問責" />
+  <meta property="og:description" content="AI智能體無法觸碰患者、檢查電路板或透過直接觀察檢測金鑰洩露。每個推斷都透過表示來中介。當表示有誤時，智能體以充分的自信基於錯誤前提行動。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/representation-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-04" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {"@context":"https://schema.org","@type":"Article","headline":"表示差距：當AI智能體依據模型而非現實行動時的問責","description":"AI智能體無法觸碰患者、檢查電路板或透過直接觀察檢測金鑰洩露。每個推斷都透過表示來中介。當表示有誤時，智能體以充分的自信基於錯誤前提行動。","url":"https://asaptic.com/zht/blog/representation-gap.html","author":{"@type":"Organization","name":"Asaptic Labs"},"publisher":{"@type":"Organization","name":"Asaptic Labs","url":"https://asaptic.com"},"datePublished":"2026-06-04","dateModified":"2026-06-14","mainEntityOfPage":"https://asaptic.com/zht/blog/representation-gap.html","inLanguage":"zh-Hant","potentialAction":{"@type":"Action","name":"與 Asaptic 洽談","target":[{"@type":"EntryPoint","urlTemplate":"https://asaptic.com/zht/engage.html","contentType":"application/json","description":"MCP server, tool: submit_rfq"},{"@type":"EntryPoint","urlTemplate":"mailto:engage@asaptic.com","description":"透過電子郵件聯絡"}]}} ,
+    {"@context":"https://schema.org","@type":"BreadcrumbList","inLanguage":"zh-Hant","itemListElement":[{"@type":"ListItem","position":1,"name":"首頁","item":"https://asaptic.com/zht/"},{"@type":"ListItem","position":2,"name":"博客","item":"https://asaptic.com/zht/blog/"},{"@type":"ListItem","position":3,"name":"表示差距","item":"https://asaptic.com/zht/blog/representation-gap.html"}]}
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic,.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-header{margin-bottom:0}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date,.essay-meta span{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px;background:rgba(0,200,150,.02)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:15px;line-height:1.65;color:var(--gray);margin:0}.essay-nav,.essay-footer-wrap{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a,.essay-footer-back{transition:opacity .2s;color:var(--accent)}.essay-nav a:hover,.essay-footer-back:hover{opacity:.7}.essay-footer-byline{color:var(--gray-dim)}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav,.essay-footer-wrap{flex-direction:column}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 物理世界照護 · × 硬件 · × 後量子安全</span>
+      <h1 class="essay-title">表示差距：當AI智能體依據模型而非現實行動時的問責</h1>
+      <div class="essay-meta"><span class="essay-byline">作者：Asaptic Labs</span><span class="essay-date">2026-06-04</span><span class="essay-date">6 分鐘閱讀</span></div>
+
+      <div class="essay-body">
+        <p>AI智能體無法直接接觸患者、檢查電路板或通過直接觀察檢測金鑰洩露。每一個推斷、建議和行動都通過表示來中介——物理現實的結構化近似，在特定時間、通過特定過程創建，可能不再與所描述的內容匹配。</p>
+
+        <p>這對AI智能體來說並非獨有。人類從業者也依據記錄工作。醫生審查患者病歷時是在處理一種表示，安全工程師審查系統圖時也是如此。不同之處在於，人類從業者將隱性知識帶入表示與現實之間的差距——他們知道病歷缺少上下文，尋找不一致之處，提出記錄無法回答的問題。他們的直接接觸補充了數據。</p>
+
+        <p>AI智能體沒有這種補充。表示就是一切。當表示準確時，智能體可以表現出色。當它偏離現實時——而它總會在某處偏離——智能體沒有機制檢測這種偏差。它以充分的自信基於錯誤前提行動。這就是表示差距。</p>
+
+        <h2>在照護交叉點</h2>
+        <p>在實體世界照護中，一個人的數字表示從臨床記錄、設備讀數、照護計劃注釋和結構化評估中組裝而成。每個數據點在特定時刻、由特定儀器或提供者為特定目的捕獲。它們共同形成一個表面上連貫的整體，實際上是來自不同時間、不同來源和不同情境的快照拼圖。</p>
+
+        <p>當智能體在這種表示上運作時，它做出局部連貫的決策——它們符合數據模型——但可能不符合真實的人。當損害隨之而來時，問責問題不僅僅是「智能體推斷出了什麼？」，還有「誰對智能體所給的表示負責？」沒有單一行為者組裝了完整的表示，問責的差距與模型和現實之間的差距相匹配。</p>
+
+        <h2>在硬件交叉點</h2>
+        <p>硬件安全智能體在物理系統的表示上運作——網絡拓撲圖、固件清單、配置基線、漏洞掃描結果。這些表示由以間隔運行的發現過程創建，而非持續運行。掃描之間，物理現實發生變化：設備被替換、固件通過帶外渠道更新、配置通過未記錄路徑被修改。</p>
+
+        <p>根據過時地圖評估安全態勢的智能體並未在檢測漏洞——它無法檢測它們。其乾淨的評估相對於表示是準確的，相對於實際系統是錯誤的。當攻擊者利用智能體地圖未顯示的內容時，問責問題是相同的：誰對智能體運作所依賴的表示的新鮮度負責？</p>
+
+        <h2>在後量子交叉點</h2>
+        <p>加密身份是一種表示：公鑰斷言「我是這個實體，我控制這把金鑰。」金鑰材料老化、被洩露、被委託給不再持有它的各方，或被更新的金鑰材料取代，而更廣泛的系統尚未同步。如果管理加密遷移的智能體依賴的表示是錯誤的——仍被列為有效但已被洩露的金鑰、被標記為完成但只是部分執行的遷移——智能體會以與現實準確時相同的自信認證錯誤狀態。錯誤在被對手利用之前是不可見的。</p>
+
+        <h2>差距所需要的</h2>
+        <p>表示差距沒有消除它的工程解決方案。持續數據收集可以縮小它；新鮮度追蹤使其可見；異常檢測可以標記表示與觀察行為偏離的情況。但差距無法完全關閉。</p>
+
+        <p>差距所需要的是明確命名它的問責架構，而不是將其視為殘餘細節。部署者應被要求描述其智能體運作所依賴的表示：如何組裝、刷新頻率以及已知限制。在高風險情境中，智能體應被禁止在超過定義閾值的表示上行動。</p>
+
+        <p>當損害被追溯到表示錯誤而非推斷錯誤時，問責路徑必須到達表示的托管人——組裝、維護和提供智能體所依賴的數據模型的組織。他們給了智能體一個可以行動的世界。當那個世界是錯的，他們共同承擔後續的責任。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>AI智能體在現實的結構化表示上運作，而非在現實本身上。表示差距——模型與它所描述的世界之間的偏差——是結構性的且不可避免的。它存在於每個交叉點：照護智能體在落後於活生生患者的患者數據模型上行動；硬件智能體在落後於實際基礎設施的系統圖上行動；後量子智能體在可能不反映實際金鑰有效性的加密狀態記錄上行動。當損害源於有缺陷的表示時，問責必須到達給智能體提供模型的托管人，而不僅僅是智能體的部署者或智能體本身。</p>
+      </div>
+    
+      <div class="essay-nav"><a href="/zht/blog/">&larr; 全部文章</a><a href="/zht/engage.html">參與 &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>
