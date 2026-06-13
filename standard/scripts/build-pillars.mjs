@@ -96,6 +96,36 @@ function labelMap(items) {
 const products = readJson(join(DATA, "_pillars/products.json"));
 const markets = readJson(join(DATA, "_pillars/markets.json"));
 const idx = readJson(join(DATA, "_index.json"));
+
+// Backfill pillar entries for any product/market in the index that lacks authored copy,
+// so EVERY live market/product gets a discoverable hub page (no homepage-fallback gaps).
+const tri = (en, zh, zht) => ({ en, zh, zht });
+for (const m of idx.markets || []) {
+  if (markets[m.id]) continue;
+  const lbl = m.label || tri(m.id, m.id, m.id);
+  markets[m.id] = {
+    label: lbl,
+    intro: tri(
+      `${lbl.en} applies its own conformity-assessment and market-access requirements to imported products. This page groups every Cross-Standard comparison of common China (GB / GB-T) documentation against ${lbl.en} requirements, by product category — a source-linked, informational reference to the gaps exporters most often need to close.`,
+      `${lbl.zh || lbl.en}对进口产品适用其自身的合格评定与市场准入要求。本页按产品类别汇总所有将中国常用文件（GB / GB-T）与${lbl.zh || lbl.en}要求进行对照的 Cross-Standard 比较，提供带来源链接的信息性参考，帮助出口商了解最常见的合规差距。`,
+      `${lbl.zht || lbl.en}對進口產品適用其自身的合格評定與市場准入要求。本頁按產品類別匯總所有將中國常用文件（GB / GB-T）與${lbl.zht || lbl.en}要求進行對照的 Cross-Standard 比較，提供附來源連結的資訊性參考，幫助出口商了解最常見的合規差距。`
+    ),
+    products: (idx.comparisons || []).filter((c) => c.market === m.id).map((c) => c.product)
+  };
+}
+for (const p of idx.products || []) {
+  if (products[p.id]) continue;
+  const lbl = p.label || tri(p.id, p.id, p.id);
+  products[p.id] = {
+    label: lbl,
+    intro: tri(
+      `Exporting ${lbl.en} from China means meeting each destination market's standards and conformity requirements. This page groups every Cross-Standard comparison for ${lbl.en} by market — a source-linked, informational gap reference.`,
+      `从中国出口${lbl.zh || lbl.en}需要满足各目标市场的标准与合格评定要求。本页按市场汇总所有关于${lbl.zh || lbl.en}的 Cross-Standard 比较，提供带来源链接的信息性差距参考。`,
+      `從中國出口${lbl.zht || lbl.en}需要滿足各目標市場的標準與合格評定要求。本頁按市場匯總所有關於${lbl.zht || lbl.en}的 Cross-Standard 比較，提供附來源連結的資訊性差距參考。`
+    ),
+    markets: (idx.comparisons || []).filter((c) => c.product === p.id).map((c) => c.market)
+  };
+}
 const productLabels = { ...labelMap(idx.products), ...Object.fromEntries(Object.entries(products).map(([id, p]) => [id, p.label])) };
 const marketLabels = { ...labelMap(idx.markets), ...Object.fromEntries(Object.entries(markets).map(([id, m]) => [id, m.label])) };
 const live = idx.comparisons.filter((comparison) => comparison.status === "live");
