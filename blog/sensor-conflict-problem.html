@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The sensor conflict problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents in physical environments do not observe the world directly — they observe sensor outputs that represent it. When those outputs conflict, the resolution decision is consequential, often invisible, and almost never logged." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/sensor-conflict-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The sensor conflict problem" />
+  <meta property="og:description" content="AI agents in physical environments do not observe the world directly — they observe sensor outputs that represent it. When those outputs conflict, the resolution decision is consequential, often invisible, and almost never logged." />
+  <meta property="og:url" content="https://asaptic.com/blog/sensor-conflict-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-13" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The sensor conflict problem",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-13",
+    "description": "AI agents in physical environments do not observe the world directly — they observe sensor outputs that represent it. When those outputs conflict, the resolution decision is consequential, often invisible, and almost never logged.",
+    "url": "https://asaptic.com/blog/sensor-conflict-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap { max-width: 680px; margin: 0 auto; padding: 120px 32px 96px; }
+    .essay-back { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: var(--gray); margin-bottom: 48px; transition: color 0.2s; }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; color: var(--cyan); display: block; margin-bottom: 14px; }
+    .essay-title { font-size: clamp(26px, 4vw, 40px); font-weight: 700; line-height: 1.15; margin-bottom: 24px; }
+    .essay-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+    .essay-byline, .essay-date { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gray-dim); }
+    .essay-body p { font-size: 17px; color: var(--gray); line-height: 1.85; margin-bottom: 24px; }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--border); }
+    .essay-summary-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: var(--accent); display: block; margin-bottom: 12px; }
+    .essay-summary p { font-size: 14px; color: var(--gray-dim); line-height: 1.75; margin-bottom: 12px; }
+    .essay-nav { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; font-size: 12px; color: var(--gray-dim); margin-top: 48px; }
+    @media (max-width: 768px) { .essay-wrap { padding: 100px 20px 72px; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× HARDWARE · × PHYSICAL-WORLD CARE · × POST-QUANTUM SECURITY</span>
+      <h1 class="essay-title">The sensor conflict problem: accountability when AI agents adjudicate between conflicting physical inputs</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-06-13</span>
+        <span class="essay-date">6 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>AI agents in physical environments do not observe the world directly. They observe sensor outputs that represent it. When those outputs agree, the agent proceeds with high confidence. When they conflict — when two sensors measuring the same quantity return meaningfully different values, or when sensors measuring different proxies of the same underlying state point in opposite directions — the agent must adjudicate before it can act. That adjudication is itself a decision. It is often the most consequential decision in the chain. And in almost every deployed system we are aware of, it happens without deliberation, without an explicit policy, and without a record.</p>
+
+        <p>The anatomy of sensor conflict follows three patterns. The first is same-quantity conflict: two instruments measuring the same thing produce readings that cannot both be correct. A wrist oximeter reads 94% blood oxygen saturation; a second sensor on the same wrist reads 99%. Both are operating within their manufacturer-specified accuracy range. Neither is producing an error signal. The agent must choose which to trust before it can decide whether to escalate. The second pattern is cross-modal conflict: different sensors measure different proxies of the same underlying state, and the proxies disagree. A bed occupancy sensor indicates a patient is in bed; a motion detector reports no movement; a door sensor shows no activity for six hours. Each reading is individually plausible. Together they imply either that the patient is sleeping quietly, or that the patient has been motionless and isolated in a way that warrants immediate attention. The third pattern is historical conflict: the current sensor reading is sharply inconsistent with the patient's established baseline from the same sensor over the preceding days. This could mean sensor drift, sensor malfunction, or a true clinical change. The agent must resolve that ambiguity under time pressure.</p>
+
+        <p>The accountability problem is not that sensors conflict — hardware systems have always required conflict resolution logic. The problem is the combination of three structural features of current AI deployments. First, the arbitration policy is implicit. It is not a written rule that an engineer specified, reviewed, and signed off on. It is an emergent property of training — an implicit weighting of modalities learned from the training dataset. The system's response to a specific conflict is not predictable from any design document, because no design document describes it. When a post-incident review asks "why did the agent trust sensor A over sensor B in this case?", there is no authoritative answer. The weights cannot be read as a policy. Second, the conflict itself is usually not logged. Most deployed agents record their assessment of world state — the output of the arbitration. They do not record the conflict that preceded the assessment. The raw readings that disagreed, the disagreement magnitude, and the identity of the modalities involved are discarded before any log is written. This makes post-incident reconstruction impossible: the record shows what the agent concluded, not what it weighed. Third, responsibility for the arbitration policy is diffuse to the point of being unassignable. The training team selected the dataset. The data curation team determined which sensor modalities were included and in what proportions. The validation team evaluated aggregate accuracy without decomposing performance by conflict type. No one wrote an arbitration policy, because no one was responsible for writing one.</p>
+
+        <p>The physical-world care context intensifies all three problems. The patients most likely to generate sensor conflicts are precisely the patients at highest clinical risk: those with movement disorders produce unreliable mobility sensor readings; those with poor peripheral circulation produce unreliable pulse oximetry from wrist-mounted sensors; those with disrupted sleep architecture produce ambiguous signals on sleep staging instruments. An arbitration policy trained on a general population will systematically apply the wrong weighting when deployed with a clinical population where the most vulnerable patients are also the most sensor-ambiguous. The training distribution does not represent the deployment population at the margin that matters most. And the margin that matters most — the highest-risk patients at the edges of sensor reliability — is exactly where arbitration errors have the highest consequence.</p>
+
+        <p>The hardware crossing presents a structurally identical problem in a different physical domain. An autonomous system navigating a real-world environment relies on sensor fusion across imaging, ranging, and inertial modalities. When conflicting readings arise — a camera detecting a clear path while a proximity sensor flags an obstacle — the system must arbitrate before it can proceed. If the arbitration policy was trained on daylight-condition data, it will over-weight visual inputs relative to ranging inputs when deployed in low-light or high-particulate environments. The conflict resolution that is correct on average is systematically wrong in the operating conditions most likely to produce genuine obstacles. The agent's confidence in its arbitrated world-model will be highest exactly when its arbitration is least trustworthy.</p>
+
+        <p>Three architectural changes are required to make sensor conflict accountability-tractable. The first is explicit arbitration policy. Conflict resolution rules must be engineered artifacts: written specifications with version control, human authorship, and formal review, not implicit model behaviors. The policy must enumerate the conflict types that are in scope, specify the resolution logic for each, and document the reasoning behind each choice. This is harder than training a model that implicitly learns to weight modalities, but it is the only form of arbitration policy that can be audited, updated, or challenged in a post-incident review. The second is conflict event logging. Every sensor conflict above a defined disagreement threshold must be logged as a distinct event, separate from the arbitrated output. The log entry must include the raw readings, the disagreement magnitude, the modalities involved, and the arbitration outcome. This log serves two purposes: it enables post-incident reconstruction when the arbitrated output was wrong, and it provides a monitoring stream that detects when conflict frequency or magnitude is increasing — a leading indicator of sensor degradation or deployment distribution shift. The third is a human escalation pathway for high-stakes conflicts. When a conflict involves sensors that are safety-critical for the relevant decision, or when the disagreement magnitude exceeds a defined threshold, the agent should not resolve it silently. It should escalate to a human supervisor and hold the decision pending review. The conflict itself is an accountability-relevant event. Resolving it without human awareness destroys the oversight that the deployment model was designed to preserve.</p>
+
+        <p>The sensor conflict problem is not a signal-processing question. Fusing noisy inputs from heterogeneous sensors is a well-studied engineering discipline. The accountability gap is not that the problem is technically hard. It is that the accountability infrastructure required to make conflict resolution auditable — explicit policies, conflict logs, escalation thresholds — has not been built into deployed systems, because no one has been required to build it. In care AI and in physical-world autonomous hardware, that omission is not a technical gap. It is a governance gap, visible at the exact moment it matters most: when something goes wrong and the record shows only what the agent concluded, not what the agent chose to ignore.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>AI智能体通过传感器观察物理世界，但传感器数据冲突时，智能体必须在无需审议、通常也无需记录的情况下做出裁决。这一裁决政策通常隐性编码于模型权重之中，而非明确书面规则；冲突事件本身通常不被记录，仅记录裁决后的状态输出；裁决政策的责任归属分散，没有任何工程师明确撰写了相关规则。在照护AI中，最可能引发传感器冲突的患者——行动障碍、外周循环不良、睡眠障碍者——恰恰也是风险最高的患者，错误裁决的代价在此处最为高昂。应对之策需要三项架构性变革：明确可审计的裁决政策、冲突事件独立日志，以及高风险冲突的人工升级通道。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>AI智能體透過傳感器觀察物理世界，但傳感器數據衝突時，智能體必須在無需審議、通常也無需記錄的情況下做出裁決。這一裁決政策通常隱性編碼於模型權重之中，而非明確書面規則；衝突事件本身通常不被記錄，僅記錄裁決後的狀態輸出；裁決政策的責任歸屬分散，沒有任何工程師明確撰寫了相關規則。在照護AI中，最可能引發傳感器衝突的患者——行動障礙、外周循環不良、睡眠障礙者——恰恰也是風險最高的患者，錯誤裁決的代價在此處最為高昂。應對之策需要三項架構性變革：明確可審計的裁決政策、衝突事件獨立日誌，以及高風險衝突的人工升級通道。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/reidentification-problem.html">&larr; Re-identification problem</a>
+        <a href="/blog/">All essays →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 硬件 · × 物理世界照护 · × 后量子安全</span>
+      <h1 class="essay-title">传感器冲突问题：AI智能体裁决相互矛盾的物理输入时的问责</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-13</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>物理环境中的AI智能体不直接观察世界，而是通过传感器输出来表征世界。当这些输出一致时，智能体以高置信度推进行动。当它们发生冲突——两个测量同一量的传感器返回有意义的差异读数，或测量同一底层状态的不同代理传感器指向相反方向——智能体在行动前必须进行裁决。这个裁决本身就是一个决策，往往是整个链条中最关键的决策。而在我们所了解的几乎所有已部署系统中，这一过程都在无需审议、无明确政策、无任何记录的情况下发生。</p>
+
+        <p>传感器冲突的形态遵循三种模式。第一是同量冲突：两个测量同一量的仪器产生不可能同时正确的读数。第二是跨模态冲突：不同传感器测量同一底层状态的不同代理指标，而这些代理指标相互矛盾——例如床位占用传感器显示患者在床上，动作探测器却没有检测到运动，六小时内门传感器也无任何活动记录。每个读数单独来看都合理，组合起来却意味着截然不同的临床状态。第三是历史冲突：当前传感器读数与该传感器前几天建立的患者基线明显不一致，可能意味着传感器漂移、故障，或真实的临床变化。</p>
+
+        <p>问题的核心不在于传感器冲突本身，而在于三个结构性特征的叠加。其一，裁决政策是隐性的：它不是工程师规范、审查并签字的书面规则，而是训练过程中产生的模态权重的涌现属性，无法从任何设计文档中读出，事后也无法提供权威解释。其二，冲突事件本身通常不被记录：大多数系统仅记录裁决后的世界状态评估（输出），而非导致该评估的原始冲突读数、差异幅度与涉及模态。这使事后重建成为不可能。其三，裁决政策的责任归属分散到几乎无法追究的程度——训练团队、数据整理团队、验证团队各自负责自己的环节，而没有任何人负责书写裁决政策，因为没有人被要求这样做。</p>
+
+        <p>物理世界照护背景使三个问题都更加严峻。最可能引发传感器冲突的患者，恰恰也是临床风险最高的患者：行动障碍者的移动传感器读数不可靠；外周循环不良者的手腕式脉搏血氧仪读数不可靠；睡眠架构紊乱者的睡眠分期传感器信号模糊。基于普通人群训练的裁决政策，在部署于高风险临床人群时，会系统性地采用错误的权重——而正是这些最脆弱的患者，处于传感器可靠性最低、裁决错误代价最高的边缘地带。</p>
+
+        <p>自主硬件系统在不同的物理领域呈现出结构上完全相同的问题：依赖图像、测距和惯性多模态传感器融合的自主系统，当各模态读数冲突时，必须在行动前裁决。若裁决政策在日光条件数据上训练，则在低光或高颗粒物环境部署时，会系统性地过度信任视觉输入而轻视测距输入——在最可能存在真实障碍物的操作条件下，裁决逻辑最不可靠。</p>
+
+        <p>实现传感器冲突问责性，需要三项架构性变革。其一，明确可审计的裁决政策：冲突解决规则必须是带版本控制、人工署名与正式审查的工程文档，而非隐性模型行为。其二，冲突事件独立日志：超过定义差异阈值的每次传感器冲突，都应作为独立事件记录，包含原始读数、差异幅度、涉及模态与裁决结果；这一日志既能支持事后重建，也能提供检测传感器退化的监控流。其三，高风险冲突的人工升级通道：涉及安全关键传感器或差异幅度超过阈值的冲突，不应被静默解决，而应上报人工监督者并暂缓决策。</p>
+
+        <p>传感器冲突问题本质上不是信号处理问题。它是治理问题：使冲突解决具有可审计性所需的基础设施——明确政策、冲突日志、升级阈值——尚未被内置到已部署系统中，因为没有人被要求这样做。在照护AI和物理世界自主硬件中，这一缺失在最关键的时刻显现：当事故发生，记录仅显示智能体得出了什么结论，而非它选择忽略了什么。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/reidentification-problem.html">&larr; 再识别问题</a>
+        <a href="/blog/">全部文章 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 硬件 · × 物理世界照護 · × 後量子安全</span>
+      <h1 class="essay-title">傳感器衝突問題：AI智能體裁決相互矛盾的物理輸入時的問責</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-13</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>物理環境中的AI智能體不直接觀察世界，而是透過傳感器輸出來表徵世界。當這些輸出一致時，智能體以高置信度推進行動。當它們發生衝突——兩個測量同一量的傳感器返回有意義的差異讀數，或測量同一底層狀態的不同代理傳感器指向相反方向——智能體在行動前必須進行裁決。這個裁決本身就是一個決策，往往是整個鏈條中最關鍵的決策。而在我們所了解的幾乎所有已部署系統中，這一過程都在無需審議、無明確政策、無任何記錄的情況下發生。</p>
+
+        <p>傳感器衝突的形態遵循三種模式。第一是同量衝突：兩個測量同一量的儀器產生不可能同時正確的讀數。第二是跨模態衝突：不同傳感器測量同一底層狀態的不同代理指標，而這些代理指標相互矛盾——例如床位占用傳感器顯示患者在床上，動作探測器卻沒有偵測到運動，六小時內門傳感器也無任何活動記錄。每個讀數單獨來看都合理，組合起來卻意味著截然不同的臨床狀態。第三是歷史衝突：當前傳感器讀數與該傳感器前幾天建立的患者基線明顯不一致，可能意味著傳感器漂移、故障，或真實的臨床變化。</p>
+
+        <p>問題的核心不在於傳感器衝突本身，而在於三個結構性特徵的疊加。其一，裁決政策是隱性的：它不是工程師規範、審查並簽字的書面規則，而是訓練過程中產生的模態權重的湧現屬性，無法從任何設計文件中讀出，事後也無法提供權威解釋。其二，衝突事件本身通常不被記錄：大多數系統僅記錄裁決後的世界狀態評估，而非導致該評估的原始衝突讀數、差異幅度與涉及模態，使事後重建成為不可能。其三，裁決政策的責任歸屬分散到幾乎無法追究的程度——沒有任何人被要求撰寫裁決政策，因此也就沒有人撰寫了它。</p>
+
+        <p>物理世界照護背景使三個問題都更加嚴峻。最可能引發傳感器衝突的患者，恰恰也是臨床風險最高的患者：行動障礙者的移動傳感器讀數不可靠；外周循環不良者的手腕式脈搏血氧儀讀數不可靠；睡眠架構紊亂者的睡眠分期傳感器信號模糊。基於普通人群訓練的裁決政策，在部署於高風險臨床人群時，會系統性地採用錯誤的權重——而正是這些最脆弱的患者，處於傳感器可靠性最低、裁決錯誤代價最高的邊緣地帶。</p>
+
+        <p>自主硬件系統在不同的物理領域呈現出結構上完全相同的問題：依賴圖像、測距和慣性多模態傳感器融合的自主系統，當各模態讀數衝突時，必須在行動前裁決。若裁決政策在日光條件數據上訓練，則在低光或高顆粒物環境部署時，會系統性地過度信任視覺輸入而輕視測距輸入——在最可能存在真實障礙物的操作條件下，裁決邏輯最不可靠。</p>
+
+        <p>實現傳感器衝突問責性，需要三項架構性變革。其一，明確可審計的裁決政策：衝突解決規則必須是帶版本控制、人工署名與正式審查的工程文件，而非隱性模型行為。其二，衝突事件獨立日誌：超過定義差異閾值的每次傳感器衝突，都應作為獨立事件記錄，包含原始讀數、差異幅度、涉及模態與裁決結果；這一日誌既能支持事後重建，也能提供檢測傳感器退化的監控流。其三，高風險衝突的人工升級通道：涉及安全關鍵傳感器或差異幅度超過閾值的衝突，不應被靜默解決，而應上報人工監督者並暫緩決策。</p>
+
+        <p>傳感器衝突問題本質上不是信號處理問題。它是治理問題：使衝突解決具有可審計性所需的基礎設施——明確政策、衝突日誌、升級閾值——尚未被內置到已部署系統中，因為沒有人被要求這樣做。在照護AI和物理世界自主硬件中，這一缺失在最關鍵的時刻顯現：當事故發生，記錄僅顯示智能體得出了什麼結論，而非它選擇忽略了什麼。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/reidentification-problem.html">&larr; 再識別問題</a>
+        <a href="/blog/">全部文章 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
