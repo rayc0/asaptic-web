@@ -143,3 +143,4 @@
 2026-06-12 00:00 UTC · blog: add essay 'The post-incident modification problem' — accountability when operational response destroys incident evidence (EN+ZH+ZH-HK) + blog index ZH/ZHT parity fix · 0696829
 2026-06-12 04:14 UTC · blog: add essay 'The third-party accountability gap' — accountability when AI agents cause harm to people outside their authorization chain (EN+ZH+ZH-HK) · 5a6f63c
 2026-06-12 16:15 UTC · blog: add essay 'The notification gap problem' — accountability when AI agents detect correctly but alerts fail to reach the people who can act (EN+ZH+ZH-HK) · 26d6817
+2026-06-13 12:13 UTC · blog: add essay 'The re-identification problem' — accountability when privacy-preserving AI outputs expose the person they were designed to protect · 3235467
