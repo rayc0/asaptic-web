@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>重放攻击问题：为何AI智能体无法验证凭证是否被首次使用 — Asaptic Labs</title>
+  <meta name="description" content="向AI智能体出示的有效凭证，并不能证明它正在被首次使用、被正确主体使用、在正确场景中使用。抗重放性不是协议细节——它是问责的前提条件。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/replay-attack-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/replay-attack-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/replay-attack-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/replay-attack-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/replay-attack-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/replay-attack-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="重放攻击问题：为何AI智能体无法验证凭证是否被首次使用" />
+  <meta property="og:description" content="向AI智能体出示的有效凭证，并不能证明它正在被首次使用、被正确主体使用、在正确场景中使用。抗重放性不是协议细节——它是问责的前提条件。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/replay-attack-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-05-24" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "重放攻击问题：为何AI智能体无法验证凭证是否被首次使用",
+      "description": "向AI智能体出示的有效凭证，并不能证明它正在被首次使用、被正确主体使用、在正确场景中使用。抗重放性不是协议细节——它是问责的前提条件。",
+      "url": "https://asaptic.com/zh/blog/replay-attack-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-05-24",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/replay-attack-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "与 Asaptic 洽谈",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "重放攻击问题", "item": "https://asaptic.com/zh/blog/replay-attack-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:17px;line-height:1.8;color:var(--text-muted);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:700;margin:48px 0 18px;color:var(--text)}.essay-nav{display:flex;justify-content:space-between;margin-top:64px;padding-top:32px;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px}.essay-nav a{color:var(--accent)}.essay-footer{border-top:1px solid var(--border);padding:32px;text-align:center;font-size:12px;color:var(--gray-dim)}.essay-footer a{color:var(--gray);margin:0 8px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column;gap:16px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照护</span>
+      <h1 class="essay-title">重放攻击问题：为何AI智能体无法验证凭证是否被首次使用</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-24</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>收到有效凭证的AI智能体只了解到一件事：该凭证在过去某个时间点被合法签发。它无从得知该凭证现在是否正由其签发对象使用、是否处于预期的使用场景中、是否属于首次使用。有效性与新鲜度是不同的属性，但大多数智能体凭证体系将二者混为一谈。</p>
+
+        <p>重放攻击正是利用了这一空白。攻击者捕获一个合法凭证——授权令牌、签名同意记录、认证报告或会话令牌——然后在稍后时刻或不同场景中重新提交，以获取原始凭证从未打算反复或无条件授予的访问权限。签名验证通过，签发方合法，凭证只是过期了，或正被错误方使用，或在应该失效后被二次使用。智能体无从辨别。</p>
+
+        <h2>为何AI智能体尤其脆弱</h2>
+        <p>传统网络协议经过数十年的抗重放工程积累：有效期极短的TLS会话令牌、挑战-响应随机数、OAuth令牌轮换、TOTP时间窗口。这些保护措施之所以有效，是因为协议层在应用层看到凭证之前就已完成强制执行。</p>
+
+        <p>AI智能体引入了新的攻击面。它们不仅从网络协议中消费凭证，还从文档、电子邮件、记忆存储、API响应和工具输出中获取凭证。当智能体检索到一个写有"患者已同意X手术"的文件，或工具返回上周二签名的授权记录时，智能体不会自动追问该断言是否仍然有效，或该凭证的原始传输通道是否执行了抗重放保护。它将内容作为数据读取并纳入推理。抗重放保护如果存在，现在必须在智能体的决策层强制执行，而不能依赖传输层的隐性保障。</p>
+
+        <h2>后量子维度</h2>
+        <p>随着密码学转型临近，重放问题愈加紧迫。当前保护凭证免遭伪造的RSA和椭圆曲线签名，将在能力足够强大的量子对手面前变得可破解。现在囤积签名凭证的攻击者，未来可以伪造签名有效但完全捏造的新凭证，或重放背景早已过期的旧有效凭证。</p>
+
+        <p>后量子密码算法——目前正在标准化的基于格和基于哈希的签名方案——解决的是抗伪造性，而非自动解决抗重放性。提交给智能体的后量子签名凭证依然只是带有有效签名的凭证。除非签名方案将凭证绑定到新鲜度随机数、特定会话和特定预期用途，量子时代的对手同样可以像当今的经典对手一样轻松重放旧的有效凭证。</p>
+
+        <p>架构应对方案是在每次凭证交换中引入挑战-响应随机数：依赖方智能体签发一个随机数；凭证仅在对该随机数进行签名后才有效。这将凭证绑定到特定交易，使重放失去意义。后量子签名方案必须在强制执行此绑定的前提下部署，而非将其视为可选项。</p>
+
+        <h2>硬件认证维度</h2>
+        <p>硬件认证是智能体系统最依赖的信任锚点之一。来自安全飞地的认证报告证明，特定软件配置正运行在特定设备上。这些报告本身经过签名，这意味着它们同样可能被重放。</p>
+
+        <p>捕获合法认证报告的攻击者可以将其作为当前时刻的实时认证提交。如果依赖方智能体接受该报告时未进行新鲜度绑定——即其签发的随机数、或窄有效期时间戳、或二者兼备——它实际上是在接受"软件此刻正以受信配置运行"的声明，而这一声明来自过去某个时刻，对应的设备可能早已不存在或已被攻破。</p>
+
+        <p>正确构建的认证协议会在请求认证报告前签发一个挑战随机数，要求认证覆盖该随机数，并拒绝不包含随机数的报告。这并非罕见做法，而是硬件安全规范中的设计模式。但这要求请求和验证认证的智能体端软件正确实现挑战——且实现本身不可重放。</p>
+
+        <h2>物理世界照护维度</h2>
+        <p>在照护AI部署中，重放问题以一种不那么明显具有对抗性、却同样危险的形式出现：已授权但已过期。照护AI智能体可能收到一份由患者签名的同意书。签名有效，患者确实签署了该文件。但签署时间在患者状况发生变化之前，而这一变化本会促使其撤销或修改同意。该记录并非伪造，只是被用于签署者未预期的场景、代表着其不再适用的临床时刻。</p>
+
+        <p>类似情形包括：在开具有禁忌症药物之前签发的用药授权；在患者表达新意愿之前记录的预立医疗指示；在功能状态恶化之前签署的护理计划。每种情形都是有效凭证被重放到一个它并非有效当下授权的临床场景中。危害不来自外部对手，而来自智能体将一份有时间限制的凭证视为无时效性声明加以接受。</p>
+
+        <p>设计含义是：照护相关授权必须设定与基础临床状态波动性相匹配的有效期。稳定慢性病的同意书有效期可能长于急性干预的同意书。智能体在行动前必须同时验证签名和有效期——当有效期已过，必须要求重新授权，而非接受缓存断言。</p>
+
+        <h2>设计应对</h2>
+        <p>智能体系统的抗重放性需要三个各自已知但尚未一贯综合应用的要素。第一，每个授权凭证必须在签名中绑定新鲜度组件——随机数、严格有效期或二者兼备。第二，智能体在接受认证之前必须签发挑战，而不是信任缓存的认证报告。第三，照护相关授权必须设定与临床波动性相匹配的有效期，有效期届满时强制要求重新授权。</p>
+
+        <p>基本原则在于：有效凭证是关于过去的声明。在当下行动的AI智能体需要的是有效凭证加上它所描述的过去仍是当下现实的证明。抗重放性正是使这一证明难以伪造的机制。缺乏抗重放性，凭证层只是历史授权的记录，而非对当前许可的实时断言——基于历史授权行动的智能体不是可问责的智能体，而是自以为拥有实已失效权限的智能体。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/state-sync-problem.html">延伸阅读：状态同步问题 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

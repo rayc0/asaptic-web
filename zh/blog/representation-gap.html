@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>表示差距：当AI智能体依据模型而非现实行动时的问责 — Asaptic Labs</title>
+  <meta name="description" content="AI智能体无法触碰患者、检查电路板或通过直接观察检测密钥泄露。每个推断都通过表示来中介。当表示有误时，智能体以充分的自信基于错误前提行动。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/representation-gap.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/representation-gap.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/representation-gap.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/representation-gap.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/representation-gap.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/representation-gap.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="表示差距：当AI智能体依据模型而非现实行动时的问责" />
+  <meta property="og:description" content="AI智能体无法触碰患者、检查电路板或通过直接观察检测密钥泄露。每个推断都通过表示来中介。当表示有误时，智能体以充分的自信基于错误前提行动。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/representation-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-04" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "表示差距：当AI智能体依据模型而非现实行动时的问责",
+      "description": "AI智能体在数据上运作——物理现实的结构化近似。当表示偏离现实时，智能体以充分的自信基于错误前提行动。没有单一主体控制完整的表示。问责必须到达给智能体提供错误世界的主体。",
+      "url": "https://asaptic.com/zh/blog/representation-gap.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-04",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/representation-gap.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "与 Asaptic 洽谈",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "表示差距", "item": "https://asaptic.com/zh/blog/representation-gap.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-wrap{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <header class="essay-header">
+        <div class="essay-tag">× 后量子安全 × 硬件 × 物理世界照护</div>
+        <h1 class="essay-title">表示差距：当AI智能体依据模型而非现实行动时的问责</h1>
+        <p class="essay-subtitle">AI智能体在数据上运作——物理现实的结构化近似。当表示偏离其所描述的内容时，智能体以充分的自信基于错误前提行动。这一差距是结构性的，而非偶然的。它所引发的问责问题——谁对智能体所获的模型负责——没有明确的归属者。</p>
+        <div class="essay-meta">
+          <span>Asaptic Labs</span>
+          <span>2026-06-04</span>
+          <span>5 分钟阅读</span>
+        </div>
+      </header>
+
+      <div class="essay-body">
+        <p>AI智能体无法直接接触患者、检查电路板或通过直接观察检测密钥泄露。每一个推断、建议和行动都通过表示来中介——物理现实的结构化近似，在特定时间、通过特定过程创建，可能不再与所描述的内容匹配。</p>
+
+        <p>这对AI智能体来说并非独有。人类从业者也依据记录工作。医生审查患者病历时是在处理一种表示，安全工程师审查系统图时也是如此。不同之处在于，人类从业者将隐性知识带入表示与现实之间的差距——他们知道病历缺少上下文，寻找不一致之处，提出记录无法回答的问题。他们的直接接触补充了数据。</p>
+
+        <p>AI智能体没有这种补充。表示就是一切。当表示准确时，智能体可以表现出色。当它偏离现实时——而它总会在某处偏离——智能体没有机制检测这种偏差。它以充分的自信基于错误前提行动。</p>
+
+        <p>这就是表示差距。它是结构性的，而非偶然的。它来源于数据驱动系统的本质。它所引发的问责问题是现有框架难以回答的：当损害源于有缺陷的表示时，谁对智能体所获的模型负责？</p>
+
+        <h2>在照护交叉点</h2>
+        <p>在物理世界照护中，一个人的数字表示从临床记录、设备读数、照护计划注释和结构化评估中组装而成。每个数据点在特定时刻、由特定仪器或提供者为特定目的捕获。它们共同形成一个表面上连贯的整体，实际上是来自不同时间、不同来源和不同情境的快照拼图。</p>
+
+        <p>这个人已经改变了。他们老化了、康复了、衰退了，或做出了记录尚未反映的决定。药物清单可能包含非正式停用的药物。照护计划可能反映当事人此后已放弃的目标。生命体征基线可能已是数月前的数据。智能体在一个在最后更新时刻准确、此后越来越近似的表示上运作。</p>
+
+        <p>当智能体在这种表示上运作时，它做出局部连贯的决策——它们符合数据模型——但可能不符合真实的人。当损害随之而来时，问责问题不仅仅是"智能体推断出了什么？"，还有"谁对智能体所给的表示负责？"没有单一行为者组装了完整的表示。它跨越组织、设备和时间构建而成。智能体的部署者创建的只是其中一小部分。智能体本身无法验证它。问责的差距与模型和现实之间的差距相匹配。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>硬件安全智能体在物理系统的表示上运作——网络拓扑图、固件清单、配置基线、漏洞扫描结果。这些表示由以间隔运行的发现过程创建，而非持续运行。扫描之间，物理现实发生变化：设备被替换、固件通过带外渠道更新、配置通过未记录路径被修改。</p>
+
+        <p>根据过时地图评估安全态势的智能体并未在检测漏洞——它无法检测它们。其干净的评估相对于表示是准确的，相对于实际系统是错误的。当攻击者利用智能体地图未显示的内容时，问责问题是相同的：谁对智能体运作所依赖的表示的新鲜度负责？答案在部署合同或操作程序中几乎从未明确界定。</p>
+
+        <h2>在后量子交叉点</h2>
+        <p>加密身份是一种表示：公钥断言"我是这个实体，我控制这把密钥。"密钥材料老化、被泄露、被委托给不再持有它的各方，或被更新的密钥材料取代，而更广泛的系统尚未同步。管理加密迁移的智能体在一个关于哪些算法处于活跃状态、哪些密钥有效、哪些系统已完成迁移的表示上运作。</p>
+
+        <p>如果该表示有误——仍被列为有效但已被泄露的密钥、被标记为完成但只是部分执行的迁移、被记录为已弃用但仍在处理实时流量的算法——智能体会以与现实准确时相同的自信认证错误状态。其断言"该系统迁移完成"的自信，在输出上与系统实际上确已完成时无从区分。这一交叉点的表示差距后果尤为严重，因为错误是无声的：在对手利用智能体模型与实际加密状态之间的差异之前，它们始终不可见。</p>
+
+        <h2>差距所需要的</h2>
+        <p>表示差距没有可以消除它的工程解决方案。持续数据收集可以缩小它；新鲜度跟踪使其可见；异常检测可以标记表示与观察行为偏离的情况。但差距无法完全关闭。数据收集在所有来源上从不同步。表示始终是近似值。物理现实的变化速度超过任何表示系统所能追踪的速度。</p>
+
+        <p>差距所需要的是明确命名它的问责架构，而不是将其视为残余细节。部署者应被要求描述其智能体运作所依赖的表示：如何组装、刷新频率以及已知限制。在高风险情境中——照护决策、安全认证、加密状态断言——智能体应被禁止在超过定义阈值的表示上行动，除非明确确认该表示可能已过时。</p>
+
+        <p>当损害被追溯到表示错误而非推断错误时——当智能体从错误的输入中正确推理时——问责路径必须到达表示的托管人。那些是组装、维护和提供智能体所依赖的数据模型的组织。他们可能不是智能体的部署者。他们可能是照护网络的数据基础设施团队、硬件供应商的固件更新服务，或证书颁发机构的密钥状态数据源。在每种情况下，他们给了智能体一个可以行动的世界。当那个世界是错的，他们共同承担后续的责任。</p>
+
+        <p>智能体依据被给予的世界行动。问责必须到达给它那个世界的主体。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>AI智能体在现实的结构化表示上运作，而非在现实本身上。表示差距——模型与它所描述的世界之间的偏差——是结构性的且不可避免的。它存在于每个交叉点：照护智能体在落后于活生生患者的患者数据模型上行动；硬件智能体在落后于实际基础设施的系统图上行动；后量子智能体在可能不反映实际密钥有效性的加密状态记录上行动。当损害源于有缺陷的表示时，问责必须到达给智能体提供模型的托管人，而不仅仅是智能体的部署者或智能体本身。</p>
+      </div>
+
+      <div class="essay-footer-wrap">
+        <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+        <a href="/zh/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

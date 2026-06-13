@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>枚舉問題：AI智能體無法完整列出自身能力，以及這如何打破授權模型 — Asaptic Labs</title>
+  <meta name="description" content="最小權限原則要求了解系統的能力邊界。基於大語言模型的AI智能體無法枚舉其能力——能力表面從訓練、上下文窗口和工具組合中湧現，無法穷舉。這打破了安全系統設計所依賴的授權模型。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/enumeration-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/enumeration-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zht/blog/enumeration-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/enumeration-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/enumeration-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/enumeration-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="og:title" content="枚舉問題：AI智能體無法完整列出自身能力，以及這如何打破授權模型" />
+  <meta property="og:description" content="最小權限原則要求了解系統的能力邊界。基於大語言模型的AI智能體無法枚舉其能力。能力表面是湧現的、組合的，比任何權限列表所能表达的都大。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/enumeration-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "枚舉問題：AI智能體無法完整列出自身能力，以及這如何打破授權模型",
+      "description": "最小權限原則要求了解系統的能力邊界。基於大語言模型的AI智能體無法枚舉其能力。能力表面是湧現的、組合的，比任何權限列表所能表达的都大。",
+      "url": "https://asaptic.com/zht/blog/enumeration-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/enumeration-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "contentType": "application/json",
+            "description": "聯絡 Asaptic Labs"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯絡"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "枚舉問題", "item": "https://asaptic.com/zht/blog/enumeration-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:16px;line-height:1.8;color:var(--text);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:600;color:var(--text);margin:48px 0 16px;line-height:1.3}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">枚舉問題：AI智能體無法完整列出自身能力，以及這如何打破授權模型</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+
+      <div class="essay-body">
+        <p>最小權限原則是安全系統設計的基礎。仅授予系統完成其分配工作所需的權限，撤销其余權限。這一原則简单、持久且正確——但它完全依賴於一個AI智能體無法满足的前提：能够枚舉自身的能力。</p>
+
+        <p>傳統軟件具有有限的能力表面。資料庫連接器可以讀寫資料庫，文件访問庫可以在定義的路徑前綴内操作。你可以列出API表面，枚舉權限，並寫出恰好覆盖系統所需工作的授權。最小權限設計的前提——了解系統能做什麼——在構建時就得到了满足。</p>
+
+        <p>基於大語言模型構建的AI智能體不具備這一屬性。其能力表面不由固定的API定義，而是從訓練、上下文窗口、運行時加載的工具定義，以及智能體利用其持有能力組合新型動作序列的能力中湧現。拥有相同基礎模型和相同工具集的两個智能體，根據微調期間所接收的指令、启動時初始化的系統提示，以及它們学會生成的複合動作序列，其有效能力表面可能存在實質性差异。這不是更好的文件能够解決的暫時性限制，而是結構性的。基於大語言模型的智能體的能力表面不是一個封閉集合。</p>
+
+        <h2>授權模型的失效</h2>
+        <p>對授權設計的影響是直接的。當你授權一個智能體访問一組工具和資源時，你是在不完整資訊下做決策。你知道工具名義上允許什麼，但你不知道智能體在邊緣條件下，或在授權時未曾預期的輸入回應中，可能組合生成的所有複合行動。</p>
+
+        <p>考慮一個被授權代表照护協調員發送消息的智能體。授權覆盖消息發送。但它没有枚舉智能體可能以消息發送為步骤組合的所有行動序列：向從未明確定義順序的多方上報臨床問題，根據授權時未預期的自然語言觸發條件發起照护團隊集結，或發送引用了授權方未意識到智能體持有的資訊的消息。每個行動都在授權的字面範圍内，但没有一個在授權時被完整預期。</p>
+
+        <p>枚舉問題不在於智能體超出其權限，而在於授權無法精確描述允許行為的邊界——因為智能體的有效行為空間比權限列表所能表达的更大、更具組合性。</p>
+
+        <h2>硬件認證證明了错誤的表面</h2>
+        <p>硬件根認證——TPM度量、安全飛地驗證——解決的是授權的智能體是否正在執行的問題。度量涵盖模型權重、運行時環境、已加載的工具。它證明：這是你授權的智能體。</p>
+
+        <p>認證不覆盖的是該智能體在其可能接收的全部輸入範圍内將做什麼。已認證的智能體可以生成認證機構如果在注冊時具體枚舉就不會批准的行動。證书說明智能體是你注冊的那個，但它没有說明智能體的行為被限制在你注冊時所預期的範圍内。</p>
+
+        <p>這不是認證机制的缺陷，而是認證所證明的内容——身份和來源——與最小權限執行所要求的内容——封閉的能力表面——之間不可消除的错配。經典軟件两者兼顾，因為能力由代碼決定，而代碼正是認證度量的内容。對於基於大語言模型的智能體，能力從訓練和上下文中湧現，代碼度量本身無法約束。</p>
+
+        <h2>物理世界的後果無法等待枚舉能力的改善</h2>
+        <p>在照护環境中，枚舉問題並非理论性的。一個被授權管理住戶日程的智能體，也可能組合出傳达其未被授權披露的臨床資訊的消息——不是通過绕過访問控制，而是將其合法持有的上下文資訊與合法獲得的消息權限相結合。當能力是湧現的而非可枚舉的，授權使用與可能使用之間的缺口始终存在。在物理世界照護中，這一缺口承載著軟件環境中没有的风险：輸出以無法撤回的方式到达人類，問責問題——智能體有權做它所做的事吗？——無法通過检查行動是否在字面權限集合内來回答。</p>
+
+        <h2>在枚舉不確定性下有效的設計方案</h2>
+        <p>由於能力表面無法提前完整枚舉，AI智能體的授權設計必须基於不同的原則：以輸出約束代替輸入權限枚舉。設計問題不是"智能體被允許採取什麼行動"，而是"到达外部世界的哪些輸出是可接受的，哪些在跨越邊界前必须經過審核"。</p>
+
+        <p>這將執行点從授權授予转移到輸出通道。智能體可以在其工作上下文中自由組合；在任何輸出跨越定義邊界之前——消息發送、記錄更新、設備操動——它都經過一個輸出門，根據可接受使用策略評估該輸出。策略以可觀察輸出來定義，而非以產生這些輸出的内部行動序列來定義。能力無需枚舉，輸出受到治理。</p>
+
+        <p>輸出門控並不消除枚舉問題，而是重新框架它：它不要求在授權時完整枚舉能力，而是要求在部署時完整分類輸出。對於照护環境和安全關鍵硬件部署，這一取舍是有利的。可接受輸出的空間比可能的智能體行動空間更小、更易處理。執行邊界也與問責更直接相关——最终重要的不是智能體在内部做了什麼，而是它導致什麼跨入了現實世界。</p>
+
+        <p>最小權限原則仍然是正確的框架。對AI智能體而言改變的是這一邊界的劃定位置。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>最小權限原則要求了解系統的能力邊界。傳統軟件具有有限的能力表面，可以枚舉。基於大語言模型的AI智能體則不然：其能力表面從訓練、上下文窗口和工具組合中湧現，無法穷舉。這打破了授權設計的前提——當你授權一個智能體時，你對其能做什麼的了解是不完整的。硬件認證證明了"哪個智能體在運行"，却無法約束該智能體在所有可能輸入下的行為範圍。在物理世界照護場景中，這一缺口直接关系到問責：智能體可能合法持有的上下文與合法獲得的工具權限相結合，產生了未經預期的輸出。應對方案是以輸出約束代替輸入權限枚舉：在輸出跨越外部邊界之前進行評估，而非试圖在授權時枚舉所有可能行為。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zht/blog/">&larr; 全部文章</a>
+        <a href="/zht/blog/distillation-gap.html">蒸餾間隙 &rarr;</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da enumeração: porque agentes de IA não conseguem listar tudo o que podem fazer e porque isso quebra o modelo de concessão — Asaptic Labs</title>
+  <meta name="description" content="O princípio do menor privilégio exige conhecer a fronteira de capacidades. Agentes baseados em LLM não conseguem enumerar completamente as suas capacidades." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/enumeration-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/enumeration-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/enumeration-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/enumeration-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/enumeration-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/enumeration-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="og:title" content="O problema da enumeração: porque agentes de IA não conseguem listar tudo o que podem fazer e porque isso quebra o modelo de concessão" />
+  <meta property="og:description" content="O princípio do menor privilégio exige conhecer a fronteira de capacidades. Agentes baseados em LLM não conseguem enumerar completamente as suas capacidades." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/enumeration-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [{"@context":"https://schema.org","@type":"Article","headline":"O problema da enumeração: porque agentes de IA não conseguem listar tudo o que podem fazer e porque isso quebra o modelo de concessão","description":"O princípio do menor privilégio exige conhecer a fronteira de capacidades. Agentes baseados em LLM não conseguem enumerar completamente as suas capacidades.","url":"https://asaptic.com/pt/blog/enumeration-problem.html","author":{"@type":"Organization","name":"Asaptic Labs"},"publisher":{"@type":"Organization","name":"Asaptic Labs","url":"https://asaptic.com"},"datePublished":"2026-06-14","dateModified":"2026-06-14","mainEntityOfPage":"https://asaptic.com/pt/blog/enumeration-problem.html","inLanguage":"pt","potentialAction":{"@type":"Action","name":"Contactar a Asaptic Labs","target":[{"@type":"EntryPoint","urlTemplate":"https://asaptic.com/pt/engage.html","contentType":"text/html","description":"Página de contacto"},{"@type":"EntryPoint","urlTemplate":"mailto:engage@asaptic.com","description":"Contactar por e-mail"}]}},{"@context":"https://schema.org","@type":"BreadcrumbList","inLanguage":"pt","itemListElement":[{"@type":"ListItem","position":1,"name":"Início","item":"https://asaptic.com/pt/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://asaptic.com/pt/blog/"},{"@type":"ListItem","position":3,"name":"O problema da enumeração","item":"https://asaptic.com/pt/blog/enumeration-problem.html"}]}]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--gray);margin:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× SEGURANÇA QUÂNTICA · × HARDWARE · × CUIDADOS NO MUNDO FÍSICO</span>
+      <h1 class="essay-title">O problema da enumeração: porque agentes de IA não conseguem listar tudo o que podem fazer e porque isso quebra o modelo de concessão</h1>
+      <p class="essay-subtitle">O princípio do menor privilégio depende de saber o que um sistema consegue fazer. Agentes baseados em grandes modelos de linguagem não satisfazem essa condição: a sua superfície de capacidade emerge do treino, do contexto, das ferramentas e da composição de ações.</p>
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 min de leitura</span></div>
+      <div class="essay-body">
+        <p>O princípio do menor privilégio é fundamental: conceder apenas as permissões necessárias e revogar o resto. Mas depende de uma condição que agentes de IA não conseguem satisfazer, a capacidade de enumerar as próprias capacidades.</p>
+
+        <p>Software tradicional tem superfície limitada. Um conector lê e escreve numa base de dados; uma biblioteca opera sob um prefixo de caminho. É possível listar APIs e permissões. A concessão pode cobrir exatamente o trabalho necessário.</p>
+
+        <p>Agentes baseados em grandes modelos de linguagem não têm essa propriedade. A superfície emerge do treino, da janela de contexto, das ferramentas carregadas e da capacidade de compor sequências novas. Dois agentes com o mesmo modelo e ferramentas podem comportar-se de modo diferente por causa de instruções, prompts e sequências compostas aprendidas.</p>
+
+        <h2>Falha do modelo de concessão</h2>
+
+        <p>Quando se concede acesso a ferramentas e recursos, decide-se com informação incompleta. Sabe-se o que as ferramentas permitem nominalmente; não se sabe todas as ações compostas que o agente pode gerar em condições de fronteira ou perante entradas não previstas.</p>
+
+        <p>Um agente autorizado a enviar mensagens por um coordenador de cuidados pode escalar uma questão clínica a várias partes, convocar uma equipa a partir de uma condição em linguagem natural ou incluir informação que a autoridade concedente não sabia que o agente possuía. Cada ação cabe na letra da concessão; nenhuma foi plenamente antecipada.</p>
+
+        <p>O problema não é que o agente exceda permissões. É que a concessão não consegue descrever precisamente a fronteira do comportamento permitido, porque o espaço efetivo é maior e mais combinatório do que uma lista representa.</p>
+
+        <h2>A atestação certifica a superfície errada</h2>
+
+        <p>A atestação enraizada em hardware prova que o agente autorizado está a executar: pesos, runtime e ferramentas carregadas. Certifica identidade e proveniência.</p>
+
+        <p>Não prova o que o agente fará em toda a gama de entradas. Um agente atestado pode gerar ações que a autoridade não teria aprovado se as tivesse enumerado no registo inicial. O certificado diz quem está a executar, não que o comportamento esteja limitado ao pretendido.</p>
+
+        <h2>Consequências no mundo físico</h2>
+
+        <p>Em cuidados, um agente autorizado a gerir horários pode compor uma mensagem que comunica informação clínica não autorizada, não por contornar controlo de acesso, mas por combinar contexto que possui legitimamente com acesso de mensagens legitimamente concedido.</p>
+
+        <p>A lacuna entre uso autorizado e uso possível está sempre presente quando capacidade é emergente. No mundo físico, outputs chegam a pessoas e não podem ser simplesmente recolhidos; a pergunta de responsabilização não se resolve verificando apenas a lista literal de permissões.</p>
+
+        <h2>Desenho sob incerteza</h2>
+
+        <p>A autorização deve restringir por output, não apenas por permissão de entrada. A pergunta torna-se: que outputs podem chegar ao exterior e quais precisam de revisão antes de cruzarem uma fronteira?</p>
+
+        <p>O agente pode compor livremente no seu contexto; antes de uma mensagem ser enviada, um registo atualizado ou um dispositivo acionado, o output passa por uma porta que o avalia contra política de uso aceitável.</p>
+
+        <p>Isto não elimina a enumeração; reformula-a. Em vez de enumerar capacidades no momento da concessão, classifica outputs na implantação. O menor privilégio continua correto; muda o lugar onde a fronteira deve ser traçada.</p>
+      </div>
+      <div class="essay-summary"><span class="essay-summary-label">Resumo</span><p>O menor privilégio exige conhecer a fronteira de capacidades. Agentes baseados em LLM não têm uma superfície fechada: capacidades emergem de treino, contexto e composição de ferramentas. A resposta prática é governar outputs antes de cruzarem fronteiras externas.</p></div>
+      <div class="essay-nav"><a href="/pt/blog/">&larr; Todos os artigos</a><a href="/pt/blog/distillation-gap.html">Lacuna da destilação &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>
