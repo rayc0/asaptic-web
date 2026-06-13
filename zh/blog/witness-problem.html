@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>目击者问题 — Asaptic Labs</title>
+  <meta name="description" content="当AI智能体是其所报告事件的唯一有权访问的实体时，问责制完全依赖于智能体自身的陈述。密码签名和硬件证明可以保证该陈述在生成后未被修改，但无法保证它在生成时是准确的。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/witness-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/witness-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/witness-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/witness-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/witness-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/witness-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="目击者问题：当AI智能体是唯一观察者时的问责" />
+  <meta property="og:description" content="完整性与准确性是不同的属性。后量子签名和硬件证明保证智能体记录在生成后未被更改。当智能体是唯一观察者时，没有任何机制能保证记录在生成时是正确的。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/witness-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "目击者问题：当AI智能体是唯一观察者时的问责",
+      "description": "当AI智能体是其所报告事件的唯一有权访问的实体时，问责制完全依赖于智能体自身的陈述。密码签名和硬件证明可以保证该陈述在生成后未被修改，但无法保证它在生成时是准确的。",
+      "url": "https://asaptic.com/zh/blog/witness-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/witness-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "description": "参与页面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "目击者问题", "item": "https://asaptic.com/zh/blog/witness-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-wrap{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+
+    <header class="essay-header">
+      <div class="essay-tag">× 后量子安全 × 硬件 × 物理世界护理</div>
+      <h1 class="essay-title">目击者问题：当AI智能体是唯一观察者时的问责</h1>
+      <p class="essay-subtitle">完整性与准确性是不同的属性。后量子签名和硬件证明保证智能体记录在生成后未被更改。当智能体是唯一观察者时，没有任何机制能保证记录在生成时是正确的。</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-14</span>
+        <span>5 分钟阅读</span>
+      </div>
+    </header>
+
+    <div class="essay-body">
+      <p>大多数AI智能体问责架构依赖一个隐含假设：智能体的记录可以与某些外部内容进行核对。人类监督者可能会将日志与自己的记忆进行比对。第二个系统可能已从不同角度捕获了同一事件。物理证据可能可以印证记录所声称的内容。在这种模型下，问责是一个关联问题——智能体的陈述是否与其他观察者所见相符？</p>
+
+      <p>当智能体是唯一目击者时，这一假设便会失效。在智能体独自运行的部署中——在没有人类在场时通宵监控设施、在没有第二系统独立访问的情况下管理密码过程、在没有临床医师看守时为患者提供床旁观察——问责记录是智能体关于其作为唯一能够描述这些事件的实体所发生事情的报告。没有外部内容可以与之关联。日志、证明和审计都依赖于智能体选择记录的只有智能体观察到的事件。</p>
+
+      <h2>在后量子安全交叉点</h2>
+      <p>应用于智能体问责记录的后量子签名提供了一个具有精确和有限范围的保证：它们确认签署内容在生成后未被修改。如果私钥管理良好且算法健全，有效签名证明了完整性。但完整性——记录在生成后未被更改的保证——与准确性截然不同：记录在生成时是正确的保证。</p>
+
+      <p>当智能体是唯一目击者时，无论密码强度如何，记录的准确性都无法通过任何下游验证机制确立。来自唯一目击者部署的后量子签名问责记录携带完整的完整性保证，以及对任何外部准确性检查的完全缺失。后量子迁移将产生在密码上抵御攻击数十年的签名。但一条记录可以被完美签署却在实质上是错误的。当观察事件的唯一实体也是生成记录的实体时，签名强度的任何进步都无法弥合完整性与准确性之间的差距。</p>
+
+      <h2>在硬件交叉点</h2>
+      <p>硬件证明向下进一步扩展了完整性保证：经过证明的记录不仅可以证明内容在生成后未被修改，还可以证明它是由特定验证系统在特定验证硬件状态下生成的。证明为完整性添加了来源。但来源——确认哪个系统生成了记录——不扩展到该系统观察的准确性。</p>
+
+      <p>由于校准漂移、环境干扰或软件故障而错误读取传感器的设备智能体，会生成硬件证明的、密码签名的不对应于物理世界的观察记录。证明是完整的，记录是错误的。没有任何硬件机制在经过证明的系统状态与该系统感知输出的准确性之间建立经过验证的对应关系。硬件交叉点恰恰是这一点最重要的地方：嵌入物理基础设施的智能体通常是与其报告的环境接触的唯一系统，其硬件身份的证明对于验证其环境读数的准确性没有任何作用。</p>
+
+      <h2>在物理世界照护交叉点</h2>
+      <p>在照护环境中，唯一目击者条件是结构性的且预期的。在大多数设施配置中，通宵监控患者的监控智能体是该时段大部分时间的唯一在场实体。它记录的生命体征读数、它升级或抑制的警报、它在不上报的情况下响应的患者互动——这些事件构成了照护记录。对于例行的夜间观察，没有人类共同目击者。没有独立传感器系统从单独视角捕获相同的生理测量值。</p>
+
+      <p>这是设计，不是设计失败。智能体在照护环境中部署，正是因为所需分辨率和持续时间的持续人类存在不可用或不可持续。但适用于人类照护文档的问责实践——临床医师的记录可以与另一名临床医师的独立检查进行比较，患者可以证实或反驳其经历的事件——不适用于唯一目击者智能体部署。智能体的记录就是发生事情的记录。如果它不完整、不准确，或因未被检测到的校准问题而系统性偏差，可能没有纠正来源。</p>
+
+      <h2>设计回应</h2>
+      <p>目击者问题没有密码学解决方案。更强的签名无法解决它，更好的证明也无法解决它。在唯一目击者部署中，完整性与准确性之间的差距是结构性的。弥合它需要架构干预：智能体无法生成的独立防篡改物理环境日志；即使单个传感器在操作上已足够，也需要冗余观察路径；使用智能体不控制的信号对智能体自身报告进行异常检测；以及当智能体作为重要事件的唯一观察者运行时，向监督主体明确披露。这些措施不能恢复独立目击者验证——它们使唯一目击者条件可见且受约束，从而可以在准确了解哪些内容可以被验证、哪些不能的情况下应用监督。</p>
+    </div>
+
+    <div class="essay-summary">
+      <span class="essay-summary-label">核心观点</span>
+      <p>当AI智能体是唯一观察者时，问责记录携带完整的完整性保证，以及外部准确性验证的完全缺失。后量子签名和硬件证明证明智能体自身的陈述未被更改——而非其在生成时是正确的。在所有三个交叉点，唯一目击者条件需要明确的架构认可：智能体无法生成的防篡改环境日志、冗余观察路径、对智能体生成记录的异常检测，以及在独立验证结构上不可用时向主体明确披露。</p>
+    </div>
+
+    <div class="essay-footer-wrap">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zh/blog/" class="essay-footer-back">&larr; 返回博客</a>
+    </div>
+  </main>
+
+  <footer class="site-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
