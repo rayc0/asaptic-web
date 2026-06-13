@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>检查时间到使用时间问题：授权在智能体行动前已过期 — Asaptic Labs</title>
+  <meta name="description" content="AI智能体在一个时刻验证授权，在另一个时刻采取行动。在具有物理世界后果的长工作流中，检查与使用之间的间隔是问责失效的地方。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/toctou-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/toctou-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/toctou-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/toctou-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/toctou-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/toctou-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="检查时间到使用时间问题：授权在智能体行动前已过期" />
+  <meta property="og:description" content="TOCTOU 是计算机安全中最古老的漏洞之一。AI智能体使这一问题在结构上更为严重：授权检查与实际行动之间的间隔不是微秒，而是数分钟乃至整个多步骤工作流的持续时间。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/toctou-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "检查时间到使用时间问题：授权在智能体行动前已过期",
+      "description": "AI智能体在一个时刻验证授权，在另一个时刻采取行动。在具有物理世界后果的长工作流中，检查与使用之间的间隔是问责失效的地方。",
+      "url": "https://asaptic.com/zh/blog/toctou-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/toctou-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "description": "参与页面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "检查时间到使用时间问题", "item": "https://asaptic.com/zh/blog/toctou-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">检查时间到使用时间问题：授权在智能体行动前已过期</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body" data-lang-content="zh">
+        <p>检查时间到使用时间（TOCTOU）是计算机安全中最古老的漏洞之一。模式很简单：系统验证一个条件，经过一段时间后，系统假设该条件仍然成立并采取行动。在检查与使用之间，世界已经发生变化。系统对一个过时的快照采取了行动。</p>
+
+        <p>在经典的操作系统安全中，TOCTOU出现在调度器边界——程序检查文件权限，发生上下文切换，另一个进程移动了该文件，而原程序以不再适用的权限写入了错误位置。这个窗口以微秒计量，后果通常可以恢复。</p>
+
+        <p>AI智能体在两个维度上都使这一问题在结构上更为严重。检查与使用之间的间隔不是微秒，而是数分钟、数小时，或整个多步骤工作流的完整持续时间。当这些工作流与物理世界交汇时，后果无法恢复。这种组合是一个问责架构问题，更快的硬件无法解决。</p>
+
+        <h2>智能体TOCTOU失效的解剖</h2>
+        <p>一个智能体被分配管理照护机构住户的用药计划。早上8点，它验证授权：主治医生已批准当前方案，药房供应已确认，早班照护团队已签署查房单。智能体开始执行工作流。</p>
+
+        <p>上午9点45分，九十分钟后，智能体准备发送一次计划内的用药提醒。它依据早上8点验证的授权采取行动。它不知道的是：上午9点20分，医生更新了医嘱，要求暂停所有计划用药，等待即将到来的诊断结果。该更新通过正确的临床渠道录入。智能体依据的授权已经过期了八十五分钟。</p>
+
+        <p>这不是权限失败——智能体在检查时是被正确授权的。这不是操作员错误——医生通过规定流程更新了医嘱。这是一次TOCTOU失效：授权在一个时刻被验证，又在另一个时刻被执行，智能体执行过程中没有任何机制能检测到授权状态在此期间已发生变化。</p>
+
+        <h2>物理世界的不可逆性消除了安全网</h2>
+        <p>软件系统中的TOCTOU失效通常会产生可恢复的后果。写入错误位置的文件可以移动，基于过时状态执行的数据库事务可以回滚。代价是开销和不一致，很少造成持久伤害。</p>
+
+        <p>物理世界AI智能体完全消除了这张安全网。已执行的照护干预无法恢复。依据过时访问权限开锁的门，无法为其开着的那几秒钟重新上锁。发送给住户的用药提醒已进入他们的意识，事后无法从人类记忆中撤回。</p>
+
+        <p>智能体延迟（具有许多中间步骤、每个步骤都可能触发外部状态变化的长工作流）与物理世界不可逆性的结合，意味着这类部署中的TOCTOU失效不是操作上的不便，而是问责事件：在物理世界发生了一件在行动时刻并未被授权的事情，即使在智能体启动时是被授权的。日志显示了一个发生时未经授权的行动。问责记录是破损的。</p>
+
+        <h2>硬件绑定缩小了窗口但无法关闭它</h2>
+        <p>硬件认证——基于TPM的执行环境、安全飞地——解决了"正确的智能体是否在运行"的问题。它并不解决"该智能体持有的授权是否仍然有效"的问题。在完全验证的硬件环境中执行的智能体，仍然可能依据三分钟前已被撤销的权限采取行动。硬件告诉你谁在行动；它对行动权是否仍然存在只字不提。</p>
+
+        <p>直接的回应是在每次重要行动之前立即重新验证授权。这在原则上是正确的，但面临两个结构性障碍。首先，部署在间歇性连接物理环境中的智能体，在需要重新验证时可能无法访问授权服务。其次，即使有可靠的连接，行动前立即重新验证仍会产生TOCTOU窗口：检查完成后200毫秒，授权服务器上处理了一个撤销操作；检查完成后400毫秒，行动执行了。缩小窗口可以降低风险，但不能消除这一结构性漏洞。</p>
+
+        <h2>后量子维度加剧了延迟</h2>
+        <p>后量子密码操作比经典对应算法承载更高的计算开销。验证后量子签名比验证椭圆曲线签名耗时更长。对于在多个并发实例中每分钟执行许多行动之前都要重新验证授权的智能体，这一开销使每个单独的TOCTOU窗口扩大了重新验证往返所需的时间。</p>
+
+        <p>一种回应是使用短生命周期授权令牌，可以针对缓存密钥进行本地验证，将重新验证开销限制为定期令牌刷新，而非每次行动前的完整授权查询。但这在每个令牌刷新边界重新引入了TOCTOU暴露——上一个令牌到期与下一个令牌签发之间的时刻，恰好是撤销最需要传播的时刻，也恰好是智能体可能正在假设当前令牌仍然有效而执行行动的时刻。</p>
+
+        <h2>将授权视为持续属性，而非前提条件</h2>
+        <p>TOCTOU分析得出的设计原则是：授权不能被视为在工作流启动时检查一次就假设始终有效的前提条件。它必须被视为智能体执行状态的持续属性——可以在任何时刻发生变化，智能体必须在架构上具备接收和响应这些变化的能力，即使在工作流进行中。</p>
+
+        <p>在操作上，这意味着授权基础设施必须支持流式撤销：能够将撤销信号推送给已经处于工作流执行中的智能体，而不仅仅是将权限标记为对未来检查已过期。智能体必须被设计成能够接收这些信号，并将其视为即时执行约束——暂停、上报或停止，而非依据工作流启动时有效但现在已不有效的授权完成工作流。</p>
+
+        <p>检查时有效的授权不是重要的那个。使用时有效的授权才是智能体必须持有的。缩小这两个时刻之间的差距不是性能优化。这是物理世界AI智能体能够被信任采取行动的前提条件。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>检查时间到使用时间（TOCTOU）是计算机安全中最古老的漏洞之一。AI智能体使这一问题在结构上更为严重：授权检查与实际行动之间的间隔不是微秒，而是数分钟乃至整个多步骤工作流的持续时间。当工作流与物理世界交汇时，后果不可逆转。硬件认证解决了"谁在行动"的问题，却无法解决"授权是否仍然有效"的问题。后量子密码操作的额外开销进一步扩大了每次重新验证的TOCTOU窗口。正确的架构原则是：将授权视为智能体执行状态的持续属性，而非仅在工作流启动时检查一次的前提条件；授权基础设施必须支持流式撤销——能够将撤销信号推送给正在执行中的智能体。检查时有效的授权不是重要的那个；使用时有效的授权才是智能体必须持有的。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/trust-bootstrap-problem.html">另见：信任引导问题 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
