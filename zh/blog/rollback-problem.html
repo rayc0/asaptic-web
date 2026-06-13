@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>回滚问题：当 AI 智能体的行动无法撤销，该怎么办 — Asaptic Labs</title>
+  <meta name="description" content="AI 智能体在物理世界中的行动一旦执行便无法撤销。回滚问题分为三个层次，正确架构应在部署前为每个行动建立可逆性分类体系。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/rollback-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/rollback-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/rollback-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/rollback-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/rollback-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/rollback-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="回滚问题：当 AI 智能体的行动无法撤销，该怎么办" />
+  <meta property="og:description" content="AI 智能体在物理世界中的行动一旦执行便无法撤销。回滚问题分为三个层次，正确架构应在部署前为每个行动建立可逆性分类体系。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/rollback-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-05-21" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "回滚问题：当 AI 智能体的行动无法撤销，该怎么办",
+      "description": "AI 智能体在物理世界中的行动一旦执行便无法撤销。回滚问题分为三个层次：物理不可逆性、机构不可逆性与信任不可逆性，正确架构应在部署前为每个行动建立可逆性分类体系。",
+      "url": "https://asaptic.com/zh/blog/rollback-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-05-21",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/rollback-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系 Asaptic"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "回滚问题", "item": "https://asaptic.com/zh/blog/rollback-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 物理系统 × 量子安全 × 人文关怀</span>
+      <h1 class="essay-title">回滚问题：当 AI 智能体的行动无法撤销，该怎么办</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-21</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>大多数软件系统的架构建立在一个假设之上：错误可以被纠正。数据库有事务，版本控制有回退，部署流程有回滚管道。整个可靠软件工程的学科都建立在这样一个前提上：如果出了问题，可以撤销并重新尝试。这个前提如此根深蒂固，以至于很少被审视。但对于越来越多的 AI 智能体来说，这个前提是错误的。</p>
+        <p>当 AI 智能体安排药物给药、执行证券交易、向飞行中的无人机发出指令，或者调度紧急响应团队时——行动已经发生。没有事务可以回滚，没有指针可以恢复，没有原子单元可以中止。世界已经改变。药物已在患者体内。头寸已经开仓。无人机已经移动。团队已经出发。接下来的一切都必须从新状态推进，而非旧状态。这不是软件问题，而是物理问题。</p>
+        <p>回滚问题有三个不同层次，解决其中一个并不能解决其他两个。第一层是物理不可逆性：触及真实世界的行动——给药、移动、部署、物理访问——无法通过任何软件机制撤销。这一层要求在不可逆行动发生之前设置门控，而非事后记录。第二层是机构不可逆性：许多行动在物理上可逆，但在机构层面已固化。向监管机构发出的函件、向对手方记录的披露——这些可以物理修改，但原始行动已成为外部记录的一部分。对于这一层，设计要求是分阶段提交：智能体提案，记录以暂定状态创建，合格人员确认后才向外部系统传播。第三层是信任不可逆性：当智能体在人们依赖它的领域做出错误决定时，对信任关系的损害不会因纠正行动而自动修复。信任一旦受损，就有其自身的恢复曲线，任何软件回滚都无法触及。</p>
+        <p>使回滚问题在 AI 智能体中尤为紧迫的是：智能体具有的有用属性——自主行动、快速行动、同时跨多个会话行动——正是放大不可逆错误代价的属性。配置错误或在授权范围外运行的智能体，可能在任何人发现模式之前，在数百种情形中发出相同的错误行动。不可逆性乘以规模，是与单纯不可逆性不同的风险类别。</p>
+        <p>正确的架构应对是在部署前为每个可执行动作建立可逆性分类体系：可自由执行（智能体可无需门控行动）、分阶段提交（智能体提案，需人员确认后才向外部传播）、人工硬性审批（智能体提交请求，合格人员批准，行动执行，会话日志附带审批者身份）。还需配合轨迹监控机制，在累积模式越界前触发告警。问责不是事后标签，而是在部署前内置于行动分类体系中的架构属性。</p>
+      </div>
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>AI 智能体在物理世界中的行动——给药、指令下达、紧急响应部署——一旦执行便无法撤销。回滚问题分为三个层次：物理不可逆性（需要事前硬性人工审批门控）、机构不可逆性（需要分阶段提交机制）、信任不可逆性（需要透明纠正通信）。当智能体在规模化部署中行动时，不可逆性的代价被放大数倍。正确的架构响应是在部署前为每个可执行动作建立可逆性分类体系——可自由执行、分阶段提交、人工硬性审批——并结合轨迹监控机制，在累计模式越界前触发告警。问责不是事后标签，而是在部署前内置于行动分类体系中的架构属性。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/context-poisoning.html">下一篇：上下文污染 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

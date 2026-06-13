@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>语义差距问题：意图与解释分离时的问责制 — Asaptic Labs</title>
+  <meta name="description" content="自然语言指令包含 AI 智能体必须无声解析的歧义。当智能体的解释偏离委托人意图时，行动在形式上被授权但实质上是错误的——问责差距在审计日志中不可见。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/semantic-gap-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/semantic-gap-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/semantic-gap-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/semantic-gap-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/semantic-gap-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/semantic-gap-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="语义差距问题：意图与解释分离时的问责制" />
+  <meta property="og:description" content="自然语言指令包含 AI 智能体必须无声解析的歧义。当智能体的解释偏离委托人意图时，行动在形式上被授权但实质上是错误的——问责差距在审计日志中不可见。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/semantic-gap-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-05-31" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "语义差距问题：意图与解释分离时的问责制",
+      "description": "自然语言指令包含 AI 智能体行动时必须解析的歧义。智能体在无声中解析该歧义，当其理解偏离委托人意图时，行动在形式上被授权但实质上是错误的，且问责差距在审计日志中不可见。",
+      "url": "https://asaptic.com/zh/blog/semantic-gap-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-05-31",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/semantic-gap-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系 Asaptic"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "语义差距问题", "item": "https://asaptic.com/zh/blog/semantic-gap-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1rem;line-height:1.8;color:var(--gray);margin-bottom:20px}.essay-body h2{font-size:1.1rem;font-weight:600;color:var(--fg);margin:40px 0 16px;letter-spacing:.01em}.essay-summary{margin-top:48px;padding:28px 32px;border:1px solid var(--border);border-left:3px solid var(--accent);background:rgba(0,200,150,.02)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.9rem;line-height:1.7;color:var(--gray);margin:0}.essay-footer-area{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <header>
+        <div class="essay-tag">× 量子安全 × 硬件 × 人文关怀</div>
+        <h1 class="essay-title">语义差距问题：意图与解释分离时的问责制</h1>
+        <p class="essay-subtitle">自然语言指令包含 AI 智能体行动时必须解析的歧义。智能体在无声中进行解析，不向发出指令的委托人呈现其解释。随后的行动在形式上被授权——但它是否符合委托人的真实意图，审计日志无法回答。</p>
+        <div class="essay-meta">
+          <span>Asaptic Labs</span>
+          <span>2026-05-31</span>
+          <span>7 分钟阅读</span>
+        </div>
+      </header>
+      <div class="essay-body">
+        <p>给 AI 智能体的每一条指令，都是以某种程度上具有歧义的语言表达的。"更新"、"监控"、"升级"和"管理"等词语的含义会随着语境、领域惯例和具体情况而变化。智能体必须解析这种歧义——否则根本无法行动——但它是在无声中进行解析的。发出指令的委托人无法得知智能体如何理解"更新配置"或"处理标记案例"。随后的行动在形式上是被授权的，因为委托人发出了指令；但它是否符合委托人的真实意图，则完全是另一个问题。这就是语义差距问题，它位于所有关于 AI 智能体的问责主张的基础之上。</p>
+        <h2>为什么这不是用户体验问题</h2>
+        <p>语义差距有时被视为沟通设计问题——如果指令描述得更清晰，差距就会消失。但这种定性误判了问题所在。差距不是由于指令写得不好而产生的，而是源于委托人沟通方式与智能体行动方式之间的结构性不匹配。委托人以假设共享语境、领域知识和善意解读意图的语言进行沟通。智能体则依据其训练编码的语言解释行动，这种解释可能在双方都未察觉的情况下偏离委托人的意图。</p>
+        <p>再好的指令设计也无法完全消除这一差距，因为生产环境中到达智能体的指令并非出自试图混淆它的对手——而是出自期望智能体做出合理解读的领域专业人士。当智能体的"合理解读"与专业人士的意图不同时，这一差距就具有结构性。</p>
+        <p>问责后果是严重的：当智能体基于对歧义指令的貌似合理但错误的解读而行动并造成伤害时，委托人可能认为自己授权了正确的行动，而智能体记录的是它按照指令执行了。双方都有清白的记录。意图与解释之间的差距在审计日志中是不可见的——日志忠实地记录了指示的内容和执行的内容，但未记录意图与理解之间的偏差。</p>
+        <h2>后量子交叉点</h2>
+        <p>密码学迁移对语义差距失效尤为脆弱。"迁移到抗量子算法"或"优先考虑前向保密配置"等指令包含巨大的隐含规格：哪些算法符合条件？在哪些性能约束下？适用于哪些密钥长度和协议版本？将"抗量子"解读为"合规清单上的任何算法"的智能体，可能会选择满足标签但不满足底层安全意图的算法。</p>
+        <p>指令被遵守了，意图被忽略了。这种差异可能多年后才会浮现——当委托人预设的具体威胁模型面对实际执行的迁移被测试时。届时，所选算法、配置的协议版本和生成的密钥材料已深度嵌入基础设施。审计日志显示合规无误，语义差距在其中不可见。</p>
+        <h2>硬件交叉点</h2>
+        <p>机队管理智能体接收关于维护、配置和干预的语义密集型指令。"处理异常功耗"没有规定是限制、重启、隔离还是告警。"保持在运行参数内"包含了"运行"对于在多变条件下运行的设备意味着什么的全部复杂性。依据最常训练的解释默认处理这些指令的智能体，可能在典型情况下正确行动，但在新颖条件下产生失败——恰恰是委托人意图最为具体、智能体插值最不可靠的条件。</p>
+        <p>日志中记录的维护行动与指令逐字匹配。与意图的偏差未被记录在任何地方。重建事件轨迹的调查人员看到的是一个合规智能体按指令执行。问责问题——智能体是否按照操作员的意思解释了指令？——在记录中没有答案。</p>
+        <h2>物理世界护理交叉点</h2>
+        <p>护理指令承载着最具影响的语义差距。关于何时升级、如何解读行为信号以及什么构成"稳定"或"痛苦"的指令，是以同一领域的专业人士根据训练、经验和面前的具体个体会有不同解读的语言表达的。一个解析"监控痛苦信号"的护理智能体，将依据其训练分布应用自己对"痛苦"的解释——这可能与护理团队对这位有特定病史的个体在这些条件下的意图不符。</p>
+        <p>当伤害发生时，指令日志显示监控已执行。语义差距——护理团队所说的"痛苦信号"与智能体所理解的痛苦信号之间——在记录中不可见。应附着于超出指令预期含义行动的智能体的问责，被仅显示表面形式合规的文档所掩盖。</p>
+        <h2>问责架构的要求</h2>
+        <p>完全消除语义差距是不可能的。但可以约束其后果。对于在自然语言指令下运行的 AI 智能体的问责架构，至少要求智能体在对重要决策采取行动之前，呈现其对歧义指令的解释——不是作为形式，而是作为委托人可以确认或纠正理解的真实检查点。先行动后记录解释、或根本不呈现解释的系统，使语义差距永久不可见。</p>
+        <p>在高风险领域的部署——密码基础设施、机队管理、物理护理——需要特定范围的解释框架：限制智能体对领域关键术语解释的结构化词汇，以及当指令是新颖的、歧义的或在智能体训练中缺乏先例时触发的升级要求。在无法强制要求解释确认的地方，日志记录要求应包括智能体的实际解释及其所应用的指令，以便事后问责审查不仅能评估做了什么，还能评估理解了什么。</p>
+        <p>另一种选择——无声解析歧义并只生成显示表面形式合规的审计记录的智能体——是一种问责架构，其中最关键的解释判断由智能体做出，且未被记录在任何地方。当这些判断偏离委托人意图并造成伤害时，委托人和审计日志都将显示清白。语义差距就是它们之间的空间。</p>
+      </div>
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>自然语言指令包含 AI 智能体行动时必须解析的歧义。智能体在无声中解析该歧义，而不向发出指令的委托人呈现其解释。当智能体的理解偏离委托人意图时，产生的行动在形式上被授权但实质上是错误的——审计日志和委托人的记录都不反映这种偏差。在密码迁移中，这一差距可能意味着选择了满足合规标签但未达到底层安全意图的算法。在机队管理中，意味着与指令逐字匹配但恰好在偏差最重要的新颖条件下偏离操作员意图的维护行动。在物理世界护理中，意味着护理智能体按照自己对"痛苦"的解释而非护理团队的解释进行监控。高风险智能体部署的问责架构必须要求智能体在对重要决策采取行动之前呈现其实际解释，并将该解释与指令一同记录——使意图与理解之间的差距在记录中可见，而非在设计上不可见。</p>
+      </div>
+      <div class="essay-footer-area">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-05-31</span>
+        <a href="/zh/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
