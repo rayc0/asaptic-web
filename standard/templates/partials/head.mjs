@@ -46,7 +46,7 @@ export function head({ data, lang, locale, slug, rows, faq }) {
   <link rel="stylesheet" href="/standard/standard.css?v=20260611b" />
 
   <script type="application/ld+json">
-  ${jsonld({ data, lang, locale, slug, faq })}
+  ${jsonld({ data, lang, locale, slug, faq, rows })}
   </script>
 </head>`;
 }
