@@ -297,7 +297,11 @@ function page({ template, kind, id, pillar, lang, locale, htmlLang }) {
     .replace(/<head>[\s\S]*?<\/head>/, head({ kind, id, pillar, title, description, lang, locale }))
     .replace(/<nav>[\s\S]*?<\/nav>/, nav({ locale, slug }))
     .replace(/<main>[\s\S]*?<\/main>/, mainHtml({ kind, id, pillar, lang, locale, comparisons }))
-    .replace(/<footer[\s\S]*?<\/footer>/, footer({ lang, locale, slug }));
+    .replace(/<footer[\s\S]*?<\/footer>/, footer({ lang, locale, slug }))
+    // Rewrite any residual methodology.html refs (locale-switcher redirects, canonical helpers)
+    // spliced from the chrome so they point at THIS pillar page, not methodology.
+    .replace(/standard\/methodology\.html/g, `standard/${slug}.html`)
+    .replace(/(["'(])methodology\.html/g, `$1${slug}.html`);
 }
 
 let written = 0;
