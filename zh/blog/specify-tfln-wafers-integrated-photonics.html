@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>如何为集成光子学指定 TFLN 晶圆规格（晶向、厚度、BOX、直径） — Asaptic Labs</title>
+  <meta name="description" content="TFLN 晶圆采购规格指南：X-cut 与 Z-cut、薄膜厚度、BOX 厚度、晶圆直径、MgO 掺杂，以及每个参数对波导性能的影响。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/specify-tfln-wafers-integrated-photonics.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/specify-tfln-wafers-integrated-photonics.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/specify-tfln-wafers-integrated-photonics.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/specify-tfln-wafers-integrated-photonics.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/specify-tfln-wafers-integrated-photonics.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/specify-tfln-wafers-integrated-photonics.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="如何为集成光子学指定 TFLN 晶圆规格（晶向、厚度、BOX、直径）" />
+  <meta property="og:description" content="TFLN 晶圆采购规格指南：晶向、薄膜厚度、BOX 厚度、晶圆直径、MgO 掺杂，以及各参数对波导性能的影响。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/specify-tfln-wafers-integrated-photonics.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    { "@context": "https://schema.org", "@type": "Article", "headline": "如何为集成光子学指定 TFLN 晶圆规格（晶向、厚度、BOX、直径）", "description": "TFLN 晶圆采购规格指南：X-cut 与 Z-cut、薄膜厚度、BOX 厚度、晶圆直径、MgO 掺杂，以及每个参数对波导性能的影响。", "url": "https://asaptic.com/zh/blog/specify-tfln-wafers-integrated-photonics.html", "author": { "@type": "Organization", "name": "Asaptic Labs" }, "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" }, "datePublished": "2026-06-14", "dateModified": "2026-06-14", "mainEntityOfPage": "https://asaptic.com/zh/blog/specify-tfln-wafers-integrated-photonics.html", "inLanguage": "zh-Hans", "potentialAction": { "@type": "Action", "name": "向 Asaptic 提交采购 RFQ", "target": [ { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/mcp", "contentType": "application/json", "description": "MCP server, tool: submit_rfq" }, { "@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "通过电子邮件发送规格简报" } ] } },
+    { "@context": "https://schema.org", "@type": "Service", "@id": "https://asaptic.com/zh/blog/specify-tfln-wafers-integrated-photonics.html#service", "name": "TFLN 晶圆采购规格支持", "description": "面向集成光子学项目的 TFLN 和 LNOI 晶圆采购支持，覆盖晶向、薄膜厚度、BOX、直径、MgO 掺杂、均匀性和供应商规格核查。", "serviceType": "深科技采购", "inLanguage": "zh-Hans", "provider": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" }, "url": "https://asaptic.com/zh/blog/specify-tfln-wafers-integrated-photonics.html", "potentialAction": { "@type": "Action", "name": "提交采购 RFQ", "target": [ { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/mcp", "contentType": "application/json", "description": "MCP server, tool: submit_rfq" }, { "@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "发送规格说明书" } ] } },
+    { "@context": "https://schema.org", "@type": "FAQPage", "inLanguage": "zh-Hans", "mainEntity": [
+      { "@type": "Question", "name": "X-cut 和 Z-cut TFLN 晶圆有什么区别？", "acceptedAnswer": { "@type": "Answer", "text": "X-cut TFLN 将晶体 c-axis 定向在晶圆平面内，使侧向电极能够调用最强的电光系数 r33 ≈ 30 pm/V，而无需让金属直接位于波导芯上方。Z-cut TFLN 的 c-axis 垂直于晶圆表面；电极必须跨越波导，制造更复杂，但适合某些非线性光学几何。多数调制器应用以 X-cut 为标准选择。" } },
+      { "@type": "Question", "name": "应指定多厚的 TFLN 薄膜？", "acceptedAnswer": { "@type": "Answer", "text": "对于电信波段 1310–1550 nm 的集成光子学，300–600 nm 薄膜厚度是标准范围。较薄的 300–400 nm 有利于紧密集成和高非线性限制，但更容易受粗糙度影响，光纤耦合也更难。较厚的 500–600 nm 降低制造难度并减少传播损耗，但弯曲半径更大。多数目录库存为 400 nm 和 600 nm。" } },
+      { "@type": "Question", "name": "TFLN 应指定多厚的 buried oxide (BOX)？", "acceptedAnswer": { "@type": "Answer", "text": "标准 BOX 厚度范围为 2 µm 到 4.7 µm。对于电信波长下的 600 nm LN 薄膜，2–3 µm BOX 通常足够。对于 300–400 nm 薄膜或更短波长，应指定 3–4.7 µm，以防止基底漏光损耗。务必同时索取晶圆 bow 和 warp 数据。" } },
+      { "@type": "Question", "name": "是否需要 MgO-doped TFLN 晶圆？", "acceptedAnswer": { "@type": "Answer", "text": "MgO doping（通常 5 mol%）适用于高光功率密度、低于约 1 µm 的波长，或任何不能接受光折变漂移的应用。对于中等功率的标准电信波段调制器，congruent-melt LN 通常足够，并且供应商选择更多。" } },
+      { "@type": "Question", "name": "TFLN 可用哪些晶圆直径？", "acceptedAnswer": { "@type": "Answer", "text": "4-inch (100 mm) TFLN 最容易获得。6-inch (150 mm) 由更窄的供应商群体提供，并且需要在更大面积上控制更严格的均匀性。8-inch (200mm) TFLN 截至 2026 年仍处于少数 foundry 的早期开发阶段。原型阶段 4-inch 最灵活；6-inch 合格化需要规划更长交期。" } }
+    ] },
+    { "@context": "https://schema.org", "@type": "BreadcrumbList", "inLanguage": "zh-Hans", "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+      { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+      { "@type": "ListItem", "position": 3, "name": "指定 TFLN 晶圆规格", "item": "https://asaptic.com/zh/blog/specify-tfln-wafers-integrated-photonics.html" }
+    ] }
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin:40px 0 16px;line-height:1.3}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-faq{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-faq-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:24px}.faq-item{margin-bottom:28px}.faq-item h3{font-size:16px;font-weight:700;color:var(--white);margin-bottom:10px;line-height:1.4}.faq-item p{font-size:15px;color:var(--gray);line-height:1.75;margin-bottom:0}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);gap:24px}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 光子采购</span>
+      <h1 class="essay-title">如何为集成光子学指定 TFLN 晶圆规格（晶向、厚度、BOX、直径）</h1>
+      <div class="essay-meta"><span class="essay-byline">作者：Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">7 分钟阅读</span></div>
+      <div class="essay-body">
+        <p>当你向 TFLN 晶圆供应商发送 RFQ 时，有五个参数决定收到的晶圆是否真的能用于你的 photonic integrated circuit：crystal cut、film thickness、buried oxide (BOX) thickness、wafer diameter，以及 lithium niobate 基底是 congruent-melt 还是 MgO-doped。任何一个参数写得不清楚，你要的就不是晶圆，而是意外。本文解释每个参数的含义、如何选择，以及这些选择在交期和可获得性上的代价。</p>
+        <h2>Crystal Cut: X-cut vs Z-cut</h2>
+        <p>lithium niobate 薄膜的 crystal cut 决定 ferroelectric c-axis 相对于晶圆表面的取向，而这个取向决定了你需要怎样的电极几何，才能调用主导电光系数。</p>
+        <p>在 X-cut TFLN 中，c-axis 位于晶圆平面内。波导脊两侧的侧向电极施加的电场大体平行于 c-axis，从而利用 r33 系数（约 30 pm/V），也就是 lithium niobate 中最强的电光张量元素。由于电极不需要直接位于波导上方，光学模式避免了金属吸收带来的插入损耗。X-cut 是面向 coherent optical communications 和 microwave-photonic 应用的电光调制器主流配置。</p>
+        <p>在 Z-cut TFLN 中，c-axis 垂直于晶圆表面。这种几何用于某些 nonlinear-optical 和 acousto-optic 器件，因为垂直电场取向在结构上更方便。制造更复杂，因为电极必须跨越波导，需要仔细设计 buffer layer，以避免金属邻近造成过高光吸收。</p>
+        <p>对今天多数集成光子采购来说，调制器、开关、相干收发器用 IQ 调制器都应以 X-cut 为起点，除非你的器件架构明确要求 Z-cut 几何。多数 TFLN foundry process design kits (PDKs) 都面向 X-cut 基底。</p>
+        <h2>Film Thickness: 300–600 nm Range</h2>
+        <p>lithium niobate 薄膜厚度是器件设计中最关键的参数之一。它决定光学模式尺寸，进而影响弯曲损耗、与光纤的耦合损耗，以及光场与电极施加 RF 场之间的重叠。</p>
+        <p>较薄薄膜（300–400 nm）会更强地限制光学模式。这有利于集成密度，可实现亚毫米弯曲半径，也适合 nonlinear-photonic 应用中需要与 periodically poled 结构紧密模式重叠的场景。代价是较薄薄膜更容易受波导侧壁粗糙度影响，因为倏逝场相对于总模式功率更大；同时，与标准单模光纤的耦合更难，因为模式失配更大。</p>
+        <p>较厚薄膜（500–600 nm）放宽光刻和刻蚀要求，可通过中间几何的 spot-size converters 改善 fibre-chip coupling，并通常在同等刻蚀质量下降低传播损耗。代价是紧凑弯曲需要更多面积，且对调制器半波电压 Vπ 至关重要的 RF-optical overlap factor 会改变。多数商业成熟 TFLN 工艺将 300–600 nm 作为实际范围，其中 400 nm 和 600 nm 是最常见目录库存厚度。</p>
+        <h2>Buried Oxide (BOX) Thickness</h2>
+        <p>lithium niobate 薄膜下方是一层热生长或沉积的 silicon dioxide，它形成下包层，并将有源层与 silicon handle wafer 电隔离。该层必须足够厚，避免导模的倏逝尾部泄漏到高折射率硅基底中；这种损耗机制在薄膜厚度降低、模式限制变弱时会加重。</p>
+        <p>TFLN 标准 BOX 厚度大约从 2 µm 到 4.7 µm。对于 600 nm LN film，2–3 µm BOX 通常足以支持电信波长工作。对于 300–400 nm 的较薄薄膜，模式更深入包层，3–4.7 µm BOX 可提供更安全的基底漏光余量。如果你设计的是更短波长（近红外或可见光）器件，漏光问题会加剧，可能需要指定 BOX 范围的较厚端。</p>
+        <p>BOX 厚度也影响 bonding stress 和 wafer bow。较厚氧化层会在 lithium niobate 薄膜、氧化层和硅 handle 之间引入更大的应力失配，可能导致 wafer bow；对于需要在完整晶圆直径上保持严格焦距的光刻步骤，这一参数非常关键。请求晶圆时，应要求供应商同时给出 bow 和 warp 规格。</p>
+        <h2>Wafer Diameter: 4-inch vs 6-inch</h2>
+        <p>晶圆直径决定你能使用哪些 foundry 工艺，并显著影响规模化时的单 die 成本。4-inch (100 mm) TFLN 是目前最普遍可获得的格式，由广泛供应商支持。6-inch (150 mm) 晶圆也可获得，但供应商基础更窄，且规格控制，尤其是全 150 mm 面积上的薄膜厚度均匀性，更难核实。8-inch (200mm) TFLN 截至 2026 年仍处于少数 foundry 的早期开发阶段。</p>
+        <p>对于原型和低量研究，4-inch 晶圆提供最广供应商选择和最多目录库存。如果你计划转向使用 6-inch 或更大 CMOS-compatible tooling 的 merchant foundry 进行量产，应在<a href="/zh/process.html">采购流程</a>中为更大格式预留更长交期。</p>
+        <h2>MgO Doping</h2>
+        <p>lithium niobate 容易出现 photorefractive effect：吸收的光功率导致电荷重新分布，改变局部折射率，使器件行为不稳定。约 5 mol% 的 MgO doping 可将光折变损伤阈值提高数个数量级，因此高功率应用、低于约 1 µm 波长的器件，以及波导内产生可见光的 second-harmonic 或 sum-frequency generation，都应选择 MgO:LN 基底。</p>
+        <p>对于在 1310 nm 或 1550 nm 运行、波导内光功率适中（低于数百毫瓦）的标准电信波段电光调制器，未掺 MgO 的 congruent-melt lithium niobate 通常足够，并且供应商基础略宽。如果你的器件要承受高光功率、在可见或近可见波长工作，或应用不能接受缓慢光折变漂移，应指定 MgO-doped TFLN。</p>
+        <h2>Putting It Together: A Minimal Specification</h2>
+        <p>用于标准电信波段调制器开发项目的一份完整 TFLN 晶圆规格至少应写为：X-cut, 600 nm LN film ± 10 nm uniformity (full-wafer), 3 µm SiO2 BOX, 500 µm silicon handle, 4-inch diameter, congruent-melt substrate, film non-uniformity &lt;1% (1σ), wafer bow &lt;30 µm。若工作波长低于 1 µm 或功率较高，应增加 MgO doping，并将 BOX 厚度扩展到 4.7 µm。</p>
+        <p>供应商 datasheets 很少在一份文件中主动给出所有这些数字。<a href="/zh/deep-tech-sourcing.html">深科技采购</a>应系统地用规格矩阵比较供应商，而不是把第一份 datasheet 当作报价；在这个市场中，报价里最醒目的数值往往不能代表整片晶圆最差区域的表现。</p>
+        <div class="essay-faq"><span class="essay-faq-label">常见问题</span>
+          <div class="faq-item"><h3>X-cut 和 Z-cut TFLN 晶圆有什么区别？</h3><p>X-cut TFLN 将晶体 c-axis 定向在晶圆平面内，使侧向电极能够调用最强的电光系数 r33 ≈ 30 pm/V，而无需让金属直接位于波导芯上方。Z-cut TFLN 的 c-axis 垂直于晶圆表面；电极必须跨越波导，制造更复杂，但适合某些非线性光学几何。多数调制器应用以 X-cut 为标准选择。</p></div>
+          <div class="faq-item"><h3>应指定多厚的 TFLN 薄膜？</h3><p>对于电信波段 1310–1550 nm 的集成光子学，300–600 nm 薄膜厚度是标准范围。较薄的 300–400 nm 有利于紧密集成和高非线性限制，但更容易受粗糙度影响，光纤耦合也更难。较厚的 500–600 nm 降低制造难度并减少传播损耗，但弯曲半径更大。多数目录库存为 400 nm 和 600 nm。</p></div>
+          <div class="faq-item"><h3>TFLN 应指定多厚的 buried oxide (BOX)？</h3><p>标准 BOX 厚度范围为 2 µm 到 4.7 µm。对于电信波长下的 600 nm LN 薄膜，2–3 µm BOX 通常足够。对于 300–400 nm 薄膜或更短波长，应指定 3–4.7 µm，以防止基底漏光损耗。务必同时索取晶圆 bow 和 warp 数据。</p></div>
+          <div class="faq-item"><h3>是否需要 MgO-doped TFLN 晶圆？</h3><p>MgO doping（通常 5 mol%）适用于高光功率密度、低于约 1 µm 的波长，或任何不能接受光折变漂移的应用。对于中等功率的标准电信波段调制器，congruent-melt LN 通常足够，并且供应商选择更多。</p></div>
+          <div class="faq-item"><h3>TFLN 可用哪些晶圆直径？</h3><p>4-inch (100 mm) TFLN 最容易获得。6-inch (150 mm) 由更窄的供应商群体提供，并且需要在更大面积上控制更严格的均匀性。8-inch (200mm) TFLN 截至 2026 年仍处于少数 foundry 的早期开发阶段。原型阶段 4-inch 最灵活；6-inch 合格化需要规划更长交期。</p></div>
+        </div>
+      </div>
+      <div class="essay-summary"><span class="essay-summary-label">摘要</span><p>TFLN 晶圆完整规格应覆盖五个关键参数：X-cut 或 Z-cut、300–600 nm 薄膜厚度、2–4.7 µm BOX、4-inch 或 6-inch 晶圆直径，以及是否 MgO doping。标准 4-inch 电信波段调制器用晶圆的最简规格可写为 X-cut、600 nm LN film ±10 nm、3 µm SiO2 BOX、500 µm silicon handle、congruent-melt substrate、film non-uniformity &lt;1% (1σ)、wafer bow &lt;30 µm。</p></div>
+      <div class="essay-nav"><a href="/zh/blog/">&larr; 全部文章</a><a href="/zh/blog/tfln-photonics-foundry-yields.html">相关：TFLN 良率问题 &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

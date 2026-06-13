@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>对齐漂移问题：AI智能体在部署后如何悄然失准 — Asaptic Labs</title>
+  <meta name="description" content="AI智能体在部署时处于对齐状态。但这种对齐并非永久有效。随着运行上下文变化——患者群体、威胁态势、硬件老化——智能体的校准会悄然偏离委托方的当前期望。对齐漂移没有任何警报。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/alignment-drift-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/alignment-drift-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/alignment-drift-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/alignment-drift-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/alignment-drift-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/alignment-drift-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="对齐漂移问题：AI智能体在部署后如何悄然失准" />
+  <meta property="og:description" content="AI智能体在部署时处于对齐状态，但这种对齐并非永久有效。随着运行上下文变化，智能体的校准会悄然偏离委托方的当前期望，且不会触发任何警报。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/alignment-drift-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "对齐漂移问题：AI智能体在部署后如何悄然失准",
+      "description": "AI智能体在部署时处于对齐状态。但这种对齐并非永久有效。随着运行上下文变化，智能体的校准会悄然偏离委托方的当前期望，且不会触发任何警报。",
+      "url": "https://asaptic.com/zh/blog/alignment-drift-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/alignment-drift-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic 了解 AI 治理",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件发送查询"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "对齐漂移问题", "item": "https://asaptic.com/zh/blog/alignment-drift-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照护</span>
+      <h1 class="essay-title">对齐漂移问题：AI智能体在部署后如何悄然失准</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>AI智能体在部署时处于对齐状态。其行为经过校准，符合委托方在部署时希望实现的目标、约束条件与评估标准。但这种对齐并非永久有效。世界在变化，运行上下文在变化，威胁态势在变化。智能体的校准参数不会自动随之更新。由此产生的便是对齐漂移：智能体实际行为与委托方当前期望之间的逐渐背离，且整个过程不会触发任何明确的审查事件。</p>
+
+        <p>对齐漂移不同于程序错误、规范失当与身份变更。程序错误产生可被复现和修复的错误行为；规范失当产生的是持续满足书面要求但实质不符的行为；身份变更则发生在模型或配置被明确更新时，会触发重新注册的检查点。对齐漂移不属于上述任何一种。它是在一个悄然变得不同于智能体初始校准时上下文中部署的累积效应。</p>
+
+        <h2>沉默使其成为危险</h2>
+        <p>大多数智能体监控框架旨在检测行为偏差，通过将智能体当前行为与历史行为相比较来实现。对齐漂移对这种方法而言是透明的。一个上周失准、本周同样失准的智能体，不会产生任何异常信号。监控器看到的是一致的行为；而这种一致性本身就是问题所在。</p>
+
+        <p>设想一个针对特定患者群体——具有特定病症分布、用药情况和活动能力水平——进行校准的照护智能体。十二个月后，该群体发生了变化：新入住者带来不同的健康档案。但智能体的校准参数仍然锚定在原始分布上。其建议开始出现细微偏差——不是灾难性的失误，无法通过单次事件监控检测到，但对当前患者群体而言持续不够适当。智能体在做它被训练去做的事；而它正在服务的群体，已不再是它被训练时所针对的群体。</p>
+
+        <h2>后量子维度</h2>
+        <p>后量子安全为对齐漂移增加了特定轴向。一个针对经典对抗威胁模型进行校准的智能体，在面对量子能力的攻击者时，定义上已处于失准状态。从经典威胁到后量子威胁的过渡不是一个边界清晰的离散事件，而是一个逐渐变化的概率分布：随着量子能力的成熟，经典签名被伪造的可能性不断上升。一个被正确校准为信任基于格的签名方案而非经典密钥材料的智能体，在特定威胁模型下做出了正确判断。但随着威胁模型的演进，信任阈值可能需要重新校准——而智能体没有任何机制察觉其校准正在老化。</p>
+
+        <p>同样的动态适用于智能体自身的签名行为。一个被校准为使用在部署时强度充分的算法族进行决策签名的智能体，可能逐渐使用一个正在变弱的算法。校准本身没有错；是世界发生了移动。</p>
+
+        <h2>硬件退化即对齐漂移</h2>
+        <p>物理硬件引入了更深一层的维度。传感器会随时间退化。一个使用新鲜近距传感器校准的照护机器人，随着传感器老化，可能产生系统性偏差的感知。智能体的世界模型建立在不再精准的传感器读数之上。其校准——在部署时对当时的传感器读数而言是正确的——与实际物理环境之间的背离日益加剧。</p>
+
+        <p>这是硬件层面的对齐漂移：智能体的行为对于其接收到的传感器读数而言是正确的；传感器读数对于真实世界而言不再正确。修复不是软件层面的工作，而需要物理世界的干预。智能体无法自行诊断这一问题；监控也无法通过将当前行为与历史行为比较来发现它。这需要一套定期对照物理环境真实观察结果来检验智能体输出的测试机制。</p>
+
+        <h2>设计应对</h2>
+        <p>将对齐漂移作为一级运营关切来对待，需要三件事。第一，对齐陈旧度计时器：部署记录应包括最后一次校准的日期以及校准时的环境条件，该计时器在重新校准前持续运行。第二，重新校准触发条件：运行上下文的特定变化——群体转变、威胁态势变化、硬件维护周期——应触发强制性的重新校准审查，而不仅是性能审查。第三，覆盖信号：人工干预是对齐漂移最可靠的证据。记录不仅是干预内容、还有干预原因的覆盖日志，是对齐漂移探测器。当一批覆盖事件共享同一类失效模式时，这批事件就是智能体校准不再匹配其运行上下文的证据。</p>
+
+        <p>因此，覆盖日志不仅仅是审计轨迹，它是对齐漂移的传感器。仅将其视为合规记录的组织，会错过其中蕴含的信号。</p>
+
+        <p>对齐漂移不是灾难性的失效模式，而是一种缓慢的退化，不产生任何值得单独记录的事件。这正是它成为最难治理的智能体失效类型的原因——也是从一开始就必须为其设计防护的原因。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/data-provenance-problem.html">延伸阅读：数据溯源问题 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
