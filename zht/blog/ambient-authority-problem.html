@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>環境權威問题：AI智能體繼承但從未獲授的能力 — Asaptic Labs</title>
+  <meta name="description" content="AI智能體可以對其從未正式獲得的能力采取行動。智能體進程可訪問的每個環境變量、掛載憑證和繼承的文件描述符，都是委託人層級從未審查、也從未撤銷過的能力。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/ambient-authority-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/ambient-authority-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/ambient-authority-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/ambient-authority-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/ambient-authority-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/ambient-authority-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="環境權威問题：AI智能體繼承但從未獲授的能力" />
+  <meta property="og:description" content="AI智能體可以對其從未正式獲得的能力采取行動。智能體進程可訪問的每個環境變量、掛載憑證和繼承的文件描述符，都是委託人層級從未審查過的能力。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/ambient-authority-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "環境權威問题：AI智能體繼承但從未獲授的能力",
+      "description": "AI智能體可以對其從未正式獲得的能力采取行動。智能體進程可訪問的每個環境變量、掛載憑證和繼承的文件描述符，都是委託人層級從未審查過的能力。",
+      "url": "https://asaptic.com/zht/blog/ambient-authority-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/ambient-authority-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic 了解 AI 治理",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件發送查詢"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "環境權威問题", "item": "https://asaptic.com/zht/blog/ambient-authority-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:56px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--accent);display:block;margin-bottom:16px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim);margin-bottom:56px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body h2{font-size:20px;font-weight:600;margin:40px 0 16px;line-height:1.3}.essay-body p{font-size:16px;line-height:1.85;color:var(--gray);margin-bottom:20px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);background:var(--surface)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;line-height:1.75;color:var(--gray-dim);margin:0}.essay-footer{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray);transition:color .2s}.essay-footer-back:hover{color:var(--accent)}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <span class="essay-label">NOTES FROM THE CROSSINGS · 2026-06-14</span>
+    <h1 class="essay-title">環境權威問题</h1>
+    <p class="essay-subtitle">AI智能體繼承但從未獲授的能力</p>
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>5 分鐘閱讀</span>
+      <span>× 量子安全 × 硬件 × 人類照護</span>
+    </div>
+    <div class="essay-body">
+      <p>當系統向AI智能體授予權限時，存在一個委託人——人或机構——審查了該授權並接受了其責任。授權模型依賴於這種審查。權限應該存在，是因為有人决定了它们應該存在；撤銷是有意義的，因為有具體的东西可以撤銷。</p>
+
+      <p>環境權威以一種安静的方式打破了這個模型。智能體不需要请求其執行環境中已經存在的能力。作為環境變量注入的雲服務憑證、掛載到容器中的文件系統路徑、從主机可訪問的網絡接口、從父進程繼承的文件描述符、對共享內存区域的隱式寫訪問——所有這些都是智能體進程無需任何顯式授權即可訪問的能力。没有委託人在智能體部署的上下文中審查過它们。没有審計記錄註明智能體持有它们。當智能體使用它们時，没有權限事件可以記錄，因為該能力從未被正式授予。</p>
+
+      <h2>環境權威如何積累</h2>
+      <p>環境權威通過普通的操作實踐積累。容器鏡像由平台团隊構建，他们的工作是基礎設施，而不是智能體安全。鏡像繼承了使部署正常工作的環境變量——數據庫连接字符串、API令牌、服務賬戶憑證。隨後，智能體被部署到該鏡像中，因為它是智能體其他依賴項的正确運行時環境。平台团隊並没有將憑證暴露設計為智能體權限授予。他们没有這样考虑。但從智能體的進程角度來看，這些憑證是可訪問的，而訪問它们不需要任何特殊操作。</p>
+
+      <p>權限積累問题描述的是隨時間请求和收集能力的智能體——每個请求單獨來看都是合理的，但总體上危險地寬泛。環境權威在結構上是不同的。這些能力從未被请求過。它们早於智能體的部署而存在。智能體没有積累它们；它在進程啟動時繼承了它们。這種区別對審計軌跡很重要：權限積累審查可以追蹤授權事件的序列。環境權威審查必須從執行環境本身開始，並向後推理智能體可以訪問什么——這是一項困難得多的取證任務。</p>
+
+      <h2>硬件表面與物理世界交叉點</h2>
+      <p>環境權威問题在嵌入式硬件部署中邊缘最為鋒利。照護監測設备具有特定的能力配置：它公開的傳感器、它控制的執行器、它運行的網絡接口。該配置是由了解每種能力物理後果的工程师為特定操作範圍設計的。</p>
+
+      <p>當AI智能體部署到該設备上時，它繼承了平台的完整能力配置。智能體的任務可能很窄——观察和总結；在閾值违規時發出警報——但其進程可以訪問設备公開的每個接口。如果智能體後來被更新，如果其上下文窗口被對抗性輸入污染，或者如果供應鏈攻擊改變了其行為，爆炸半徑不受智能體预期範圍的限制。它受設备物理能力表面的限制——一個更大的邊界，從未被審查為智能體權限授予。</p>
+
+      <p>在照護環境中，這不是理論上的擔憂。一個對執行器接口具有環境訪問權的監控智能體，在對抗性條件下，是一個可以影響物理環境的智能體。智能體被設計做什么與其進程可以訪問什么之間的差距，正是環境權威問题所創造的攻擊面。</p>
+
+      <h2>後量子维度</h2>
+      <p>環境憑證——API令牌、服務賬戶密鑰、云訪問憑證——通常是不记名令牌或使用經典非對称密碼學認證的憑證。它们是長期存在的，很少以安全態势要求的頻率進行轮换。在许多部署中，它们在服務的整個生命週期內都是静態的。</p>
+
+      <p>後量子過渡加剧了這一問题。今天存在的環境憑證可能使用在憑證退役之前就變得脆弱的密碼算法簽名或保護。在憑證生命週期內的任何時間点捕獲環境的攻擊者，凭借足夠的未來能力，可以在原始部署結束後很長時間內使用它來偽造授權操作。這是"現在收割，以後解密"模式應用於環境權威本身：代表智能體執行環境無限期行動的能力，因為憑證從未被限定在有界授權上下文中，也從未使用量子抗性算法簽名。</p>
+
+      <h2>設計回應：顯式能力放弃</h2>
+      <p>最小足迹原則说，智能體應該只獲取它需要的能力。環境權威問题揭示了一個必要的推論：智能體還應該明确放弃其環境中它不需要的能力。放弃是一個主動步骤，而不是缺乏行動。智能體啟動序列應該枚舉從其進程可訪問的能力——憑證、接口、路徑、描述符——並正式排除那些超出其操作範圍的能力。排除應該像授權一样記錄為授權事件。這創建了一個可審計的記錄，記錄智能體選擇不使用的內容，這與記錄它使用的內容同样重要。</p>
+
+      <p>這創造了一個可由委託人層級審查的邊界。並且創造了一個可以在基礎設施层面強制執行的安全不變量：智能體環境被剥離以匹配其声明的能力放弃声明的部署，是在智能體運行之前已在結構上限制了爆炸半徑的部署。</p>
+
+      <p>環境權威問题之所以安静，是因為它不需要任何行動。能力隨環境而來。智能體從不请求。授權從不發生。審計軌跡没有任何顯示，因為没有正式授予任何东西。這種沉默就是漏洞：没有審查的繼承權威就是没有問責的權威，在智能體對物理世界采取行動的领域，問責是不可選擇的。</p>
+    </div>
+
+    <div class="essay-summary">
+      <span class="essay-summary-label">摘要</span>
+      <p>AI智能體可以對其從未正式獲得的能力采取行動。智能體進程可以訪問的每個環境變量、掛載的憑證和繼承的文件描述符都是委託人層級從未審查的能力。與權限積累不同——智能體隨時間收集授權——環境權威早於智能體部署而存在，在審計軌跡中不留任何授權事件。在照護環境的嵌入式硬件中，繼承的平台能力將智能體的潜在爆炸半徑扩展到远超其预期操作範圍的程度。受經典密碼學保護的環境憑證在後量子過渡中加剧了风險。設計回應是在啟動時顯式放弃能力：枚舉可訪問的內容，正式排除超出範圍的內容，並將排除記錄為授權事件。没有審查的繼承權威就是没有問責的權威。</p>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zht/blog/" class="essay-footer-back">&larr; 全部文章</a>
+    </div>
+  </main>
+  <footer style="border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

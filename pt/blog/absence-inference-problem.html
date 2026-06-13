@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da inferência por ausência: responsabilização quando agentes de IA agem sobre o que não está presente — Asaptic Labs</title>
+  <meta name="description" content="Agentes de IA agem frequentemente sobre a ausência de sinais esperados: um doente que não respondeu, um dispositivo que ficou silencioso, uma rotação de chaves que nunca chegou. Estas inferências por ausência estão entre os inputs mais consequentes em decisões de alto risco e não deixam rasto positivo no registo de responsabilização." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/absence-inference-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/absence-inference-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/absence-inference-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/absence-inference-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/absence-inference-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/absence-inference-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da inferência por ausência: responsabilização quando agentes de IA agem sobre o que não está presente" />
+  <meta property="og:description" content="Agentes de IA agem frequentemente sobre a ausência de sinais esperados: um doente que não respondeu, um dispositivo que ficou silencioso, uma rotação de chaves que nunca chegou. Estas inferências por ausência estão entre os inputs mais consequentes em decisões de alto risco e não deixam rasto positivo no registo de responsabilização." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/absence-inference-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "O problema da inferência por ausência: responsabilização quando agentes de IA agem sobre o que não está presente",
+    "description": "Agentes de IA agem frequentemente sobre a ausência de sinais esperados: um doente que não respondeu, um dispositivo que ficou silencioso, uma rotação de chaves que nunca chegou. Estas inferências por ausência estão entre os inputs mais consequentes em decisões de alto risco e não deixam rasto positivo no registo de responsabilização.",
+    "url": "https://asaptic.com/pt/blog/absence-inference-problem.html",
+    "author": {
+      "@type": "Organization",
+      "name": "Asaptic Labs"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Asaptic Labs",
+      "url": "https://asaptic.com"
+    },
+    "datePublished": "2026-06-14",
+    "dateModified": "2026-06-14",
+    "mainEntityOfPage": "https://asaptic.com/pt/blog/absence-inference-problem.html",
+    "inLanguage": "pt",
+    "potentialAction": {
+      "@type": "Action",
+      "name": "Contactar a Asaptic",
+      "target": [
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/pt/engage.html",
+          "description": "Página de contacto da Asaptic"
+        },
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/mcp",
+          "contentType": "application/json",
+          "description": "Servidor MCP, ferramenta: submit_rfq"
+        },
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "mailto:engage@asaptic.com",
+          "description": "Enviar brief por e-mail"
+        }
+      ]
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "inLanguage": "pt",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Início",
+        "item": "https://asaptic.com/pt/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Blog",
+        "item": "https://asaptic.com/pt/blog/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "O problema da inferência por ausência",
+        "item": "https://asaptic.com/pt/blog/absence-inference-problem.html"
+      }
+    ]
+  }
+]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:15px;line-height:1.65;color:var(--gray);margin:0}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× SEGURANÇA PÓS-QUÂNTICA × HARDWARE × CUIDADOS NO MUNDO FÍSICO</span>
+      <h1 class="essay-title">O problema da inferência por ausência: responsabilização quando agentes de IA agem sobre o que não está presente</h1>
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 min de leitura</span></div>
+      <div class="essay-body">
+        <p>Os enquadramentos de responsabilização da IA são construídos em torno de evidência positiva. Foi tomada uma decisão; baseou-se nestes inputs; produziu este output. O trilho de auditoria segue aquilo que estava presente: o que o agente observou, ponderou e executou. Esta estrutura funciona bem para a classe mais visível de decisões de agentes. Não funciona para uma classe igualmente comum e muitas vezes mais consequente: decisões tomadas porque algo esperado não chegou.</p>
+        <p>Os agentes de IA inferem regularmente a partir do silêncio. Um agente de cuidados espera um relatório de sinais vitais a cada dois minutos e não recebe nenhum durante vinte; infere deterioração ou falha do sensor e escala. Um agente de hardware espera heartbeats de atestação de uma frota de dispositivos e percebe que uma máquina ficou silenciosa; infere possível compromisso e coloca o dispositivo em quarentena. Um agente de segurança espera que uma rotação programada de chave criptográfica esteja concluída até à meia-noite; não recebe confirmação e dispara um alerta. Em cada caso, a ação do agente é razoável. Em cada caso, a cadeia de raciocínio que levou à ação não é aquilo que o registo de responsabilização mostra.</p>
+        <p>O registo mostra uma escalação, uma quarentena, um alerta. Não mostra que “nenhum sinal chegou quando era esperado”. A ausência que conduziu a decisão é invisível no output, não porque alguém tenha decidido escondê-la, mas porque as arquiteturas normais de auditoria foram feitas para registar o que estava presente, não o que estava ausente.</p>
+        <h2>Porque as inferências por ausência importam para a responsabilização</h2>
+        <p>Uma inferência por ausência contém três componentes relevantes para responsabilização e todos em risco de se perderem. Primeiro, a expectativa: alguma configuração anterior ou comportamento aprendido estabeleceu que um sinal deveria chegar. A natureza dessa expectativa, quem a definiu, quando e em que condições, determina se a inferência era justificada. Segundo, a janela: a ausência é avaliada ao longo do tempo. O mesmo sinal em falta significa coisas diferentes após cinco minutos, cinco horas ou cinco dias. A janela usada para declarar ausente um sinal esperado é um parâmetro da decisão e pertence ao registo. Terceiro, as hipóteses alternativas: a ausência é ambígua. A falta de um relatório de sinais vitais pode significar falha do sensor, queda de rede, transferência do doente ou deterioração clínica. A inferência do agente favoreceu uma hipótese sobre outras, e a base dessa ponderação deve ser auditável.</p>
+        <p>Nenhum destes três componentes surge naturalmente num registo normal de ações. O log regista o output: escalação acionada às 14:23. A expectativa, a janela e a ponderação de hipóteses alternativas são contexto pré-decisão que a maior parte da infraestrutura de logging não captura. Um revisor que examine o trilho de auditoria depois de um evento adverso vê o que o agente fez. Não consegue ver porque a ausência levou à inferência específica, se a inferência era razoável dada a expectativa configurada, ou se a janela era adequada ao contexto clínico ou de segurança.</p>
+        <h2>No cruzamento dos cuidados</h2>
+        <p>Os cuidados no mundo físico estão saturados de inferências por ausência. Um agente que monitoriza uma pessoa idosa num ambiente de vida assistida compara continuamente padrões esperados com padrões observados: duração esperada do sono, movimento esperado, confirmação esperada de medicação, resposta esperada a uma pergunta de check-in. Quando o padrão esperado não é observado, a inferência varia por contexto: variação normal, deterioração inicial, evento agudo, falha de dispositivo. O agente tem de distinguir estas opções com os sinais que possui, e muitas vezes errará a ponderação de formas que dependem inteiramente da expectativa configurada.</p>
+        <p>O problema de responsabilização torna-se agudo quando a inferência estava errada. Um agente de cuidados que escalou com base numa ausência que afinal era uma falha rotineira de sensor desencadeou uma intervenção desnecessária. A revisão de auditoria começa: porque foi acionada a escalação? O log mostra a hora e a regra que disparou. Não mostra que ausência disparou a regra, qual era o sinal esperado, durante quanto tempo esteve ausente, ou se sinais positivos de que a pessoa estava bem foram ponderados contra a ausência. O registo ausente do sinal ausente é onde a responsabilização falha.</p>
+        <h2>No cruzamento do hardware</h2>
+        <p>Agentes de hardware que gerem frotas de dispositivos dependem de atestação contínua e sinais de heartbeat para manter visibilidade sobre a integridade dos dispositivos. Quando um dispositivo deixa de atestar, a inferência é relevante para segurança: falha de hardware, interrupção de rede, janela legítima de manutenção ou indicador de compromisso? A inferência correta depende do contexto, tipo de dispositivo, comportamento anterior e ambiente de implantação, e as consequências de errar diferem por modo de erro. Uma quarentena falso-positiva remove desnecessariamente um dispositivo de serviço. Um falso-negativo atrasa a deteção de um compromisso real.</p>
+        <p>Quando uma decisão de quarentena é revista mais tarde, o registo de auditoria deve mostrar que atestação era esperada, durante que intervalo esteve ausente, que sinais contextuais estavam disponíveis e que hipóteses alternativas foram avaliadas. A maioria das implantações de agentes de hardware não produz registos com este nível de detalhe. O evento de quarentena é registado; o raciocínio por ausência que o precedeu não é. A revisão pós-incidente de decisões de agentes de hardware envolvendo inferências por ausência é, por isso, superficial: os revisores confirmam que a política disparou, mas não se a política era adequada ao padrão específico de ausência observado.</p>
+        <h2>No cruzamento da segurança pós-quântica</h2>
+        <p>Operações criptográficas têm expectativas fortes sobre tempo. Calendários de rotação de chaves, janelas de renovação de certificados, latências de desafio-resposta: todos são contratos temporais cuja violação é, por si só, um sinal de segurança. Um agente de IA que gere infraestrutura de chaves pós-quânticas observa estas violações e age sobre elas. Uma rotação que não terminou no prazo, uma confirmação de renovação que nunca chegou, um desafio sem resposta: cada uma é uma inferência por ausência e cada uma é input para uma decisão de segurança que deve prestar contas a auditores, reguladores e equipas de resposta a incidentes.</p>
+        <p>A inferência por ausência em contextos pós-quânticos tem peso adicional porque a transição para algoritmos resistentes a computadores quânticos introduz novos sinais esperados, atestações em novos formatos e renovações com novos algoritmos, cujos padrões de ausência ainda não são bem compreendidos. Um agente que aciona uma resposta de segurança porque uma confirmação de atestação pós-quântica não chegou no calendário esperado pode estar a identificar corretamente uma falha de migração, ou pode estar a responder a uma diferença temporal entre formatos antigos e novos. O registo de responsabilização dessa decisão deve incluir a expectativa violada e a base para tratar a violação como evento de segurança.</p>
+        <h2>O que exige uma responsabilização sensível à ausência</h2>
+        <p>Três alterações à arquitetura normal de auditoria tornariam as inferências por ausência visíveis e revisíveis. Primeiro, logging de expectativas: a configuração que define que sinal o agente espera e em que intervalo deve ser registada como objeto de auditoria de primeira ordem. É a pré-condição para avaliar cada inferência por ausência que o agente faz. Segundo, eventos de ausência: quando uma expectativa configurada é violada e se extrai uma inferência, o evento de ausência deve ser registado explicitamente, antes da ação que se segue. Terceiro, logging de hipóteses: quando uma ausência pode suportar várias inferências, a base do agente para escolher entre elas deve ser registada. Não exige listar todas as possibilidades; exige que a ponderação usada para selecionar a inferência não se perca entre avaliação e ação.</p>
+        <p>O problema da inferência por ausência não é exótico. Surge em todos os domínios onde agentes monitorizam condições esperadas, ou seja, na maioria dos domínios onde agentes de IA são usados para trabalho de alto risco. A lacuna de responsabilização que cria é estrutural e silenciosa: os registos existentes são corretos, mas sistematicamente incompletos de uma forma que torna irrevisíveis as partes mais consequentes do raciocínio. Fechar essa lacuna exige tratar o sinal ausente como input de primeira ordem, não como o pano de fundo onde a decisão “real” acontece.</p>
+        <div class="essay-summary"><span class="essay-summary-label">Ponto-chave</span><p>Quando agentes de IA agem sobre a ausência de um sinal esperado, a ausência em si normalmente não é registada como input da decisão. O trilho de auditoria mostra a ação; a inferência por ausência que a causou fica invisível. A responsabilização sensível à ausência exige registar a expectativa, a janela e a inferência, não apenas a ação que se seguiu.</p></div>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>
