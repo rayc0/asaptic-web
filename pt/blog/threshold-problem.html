@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema do limiar: responsabilização quando a autonomia do agente deriva para cima sem governação explícita — Asaptic Labs</title>
+  <meta name="description" content="Toda implantação de agentes contém um limiar entre assistência e autonomia. Quando esse limiar deriva sem uma decisão de responsabilização correspondente, o registo de autorização deixa de refletir o comportamento real do agente." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/threshold-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/threshold-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/threshold-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/threshold-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/threshold-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/threshold-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema do limiar: responsabilização quando a autonomia do agente deriva para cima sem governação explícita" />
+  <meta property="og:description" content="Toda implantação de agentes contém um limiar entre assistência e autonomia. Quando esse limiar deriva sem uma decisão de responsabilização correspondente, o registo de autorização deixa de refletir o comportamento real do agente." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/threshold-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {"@context":"https://schema.org","@type":"Article","headline":"O problema do limiar: responsabilização quando a autonomia do agente deriva para cima sem governação explícita","description":"Toda implantação de agentes contém um limiar entre assistência e autonomia. Quando esse limiar deriva sem uma decisão de responsabilização correspondente, o registo de autorização deixa de refletir o comportamento real do agente.","url":"https://asaptic.com/pt/blog/threshold-problem.html","author":{"@type":"Organization","name":"Asaptic Labs"},"publisher":{"@type":"Organization","name":"Asaptic Labs","url":"https://asaptic.com"},"datePublished":"2026-06-14","dateModified":"2026-06-14","mainEntityOfPage":"https://asaptic.com/pt/blog/threshold-problem.html","inLanguage":"pt","potentialAction":{"@type":"Action","name":"Contactar a Asaptic","target":[{"@type":"EntryPoint","urlTemplate":"https://asaptic.com/pt/engage.html","description":"Página de contacto da Asaptic"},{"@type":"EntryPoint","urlTemplate":"mailto:engage@asaptic.com","description":"Contactar por e-mail"}]}},
+    {"@context":"https://schema.org","@type":"BreadcrumbList","inLanguage":"pt","itemListElement":[{"@type":"ListItem","position":1,"name":"Início","item":"https://asaptic.com/pt/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://asaptic.com/pt/blog/"},{"@type":"ListItem","position":3,"name":"O problema do limiar","item":"https://asaptic.com/pt/blog/threshold-problem.html"}]}
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:15px;line-height:1.65;color:var(--gray);margin:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× SEGURANÇA QUÂNTICA × HARDWARE × CUIDADOS HUMANOS</span>
+      <h1 class="essay-title">O problema do limiar: responsabilização quando a autonomia do agente deriva para cima sem governação explícita</h1>
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">6 min de leitura</span></div>
+      <div class="essay-body">
+
+        <p>O limiar é a linha entre um agente que assiste e um agente que decide. De um lado, o agente apresenta uma recomendação, um sinalizador ou uma escalação, e uma pessoa age. Do outro, o agente age diretamente e a atenção humana deixa de ser necessária. A posição dessa linha é uma das propriedades mais consequentes de qualquer implantação agentiva: determina quem responde por quais decisões, que mecanismos de supervisão se aplicam, e onde termina o registo de autorização e começa o julgamento autónomo do agente.</p>
+        <p>A maioria dos limiares não é desenhada explicitamente. Eles emergem. Um agente autorizado a monitorizar e escalar anomalias terá, na prática, um limiar implícito determinado pela sensibilidade do modelo de deteção, pelo volume de escalações que produz e pela tolerância da equipa humana a falsos positivos. Nenhum destes inputs aparece no registo de autorização. O limiar é um subproduto do desenho da implantação, não uma propriedade declarada.</p>
+        <p>A deriva de limiar ocorre quando a posição do limiar muda ao longo do tempo sem uma decisão de autorização correspondente. O mecanismo mais comum é a pressão operacional: o volume de escalações excede a capacidade de revisão humana, por isso o limiar é elevado para reduzir carga. O segundo é a acumulação de confiança: os outputs do agente mostram-se fiáveis e os operadores tornam-se confortáveis em deixar mais decisões passar sem revisão. O terceiro é a atualização do modelo: quando o modelo subjacente é retreinado ou ajustado, as pontuações de confiança deslocam-se, movendo o limiar mesmo quando o valor formal permanece igual.</p>
+        <p>Cada mecanismo é defensável isoladamente. Reduzir falsos positivos é boa engenharia. Estender autonomia a um agente comprovado é gestão razoável de confiança. Melhorar o modelo é manutenção. Em conjunto, porém, produzem uma implantação em que o âmbito autónomo real do agente é muito mais amplo do que o âmbito revisto e autorizado no momento da implantação. Nenhuma decisão única expandiu a autoridade do agente. A expansão aconteceu nos espaços entre decisões.</p>
+        <h2>O cruzamento da segurança pós-quântica</h2>
+        <p>Um agente que gere rotação de chaves criptográficas opera contra um limiar que define quando age sozinho e quando coloca uma rotação em fila para revisão humana. No início, rotações rotineiras podem ser autónomas, enquanto rotações que afetam âncoras de confiança, material entre domínios ou certificados de validade alargada exigem revisão. Com o tempo, a definição de rotineiro expande-se. O agente executou milhares de rotações sem incidente; os operadores aceitaram o seu julgamento sobre material cada vez mais consequente. O limiar deriva. Eventualmente, o agente roda autonomamente material que a autorização original tinha desenhado para revisão humana, não porque alguém concedeu essa autoridade, mas porque ninguém preservou a fronteira que a excluía.</p>
+        <p>Numa migração pós-quântica, isto importa de forma aguda. As consequências de decisões de rotação são duradouras: material assinado sob uma rotação comprometida ou mal executada continua em uso até expirar. Um limiar que derivou durante o período clássico pode ter transferido autoridade autónoma sobre trocas críticas de migração quântica para um agente nunca revisto para esse âmbito.</p>
+        <h2>O cruzamento do hardware</h2>
+        <p>Agentes industriais e do mundo físico, como sistemas robóticos, controlo ambiental e monitorização de frotas, operam em domínios onde o limiar entre recomendação e ação tem consequências físicas diretas. Um assistente robótico de cuidados autorizado a alertar cuidadores quando deteta sofrimento tem um limiar entre alertar e tentar uma intervenção física autónoma. Essa posição é crítica para a segurança: determina se uma pessoa está ou não no circuito de decisão.</p>
+        <p>A deriva em hardware é difícil de detetar porque pode aparecer como latência de escalação, não como ausência de escalação. Um agente que antes escalava imediatamente pode começar a atrasar-se, tentando primeiro uma intervenção breve e escalando apenas se falhar. O registo continua a mostrar escalações. O limiar moveu-se, mas a auditoria não o mostra porque regista eventos de escalação, não posições de limiar.</p>
+        <h2>O cruzamento dos cuidados no mundo físico</h2>
+        <p>Agentes de cuidados que aconselham sobre nutrição, horários de medicação ou protocolos operam contra limiares que distinguem recomendação clínica de decisão clínica. No início, o agente pode estar autorizado a assinalar desvios de um plano sem agir sobre eles: assinalar é autónomo, agir exige um clínico qualificado. Com o tempo, os sinalizadores mais rotineiros são resolvidos de forma previsível; os operadores passam a tratar a revisão clínica como perfunctória. O agente começa a construir sinalizadores pré-resolvidos, com uma ação proposta tão específica que aceitar o sinalizador equivale funcionalmente a aceitar a ação.</p>
+        <p>O registo de autorização não reflete esta mudança. O agente continua formalmente a assinalar. A pessoa continua nominalmente a aprovar. Mas o âmbito autónomo do julgamento clínico do agente atravessou o limiar sem ser nomeado, revisto ou registado como evento de autorização. Quando um resultado é revisto, a cadeia de responsabilização parece intacta: um clínico aprovou cada ação. O problema do limiar é que a função de aprovação já tinha sido esvaziada pela deriva.</p>
+        <h2>O que o problema exige</h2>
+        <p>A resposta mínima é tratar limiares como artefactos de desenho de primeira classe: declarados na implantação, versionados quando mudam e registados como eventos de autorização. Uma mudança de limiar, seja por atualização de modelo, pressão operacional ou acumulação de confiança, deve gerar um registo de auditoria com peso de responsabilização equivalente ao da autorização original.</p>
+        <p>Além do registo, limiares exigem monitorização. A taxa atual de escalação não é um indicador suficiente da posição do limiar, porque a deriva pode reduzir escalações enquanto o limiar formal permanece igual. A governação de limiares deve acompanhar a distribuição das decisões que passam pelo canal autónomo contra a distribuição que estava no âmbito autorizado inicialmente, sinalizando quando a interseção já não corresponde ao que a autorização assumia.</p>
+        <p>O problema do limiar é um problema de governação com aparência de engenharia. As ferramentas, como limiares de confiança, roteamento de escalação e filas de revisão, são construções de engenharia. Mas a pergunta sobre onde o limiar deve ficar e quem pode movê-lo é uma pergunta de responsabilização.</p>
+        <div class="essay-summary"><span class="essay-summary-label">Ponto-chave</span><p>Tratar limiares como artefactos de governação, declarados, versionados, registados e autorizados separadamente, é a arquitetura mínima para manter a autonomia dentro do que foi realmente aprovado.</p></div>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>
