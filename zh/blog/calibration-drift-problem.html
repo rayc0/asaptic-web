@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>校准漂移问题 — Asaptic Labs</title>
+  <meta name="description" content="物理环境中的AI智能体依赖传感器数据进行决策。传感器会发生漂移。与传感器故障不同，漂移是渐进且看似合理的——读数在看起来合理的情况下持续偏移，直到某个基于这些数据所作的决策被证明是错误的。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/calibration-drift-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/calibration-drift-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/calibration-drift-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/calibration-drift-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/calibration-drift-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/calibration-drift-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="校准漂移问题：智能体物理世界输入悄然退化时的问责机制" />
+  <meta property="og:description" content="物理环境中的AI智能体依赖传感器数据进行决策。传感器会发生漂移。与传感器故障不同，漂移是渐进且看似合理的——读数在看起来合理的情况下持续偏移，直到某个基于这些数据所作的决策被证明是错误的。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/calibration-drift-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "校准漂移问题：智能体物理世界输入悄然退化时的问责机制",
+      "description": "物理环境中的AI智能体依赖传感器数据进行决策。传感器会发生漂移。与传感器故障不同，漂移是渐进且看似合理的——读数一直看起来合理，直到由此做出的决策被证明是错误的。当那一刻到来时，问责问题比看起来更难处理。",
+      "url": "https://asaptic.com/zh/blog/calibration-drift-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/calibration-drift-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件发送询盘"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "校准漂移问题", "item": "https://asaptic.com/zh/blog/calibration-drift-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <div class="essay-tag">× 硬件 × 物理世界照护 × 量子安全</div>
+      <h1 class="essay-title">校准漂移问题：智能体物理世界输入悄然退化时的问责机制</h1>
+      <p class="essay-subtitle">在物理环境中行动的AI智能体依赖传感器。传感器会发生漂移。与传感器故障不同，漂移是渐进的，产生看似合理的读数——直到由此做出的决策被证明是错误的那一刻，数据一直看起来合理。当那一刻到来时，问责问题比看起来更难处理。</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-14</span>
+        <span>6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>发生故障的传感器会停止产生读数，或产生明显错误的读数从而触发警报。发生漂移的传感器则持续产生读数。这些读数偏差微小且缓慢增长。在任何给定时刻，读数看起来都是合理的。没有单个读数足以引起警惕。只有在事后——当基于数月漂移数据做出的决策被证明是有害的——这一模式才变得清晰可见。</p>
+
+        <p>这就是校准漂移问题。它处于硬件与问责的交汇点，在AI智能体部署最快的领域中最为尖锐：实体世界护理和关键基础设施。围绕AI智能体发展的问责框架尚未充分解决这一问题，部分原因在于智能体问责的法律和哲学范畴是围绕离散事件而非渐进退化构建的。</p>
+
+        <h2>为何漂移比故障更难处理</h2>
+        <p>传感器故障有清晰的问责结构。智能体基于传感器读数做出决策；传感器随后被发现已故障；智能体的行动可追溯至已知故障时间的缺陷输入。责任可以在智能体开发者、硬件供应商和负责维护的运营者之间分配。</p>
+
+        <p>漂移消解了这一结构。没有故障时刻。传感器在最后一次校准时产生可接受的读数，现在仍然产生落在合理范围内的读数。智能体不是在基于损坏的输入行动，而是基于逐渐变得不那么准确的输入行动。没有外部参照，智能体无法区分这两种情况。在许多情况下，运营者同样无法区分。</p>
+
+        <p>问责问题因此变为：当一个智能体基于其所拥有的输入正确行动，而这些输入已悄然退化时，由谁来承担由此造成的伤害？答案并不明显，现有框架也没有提供答案。</p>
+
+        <h2>硬件交叉点：信任根的漂移</h2>
+        <p>在硬件交叉点，校准漂移触及智能体身份和加密正确性的基础。硬件安全模块依赖内部振荡器，其频率漂移会影响加密操作的时序。依赖同步时钟的协议中的时序漂移——包括许多进入部署的后量子密钥交换方案——可能导致操作在规范之外悄然运行。操作在完成而不报错的意义上是成功的，但在协议所依赖的时序保证不再成立的意义上是失败的。</p>
+
+        <p>这对管理加密状态的AI智能体至关重要。负责密钥轮换、会话管理或硬件锚定系统中证书生命周期的智能体，正在基于依赖校准硬件的时序和状态信息做出决策。如果硬件发生漂移，智能体对加密状态的视图就会存在微妙错误，它将继续自信地基于该视图行动，因为其可观察环境中没有任何信号表明存在问题。</p>
+
+        <p>这里的问责挑战在于：智能体不是失败点，硬件也没有以任何可检测的方式损坏。失败模式存在于校准事件之间的间隙中——而这个间隙通常没有被定义、追踪或视为与问责相关的记录。</p>
+
+        <h2>护理交叉点：读数看起来正确但并非如此</h2>
+        <p>在实体世界护理环境中，校准漂移创造了更直接且更难防御的风险。AI护理智能体基于嵌入护理环境的传感器读数做出决策——关于用药计划、活动水平、护理升级阈值。读数高出两个百分点的血氧仪看起来没有损坏，它报告的值在合理范围内。向下漂移五公斤的体重秤不会触发任何警报，它产生的趋势线看起来平滑。检测半径缩小的运动传感器不报错，只是无法登记实际发生的活动。</p>
+
+        <p>在每种情况下，智能体都在根据其输入正确行动。它在读数越过配置阈值时进行升级，维持读数所支持的护理计划。失败是不可见的，直到伤害发生，而漂移的读数在事后做出解释。</p>
+
+        <p>最暴露于这种失败模式的人是无法自我报告传感器读数错误的护理接受者。经历真实生理变化的老年居民可能无法区分智能体的决定是不正确的还是情况就是智能体所描述的那样。智能体对其读数的信心——通常以对决策的信心传达给护理人员——并未针对提供证据的硬件的物理状态进行校准。</p>
+
+        <h2>问责架构的要求</h2>
+        <p>将校准漂移视为问责问题而非维护问题，会改变架构必须做的事情。若干属性变得必要。</p>
+
+        <p>首先，校准事件必须被视为一等审计记录。智能体据以行动的每个传感器的当前校准状态，应当是一个已记录、有时间戳且可查询的事实——与智能体做出的决策同等重要。一个记录了智能体决策内容但没有记录当时输入校准状态的审计追踪，在问责意义上是不完整的。</p>
+
+        <p>其次，智能体必须将传感器不确定性传播到其输出中。一个基于最近校准超出规定容差窗口的硬件所提供输入进行行动的智能体，应该明确标记这种不确定性——在其决策记录中，以及在可能的情况下向依赖其输出的人标记。智能体对决策所表达的信心，不应与提供其证据的硬件的物理状态无关。</p>
+
+        <p>第三，校准计划必须被视为可审计的义务，而非可推迟的维护建议。在护理环境中，这意味着将智能体操作权限与其所依赖传感器的校准状态挂钩。传感器输入超过校准阈值的智能体，应在降级模式下运行——自主性降低，明确标记不确定性——直到校准恢复。</p>
+
+        <p>校准漂移问题并不罕见。部署在实体环境中的每个AI智能体都面临它。为这些智能体构建的问责架构需要直接解决它——不是作为边缘案例，而是作为运行领域的结构性属性。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>传感器漂移产生逐渐错误的合理读数，造成传感器故障所不会造成的问责缺口：智能体基于其所拥有的输入正确行动，但这些输入已悄然退化。物理环境智能体的问责架构必须将校准状态视为一等审计记录，将传感器不确定性传播到智能体输出，并将操作权限与校准时效挂钩。</p>
+      </div>
+
+      <footer class="essay-footer">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+        <a href="/zh/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </footer>
+    </article>
+  </main>
+  <footer class="site-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

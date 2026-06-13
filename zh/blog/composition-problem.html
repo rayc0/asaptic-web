@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>组合问题：为何安全属性不会自动叠加 — Asaptic Labs</title>
+  <meta name="description" content="单独安全、权限受限且经过证明的AI智能体，组合成流水线后并不自动成为安全的组合。涌现权限、问责扩散和不可见的副作用链，是组合AI流水线的三种失效模式。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/composition-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/composition-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/composition-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/composition-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/composition-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/composition-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="组合问题：为何安全属性不会自动叠加" />
+  <meta property="og:description" content="单独安全、权限受限且经过证明的AI智能体，组合成流水线后并不自动成为安全的组合。涌现权限、问责扩散和不可见的副作用链，是组合AI流水线的三种失效模式。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/composition-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "组合问题：为何安全属性不会自动叠加",
+      "description": "单独安全、权限受限且经过证明的AI智能体，组合成流水线后并不自动成为安全的组合。涌现权限、问责扩散和不可见的副作用链，是组合AI流水线的三种失效模式。",
+      "url": "https://asaptic.com/zh/blog/composition-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/composition-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "组合问题", "item": "https://asaptic.com/zh/blog/composition-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+
+    <article>
+      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照护</span>
+      <h1 class="essay-title">组合问题：为何安全属性不会自动叠加</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+
+      <div class="essay-body">
+        <p>当工程师评估多智能体流水线的安全性时，他们通常着眼于单个智能体：这个智能体的权限范围是否正确、凭证是否短期有效、是否经过硬件证明。他们较少思考的，是流水线本身作为一个独立的信任界面。潜在的假设是：治理良好的组件能组合成治理良好的整体。这一假设是错误的。</p>
+
+        <p>组合引入了任何单个智能体都不会出现的失效模式。一条由单独限定范围的智能体组成的链路，可能产生没有任何单个智能体被授予的涌现权限。一条由单独可审计步骤组成的流水线，可能产生没有任何单条日志记录所能描述的结果。当组合流水线造成伤害时，"谁该对此结果负责"这一问责问题，会以一种无法令人满意、也无法真正解决的方式分散到各个组件中。这三种失效模式并非实现上的缺陷，而是组合本身的结构性属性。</p>
+
+        <h2>涌现权限</h2>
+        <p>权限范围被分配给智能体，而非流水线。一个被允许读取患者记录的协调智能体，将子任务委托给一个被允许向消息系统写入的第二智能体。没有任何一个智能体被授权根据医疗记录内容向患者发送消息——但组合后的流水线可以做到这一点。执行这一组合动作的权限从未被授予任何人，而是从两个单独合理的授权的交集中涌现出来。</p>
+
+        <p>这并非病态配置，而是当两个具有互补权限范围的智能体在未对其交集进行显式推理的情况下被串联时所发生的事情。问题在于，现有权限模型是以智能体为中心的。它们回答的是"这个智能体被允许做什么"，而非"这条流水线被允许产生什么"。这是两个不同的问题，而只有第二个问题才真正约束实际结果。</p>
+
+        <h2>不可见的副作用链</h2>
+        <p>流水线中的每个智能体处理其输入并产生输出，输出成为下一个智能体的输入。在正确隔离的系统中，没有单个智能体能够观察其输出的下游后果——它已完成任务并继续前进。但下游后果恰恰是流水线实际效果所在之处。一个格式化临床建议的智能体，对第二个智能体将如何解读该格式，或第三个智能体将如何依据第二个智能体的解读采取行动，没有任何可见性。</p>
+
+        <p>在硬件部署中，这种链式结构意味着局部无害的输出可能成为危险的输入。一个传感器读数智能体输出的数值在正常参数范围内，但第二个智能体——基于略有不同的运营基准训练——可能将其分类为需要处理的异常。由此产生的执行器指令，是两个单独正确但未共享参考框架的推理的产物。没有任何单条日志记录了驱动这一结果的跨智能体解读差距。</p>
+
+        <p>在照护场景中，同样的动态适用于临床推理链。分诊智能体的输出传递给照护协调智能体后，可能产生两个智能体单独均不会生成的照护路径建议，且没有任何临床医生对其整体进行过审查。每个单独步骤都是合适的，组合后的输出却并非如此。</p>
+
+        <h2>问责扩散</h2>
+        <p>当组合流水线产生有害结果时，因果链是真实存在的，却是分散的。协调智能体调用了子智能体；子智能体依据协调智能体的指令行动；指令是对任务描述的合理解释；任务描述经过运营方授权；伤害产生于所有这些步骤的交汇处，而每一个步骤单独来看都没有错误。</p>
+
+        <p>现有问责框架并非为这种结构而设计。它们将责任分配给智能体或部署它们的运营方，而不分配给流水线配置本身——即将这些智能体以这种顺序、这种信息流连接在一起的组合决策。在组合被视为一项需要明确授权的行为之前，流水线层面的问责缺口将持续存在于结构层面。</p>
+
+        <h2>设计应对</h2>
+        <p>解决组合问题，需要将流水线作为独立的授权界面来对待。组合流水线应携带明确的组合契约：声明其接受什么输入、产生什么输出、这些输出代表什么组合权限，以及谁授权了这一组合。该契约应在部署时由组装流水线的权威机构签名，而非由各组件智能体单独签名。</p>
+
+        <p>硬件根植的证明在这里以特定方式发挥作用。如果流水线中的每个智能体都必须提供经证明的身份，则组合可以被追溯：每个步骤都有签名的溯源记录，证明哪个智能体产生了哪个输出。流水线运行的端到端追踪因此成为一条签名记录链，而非一组独立日志。重建所发生的事情成为可能，不是因为任何单个智能体记录得足够仔细，而是因为组合协议在每次交接时强制执行了可追溯性。</p>
+
+        <p>这一洞察令人不安，但至关重要：安全性在默认情况下不具有组合性。单个智能体可以被正确限定范围、经过证明并受到治理，但它们的组合仍可能是不安全的。将组合视为一项授权行为——要求明确的契约、端到端的追踪和流水线级的范围审查——是弥合这一缺口的架构步骤。而在实践中，这也是大多数多智能体部署尚未采取的步骤。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/permission-accumulation-problem.html">延伸阅读：权限积累问题 &rarr;</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

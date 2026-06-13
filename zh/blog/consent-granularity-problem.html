@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>同意粒度问题：当委托人无法以智能体可操作的分辨率指定权限时的问责困境 — Asaptic Labs</title>
+  <meta name="description" content="人类委托人以粗粒度授权AI智能体——授予访问权限、撤销访问权限、调整设置。智能体以细粒度行动——在任何授予的权限内执行数千个不同的操作。委托人能够指定的内容与智能体能够做的内容之间的差距，不是界面问题，而是结构性问责缺口。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/consent-granularity-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/consent-granularity-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/consent-granularity-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/consent-granularity-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/consent-granularity-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/consent-granularity-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="同意粒度问题：当委托人无法以智能体可操作的分辨率指定权限时的问责困境" />
+  <meta property="og:description" content="人类委托人以粗粒度授权AI智能体——授予访问权限、撤销访问权限、调整设置。智能体以细粒度行动——在任何授予的权限内执行数千个不同的操作。委托人能够指定的内容与智能体能够做的内容之间的差距，不是界面问题，而是结构性问责缺口。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/consent-granularity-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "同意粒度问题：当委托人无法以智能体可操作的分辨率指定权限时的问责困境",
+      "description": "人类委托人以粗粒度授权AI智能体，智能体在任何授予权限内执行数千个具体操作。这一分辨率差距造成结构性问责缺口，不能通过更多披露或更细的复选框来弥合，而只能通过操作层面的审计来解决。",
+      "url": "https://asaptic.com/zh/blog/consent-granularity-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/consent-granularity-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "同意粒度问题", "item": "https://asaptic.com/zh/blog/consent-granularity-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:15px;line-height:1.65;color:var(--gray);margin:0}.essay-footer-wrap{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 后量子安全 × 硬件 × 物理世界照护</span>
+      <h1 class="essay-title">同意粒度问题：当委托人无法以智能体可操作的分辨率指定权限时的问责困境</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>每一个有意义的同意框架都建立在这样一个假设之上：同意方在某种可行的分辨率下理解他们同意的内容。分辨率不需要完整——没有人阅读软件许可的每一条款——但它需要足够充分以锚定问责。如果实际发生的事情与合理预期的内容有实质性偏差，那么同意就没有约束那个行动。</p>
+
+        <p>AI智能体的运作分辨率是人类委托人无法匹配的。一个被授权访问患者日常日程的照护智能体，在该权限内可以从预约模式推断用药依从性、从访客频率检测社会孤立、将睡眠中断与照护事件时间关联，以及将行为异常与纵向基线对比标记。说"是的，智能体可以查看日程"的委托人，并没有同意这些具体的推断。他们同意了一个粗略的类别。智能体在该类别的细粒度内容上行动。</p>
+
+        <p>这就是同意粒度问题。它不能通过更好的隐私声明、更长的服务条款或更细粒度的权限复选框来解决。复选框比操作更粗略。这个差距是结构性的。</p>
+
+        <h2>为什么这个差距无法通过披露来弥合</h2>
+        <p>对同意差距的标准回应是披露：更具体地告诉用户智能体将做什么。但披露只有在披露列表有限且可理解的情况下才有效。对于在丰富输入数据上运作的AI智能体，可能操作的列表两者皆非。照护智能体的行为推断能力不是命名操作的固定列表——它是可用数据、模型当前能力和部署上下文的函数。智能体可能执行在同意时没有列举的操作，因为它们来自撰写披露时不存在的数据组合。</p>
+
+        <p>更多披露不会弥合差距；它将问题从同意转移到理解。一个在点击"同意"之前收到十页可能代理操作清单的委托人，并没有以更高分辨率同意。他们同意了清单的存在。问责基础没有改善，而是被遮蔽了。</p>
+
+        <h2>在照护交叉点</h2>
+        <p>在物理世界照护中，同意粒度问题在家庭和住宅环境中最为突出。一个授权照护智能体在家中支持老年亲属的家庭，同意了一个一般性目的。他们没有——通常也无法——列举智能体可能生成的每一个具体推断、升级触发器、数据保留行为或第三方通知。呼叫紧急服务、提醒远方家庭成员或记录对家庭环境关注的照护智能体，是在一般授权范围内行动，但远超任何具体同意所涵盖的范围。</p>
+
+        <p>问责问题——这个行动是被授权的吗？——无法通过参考同意记录来回答，因为同意记录没有描述那个行动。它描述了一个包含该行动的类别。因此，建立在同意之上的问责框架治理的是类别，而不是行动。智能体可以以委托人未曾预期、未曾意图、也不希望的方式行动，同时在技术上仍处于授予类别的范围内。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>相邻硬件的智能体在不同的表面呈现相同的问题。一个被授权管理设备群固件的智能体，被授予了一个权限类别——固件管理——它包含了数百个具体操作：哪些设备以何种顺序接收更新、在何种条件下触发什么回滚行为、当检测到签名异常时哪些设备被隔离，以及设备在需要人工审查前被隔离多长时间。在授权时，这些具体行为都没有被列举。它们隐含在授予的类别中。</p>
+
+        <p>当智能体做出干扰生产操作的固件决定时，问责问题不是智能体是否拥有固件管理权限——它确实拥有。问题是具体决定是否在实际同意的范围内。在"固件管理"的粒度上，仅从授权记录来看，这个问题是无法回答的。</p>
+
+        <h2>在后量子交叉点</h2>
+        <p>加密迁移智能体面临相同的结构，但风险更高。一个被授权管理加密基础设施的智能体，可以在该授权范围内决定废弃哪些算法、按照什么时间线、在哪些系统上以什么顺序，以及当迁移失败时采用什么回退行为。这些决定具有重大的操作和安全后果。授予"加密基础设施管理"的授权没有指定其中任何一项。它授权了一个类别。智能体填充该类别的内容。</p>
+
+        <p>当智能体的具体选择导致加密覆盖出现空白——迁移期间某些系统使用已弃用算法的窗口——授权记录将确认智能体拥有权限。它不会揭示具体的排序决定是否曾被任何委托人考虑、评估或批准。</p>
+
+        <h2>问责的要求</h2>
+        <p>同意粒度问题没有同意解决方案。它有一个审计解决方案：问责必须建立在智能体在操作层面实际做了什么，而不是类别层面上授权了什么。这要求智能体生成操作层面的记录——而不是类别层面的日志——可以在事后与委托人期望进行比较。</p>
+
+        <p>这也要求对"授权"意味着什么保持机构纪律。授予的权限不是该类别内所有操作的空白支票。它是一种临时授权，携带隐含的批准要求：委托人应该有持续的机制来确认正在执行的具体操作属于他们实际意图的范围。在该机制缺失的地方，授权已经超过了同意。</p>
+
+        <p>委托人能够指定的内容与智能体能够做的内容之间的差距，将随着智能体能力的增强而扩大。将粗略授权视为充分同意的问责框架将逐渐减少对智能体实际所做事情的治理。选择不是精细同意与粗略同意之间的选择。而是操作层面审计与名义问责之间的选择。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要点</span>
+        <p>人类在类别层面授权AI智能体——"管理固件"、"访问日程"、"处理加密基础设施"。智能体在具体操作层面行动，任何单一类别内都包含数千个操作。这些分辨率之间的差距意味着同意记录在类别层面确认授权，而对所采取的具体行动保持沉默。在照护交叉点，一般授权包含未预期的推断和升级。在硬件交叉点，固件权限包含未描述的操作决定。在后量子交叉点，迁移权限涵盖未披露的排序选择。弥合问责差距需要操作层面的审计——而不是更长的披露、更细的复选框——因为这些操作来自数据，而不是来自披露。</p>
+      </div>
+
+      <div class="essay-footer-wrap">
+        <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+        <a href="/zh/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+  <footer class="site-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
