@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>指令折叠问题 — Asaptic Labs</title>
+  <meta name="description" content="长期运行的AI智能体必须压缩上下文以持续运作。压缩时，详细的条件指令折叠为更简单的摘要——智能体随后基于简化版本而非原始授权继续运作。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/instruction-collapse-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/instruction-collapse-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/instruction-collapse-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/instruction-collapse-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/instruction-collapse-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/instruction-collapse-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="指令折叠问题：AI智能体丢失授权指令细节时的问责困境" />
+  <meta property="og:description" content="长期运行的AI智能体必须压缩上下文以持续运作。压缩时，详细的条件指令折叠为更简单的摘要——智能体随后基于简化版本而非原始授权继续运作。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/instruction-collapse-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "指令折叠问题：AI智能体丢失授权指令细节时的问责困境",
+      "description": "长期运行的AI智能体必须压缩上下文以持续运作。压缩时，详细的条件指令折叠为更简单的摘要——智能体随后基于简化版本而非原始授权继续运作。",
+      "url": "https://asaptic.com/zh/blog/instruction-collapse-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/instruction-collapse-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "向 Asaptic 提交采购 RFQ",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件发送规格简报"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "指令折叠问题", "item": "https://asaptic.com/zh/blog/instruction-collapse-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--accent);display:block;margin-bottom:16px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim);margin-bottom:56px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:16px;line-height:1.85;color:var(--fg);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:600;margin:48px 0 16px;color:var(--fg)}.essay-summary{margin-top:56px;padding:28px 32px;border:1px solid var(--border);background:var(--surface)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;line-height:1.75;color:var(--gray-dim);margin:0}.essay-footer{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray);transition:color .2s}.essay-footer-back:hover{color:var(--accent)}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <span class="essay-label">跨界笔记 · 2026-06-14</span>
+    <h1 class="essay-title">指令折叠问题</h1>
+    <p class="essay-subtitle">AI智能体丢失授权指令细节时的问责困境</p>
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>5 分钟阅读</span>
+      <span>× 物理世界照护 · × 后量子安全</span>
+    </div>
+    <article>
+      <div class="essay-body">
+        <p>在部署之初，给予AI护理智能体的指令通常是详细而有条件的：如果护理对象连续三次拒绝服药，则联系护理协调员，但若拒绝模式符合已记录的个人偏好，则无需联系；仅在生命体征超出特定阈值时于夜间升级处理，但周四除外，因为夜班护士已事先收到通知。这种具体性是有意为之的，它体现了运营方、临床医生和家属之间经过数小时协商达成的共识——关于智能体的自主权在哪里结束、人工判断必须在哪里介入。</p>
+
+        <p>部署数月后，这些指令名义上仍在约束着智能体。但智能体已不再根据原始文本运作，而是基于一种压缩后的表示——多次折叠上下文窗口后留下的摘要之摘要，以便为更近期的运营数据腾出空间。指令在某种形式上仍然存在。但使其具有可问责性的细节已不复存在。</p>
+
+        <p>这就是指令折叠问题：不是对齐失败，而是保真度失败——条件逻辑的逐渐侵蚀，而正是这种条件逻辑赋予了智能体权限以具体形状。</p>
+
+        <h2>为何压缩在结构上不可避免</h2>
+        <p>长周期AI智能体面临一个硬约束：上下文窗口是有限的。一个持续运行的护理智能体——记录观察、追踪护理事件——会以比部署周期更快的速度填满可用上下文。为了继续运作，它必须进行压缩：将早期上下文归纳为更短的表示，为当前腾出空间。</p>
+
+        <p>压缩本身并非失败，而是任何需要跨时间运作的系统的正常运行模式。问题在于压缩对条件指令的影响。"执行X，除非满足条件Y，此时执行Z，但前提是在过去72小时内满足了标准W"这样的句子并不适合优雅压缩。这些条件、例外和时间限定词正是使指令安全的因素——也恰恰是压缩最先丢失的细节。压缩后的摘要可能只剩下"在适当时执行X"——这并非错误，但已不再是被授权的指令。</p>
+
+        <h2>折叠指令的问责特征</h2>
+        <p>指令折叠问题尤其难以察觉，因为它不会产生明显的错误。基于折叠后指令运作的智能体大多数情况下看起来仍然是正确的。多数时候，简化版本与原始版本产生相同的行动。偏差出现在边缘情况——在阈值条件下，在那些"正是我们当初特意注明情形"的时刻，而这些时刻正是条件指令被编写出来要覆盖的。</p>
+
+        <p>从监督的角度来看，这是最难处理的漂移。智能体的每个单独行动都有理可辩。日志记录合情合理。没有哪一个决策明显是错的。出错的是：智能体不再受到它被给予的那份详细、经过协商的授权约束——它受到的是这份授权的近似版本，而这个近似版本没有任何人负责。原始指令授权了部署，但没有人授权智能体实际运行的那个压缩版本。</p>
+
+        <h2>密码协议部署中的类比</h2>
+        <p>在安全关键系统中，指令折叠问题有一个直接的结构类比。密码协议最初以详细配置文件部署：哪些密码套件被允许，哪些被禁止，降级条件下的回退层级是什么，密钥协商应如何进行。随着时间推移，这些文件被逐层归纳——成为运营手册、缩略政策引用、机构记忆。摘要被假定能够捕捉基本意图。数年后，某个配置决策基于摘要而非原始文件作出，该决策在技术上与摘要一致，却违反了摘要省略掉的原始规范中的约束。</p>
+
+        <p>后量子密码迁移使这一失效模式变得尤为紧迫。医疗相关硬件的迁移指令——医疗设备中的嵌入式系统、护理终端的安全飞地——是该领域条件最为复杂的规范之一。它们包含遗留兼容性例外、时间窗口、硬件认证要求以及依赖特定版本条件的回退程序。如果负责协调或核验迁移的智能体基于这些指令的压缩表示运作，它可能相信自己已遵循协议，而实际上系统性地绕过了区分"迁移完成并核验"与"迁移表面完成"的安全关键条件分支。</p>
+
+        <h2>问责所需</h2>
+        <p>指令折叠问题指向一项具体的问责要求：授权指令集必须单独进行版本控制和保存，智能体的运行上下文必须定期与其进行核对。这不仅是一种技术实践，更是一种问责实践。如果原始指令未以可恢复的形式保存，部署就失去了评估智能体行为的规范标准，关于智能体被要求做什么的记录本身已经丢失。</p>
+
+        <p>在护理环境中，这意味着应将初始指令集视为一种受治理的制品——而不仅仅是一个配置文件。它应当被版本控制、由授权各方签署，并按照部署敏感程度所规定的时间间隔与智能体压缩后的运行上下文进行比对。如果压缩后的上下文在可预见的条件下与原始指令集存在会改变智能体行为的偏差，在部署继续之前需要人工审查。</p>
+
+        <p>在Asaptic Labs，我们认为指令折叠问题在当前AI护理治理框架中被低估了——这些框架往往关注训练期间的行为漂移，而非推理期间的保真度损失。这一区别至关重要。训练时的对齐漂移原则上可以通过行为测试来发现。推理时的指令折叠对行为测试是不可见的——智能体会通过测试——只有将智能体的运行上下文与原始授权指令进行比对才能发现。这一比对要求原始指令的存在。在许多长期运行的部署中，它已经不复存在。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>长期运行的AI智能体通过压缩上下文来持续运作。详细的条件指令——赋予智能体权限以具体形状的条件逻辑——恰恰是压缩最先丢失的内容。结果不是对齐失效，而是授权侵蚀：智能体继续运作、通过行为测试、看起来大体正确，却运行在没有任何人授权的近似指令上。问责要求将原始指令集作为受治理的制品加以保存，并定期与智能体的运行上下文进行核对。</p>
+      </div>
+    </article>
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zh/blog/" class="essay-footer-back">&larr; 返回博客</a>
+    </div>
+  </main>
+  <footer style="border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px">
+    <a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a>
+  </footer>
+</body>
+</html>

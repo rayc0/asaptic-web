@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>「人在回路中」悖论 — Asaptic Labs</title>
+  <meta name="description" content="受监管领域要求对AI智能体进行人工监督，但智能体的价值恰恰在于其以人类无法企及的规模运作。答案不是移除这个回路——而是从架构层面重新定义回路的含义。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/human-in-the-loop-paradox.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/human-in-the-loop-paradox.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/human-in-the-loop-paradox.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/human-in-the-loop-paradox.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/human-in-the-loop-paradox.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/human-in-the-loop-paradox.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="「人在回路中」悖论：为什么答案不是移除这个回路" />
+  <meta property="og:description" content="要求「人在回路中」是正确的直觉，但这一要求被以糟糕的方式提出。修正在于架构，而非流程。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/human-in-the-loop-paradox.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "「人在回路中」悖论：为什么答案不是移除这个回路",
+      "description": "受监管领域要求对AI智能体进行人工监督，但智能体的价值恰恰在于其以人类无法企及的规模运作。答案不是移除这个回路——而是从架构层面重新定义回路的含义。",
+      "url": "https://asaptic.com/zh/blog/human-in-the-loop-paradox.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/human-in-the-loop-paradox.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系我们"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "「人在回路中」悖论", "item": "https://asaptic.com/zh/blog/human-in-the-loop-paradox.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 照护 AI · × 智能原生企业 · × 基础层</span>
+      <h1 class="essay-title">「人在回路中」悖论：为什么答案不是移除这个回路</h1>
+      <div class="essay-meta"><span class="essay-byline">作者：Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 分钟阅读</span></div>
+      <div class="essay-body">
+        <p>在受监管的人类领域——安老院、临床环境、金融运营、物流——部署 AI 智能体的论据中，几乎无一例外地包含"人在回路中"这个短语。它出现在监管框架、采购标准、伦理指南和董事会审批中，被视为使智能体部署变得可接受的保障措施。</p>
+        <p>悖论在于：在大多数真实部署中，这一要求在名义上得到满足，而在实践中被违反。不是因为疏忽——而是因为算术。</p>
+        <p>一个运营着百名住客的安老院，每个班次产生数百个临床和福利决策。一个提供吞咽安全筛查、水分监测和药物交叉参考的 AI 智能体，每位护理员每小时可能标记或启动三十到五十个微决策。如果每个决策都需要人工逐一审查，智能体创造的工作量会多于减少的工作量。护理员要么对所有事项盖章通过——此时回路中根本没有人，只有一个站在回路上的人——要么认真逐一处理，此时智能体的价值主张便彻底崩塌。同样的算术问题适用于金融运营、自主物流和企业流程智能体。规模和速度正是智能体的价值所在。一个必须以智能体运作速度审批每个决策的人，不是一个回路，而是一个智能体本来就要绕过的瓶颈。</p>
+
+        <h2>这个问题真正在问什么</h2>
+        <p>要求人在回路中并没有错。它在以一种糟糕的方式提出正确的问题。机构真正需要的不是对每个决策进行人工审查，而是一个确保高后果决策必须经过适当人类权威授权、错误能够可靠浮现和纠正、且记录清晰到足以完整重现发生了什么和为什么的系统。这些是问责要求，而非审查率要求。它们可以由与逐一人工审批截然不同的架构来满足。</p>
+
+        <h2>三种有效的替代方案</h2>
+        <p>第一是分类门控设计。并非每个决策都有相同的后果量级。筛查吞咽风险的智能体可以自主记录低风险结果，但对潜在吞咽障碍的标记，在任何护理计划变更被记录之前，应需要护理员确认。门控不针对所有决策，而是针对具有重大临床意义的决策。设计得当，这将人类注意力重新引导到真正需要的地方，而非将其稀薄地分散在所有事务上。</p>
+        <p>第二是具有取证深度的统计审计。如果智能体的每个动作都以完整上下文、时间戳和产生该动作的推理状态记录，并由智能体运行的硬件签名以防篡改，那么监管机构、督导员或调查人员可以完整重现任何决策序列。这与事前审查不同，但往往是更强的问责形式：事后审查可以由合适的人员在充裕时间内仔细进行，而非在当班人员的时间压力下完成。</p>
+        <p>第三是结构化升级机制。具有校准不确定性估计的智能体，可以自动将高不确定性行动路由到人工审查。架构规定：不确定性超过阈值 X 触发人工确认；确定性低于阈值 Y 触发立即升级至督导级别。这将人类注意力集中在真正困难的案例上，而非分散在例行事务中。</p>
+
+        <h2>架构上的要求</h2>
+        <p>这些替代方案都需要两个技术基础方能奏效。首先，智能体的行动日志必须是真正可信赖的——经过硬件证明、只能追加、且可由部署运营者以外的各方审计。由运营者以可编辑形式维护的审计轨迹不是审计轨迹，而是一项声明。其次，范围和门控定义必须在部署时由适当权威设定——不可由智能体调整，也不可由运营者在没有变更控制记录的情况下在部署过程中重新配置。"自动化这项"与"需要人工"之间的界线，是一项政策承诺，而非运行时参数。</p>
+        <p>当这些基础存在时，"人在回路中"这一问题改变了形态。答案不是"人工审查X%的决策"，而是"某些类别的决策在没有人工签署的情况下无法进行，所有决策都在事后可问责，且架构防止智能体将受门控决策重新分类为不受门控"。这比高速度下的人工审查提供了更强的保障。</p>
+
+        <h2>真正的回路</h2>
+        <p>人在回路中不是对智能体自主性的速率限制。它是关于哪些决策需要人类权威、哪些可以安全委托的一套结构性承诺——在一个这一边界得到强制执行和可审计的系统中。满足这些承诺的智能体可以被信任以规模化运作。无法满足的智能体，无论名义上是否有人对每个输出进行签署，都不安全，不应部署。</p>
+        <p>回路是架构性的。问题在于它是否诚实。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>要求"人在回路中"是正确的直觉，但在实际部署中几乎总是通过算术被违反：当每个班次有数十到数百个智能体决策需要逐一审查时，护理员会流于形式，或审查速度根本跟不上。真正需要的不是对每个决策的人工审查，而是问责架构：分类门控确保高后果决策必须经过人工授权；具有取证深度的统计审计以硬件证明记录所有行动；结构化升级机制将高不确定性决策自动路由至人工。这两个技术基础缺一不可：硬件证明、只追加的日志；以及在部署时设定、不可由智能体更改的门控定义。回路是架构性的——问题在于它是否诚实。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/consent-layer.html">延伸阅读：同意层 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
