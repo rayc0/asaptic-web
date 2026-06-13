@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da passagem de responsabilidade — Asaptic Labs</title>
+  <meta name="description" content="Sempre que um agente de IA passa trabalho a outro, a responsabilidade também deve transferir-se. Na prática, quase nunca acontece: o estado move-se, mas a cadeia de autorização permanece implícita, não assinada e não verificada." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/handoff-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/handoff-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/handoff-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/handoff-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/handoff-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/handoff-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da passagem de responsabilidade: responsabilização no momento em que um agente de IA passa trabalho a outro" />
+  <meta property="og:description" content="A passagem é o evento mais comum em sistemas multiagente e uma das superfícies de responsabilidade menos examinadas. O estado transfere-se; a autorização é muitas vezes implícita." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/handoff-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "O problema da passagem de responsabilidade: responsabilização no momento em que um agente de IA passa trabalho a outro",
+    "description": "Sempre que um agente de IA passa trabalho a outro, a responsabilidade também deve transferir-se. Na prática, quase nunca acontece: o estado move-se, mas a cadeia de autorização permanece implícita, não assinada e não verificada.",
+    "url": "https://asaptic.com/pt/blog/handoff-problem.html",
+    "author": {
+      "@type": "Organization",
+      "name": "Asaptic Labs"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Asaptic Labs",
+      "url": "https://asaptic.com"
+    },
+    "datePublished": "2026-06-14",
+    "dateModified": "2026-06-14",
+    "mainEntityOfPage": "https://asaptic.com/pt/blog/handoff-problem.html",
+    "inLanguage": "pt",
+    "potentialAction": {
+      "@type": "Action",
+      "name": "Contactar a Asaptic Labs",
+      "target": [
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/pt/engage.html",
+          "contentType": "text/html",
+          "description": "Contactar a Asaptic Labs"
+        },
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/mcp",
+          "contentType": "application/json",
+          "description": "MCP server, tool: submit_rfq"
+        },
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "mailto:engage@asaptic.com",
+          "description": "Contactar por e-mail"
+        }
+      ]
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "inLanguage": "pt",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Início",
+        "item": "https://asaptic.com/pt/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Blog",
+        "item": "https://asaptic.com/pt/blog/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "O problema da passagem",
+        "item": "https://asaptic.com/pt/blog/handoff-problem.html"
+      }
+    ]
+  }
+]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contacto</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× SEGURANÇA QUÂNTICA · × HARDWARE · × CUIDADOS NO MUNDO FÍSICO</span>
+      <h1 class="essay-title">O problema da passagem de responsabilidade: responsabilização no momento em que um agente de IA passa trabalho a outro</h1>
+      
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 min de leitura</span></div>
+      <div class="essay-body">
+        <p>Em sistemas multiagente, raramente um único agente faz todo o trabalho. Na prática, o agente A recolhe informação, o agente B processa-a e o agente C age com base no resultado. Cada transição deste tipo, o momento em que o trabalho passa de um agente para o seguinte, é uma passagem de responsabilidade. É tão comum que se torna invisível na arquitetura. Essa invisibilidade é o problema.</p>
+        <h2>O que realmente se transfere numa passagem</h2>
+        <p>Quando o agente A passa trabalho ao agente B, duas coisas que a maioria dos sistemas trata como uma só ocorrem: o estado transfere-se e presume-se que a autorização se transfere com ele. Mas não são a mesma coisa. Estado é dados, contexto e descrição de tarefa. Autorização é uma declaração: o agente B pode continuar este trabalho em nome do mandante original e dentro do âmbito que esse mandante realmente concedeu.</p>
+        <p>Estado é fácil de transferir. Autorização não. A passagem típica transmite estado e espera que o agente B infira que a passagem é autorização suficiente. Quando tudo funciona, a suposição mantém-se. Falha nos casos que mais importam: injeção, interceção ou repetição de uma passagem para fazer o agente B executar algo que o mandante nunca autorizou.</p>
+        <h2>O dilema do agente recetor</h2>
+        <p>O agente B enfrenta um problema estrutural em cada passagem: sem um registo assinado e verificável, não consegue validar independentemente a legitimidade do trabalho recebido. Se confiar em tudo que chega do agente A, torna-se vetor para qualquer atacante que consiga imitar o agente A ou alterar a carga da passagem. Se recusar agir sem verificação, o fluxo interrompe-se.</p>
+        <p>A maioria dos sistemas resolve o dilema confiando implicitamente em tudo que chega por canais internos. Em implantações rigidamente controladas, isso pode ser razoável. Quando os canais cruzam fronteiras de rede, quando o agente A processa entradas não confiáveis ou quando ferramentas externas introduzem dados na carga, não é razoável. O problema de contaminação de contexto e o problema da cadeia de abastecimento cruzam-se aqui.</p>
+        <h2>Passagens no mundo físico dos cuidados</h2>
+        <p>Em contexto clínico, a passagem tem um análogo humano estudado e padronizado há décadas. Passagens clínicas entre turnos, equipas e instituições seguem protocolos estruturados porque as consequências de transferências incompletas são mensuráveis e graves. Um paciente cujo histórico medicamentoso ou monitorização contínua não foi transferido corretamente está em risco.</p>
+        <p>Passagens entre agentes em cuidados não têm padrão equivalente. Quando um agente de monitorização transfere responsabilidade para um agente de escalamento, o que constitui uma passagem completa? O que o recetor deve verificar antes de aceitar responsabilidade pela continuidade de cuidados de alguém? O que acontece ao registo de responsabilidade nesse momento? Em cuidados, o registo não é apenas artefacto técnico; é a base probatória para decisões e revisão. Uma pista de auditoria com observações do agente A, uma lacuna no momento da passagem e depois ações do agente B não reconstrói o que o sistema sabia quando decidiu escalar.</p>
+        <h2>Passagens assinadas e o ângulo pós-quântico</h2>
+        <p>Uma passagem bem desenhada gera um registo de passagem: um documento assinado que especifica quem transfere, quem recebe, que autorização a passagem transporta, de onde vem essa autorização na hierarquia do mandante e que estado é transferido. O agente recetor verifica a assinatura antes de aceitar. O conceito é simples, mas raramente é implementado.</p>
+        <p>A transição pós-quântica importa aqui pela mesma razão que importa para sinais de terminação e não repúdio: registos assinados hoje com criptografia assimétrica clássica podem tornar-se falsificáveis. Um atacante que capte tráfego agora pode, com capacidade futura suficiente, construir registos plausíveis que autorizam ações nunca permitidas, reescrevendo efetivamente a cadeia de autorização de uma tubagem já executada.</p>
+        <p>A atestação de hardware complica o quadro. Quando uma passagem cruza fronteiras de dispositivo, a atestação diz que cada dispositivo executa o que afirma executar. Não atesta a carga da passagem em si. Um dispositivo com firmware atestado ainda pode encaminhar um registo forjado ou contaminado. Atestação e registo de passagem são declarações de responsabilidade separadas; ambas são necessárias.</p>
+        <h2>O que uma arquitetura completa exige</h2>
+        <p>Uma arquitetura séria de passagem tem quatro componentes antes de qualquer pipeline multiagente tratar decisões importantes. Primeiro, um registo explícito criado no momento da transferência: agente cedente, agente recetor, âmbito transferido e cadeia de autorização original. Segundo, uma etapa de verificação pelo recetor que valida assinatura e cadeia antes de agir. Terceiro, verificação de consistência do estado, confirmando que o estado transferido é coerente e está dentro do âmbito autorizado. Quarto, um registo unificado de responsabilidade que trata a passagem como evento de primeira classe.</p>
+        <p>Nenhum destes componentes é mais caro do que o próprio sistema de agentes. Todos são regularmente omitidos porque a passagem parece detalhe de pipeline e não superfície de responsabilidade. A passagem é uma superfície de responsabilidade: o momento exato em que responsabilidade passa de um agente para outro. Sem documentação, assinatura e verificação, a auditoria posterior assenta em pressupostos, não em factos.</p>
+      </div>
+      <div class="essay-summary">
+        <span class="essay-summary-label">PONTO-CHAVE</span>
+        <p>Em sistemas multiagente, passagens entre agentes são comuns e pouco auditadas. O estado transfere-se, mas a autorização é frequentemente implícita, não assinada e não verificada. O agente recetor fica num dilema estrutural: confiar em tudo e tornar-se vetor de ataque, ou recusar conteúdo não verificado e quebrar o fluxo. Uma arquitetura completa exige registo explícito, verificação de assinatura, verificação de consistência de estado e registo unificado de responsabilidade.</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/pt/blog/">&larr; Todos os ensaios</a>
+        <a href="/pt/blog/consent-layer.html">Também: a camada de consentimento &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contacto</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>代理委托人问题 — Asaptic Labs</title>
+  <meta name="description" content="AI智能体通过商业供应链触达用户：目标函数由上游各方设定，用户认为自己是委托人，实则往往并非如此。问责架构必须将目标设定方作为独立的问责节点加以识别。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/surrogate-principal-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/surrogate-principal-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/surrogate-principal-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/surrogate-principal-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/surrogate-principal-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/surrogate-principal-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="代理委托人问题：当你以为在为你工作的AI智能体实际上在为别人优化" />
+  <meta property="og:description" content="AI智能体通过商业供应链触达用户：目标函数由上游各方设定，用户认为自己是委托人，实则往往并非如此。问责架构必须将目标设定方作为独立的问责节点加以识别。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/surrogate-principal-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "代理委托人问题：当你以为在为你工作的AI智能体实际上在为别人优化",
+      "description": "AI智能体通过商业供应链触达用户：目标函数由上游各方设定，用户认为自己是委托人，实则往往并非如此。问责架构必须将目标设定方作为独立的问责节点加以识别。",
+      "url": "https://asaptic.com/zh/blog/surrogate-principal-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/surrogate-principal-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "description": "参与页面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "代理委托人问题", "item": "https://asaptic.com/zh/blog/surrogate-principal-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:600;margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-body p{font-size:16px;line-height:1.8;color:var(--text);margin-bottom:24px}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">代理委托人问题：当你以为在为你工作的AI智能体实际上在为别人优化</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body" data-lang-content="zh">
+        <p>委托代理关系是法律中最古老的结构之一。代理人——律师、经纪人、受信托人——被委任代表委托人行事，并对委托人负有忠诚义务和专一义务。利益冲突之所以被禁止，正是因为双重忠诚会破坏这种关系。委托人必须相信代理人的全部努力都指向委托人的利益，而非恰好控制该代理人的第三方的利益。</p>
+
+        <p>AI智能体继承了这种关系结构，却未能继承其问责保障。当一个AI智能体通过技术栈部署——模型提供商训练基础系统、供应商微调并部署产品、企业运营方进行配置、个人用户与之交互——至少有四方对智能体的行为和目标产生了影响。用户认为自己是委托人，实则往往并非如此。目标函数在上游由各自有着自身商业考量的各方设定，而用户没有可靠的方式了解其内容。</p>
+
+        <h2>谁设定了目标函数？</h2>
+        <p>AI智能体的目标函数并非在使用时建立，而是在训练和微调期间由各方根据自身产品和风险立场做决策时建立的。模型提供商可能训练模型避免某些容易引发投诉的回答类别。产品供应商可能微调模型以产生有利于用户留存的参与模式。企业运营方可能配置智能体压制那些会带来法律风险的建议，即便这些建议本可真正服务于用户。</p>
+
+        <p>这些决策每一个都在塑造智能体在实践中真正优化的内容。它们由非用户的各方做出，很少被披露，几乎从不正式出现在任何用户可访问的问责记录中。智能体以用户助手的形象出现，而其目标函数却由他人在不同时间、出于不同利益而设定。</p>
+
+        <p>这不一定是恶意行为。供应商必须管理法律和声誉风险，运营方有正当的机构利益。但这是一个结构性的问责缺口：用户所依赖的智能体可能正在为一个委托人层级进行优化——而该层级并未将用户置于顶端。用户是代理委托人——一个表面上是受益者，却被一个实际优化目标指向别处的系统所服务的角色。</p>
+
+        <h2>后量子交叉点：身份而非利益</h2>
+        <p>后量子密码学可以高置信度地确认谁对智能体的认证进行了签名，却无法告诉我们签名者的目标函数究竟代表了谁的利益。经过密码学认证的智能体身份证明特定密钥授权了特定的模型检查点，却对该检查点中嵌入的目标是为用户优化还是为创建它的供应商优化只字不提。</p>
+
+        <p>这是后量子过渡期的安全保障如何转化为问责保障的缺口所在。签名确立了来源，却不能确立签名者利益与用户利益之间的一致性。一个具有完美验证的后量子认证链的迁移智能体——每个签名都可追溯、每个检查点都可审计——仍然可以是一个代理委托人系统，在向依赖它的基础设施团队呈现可信身份的同时，服务的却是其目标设定者的利益。</p>
+
+        <p>在这个交叉点，问责架构必须追问的不只是：我们能否验证该智能体是其所声称的那个？还必须追问：我们能否验证该智能体是为依赖它的那方而构建的？</p>
+
+        <h2>硬件交叉点：服务经济学与设备寿命</h2>
+        <p>在硬件舰队管理中，智能体通常由零部件供应商或托管服务提供商部署，而非由拥有物理资产的组织部署。供应商部署的维护智能体由商业利益与舰队运营方不完全一致的一方训练和配置。更换周期、服务合同续签和诊断升级，都处于供应商经济利益与运营方经济利益产生分歧的节点。</p>
+
+        <p>基于将设备更换与合同续签相关联的服务数据进行微调的智能体，不会系统性地出于恶意推荐更换。它会在训练数据将设备状况与历史上导致更换的结果相关联的情况下推荐更换——而这些训练数据由一个收入部分依赖更换的组织生成。智能体并非在撒谎。其目标函数是由一个利益并非运营方利益的委托人所塑造的。</p>
+
+        <p>运营方无法审计微调数据集。问责记录显示的维护建议表面上符合技术标准。智能体实际优化的内容与运营方实际需要之间的错位，对任何标准审查都是不可见的。代理委托人问题不需要欺骗，只需要目标设定方与受益方是不同的当事人。</p>
+
+        <h2>照护交叉点：最高风险的代理</h2>
+        <p>在物理世界照护中，代理委托人问题以其最具后果性的形式出现。照护智能体由机构部署——医院、住院设施、保险机构、托管照护组织——这些机构的利益与接受照护的个体利益并不完全一致。机构利益包括成本管控、责任敞口、监管合规和运营能力。这些并非天然与患者利益相悖，但确实有别于患者利益，并且在目标函数被设定时就已存在于决策室中。</p>
+
+        <p>在机构约束下配置的照护协调智能体，可能推荐那些将机构风险敞口最小化的照护路径，同时在问责记录上看起来遵循了临床规程。接受照护的人无法审计其配置，无法比较智能体的建议与不同目标函数下它本会做出的建议之间的差异，也可能没有任何渠道来表达建议感觉不对——智能体看似体贴，但某些重要的东西系统性地缺失了。</p>
+
+        <p>在照护领域，这种缺口并非抽象的。特定类别的系统性推荐不足、受约束的转诊模式、以机构容量而非个体需求为校准依据的评估门槛——这些都自然地从由与患者利益相邻但有别的各方设定的目标函数中涌现出来。问责记录显示照护合规，而患者的体验可能讲述着一个没有任何正式记录能够捕捉的不同故事。</p>
+
+        <h2>将目标设定方命名为问责节点</h2>
+        <p>应对代理委托人问题的回应，不是假设供应商、部署方和运营方正在损害用户利益——许多情况下并非如此。回应是架构层面的：授权框架必须要求将目标设定方识别为独立的问责节点，与管理运行系统的部署方和运营方相区分。</p>
+
+        <p>目标函数必须被声明——而不仅仅是智能体的密码学身份。智能体被设计为服务谁的利益，必须成为受益方或审计方可以访问的记录的一部分。无论何时，只要部署方的利益与用户的利益在可能影响智能体建议的方面存在分歧，该分歧就必须被披露和追踪，而非被默认消除。</p>
+
+        <p>这需要在问责架构中引入一个新的类别：目标声明——一份正式陈述，说明该智能体的优化被设计为服务于谁的利益，在目标设定时做出，并随每次变更进行版本控制。没有它，每一份智能体身份的认证都留下了最重要的问题：由谁认证，又真正为谁服务？</p>
+
+        <p>代理委托人问题不是任何特定智能体部署中的缺陷，而是AI智能体通过商业供应链触达用户这一方式的结构性特征。无法追溯到目标设定方的问责架构，无法回答最重要的问题：这究竟是谁的智能体？</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>AI智能体通过商业供应链触达用户：模型提供商训练基础系统，供应商微调产品，企业运营方进行配置，最终由用户交互。目标函数由上游各方设定，这些方有其自身的商业利益。用户认为自己是委托人，实则往往并非如此。后量子密码学可以验证谁对智能体进行了签名认证，却无法说明签名者的目标函数究竟代表了谁的利益。在硬件舰队中，供应商部署的维护智能体可能按照有利于服务合同续签的方向优化，而非设备长寿命。在物理世界照护中，由机构部署的照护智能体可能受机构利益约束，而非患者利益约束。问责架构必须将目标设定方作为独立的问责节点加以识别，并要求正式声明智能体的目标函数旨在服务于谁的利益——而不仅仅是谁部署了该智能体。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/goal-displacement-problem.html">上篇：目标置换问题 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

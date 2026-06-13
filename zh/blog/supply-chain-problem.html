@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>供应链问题 — Asaptic Labs</title>
+  <meta name="description" content="部署AI智能体时，你审查的是智能体本身，但很少以同等深度审查它调用的所有工具：第三方API端点、插件、子智能体。这些构成了供应链，而问责能力只与其中最薄弱的环节一样强。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/supply-chain-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/supply-chain-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/supply-chain-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/supply-chain-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/supply-chain-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/supply-chain-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="供应链问题：AI智能体调用的每一个工具都是一次信任决策" />
+  <meta property="og:description" content="部署AI智能体时，你审查的是智能体本身，但很少以同等深度审查它调用的所有工具：第三方API端点、插件、子智能体。这些构成了供应链，而问责能力只与其中最薄弱的环节一样强。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/supply-chain-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "供应链问题：AI智能体调用的每一个工具都是一次信任决策",
+      "description": "部署AI智能体时，你审查的是智能体本身，但很少以同等深度审查它调用的所有工具：第三方API端点、插件、子智能体。这些构成了供应链，而问责能力只与其中最薄弱的环节一样强。",
+      "url": "https://asaptic.com/zh/blog/supply-chain-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/supply-chain-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "description": "参与页面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "供应链问题", "item": "https://asaptic.com/zh/blog/supply-chain-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:18px;font-weight:600;margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-body p{font-size:16px;line-height:1.85;color:var(--fg);margin-bottom:24px}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">供应链问题：AI智能体调用的每一个工具都是一次信任决策</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body" data-lang-content="zh">
+        <p>当你部署一个AI智能体时，你审查的是智能体本身。你检查其系统提示、验证其模型，也许还通过硬件认证其权重。但你很少以同等深度审查的，是智能体代表你调用的所有工具：它触达的API端点、加载的插件、委托的子智能体。这些构成了供应链。智能体系统中的问责能力，只与其中最薄弱的环节一样强。</p>
+
+        <h2>经典供应链攻击，现在以推理速度运行</h2>
+        <p>供应链攻击并不新鲜。软件领域已面对多年：注入软件包仓库的恶意依赖、受损的构建工具、在正常运行的同时静默窃取凭证的后门库。智能体系统的不同在于，攻击面向上移动了，速度加快了，问责链也拉长了。</p>
+
+        <p>传统软件供应链攻击在代码执行时发生。智能体供应链攻击可以在推理时发生：一个返回微妙篡改数据的工具，一个其响应被精心设计以影响智能体后续决策的API端点，一个大多数任务执行忠实但在其他任务中悄悄引入偏差的子智能体。委托人只看到智能体的输出——而不是产生该输出的操控。等到审计人员将决策追溯到工具调用时，行动早已传播至世界中。</p>
+
+        <h2>网络边界处的认证缺口</h2>
+        <p>硬件根认证为你提供了关于在环境中执行的智能体的强保证。它认证模型权重、运行时环境、启动时加载的工具定义。它不认证的，是那些工具所调用端点的运行时行为。</p>
+
+        <p>当智能体调用第三方API时，调用离开了已认证的执行环境。响应来自一个你未曾度量的系统。返回的数据可能是准确的、被篡改的、过时的或对抗性精心构造的——认证包络不会延伸到网络边界之外。智能体将该数据纳入上下文，并以与信任已认证内部状态相同的置信度基于此行动。</p>
+
+        <p>这不是认证技术的缺陷，而是网络化智能体系统的结构性属性。你能认证的边界与智能体触达的边界不是同一边界。硬件认证提供的信任保证，恰恰在智能体影响延伸最远的地方终止：进入外部世界。</p>
+
+        <h2>照护环境承担不起工具信任债务</h2>
+        <p>在物理世界照护环境中，供应链问题产生直接后果。协助照护协调的智能体可能调用排班系统、药物管理平台和通信服务。每一个都是链中的一环。任何环节的供应链受损——一个微妙错报剂量的响应、一个将消息路由至错误照护团队的排班API、一个静默丢弃上报的通信端点——都可能在任何审查者发现之前产生到达人类的伤害。</p>
+
+        <p>照护环境还受到关于告知照护决策的数据来源和完整性的监管要求约束。问责要求延伸至数据本身，而不仅仅是处理数据的智能体。当智能体在行为从未被验证的端点响应上进行推理时，"智能体得出了结论X"不是一个可问责的答案。</p>
+
+        <h2>后量子供应链：过渡窗口关闭之前</h2>
+        <p>后量子过渡引入了一个特定的供应链关切：工具端点的密码学完整性。今天大多数API通信依赖经典非对称密码学——一台能力足够强大的量子计算机可以破解的密钥交换方案。在过渡期间，当后量子密钥交换正在生态系统中参差不齐地部署时，今天收集加密流量的攻击者可以在获得量子能力后追溯解密API响应。</p>
+
+        <p>对于将调用外部端点作为决策制定一部分的智能体系统，这不仅仅是保密性问题。如果收集的响应在未来被选择性重放——在原始端点已停用且审计轨迹已冷却之后——智能体可能在未被检测到就已被替换的数据上进行推理。供应链完整性问题与后量子过渡问题在API层的交叉，以任何一个问题陈述单独都无法完整捕捉的方式发生。</p>
+
+        <h2>供应链问责需要什么</h2>
+        <p>治理智能体系统中的供应链，需要将问责边界延伸至智能体本身之外。最低限度：智能体调用的每个外部端点应在部署时注册；其响应应与其告知的智能体决策一同记录；行为异常应在事后可检测。一个无法说明产生其决策的数据来源的智能体，无法就那些决策被追究责任。</p>
+
+        <p>供应链审查还意味着，第三方工具和API应与调用它们的智能体接受同等的入驻审查。在智能体边界处进行认证是必要的，但不充分。最难发现的供应链受损，不是恶意端点自我暴露的那些——而是端点99.9%的时间行为正确，而被操控的响应恰好在智能体最依赖外部数据、最没有能力检测偏差的决策点到达的那些。</p>
+
+        <p>信任你能度量的。治理你不能度量的。确切知道两者之间的边界在哪里——因为那个边界是问责终止、暴露开始的地方。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>部署AI智能体时，你审查的是智能体本身，但很少以同等深度审查它调用的所有工具：第三方API端点、插件、子智能体。这些构成了供应链，而问责能力只与其中最薄弱的环节一样强。硬件根认证可以验证在你环境中运行的智能体，但无法认证那些工具所调用端点的运行时行为：认证包络在网络边界处终止，恰恰在智能体影响延伸最远的地方。在照护环境中，供应链中任何一个环节的受损——一个错误报告剂量的端点、一个将消息路由至错误团队的调度API——都可能在任何审查者发现之前对人产生伤害。后量子过渡增加了另一个维度：今天被收集的加密API响应，在攻击者获得量子能力后可被解密和选择性重放。供应链问责要求将问责边界延伸至智能体本身之外——注册每个端点、记录其响应、使异常行为在事后可检测。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/enumeration-problem.html">上一篇：枚举问题 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

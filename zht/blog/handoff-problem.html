@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>交接問題 — Asaptic Labs</title>
+  <meta name="description" content="每當一個AI智能體將工作傳遞給另一個，問責也必須隨之轉移。而實踐中幾乎從未如此：狀態移動了，但授權鏈依然是隱含的、未簽名的、未經驗證的。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/handoff-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/handoff-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/handoff-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/handoff-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/handoff-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/handoff-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="交接問題：一個AI智能體將工作傳遞給另一個時的問責時刻" />
+  <meta property="og:description" content="交接是多智能體系統中最常見的事件，也是最少被審查的問責表面。當智能體A將工作傳遞給智能體B時，狀態轉移是明確的，但授權往往是隱含的、未簽名的、未經驗證的。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/handoff-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "交接問題：一個AI智能體將工作傳遞給另一個時的問責時刻",
+    "description": "每當一個AI智能體將工作傳遞給另一個，問責也必須隨之轉移。而實踐中幾乎從未如此：狀態移動了，但授權鏈依然是隱含的、未簽名的、未經驗證的。",
+    "url": "https://asaptic.com/zht/blog/handoff-problem.html",
+    "author": {
+      "@type": "Organization",
+      "name": "Asaptic Labs"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Asaptic Labs",
+      "url": "https://asaptic.com"
+    },
+    "datePublished": "2026-06-14",
+    "dateModified": "2026-06-14",
+    "mainEntityOfPage": "https://asaptic.com/zht/blog/handoff-problem.html",
+    "inLanguage": "zh-Hant",
+    "potentialAction": {
+      "@type": "Action",
+      "name": "聯絡 Asaptic Labs",
+      "target": [
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/zht/engage.html",
+          "contentType": "text/html",
+          "description": "聯絡 Asaptic Labs"
+        },
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/mcp",
+          "contentType": "application/json",
+          "description": "MCP server, tool: submit_rfq"
+        },
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "mailto:engage@asaptic.com",
+          "description": "透過電子郵件聯絡我們"
+        }
+      ]
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "inLanguage": "zh-Hant",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "首頁",
+        "item": "https://asaptic.com/zht/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "博客",
+        "item": "https://asaptic.com/zht/blog/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "交接問題",
+        "item": "https://asaptic.com/zht/blog/handoff-problem.html"
+      }
+    ]
+  }
+]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">交接問題：一個AI智能體將工作傳遞給另一個時的問責時刻</h1>
+      
+      <div class="essay-meta"><span class="essay-byline">作者：Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 分鐘閱讀</span></div>
+      <div class="essay-body">
+        <p>多智能體系統中，很少由一個智能體完成所有工作。實踐中，智能體A收集信息，智能體B處理信息，智能體C根據結果採取行動。每一次這樣的過渡——工作從一個智能體轉移到下一個的時刻——就是一次交接。交接如此普遍，以至於在架構中變得隱形。這種隱形，正是問題所在。</p>
+        <h2>交接時實際轉移了什麼</h2>
+        <p>當智能體A將工作傳遞給智能體B時，發生了兩件大多數系統視為同一件事的事：狀態轉移了，而授權被假設隨之轉移。但這兩者並不相同。狀態是數據、上下文、任務描述——接收智能體繼續工作所需的一切。授權則是一項聲明：智能體B被允許代表原始委托人、在委托人實際授予的範圍內繼續這項工作。</p>
+        <p>狀態很容易轉移。授權則不然。典型的交接傳遞狀態，並期望智能體B推斷交接本身就是足夠的授權。當一切正常運作時，這一假設成立。它在最關鍵的情況下失效：當交接被注入、攔截或重放時，攻擊者希望智能體B執行原始委托人從未授權的操作。</p>
+        <h2>接收智能體的困境</h2>
+        <p>智能體B在每次交接時都面臨一個結構性問題：如果沒有已簽名、可驗證的交接記錄，它無法獨立驗證所接收工作的合法性。如果它信任從智能體A收到的一切，它就成為任何能冒充智能體A或修改交接負載的攻擊者的攻擊向量。如果它在沒有驗證的情況下拒絕行動，工作流就會中斷。</p>
+        <p>大多數智能體系統設計通過隱含地信任內部消息通道上到達的任何內容是合法的來解決這一困境。在嚴格控制的部署中，這一假設是合理的。在智能體之間的通道跨越網絡邊界、智能體A本身在形成交接之前正在處理不受信任的輸入、或者在智能體A工作期間調用的工具將外部數據引入交接負載的任何部署中，這都是不合理的。上下文污染問題和供應鏈問題在這裡交叉：收到了被污染上下文的智能體，會在其交接中將該污染傳遞下去，而接收智能體沒有機制來檢測它。</p>
+        <h2>照護環境中的物理世界交接</h2>
+        <p>在臨床環境中，交接問題有一個經過數十年研究和標準化的人類類比。臨床交接——班次之間、照護團隊之間、機構之間——遵循結構化協議，因為不完整轉移的後果是可衡量且嚴重的。用藥歷史未被準確轉移、持續監測未被明確交接的患者，是處於風險中的患者。</p>
+        <p>照護環境中的智能體間交接沒有等效標準。當監測智能體將責任轉移給升級智能體時，什麼構成完整的交接？接收智能體在接受對某人照護連續性的責任之前必須驗證什麼？問責記錄在轉移時刻會發生什麼？在照護中，問責記錄不是技術工件——它是做出和審查照護決策的證據基礎。一條涵蓋了智能體A的觀察但在交接時刻存在空白、然後在智能體B的行動中恢復的審計軌跡，無法重建系統在決定升級時所知道的內容。這個空白不是日誌記錄失敗。它是在問責最關鍵的時刻的問責真空。</p>
+        <h2>已簽名的交接與後量子角度</h2>
+        <p>設計良好的交接會生成一條交接記錄：一份已簽名的文件，指定誰在轉移、誰在接收、交接攜帶什麼授權及該授權在委托人層級中的來源，以及正在轉移什麼狀態。接收智能體在接受交接之前驗證簽名。這在概念上並不複雜。但它很少被實現。</p>
+        <p>後量子過渡在這裡同樣重要，原因與它對終止信號和不可否認性同樣重要：今天用經典非對稱密碼學簽名的交接記錄，未來可能是可偽造的。現在捕獲交接流量的攻擊者，憑藉足夠的未來能力，可以構造出看起來可信的交接記錄，授權原始委托人從未許可的行動——有效地改寫已經運行的管道的授權鏈。對於長期運行的智能體部署，交接簽名機制需要從一開始就具有量子抵抗性，而不是在密碼學假設轉變後再進行改造。</p>
+        <p>硬件認證使情況更為複雜。當交接跨越設備邊界——一個嵌入式單元在照護環境中將責任傳遞給另一個——硬件認證告訴你每個設備運行的是它聲稱運行的內容。它不認證交接負載本身。固件經過認證的設備仍然可以轉發偽造或被污染的交接記錄。認證和交接記錄是獨立的問責聲明，兩者都必須存在才能使鏈條成立。</p>
+        <h2>完整的交接架構需要什麼</h2>
+        <p>一個嚴肅的交接架構有四個組件，必須在任何多智能體管道處理重要決策之前存在。第一，在轉移時刻創建的明確交接記錄：指定轉移智能體、接收智能體、正在轉移的範圍，以及原始授權鏈。第二，接收智能體驗證步驟，在對轉移狀態採取行動之前檢查交接記錄的簽名並驗證授權鏈。第三，狀態一致性檢查——接收智能體確認轉移的狀態在內部是連貫的，並且在其被授權處理的範圍內。第四，將交接視為一等事件的統一問責日誌，以便可以從單個可審計的軌跡重建整個管道中所有智能體行動的完整序列。</p>
+        <p>這些組件都不比智能體系統本身的成本昂貴。所有這些都被定期省略，因為交接看起來是管道細節而不是問責表面。交接是問責表面。它是責任從一個智能體轉移到另一個的確切時刻——如果該時刻沒有文檔記錄、沒有簽名、沒有驗證，之後的審計軌跡就建立在假設上，而不是事實上。</p>
+      </div>
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>多智能體系統中，智能體之間的交接是最常見的事件，也是最少被審查的問責表面。當智能體A將工作傳遞給智能體B時，狀態轉移是明確的，但授權往往是隱含的、未簽名的、未經驗證的。接收智能體面臨結構性困境：如果信任所收到的一切，它就成為攻擊者的向量；如果拒絕未經驗證的內容，工作流就會中斷。在照護環境中，智能體間的交接與經過數十年研究的臨床交接協議不同，缺乏等效標準，而交接時刻的問責空白恰好發生在最關鍵的決策時刻。後量子過渡增加了一層：今天以經典密碼學簽名的交接記錄未來可能被偽造。完整的交接架構需要四個要素：明確的交接記錄、接收智能體的簽名驗證步驟、狀態一致性檢查，以及將交接視為一等事件的統一問責日誌。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/zht/blog/">&larr; 全部文章</a>
+        <a href="/zht/blog/consent-layer.html">延伸閱讀：同意層 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>
