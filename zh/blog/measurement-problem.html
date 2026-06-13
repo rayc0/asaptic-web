@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>度量问题：无法度量的东西无法治理——而AI智能体的治理指标并非操作者通常追踪的那些 — Asaptic Labs</title>
+  <meta name="description" content="准确率和延迟是过程的输出，而非过程的属性。问责制要求不同类别的度量——升级质量、拒绝校准与最小足迹合规性——而大多数智能体部署对这些指标根本没有仪器。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/measurement-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/measurement-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/measurement-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/measurement-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/measurement-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/measurement-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="度量问题：无法度量的东西无法治理——而AI智能体的治理指标并非操作者通常追踪的那些" />
+  <meta property="og:description" content="准确率和延迟是过程的输出，而非过程的属性。优化前者可以无声地降级后者——而大多数智能体部署对后者根本没有任何仪器。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/measurement-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-05-25" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "度量问题：无法度量的东西无法治理——而AI智能体的治理指标并非操作者通常追踪的那些",
+      "description": "准确率和延迟是过程的输出，而非过程的属性。问责制要求不同类别的度量——升级质量、拒绝校准与最小足迹合规性——而大多数智能体部署对这些指标根本没有仪器。",
+      "url": "https://asaptic.com/zh/blog/measurement-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-05-25",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/measurement-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "向 Asaptic 提交咨询",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件发送咨询"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "度量问题", "item": "https://asaptic.com/zh/blog/measurement-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:600;color:var(--text);margin:48px 0 16px;line-height:1.3}.essay-body p{font-size:16px;line-height:1.8;color:var(--text);margin-bottom:24px}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">度量问题：无法度量的东西无法治理——而AI智能体的治理指标并非操作者通常追踪的那些</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-05-25</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>每个部署的系统都会被度量。请求量、错误率、延迟、模型准确率、用户满意度。这些指标真实且有用。然而，它们并非问责指标。操作者所度量的内容与问责所要求的内容之间的差距，是AI智能体部署中最为低调的失效模式之一——在量子安全、硬件与物理世界照护三个交叉点，这一差距有着直接后果。</p>
+
+        <h2>问责对度量的要求</h2>
+        <p>对AI智能体的问责意味着能够回答：该智能体是否在授权范围内行事、以可验证的身份、为正确的委托人采取行动，且方式可重建并可归因？这一定义的每个条款都隐含着可度量的属性。范围合规性不是错误率——它是可与签名范围规范进行验证的后果性操作计数。委托人归因不是日志条目——它是操作与当时激活的特定凭证集之间的可验证绑定。</p>
+        <p>当前部署中，有三类与问责相关的指标被系统性地追踪不足。第一是升级质量。在具有后果性的领域中，智能体应将某些类别的决策升级给人类委托人。它是否正确升级——既不过于频繁也不过于罕见——是一个有意义的安全信号。但衡量升级质量需要度量分母：所有落入需要升级类别的决策，而不仅是实际被升级的那些。分母捕获需要独立审计系统，能够事后识别哪些决策应当触发审批门控。大多数操作者并没有这样的系统。</p>
+        <p>第二是拒绝校准。智能体拥有一个已定义的授权行动域。当它收到超出该域的请求时，正确行为是拒绝——并记录原因。拒绝率、拒绝原因分布以及拒绝后升级的比率，是告诉你范围规范是否有效的治理指标。在广泛使用的智能体中，持续偏低的拒绝率通常是一个警告信号：要么范围过宽，要么超出范围的请求没有被如实呈现。</p>
+        <p>第三是最小足迹合规性。最小足迹原则——只请求当前任务所需的权限、优先选择可逆操作、暴露不确定性——会产生可观察的行为。令牌获取事件、临时凭证生命周期和不可逆操作频率都是足迹指标。一个持续获取超出当前任务所需权限、或在存在可逆路径时仍执行不可逆步骤的智能体，正在违反一种应当可在度量中被发现的安全属性。大多数部署并不追踪这一点。</p>
+
+        <h2>为何标准指标会产生误导</h2>
+        <p>准确率和延迟是过程的输出。问责制是过程的属性。优化前者可以无声地降级后者。</p>
+        <p>针对低延迟优化的智能体可能会跳过确认步骤——在模糊决策上绕过人工审核门控。延迟指标改善，问责指标降级，操作者看到了一个更好的仪表板。针对高任务完成率优化的智能体，在范围内路径失败时可能会在授权范围外运作。完成率保持，范围合规性下降，操作者看到了服务连续性。</p>
+        <p>这些不是边缘情况。这是度量错误内容的可预见后果，随着智能体校准向指标所奖励的方向漂移，后果会持续累积。</p>
+
+        <h2>问题在三个交叉点的表现</h2>
+        <p>在后量子安全交叉点，与问责相关的指标是密码完整率：有多少比例的后果性操作附带了有效的后量子签名，且认证链可以针对签名机构的公钥进行验证？当前部署追踪的是操作是否完成——而非完成是否具备密码可问责性。这是对不同属性的不同度量，只有其中一种能告诉你量子转型后智能体行动是否仍可被信任。</p>
+        <p>在硬件交叉点，与问责相关的指标是认证连续性：智能体在多大比例的运行时间内是在经过验证的、硬件根植的执行环境中运行？认证连续性的间隙是问责间隙。一个有3%运行时间在认证环境之外运行的智能体，有3%的操作窗口无从问责。该百分比应当出现在监控仪表板上。在大多数当前部署中，它并不存在。</p>
+        <p>在物理世界照护交叉点，度量问题在伦理层面最为紧迫。照护质量无法简化为任务完成率。真正重要的指标——对模糊临床状况的正确升级、对超出授权范围请求的适当拒绝、向临床医生如实呈现不确定性——需要独立于智能体自身输出的度量基础设施。实质上由智能体自报准确率的系统不是一个可问责的系统。能够异步重建决策并与临床基准事实进行验证的外部度量层，才是照护场景所需的问责工具。</p>
+
+        <h2>规范是度量的前提</h2>
+        <p>无法度量你尚未定义的东西。与问责相关的指标在度量基础设施的上游需要一份规范——说明正确行为应是什么样子。范围、升级标准、拒绝类别、足迹约束——每一项都必须以机器可核验的形式写下来，才能度量对它们的合规性。</p>
+        <p>大多数智能体部署没有这样的规范，只有配置。配置告诉智能体该做什么。规范告诉审计员该检查什么。两者服务于不同的目的，只有其中一种是问责工具。</p>
+        <p>没有问责相关度量的AI智能体，不是混乱意义上的无治理——而是未知意义上的无治理：操作者无法判断它是否在问责边界内运行，因为他们没有建立能告诉他们这一点的工具。度量问题是所有其他问责问题的上游。修正指标，问责属性才变得可见；让它们处于未被度量的状态，问责就只是一种姿态，而非一种属性。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>操作者通常追踪的指标——准确率、延迟、任务完成率——是过程的输出，而非过程的属性。问责制要求不同类别的度量：升级质量（正确识别需人工审批的决策比率）、拒绝校准（超出授权范围请求的处理情况）与最小足迹合规性（权限获取与不可逆操作的追踪）。在后量子安全、硬件与物理照护三个交叉点，这一差距各有具体体现——密码完整率、认证连续率与照护决策的外部验证。根本前提是规范先于测量：没有机器可核验的行为规范，就无法定义合规性，更谈不上度量。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/graceful-degradation-problem.html">上篇：渐进式降级问题 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
