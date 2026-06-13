@@ -98,7 +98,8 @@ for (const c of CLUSTERS) {
 }
 
 // 2. new pillar pages + other top-level pages
-const pillars = ["heavy-lift-uav.html", "physical-ai-robotics.html", "deep-tech-sourcing.html", "medical-device-sourcing.html"];
+const __extra=["standard/browse.html","standard/methodology.html","standard/macau-public-interest.html"]; for(const __p of __extra){ try{ add(`${BASE}/${__p}`, __p, "0.6"); }catch(e){} }
+  const pillars = ["heavy-lift-uav.html", "physical-ai-robotics.html", "deep-tech-sourcing.html", "medical-device-sourcing.html"];
 for (const p of pillars) if (existsSync(p)) add(`${BASE}/${p}`, p, "0.8");
 for (const p of ["engage.html", "thesis.html", "press.html", "crossings.html", "privacy.html"])
   if (existsSync(p)) add(`${BASE}/${p}`, p, "0.7");
