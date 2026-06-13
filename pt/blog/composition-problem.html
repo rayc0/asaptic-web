@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da composição: porque as propriedades de segurança não se acumulam automaticamente — Asaptic Labs</title>
+  <meta name="description" content="Um agente de AI individualmente seguro, limitado e atestado não se torna uma composição segura quando encadeado com outros agentes. Autoridade emergente, responsabilidade difusa e cadeias invisíveis de efeitos secundários são os três modos de falha." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/composition-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/composition-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/composition-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/composition-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/composition-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/composition-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da composição: porque as propriedades de segurança não se acumulam automaticamente" />
+  <meta property="og:description" content="Um agente de AI individualmente seguro, limitado e atestado não se torna uma composição segura quando encadeado com outros agentes. Autoridade emergente, responsabilidade difusa e cadeias invisíveis de efeitos secundários são os três modos de falha." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/composition-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "O problema da composição: porque as propriedades de segurança não se acumulam automaticamente",
+    "description": "Um agente de AI individualmente seguro, limitado e atestado não se torna uma composição segura quando encadeado com outros agentes. Autoridade emergente, responsabilidade difusa e cadeias invisíveis de efeitos secundários são os três modos de falha.",
+    "url": "https://asaptic.com/pt/blog/composition-problem.html",
+    "author": {
+      "@type": "Organization",
+      "name": "Asaptic Labs"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Asaptic Labs",
+      "url": "https://asaptic.com"
+    },
+    "datePublished": "2026-06-14",
+    "dateModified": "2026-06-14",
+    "mainEntityOfPage": "https://asaptic.com/pt/blog/composition-problem.html",
+    "inLanguage": "pt",
+    "potentialAction": {
+      "@type": "Action",
+      "name": "Contactar a Asaptic",
+      "target": [
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/pt/engage.html",
+          "contentType": "text/html",
+          "description": "MCP server, tool: submit_rfq"
+        },
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "mailto:engage@asaptic.com",
+          "description": "Contactar por e-mail"
+        }
+      ]
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "inLanguage": "pt",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Início",
+        "item": "https://asaptic.com/pt/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Blog",
+        "item": "https://asaptic.com/pt/blog/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Problema da composição",
+        "item": "https://asaptic.com/pt/blog/composition-problem.html"
+      }
+    ]
+  }
+]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:56px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-label,.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:16px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim);margin-bottom:56px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-body h2{font-size:20px;font-weight:600;margin:44px 0 16px;line-height:1.3;color:var(--fg)}.essay-body p{font-size:16px;line-height:1.85;color:var(--gray);margin-bottom:22px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px;background:var(--surface)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;line-height:1.75;color:var(--gray-dim);margin:0}.essay-footer-wrap,.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim)}.essay-footer-back,.essay-nav a{color:var(--accent);transition:opacity .2s}.essay-footer-back:hover,.essay-nav a:hover{opacity:.7}.site-footer,.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column;align-items:flex-start}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-label">× SEGURANÇA QUÂNTICA × HARDWARE × CUIDADO NO MUNDO FÍSICO</span>
+      <h1 class="essay-title">O problema da composição</h1>
+      <p class="essay-subtitle">Um agente individualmente seguro não torna automaticamente segura uma pipeline multiagente.</p>
+      <div class="essay-meta"><span>Asaptic Labs</span><span>2026-06-14</span><span>5 min de leitura</span></div>
+      <div class="essay-body">
+        <p>Quando engenheiros raciocinam sobre a segurança de uma pipeline multiagente, tendem a analisar agentes individuais: este agente tem âmbito correto, credenciais de curta duração e atestação. Raciocinam menos sobre a própria pipeline como uma superfície de confiança distinta. A suposição é que componentes bem governados compõem um todo bem governado. Essa suposição está errada.</p>
+        <p>A composição introduz modos de falha que nenhum agente individual exibe. Uma cadeia de agentes individualmente limitados pode produzir autoridade emergente que nenhum agente recebeu. Uma pipeline de passos auditáveis pode produzir resultados que nenhuma entrada de log individual descreve. Quando uma pipeline composta causa dano, a pergunta sobre quem é responsável distribui-se pelos componentes de forma que não satisfaz ninguém.</p>
+        <h2>Autoridade emergente</h2>
+        <p>O âmbito é atribuído a agentes, não a pipelines. Um agente orquestrador autorizado a ler registos de pacientes delega uma subtarefa a um segundo agente autorizado a escrever num sistema de mensagens. Nenhum dos agentes recebeu autoridade para enviar uma mensagem ao paciente com base em conteúdo médico, mas a pipeline composta consegue fazê-lo. A autoridade para a ação composta nunca foi concedida; emergiu da intersecção de duas concessões individualmente adequadas.</p>
+        <p>Isto não é uma configuração patológica. É o que acontece quando agentes com âmbitos complementares são ligados sem raciocínio explícito sobre a intersecção. Modelos de permissões centrados no agente respondem à pergunta “o que este agente pode fazer?”. Não respondem à pergunta “o que esta pipeline pode produzir?”. Só a segunda governa o resultado real.</p>
+        <h2>Cadeias invisíveis de efeitos secundários</h2>
+        <p>Cada agente processa entradas e produz saídas. As saídas tornam-se entradas do agente seguinte. Num sistema corretamente isolado, nenhum agente individual observa as consequências a jusante da sua saída. Mas essas consequências são onde os efeitos reais da pipeline vivem.</p>
+        <p>Em implantações de hardware, saídas localmente benignas podem tornar-se entradas perigosas. Um agente de leitura de sensores pode produzir valores dentro dos parâmetros normais que um segundo agente, treinado sobre uma linha de base operacional ligeiramente diferente, classifica como anomalia acionável. O comando resultante é produto de duas inferências individualmente corretas que não partilhavam o mesmo quadro de referência.</p>
+        <p>Em contextos de cuidado, uma saída de triagem passada a um agente de coordenação pode produzir uma recomendação de percurso que nenhum agente isoladamente teria produzido e que nenhum clínico reviu como um todo.</p>
+        <h2>Difusão de responsabilidade</h2>
+        <p>Quando uma pipeline composta produz dano, a cadeia causal é real mas distribuída. O orquestrador invocou o subagente; o subagente agiu segundo instruções razoáveis; a descrição da tarefa foi autorizada por um operador; o dano surgiu na intersecção de todos esses passos, nenhum deles individualmente errado.</p>
+        <p>Os quadros de responsabilidade existentes não foram desenhados para esta estrutura. Atribuem responsabilidade a agentes ou aos operadores que os implantam. Não atribuem responsabilidade à configuração da pipeline: a decisão de composição que ligou estes agentes nesta sequência e com este fluxo de informação.</p>
+        <h2>A resposta de desenho</h2>
+        <p>Fechar o problema da composição exige tratar pipelines como superfícies de autorização distintas. Uma pipeline composta deve transportar um contrato de composição explícito: que entradas aceita, que saídas produz, que autoridade combinada essas saídas representam e quem autorizou a composição. Esse contrato deve ser assinado no momento da implantação pela autoridade que montou a pipeline.</p>
+        <p>A atestação enraizada em hardware ajuda porque cada passo pode apresentar identidade atestada e proveniência assinada. Uma execução de ponta a ponta torna-se uma cadeia de registos assinados, não uma coleção de logs independentes.</p>
+        <p>A segurança não é composicional por defeito. Agentes individuais podem estar corretamente limitados, atestados e governados, e a composição ainda assim ser insegura. Tratar a composição como um ato de autorização é o passo arquitetónico que fecha a lacuna.</p>
+      </div>
+      <div class="essay-summary"><span class="essay-summary-label">Resumo</span><p>Componentes seguros não formam automaticamente uma pipeline segura. A composição cria autoridade emergente, efeitos secundários invisíveis e responsabilidade difusa. A resposta é tratar a composição como ato de autorização, com contratos explícitos, rastreio de ponta a ponta e revisão de âmbito ao nível da pipeline.</p></div>
+      <div class="essay-nav"><a href="/pt/blog/">&larr; Todos os artigos</a><a href="/pt/engage.html">Discutir este tema &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

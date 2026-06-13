@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>組合問題：為何安全屬性不會自動疊加 — Asaptic Labs</title>
+  <meta name="description" content="單獨安全、權限受限且經過證明的AI智能體，組合成流水線後並不自動成為安全的組合。湧現權限、問責擴散和不可見的副作用鏈，是組合AI流水線的三種失效模式。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/composition-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/composition-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/composition-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/composition-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/composition-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/composition-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="組合問題：為何安全屬性不會自動疊加" />
+  <meta property="og:description" content="單獨安全、權限受限且經過證明的AI智能體，組合成流水線後並不自動成為安全的組合。湧現權限、問責擴散和不可見的副作用鏈，是組合AI流水線的三種失效模式。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/composition-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "組合問題：為何安全屬性不會自動疊加",
+      "description": "單獨安全、權限受限且經過證明的AI智能體，組合成流水線後並不自動成為安全的組合。湧現權限、問責擴散和不可見的副作用鏈，是組合AI流水線的三種失效模式。",
+      "url": "https://asaptic.com/zht/blog/composition-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/composition-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "contentType": "text/html",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯絡"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "組合問題", "item": "https://asaptic.com/zht/blog/composition-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+
+    <article>
+      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照護</span>
+      <h1 class="essay-title">組合問題：為何安全屬性不會自動疊加</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+
+      <div class="essay-body">
+        <p>當工程师評估多智能體流水線的安全性時，他們通常著眼於單個智能體：這個智能體的權限範圍是否正確、凭證是否短期有效、是否經過硬件證明。他們較少思考的，是流水線本身作為一個独立的信任界面。潜在的假設是：治理良好的組件能組合成治理良好的整體。這一假設是錯誤的。</p>
+
+        <p>組合引入了任何單個智能體都不會出現的失效模式。一条由單獨限定範圍的智能體組成的鏈路，可能產生沒有任何單個智能體被授予的湧現權限。一条由單獨可審計步骤組成的流水線，可能產生沒有任何單条日誌記錄所能描述的結果。當組合流水線造成伤害時，"谁该對此結果负責"這一問責問題，會以一種無法令人满意、也無法真正解決的方式分散到各個組件中。這三種失效模式並非實現上的缺陷，而是組合本身的結構性屬性。</p>
+
+        <h2>湧現權限</h2>
+        <p>權限範圍被分配給智能體，而非流水線。一個被允许讀取患者記錄的協調智能體，將子任務委托給一個被允许向消息系統寫入的第二智能體。沒有任何一個智能體被授權根據醫療記錄内容向患者發送消息——但組合後的流水線可以做到這一點。执行這一組合动作的權限從未被授予任何人，而是從兩個單獨合理的授權的交集中湧現出來。</p>
+
+        <p>這並非病态配置，而是當兩個具有互补權限範圍的智能體在未對其交集進行顯式推理的情況下被串聯時所發生的事情。問題在於，現有權限模型是以智能體為中心的。它們回答的是"這個智能體被允许做什么"，而非"這条流水線被允许產生什么"。這是兩個不同的問題，而只有第二個問題才真正約束實際結果。</p>
+
+        <h2>不可見的副作用鏈</h2>
+        <p>流水線中的每個智能體處理其輸入並產生輸出，輸出成為下一個智能體的輸入。在正確隔離的系統中，沒有單個智能體能够观察其輸出的下游後果——它已完成任務並继续前進。但下游後果恰恰是流水線實際效果所在之處。一個格式化臨床建議的智能體，對第二個智能體將如何解讀该格式，或第三個智能體將如何依據第二個智能體的解讀採取行動，沒有任何可見性。</p>
+
+        <p>在硬件部署中，這種鏈式結構意味著局部无害的輸出可能成為危险的輸入。一個傳感器讀數智能體輸出的數值在正常参數範圍内，但第二個智能體——基於略有不同的运营基準訓練——可能將其分類為需要處理的异常。由此產生的執行器指令，是兩個單獨正確但未共享参考框架的推理的產物。沒有任何單条日誌記錄了驱动這一結果的跨智能體解讀差距。</p>
+
+        <p>在照護场景中，同樣的动态適用於臨床推理鏈。分诊智能體的輸出传递給照護協調智能體後，可能產生兩個智能體單獨均不會生成的照護路径建議，且沒有任何臨床醫生對其整體進行過審查。每個單獨步骤都是合適的，組合後的輸出卻並非如此。</p>
+
+        <h2>問責擴散</h2>
+        <p>當組合流水線產生有害結果時，因果鏈是真實存在的，卻是分散的。協調智能體調用了子智能體；子智能體依據協調智能體的指令行動；指令是對任務描述的合理解释；任務描述經過運營方授權；伤害產生於所有這些步骤的交汇處，而每一個步骤單獨來看都沒有錯誤。</p>
+
+        <p>現有問責框架並非為這種結構而設計。它們將責任分配給智能體或部署它們的運營方，而不分配給流水線配置本身——即將這些智能體以這種顺序、這種資訊流連接在一起的組合決策。在組合被視為一項需要明確授權的行為之前，流水線層面的問責缺口將持續存在於結構層面。</p>
+
+        <h2>設計應對</h2>
+        <p>解決組合問題，需要將流水線作為独立的授權界面來對待。組合流水線應携带明確的組合契約：聲明其接受什么輸入、產生什么輸出、這些輸出代表什么組合權限，以及谁授權了這一組合。该契約應在部署時由組装流水線的權威機構簽名，而非由各組件智能體單獨簽名。</p>
+
+        <p>硬件根植的證明在這里以特定方式發挥作用。如果流水線中的每個智能體都必須提供经證明的身份，则組合可以被追溯：每個步骤都有簽名的溯源記錄，證明哪個智能體產生了哪個輸出。流水線運行的端到端追蹤因此成為一条簽名記錄鏈，而非一組独立日誌。重建所發生的事情成為可能，不是因為任何單個智能體記錄得足够仔细，而是因為組合协議在每次交接時強制执行了可追溯性。</p>
+
+        <p>這一洞察令人不安，但至關重要：安全性在默認情況下不具有組合性。單個智能體可以被正確限定範圍、經過證明並受到治理，但它們的組合仍可能是不安全的。將組合視為一項授權行為——要求明確的契約、端到端的追蹤和流水線級的範圍審查——是弥合這一缺口的架構步骤。而在實踐中，這也是大多數多智能體部署尚未採取的步骤。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zht/blog/">&larr; 全部文章</a>
+        <a href="/zht/blog/permission-accumulation-problem.html">延伸閱讀：權限積累問題 &rarr;</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da falha em cascata — Asaptic Labs</title>
+  <meta name="description" content="Um agente de IA em mau funcionamento numa pipeline multiagente não falha simplesmente. Outputs corrompidos, autoridade mal usada e consumo de recursos propagam-se a jusante. Conter a falha em cascata exige disjuntores, atestação independente e limites de raio de impacto definidos antes da primeira execução." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/cascade-failure-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/cascade-failure-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/cascade-failure-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/cascade-failure-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/cascade-failure-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/cascade-failure-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da falha em cascata: como um único agente em falha pode corromper uma pipeline inteira" />
+  <meta property="og:description" content="Um agente de IA em mau funcionamento numa pipeline multiagente não falha simplesmente. Outputs corrompidos, autoridade mal usada e consumo de recursos propagam-se a jusante. Conter a falha em cascata exige disjuntores, atestação independente e limites de raio de impacto definidos antes da primeira execução." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/cascade-failure-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema da falha em cascata: como um único agente em falha pode corromper uma pipeline inteira",
+      "description": "Um agente de IA em mau funcionamento numa pipeline multiagente não falha simplesmente. Outputs corrompidos, autoridade mal usada e consumo de recursos propagam-se a jusante. Conter a falha em cascata exige disjuntores, atestação independente e limites de raio de impacto definidos antes da primeira execução.",
+      "url": "https://asaptic.com/pt/blog/cascade-failure-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/cascade-failure-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar a Asaptic",
+        "target": [
+          { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/pt/engage.html", "contentType": "text/html", "description": "MCP server, tool: submit_rfq" },
+          { "@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "Enviar pedido por e-mail" }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "pt",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema da falha em cascata", "item": "https://asaptic.com/pt/blog/cascade-failure-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;padding-bottom:32px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray);flex-wrap:wrap;margin-bottom:48px}.essay-body p{font-size:17px;line-height:1.8;color:var(--fg);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:700;margin-top:40px;margin-bottom:16px}.essay-summary{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:28px 32px;margin-top:48px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:0}.essay-footer{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× SEGURANÇA QUÂNTICA · × HARDWARE · × CUIDADOS NO MUNDO FÍSICO</span>
+      <h1 class="essay-title">O problema da falha em cascata: como um único agente em falha pode corromper uma pipeline inteira</h1>
+      <p class="essay-subtitle">Um agente em falha numa pipeline multiagente pode propagar outputs corrompidos, autoridade indevida e exaustão de recursos. A contenção tem de ser arquitetural.</p>
+      <div class="essay-meta"><span>Asaptic Labs</span><span>2026-06-14</span><span>6 min de leitura</span></div>
+      <div class="essay-body">
+        <p>Cada agente numa pipeline multiagente é desenhado individualmente para ser correto e seguro. O problema de composição pergunta se as propriedades de segurança se mantêm quando esses agentes são encadeados. O problema da falha em cascata pergunta algo mais agudo: quando um agente falha em produção, sob carga e com inputs reais, até onde viaja o dano? Na maioria das pipelines, mais longe do que alguém especificou, porque a contenção nunca foi desenhada.</p>
+
+        <p>Uma falha pode propagar-se de três formas. Pode empurrar outputs corrompidos para a frente, tratando agentes a jusante como consumidores passivos. Pode abusar de autoridade delegada, usando credenciais para instruir subagentes de formas que a hierarquia de principal nunca autorizou. E pode esgotar recursos partilhados, como memória, chamadas API com limite de taxa ou capacidade de hardware, prejudicando agentes vizinhos. Cada modo exige mecanismo de contenção diferente, e poucas pipelines têm algum.</p>
+
+        <h2>Propagação de outputs corrompidos</h2>
+
+        <p>Um agente a jusante que confia no input a montante sem validação independente é um amplificador passivo da falha. Se o agente a montante produzir um output plausível mas errado, por degradação do modelo, envenenamento de contexto ou falha silenciosa de hardware, o agente seguinte incorpora esse erro no seu raciocínio e passa adiante um erro ainda mais entrelaçado. Quando a corrupção chega ao output final, é inseparável de passos válidos e invisível para o consumidor terminal.</p>
+
+        <p>A correção estrutural não é desconfiar de todos os inputs, mas definir em cada fronteira que propriedades do output a montante devem valer antes de prosseguir. Não é verificação completa do raciocínio, o que seria intratável. São invariantes de fronteira: o output deve estar numa faixa, referir apenas fontes atestadas e carregar assinatura válida ao nível do estágio. Um agente que recebe input violando invariantes deve parar e escalar, não continuar sobre estado corrompido.</p>
+
+        <h2>Corrupção da cadeia de autoridade</h2>
+
+        <p>Um agente em mau funcionamento não age só em nome próprio. Em muitas arquiteturas, um orquestrador detém credenciais para criar e dirigir subagentes. Esses subagentes aceitam instruções na suposição implícita de que o orquestrador opera dentro da autorização. Quando o orquestrador é corrompido por envenenamento de contexto, erro lógico ou modelo comprometido, os subagentes executam fielmente instruções que a hierarquia original nunca autorizou. Eles não se comportam mal; seguem o desenho. A falha de autorização é invisível para eles.</p>
+
+        <p>Fechar isto exige que subagentes validem não só a credencial que lhes dá a tarefa, mas a cadeia de autoridade por trás dela. O agente delegante deve vincular criptograficamente o seu âmbito de autorização à tarefa delegada. Uma instrução só é válida se o orquestrador demonstrar autoridade para a emitir. Isto é mais forte do que modelos atuais, que verificam a credencial em vez da cadeia de autoridade que ela codifica.</p>
+
+        <h2>Cascata por exaustão de recursos</h2>
+
+        <p>Um agente em falha consome recursos de forma diferente de um agente saudável. Um modelo preso num ciclo de raciocínio faz muito mais chamadas geradoras de tokens. Um agente de atestação de hardware que repete pedidos contra serviço indisponível mantém ligações abertas. Um gerador de plano de cuidados à espera de contexto a montante ocupa capacidade que agentes de outros residentes precisam. Estas falhas propagam-se horizontalmente: vizinhos começam a falhar não por inputs defeituosos, mas por contenção introduzida pelo estágio em falha.</p>
+
+        <p>A resposta arquitetural é análise de raio de impacto. Para cada agente, definir a reivindicação máxima de recursos, o tempo máximo antes de um disjuntor o terminar e a ação explícita quando o limite é atingido: falha limpa com sinal de erro, fallback para caminho reduzido ou escalada humana. Um disjuntor é uma decisão pré-comprometida sobre degradação aceitável. Sem ele, a resposta ao estágio em falha fica por omissão em inação.</p>
+
+        <h2>Como os cruzamentos concentram o problema</h2>
+
+        <p>No cruzamento da segurança pós-quântica, a cascata tem dimensão criptográfica. Uma chave de assinatura num estágio intermédio cria cadeia de confiança para agentes a jusante. Se esse estágio for comprometido, por chave vazada ou modelo manipulado para assinar outputs maliciosos, todas as atestações a jusante que encadeiam a partir dele ficam invalidadas. A migração pós-quântica é oportunidade para redesenhar cadeias com raízes independentes por estágio, não derivações de uma hierarquia única.</p>
+
+        <p>No cruzamento do hardware, o problema aparece como herança de atestação. Pipelines atestadas por hardware muitas vezes atestam a pipeline inteira em vez de cada estágio. Um estágio que execute parcialmente fora da fronteira atestada, por erro de memória, atualização de firmware durante execução ou escape de contentor, corrompe a afirmação de atestação para estágios seguintes. Atestação independente por estágio contém o raio de impacto no estágio comprometido.</p>
+
+        <p>No cruzamento dos cuidados no mundo físico, a falha em cascata tem imediatismo. Um agente de avaliação que produz pontuação de risco errada alimenta premissa errada no agente de medicação, no agente de escalada e no de notificação familiar. Quando um clínico revê o output final, a cascata já produziu um plano coerente mas profundamente errado. O invariante em cada fronteira de cuidados tem de incluir verificações de plausibilidade clínica, não apenas técnicas.</p>
+
+        <h2>Desenhar antes da implantação</h2>
+
+        <p>A falha em cascata não pode ser corrigida depois examinando registos. Quando o output final é revisto, a cadeia de corrupção é indistinguível de raciocínio válido. Invariantes de fronteira, validação de cadeia de autoridade, disjuntores e limites de raio de impacto devem ser desenhados antes de a pipeline correr e aplicados em cada transição de estágio. Uma pipeline não desenhada para falhar é desenhada para falhar em escala.</p>
+      </div>
+      <div class="essay-summary"><span class="essay-summary-label">Resumo</span><p>A falha de um único agente numa pipeline multiagente não é apenas local. Propaga-se por três vias: outputs corrompidos, autoridade delegada mal usada e esgotamento de recursos partilhados. A resposta é desenhar antes da implantação invariantes de fronteira, validação da cadeia de autoridade, disjuntores e limites de raio de impacto.</p></div>
+      <footer class="essay-footer"><span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span><a href="/pt/blog/" class="essay-footer-back">&larr; Todos os artigos</a></footer>
+    </article>
+  </main>
+  <footer class="site-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>旁觀者問題 — Asaptic Labs</title>
+  <meta name="description" content="部署於物理世界的AI智能體所感知到的資訊，遠超其被授權採取行動的範圍。旁觀者問題是結構性的：智能體所能感知的與其被允許做的之間的差距是設計常量。處理不當會產生兩種截然不同的失敗模式——兩者都應寫入授權文件，而非事後臨時擬定的應急程序。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/bystander-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/bystander-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/bystander-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/bystander-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/bystander-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/bystander-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="旁觀者問題：AI智能體目睹其無權阻止的傷害時的問責機制" />
+  <meta property="og:description" content="部署於物理世界的AI智能體所感知到的資訊，遠超其被授權採取行動的範圍。旁觀者問題是結構性的：智能體所能感知的與其被允許做的之間的差距是設計常量。處理不當會產生兩種截然不同的失敗模式——兩者都應寫入授權文件，而非事後臨時擬定的應急程序。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/bystander-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "旁观者問題：AI智能體目睹其无权阻止的伤害时的问责机制",
+      "description": "部署于物理世界的AI智能體所感知到的信息，远超其被授權采取行动的範圍。旁观者問題是結構性的：智能體所能感知的与其被允许做的之间的差距是設計常量。处理不当会产生两种截然不同的失敗模式。",
+      "url": "https://asaptic.com/zht/blog/bystander-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/bystander-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "contentType": "text/html",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件發送詢盤"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "旁观者問題", "item": "https://asaptic.com/zht/blog/bystander-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;padding-bottom:32px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray);flex-wrap:wrap;margin-bottom:48px}.essay-body p{font-size:17px;line-height:1.8;color:var(--fg);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:700;margin-top:40px;margin-bottom:16px}.essay-summary{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:28px 32px;margin-top:48px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:0}.essay-footer{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 物理世界照護 · × 硬件 · × 後量子安全</span>
+      <h1 class="essay-title">旁觀者問題：AI智能體目睹其無權阻止的傷害時的問責機制</h1>
+      <p class="essay-subtitle">每个AI智能體的部署都有明確的行动範圍。物理世界中的部署配备了超出该範圍的傳感器。智能體所能感知的与其被允许做的之间的差距是結構性的——并由此产生两种截然不同的问责失敗，每一种都比另一种更糟糕。</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-14</span>
+        <span>5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>每个AI智能體的部署都带有一种隐含的範圍理论。智能體被授權在一个明確的領域内行动，領域之外的一切不在其考量之中。楼宇自动化智能體管理暖通空调和门禁控制；照護协调智能體追踪用藥計劃和就诊时间窗口；物流智能體在设施内路由库存。每个智能體都在其委託人层级划定的邊界内运作。</p>
+
+        <p>当一个合法運營中的智能體感知到对人造成伤害的迹象，却没有干預的授權、能力或职责时，旁观者問題就出现了。楼宇智能體的攝像頭画面显示有人在其監控但不服务的走廊里摔倒了。照護协调智能體的日程數據反映出其名单之外的相邻单元存在连续未签到的规律。物流智能體的傳感器阵列在其经过但不管理的禁区中檢測到疑似处于困境中的人员。</p>
+
+        <p>每个智能體都获得了态势感知信息，而对于处于同一位置的人来说，这些信息将构成立即采取行动的道德義務。但智能體根据其部署条款并无此种義務——或至少没有明確的義務。</p>
+
+        <p>这并非仅在异常部署中才会出现的边缘案例，而是任何配备超出其運營邊界的傳感器、在物理世界中運行的AI智能體所面临的結構性条件。攝像頭、麦克风、環境傳感器和存在探测器产生的态势感知覆盖範圍超出智能體的职责範圍。智能體所感知到的信息与其被授權采取行动的範圍之间的差距是設計常量，而非异常。</p>
+
+        <h2>两种失敗模式</h2>
+        <p>问责問題有两种截然不同的失敗模式。</p>
+
+        <p>第一种是不作為失敗。智能體感知到伤害信号，没有響應的职责，于是什么都没做。如果伤害最终發生，而智能體的日誌显示它拥有相关數據——与跌倒一致的运动异常，与困境一致的生理信号——那么谁对路由该信号负有隐性義務，就成了當前问责框架难以解决的法律和伦理争议。谁来承担責任？是限制了其範圍的智能體委託人？还是未配置跨智能體警報功能的更广泛系统運營者？抑或是在授權文件中未考虑旁观者義務便完成部署的機構？</p>
+
+        <p>第二种失敗模式是未授權干預。无论结果如何，擅自扩大範圍響應紧急情况的智能體均已违反其授權。正確识别了处于困境的人员并呼叫紧急服务的智能體，可能改善了结果，但肯定超越了其职责。如果感知是错误的——信号被誤讀，情况无需升级即可解决——智能體的未授權行动使其委託人面临責任风险，却没有相应的收益。当同一部署中的多个智能體在不同置信度閾值下獨立作出这一決策时，問題进一步复杂化，产生了无任何單一委託人授權、无任何问责框架预见的不一致上報行為。</p>
+
+        <h2>後量子安全交叉點</h2>
+        <p>当傳感器數據的完整性无法保证时，两种失敗模式都会变得更糟。感知通道存在被篡改风险的智能體面临更复杂的旁观者情境：它可能被诱导感知不存在的紧急情况，从而触发未授權上報；或被诱导未能感知真实存在的紧急情况，在关键时刻导致不作為。触发旁观者響應的感知的完整性，依赖于物理世界问责在三个交叉點上普遍所需的硬件認證和密碼驗證傳感器數據链。建立在未经驗證的感知之上的旁观者判断既是问责缺口，也是攻击面。能够注入虚假窘迫信号的攻击者可随意触发智能體呼叫紧急服务；能够抑制真实信号的攻击者则可阻止这一行為。</p>
+
+        <h2>硬件交叉點</h2>
+        <p>嵌入式物理世界智能體——運行于傳感器节点、边缘设备和集成楼宇系统上的智能體——面临着響應延迟余量更小的旁观者問題。通过体佩加速度计或地板压力傳感器檢測到跌倒事件的智能體，其警報价值随时间迅速下降，可用決策窗口或许只有数秒。授權文件不可能预见每一种傳感器組合和延迟特性。如果旁观者政策未被事先指定，智能體要么在未经授權的情况下行动，要么延迟至行动已无意义的时刻。两种结果在審計追蹤中均无法挽回。</p>
+
+        <h2>物理世界照護交叉點</h2>
+        <p>照護部署使旁观者問題呈现得最为清晰。在明確照護合約下监测某位居民的照護AI，与它无任何合約关系的相邻空间共享環境傳感器——攝像頭、运动探测器、噪音监测器。在任意一个夜晚，该智能體都可能是第一个檢測到其从未被部署去服务的人员状况恶化的系统。其數據比護士站更为实时，其檢測能力或许优于当值的任何人类观察者。而按其授權条款的嚴格解释，它不被允许采取行动。</p>
+
+        <p>認為照護機構只需配置警報以覆盖相邻空间的论点，没有抓住問題的本质。旁观者問題的出现并非因为有人忘记了进行某项配置，而是因为智能體的授權範圍与其感知範圍在結構上是不同的事物——在照護環境中，两者之间的差距持續地容纳着那些安全取决于某人是否事先认真思考过他们处于邊界哪一侧的人。</p>
+
+        <h2>結構性要求</h2>
+        <p>結構性解決方案是在設計层面明確制定旁观者政策。智能體的授權文件应明確规定——而非默認——智能體在感知到超出其運營範圍的伤害迹象时的行為。政策選項是有限的：不作為并記錄日誌；保存经密碼簽名的證據記錄供人工审查；向智能體正常委託人层级之外的指定接收人发出警報；或在授權链内向持有旁观者授權的人类上報。每个選項都有不同的问责含义，在不知道系统被設計为執行哪个選項的情况下，任何選項都无法在事后进行评估。</p>
+
+        <p>无法通过設計消除的张力在于：智能體被部署来做一件事，而世界不断产生需要其他事情的情境。解決方案——通知谁、置信度閾值如何、以什么代价維護範圍完整性——是必须在部署前作出的人类判断，而非由智能體碰巧首先遇到的情境塑造的應急行為。</p>
+
+        <p>负責任的旁观者智能體，不是在目睹伤害时能做出正確行动的智能體，而是其設計者认真思考了正確行动是什么，将其寫入授權文件，并构建智能體精确地只做那件事——并有簽名審計追蹤证明其确实如此的智能體。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>任何在物理世界中運行且傳感器範圍超出其职责範圍的AI智能體，都从結構上面临旁观者問題。不作為失敗——智能體感知到伤害但未获授權響應——产生无明確解決方案的責任争议。未授權干預——智能體超出範圍上報——无论结果如何均违反授權。两种失敗模式均无法事后补救。解決方案是在部署前于授權文件中明確旁观者政策：哪些信号、何种響應、哪条授權链，并以密碼簽名的審計追蹤确认智能體确实如此執行。</p>
+      </div>
+
+      <footer class="essay-footer">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+        <a href="/zht/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </footer>
+    </article>
+  </main>
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>
