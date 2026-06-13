@@ -1,3 +1,4 @@
+2026-06-13 16:15 UTC · blog: add essay 'The sensor conflict problem' — accountability when AI agents adjudicate between conflicting physical inputs (EN+ZH+ZH-HK, firewall clean) · 31164fe
 2026-06-13 12:00 UTC · llms.txt + agent.json: align to locked brand thesis — three crossings, no venture names, no external venture links · 785ab30
 2026-06-13 08:00 UTC · blog: add essay 'The organizational forgetting problem' — accountability when AI deployment erodes the institutional knowledge required to evaluate AI decisions (EN+ZH+ZH-HK, firewall clean) · 6297eb0
 2026-06-13 00:00 UTC · blog: add essay 'The bystander problem' — accountability when an AI agent observes harm it is not authorized to prevent (EN+ZH+ZH-HK, firewall clean) · 33c62e1
