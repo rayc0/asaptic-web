@@ -76,6 +76,14 @@ function standardRows(data) {
   }
   return rows;
 }
+function standardPillarFiles(kind) {
+  const dir = `standard/${kind}`;
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((file) => file.endsWith(".html"))
+    .sort()
+    .map((file) => `${dir}/${file}`);
+}
 
 const urls = [];
 const seen = new Set();
@@ -99,6 +107,12 @@ for (const c of CLUSTERS) {
 
 // 2. new pillar pages + other top-level pages
 const __extra=["standard/browse.html","standard/methodology.html","standard/macau-public-interest.html"]; for(const __p of __extra){ try{ add(`${BASE}/${__p}`, __p, "0.6"); }catch(e){} }
+for (const __p of [...standardPillarFiles("product"), ...standardPillarFiles("market")]) {
+  const alts = standardAltLinks(__p);
+  add(`${BASE}/${__p}`, __p, "0.65", alts);
+  for (const l of STANDARD_LOCS)
+    add(`${BASE}/${l.code}/${__p}`, `${l.code}/${__p}`, "0.55", alts);
+}
   const pillars = ["heavy-lift-uav.html", "physical-ai-robotics.html", "deep-tech-sourcing.html", "medical-device-sourcing.html"];
 for (const p of pillars) if (existsSync(p)) add(`${BASE}/${p}`, p, "0.8");
 for (const p of ["engage.html", "thesis.html", "press.html", "crossings.html", "privacy.html"])
@@ -124,6 +138,18 @@ for (const file of standardDatasetFiles()) {
   const sitemapEligible = rows.length > 0;
   if (sitemapEligible) {
     const suffix = `standard/${slug}.html`;
+    const alts = standardAltLinks(suffix);
+    add(`${BASE}/${suffix}`, suffix, "0.7", alts);
+    for (const l of STANDARD_LOCS)
+      add(`${BASE}/${l.code}/${suffix}`, `${l.code}/${suffix}`, "0.6", alts);
+  }
+}
+
+// 4b. Cross-Standard topical pillar pages (per product + per market) — hub authority for GEO/SEO.
+for (const dir of ["standard/product", "standard/market"]) {
+  if (!existsSync(dir)) continue;
+  for (const f of readdirSync(dir).filter((x) => x.endsWith(".html")).sort()) {
+    const suffix = `${dir}/${f}`;
     const alts = standardAltLinks(suffix);
     add(`${BASE}/${suffix}`, suffix, "0.7", alts);
     for (const l of STANDARD_LOCS)
