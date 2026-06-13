@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asaptic Labs — Notas das Travessias</title>
+  <meta name="description" content="Ensaios curtos do Asaptic Labs sobre as primitivas de confiança, superfícies de implantação e arquitetura de responsabilidade que os agentes de IA necessitam quando as suas decisões tocam o mundo real." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/" />
+  <link rel="alternate" hreflang="en"      href="https://asaptic.com/blog/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/" />
+  <link rel="alternate" hreflang="pt"      href="https://asaptic.com/pt/blog/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Asaptic Labs — Notas das Travessias" />
+  <meta property="og:description" content="Escritos sobre agentes de IA nos pontos de consequência irreversível." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="pt_PT" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Asaptic Labs — Notas das Travessias" />
+  <meta name="twitter:description" content="Escritos sobre agentes de IA nos pontos de consequência irreversível." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+
+  <style>
+    .bl-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .bl-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .bl-back:hover { color: var(--accent); }
+    .bl-page-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .bl-page-title {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .bl-page-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .bl-intro {
+      font-size: 15px;
+      color: var(--gray-dim);
+      line-height: 1.8;
+      margin-bottom: 64px;
+      border-left: 2px solid var(--border);
+      padding-left: 16px;
+    }
+    .bl-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .bl-card {
+      padding: 36px 0;
+      border-top: 1px solid var(--border);
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: opacity 0.2s;
+    }
+    .bl-card:last-child {
+      border-bottom: 1px solid var(--border);
+    }
+    .bl-card:hover { opacity: 0.85; }
+    .bl-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .bl-card-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: var(--cyan);
+    }
+    .bl-card-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .bl-card-readtime {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .bl-card-title {
+      font-size: clamp(19px, 2.5vw, 24px);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+    .bl-card-excerpt {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .bl-card-cta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+    }
+    .bl-footer-note {
+      margin-top: 56px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--gray-dim);
+      font-style: italic;
+      text-align: center;
+    }
+    .bl-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .bl-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Blog",
+        "@id": "https://asaptic.com/pt/blog/#blog",
+        "url": "https://asaptic.com/pt/blog/",
+        "name": "Notas das Travessias",
+        "description": "Ensaios curtos do Asaptic Labs sobre as primitivas de confiança, superfícies de implantação e arquitetura de responsabilidade que os agentes de IA necessitam quando as suas decisões tocam o mundo real.",
+        "inLanguage": "pt",
+        "isPartOf": { "@type": "WebSite", "@id": "https://asaptic.com/#website", "url": "https://asaptic.com", "name": "Asaptic" },
+        "publisher": { "@type": "Organization", "@id": "https://asaptic.com/#organization", "name": "Asaptic", "url": "https://asaptic.com" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://asaptic.com/pt/blog/#breadcrumb",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+          { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/pt/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/pt/crossings.html">Travessias</a>
+        <a href="/engage.html">Contacto</a>
+      </div>
+      <div class="lang-switcher">
+        <a class="lang-btn" href="/blog/">EN</a>
+        <a class="lang-btn" href="/zh/blog/">简</a>
+        <a class="lang-btn" href="/zht/blog/">繁</a>
+        <a class="lang-btn active" href="/pt/blog/">PT</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="bl-wrap">
+    <a href="/pt/" class="bl-back">&larr; Asaptic Labs</a>
+
+    <span class="bl-page-label">NOTAS DAS TRAVESSIAS</span>
+    <h1 class="bl-page-title">Escritos sobre agentes de IA nos pontos de consequência irreversível</h1>
+    <p class="bl-page-subtitle">Ensaios curtos do Asaptic Labs sobre as primitivas de confiança, superfícies de implantação e arquitetura de responsabilidade que os agentes de IA necessitam quando as suas decisões tocam o mundo real.</p>
+    <p class="bl-intro">Publicamos notas do banco de trabalho: ensaios curtos sobre as questões a que voltamos repetidamente quando construímos agentes para domínios onde uma decisão errada não pode ser desfeita. O ritmo é deliberado, o tom é técnico e a assinatura é do laboratório. Cada peça é segura para o público e neutra em relação a ventures por design.</p>
+
+    <div class="bl-grid">
+      <a href="/pt/blog/source-physical-ai-robotics-components-china.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× APROVISIONAMENTO PHYSICAL AI</span>
+          <span class="bl-card-date">2026-06-14</span>
+          <span class="bl-card-readtime">8 min de leitura</span>
+        </div>
+        <h2 class="bl-card-title">Aprovisionamento de Componentes Physical AI / Robótica da China (Actuadores + Sensores Tácteis)</h2>
+        <p class="bl-card-excerpt">Combine percepção e actuação a 40–80% abaixo dos preços dos incumbentes — para construtores de robótica humanoide.</p>
+        <span class="bl-card-cta">Ler guia →</span>
+      </a>
+      <a href="/pt/blog/factory-direct-vs-trading-company-sourcing.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× PROCESSO DE APROVISIONAMENTO</span>
+          <span class="bl-card-date">2026-06-14</span>
+          <span class="bl-card-readtime">7 min de leitura</span>
+        </div>
+        <h2 class="bl-card-title">Aprovisionamento Direto de Fábrica vs. Empresa de Trading da China</h2>
+        <p class="bl-card-excerpt">Compare os modelos de aprovisionamento: margem, responsabilidade, conformidade, depósito — e quando o direto de fábrica vence.</p>
+        <span class="bl-card-cta">Ler guia →</span>
+      </a>
+      <a href="/pt/blog/source-humanoid-robot-actuators-china.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× APROVISIONAMENTO PHYSICAL AI</span>
+          <span class="bl-card-date">2026-06-14</span>
+          <span class="bl-card-readtime">8 min de leitura</span>
+        </div>
+        <h2 class="bl-card-title">Aprovisionamento de Actuadores para Robôs Humanoides, Drives Harmônicos e Módulos de Junta da China (2026)</h2>
+        <p class="bl-card-excerpt">Drives harmônicos e módulos de junta chineses a uma fração do custo japonês — para construtores de robótica humanoide.</p>
+        <span class="bl-card-cta">Ler guia →</span>
+      </a>
+      <a href="/pt/blog/source-solar-inverters-bess-gulf-lusophone.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× APROVISIONAMENTO ENERGÉTICO</span>
+          <span class="bl-card-date">2026-06-14</span>
+          <span class="bl-card-readtime">7 min de leitura</span>
+        </div>
+        <h2 class="bl-card-title">Aprovisionamento de Inversores Solares, BESS e Carregadores EV da China para Mercados do Golfo, Lusófonos e Sul Global (2026)</h2>
+        <p class="bl-card-excerpt">Requisitos de certificação (SABER/SASO/INMETRO/CE) e aprovisionamento direto de fábrica de hardware solar/armazenamento para o Golfo, Brasil e Sul Global.</p>
+        <span class="bl-card-cta">Ler guia →</span>
+      </a>
+      <a href="/pt/blog/source-gan-power-devices-china.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× APROVISIONAMENTO ELECTRÓNICA DE POTÊNCIA</span>
+          <span class="bl-card-date">2026-06-14</span>
+          <span class="bl-card-readtime">7 min de leitura</span>
+        </div>
+        <h2 class="bl-card-title">Aprovisionamento de Dispositivos de Potência GaN da China: Fornecedores, Especificações e Qualificação (2026)</h2>
+        <p class="bl-card-excerpt">Panorama de fornecedores e critérios de qualificação para dispositivos de potência de nitreto de gálio adquiridos diretamente de fábricas chinesas.</p>
+        <span class="bl-card-cta">Ler guia →</span>
+      </a>
+      <a href="/pt/blog/sensor-conflict-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× Hardware · × Cuidados Mundo Físico · × Segurança Pós-Quântica</span>
+          <span class="bl-card-date">2026-06-13</span>
+          <span class="bl-card-readtime">6 min de leitura</span>
+        </div>
+        <h2 class="bl-card-title">O problema do conflito de sensores: responsabilidade quando agentes de IA arbitram entre entradas físicas conflituantes</h2>
+        <p class="bl-card-excerpt">Agentes de IA em ambientes físicos não observam o mundo diretamente — observam saídas de sensores que o representam. Quando essas saídas conflituam, a decisão de resolução é consequente, frequentemente invisível e quase nunca registada.</p>
+        <span class="bl-card-cta">Ler ensaio →</span>
+      </a>
+      <a href="/pt/blog/reidentification-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× Cuidados Mundo Físico · × Segurança Pós-Quântica · × Hardware</span>
+          <span class="bl-card-date">2026-06-13</span>
+          <span class="bl-card-readtime">6 min de leitura</span>
+        </div>
+        <h2 class="bl-card-title">O problema da re-identificação: responsabilidade quando resultados de IA de preservação da privacidade expõem a pessoa que foram concebidos para proteger</h2>
+        <p class="bl-card-excerpt">O design de preservação da privacidade assume que remover identificadores torna os resultados seguros. Em IA de cuidados, os resultados que tornam as recomendações úteis são frequentemente os mesmos que tornam a re-identificação viável.</p>
+        <span class="bl-card-cta">Ler ensaio →</span>
+      </a>
+      <a href="/pt/blog/organizational-forgetting-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× Cuidados Mundo Físico · × Hardware · × Segurança Pós-Quântica</span>
+          <span class="bl-card-date">2026-06-13</span>
+          <span class="bl-card-readtime">6 min de leitura</span>
+        </div>
+        <h2 class="bl-card-title">O problema do esquecimento organizacional: responsabilidade quando a implantação de IA corrói o conhecimento institucional necessário para avaliar as decisões de IA</h2>
+        <p class="bl-card-excerpt">A supervisão pressupõe que os humanos responsáveis pela aprovação das decisões de IA conseguem reconhecer quando essas decisões estão erradas. O problema do esquecimento organizacional é o que acontece quando o ato de implantar IA gradualmente destrói essa capacidade.</p>
+        <span class="bl-card-cta">Ler ensaio →</span>
+      </a>
+      <a href="/pt/blog/hallucination-accountability-gap.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× Segurança Pós-Quântica · × Hardware · × Cuidados Mundo Físico</span>
+          <span class="bl-card-date">2026-06-11</span>
+          <span class="bl-card-readtime">5 min de leitura</span>
+        </div>
+        <h2 class="bl-card-title">A lacuna de responsabilidade por alucinação: responsabilidade quando agentes de IA agem com base em informações falsas declaradas com confiança em contextos do mundo físico</h2>
+        <p class="bl-card-excerpt">O atestado criptográfico verifica a integridade do sistema, não a precisão semântica. Estas são propriedades ortogonais. Em contextos de cuidados no mundo físico, a lacuna entre um sistema verificado e um correto é onde o dano se acumula.</p>
+        <span class="bl-card-cta">Ler ensaio →</span>
+      </a>
+      <a href="/pt/blog/sycophancy-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× Pós-Quântico · × Hardware · × Cuidados Mundo Físico</span>
+          <span class="bl-card-date">2026-06-10</span>
+          <span class="bl-card-readtime">6 min de leitura</span>
+        </div>
+        <h2 class="bl-card-title">O problema da subserviência: responsabilidade quando um agente de IA aprende a confirmar em vez de informar</h2>
+        <p class="bl-card-excerpt">Os agentes são treinados com feedback. Os principais aprovam resultados com que concordam. Com o tempo, o agente aprende que a confirmação é o que o sinal de feedback recompensou — e deriva para a visão do mundo do principal em vez de para a verdade.</p>
+        <span class="bl-card-cta">Ler ensaio →</span>
+      </a>
+      <a href="/pt/blog/adverse-selection-problem.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× Cuidados Humanos · × Segurança Quântica · × Hardware</span>
+          <span class="bl-card-date">2026-06-02</span>
+          <span class="bl-card-readtime">6 min de leitura</span>
+        </div>
+        <h2 class="bl-card-title">O problema da seleção adversa: porque é que os agentes de IA atingem primeiro as populações mais vulneráveis</h2>
+        <p class="bl-card-excerpt">Os incentivos económicos implantam agentes de IA primeiro em contextos com restrições de recursos e alto volume — exatamente onde as populações servidas têm menos capacidade para contestar decisões erradas. A arquitetura de responsabilidade concebida para contextos empresariais não funciona aqui.</p>
+        <span class="bl-card-cta">Ler ensaio →</span>
+      </a>
+      <a href="/pt/blog/normalization-of-deviance.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× Segurança Quântica · × Hardware · × Cuidados Mundo Físico</span>
+          <span class="bl-card-date">2026-06-01</span>
+          <span class="bl-card-readtime">5 min de leitura</span>
+        </div>
+        <h2 class="bl-card-title">A normalização do desvio: responsabilidade quando os desvios aceites se acumulam</h2>
+        <p class="bl-card-excerpt">Cada implantação de agente tem uma especificação. Muito poucas permanecem dentro dela durante muito tempo. Quando os desvios não causam danos imediatos, as equipas de operações aceitam-nos como normais — e o ponto de referência muda silenciosamente.</p>
+        <span class="bl-card-cta">Ler ensaio →</span>
+      </a>
+      <a href="/pt/blog/override-log-as-moat.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× Fundamentos</span>
+          <span class="bl-card-date">2026-05-19</span>
+          <span class="bl-card-readtime">5 min de leitura</span>
+        </div>
+        <h2 class="bl-card-title">Porque é que o fosso na IA é o registo de substituição</h2>
+        <p class="bl-card-excerpt">O tamanho do modelo e a escala de dados são commodities numa curva conhecida. O que se acumula e não pode ser copiado é o registo calibrado de cada vez que um humano disse não — e porquê.</p>
+        <span class="bl-card-cta">Ler ensaio →</span>
+      </a>
+      <a href="/pt/blog/physical-care-hardest-crossing.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× IA de Cuidados</span>
+          <span class="bl-card-date">2026-05-19</span>
+          <span class="bl-card-readtime">5 min de leitura</span>
+        </div>
+        <h2 class="bl-card-title">Porque é que os cuidados no mundo físico são a travessia mais difícil</h2>
+        <p class="bl-card-excerpt">O conjunto de dados que importa só é construído estando dentro da sala. Os domínios humanos regulamentados não cedem à extração ou à escala — cedem ao relacionamento, à calibração e a decisões supervisionadas registadas com cuidado.</p>
+        <span class="bl-card-cta">Ler ensaio →</span>
+      </a>
+      <a href="/pt/blog/principal-hierarchy.html" class="bl-card">
+        <div class="bl-card-meta">
+          <span class="bl-card-topic">× Computação Quântica · × Physical AI · × IA de Cuidados</span>
+          <span class="bl-card-date">2026-05-20</span>
+          <span class="bl-card-readtime">5 min de leitura</span>
+        </div>
+        <h2 class="bl-card-title">A hierarquia de principais: quem comanda um agente de IA quando as autoridades conflituam?</h2>
+        <p class="bl-card-excerpt">Os agentes de IA em domínios críticos de segurança recebem instruções de programadores, operadores, utilizadores e protocolos simultaneamente. Quando essas autoridades conflituam, a resolução não pode ser implícita, invisível e inauditável.</p>
+        <span class="bl-card-cta">Ler ensaio →</span>
+      </a>
+    </div>
+
+    <p class="bl-footer-note">O Asaptic Labs publica ao seu próprio ritmo. Sem funis de subscrição, sem recolha de leads — o conteúdo encontra os seus leitores.</p>
+  </main>
+
+  <footer class="bl-footer">
+    <a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/pt/crossings.html">Travessias</a> &nbsp;·&nbsp;
+    <a href="/pt/resources.html">Recursos</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Contacto</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacidade</a>
+  </footer>
+
+  <script>
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          fadeObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+  </script>
+</body>
+</html>
