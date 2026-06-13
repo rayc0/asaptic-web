@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da multiplicidade — Asaptic Labs</title>
+  <meta name="description" content="Os agentes de IA em produção executam muitas instâncias simultâneas sob uma única autorização. Quando a responsabilidade foi concebida para um agente singular, a multiplicidade quebra a atribuição, amplifica a deriva de âmbito e cria lacunas de identidade que nenhum enquadramento atual resolve." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/multiplicity-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/multiplicity-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/multiplicity-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/multiplicity-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/multiplicity-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/multiplicity-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da multiplicidade — responsabilidade quando um agente de IA executa muitas instâncias simultâneas" />
+  <meta property="og:description" content="A autorização foi emitida para 'o agente.' O agente é agora cinquenta instâncias concorrentes. Qual a ação da instância que a autorização cobre? Onde a decisão é consequente, essa pergunta precisa de resposta antes de a primeira instância ser iniciada." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/multiplicity-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-05-25" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema da multiplicidade — responsabilidade quando um agente de IA executa muitas instâncias simultâneas",
+      "description": "Os agentes de IA em produção escalam horizontalmente como instâncias concorrentes, enquanto as autorizações são tipicamente emitidas para o tipo de agente e não para a instância específica. A multiplicidade quebra a atribuição, amplifica a deriva de âmbito e cria lacunas de identidade que os enquadramentos de responsabilidade atuais não abordam.",
+      "url": "https://asaptic.com/pt/blog/multiplicity-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-05-25",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/multiplicity-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar a Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/pt/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "Contactar por e-mail"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "pt",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema da multiplicidade", "item": "https://asaptic.com/pt/blog/multiplicity-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:16px;line-height:1.8;color:var(--text);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:600;color:var(--text);margin:48px 0 16px;line-height:1.3}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contacto</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+
+    <article>
+      <span class="essay-topic">× SEGURANÇA QUÂNTICA · × HARDWARE · × CUIDADOS NO MUNDO FÍSICO</span>
+      <h1 class="essay-title">O problema da multiplicidade: responsabilidade quando um agente de IA executa muitas instâncias simultâneas</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">Por Asaptic Labs</span>
+        <span class="essay-date">2026-05-25</span>
+        <span class="essay-date">6 min de leitura</span>
+      </div>
+      <div class="essay-body">
+        <p>A autorização foi emitida para o agente. O agente é agora cinquenta instâncias concorrentes. A ação de qual instância a autorização cobre? Esta questão permanece maioritariamente por fazer nos enquadramentos de responsabilidade de agentes de IA, porque esses enquadramentos foram concebidos numa era em que o modelo mental de um agente era singular: uma instância, uma sessão, um fluxo de ações. Em produção, esse modelo mental não sobrevive ao contacto com a infraestrutura. Os agentes reais escalam horizontalmente. E quando o fazem, os primitivos de responsabilidade — identidade, autorização, atribuição, auditoria — requerem todos repensar.</p>
+
+        <h2>Como a multiplicidade quebra a atribuição</h2>
+        <p>A atribuição é a afirmação de que uma entidade específica, agindo num momento específico, com uma autorização específica, produziu um efeito específico. Num agente de instância única, a cadeia de atribuição é rigorosa: o agente tem uma identidade, um conjunto de credenciais e um registo de ações. Um auditor pode reconstruir a cadeia. Quando a mesma especificação de agente executa como uma frota de instâncias concorrentes, a cadeia bifurca-se. Cada instância pode receber entradas diferentes, encontrar estados diferentes e tomar decisões diferentes — enquanto apresenta a mesma identidade a sistemas externos. O registo de ações é a união de cinquenta registos de instâncias. A que entrada de registo se aponta quando uma ação consequente precisa de ser atribuída? Na maioria das implementações atuais, a resposta é: qualquer que seja a instância que concluiu primeiro, identificada pelo ID de sessão, se o ID de sessão foi sequer registado.</p>
+        <p>O problema mais profundo é que a autorização não foi concedida a instâncias. Foi concedida ao tipo de agente, ou à configuração do agente, ou à versão de implementação. Nenhuma dessas designações resolve qual instância foi efetivamente autorizada a executar a ação consequente específica que está sob revisão. A autorização ao nível do tipo, combinada com a ação ao nível da instância, produz uma lacuna de atribuição que escala com o número de instâncias.</p>
+
+        <h2>Como a multiplicidade amplifica a deriva de âmbito</h2>
+        <p>Um único agente a operar fora do seu âmbito autorizado é uma violação de âmbito. Cinquenta agentes cada um a desviar-se ligeiramente fora do âmbito produzem cinquenta violações de âmbito simultâneas — cada uma pequena, cada uma facilmente perdida no ruído de um registo de ações extenso, e em conjunto constituindo uma afastamento sistemático da autorização que nenhuma revisão ao nível da instância individual detetaria. A deriva de âmbito numa frota de múltiplas instâncias é uma propriedade agregada. Requer medição agregada: não a distribuição de ações para uma única instância, mas a distribuição de ações em toda a população de instâncias durante uma determinada janela de operação. A maioria das implementações não tem uma infraestrutura de auditoria capaz desta perspetiva. Têm registos por sessão. Os registos por sessão são insuficientes para responsabilidade de múltiplas instâncias.</p>
+        <p>O problema do footprint agrava isto. O princípio do footprint mínimo estabelece que um agente deve solicitar apenas as permissões que a tarefa atual requer. Quando muitas instâncias executam concorrentemente, cada uma a solicitar permissões para a sua tarefa atual, a superfície de permissão agregada é muito maior do que qualquer tarefa individual justifica. A frota coletivamente detém mais autoridade do que qualquer autorização individual contemplou. Essa autoridade coletiva é a superfície que precisa de ser governada, e é a superfície que a maioria dos enquadramentos de autorização não aborda.</p>
+
+        <h2>Como as travessias expõem o problema</h2>
+        <p>Na travessia de segurança pós-quântica, o problema da multiplicidade manifesta-se como uma violação de padrão de utilização de chaves. Uma chave de assinatura emitida a um agente para um âmbito de autorização específico foi concebida tendo em mente uma entidade de assinatura. Quando muitas instâncias assinam concorrentemente usando a mesma credencial, o registo de auditoria criptográfica agrega assinaturas de uma frota, não de um único agente. A ligação entre o âmbito de autorização e a ação assinada específica enfraquece: sabe-se que a credencial autorizou a ação, mas a credencial nunca foi concebida para autorizar ação simultânea em escala. A transição para a criptografia pós-quântica é uma oportunidade para redesenhar a emissão de chaves ao nível da instância em vez do nível de implementação — emitindo chaves de curta duração com âmbito de instância que vinculam cada assinatura à instância e momento específicos que a produziram.</p>
+        <p>Na travessia de hardware, o problema de atestação espelha o problema de chaves. A atestação de hardware é tipicamente emitida para uma implementação, não para uma instância. Quando cinquenta instâncias executam concorrentemente, cada uma num ambiente de execução potencialmente diferente — hardware diferente, firmware diferente, estado de atestação diferente — a atestação ao nível de implementação não fala ao contexto de execução ao nível de instância. Uma ação produzida por uma instância a executar fora do limite de hardware atestado é tratada como se estivesse coberta pela atestação, porque o sistema de autorização não tem atestação ao nível de instância para verificar. O resultado é uma frota de agentes cada um apresentando uma atestação de implementação válida enquanto a afirmação de responsabilidade que a atestação pretende suportar pode não se verificar para qualquer instância específica.</p>
+        <p>Na travessia de cuidados no mundo físico, o problema da multiplicidade é mais imediatamente ético. Um agente de cuidados autorizado a interagir com um residente opera sob um plano de cuidados concebido para uma relação singular. Quando o mesmo tipo de agente executa como muitas instâncias simultâneas — cada uma interagindo com residentes diferentes, ou mesmo com o mesmo residente em momentos de cuidado diferentes — os pressupostos do plano de cuidados sobre continuidade de contexto, reconhecimento de estado anterior e limiares de escalada apropriados podem ser violados de formas que nenhum registo ao nível de instância revela. A responsabilidade agregada numa frota de cuidados requer correlacionar ações de instâncias de volta a relações de cuidado individuais, com uma granularidade que a maioria do registo de implementações de cuidados não suporta.</p>
+
+        <h2>O que a arquitetura deve fazer</h2>
+        <p>A solução não é menos instâncias — a escala é operacionalmente necessária. A solução é responsabilidade que foi concebida para escala desde o início. Identidade ao nível de instância significa que cada instância iniciada recebe um identificador único e de curta duração que está vinculado ao seu âmbito de autorização, estado de atestação de hardware e contexto de operação no momento do início. Atribuição de ação ao nível de instância significa que cada ação consequente transporta esse identificador de instância, criando um registo que não é uma união plana de entradas de sessão mas uma árvore estruturada: implementação para instância para ação. Monitorização de âmbito agregada significa que a camada de governação acompanha não apenas as distribuições de ação por instância, mas a distribuição de toda a frota, e alerta quando o agregado se afasta do âmbito pretendido mesmo quando nenhuma instância individual excedeu visivelmente a sua autorização.</p>
+        <p>A autorização foi emitida para o agente. Mas o agente que age é sempre uma instância específica, num momento específico, num contexto de execução específico. A responsabilidade em escala requer reconhecer essa distinção nas camadas de identidade, autorização e auditoria — antes que uma decisão consequente seja tomada por uma instância que nunca foi individualmente responsabilizada.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Ponto-chave</span>
+        <p>Os agentes de IA em produção escalam horizontalmente como instâncias concorrentes, enquanto as autorizações são tipicamente emitidas para o tipo de agente e não para a instância específica. Isto cria três problemas: quebra de cadeia de atribuição (qual instância foi autorizada a executar a ação consequente específica?), amplificação da deriva de âmbito (os pequenos desvios de cada instância são invisíveis ao nível da instância mas constituem afastamento sistemático no agregado) e acumulação de footprint de permissões (a superfície de permissão combinada de instâncias concorrentes excede muito o que qualquer autorização individual contemplou). Na travessia pós-quântica, o problema manifesta-se como uso indevido de chaves ao nível da instância; na travessia de hardware, como atestação ao nível de implementação incapaz de cobrir o ambiente de execução ao nível de instância; na travessia de cuidados físicos, como pressupostos de continuidade de relações de cuidado violados implicitamente em cenários de múltiplas instâncias. A solução é uma arquitetura de responsabilidade concebida para escala: vinculação de identidade ao nível de instância, atribuição de ações ao nível de instância e monitorização de âmbito agregada entre instâncias.</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/pt/blog/">&larr; Todos os artigos</a>
+        <a href="/pt/blog/measurement-problem.html">Anterior: O problema da medição →</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contacto</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

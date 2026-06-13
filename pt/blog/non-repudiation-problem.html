@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da não-repudiação — Asaptic Labs</title>
+  <meta name="description" content="Registar o que um agente fez não é o mesmo que provar que não pode negar tê-lo feito. A não-repudiação exige assinatura do lado do agente no momento da decisão — e essas assinaturas devem sobreviver à transição quântica." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/non-repudiation-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/non-repudiation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/non-repudiation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/non-repudiation-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/non-repudiation-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/non-repudiation-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da não-repudiação" />
+  <meta property="og:description" content="Registar o que um agente fez não é o mesmo que provar que não pode negar tê-lo feito. A não-repudiação exige assinatura do lado do agente no momento da decisão — e essas assinaturas devem sobreviver à transição quântica." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/non-repudiation-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema da não-repudiação: porque um agente de IA não deve poder negar as suas ações",
+      "description": "Registar o que um agente fez não é o mesmo que provar que não pode negar tê-lo feito. A não-repudiação exige assinatura do lado do agente no momento da decisão, vinculando a identidade verificada do agente, o âmbito de autorização e as entradas em que a ação se baseou.",
+      "url": "https://asaptic.com/pt/blog/non-repudiation-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/non-repudiation-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar a Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/pt/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "Contactar por e-mail"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "pt",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema da não-repudiação", "item": "https://asaptic.com/pt/blog/non-repudiation-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contacto</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× SEGURANÇA QUÂNTICA · × HARDWARE · × CUIDADOS HUMANOS</span>
+      <h1 class="essay-title">O problema da não-repudiação: porque um agente de IA não deve poder negar as suas ações</h1>
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 min de leitura</span></div>
+      <div class="essay-body">
+        <p>Quando um profissional humano toma uma decisão consequente — um médico a redigir uma prescrição, um analista financeiro a autorizar uma transferência, um engenheiro de segurança a aprovar uma alteração de configuração — o registo dessa decisão está tipicamente vinculado a essa pessoa por uma assinatura, uma credencial de acesso ou um ato testemunhado. A vinculação é imperfeita mas tem uma direção: o ónus recai sobre a pessoa para explicar qualquer discrepância entre o registo e o seu relato, e não sobre o registo para provar a sua própria autenticidade.</p>
+        <p>Os agentes de IA não têm vinculação equivalente por defeito. Uma entrada de registo que diz que um agente tomou uma ação é evidência de que a ação foi registada — não evidência de que o agente realmente a tomou, de que o registo não foi alterado, ou de que a ação registada corresponde à decisão que o agente realmente tomou. Esta lacuna entre registo e não-repudiação é estreita quando as apostas são baixas. Quando os agentes operam em domínios onde os resultados são contestados — onde uma decisão de cuidados é disputada, uma autorização financeira é contestada, ou um evento de segurança é litigado — a lacuna torna-se uma vulnerabilidade estrutural no registo de responsabilidade.</p>
+
+        <h2>O que a não-repudiação exige</h2>
+        <p>A não-repudiação é a propriedade que torna possível provar, após o facto, que uma parte específica gerou uma mensagem específica ou tomou uma ação específica, de uma forma que a parte não pode credilvelmente negar. Nos sistemas humanos é alcançada através de uma combinação de controlos procedimentais e mecanismos criptográficos — assinaturas, trilhos de auditoria, registos com marca temporal mantidos por partes independentes.</p>
+        <p>Para agentes de IA, a não-repudiação exige que o agente assine os seus próprios resultados no momento da decisão, usando uma chave que está vinculada à identidade do agente e protegida contra adulteração. O artefacto assinado não é apenas a ação tomada — inclui as entradas em que o agente agiu, o âmbito dentro do qual estava a operar e a cadeia de autorização que lhe delegou a tarefa. A assinatura prova que um agente específico, agindo sob uma concessão específica de autoridade, produziu um resultado específico a partir de entradas específicas. Sem todos esses quatro elementos, o registo pode ser contestado em qualquer um deles.</p>
+        <p>A consequência prática é que a não-repudiação não pode ser adicionada retroativamente a um registo. Deve ser incorporada no pipeline de ações do agente. Um registo que regista o que um agente fez não é um registo não-repudiável a menos que a entrada do registo tenha sido assinada pelo agente no momento da ação, a chave de assinatura seja gerida de forma a impedir substituição não detetável, e a própria chave esteja vinculada à identidade verificada do agente através de uma cadeia de certificados auditável independentemente do agente e do seu operador.</p>
+
+        <h2>A travessia quântica</h2>
+        <p>A durabilidade da não-repudiação depende inteiramente da durabilidade das assinaturas subjacentes. Um agente implantado hoje que assina as suas ações usando um esquema de curva elíptica clássico produz registos que são não-repudiáveis nas condições de ameaça atuais. Em condições onde um processador quântico suficientemente poderoso está disponível para um adversário — um limiar cuja linha temporal é contestada mas não infinitamente remota — esses registos tornam-se retroativamente repudiáveis. Um adversário com capacidade quântica pode gerar uma assinatura válida sob a chave pública histórica do agente, inseri-la numa versão alternativa do registo e apresentar uma falsificação plausível do registo de ações do agente.</p>
+        <p>Este é o problema harvest-now-decrypt-later aplicado não à confidencialidade mas à responsabilidade. Os registos assinados hoje com esquemas vulneráveis ao quantum permanecerão em uso legal, regulatório e probatório muito depois de o algoritmo de assinatura ter sido quebrado. Os agentes cujas decisões têm exposição legal de longa cauda — em cuidados, em autorização financeira, em sistemas de segurança certificados — estão a assinar hoje registos que podem ser indefensáveis em dez anos.</p>
+        <p>A migração para esquemas de assinatura pós-quânticos é a versão da camada de responsabilidade da migração bem compreendida para encriptação. É operacionalmente mais difícil porque as assinaturas estão incorporadas em handshakes de protocolo, cadeias de certificados, pipelines de validação de firmware e formatos de evidência regulatória — cada um com o seu próprio ciclo de atualização. Mas a consequência de não migrar não é perda de confidencialidade. É a capacidade retroativa de adversários falsificarem o registo histórico do que um agente decidiu.</p>
+
+        <h2>A travessia de hardware</h2>
+        <p>O ponto mais fraco na cadeia de não-repudiação de um agente é tipicamente a chave de assinatura. Uma chave armazenada em software, no mesmo sistema em que o agente executa, pode ser extraída por um atacante com privilégios suficientes — ou pelo operador do agente, o que cria um conflito de interesses em qualquer disputa sobre o que o agente fez. Se o operador controla a chave de assinatura, o operador pode plausivelmente gerar registos assinados alternativos, o que prejudica a garantia de não-repudiação para qualquer parte que não o próprio operador.</p>
+        <p>Os módulos de segurança de hardware e os ambientes de execução confiáveis abordam isto vinculando a chave de assinatura a uma raiz de confiança física que não pode ser exportada. A chave é gerada dentro do limite do hardware, nunca o abandona e assina apenas o que a política de atestação do hardware permite. Isto significa que uma assinatura produzida pelo agente é evidência não apenas do que foi assinado, mas de que a assinatura aconteceu dentro de um ambiente verificado e resistente a adulteração — um que nem o operador nem um atacante externo pode reprogramar retrospetivamente.</p>
+        <p>Para agentes implantados em hardware crítico para a segurança — sistemas industriais, dispositivos médicos, monitorização de infraestrutura — a assinatura com raiz em hardware é a diferença entre um registo que um operador pode teoricamente falsificar e um registo em que um auditor pode confiar independentemente da cooperação do operador. Os enquadramentos de certificação para estes domínios estão a começar a exigi-lo. Os agentes concebidos sem isso estão a construir arquiteturas de responsabilidade com uma porta de acesso para falsificadores deixada aberta.</p>
+
+        <h2>A travessia de cuidados</h2>
+        <p>Em contextos de cuidados, o problema da não-repudiação tem uma forma específica. Quando um agente de IA auxilia numa decisão de cuidados e o resultado é posteriormente disputado — uma contraindicação não detetada, um limiar de dosagem, uma avaliação de risco que influenciou um plano de alta — surgem duas questões. Primeiro, o que recomendou o agente? Segundo, a recomendação implementada foi a que o agente realmente fez?</p>
+        <p>A primeira questão é um problema forense — o registo de raciocínio. A segunda é um problema de não-repudiação: estabelecer que o agente, a operar dentro de um âmbito específico e com entradas específicas, produziu a recomendação que lhe é atribuída. Num sistema sem assinatura do lado do agente, o prestador de cuidados depende dos registos do operador da plataforma, que são mutáveis pelo operador e não verificáveis por qualquer parte independente. Isto não é adequado para um domínio onde o padrão de documentação para clínicos humanos é um registo assinado e testemunhado.</p>
+        <p>Os registos não-repudiáveis de agentes em cuidados também afetam a cadeia de responsabilidade de formas que cortam em ambas as direções. Um prestador de cuidados que pode produzir um registo assinado do que o agente recomendou, em que âmbito, atuando sobre que dados do doente, está melhor posicionado para demonstrar que o cuidador humano exerceu julgamento apropriado em relação à recomendação. O registo assinado não elimina a responsabilidade do humano — clarifica-a, o que é a pré-condição para qualquer responsabilidade em absoluto.</p>
+
+        <h2>A assinatura é necessária — mas não suficiente</h2>
+        <p>A não-repudiação não resolve a lacuna forense — um resultado assinado ainda é um resultado, não um rasto de raciocínio. Não resolve o problema de âmbito — uma assinatura prova o que foi assinado, não se o agente estava a operar dentro dos seus limites autorizados. E não garante comportamento correto — uma assinatura bem formada numa resposta errada ainda é uma resposta errada.</p>
+        <p>O que a assinatura faz é ancorar o registo. Torna a questão "o agente fez isto?" respondível por evidência e não por afirmação. Todas as outras afirmações de responsabilidade — sobre âmbito, raciocínio, supervisão — assentam numa fundação que inclui essa resposta. Sem ela, as disputas sobre o que um agente de IA decidiu são disputas sobre narrativas concorrentes, não disputas sobre um registo verificável.</p>
+        <p>Para agentes a operar onde as consequências importam, a questão de quem assina o registo não é um detalhe a diferir para uma revisão de arquitetura posterior. É a questão estrutural de toda a estrutura de responsabilidade. Construir a partir da raiz para cima, antes de o agente tomar a sua primeira decisão consequente — e escolher uma raiz que se mantenha quando o panorama criptográfico mudar.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Ponto-chave</span>
+        <p>Existe uma lacuna estrutural entre registar o que um agente fez e provar que não pode negar tê-lo feito. A não-repudiação exige que o agente assine os seus resultados no momento da decisão, vinculando a sua identidade verificada, o âmbito de autorização e as entradas em que agiu. Com esquemas de assinatura vulneráveis ao quantum, os registos históricos ficam expostos a falsificação retroativa — a versão da camada de responsabilidade do problema harvest-now-decrypt-later. Os módulos de segurança de hardware vinculam a chave de assinatura a uma raiz de confiança física não exportável, impedindo o operador ou um atacante externo de gerar registos alternativos credíveis. Nos cuidados, os registos não-repudiáveis de agentes clarificam a fronteira de responsabilidade entre o cuidador humano e a recomendação do agente — a pré-condição para qualquer responsabilidade. A assinatura não resolve a lacuna forense nem o problema de âmbito, mas ancora o registo: sem ela, as disputas sobre o que um agente de IA decidiu tornam-se disputas sobre narrativas, não sobre um registo verificável.</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/pt/blog/">&larr; Todos os artigos</a>
+        <a href="/pt/blog/attestation-gap.html">Leitura adicional: A lacuna de atestação &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contacto</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

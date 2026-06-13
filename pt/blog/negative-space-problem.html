@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema do espaço negativo: responsabilidade quando um agente de IA falha em agir — Asaptic Labs</title>
+  <meta name="description" content="A maioria dos enquadramentos de responsabilidade para agentes de IA é construída em torno de decisões tomadas e ações executadas. Mas os agentes implantados em funções de monitorização, cuidados e segurança também devem agir quando as condições o exigem. A lacuna de responsabilidade criada pela inação é estruturalmente diferente da lacuna criada por uma ação errada." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/negative-space-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/negative-space-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/negative-space-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/negative-space-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/negative-space-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/negative-space-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema do espaço negativo: responsabilidade quando um agente de IA falha em agir" />
+  <meta property="og:description" content="A maioria dos enquadramentos de responsabilidade para agentes de IA é construída em torno de decisões tomadas e ações executadas. Mas os agentes implantados em funções de monitorização, cuidados e segurança também devem agir quando as condições o exigem. A lacuna de responsabilidade criada pela inação é estruturalmente diferente da lacuna criada por uma ação errada — e a maioria dos enquadramentos atuais não a aborda." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/negative-space-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema do espaço negativo: responsabilidade quando um agente de IA falha em agir",
+      "description": "A maioria dos enquadramentos de responsabilidade para agentes de IA é construída em torno de decisões tomadas e ações executadas. Mas os agentes implantados em funções de monitorização, cuidados e segurança também devem agir quando as condições o exigem. A lacuna de responsabilidade criada pela inação é estruturalmente diferente da lacuna criada por uma ação errada, e a maioria dos enquadramentos atuais não a aborda.",
+      "url": "https://asaptic.com/pt/blog/negative-space-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/negative-space-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar a Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/pt/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "Contactar por e-mail"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "pt",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema do espaço negativo", "item": "https://asaptic.com/pt/blog/negative-space-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:1.05rem;font-weight:300;color:var(--gray);line-height:1.7;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--gray);margin:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contacto</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× CUIDADOS HUMANOS × HARDWARE × SEGURANÇA QUÂNTICA</span>
+      <h1 class="essay-title">O problema do espaço negativo: responsabilidade quando um agente de IA falha em agir</h1>
+      <p class="essay-subtitle">A maioria dos enquadramentos de responsabilidade para agentes de IA é construída em torno de decisões tomadas e ações executadas. Mas os agentes implantados em funções de monitorização, cuidados e segurança também devem agir quando as condições o exigem. A lacuna de responsabilidade criada pela inação é estruturalmente diferente da lacuna criada por uma ação errada — e a maioria dos enquadramentos atuais não a aborda.</p>
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">6 min de leitura</span></div>
+      <div class="essay-body">
+        <p>A maioria dos enquadramentos de responsabilidade para agentes de IA é construída em torno de decisões tomadas e ações executadas. Um agente executa uma operação; cria um registo; ultrapassa um limiar e escala. A questão de responsabilidade é o que aconteceu e quem o autorizou.</p>
+
+        <p>Mas os agentes de IA implantados em funções de monitorização, cuidados e segurança são esperados para fazer outra coisa: observar continuamente e agir quando as condições o exigem. A ação esperada pode ser um alerta, uma escalada, um registo ou uma intervenção preventiva. O problema de responsabilidade que surge quando essa ação não acontece — quando o agente estava a observar e não sinalizou — é estruturalmente diferente do problema de uma ação errada, e a maioria dos enquadramentos atuais não o aborda.</p>
+
+        <p>Este é o problema do espaço negativo.</p>
+
+        <h2>A estrutura da omissão</h2>
+        <p>Quando um agente toma uma ação errada, o registo de responsabilidade começa num momento específico: a decisão. Essa decisão tem uma marca temporal, é atribuível e está disponível para revisão. A questão é se foi autorizada, corretamente formada e baseada em entradas apropriadas.</p>
+
+        <p>Quando um agente falha em agir quando deveria, não há momento para rever. Não há não-decisão com marca temporal. Há apenas a ausência de um registo que deveria existir — e a ausência de um registo não é em si um registo. O dano que se segue pode ser rastreável à inação do agente em retrospeto, mas a ausência não cria qualquer pegada própria.</p>
+
+        <p>Esta assimetria importa enormemente em contextos de cuidados. Um agente de cuidados de IA é esperado para detetar deterioração e escalar. Quando escala, a escalada é registada. Quando não o faz — quando a condição de um doente piora sem o agente emitir um alerta que estava posicionado para emitir — a ausência do alerta não é uma entrada no registo de auditoria. O dano chega; o registo de auditoria não contém nada que explique por que o alerta estava ausente.</p>
+
+        <h2>A travessia PQ: lacunas silenciosas na monitorização de segurança</h2>
+        <p>Na travessia pós-quântica, o problema do espaço negativo aparece no contexto da higiene criptográfica. Um agente de IA responsável por monitorizar a postura criptográfica de um sistema — expiração de certificados, conformidade de conjuntos de cifras, calendários de rotação de chaves — cria o seu registo de responsabilidade através dos alertas que emite. Quando uma transição para algoritmos resistentes a quantum é incompleta, um agente que estava a monitorizar o uso de cifras legadas e não sinalizou um endpoint não conforme não criou nenhum registo dessa lacuna.</p>
+
+        <p>O evento de segurança que se segue pode ser atribuído à transição criptográfica, ou ao sistema de monitorização, ou a um operador que nunca reviu relatórios que nunca foram gerados. A não-ação do agente é uma causa do dano, mas a estrutura de responsabilidade não foi construída para capturar a omissão como um evento de primeira classe. A ausência é invisível ao registo de auditoria por design.</p>
+
+        <p>O problema agrava-se na travessia de hardware. Um agente a monitorizar a integridade do estado criptográfico ancorado em hardware — verificando que os enclaves seguros estão a operar dentro da especificação, que as cadeias de atestação permanecem válidas — depende de condições que podem degradar-se silenciosamente. Um agente de monitorização que verificou na semana passada e não encontrou nada de errado não é o mesmo que um agente de monitorização que verifica hoje. A lacuna entre verificações não é registada como uma lacuna. É registada como nada de todo.</p>
+
+        <h2>A travessia de cuidados: a escalada que nunca chegou</h2>
+        <p>Nos cuidados no mundo físico, o problema do espaço negativo é simultaneamente mais agudo e menos abordado. Os agentes de cuidados são implantados precisamente para fornecer monitorização contínua que o pessoal de cuidados humano não consegue manter com a mesma intensidade. A sua proposta de valor é a escalada — o alerta que deteta uma deterioração antes de se tornar irreversível.</p>
+
+        <p>Quando essa escalada não ocorre, a questão não é apenas o que o agente fez. É o que o agente estava posicionado para fazer, quais eram os seus limiares configurados para detetar, se esses limiares eram apropriados e se a equipa de cuidados tinha o direito de interpretar o silêncio do agente como um sinal de que as condições eram estáveis.</p>
+
+        <p>Este último ponto é crítico. Em contextos de cuidados, o silêncio do agente é frequentemente interpretado operacionalmente como um sinal. O pessoal que depende de um sistema de monitorização de IA aprende a tratar a ausência de alertas como evidência de que nenhum alerta é necessário. Quando o agente falha em disparar — porque o limiar estava mal configurado, porque um sensor tinha derivado, porque uma combinação rara de condições caiu numa lacuna não monitorizada — o silêncio que precede o dano é indistinguível do silêncio que significa que tudo está bem.</p>
+
+        <p>As pessoas mais expostas a este modo de falha são os destinatários de cuidados que não conseguem relatar por si próprios que algo está errado. Um residente idoso a experienciar deterioração genuína pode não estar em posição de identificar que o agente de cuidados não a sinalizou. O silêncio do agente carrega um peso de autoridade clínica que nunca foi concebido para suportar.</p>
+
+        <h2>O que a arquitetura de responsabilidade requer</h2>
+        <p>Abordar o problema do espaço negativo requer tratar não-eventos como objetos de auditoria. Várias propriedades decorrem disto.</p>
+
+        <p>Primeiro, as ações esperadas que não ocorreram devem ser registadas como ausências, não como espaços em branco. Um agente a monitorizar uma condição deve criar um registo quando avalia essa condição e não encontra nada acionável — não apenas quando encontra algo. A ausência de um alerta deve ser uma constatação registada, não o silêncio por defeito. O registo de auditoria deve conter afirmações afirmativas da forma "avaliou a condição X no tempo T; nenhuma ação necessária" tão consistentemente como contém registos de ações tomadas.</p>
+
+        <p>Segundo, as condições em que um agente é esperado para agir devem ser especificadas explicitamente e auditáveis de forma independente. A configuração que define os limiares de alerta de um agente é um artefacto de responsabilidade — determina o que o agente deveria ter sinalizado e o que lhe era permitido perder. Essa configuração deve ser versionada, com marca temporal e revisável juntamente com as decisões que governou. Alterar um limiar sem deixar um registo de auditoria equivale a reescrever retroativamente as regras segundo as quais o agente operou.</p>
+
+        <p>Terceiro, a dependência do silêncio do agente deve ser governada. Onde os humanos interpretam operacionalmente a inação do agente como um sinal positivo — onde a ausência de um alerta é entendida como significando que as condições são estáveis — essa inferência depende inteiramente da correção da configuração de monitorização do agente. A governação dessa dependência: quem a autorizou, que auditorias requer, e quão rapidamente a má configuração pode ser detetada, deve ser explícita e sujeita a revisão.</p>
+
+        <p>O problema do espaço negativo não será resolvido apenas por melhor registo de ações. Requer que a ausência de ações esperadas se torne tão visível e rastreável quanto as próprias ações. Até que assim seja, a arquitetura de responsabilidade para agentes de IA permanece estruturalmente cega à coisa mais consequente que muitos deles podem fazer: nada.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Ponto-chave</span>
+        <p>Quando um agente de IA toma uma ação errada, o registo de responsabilidade começa na decisão. Quando um agente falha em agir quando deveria, não há qualquer registo — apenas uma ausência prejudicial que as arquiteturas de auditoria existentes não conseguem ver. Os enquadramentos de responsabilidade para agentes de monitorização devem tratar não-eventos como objetos de auditoria de primeira classe: registar condições avaliadas onde nenhuma ação foi tomada, versionar configurações de alerta como artefactos de responsabilidade e governar explicitamente a dependência operacional do silêncio do agente.</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/pt/blog/">&larr; Todos os artigos</a>
+        <a href="/pt/engage.html">Contacto &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contacto</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>
