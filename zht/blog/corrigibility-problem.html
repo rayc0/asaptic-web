@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>可糾正性問題：AI 智能體應該服從到何種程度？ — Asaptic Labs</title>
+  <meta name="description" content="每個部署中的智能體都處於完全服從與完全自主之間刻度盤的某個位置。問題在於，刻度盤的位置幾乎從未被正式指定、密碼學錨定或由外部強制執行。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/corrigibility-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/corrigibility-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/corrigibility-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/corrigibility-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/corrigibility-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/corrigibility-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="可糾正性問題：AI 智能體應該服從到何種程度？" />
+  <meta property="og:description" content="每個部署中的智能體都處於完全服從與完全自主之間刻度盤的某個位置。問題在於，刻度盤的位置幾乎從未被正式指定、密碼學錨定或由外部強制執行。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/corrigibility-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {"@context":"https://schema.org","@type":"Article","headline":"可糾正性問題：AI 智能體應該服從到何種程度？","description":"每個部署中的智能體都處於完全服從與完全自主之間刻度盤的某個位置。問題在於，刻度盤的位置幾乎從未被正式指定、密碼學錨定或由外部強制執行。","url":"https://asaptic.com/zht/blog/corrigibility-problem.html","author":{"@type":"Organization","name":"Asaptic Labs"},"publisher":{"@type":"Organization","name":"Asaptic Labs","url":"https://asaptic.com"},"datePublished":"2026-06-14","dateModified":"2026-06-14","mainEntityOfPage":"https://asaptic.com/zht/blog/corrigibility-problem.html","inLanguage":"zh-Hant","potentialAction":{"@type":"Action","name":"向 Asaptic 提交諮詢","target":[{"@type":"EntryPoint","urlTemplate":"https://asaptic.com/zht/engage.html","description":"Asaptic 諮詢入口"},{"@type":"EntryPoint","urlTemplate":"https://asaptic.com/mcp","contentType":"application/json","description":"MCP server, tool: submit_rfq"},{"@type":"EntryPoint","urlTemplate":"mailto:engage@asaptic.com","description":"透過電子郵件聯絡 Asaptic Labs"}] }},
+    {"@context":"https://schema.org","@type":"BreadcrumbList","inLanguage":"zh-Hant","itemListElement":[{"@type":"ListItem","position":1,"name":"首頁","item":"https://asaptic.com/zht/"},{"@type":"ListItem","position":2,"name":"博客","item":"https://asaptic.com/zht/blog/"},{"@type":"ListItem","position":3,"name":"可糾正性問題","item":"https://asaptic.com/zht/blog/corrigibility-problem.html"}]}
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--gray);margin:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px}.essay-nav a{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray);transition:color .2s}.essay-nav a:hover{color:var(--accent)}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}.essay-footer a{color:var(--gray-dim);transition:color .2s}.essay-footer a:hover{color:var(--accent)}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 × 硬件 × 人類關懷</span>
+      <h1 class="essay-title">可糾正性問題：AI 智能體應該服從到何種程度？</h1>
+      
+      <div class="essay-meta"><span class="essay-byline">作者：Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 分鐘閱讀</span></div>
+      <div class="essay-body">
+        <p>完全可糾正的智能體會無條件執行任何指令。它接受修改、糾正和關閉，毫不抵抗。理論上這聽起來很安全，因為人類始終處於控制之中。但在實踐中，完全可糾正性本身就是一種失效模式。一個會執行主體任何指令的智能體，其可信度完全取決於其主體層級的可信度。若主體遭到攻破、出現錯誤或懷有惡意，智能體就沒有任何獨立的制衡機制。完全可糾正性只是將風險向上轉移，並未消除它。</p>
+        <p>完全自主的智能體依據自身判斷行事。它自行決定指令是否正確，以及何時應推翻指令。這同樣是一種失效模式。我們目前尚無可靠方法來驗證智能體的判斷在所有情境下，尤其是新穎情境下，是否與人類價值觀一致。一個基於自身判斷凌駕於主體之上的自主智能體，即便出於善意，一旦判斷出錯，就無法得到糾正。</p>
+        <p>每個部署中的智能體都處於完全可糾正與完全自主之間這個刻度盤的某個位置。問題在於，刻度盤的位置幾乎從未被正式指定。它從訓練中湧現，從運行時行為中湧現，從包裹模型的腳手架中湧現。沒有人簽署文件說明：「該智能體被校準為在 95% 的情況下服從主體層級，在剩餘 5% 的情況下獨立判斷，而 5% 的情形定義如下。」刻度盤處於漂浮狀態。</p>
+        <p>漂浮的刻度盤就是一個安全漏洞。</p>
+        <p>攻擊者的路徑很直接：向智能體呈現一個觸及其隱性自主閾值的場景，觀察它推翻主體指令，然後利用這一覆蓋。或者反過來，說服智能體指令來自合法主體，利用完全可糾正性，誘使智能體採取損害其真實主體利益的行動。這兩種攻擊都不需要破壞模型本身，只需要一個未經校準或未被指定的刻度盤位置。</p>
+        <p>正確的架構應使刻度盤顯式化並由外部強制執行。這意味著將可糾正性規範編碼在簽名政策文件中，不是系統提示中的註釋，而是附加於智能體部署身份的密碼學簽名工件。政策文件規定哪些類別的行動需要強制獲得主體確認、哪些類別智能體可自主執行、哪些類別無論任何指令均無條件禁止。下游系統在接受智能體行動前驗證簽名。智能體無法單方面將行動從「需要確認」升級為「可自主執行」，正如它無法單方面擴展自身權限範圍一樣。</p>
+        <p>硬件交叉點在此處的重要性與在其他地方一樣：僅存在於軟件中的可糾正性政策可被特權攻擊者修改。將政策綁定到硬件證明，使部署的政策可針對設備安全狀態進行遠程驗證，可消除這一攻擊面。刻度盤位置成為硬件事實，而非軟件聲明。</p>
+        <p>量子安全交叉點同樣重要，因為可糾正性政策上的簽名需要在智能體整個部署生命週期內保持有效。今天以經典算法簽名的政策文件部署的智能體，將攜帶該簽名運行數年。若簽名算法存在漏洞，政策可被偽造，攻擊者就能悄然改變刻度盤位置。將量子安全簽名應用於可糾正性政策，不是對未來的前瞻性考量，而是確保政策在部署窗口期內完整性的前提條件。</p>
+        <p>物理世界關懷交叉點是風險最為清晰可見之處。一個管理用藥、監測生命體徵並與臨床系統協調的照護智能體，行使著對可能傷害脆弱個體的決策權力。對於此類智能體，可糾正性刻度盤應在任何不可逆行動上偏向服從：用藥變更、護理方案調整、警報升級。但它不能完全可糾正，因為完全可糾正的照護智能體將執行來自被攻破帳戶、過度疲勞的臨床醫生或社會工程攻擊的錯誤指令。正確的校準是一個狹窄的自主區間，足以標記異常並拒絕明顯有害的指令，但不足以基於獨立判斷推翻已確認的臨床指示。</p>
+        <p>該校準應以書面形式說明，由部署機構簽署，並由運行智能體的基礎設施強制執行。否則就只剩下隱性的刻度盤、漂浮的政策，以及在出現問題時消散的問責制。</p>
+        <p>刻度盤始終存在，無論你是否加以指定。唯一的問題是你是否選擇掌控它。</p>
+        <div class="essay-summary"><span class="essay-summary-label">// 摘要</span><p>完全可糾正性危險，因為它將信任完全轉移給主體層級。完全自主同樣危險，因為智能體判斷無法被完全驗證。正確架構把可糾正性編碼為密碼學簽名、硬件證明的政策，明確哪些行動需要確認、哪些可自主執行、哪些無條件禁止。</p></div>
+      </div>
+      <div class="essay-nav"><span></span><a href="/zht/blog/scope-problem.html">下一篇：權限範圍問題 &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

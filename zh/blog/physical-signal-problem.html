@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>物理信号问题 — Asaptic Labs</title>
+  <meta name="description" content="在物理环境中行动的AI智能体，其第一个输入来自物理世界本身——传感器读数、生物特征、环境测量。硬件证明和后量子密码学保护此后的一切，却无法保护信号的源头。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/physical-signal-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/physical-signal-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/physical-signal-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/physical-signal-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/physical-signal-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/physical-signal-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="物理信号问题：信任链起始于物理世界时的问责机制" />
+  <meta property="og:description" content="在物理环境中行动的AI智能体，其第一个输入来自物理世界本身——传感器读数、生物特征、环境测量。硬件证明和后量子密码学保护此后的一切，却无法保护信号的源头。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/physical-signal-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "物理信号问题：信任链起始于物理世界时的问责机制",
+      "description": "在物理环境中行动的AI智能体，其第一个输入来自物理世界本身——传感器读数、生物特征、环境测量。硬件证明和后量子密码学保护此后的一切，却无法保护信号的源头。",
+      "url": "https://asaptic.com/zh/blog/physical-signal-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/physical-signal-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "物理信号问题", "item": "https://asaptic.com/zh/blog/physical-signal-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <header class="essay-header">
+        <div class="essay-tag">× 量子安全 × 硬件 × 人类照护</div>
+        <h1 class="essay-title">物理信号问题：信任链起始于物理世界时的问责机制</h1>
+        <p class="essay-subtitle">在物理环境中行动的AI智能体，其第一个输入来自物理世界本身——传感器读数、生物特征、环境测量。硬件证明和后量子密码学保护此后的一切，却无法保护信号的源头。</p>
+        <div class="essay-meta">
+          <span>Asaptic Labs</span>
+          <span>2026-06-14</span>
+          <span>6 分钟阅读</span>
+        </div>
+      </header>
+      <div class="essay-body">
+        <p>当我们为AI智能体设计问责机制时，通常从软件层开始。我们审计API调用，签署令牌，追踪决策产生时运行的是哪个模型版本，并应用后量子密码学来保护智能体与其依赖系统之间数字通信的完整性。这些措施是必要的。但在物理世界部署中，信任链并非始于软件层，而是始于物理信号：心率读数、运动检测事件、环境传感器测量值、生物特征扫描。而物理世界无法对其自身的输出进行签名。</p>
+
+        <p>这就是物理信号问题。</p>
+
+        <h2>证明无法弥合的差距</h2>
+        <p>安全硬件飞地、TPM芯片和硬件证明根可以验证传感器的数字输出在离开设备后未被篡改。它们可以证明从传感器到推理引擎的数据路径是完整的。后量子密码方案可以确保即使面对未来的密码分析进展，这些证明仍然有效。</p>
+
+        <p>但这些都无法回答一个更基本的问题：物理世界是否确实产生了那个读数？一个来自心率监测仪、经过完美证明、密码学完整的40 bpm读数，可能反映的是患者摘掉了设备、电极脱落，或传感器发生了漂移。硬件证明证明了链路在传输过程中未被破坏，却无法证明链路在源头连接到了现实。证明边界止于传感器外壳，不延伸至传感器所处的物理环境。</p>
+
+        <h2>三种失效模式</h2>
+        <p>物理信号问题以三种不同方式显现，各具不同的问责含义。</p>
+
+        <p>第一种是传感器故障——硬件退化、校准漂移或物理损坏，导致传感器在数字链路无任何异常的情况下错误报告物理世界。在软件系统中，失效的API返回错误代码；失效的传感器往往返回一个数字。被训练为依据该数字行动的智能体，将基于对物理世界的错误认知正确地行动。</p>
+
+        <p>第二种是环境操纵——在信号到达传感器之前对物理信号的蓄意干扰。放置在霍尔效应传感器旁的磁铁，对准接近探测器的红外光，对麦克风的声学操纵。与软件输入的对抗性攻击不同，物理操纵不留下任何软件痕迹。审计日志记录了智能体收到的内容，却无法记录在测量前的那些瞬间环境中发生了什么。</p>
+
+        <p>第三种是语境坍塌——物理信号是准确的，但赋予其意义的语境已经改变。95%的血氧饱和度读数对一个活跃的30岁健康人和一个患有慢性呼吸系统疾病、行动不便的80岁老人意义截然不同。传感器如实报告，智能体在其训练分布内正确推断，但部署语境已偏离了智能体决策阈值被校准时所基于的分布。错误不在于测量或推断，而在于智能体被设计用于的世界与其实际运行的世界之间的偏差。</p>
+
+        <h2>为何在各交叉点上都至关重要</h2>
+        <p>在后量子安全交叉点，物理信号问题定义了密码学所能保护的外部边界。量子抗性签名可以保护从传感器到推理引擎再到执行器的每一个字节。但它们无法追溯性地证明传感器在读取时确实正确连接到了物理环境。物理世界智能体部署的问责义务必须包括对物理连接性的验证——而不仅仅是数字链路的密码学完整性。</p>
+
+        <p>在硬件交叉点，物理信号问题阐明了硬件证明实际上在证明什么。硬件信任根确立计算在可信环境中运行，却不证明触发该计算的环境输入。为物理世界智能体部署设计硬件栈，需要为物理信号验证建立独立机制：冗余传感路径、跨模态一致性检查、传感器外壳本身的物理防篡改检测。这些不是对证明的增强，而是在证明无法触及的物理层中运行的互补系统。</p>
+
+        <p>在物理世界护理交叉点，风险最高。支持护理决策的AI智能体依赖患者当前状态的模型行事，而该模型建立在物理信号之上。如果信号系统性地错误，模型就是错误的，护理行动可能造成伤害。与软件领域中的错误建议不同，错误的护理行动可能是不可逆的。问责义务沿着信号链向后延伸至物理测量时刻，向前延伸至伤害发生点——横跨两者。</p>
+
+        <h2>问责的物理世界部署需要什么</h2>
+        <p>应对物理信号问题需要综合硬件、运营和治理措施。硬件层应包括冗余传感路径，传感器间的差异应触发明确的不确定性标志，而非静默仲裁。运营层应包括定期物理校准周期，产生各自可证明的记录——在密码学链路与其旨在代表的物理环境之间形成闭环。治理层应将传感器验证和环境完整性视为部署审查的一等组件，而非事后关切。</p>
+
+        <p>物理信号无法由任何有限的测量链完全验证。物理世界不对其输出进行签名。健全的问责架构所做的，是使这一差距可见、可审计、有界——并确保在物理环境中部署智能体的各方将这一差距视为已知约束，而非残余假设。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>物理世界智能体部署的信任链始于物理信号——传感器读数、生物特征、环境测量——而硬件证明和后量子密码学都无法将其与物理世界进行核实。三种失效模式随之而来：产生看似合理的错误数据的传感器退化、不留数字痕迹的环境操纵，以及准确读数在过时校准下被错误解释的语境坍塌。符合问责要求的部署需要冗余传感、配有可证明记录的定期物理校准，以及将传感器有效性视为部署前提而非背景假设的治理框架。</p>
+      </div>
+
+      <footer class="essay-footer">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+        <a href="/zh/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </footer>
+    </article>
+  </main>
+  <footer class="site-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

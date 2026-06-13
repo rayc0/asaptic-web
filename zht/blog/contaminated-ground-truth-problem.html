@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>受污染的基準事實問題：當AI智能體的決策影響用于評估這些決策是否正確的結果時的問責困境 — Asaptic Labs</title>
+  <meta name="description" content="當AI智能體的決策因果性地嵌入到後來用于評估這些決策的結果中時，問責便無法正常運作。評估衡量的不是智能體是否正確——而是智能體是否與自身保持一致。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/contaminated-ground-truth-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/contaminated-ground-truth-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/contaminated-ground-truth-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/contaminated-ground-truth-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/contaminated-ground-truth-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/contaminated-ground-truth-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="受污染的基準事實問題：當AI智能體的決策影響用于評估這些決策是否正確的結果時的問責困境" />
+  <meta property="og:description" content="當AI智能體的決策因果性地嵌入到後來用于評估這些決策的結果中時，問責便無法正常運作。評估衡量的不是智能體是否正確——而是智能體是否與自身保持一致。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/contaminated-ground-truth-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "受污染的基準事實問題：當AI智能體的決策影響用于評估這些決策是否正確的結果時的問責困境",
+      "description": "當AI智能體的決策因果性地嵌入到後來用于評估這些決策的結果中時，問責便無法正常運作。評估衡量的不是智能體是否正確——而是智能體是否與自身保持一致。",
+      "url": "https://asaptic.com/zht/blog/contaminated-ground-truth-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/contaminated-ground-truth-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "description": "聯絡頁面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯絡"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "受污染的基準事實問題", "item": "https://asaptic.com/zht/blog/contaminated-ground-truth-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:15px;line-height:1.65;color:var(--gray);margin:0}.essay-footer-wrap{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 硬件 × 物理世界照護</span>
+      <h1 class="essay-title">受污染的基準事實問題：當AI智能體的決策影響用于評估這些決策是否正確的結果時的問責困境</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>對AI智能體決策的問責需要一個參照点：一個可以據此衡量這些決策的基準事實。智能體是否推薦了正確的干預措施？是否標記了正確的異常？是否進行了適當的升級？這些問題預设了一個獨立的答案——一份关于"應該發生什么"的說明，由智能體自身決策未曾產生的證據構建而成。</p>
+
+        <p>當這种獨立性無法維持時，就會出現受污染的基準事實問題。當AI智能體的決策因果性地嵌入到後來用于評估這些決策的結果中時，參照点便不再獨立。評估所衡量的，是智能體與自身過往選择的一致性，而非其相對于外部標準的準確性。</p>
+
+        <h2>為何這是結構性問題，而非統計性問題</h2>
+        <p>每个發揮實際作用的AI智能體都會改變其運作的世界。一個推薦護理干預措施的智能體，要么看到该干預措施被執行，要么沒有。如果干預措施得以實施，其結果會被記錄為護理歷史的一部分。當智能體日后接受審計——或基于積累的記錄進行再训练——時，這段歷史便成為評估數據的一部分。</p>
+
+        <p>這造成了結構性循環。結果登記册并非"若无智能體參與、事情會如何發展"的中立記錄。它記錄的是"因為智能體的存在，事情是如何發展的"。任何将此數據視為獨立基準來處理的審計，評估的都不是智能體的決策——它只是在检验智能體的決策是否與自身保持一致。</p>
+
+        <p>這個問題無法透過更多數據或更好的統計方法來解決。問題出在因果層面，而非相关性層面。再多的额外觀測也無法闭合一個在构造上就是循環的回路。</p>
+
+        <h2>護理場景尤為脆弱</h2>
+        <p>物理世界的護理涉及長期的、累積性的干預歷史。一個持續数月監測護理的AI智能體，參與構建了定義"正確護理軌跡應是什么样子"的記錄本身。如果智能體始終推薦某种特定干預模式，该模式便會在歷史記錄中被視為常态。後續的評估者——無論是人还是自動化系統——可能會認為智能體经過了良好校準，不是因為它準確，而是因為它所影響的結果看起來與其先前的建议相符。</p>
+
+        <p>當護理對象沒有足夠能力對記錄提出異議時，這种动态尤為危险。智能體記錄在案的歷史，可能是唯一留存下來的說明。"這是正確的干預措施吗？"這個問題，要由智能體參與撰寫的同一份記錄來回答。</p>
+
+        <p>跨代問題會叠加。當一個智能體基于其前代產生影響的歷史記錄進行再训练時，后继者就繼承了這种污染。每一代模型在內部可能更為自洽——却更與問責所要求的外部標準相隔絕。</p>
+
+        <h2>硬件加劇了這一問題</h2>
+        <p>嵌入式AI護理設備在本地處理數據，通常記錄的是匯總后的输出，而非原始傳感器流。當完整傳感器記錄不可用時——因為本地處理将其壓縮為摘要——連接原始觀測、智能體決策與結果的證據鏈便斷裂了。留存下來的是日誌摘要：智能體對其所觀測內容的解釋。</p>
+
+        <p>该摘要既是智能體的输出，又在事後成為用于評估智能體的基準事實的一部分。因此，決定原始數據保留什么、保留多長時間、以何种形式保留的硬件設計選择，不仅仅是存储工程決策，而是关于獨立問責是否根本可行的決策。</p>
+
+        <p>保留豐富傳感器歷史的設備，保存了以智能體未曾產生的證據來評估其決策的基礎。只記錄摘要的設備，在結構上使這种評估成為不可能——不是因為數據缺失，而是因為唯一存在的數據已经携帶了智能體的诠释。</p>
+
+        <h2>正確的架構應該是什么样子</h2>
+        <p>維護基準事實的獨立性，需要刻意在智能體的決策記錄與評估這些決策的依據之間保持分離。在實踐中，這意味著：</p>
+
+        <p>獨立觀測通道：原始或最小處理的傳感器數據单独保存，與智能體的输出分離，不可被智能體自身的事後摘要訪問。</p>
+
+        <p>定期樣本外評估：一部分決策根據无需訪問智能體先前输出而構建的參照來評估——以确保評估信號不受智能體已有決策的影響。</p>
+
+        <p>明确的污染標註：任何包含智能體活躍期間結果的審計數據集，都應標記為可能受智能體決策影響，而非當作乾淨的獨立基準來使用。</p>
+
+        <p>将原始數據保留視為問責要求（而非存储成本）的硬件日誌設計——因為問責工具的獨立性，取决于其所依賴的證據。</p>
+
+        <h2>失敗模式是隱性的</h2>
+        <p>受污染的基準事實問題不會產生明顯的失敗。一個決策看起來與其所影響的結果相符的智能體，可能透過每一次標準審計。日誌中沒有異常。推薦內容與記錄所显示的內容之間沒有差異。失敗的模式在于：即使存在問題，評估也無法發現——因為評估使用的是智能體自己的歷史作為參照。</p>
+
+        <p>在Asaptic Labs，我们将基準事實的獨立性視為可問責AI智能體部署不可談判的屬性。它無法在事後進行補救。它必须在設計阶段就內置于硬件日誌架構、數據管道和評估方法中——在智能體作出任何将出現在它日后被據此评判的記錄中的決策之前。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>當AI智能體的決策因果性地嵌入用于評估這些決策的結果時，問責便形成循環。評估所衡量的是一致性，而非正確性。在物理護理場景中，智能體參與構建了後來被審計的長期記錄，而硬件日誌選择決定了哪些獨立證據得以留存——這一問題必须在設計阶段消除，而無法透過事後審計來解決。</p>
+      </div>
+
+      <div class="essay-footer-wrap">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+        <a href="/zht/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

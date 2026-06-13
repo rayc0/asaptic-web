@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>速率与规模问题 — Asaptic Labs</title>
+  <meta name="description" content="人类监督机制是为人类行为者设计的。AI智能体带来机器速度与机器规模。当行动速率超越问责速率，智能体行动与人类所能审查之间的差距，不是暂时滞后——而是架构本身。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/rate-and-scale-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/rate-and-scale-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/rate-and-scale-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/rate-and-scale-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/rate-and-scale-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/rate-and-scale-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="速率与规模问题：当AI智能体的行动速度超越任何人类所能观察" />
+  <meta property="og:description" content="人类监督机制是为人类行为者设计的。AI智能体带来机器速度与机器规模。当行动速率超越问责速率，这一差距不是暂时滞后——而是架构本身。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/rate-and-scale-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "速率与规模问题：当AI智能体的行动速度超越任何人类所能观察",
+      "description": "人类监督机制是为人类行为者设计的。AI智能体带来机器速度与机器规模。当行动速率超越问责速率，这一差距不是暂时滞后——而是架构本身。",
+      "url": "https://asaptic.com/zh/blog/rate-and-scale-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/rate-and-scale-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "速率与规模问题", "item": "https://asaptic.com/zh/blog/rate-and-scale-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 56px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .essay-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+      margin-bottom: 56px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 40px 0 16px;
+      line-height: 1.3;
+    }
+    .essay-body p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--gray-dim);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray-dim);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gray);
+      transition: color 0.2s;
+    }
+    .essay-footer-back:hover { color: var(--accent); }
+    .page-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 博客</a>
+
+    <span class="essay-label">交叉点笔记 · 2026-06-14</span>
+    <h1 class="essay-title">速率与规模问题</h1>
+    <p class="essay-subtitle">当AI智能体的行动速度超越任何人类所能观察</p>
+
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>5 分钟阅读</span>
+      <span>× 量子安全 × 硬件 × 人类照护</span>
+    </div>
+
+    <div class="essay-body">
+      <p>人类监督机制是为人类行为者设计的。审查委员会、审批链、审计周期——这些结构假设行动速率是一个人或小团队能够实时跟踪的。当AI智能体进入系统时，它带来了机器速度，通过编排还带来了机器规模。监督架构不会自动更新。结果是智能体行动速度与问责跟进速度之间出现了结构性差距。</p>
+
+      <p>这个差距不是工程最终会弥合的暂时滞后。它是架构的特性：智能体的运营时钟运行在与监督时钟不同的数量级上。围绕人类速度假设构建的每一个问责机制——升级队列、异常审查、审批阈值——一旦应用于机器速度的行为者就开始退化。退化最初是不可见的。当出错时它变得可见，审计轨迹揭示在任何人有机会查看之前就已跨越数千步骤积累的决策。</p>
+
+      <h2>核心不对称性</h2>
+      <p>人类分析师处理一份文件，做出决定，然后继续下一个任务。在机器速度下，智能体可以在分析师完成第一个任务之前处理一万份文件并做出一万个决定。这不是假设上限——这是任何合理有能力的智能体部署的常规操作情况。决策单独来看都是小的，但总体是大的，而总体是伤害积累的地方。</p>
+
+      <p>为人类速度行为者建立的监督结构依赖于步调一致的假设：审查者可以跟上行为者的步伐。异常在积累之前就变得可见。错误在级联之前可以被发现。单个错误决策不会在任何人注意之前传播到数千个后续决策。在机器速度下，这些假设都不成立。审计轨迹增长速度超过审查速度。警报积累速度超过分类速度。错误产生速率可能比错误检测速率高出几个数量级——当问题浮现到人类委托人面前时，它可能已经以难以或不可能逆转的形式在整个系统中复制了自己。</p>
+
+      <h2>在硬件交叉点</h2>
+      <p>速率不对称在硬件交叉点达到最紧约束。工业、安全或生物医学硬件中的嵌入式智能体在以微秒为单位的延迟预算内运行。等待人工审查后再行动的控制回路是无法运行的控制回路。硬件的物理特性对智能体施加机器速度的决策频率，独立于围绕它构建的问责架构。</p>
+
+      <p>这造成了结构性的不可能：在硬件需要的速率下进行有意义的决策前人工监督是不可实现的。因此问责架构必须转向事后——智能体以机器速度行动，问责事后从日志和遥测中重建。事后问责有一个根本限制：它能够确定发生了什么，但不能阻止发生了什么。在后果有界且可逆的领域，事后问责是合理的权衡。在后果无界或不可逆的领域——这描述了大多数安全关键硬件部署——这不是完整的答案。问题不是是否在这些环境中接受事后问责；而是日志是否足够完整、防篡改是否足够强、重建是否足够快，以便在出错时有意义。</p>
+
+      <h2>在物理世界照护交叉点</h2>
+      <p>在照护环境中，速率和规模问题的表现有所不同。智能体的决策频率通常比嵌入式硬件慢——决策可能相隔数分钟或数小时而不是微秒——但决策的人口数量大，后果是个人的且往往是不可逆的。管理人口中日程安排、警报或升级的照护协调智能体做出的决策不仅跨越时间积累，还跨越人口积累。</p>
+
+      <p>规模放大了系统性错误在整个人口中的影响。智能体升级阈值中的偏差影响的不是一个人，而是智能体监控的人口中的每一个人。其对特定表现模式的响应漂移静默地传播到呈现该模式的每一个人，以人工审查团队永远无法匹配的频率进行。部署规模放大了任何系统性错误的爆炸半径，同时使该错误更难检测——因为最初没有个别案例看起来异常。只有总体是异常的，而总体只在事后才可见，此时许多人已经受到了影响。</p>
+
+      <p>这是速率和规模问题在照护领域的具体形式：时钟更慢，但每个决策的风险更高，受影响人口更大，任何错误的系统性特质意味着损害在变得可见之前已经分布开来。个案层面的人工监督无法捕捉人口层面的漂移。只有为总体而设计的监督才能做到——这需要在部署架构中内置总体监控器，而不是在问题浮现后事后添加。</p>
+
+      <h2>设计响应</h2>
+      <p>三种结构性响应值得区分，因为它们在问责架构的不同点发挥作用。</p>
+
+      <p>速率调控器对智能体施加独立于其任务负载的最大行动速率。智能体可能能够每分钟处理一万个项目，但部署将其限制在监督架构可以跟踪的数量。这使智能体的行动速率可以被人工审查匹配，代价是吞吐量降低。速率调控器最适用于存在吞吐量压力但并非物理强制的领域——智能体行动快是因为它能，而非因为领域的物理特性要求它如此。</p>
+
+      <p>规模上限约束单个智能体实例拥有权威的人口。部署被分片到有界群体，而不是一个智能体覆盖整个人口。错误的爆炸半径不能超过分片。以使有意义的监督成为可能的比例为分片分配人工审查员，而总体监控器跨越分片而不是整个人口。规模上限是照护部署中的主要结构性响应，在这些部署中，单决策速度可控，但单人口范围才是问责挑战。</p>
+
+      <p>强制暂停点在智能体执行路径中嵌入硬编码检查点，在继续之前需要人工审查。暂停点不管理速率；它们管理后果。它们被放置在错误成本足够高以至于吞吐量必须让步于监督的决策节点——不可逆性阈值。实践中，强制暂停点只在触发暂停的决策频率足够低、使分配给它们的人工审查员不会立即被压垮的领域才可行。</p>
+
+      <p>这些响应都不能消除速率和规模问题。每种都以一定程度的能力换取一定程度的问责。适当的权衡取决于部署背景、后果的可逆性以及受影响人口的规模。不是有效响应的是将机器速度、机器规模的智能体部署到人类速度的监督架构中，并假设差距会自行弥合。它不会。差距随智能体时钟的每次滴答而增长，在差距内积累的损害正是问责本应阻止的损害。</p>
+    </div>
+
+    <div class="essay-summary">
+      <span class="essay-summary-label">摘要</span>
+      <p>AI智能体以机器速度和机器规模行动；人类监督架构是为人类速度行为者设计的。不对称性是结构性的，而非暂时的。在硬件交叉点，物理特性强制执行决策频率，决策前的人工审查不可行——来自日志的事后问责是唯一可行模型，其充分性取决于日志完整性和防篡改强度。在物理世界照护中，较慢的单决策速度被大型受影响人口所抵消：系统性错误在总体模式对任何人工审查员可见之前已传播到许多人。设计响应包括速率调控器、规模上限和强制暂停点，每种都在架构的不同点以吞吐量换取问责。将机器速度智能体部署到人类速度监督中并期望对等，不是一个计划；它本身就是那个差距。</p>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zh/blog/" class="essay-footer-back">&larr; 所有笔记</a>
+    </div>
+  </main>
+
+  <footer class="page-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
