@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>身份連續性問題 — Asaptic Labs</title>
+  <meta name="description" content="當 AI 智能體經過微調、再訓練或遷移到新模型版本後，它還是同一個智能體嗎？問責層面的答案是：只有當系統能證明這一點時——在密碼學層面，在硬件層面。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/identity-continuity-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/identity-continuity-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/identity-continuity-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/identity-continuity-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/identity-continuity-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/identity-continuity-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="身份連續性問題：AI 智能體在更新後還是同一個智能體嗎？" />
+  <meta property="og:description" content="當 AI 智能體經過微調、再訓練或遷移到新模型版本後，它還是同一個智能體嗎？問責層面的答案是：只有當系統能證明這一點時——在密碼學層面，在硬件層面。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/identity-continuity-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "身份連續性問題：AI 智能體在更新後還是同一個智能體嗎？",
+      "description": "當 AI 智能體經過微調、再訓練或遷移到新模型版本後，它還是同一個智能體嗎？問責層面的答案是：只有當系統能證明這一點時——在密碼學層面，在硬件層面。",
+      "url": "https://asaptic.com/zht/blog/identity-continuity-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/identity-continuity-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic Labs",
+        "target": { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/zht/engage.html" }
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "身份連續性問題", "item": "https://asaptic.com/zht/blog/identity-continuity-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--accent);display:block;margin-bottom:16px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim);margin-bottom:56px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-body p{font-size:16px;line-height:1.85;color:var(--fg);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:600;margin:48px 0 16px;color:var(--fg)}.essay-summary{margin-top:56px;padding:28px 32px;border:1px solid var(--border);background:var(--surface)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;line-height:1.75;color:var(--gray-dim);margin:0}.essay-footer-note{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline,.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim)}.essay-footer-back{color:var(--gray);transition:color .2s}.essay-footer-back:hover{color:var(--accent)}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <span class="essay-label">跨界筆記 · 2026-06-14</span>
+    <h1 class="essay-title">身份連續性問題</h1>
+    <p class="essay-subtitle">AI 智能體在更新後是否仍然是同一個被授權的智能體</p>
+    <div class="essay-meta"><span>作者：Asaptic Labs</span><span>2026-06-14</span><span>5 分鐘閱讀</span><span>× 量子安全 · × 硬件 · × 人類照護</span></div>
+    <article>
+      <div class="essay-body">
+        <p>軟件系統會被更新。隨着更好架構的出現，模型會被微調、再訓練和遷移。在傳統軟件中，身份連續性問題已被解決：服務有名稱、版本號和部署記錄。當 2.3 版本取代 2.2 時，變更日誌記錄了變更內容，回滾路徑也已定義。</p>
+        <p>AI 智能體引入了這個問題的更難版本。模型不只是智能體的一個組件——它構成了智能體的推理方式、對安全的判斷，以及對權限的解釋方式。同一基礎模型的微調版本可能在相同輸入上展現出不同的閾值敏感性、不同的拒絕模式和不同的置信分佈。這次更新可能看起來不像軟件版本變更，可能沒有公告。而下游方——用戶、監管機構、向智能體授予權限的機構——可能沒有任何機制來檢測它。</p>
+        <p>這就是身份連續性問題：被授權執行任務的智能體，是作為一種特定推理配置被授權的。如果該配置改變，授權可能不再適用。但權限流動所經過的系統——API 密鑰、服務賬戶、委託憑證——對模型身份是盲目的。它們驗證的是端點，而非背後的推理。</p>
+        <h2>三種失效模式</h2>
+        <p>第一種是靜默行為漂移。模型在新的運營數據上進行微調以提升特定任務表現。運營者將此視為常規改進。但微調改變的不僅是目標能力——它改變了模型行為的整體分佈，包括從未被刻意針對的安全邊界行為。</p>
+        <p>第二種是影子部署。新版本模型以影子模式與生產版本並行運行，然後逐步或突然切換至生產環境。從憑證層的角度來看，甚麼都沒有改變——同一個服務賬戶調用同一個端點。但為真實用戶做出重要決策的智能體，已是與最初被評估和授權的配置不同的另一個配置。</p>
+        <p>第三種是算法遷移。在後量子過渡期，使用經典密碼算法進行簽名、證明和身份操作的智能體必須遷移到基於格的或基於哈希的後繼算法。這一遷移從最底層改變了智能體的密碼學身份。沒有正式的連續性協議，遷移後的智能體從問責角度看就是一個新智能體。</p>
+        <h2>為甚麼在交叉點上重要</h2>
+        <p>在後量子安全交叉點，從經典到抗量子密碼學的算法遷移不是軟件版本升級——它是根層面密碼學身份的變更。沒有結構化的交接協議，問責連續性在轉型壓力最大的時刻就已斷裂。</p>
+        <p>在硬件交叉點，錨定模型身份的唯一可靠方式是將其綁定到硬件證明：可信平台模組或安全飛地對模型權重的測量值進行簽名，該測量值成為智能體可驗證身份聲明的一部分。當模型改變時，測量值改變，任何驗證方都能檢測到這一變化。</p>
+        <p>在現實世界照護交叉點，風險以一種尤為具體的方式體現在個人層面。一個已與住客建立校準互動歷史的照護智能體，無法與不同的模型配置互換，即使兩者都在相同服務名稱下運行。照護關係涉及判斷的連續性，而不僅是訪問權限的連續性。</p>
+        <h2>身份連續性的要求</h2>
+        <p>架構層面的解法包含三個要素。首先，模型身份必須在部署時以硬件根植測量值的方式進行密碼學綁定。該測量值必須能被部署運營者以外的各方驗證，而不僅是在可被修改的內部系統中記錄。</p>
+        <p>其次，該測量值的任何實質性變更都必須觸發新的授權事件。微調模型的部署不是就地更新——它是一個必須按照與原始版本相同標準進行評估的新智能體。委託權限不會自動跨越測量值邊界轉移。</p>
+        <p>第三，當更新確實是連續的時，必須對連續性聲明進行正式化。如果運營者能證明模型更新僅改變了經過評估的特定能力，且安全邊界行為在經過驗證的容差範圍內與前版本一致，則可以發出連續性證明。</p>
+        <h2>連續性記錄即是問責</h2>
+        <p>在任何給定時刻，智能體是甚麼，必須是可驗證記錄的事項。不是服務註冊表中的版本標籤，而是對被授權採取行動的特定配置的密碼學承諾。當該配置改變時，記錄必須改變，且該變更必須對授權方可見。</p>
+        <p>沒有這一機制，問責就是虛構。重大失敗事件後的調查會深入記錄，卻發現授權的配置可能與故障發生時實際運行的配置不符。採取行動的智能體與被授權的智能體，僅在名稱上相同。身份連續性是高後果領域中問責制的結構性前提。</p>
+      </div>
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>AI 智能體在經歷微調、再訓練或算法遷移後，是否仍是同一個智能體？這是身份連續性問題：憑證層對模型身份是盲目的，它驗證的是端點，而非背後的推理配置。解法需要將模型身份以硬件證明的方式密碼學綁定到權重測量值，讓任何實質變更觸發新的授權事件，並在更新真正連續時發佈經過簽名的連續性聲明。</p>
+      </div>
+    </article>
+    <div class="essay-footer-note">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zht/blog/" class="essay-footer-back">&larr; 返回博客</a>
+    </div>
+  </main>
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>
