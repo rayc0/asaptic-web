@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>同意层：AI 照护智能体为何需要结构化权限，而非仅有配置 — Asaptic Labs</title>
+  <meta name="description" content="配置不等于知情同意。部署于受监管照护环境的 AI 智能体，需要一个患者级的授权层——结构化、动态，并能响应床边已发生的覆写事件。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/consent-layer.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/consent-layer.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/consent-layer.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/consent-layer.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/consent-layer.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/consent-layer.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="同意层：AI 照护智能体为何需要结构化权限，而非仅有配置" />
+  <meta property="og:description" content="配置授权系统级功能；知情同意授权患者特定行动。AI 照护智能体需要一个能追踪两者差异的层，并在患者授权变化时随之更新。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/consent-layer.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "同意层：AI 照护智能体为何需要结构化权限，而非仅有配置",
+      "description": "配置不等于知情同意。部署于受监管照护环境的 AI 智能体，需要一个患者级的授权层——结构化、动态，并能响应床边已发生的覆写事件。",
+      "url": "https://asaptic.com/zh/blog/consent-layer.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/consent-layer.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "向 Asaptic 提交采购 RFQ",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件发送规格简报"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "同意层", "item": "https://asaptic.com/zh/blog/consent-layer.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 照护 AI × 问责架构</span>
+      <h1 class="essay-title">同意层：AI 照护智能体为何需要结构化权限，而非仅有配置</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div style="border-left:3px solid #29B6F6;padding:1em;background:#f0f8ff;margin:1.5em 0;color:#1a1a2e;">
+        <p style="margin:0;font-size:15px;line-height:1.7;">&#128221; <strong>更新（2026-05-21）：</strong> Asaptic Labs 现已采用四个交叉口框架——量子计算、物理 AI、智能原生企业、照护 AI。详见 <a href="/crossings">/crossings</a>。本文基于此前的三交叉口结构撰写；所涉及交叉口的论点仍然有效。</p>
+      </div>
+      <div class="essay-body">
+        <p>当一家照护机构部署AI智能体——用于辅助药物审查、标记补水风险、追踪患者功能状态——总有人负责配置。临床医生或管理员设定参数、审批工作流程，系统随之上线。配置出于善意，但配置不等于知情同意。</p>
+
+        <p>这一区别比通常认识到的更为重要。照护场景中的同意并非一次性事件，而是动态的、针对特定个人的、可撤销的授权，存在于每位患者、每个护理团队、每次交互的层面。配置在系统层面运作。两者之间的差距，正是大多数照护场景中智能体部署所承载的最沉重的、尚未被承认的风险所在。</p>
+
+        <h2>配置实际上授权了什么</h2>
+        <p>当照护系统被配置为允许AI智能体提示药物警告时，配置授权该智能体对所有被覆盖的患者执行这一功能。它并未授权该智能体代表某位特定患者行事，也不反映患者是否知情AI参与其护理，不编码患者授权代理人是否同意，更未捕捉护理人员最近的覆写究竟代表的是针对特定患者的例外，还是系统级的校准信号。</p>
+
+        <p>在大多数受监管的照护环境中，系统级配置与患者级同意之间的区别对于人类临床医生而言已在实践中有清晰界定。但对于在同一环境中运行的AI智能体，这一区别尚未得到同等建立——而两者受到不同对待这一现实，并不具有可辩护性。</p>
+
+        <h2>同意层的作用</h2>
+        <p>AI照护智能体的同意层不是一张新的临床表单，而是一个架构层——在患者层面运作的结构化授权表示，在护理交接中持续存在，并随患者状态、偏好或临床背景的变化而变化。</p>
+
+        <p>该层追踪：针对该患者，AI辅助审查是否被授权、由谁授权、在何种范围内授权、授权委托链是何形态。在跨越患者特定边界的任何行动之前，智能体应查询该层。关键在于，它支持护理人员实时写入——不是通过配置面板，而是通过已在床边发生的覆写事件。</p>
+
+        <p>当护士拒绝智能体针对特定患者的建议时，这一拒绝是一个同意信号——它传达了某些针对该患者的信息：在这一语境中，对这一个人，智能体提议的行动是不适当的。该信号应回流至患者级授权模型，不只是被记录为通用纠正，而是被解读为此时此刻该患者同意边界真实位置的信息。</p>
+
+        <h2>覆写日志即同意档案</h2>
+        <p>这正是问责架构与照护特定同意之间的联结。覆写日志如果构建得当，不只是纠正记录——它是人类权威被行使之处及其原因的持续更新模型。在照护场景中，该模型是同意结构的代理：它呈现护理团队关于智能体授权范围终点的持续判断。</p>
+
+        <p>将覆写事件作为同意信号而非仅仅作为训练数据加以解读的智能体，尊重的是照护环境中活的、动态的授权结构。在护理交接时，通过此前覆写事件所表达的同意状态，应随患者记录一同转移，而非被重置为系统默认值。</p>
+
+        <h2>问责要求</h2>
+        <p>部署AI智能体的照护机构承担着无法仅凭系统配置完全履行的问责义务。对于任何具有实质性影响的智能体行动，机构需要能够证明：该行动在该患者、该时间、该临床情境下处于授权范围内。这一证明要求的不止是"智能体被配置为做X"的日志条目，而是一个能够回答以下问题的同意层：谁授权了这一行动、针对哪位患者、在何种范围内授权、该授权是否仍然有效？</p>
+
+        <p>构建这一层不需要技术上的特异性。患者级授权模型已经存在；照护机构每天都在为人类临床医生管理这些模型。所需的是将同样的规范延伸至AI智能体——以与临床授权同等的严格态度对待智能体授权，而非将其视为配置即可满足的轻量级类比。在照护场景中赢得持久信任的智能体，将是那些授权模型与照护机构临床授权模型同等严格的智能体。配置让智能体启动；同意让它保持在应有的边界内。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/physical-care-hardest-crossing.html">延伸阅读：为何物理世界的照护是最艰难的关键领域 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
