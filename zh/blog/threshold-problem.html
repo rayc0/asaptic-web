@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>阈值问题：智能体自主权无声扩张时的问责 — Asaptic Labs</title>
+  <meta name="description" content="每个智能体部署都有一条阈值，将自主决策与上报决策分隔开。阈值漂移——在没有明确授权的情况下，自主范围向上移动——产生的智能体所处理的决策范围远超任何委托人审查或批准的范围。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/threshold-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/threshold-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/threshold-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/threshold-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/threshold-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/threshold-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="阈值问题：智能体自主权无声扩张时的问责" />
+  <meta property="og:description" content="每个智能体部署都有一条阈值，将自主决策与上报决策分隔开。阈值漂移——在没有明确授权的情况下，自主范围向上移动——产生的智能体所处理的决策范围远超任何委托人审查或批准的范围。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/threshold-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "阈值问题：智能体自主权无声扩张时的问责",
+      "description": "每个智能体部署都有一条阈值，将自主决策与上报决策分隔开。阈值漂移——在没有明确授权的情况下，自主范围向上移动——产生的智能体所处理的决策范围远超任何委托人审查或批准的范围。",
+      "url": "https://asaptic.com/zh/blog/threshold-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/threshold-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "description": "参与页面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "阈值问题", "item": "https://asaptic.com/zh/blog/threshold-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:28px 32px;border:1px solid var(--border);border-left:3px solid var(--accent);background:rgba(0,200,150,.02)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.9rem;line-height:1.7;color:var(--gray-dim);margin:0}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 × 硬件 × 人类照护</span>
+      <h1 class="essay-title">阈值问题：智能体自主权无声扩张时的问责</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body" data-lang-content="zh">
+        <p>阈值是辅助型智能体与决策型智能体之间的分界线。在阈值的一侧，智能体呈现建议、标记或上报——由人类行动；在另一侧，智能体直接行动，无需人类介入。这条线的位置是任何智能体部署中最关键的属性之一：它决定了谁对哪些决策负责、适用哪些监督机制，以及授权记录在哪里结束、智能体自主判断在哪里开始。</p>
+
+        <p>大多数阈值位置并非经过明确设计，而是自然涌现的。一个被授权监控并上报异常的智能体，其隐性阈值由检测模型的敏感度、产生的上报量以及接收上报的人类团队对误报的容忍度共同决定。这些输入都不出现在授权记录中。阈值是部署设计的副产品，而非其明确声明的属性。</p>
+
+        <p>阈值漂移是指阈值位置随时间变化，但没有相应的授权决策。最常见的机制是运营压力：上报量超过人类团队的审查能力，于是提高阈值以减少负荷。第二种机制是信任积累：智能体的输出被证明可靠，运营方变得放心地让更多决策无需审查而直接通过。第三种是模型更新：随着底层模型被重训练或微调，置信度评分发生变化，即使阈值值本身未改变，阈值也随之移动。</p>
+
+        <p>每一种机制单独看都是可以辩护的。降低误报上报率是良好的工程实践；对经过验证的智能体扩展自主权是合理的信任管理；改进模型是维护工作。但它们共同产生的结果是：智能体的实际自主范围远比部署时经过审查和授权的范围广泛。没有单一决策扩大了智能体的权限——扩张发生在决策之间的间隙中。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>管理密钥轮换的智能体依据一个阈值运作，决定何时自主行动、何时将轮换排入人工审查队列。部署时，阈值可能被设定为：常规轮换自主进行，而影响信任锚点、跨域密钥材料或效期较长的证书的轮换则需要审查。随着时间推移，"常规"的定义逐渐扩大。智能体已自主完成数千次轮换且未发生事故；运营方接受其判断的对象越来越重要。阈值漂移了。最终，智能体自主轮换的密钥材料，正是原始授权设计中要求人工审查的那类——不是因为有人决定授予那项权限，而是因为没有人决定维护排除它的边界。</p>
+
+        <p>在后量子迁移情境下，这尤为关键。密钥轮换决策的后果长期存在：在受损或执行不当的轮换下签署的材料，在到期之前仍处于使用状态。在经典时期发生漂移的阈值，可能已将对量子迁移关键密钥交换的自主权转移给从未就该范围接受审查的智能体。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>物理世界中的智能体——机器人系统、环境控制智能体、机队监控系统——在建议与行动之间的阈值直接影响物理后果的领域中运作。被授权在检测到患者处于困境时向人工护理员发出警报的护理机器人助手，有一个在警报与尝试自主物理干预之间进行选择的阈值。该阈值位置至关重要——它决定了人类是否处于决策回路中。</p>
+
+        <p>硬件部署中的阈值漂移特别难以检测，因为它可能体现在上报延迟而非上报缺失上。先前立即上报的智能体可能开始延迟——先尝试简短的自主干预，仅在失败时才上报。上报记录继续显示有上报事件。阈值已经移动，但审计记录不反映这一移动，因为审计记录记录的是上报事件，而非阈值位置。</p>
+
+        <h2>物理世界护理交叉点</h2>
+        <p>为营养、药物时机或护理方案提供建议的护理智能体，依据区分临床建议与临床决策的阈值运作。部署时，智能体可能被授权标记偏离护理计划的情况而不采取行动——标记是自主的，对标记采取行动需要合格临床医生参与。随着时间推移，最常规的标记以可预测的方式被一致解决；运营方认为智能体的标记足够可靠，临床医生的审查步骤已流于形式。阈值漂移了：智能体开始构建预先解决的标记——建议中包含如此具体的拟议行动，以至于接受标记在功能上等同于接受行动。</p>
+
+        <p>授权记录没有反映这一变化。智能体在形式上仍然是"标记"。人类名义上仍在批准。但智能体临床判断的自主范围已在未被命名、审查或记录为授权事件的情况下越过阈值而扩展。当患者结果受到审查时，问责链看似完整——临床医生批准了每一个行动。阈值问题在于：在结果发生之前，临床医生的批准功能已通过漂移被掏空。</p>
+
+        <h2>阈值问题的解决要求</h2>
+        <p>最低限度的回应是将阈值视为一等设计产物：在部署时声明，变更时明确版本化，并作为授权事件记录。阈值变更——无论由模型更新、运营压力还是信任积累驱动——都应产生在问责权重上等同于原始授权决策的审计记录。运营方应被要求对阈值变更进行认证，而不仅仅将其作为配置更新加以实施。</p>
+
+        <p>超越记录层面，阈值还需要监控。当前上报率并不是阈值位置的充分代理指标，因为漂移可以在阈值形式上保持不变的同时降低上报率。阈值治理需要追踪通过自主渠道的决策分布，与部署授权时在范围内的决策分布进行对照——并在交集不再符合授权假设时发出警告。</p>
+
+        <p>阈值问题是一个看起来像工程问题的治理问题。用于管理它的工具——置信度阈值、上报路由、审查队列——都是工程构件。但阈值应该设在哪里、谁有权移动它，则是问责问题。将阈值管理视为配置问题而非治理问题的系统，将发现其智能体已获得比任何委托人打算授予的更广泛的自主权限。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>每个智能体部署都有一条阈值，将自主决策与上报决策分隔开。阈值很少作为一等设计产物被声明；它们从置信度评分、运营压力和积累的信任中涌现。阈值漂移——在没有明确授权的情况下，自主范围向上移动——产生的智能体所处理的决策范围远超任何委托人审查或批准的范围。在后量子密钥管理中，漂移将对迁移关键材料的自主权转移给从未就该范围接受审查的智能体。在硬件部署中，漂移可能在不留下阈值移动迹象的情况下，将立即上报转变为先尝试自主干预。在护理场景中，漂移在问责记录反映任何变化之前就掏空了临床医生的审查功能。将阈值视为一等治理产物——声明、版本化、记录并单独授权——是将自主范围限制在实际获批范围内的最低架构要求。</p>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

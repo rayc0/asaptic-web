@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>终止问题——Asaptic Labs</title>
+  <meta name="description" content="停止AI智能体听起来是最简单的安全保障。在实践中，这是最难解决的问题之一：嵌入式智能体无法远程触达，长期运行的工作流使任务中途停止变得危险，终止信号本身也必须经过认证以防对抗性命令。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/termination-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/termination-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/termination-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/termination-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/termination-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/termination-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="终止问题：何时以及如何停止AI智能体，以及无法停止意味着什么" />
+  <meta property="og:description" content="终止开关不是架构。真正的终止问题横跨嵌入式硬件、长期运行的照护工作流、密码停止信号认证，以及后量子过渡——每一层都比上一层更难解决。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/termination-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "终止问题：何时以及如何停止AI智能体，以及无法停止意味着什么",
+      "description": "停止AI智能体听起来是最简单的安全保障。在实践中，这是最难解决的问题之一：嵌入式智能体无法远程触达，长期运行的工作流使任务中途停止变得危险，终止信号本身也必须经过认证以防对抗性命令。",
+      "url": "https://asaptic.com/zh/blog/termination-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/termination-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "description": "参与页面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "终止问题", "item": "https://asaptic.com/zh/blog/termination-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">终止问题：何时以及如何停止AI智能体，以及无法停止意味着什么</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body" data-lang-content="zh">
+        <p>当AI智能体出现意外行为时，人们首先想到的安全措施是终止开关。听起来很简单：发送停止信号，智能体停止，情况得以控制。然而在实践中，终止问题是智能体架构中最难解决的问题之一——不是因为停止在技术上复杂，而是因为停止安全、经过认证且有意义的条件，远比表面看起来更为有限。</p>
+
+        <h2>终止开关的幻觉</h2>
+        <p>终止开关不是架构，它是架构之上的一个按钮，而该架构在任何给定时刻可能支持也可能不支持安全停止。一个正处于事务中间、文件写入中间、消息发送中间或物理执行中间的智能体，并不总能干净地停止。问题不在于是否能切断进程的电源——通常可以——而在于这样做是否让世界处于比让进程完成更好的状态。对许多智能体工作流，尤其是那些已经开始与外部系统交互的工作流，答案是模糊的。</p>
+
+        <p>这种模糊性是结构性的。智能体系统被设计为执行一系列动作，每个步骤都依赖于先前的状态。在中途打断该序列不会恢复先前状态——它会创造出一个既不在原始委托人计划之内、也不在智能体计划之内的新状态。一个不考虑智能体在工作流中何处可以安全停止的终止架构，实际上不是一个安全控制措施。它是将责任从智能体转移到按下按钮的操作员的一种方式。</p>
+
+        <h2>嵌入式智能体与物理停止问题</h2>
+        <p>对于嵌入在物理世界运行的硬件中的智能体，终止问题最为棘手。在云环境中运行的软件智能体可以通过进程信号停止，并从已知检查点重启。而在嵌入式设备中运行的智能体——照护设施中的康复单元、临床环境中的监测系统——在你需要停止它时可能物理上不可达。</p>
+
+        <p>网络分区、电源事件和设备故障都可能切断远程停止信号到达的连接。无法接收停止命令的设备会继续执行。如果其指令授权它在连接中断期间自主行动——这是保证照护连续性的必要设计选择——它将在不知晓委托人已尝试撤销该授权的情况下这样做。</p>
+
+        <p>硬件根认证告诉你设备上运行的智能体是你授权的那个。它无法解决可达性问题。一个凭证有效但网络连接已断开的设备，从委托人的角度来看，是一个在没有监督的情况下运行的智能体——可能正在执行已经被撤销的决策。设备上的问责记录可能完整，但智能体在世界中的行动已经在展开。</p>
+
+        <h2>长期运行的工作流：停止作为危险行为</h2>
+        <p>在照护环境中，当停止信号到达时，正处于任务中间的智能体呈现出一个特殊困境。智能体可能正处于监测序列、警报升级或有记录的干预中间。立即停止满足了终止命令的字面意义，同时可能造成委托人试图预防的实际伤害——一个没有主动监测的患者，一个已经启动但未完成的升级，一个在中断点之前准确、之后沉默的照护记录。</p>
+
+        <p>这是照护领域终止的深层张力：无法停止的智能体是危险的，但随时可以停止的智能体——在监测中间、在升级中间——也是危险的。一个设计良好的终止架构必须不仅包括停止机制，还要包括每个工作流中一组定义好的安全停止点，以及在收到停止信号时将智能体带到最近安全点再停止的关闭程序。没有安全点协议的任务中途终止，相当于切断手术室的电源——技术上可行，永远不应这样做。</p>
+
+        <h2>终止信号的认证问题</h2>
+        <p>终止信号是一条指令。与发送给在对抗性环境中运行的智能体的任何指令一样，它必须经过认证。能够伪造可信停止命令的攻击者，可以在智能体执行合法安全功能时将其静默——撤销凭证、记录检测到的异常、升级警报。从攻击者的角度来看，终止智能体的能力也是在入侵时刻使检测系统失明的能力。</p>
+
+        <p>这造成了一种令人不安的对称性。停止信号需要足够容易发出，以便合法委托人能在紧急情况下迅速行动。它们需要足够难以伪造，以便攻击者无法压制智能体的问责功能。这两个要求相互对立，满足其中一个的机制往往会削弱另一个。签署停止命令的硬件根密钥将终止权限与特定设备和密钥绑定——但密钥管理随后成为每次部署的运营开销的一部分。</p>
+
+        <h2>后量子停止信号</h2>
+        <p>后量子过渡为终止认证问题增加了一个常被忽视的层面。今天的认证停止信号通常依赖经典非对称密码学。能力足够强大的量子对手可以伪造这些签名——不是实时，而是可能在未来使用之前捕获的流量。对于运营生命周期较长的智能体，今天发出的经认证的停止信号可能在未来数年内可验证，然后在量子能力阈值被突破时变得可伪造。</p>
+
+        <p>对于照护环境中的嵌入式设备——可能在没有固件替换的情况下运行五到十年的设备——这不是一个假设的远景。今天制造的带有经典认证停止信号的设备，可能在支撑这些信号的密码学假设被打破后仍在运行。在制造时将终止权限与抗后量子密钥材料绑定，是在设备整个运营生命周期内保持停止信号可信的唯一机制。</p>
+
+        <h2>终止架构需要什么</h2>
+        <p>一个严肃的终止架构在任何智能体部署之前必须具备四个组件。第一，工作流级的安全停止点映射：每个工作流中的明确标记，在这些点智能体可以停止而不使下游系统处于不一致状态。第二，每个工作流的关闭协议：在收到停止信号时，将智能体带到最近的安全停止点，而不是立即停止。第三，使用适合设备部署生命周期的密钥材料的认证停止信号机制——并且对具有未来能力的对手的伪造具有抵抗性。第四，离线继续策略，精确规定智能体在委托人不可达时可以和不可以做什么，以便网络分区不会造成不受约束运行的窗口。</p>
+
+        <p>这些组件都不是终止开关。终止开关作为最后手段仍然存在——物理断电、进程强制终止、硬件重置。但既是最后手段又是第一手段的手段不是安全控制。它们是承认架构从未被设计为优雅停止。在智能体决策实时影响真实人的领域，优雅停止不是边缘情况。它是必须在第一次部署之前内置的设计要求，而不是在第一次事故之后附加的。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>终止信号看似是最简单的安全保障，实则是智能体架构中最难解决的问题之一。嵌入在照护设施或临床环境硬件中的智能体，在你需要停止它时可能因网络中断而无法被触达。处于多步骤工作流中间的智能体，即时停止可能比让其完成更危险。终止信号本身也是一条指令，需要经过认证——能伪造停止命令的攻击者可以在智能体执行合法安全功能时将其静默。后量子过渡则增加了一层：今天的认证停止信号依赖经典密码学，而长期运行的设备可能在这些假设被突破后仍在运行。严肃的终止架构需要四个要素：工作流级的安全停止点映射、将智能体引导至最近安全点的关闭协议、适用于设备生命周期的认证停止信号机制，以及指定离线时智能体权限的离线继续策略。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

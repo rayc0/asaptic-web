@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>信任引导问题：在智能体被信任之前，必须有人先信任链条的第一环 — Asaptic Labs</title>
+  <meta name="description" content="每个信任模型都假设一个信任根。智能体的注册时刻——它获得首个凭证的瞬间——是整个后续问责链要么有根可查、要么仅凭假设的节点。第一环的架构决定了关于该智能体的所有后续主张究竟是可验证的，还是仅凭断言。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/trust-bootstrap-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/trust-bootstrap-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/trust-bootstrap-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/trust-bootstrap-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/trust-bootstrap-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/trust-bootstrap-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="信任引导问题：在智能体被信任之前，必须有人先信任链条的第一环" />
+  <meta property="og:description" content="每个信任模型都假设一个信任根。智能体的注册时刻是整个后续问责链要么有根可查、要么仅凭假设的节点。第一环的架构决定了关于该智能体的所有后续主张究竟是可验证的，还是仅凭断言。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/trust-bootstrap-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "信任引导问题：在智能体被信任之前，必须有人先信任链条的第一环",
+      "description": "每个信任模型都假设一个信任根。智能体的注册时刻——它获得首个凭证的瞬间——是整个后续问责链要么有根可查、要么仅凭假设的节点。",
+      "url": "https://asaptic.com/zh/blog/trust-bootstrap-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/trust-bootstrap-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "description": "参与页面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "信任引导问题", "item": "https://asaptic.com/zh/blog/trust-bootstrap-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 × 硬件 × 人类照护</span>
+      <h1 class="essay-title">信任引导问题：在智能体被信任之前，必须有人先信任链条的第一环</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body" data-lang-content="zh">
+        <p>每个安全模型都假设存在一个信任根。证书链终止于一个根CA，浏览器信任它，是因为某个人的决定将它安置在那里。密钥交换能够成立，是因为双方共享了预先建立的秘密，或共同信任某个第三方。这些引导过程如此惯常，以至于从业者鲜少审视它们。但对于部署在高后果领域的AI智能体，引导问题以新的紧迫性重新浮现：在智能体被信任之前，必须有人先信任链条的第一环。而那第一环的架构，决定了关于该智能体的所有后续主张究竟是可验证的，还是仅凭断言。</p>
+
+        <h2>注册时刻</h2>
+        <p>智能体获得首个凭证的那一刻，是注册时刻。这是智能体生命周期中风险最高的节点：没有既往记录，没有行为证明，没有可供审查的决策历史。在常规系统中，注册被视为一项行政步骤——一个有人在系统上线前处理的配置任务。</p>
+        <p>对于AI智能体，这种框架是不够的。智能体在注册时获得的凭证，定义了它初始的权限范围。如果该凭证因配置者偏向便利而颁发过宽，智能体便带着尚未被证明合理的常驻访问权限进入世界。如果注册渠道本身被攻陷，智能体整个凭证历史从第一刻起就已被污染。</p>
+        <p>在后量子安全节点，注册时刻是算法选择固化之处。一个以经典密码学凭证注册、进入正在进行抗量子迁移的系统的智能体，从第一天起就携带着脆弱的身份。注册凭证是密码学谱系的起点节点：若起点使用了已废弃的算法，补救措施不是打补丁，而是重新注册。从一开始就以抗量子原语正确完成注册，是避免脆弱根源的唯一方式。之后的每一次密钥轮换、每一次凭证更新、每一条审计日志条目，其强度都不超过第一环所允许的上限。</p>
+
+        <h2>硬件作为首个信任锚点</h2>
+        <p>当第一个信任关系根植于硬件时，注册问题得到了最为清晰的解决。可信平台模块或硬件安全模块，可以在注册时证明智能体正在特定的、可测量的软件配置上运行。这一证明由硬件本身签署——而非由可能在注册凭证颁发之前就已被攻陷的软件进程签署。</p>
+        <p>注册时的硬件证明，回答了流程控制无法回答的问题：这是运营方意图部署的那个智能体吗？软件证明是智能体关于自身的主张。硬件证明是平台关于其正在运行什么的主张。对于没有既往历史的智能体，硬件证明是唯一不依赖于对智能体本身的既有信任的身份主张形式。</p>
+        <p>其含义是实际的。对于部署在高后果领域的智能体——安全基础设施、健康数据系统、金融授权流水线——注册时的硬件证明不是高级选项，而是整个后续信任关系获得可验证根源的机制。没有它，运营方对已部署智能体的信心完全依赖于事后无法审计的流程控制。"我怎么知道这就是我批准的那个智能体？"这个问题，在注册完全由软件中介时，没有令人满意的答案。</p>
+        <p>还有一个可组合性论点。智能体越来越多地在多智能体流水线中运作，一个智能体调用另一个智能体并传递派生权限。在这样的流水线中，无法在注册时验证的信任根，在任何下游节点也无法验证。引导问题不局限于链条中的第一个智能体——它在每一次后续委托中传播。在首个节点进行硬件根源注册，是使下游信任主张连贯而非循环的前提。</p>
+
+        <h2>照护场景中的信任引导</h2>
+        <p>在照护场景中，信任引导问题有一个硬件单独无法解决的人的维度。当一个智能体被部署以协助照护——排班、病历访问、环境管理、用药提醒——受其决策影响的人，必须有某种有根据的理由相信该智能体就是部署方所声称的那样。</p>
+        <p>这不是纯粹的技术凭证问题，而是知情同意架构问题。护理对象或其法定代表人，必须被告知智能体的初始权限范围、其授权链，以及该范围被约束的机制。引导不仅是颁发正确密码学凭证的问题，还是使凭证含义对护理关系中的非技术参与者可理解的问题。</p>
+        <p>一个初始权限对受影响者不透明的智能体，无论密码学实现多么正确，都无法满足照护领域的知情同意要求。照护场景中的信任引导，只有在技术注册与人的知情同意对齐时才算完成：注册时智能体的实际权限范围，与被解释并被接受的范围一致。将注册视为纯技术步骤的照护领域部署方，留下了空白的同意层。这个缺口不会自行弥合——在受监管的照护环境中，这恰恰是审计程序首先寻找的缺口。</p>
+
+        <h2>这需要什么</h2>
+        <p>信任必须先被锚定，才能被延伸。注册时刻——智能体在新环境中获得首个凭证的节点——是链条要么可验证地开始，要么凭假设开始的地方。假设会复利累积：无法验证的信任根无法被审计，无法被审计的信任根在出错时无法被否认。</p>
+        <p>由此引出三项要求。第一，注册凭证必须从一开始就使用抗量子原语——对根源的改造是重新注册，不是补丁。第二，对于高后果领域的智能体，注册必须包含对运行配置的硬件证明，使身份主张不再是自我断言。第三，在照护场景中，技术注册与人的知情同意流程必须共同设计，而非依次进行——智能体的权限范围必须对受其影响的人可读，而不只是对部署它的运营方透明。</p>
+        <p>对于在高后果环境中运作的智能体，信任引导不是部署细节，而是所有后续问责主张赖以成立的架构决策。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>每个信任模型都假设一个信任根。智能体的注册时刻——它获得首个凭证的瞬间——是整个后续问责链要么有根可查、要么仅凭假设的节点。在后量子安全节点，注册凭证是密码学谱系的起点：若起点采用已废弃的算法，补救措施不是打补丁，而是重新注册。硬件证明（可信平台模块或硬件安全模块）在注册时提供的保证，是软件无法给出的答案——"这真的是运营方批准部署的那个智能体吗？"。在多智能体流水线中，无法在首个节点验证的信任根，在所有下游委托环节同样无法验证。在照护场景中，信任引导还有一个人的维度：技术注册与人的知情同意必须共同设计，而非依次进行，智能体的权限范围必须能让受其影响的人看懂，而不只是对部署它的运营方透明。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 所有文章</a>
+        <a href="/zh/blog/toctou-problem.html">另见：TOCTOU 问题 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
