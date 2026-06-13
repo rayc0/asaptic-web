@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>取证差距 — Asaptic Labs</title>
+  <meta name="description" content="当AI智能体导致争议性结果时，事后还原其决策路径在结构上比传统软件系统困难得多。推理路径不会被记录；它在推断时即被丢弃。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/forensic-gap.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/forensic-gap.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/forensic-gap.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/forensic-gap.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/forensic-gap.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/forensic-gap.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="取证差距" />
+  <meta property="og:description" content="审计日志记录了智能体的行为。但它不记录连接输入与决策的推理路径。那个差距，是问责主张走向终结的地方。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/forensic-gap.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "取证差距",
+      "description": "当AI智能体导致争议性结果时，事后还原其决策路径在结构上比传统软件系统困难得多。推理路径不会被记录；它在推断时即被丢弃。",
+      "url": "https://asaptic.com/zh/blog/forensic-gap.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/forensic-gap.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件发送询问"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "取证差距", "item": "https://asaptic.com/zh/blog/forensic-gap.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 × 硬件 × 人类照护</span>
+      <h1 class="essay-title">取证差距：为何事后还原AI智能体的决策及其原因，比看起来难得多</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>当一个人做出重要决定时，事后取证是不完整的，但可能的。电子邮件、录音、书面笔记和参与者的证词，构成了一种部分记录。法律体系围绕这类不完整证据建立了几百年的程序。</p>
+        <p>当AI智能体做出重要决定时，取证问题在结构上是不同的。现有记录并不是对所发生事情的不完整描述。在大多数已部署系统中，它是唯一被设计为留存的层面——而且通常只包含智能体做了什么，而不是为什么。</p>
+
+        <h2>什么被记录，什么在决策</h2>
+        <p>大多数智能体部署记录行为和输出：发起的API调用、检索的文档、发送的消息、传达的决策。这些记录对问责至关重要，但它们是效果的日志，而非推理的日志。推断步骤——从输入到决策的路径——不会写入标准部署栈的任何地方。它发生在模型的前向传播过程中，在输出发出之前就被丢弃了。</p>
+        <p>这不是疏漏。在生产系统中记录大型模型推断的完整中间状态是不切实际的：在规模化时，每个智能体每天会产生任何存储预算都无法预期的数据量。但其后果是：日志记录与实际决策过程之间存在取证差距。审查智能体行为的调查者可以观察输出以及当时上下文中的输入。连接两者的推理路径是不可恢复的。</p>
+        <p>这一差距在多步骤智能体工作流中会进一步扩大。当一个智能体调用工具、检索信息、将其汇总，然后基于汇总采取行动时，中间汇总是短暂的——存在于一个上下文窗口中，在下一个中消失。如果该行动被证明存在问题，形成该行动的汇总可能已经消失。审计轨迹记录了工具被调用和行动被采取，但不记录联结两者的中间表示。</p>
+
+        <h2>硬件节点</h2>
+        <p>对于部署在硬件邻近场景中的智能体——安全基础设施、工业控制、医疗设备——取证差距与根本原因分析的监管要求相交叉。当一个认证系统发生故障时，认证框架通常要求故障模式可重现且可分析。固件更新有版本控制；配置更改有可回滚的日志记录。</p>
+        <p>嵌入这些堆栈的AI智能体引入了一个层次，其内部状态既无法以相同意义进行版本化，也无法以相同意义进行重现。具有相同权重的模型，在相同输入下，如果采样参数不同，可能产生不同输出。硬件可以证明模型版本和固件配置，但证明不是取证重建。知道运行的是哪个版本，并不能告诉你不良事件发生时的推断路径是什么。</p>
+        <p>对于安全关键硬件部署，这是一个实质性差距。这意味着对于某类决策——那些模型的推理链至关重要的决策——审计记录无法支持认证框架所假设的那种根本原因分析。将此视为可接受剩余风险的部署方，正在押注一个可能无法对冲的合规赌注。</p>
+
+        <h2>照护节点</h2>
+        <p>在照护场景中，取证差距具有独特的性质。当AI智能体协助做出照护决策——用药提醒、跌倒风险评估、护理计划调整——且结果有争议时，监管机构和法律程序会问：智能体做出该建议的依据是什么？如果答案是"我们有输入数据和输出建议，但推理路径不可恢复"，照护提供者将处于困境之中。</p>
+        <p>照护领域的问责框架假设决策可以事后重建。对于人类临床医生，病历、记录在案的理由和专业证词构成可重建记录。对于AI智能体，缺乏中间推理记录不是文档失误——而是系统构建方式的结构性属性。法院和监管机构不会因为"架构使日志记录不切实际"而感到满意。</p>
+        <p>将取证差距视为未来问题的部署方，误判了时间线。两年后将面临法律审查的照护决策，正在由今天部署的智能体做出。届时可用的取证记录，就是现在正在生成的记录。</p>
+
+        <h2>这需要什么</h2>
+        <p>取证差距无法通过记录更多输出来弥合。它需要在三个层面进行有意识的设计。</p>
+        <p>第一，结构化推理捕获：应要求智能体就驱动重要决策的因素发出结构化摘要，以可与输出一同记录和保存的形式呈现。这不是完整推断的重放，而是在输出时生成的人类可读推理路径说明，并被视为与决策本身并列的强制性产物。</p>
+        <p>第二，为标记决策保存上下文窗口：在可预见事后分析的领域——照护、金融授权、安全执行——高风险决策的完整输入上下文应在访问控制下记录并保留，直至适用该领域的监管保留期届满。上下文是消费它的推理过程唯一可恢复的代理。</p>
+        <p>第三，从一开始就采用具备取证意识的架构：日志记录与决策之间的差距，应被视为架构约束，而非部署后的关切。为高后果领域设计的系统，应将取证可重建性与可用性和正确性并列为一级设计要求。</p>
+        <p>对于在结果存在争议的环境中运作的智能体——照护、硬件、安全——缺乏可恢复的推理记录，不只是工程限制，而是一种法律责任姿态。取证差距，是问责主张走向终结的地方。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>当AI智能体导致争议性结果时，事后还原其决策路径在结构上比传统软件系统困难得多。审计日志记录了行为和输出，但推断步骤——从输入到决策的路径——发生在模型内部并在输出前被丢弃。在多步骤工作流中，中间摘要是短暂的，形成最终行动的中间表示可能已经消失。在硬件邻近的安全关键部署中，这一差距与根本原因分析的监管要求相交叉——硬件证明只能告诉你运行了哪个版本，而无法告诉你推断路径是什么。在照护场景中，监管机构和法律程序将要求知道建议的依据是什么；"推理路径不可恢复"不是令人满意的答案。三个层面的应对措施：结构化推理捕获（在输出时记录推理摘要）、为高风险决策保存完整上下文窗口、以及将取证可重建性作为架构约束而非事后关切。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 所有文章</a>
+        <a href="/zh/blog/trust-bootstrap-problem.html">另见：信任引导问题 →</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
