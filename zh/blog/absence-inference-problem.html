@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>缺席推断问题：AI 智能体基于"未发生之事"采取行动时的问责 — Asaptic Labs</title>
+  <meta name="description" content="AI 智能体会频繁地依据预期信号的缺席采取行动——未响应的患者、沉默的设备、从未到达的密钥轮换确认。这些缺席推断是高风险决策中影响最深远的输入之一，却在问责记录中不留任何正面痕迹。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/absence-inference-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/absence-inference-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/absence-inference-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/absence-inference-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/absence-inference-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/absence-inference-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="缺席推断问题：AI 智能体基于"未发生之事"采取行动时的问责" />
+  <meta property="og:description" content="AI 智能体会频繁地依据预期信号的缺席采取行动——未响应的患者、沉默的设备、从未到达的密钥轮换确认。这些缺席推断在问责记录中不留任何正面痕迹。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/absence-inference-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "缺席推断问题：AI 智能体基于"未发生之事"采取行动时的问责",
+      "description": "AI 智能体会频繁地依据预期信号的缺席采取行动——未响应的患者、沉默的设备、从未到达的密钥轮换确认。这些缺席推断是高风险决策中影响最深远的输入之一，却在问责记录中不留任何正面痕迹。",
+      "url": "https://asaptic.com/zh/blog/absence-inference-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/absence-inference-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "向 Asaptic 提交咨询",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件发送规格简报"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "缺席推断问题", "item": "https://asaptic.com/zh/blog/absence-inference-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:15px;line-height:1.65;color:var(--gray);margin:0}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 后量子安全 × 硬件 × 物理世界照护</span>
+      <h1 class="essay-title">缺席推断问题：AI 智能体基于"未发生之事"采取行动时的问责</h1>
+      <div class="essay-meta"><span class="essay-byline">作者：Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 分钟阅读</span></div>
+      <div class="essay-body">
+        <p>AI 问责框架建立在正面证据之上。做出了一项决策；它基于这些输入；它产生了这个输出。审计追踪追踪存在的内容——智能体观察、权衡和行动的依据。这种结构很好地适用于最可见的一类智能体决策。它不适用于一类同样普遍且通常更为重要的决策：因预期内容未到达而做出的决策。</p>
+
+        <p>AI 智能体定期从沉默中推断。照护智能体每两分钟期望一次生命体征报告，二十分钟没有收到；它推断存在恶化或传感器故障并进行升级处理。硬件智能体期望来自设备群的证明心跳，注意到某台机器已沉默；它推断可能存在入侵并将设备隔离。安全智能体期望定时的加密密钥轮换在午夜前完成；它没有收到确认，触发了警报。在每种情况下，智能体的行动都是合理的。在每种情况下，导致行动的推理链都不是问责记录所显示的内容。</p>
+
+        <p>记录显示了升级、隔离、警报。它没有显示"当预期信号应该到达时，没有信号到达"。驱动决策的缺席在输出中是不可见的——不是因为任何人选择隐藏它，而是因为标准审计架构被构建为记录存在的内容，而不是缺席的内容。</p>
+
+        <h2>为什么缺席推断对问责很重要</h2>
+        <p>缺席推断包含三个对问责都相关且都有丢失风险的组成部分。首先是期望：某些先前的配置或学习行为建立了信号应该到达的预期。该期望的性质——谁设置的、何时设置的、在什么条件下设置的——决定了推断是否合理。其次是窗口：缺席是随时间评估的。同样缺失的信号在五分钟、五小时或五天后意味着不同的事情。用于宣告预期信号缺席的窗口是决策的一个参数，它属于记录。第三是替代假设：缺席是模糊的。没有生命体征报告可能意味着传感器故障、网络中断、患者被转移，或患者病情恶化。智能体的推断偏向于一种假设而非其他，这种权重的依据应该是可审计的。</p>
+
+        <p>这三个组成部分都不会自然地在标准行动日志中浮现。日志记录输出：在 14:23 触发升级。期望、窗口和替代假设权重是大多数日志基础设施不捕获的决策前背景。不良事件后审查审计追踪的审查员看到智能体做了什么，却看不到为什么缺席导致了特定推断，推断在给定配置期望的情况下是否合理，或者窗口是否适合临床或安全背景。</p>
+
+        <h2>在照护交叉点</h2>
+        <p>物理世界照护充满了缺席推断。监测辅助生活环境中老年人的照护智能体持续评估预期模式与观察到的模式：预期睡眠时长、预期活动、预期用药确认、预期对签到提示的响应。当未观察到预期模式时，推断因背景而异——日常变化、早期恶化、急性事件、设备故障。智能体必须使用它拥有的任何信号来区分这些选项，它的权重往往会出错，而出错方式完全取决于已配置的期望。</p>
+
+        <p>当推断错误时，问责问题就很尖锐。根据结果证明是例行传感器中断的缺席进行升级的照护智能体触发了不必要的干预。审计审查开始了：为什么触发了升级？日志显示升级时间和触发规则，却没有显示什么缺席触发了规则、预期信号是什么、它已缺席多长时间，或是否有任何表明该人状态良好的正面信号被权衡以对抗缺席。对缺席信号的缺席记录是问责失落之处。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>管理设备群的硬件智能体依赖持续的证明和心跳信号来维持设备完整性的可见性。当设备停止证明时，推断具有安全相关性：这是硬件故障、网络中断、合法的维护窗口，还是入侵指示器？正确的推断取决于背景——设备类型、先前行为、部署环境——并且出错的后果因错误模式而异。误报隔离会不必要地将设备从服务中移除，漏报则会延迟检测到真正的入侵。</p>
+
+        <p>当隔离决策后来被审查时，审计记录应显示：期望什么证明，它在什么间隔内缺席，有哪些背景信号可用，以及评估了哪些替代假设。大多数硬件智能体部署不会在这个细节级别上生成记录。隔离事件被记录了，但先于它的缺席推理没有被记录。因此，对涉及缺席推断的硬件智能体决策的事后审查是肤浅的——审查员可以确认策略触发了，但无法确认策略是否适合观察到的特定缺席模式。</p>
+
+        <h2>在后量子安全交叉点</h2>
+        <p>密码操作对时序有强烈的期望。密钥轮换计划、证书续期窗口、挑战-响应延迟——这些都是时间契约，其违反本身就是安全信号。管理后量子密钥基础设施的 AI 智能体监视这些违规并对其采取行动。未按计划完成的轮换、从未到达的续期确认、没有回复的挑战：每一个都是缺席推断，每一个都是必须对审计员、监管机构和事件响应者负责的安全决策的输入。</p>
+
+        <p>后量子背景下的缺席推断承载着额外的分量，因为向抗量子算法的过渡引入了新的预期信号——新格式的证明、使用新算法的续期——其缺席模式尚未被充分理解。触发安全响应是因为后量子证明确认未在预期计划内到达的智能体，可能正确识别了迁移失败，或可能正在响应旧算法和新算法格式之间的时序差异。该决策的问责记录必须包括被违反的期望以及将其违反视为安全事件的依据。</p>
+
+        <h2>缺席感知问责需要什么</h2>
+        <p>对标准审计架构的三项变更将使缺席推断可见且可审查。第一，期望记录：定义智能体期望什么信号、在什么间隔内的配置，应作为一等审计对象被记录。它是评估智能体做出的每个缺席推断的前提条件。第二，缺席事件：当配置的期望被违反并推导出推断时，缺席事件本身应该被明确记录——"在窗口 W 内未收到预期信号 X；推断：Y"——在随后的行动之前。这使推理可重建。第三，假设记录：当缺席可以支持多种推断时，智能体在它们之间进行选择的依据应被记录。这不需要记录每个替代可能性；它需要用于选择推断的权重不在评估和行动之间丢失。</p>
+
+        <p>缺席推断问题并不罕见。它出现在每个智能体监视预期条件的领域——这是大多数部署 AI 智能体进行高风险工作的领域。它造成的问责缺口是结构性的和沉默的：存在的记录是准确的，但它们在使推理最关键部分无法审查的方式上系统性地不完整。弥合这一差距需要将缺席信号视为一等输入，而不是真正决策发生的背景。</p>
+
+        <div class="essay-summary">
+          <span class="essay-summary-label">核心要点</span>
+          <p>当 AI 智能体基于预期信号的缺席而行动时——缺失的生命体征报告、沉默的设备、从未完成的密钥轮换——缺席本身通常不会被记录为决策输入。审计追踪显示行动；导致行动的缺席推断是不可见的。这在结构上不同于消极空间问题（智能体不作为）和沉默失败问题（智能体不报告）。缺失的是对缺席信号的记录。缺席感知问责需要记录期望、窗口和推断——而不仅仅是随后的行动。</p>
+        </div>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

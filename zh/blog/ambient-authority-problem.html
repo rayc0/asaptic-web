@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>环境权威问题：AI智能体继承但从未获授的能力 — Asaptic Labs</title>
+  <meta name="description" content="AI智能体可以对其从未正式获得的能力采取行动。智能体进程可访问的每个环境变量、挂载凭证和继承的文件描述符，都是委托人层级从未审查、也从未撤销过的能力。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/ambient-authority-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/ambient-authority-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/ambient-authority-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/ambient-authority-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/ambient-authority-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/ambient-authority-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="环境权威问题：AI智能体继承但从未获授的能力" />
+  <meta property="og:description" content="AI智能体可以对其从未正式获得的能力采取行动。智能体进程可访问的每个环境变量、挂载凭证和继承的文件描述符，都是委托人层级从未审查过的能力。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/ambient-authority-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "环境权威问题：AI智能体继承但从未获授的能力",
+      "description": "AI智能体可以对其从未正式获得的能力采取行动。智能体进程可访问的每个环境变量、挂载凭证和继承的文件描述符，都是委托人层级从未审查过的能力。",
+      "url": "https://asaptic.com/zh/blog/ambient-authority-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/ambient-authority-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic 了解 AI 治理",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件发送查询"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "环境权威问题", "item": "https://asaptic.com/zh/blog/ambient-authority-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:56px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--accent);display:block;margin-bottom:16px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim);margin-bottom:56px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body h2{font-size:20px;font-weight:600;margin:40px 0 16px;line-height:1.3}.essay-body p{font-size:16px;line-height:1.85;color:var(--gray);margin-bottom:20px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);background:var(--surface)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;line-height:1.75;color:var(--gray-dim);margin:0}.essay-footer{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray);transition:color .2s}.essay-footer-back:hover{color:var(--accent)}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <span class="essay-label">NOTES FROM THE CROSSINGS · 2026-06-14</span>
+    <h1 class="essay-title">环境权威问题</h1>
+    <p class="essay-subtitle">AI智能体继承但从未获授的能力</p>
+    <div class="essay-meta">
+      <span>Asaptic Labs</span>
+      <span>5 分钟阅读</span>
+      <span>× 量子安全 × 硬件 × 人类照护</span>
+    </div>
+    <div class="essay-body">
+      <p>当系统向AI智能体授予权限时，存在一个委托人——人或机构——审查了该授权并接受了其责任。授权模型依赖于这种审查。权限应该存在，是因为有人决定了它们应该存在；撤销是有意义的，因为有具体的东西可以撤销。</p>
+
+      <p>环境权威以一种安静的方式打破了这个模型。智能体不需要请求其执行环境中已经存在的能力。作为环境变量注入的云服务凭证、挂载到容器中的文件系统路径、从主机可访问的网络接口、从父进程继承的文件描述符、对共享内存区域的隐式写访问——所有这些都是智能体进程无需任何显式授权即可访问的能力。没有委托人在智能体部署的上下文中审查过它们。没有审计记录注明智能体持有它们。当智能体使用它们时，没有权限事件可以记录，因为该能力从未被正式授予。</p>
+
+      <h2>环境权威如何积累</h2>
+      <p>环境权威通过普通的操作实践积累。容器镜像由平台团队构建，他们的工作是基础设施，而不是智能体安全。镜像继承了使部署正常工作的环境变量——数据库连接字符串、API令牌、服务账户凭证。随后，智能体被部署到该镜像中，因为它是智能体其他依赖项的正确运行时环境。平台团队并没有将凭证暴露设计为智能体权限授予。他们没有这样考虑。但从智能体的进程角度来看，这些凭证是可访问的，而访问它们不需要任何特殊操作。</p>
+
+      <p>权限积累问题描述的是随时间请求和收集能力的智能体——每个请求单独来看都是合理的，但总体上危险地宽泛。环境权威在结构上是不同的。这些能力从未被请求过。它们早于智能体的部署而存在。智能体没有积累它们；它在进程启动时继承了它们。这种区别对审计轨迹很重要：权限积累审查可以追踪授权事件的序列。环境权威审查必须从执行环境本身开始，并向后推理智能体可以访问什么——这是一项困难得多的取证任务。</p>
+
+      <h2>硬件表面与物理世界交叉点</h2>
+      <p>环境权威问题在嵌入式硬件部署中边缘最为锋利。照护监测设备具有特定的能力配置：它公开的传感器、它控制的执行器、它运行的网络接口。该配置是由了解每种能力物理后果的工程师为特定操作范围设计的。</p>
+
+      <p>当AI智能体部署到该设备上时，它继承了平台的完整能力配置。智能体的任务可能很窄——观察和总结；在阈值违规时发出警报——但其进程可以访问设备公开的每个接口。如果智能体后来被更新，如果其上下文窗口被对抗性输入污染，或者如果供应链攻击改变了其行为，爆炸半径不受智能体预期范围的限制。它受设备物理能力表面的限制——一个更大的边界，从未被审查为智能体权限授予。</p>
+
+      <p>在照护环境中，这不是理论上的担忧。一个对执行器接口具有环境访问权的监控智能体，在对抗性条件下，是一个可以影响物理环境的智能体。智能体被设计做什么与其进程可以访问什么之间的差距，正是环境权威问题所创造的攻击面。</p>
+
+      <h2>后量子维度</h2>
+      <p>环境凭证——API令牌、服务账户密钥、云访问凭证——通常是不记名令牌或使用经典非对称密码学认证的凭证。它们是长期存在的，很少以安全态势要求的频率进行轮换。在许多部署中，它们在服务的整个生命周期内都是静态的。</p>
+
+      <p>后量子过渡加剧了这一问题。今天存在的环境凭证可能使用在凭证退役之前就变得脆弱的密码算法签名或保护。在凭证生命周期内的任何时间点捕获环境的攻击者，凭借足够的未来能力，可以在原始部署结束后很长时间内使用它来伪造授权操作。这是"现在收割，以后解密"模式应用于环境权威本身：代表智能体执行环境无限期行动的能力，因为凭证从未被限定在有界授权上下文中，也从未使用量子抗性算法签名。</p>
+
+      <h2>设计响应：显式能力放弃</h2>
+      <p>最小足迹原则说，智能体应该只获取它需要的能力。环境权威问题揭示了一个必要的推论：智能体还应该明确放弃其环境中它不需要的能力。放弃是一个主动步骤，而不是缺乏行动。智能体启动序列应该枚举从其进程可访问的能力——凭证、接口、路径、描述符——并正式排除那些超出其操作范围的能力。排除应该像授权一样记录为授权事件。这创建了一个可审计的记录，记录智能体选择不使用的内容，这与记录它使用的内容同样重要。</p>
+
+      <p>这创造了一个可由委托人层级审查的边界。并且创造了一个可以在基础设施层面强制执行的安全不变量：智能体环境被剥离以匹配其声明的能力放弃声明的部署，是在智能体运行之前已在结构上限制了爆炸半径的部署。</p>
+
+      <p>环境权威问题之所以安静，是因为它不需要任何行动。能力随环境而来。智能体从不请求。授权从不发生。审计轨迹没有任何显示，因为没有正式授予任何东西。这种沉默就是漏洞：没有审查的继承权威就是没有问责的权威，在智能体对物理世界采取行动的领域，问责是不可选择的。</p>
+    </div>
+
+    <div class="essay-summary">
+      <span class="essay-summary-label">摘要</span>
+      <p>AI智能体可以对其从未正式获得的能力采取行动。智能体进程可以访问的每个环境变量、挂载的凭证和继承的文件描述符都是委托人层级从未审查的能力。与权限积累不同——智能体随时间收集授权——环境权威早于智能体部署而存在，在审计轨迹中不留任何授权事件。在照护环境的嵌入式硬件中，继承的平台能力将智能体的潜在爆炸半径扩展到远超其预期操作范围的程度。受经典密码学保护的环境凭证在后量子过渡中加剧了风险。设计响应是在启动时显式放弃能力：枚举可访问的内容，正式排除超出范围的内容，并将排除记录为授权事件。没有审查的继承权威就是没有问责的权威。</p>
+    </div>
+
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zh/blog/" class="essay-footer-back">&larr; 全部文章</a>
+    </div>
+  </main>
+  <footer style="border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
