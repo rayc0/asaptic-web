@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>自动化萎缩问题：因废弃导致监督能力退化时的问责机制 — Asaptic Labs</title>
+  <meta name="description" content="表现足以取代人类实践的AI智能体，同样会侵蚀本应捕获其失误的监督能力。当智能体长期可靠处理某类决策时，人类便停止练习有实质意义的监督所需的技能。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/automation-atrophy-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/automation-atrophy-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/automation-atrophy-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/automation-atrophy-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/automation-atrophy-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/automation-atrophy-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="自动化萎缩问题：因废弃导致监督能力退化时的问责机制" />
+  <meta property="og:description" content="表现足以取代人类实践的AI智能体，同样会侵蚀本应捕获其失误的监督能力。当智能体长期可靠处理某类决策时，人类便停止练习有实质意义的监督所需的技能。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/automation-atrophy-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "自动化萎缩问题：因废弃导致监督能力退化时的问责机制",
+      "description": "表现足以取代人类实践的AI智能体，同样会侵蚀本应捕获其失误的监督能力。当智能体长期可靠处理某类决策时，人类便停止练习有实质意义的监督所需的技能。",
+      "url": "https://asaptic.com/zh/blog/automation-atrophy-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/automation-atrophy-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic 了解 AI 治理",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系 Asaptic Labs"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "自动化萎缩问题", "item": "https://asaptic.com/zh/blog/automation-atrophy-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:28px 32px;border:1px solid var(--border);border-left:3px solid var(--accent);background:rgba(0,200,150,.02)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;line-height:1.7;color:var(--gray);margin:0}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 &nbsp;×&nbsp; 硬件 &nbsp;×&nbsp; 人类关怀</span>
+      <h1 class="essay-title">自动化萎缩问题：因废弃导致监督能力退化时的问责机制</h1>
+      <p class="essay-subtitle">表现足以取代人类实践的智能体，同时也侵蚀了本应捕获其失误的监督能力。安全网在纸面上维持已久，实际上早已失效。</p>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>AI智能体的问责架构假设回路中存在有能力的人类——能够审查决策、识别异常、并在出错时行使知情否决的操作员。这一假设在部署时几乎普遍受到审视，在部署生命周期内却几乎从不被重新检验。</p>
+
+        <p>自动化萎缩问题不是关于人类过度信任智能体——那是自动化偏见问题，已有充分记录。这涉及的是更具结构性的现象：当智能体在较长时间内可靠处理某类决策时，人类操作员停止练习那些使他们能够对该类决策进行有意义监督的技能。监督基础设施在形式上依然存在。赋予其实际意义的能力，在审计记录之下悄然侵蚀，直到被需要的那一刻才暴露。</p>
+
+        <p>技能需要在真实条件下练习。因智能体处理了网络流量分析而停止亲自审查的安全分析员，会逐渐失去使他们能够独立评估智能体建议的威胁模式识别能力。他们的监督功能退化，不是因为变得过于自信——而是因为失去了监督所赖以存在的基础。当智能体最终遇到无法有效处理的案例时——每个部署系统都会遇到——人类安全网已萎缩到无法可靠捕获错误的程度。</p>
+
+        <p>这在一个具体方面区别于自动化偏见：偏见描述的是决策时刻的一种倾向，一种精心设计的界面可以部分抵消的推卸习惯。萎缩描述的是在数月乃至数年部署中发生改变的能力状态。更好的仪表板无法抵消萎缩。唯有刻意练习才能抵消。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>后量子迁移需要在算法选择、威胁模型更新和证书验证边缘案例方面持续的人类判断。这些不是例行操作——而是需要在快速演变的领域中保持专业知识的判断调用。可靠处理经典密码操作的智能体会导致经验丰富的分析员从决策流中脱离。在足够长的部署期内，当初在场的分析员离职；他们的继任者在一个智能体建议被批准而非评估的环境中接受培训。</p>
+
+        <p>当真正新颖的威胁出现在过渡边界时——超出智能体训练分布、或涉及智能体历史接触有限的算法家族——组织独立识别和应对的能力已经退化。问责记录显示人类对智能体决策的持续批准。它不显示随着员工保持的专业知识收窄到智能体从不出错的决策范围，这种批准变得越来越缺乏知情基础。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>管理工业设备、建筑基础设施或物理机器人队列的智能体会训练其操作员信任其输出。在智能体诊断持续准确预测设备行为的情况下，维护技术员停止进行独立检查。随着时间推移，在没有智能体介入的情况下解读传感器数据所需的技能会退化。</p>
+
+        <p>当智能体对新型故障模式进行错误分类时——它没有历史类比的退化模式——本应捕获错误的技术员不再练习捕获所需的诊断模式识别。人工检查出现在维护记录中，却不再代表有效的第二意见。这是一个问责设计失败：系统被建立为受益于人类监督，却没有被建立为保存其所依赖的人类监督能力。</p>
+
+        <h2>物理世界护理交叉点</h2>
+        <p>在护理场景中，临床观察技能是智能体辅助监测和筛查的主要后备支撑。在数月乃至数年内，可靠识别哪些居民需要关注的护理智能体会塑造护理人员的实践模式。向智能体发出的护理人员将其独立临床观察与真实结果校准的频率降低。智能体的输出逐渐取代独立检查，而非补充它。</p>
+
+        <p>当居民出现超出智能体可靠运行范围的病况时——新颖的表现形式、非典型的症状组合、在训练分布中缺席的病况——护理人员的独立临床判断恰恰是所需要的。这种判断依赖于通过积极使用而保持的观察技能。在智能体良好处理大量标准案例的环境中，这些技能使用频率降低，在最关键时刻的可靠性也因此下降。</p>
+
+        <h2>问责架构必须解决的问题</h2>
+        <p>最低限度的回应是将监督能力视为需要明确维护的部署资产——不是在部署时一次性维护，而是在系统整个运营生命周期内持续维护。否决的形式权威不能替代有效否决的保持能力。</p>
+
+        <p>问责架构必须包括刻意的能力保存机制：对统计上代表性样本的智能体决策进行强制性无辅助审查、对智能体看不到的保留案例的定期能力验证，以及监督角色轮换以防止对智能体处理良好的决策过度专业化。智能体的可靠性记录不是减少对人类监督能力投入的理由——它是证明部署正在改变监督任务要求的证据。</p>
+
+        <p>更深层的含义是，监督能力维护的范围必须针对智能体退化时最重要的故障模式，而非针对智能体可靠处理的例行决策。针对不坠落而设计的安全网不是安全网。假设其没有主动维护的能力的问责架构，无法可信地声称其形式上记录的监督。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>自动化萎缩问题描述了持续高质量智能体表现导致的人类监督能力渐进侵蚀。当智能体可靠地处理某类决策时，人类停止练习独立评估这些决策所需的技能。在后量子安全领域，分析员从他们不再练习评估的决策流中脱离；他们的继任者针对智能体批准而非独立评估接受培训。在硬件队列管理中，当智能体产生可靠预测而独立检查变得不那么频繁时，诊断技能萎缩。在物理世界护理中，当智能体处理大量标准案例时，临床观察技能退化。问责架构必须通过强制性无辅助审查、定期能力验证和角色轮换来明确维护监督能力——因为最重要的故障模式恰恰是智能体无能为力之处。</p>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
