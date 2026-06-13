@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da terminação — Asaptic Labs</title>
+  <meta name="description" content="Parar um agente de IA parece a salvaguarda mais simples. Na prática, é uma das mais difíceis." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/termination-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/termination-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/termination-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/termination-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/termination-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/termination-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da terminação: quando e como parar um agente de IA, e o que significa quando não se consegue" />
+  <meta property="og:description" content="Um botão de paragem não é uma arquitetura. O verdadeiro problema de terminação atravessa hardware embebido, fluxos de cuidados longos, autenticação criptográfica de sinais de paragem e a transição pós-quântica." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/termination-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema da terminação: quando e como parar um agente de IA, e o que significa quando não se consegue",
+      "description": "Parar um agente de IA parece a salvaguarda mais simples. Na prática, é uma das mais difíceis.",
+      "url": "https://asaptic.com/pt/blog/termination-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/termination-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar a Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/pt/engage.html",
+            "description": "Página de contacto"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "Contacto por e-mail"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "pt",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "Problema da terminação", "item": "https://asaptic.com/pt/blog/termination-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--gray);margin:0}.essay-footer-block{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× SEGURANÇA QUÂNTICA · × HARDWARE · × CUIDADOS NO MUNDO FÍSICO</span>
+      <h1 class="essay-title">O problema da terminação: quando e como parar um agente de IA, e o que significa quando não se consegue</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">Por Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 min de leitura</span>
+      </div>
+      <div class="essay-body">
+        <p>O botão de paragem é a primeira salvaguarda a que se recorre quando um agente de IA se comporta de forma inesperada. Parece simples: enviar um sinal de paragem, o agente pára, a situação fica contida. Na prática, o problema da terminação é um dos mais difíceis na arquitetura agentiva, não porque parar seja tecnicamente complicado, mas porque as condições em que parar é seguro, autenticado e significativo são muito mais estreitas do que parecem.</p>
+
+        <h2>A ilusão do botão de paragem</h2>
+        <p>Um botão de paragem não é uma arquitetura. É um botão em cima de uma arquitetura que pode ou não suportar uma paragem segura num dado momento. Um agente no meio de uma transação, de uma escrita de ficheiro, de um envio de mensagem ou de uma atuação física nem sempre pode ser interrompido de forma limpa. A pergunta não é se se consegue cortar a energia a um processo, geralmente consegue-se, mas se isso deixa o mundo num estado melhor do que permitir que o processo termine.</p>
+
+        <p>Esta ambiguidade é estrutural. Sistemas agentivos são desenhados para executar sequências de ações em que cada passo depende do estado anterior. Interromper a sequência a meio não restaura o estado anterior; cria um novo estado que nem o principal original nem o agente tinham planeado. Uma arquitetura de terminação que não considera onde, num fluxo de trabalho, o agente pode ser parado em segurança não é realmente um controlo de segurança.</p>
+
+        <h2>Agentes embebidos e o problema físico de paragem</h2>
+        <p>O problema da terminação é mais agudo para agentes embebidos em hardware que opera no mundo físico. Um agente de software em ambiente cloud pode ser parado com um sinal de processo e reiniciado a partir de um checkpoint conhecido. Um agente a correr num dispositivo embebido, uma unidade de reabilitação numa instalação de cuidados ou um sistema de monitorização clínica, pode estar fisicamente inacessível quando é preciso pará-lo.</p>
+
+        <p>Partições de rede, eventos de energia e falhas de dispositivo podem cortar a ligação pela qual chegaria um sinal remoto de paragem. Um dispositivo que não consegue receber a ordem continua a executar. Se as suas instruções o autorizaram a agir autonomamente durante falhas de conectividade, uma escolha necessária para continuidade de cuidados, ele continuará sem saber que um principal tentou revogar essa autoridade.</p>
+
+        <p>A atestação com raiz em hardware diz que o agente a correr no dispositivo é aquele que foi autorizado. Não resolve o problema de alcançabilidade. Um dispositivo com credenciais válidas mas ligação de rede cortada é, da perspetiva do principal, um agente a operar sem supervisão, potencialmente a executar decisões que já foram rescindidas. O registo de responsabilização no dispositivo pode estar intacto, mas as ações do agente no mundo já estão a decorrer.</p>
+
+        <h2>Fluxos longos: parar como ato perigoso</h2>
+        <p>Em ambientes de cuidados, um agente que está a meio de uma tarefa quando chega um sinal de paragem apresenta um dilema particular. Pode estar no meio de uma sequência de monitorização, de uma escalada de alerta ou de uma intervenção documentada. Parar imediatamente satisfaz a letra do comando de terminação e pode criar o dano que o principal tentava prevenir: um paciente sem monitorização ativa, uma escalada iniciada mas não concluída, um registo de cuidados correto até ao ponto de interrupção e silencioso depois.</p>
+
+        <p>Esta é a tensão profunda da terminação no domínio dos cuidados: o agente que não pode ser parado é perigoso, mas o agente que pode ser parado a qualquer momento, a meio da monitorização ou da escalada, também é perigoso. Uma arquitetura bem desenhada deve incluir não apenas um mecanismo de paragem, mas pontos de paragem seguros definidos dentro de cada fluxo e um procedimento de encerramento que leve o agente ao ponto seguro mais próximo antes de parar.</p>
+
+        <h2>O problema de autenticação dos sinais de paragem</h2>
+        <p>Um sinal de paragem é uma instrução. Como qualquer instrução enviada a um agente que opera num ambiente adversarial, tem de ser autenticado. Um atacante capaz de forjar um comando de paragem plausível pode silenciar um agente precisamente quando ele desempenha uma função legítima de segurança: revogar credenciais, registar uma anomalia detetada ou escalar um alerta. A capacidade de terminar um agente é também, da perspetiva do atacante, a capacidade de cegar um sistema de deteção no momento da intrusão.</p>
+
+        <p>Isto cria uma simetria desconfortável. Sinais de paragem têm de ser fáceis de emitir o suficiente para que um principal legítimo atue depressa numa emergência, e difíceis de forjar o suficiente para que um adversário não consiga suprimir funções de responsabilização. Estes requisitos puxam em direções opostas. Chaves com raiz em hardware que assinam comandos de paragem vinculam a autoridade de terminação a um dispositivo e uma chave específicos, mas a gestão de chaves passa então a fazer parte da sobrecarga operacional de cada implantação.</p>
+
+        <h2>Sinais de paragem pós-quânticos</h2>
+        <p>A transição pós-quântica acrescenta uma camada ao problema de autenticação da terminação que é frequentemente ignorada. Os sinais de paragem autenticados de hoje dependem normalmente de criptografia assimétrica clássica. Um adversário quântico suficientemente capaz poderia forjar essas assinaturas, não em tempo real, mas potencialmente no futuro usando tráfego capturado antes. Para agentes com longas vidas operacionais, os sinais emitidos hoje podem ser verificáveis durante anos e tornar-se forjáveis quando o limiar quântico for atravessado.</p>
+
+        <p>Para dispositivos embebidos em ambientes de cuidados, que podem operar cinco a dez anos sem substituição de firmware, isto não é um horizonte hipotético. Um dispositivo fabricado hoje com sinais de paragem autenticados classicamente pode ainda estar em funcionamento quando as premissas criptográficas subjacentes forem quebradas. Vincular a autoridade de terminação a material de chave resistente ao pós-quântico no momento de fabrico é o mecanismo que mantém o sinal fiável durante a vida operacional do dispositivo.</p>
+
+        <h2>O que uma arquitetura de terminação exige</h2>
+        <p>Uma arquitetura séria de terminação tem quatro componentes que devem existir antes da implantação de qualquer agente. Primeiro, um mapa de pontos seguros de paragem ao nível do fluxo de trabalho. Segundo, um protocolo de encerramento para cada fluxo que, ao receber um sinal de paragem, leva o agente ao ponto seguro mais próximo em vez de parar imediatamente. Terceiro, um mecanismo autenticado de sinal de paragem que use material de chave adequado à vida de implantação do dispositivo e resistente a falsificação por adversários com capacidades futuras. Quarto, uma política de continuação offline que especifique exatamente o que o agente pode e não pode fazer quando o principal está inalcançável.</p>
+
+        <p>Nenhum destes componentes é o botão de paragem. O botão continua disponível como último recurso: corte físico de energia, SIGKILL do processo, reset de hardware. Mas últimos recursos que também são primeiros recursos não são controlos de segurança. São admissões de que a arquitetura nunca foi desenhada para parar com elegância. Em domínios onde as decisões do agente chegam a pessoas reais em tempo real, a paragem graciosa é um requisito de desenho.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Resumo</span>
+        <p>Um sinal de terminação parece simples, mas parar um agente em segurança exige pontos seguros de paragem, protocolos de encerramento, autenticação resistente ao ciclo de vida do dispositivo e uma política clara para operação offline.</p>
+      </div>
+      <div class="essay-footer-block">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+        <a href="/pt/blog/" class="essay-footer-back">&larr; Voltar ao blog</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

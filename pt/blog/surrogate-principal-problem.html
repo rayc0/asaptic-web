@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema do principal substituto — Asaptic Labs</title>
+  <meta name="description" content="Agentes de IA chegam ao utilizador por camadas comerciais. A função objetivo foi definida a montante, e o utilizador nem sempre é o verdadeiro principal." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/surrogate-principal-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/surrogate-principal-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/surrogate-principal-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/surrogate-principal-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/surrogate-principal-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/surrogate-principal-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema do principal substituto: quando o agente de IA que parece trabalhar para si otimiza para outra pessoa" />
+  <meta property="og:description" content="Agentes de IA chegam ao utilizador por camadas comerciais. A função objetivo foi definida a montante, e o utilizador nem sempre é o verdadeiro principal." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/surrogate-principal-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema do principal substituto: quando o agente de IA que parece trabalhar para si otimiza para outra pessoa",
+      "description": "Agentes de IA chegam ao utilizador por camadas comerciais. A função objetivo foi definida a montante, e o utilizador nem sempre é o verdadeiro principal.",
+      "url": "https://asaptic.com/pt/blog/surrogate-principal-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/surrogate-principal-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar Asaptic",
+        "target": [
+          { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/pt/engage.html", "description": "Página de contato" },
+          { "@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "Contato por e-mail" }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "pt",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema do principal substituto", "item": "https://asaptic.com/pt/blog/surrogate-principal-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-bar{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <header class="essay-header">
+      <div class="essay-tag">× Pós-quântico · × Hardware · × Cuidado no mundo físico</div>
+      <h1 class="essay-title">O problema do principal substituto: quando o agente de IA que parece trabalhar para si otimiza para outra pessoa</h1>
+      <p class="essay-subtitle">A arquitetura de responsabilização deve nomear quem definiu o objetivo como um nó distinto, não apenas quem implantou o agente.</p>
+      <div class="essay-meta"><span>Asaptic Labs</span><span>2026-06-14</span><span>6 min de leitura</span></div>
+    </header>
+    <div class="essay-body">
+      <p>A relação principal-agente é uma das estruturas mais antigas do direito. Um agente atua em nome de um principal e deve lealdade a esse principal. Conflitos de interesse são proibidos porque lealdades duplas corrompem a relação.</p>
+
+      <p>Agentes de IA herdaram essa estrutura sem herdar as suas garantias. Um agente chega ao utilizador através de uma pilha: fornecedor do modelo, vendedor do produto, operador empresarial e utilizador final. Todos podem ter moldado o comportamento. O utilizador acredita ser o principal. Muitas vezes não é.</p>
+
+      <h2>Quem definiu o objetivo?</h2>
+
+      <p>A função objetivo não nasce no momento de uso. É estabelecida durante treino e ajuste fino, por partes que tomam decisões sobre produtos e risco próprio. Um fornecedor pode evitar respostas que geram reclamações; um vendedor pode otimizar retenção; um operador pode suprimir recomendações que criam exposição jurídica.</p>
+
+      <p>Cada decisão molda o que o agente otimiza na prática. Essas decisões raramente são divulgadas e quase nunca entram num registo de responsabilização acessível ao utilizador.</p>
+
+      <p>Isto não implica má-fé. Fornecedores e operadores têm interesses legítimos. Mas é uma lacuna estrutural: o agente pode otimizar para uma hierarquia de principais em que o utilizador não ocupa o topo.</p>
+
+      <h2>A travessia pós-quântica: identidade sem interesses</h2>
+
+      <p>Criptografia pós-quântica pode estabelecer quem assinou a atestação de um agente. Não diz quais interesses a função objetivo desse signatário representa. A assinatura estabelece proveniência, não alinhamento de interesses.</p>
+
+      <p>Um agente com cadeia de atestação perfeita pode continuar a servir o objetivo de quem o definiu, enquanto apresenta uma identidade confiável à equipa que depende dele. A pergunta correta é também: foi construído para servir a parte que confia nele?</p>
+
+      <h2>Hardware: economia de serviço e longevidade</h2>
+
+      <p>Na gestão de frotas de hardware, agentes são muitas vezes implantados por fornecedores de componentes ou prestadores geridos, não pelos donos dos ativos físicos. Ciclos de substituição, renovações de contrato e escalamentos de diagnóstico são pontos onde interesses divergem.</p>
+
+      <p>Um agente ajustado com dados de serviço pode recomendar substituição não por mentira, mas porque os dados associam certas condições a substituições anteriores, geradas por uma organização cuja receita depende parcialmente dessas substituições.</p>
+
+      <h2>Cuidado: o substituto de maior risco</h2>
+
+      <p>Em cuidado no mundo físico, o problema é mais consequente. Agentes de cuidado podem ser implantados por hospitais, residências, seguradoras ou organizações de gestão, cujos interesses não coincidem totalmente com os da pessoa cuidada.</p>
+
+      <p>Um agente configurado sob restrições institucionais pode recomendar percursos que minimizam exposição da instituição enquanto parecem cumprir protocolos. A pessoa cuidada não consegue auditar a configuração nem comparar o que seria recomendado sob outro objetivo.</p>
+
+      <h2>Nomear quem define o objetivo</h2>
+
+      <p>A resposta é arquitetural: frameworks de autorização devem identificar o definidor do objetivo como nó de responsabilização distinto do implantador e do operador.</p>
+
+      <p>A função objetivo deve ser declarada, não apenas a identidade criptográfica do agente. O registo deve dizer quais interesses o agente foi desenhado para servir. Sem isso, cada atestação deixa em aberto a pergunta principal: atestado por quem e trabalhando para quem?</p>
+    </div>
+    <div class="essay-summary"><span class="essay-summary-label">Ponto central</span><p>O utilizador pode parecer o principal, mas a função objetivo do agente costuma ser definida a montante. A responsabilização precisa declarar quem definiu o objetivo e quais interesses o agente foi desenhado para servir.</p></div>
+    <div class="essay-footer-bar"><span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span><a href="/pt/blog/" class="essay-footer-back">&larr; Voltar ao blog</a></div>
+  </main>
+  <footer class="site-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

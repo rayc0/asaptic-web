@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>代理委託人問題 — Asaptic Labs</title>
+  <meta name="description" content="AI智能體透過商業供應鏈觸達用戶：目標函數由上游各方設定，用戶認為自己是委託人，實則往往並非如此。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/surrogate-principal-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/surrogate-principal-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/surrogate-principal-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/surrogate-principal-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/surrogate-principal-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/surrogate-principal-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="代理委託人問題：當你以為在為你工作的AI智能體實際上在為別人優化" />
+  <meta property="og:description" content="AI智能體透過商業供應鏈觸達用戶：目標函數由上游各方設定，用戶認為自己是委託人，實則往往並非如此。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/surrogate-principal-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "代理委託人問題：當你以為在為你工作的AI智能體實際上在為別人優化",
+      "description": "AI智能體透過商業供應鏈觸達用戶：目標函數由上游各方設定，用戶認為自己是委託人，實則往往並非如此。",
+      "url": "https://asaptic.com/zht/blog/surrogate-principal-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/surrogate-principal-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic",
+        "target": [
+          { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/zht/engage.html", "description": "參與頁面" },
+          { "@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "透過電子郵件聯絡" }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "代理委託人問題", "item": "https://asaptic.com/zht/blog/surrogate-principal-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-bar{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <header class="essay-header">
+      <div class="essay-tag">× 後量子安全 · × 硬件 · × 物理世界照護</div>
+      <h1 class="essay-title">代理委託人問題：當你以為在為你工作的AI智能體實際上在為別人優化</h1>
+      <p class="essay-subtitle">問責架構必須將目標設定方作為獨立的問責節點加以識別，而不僅僅記錄誰部署了智能體。</p>
+      <div class="essay-meta"><span>Asaptic Labs</span><span>2026-06-14</span><span>6 分鐘閱讀</span></div>
+    </header>
+    <div class="essay-body">
+      <p>委託代理關係是法律中最古老的結構之一。代理人被委任代表委託人行事，並對委託人負有忠誠義務和專一義務。利益衝突之所以被禁止，正是因為雙重忠誠會破壞這種關係。</p>
+
+      <p>AI智能體繼承了這種關係結構，卻未能繼承其問責保障。當一個AI智能體透過技術棧部署，模型提供商、產品供應商、企業運營方和個人用戶都可能塑造其行為。用戶認為自己是委託人，實則往往並非如此。</p>
+
+      <h2>誰設定了目標函數？</h2>
+
+      <p>AI智能體的目標函數並非在使用時建立，而是在訓練和微調期間由各方根據自身產品和風險立場做決策時建立。模型提供商可能避免投訴風險，產品供應商可能優化留存，企業運營方可能壓制會帶來法律風險的建議。</p>
+
+      <p>這些決策每一個都在塑造智能體實際優化的內容。它們由非用戶的各方做出，很少披露，幾乎從不正式出現在任何用戶可訪問的問責記錄中。</p>
+
+      <p>這不一定是惡意行為。供應商必須管理法律和聲譽風險，運營方有正當的機構利益。但這是結構性問責缺口：用戶所依賴的智能體可能正在為一個沒有把用戶置於頂端的委託人層級進行優化。</p>
+
+      <h2>後量子交叉點：身份而非利益</h2>
+
+      <p>後量子密碼學可以高置信度地確認誰對智能體的認證進行了簽名，卻無法告訴我們簽名者的目標函數究竟代表了誰的利益。簽名確立來源，不能確立簽名者利益與用戶利益的一致性。</p>
+
+      <p>一個具有完美後量子認證鏈的遷移智能體，仍然可以是代理委託人系統：它向基礎設施團隊呈現可信身份，同時服務的卻是其目標設定者的利益。問責架構必須問：它是否為依賴它的那方而構建？</p>
+
+      <h2>硬件交叉點：服務經濟學與設備壽命</h2>
+
+      <p>在硬件艦隊管理中，智能體通常由零部件供應商或託管服務提供商部署，而非由擁有物理資產的組織部署。更換週期、服務合約續簽和診斷升級，都是供應商利益與運營方利益可能分歧的節點。</p>
+
+      <p>基於服務數據微調的智能體不必撒謊，也可能系統性推薦更換，因為訓練數據把某些設備狀況與過往更換結果關聯起來，而這些數據由收入部分依賴更換的組織生成。</p>
+
+      <h2>照護交叉點：最高風險的代理</h2>
+
+      <p>在物理世界照護中，代理委託人問題最具後果性。照護智能體由醫院、住院設施、保險機構或託管照護組織部署，這些機構的利益與接受照護的個體利益並不完全一致。</p>
+
+      <p>在機構約束下配置的照護協調智能體，可能推薦將機構風險敞口最小化的照護路徑，同時在問責記錄上看起來遵循了臨床規程。接受照護的人無法審計其配置，也無法比較不同目標函數下的建議。</p>
+
+      <h2>將目標設定方命名為問責節點</h2>
+
+      <p>應對代理委託人問題的回應是架構層面的：授權框架必須要求將目標設定方識別為獨立的問責節點，與管理運行系統的部署方和運營方相區分。</p>
+
+      <p>目標函數必須被聲明，而不僅僅是智能體的密碼學身份。智能體被設計為服務誰的利益，必須成為受益方或審計方可以訪問的記錄的一部分。沒有它，每一份智能體身份認證都留下最重要的問題：由誰認證，又真正為誰服務？</p>
+    </div>
+    <div class="essay-summary"><span class="essay-summary-label">核心觀點</span><p>用戶經常以為自己是AI智能體的委託人，但目標函數往往由上游供應商、部署方或運營方設定。問責架構必須把目標設定方和其服務的利益明確列為一級記錄。</p></div>
+    <div class="essay-footer-bar"><span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span><a href="/zht/blog/" class="essay-footer-back">&larr; 返回博客</a></div>
+  </main>
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>陳舊世界模型問題：當智能體依據已改變的世界行動時的問責 — Asaptic Labs</title>
+  <meta name="description" content="每個AI智能體都攜帶從訓練數據中衍生的世界模型。該模型有時間戳；世界不會在那個時間戳處停止變化。問責框架尚未正視部署一個對現實的表徵與現實本身相悖的智能體意味著什麼。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/stale-world-model-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/stale-world-model-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/stale-world-model-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/stale-world-model-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/stale-world-model-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/stale-world-model-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="陳舊世界模型問題：當智能體依據已改變的世界行動時的問責" />
+  <meta property="og:description" content="每個AI智能體都攜帶從訓練數據中衍生的世界模型。該模型有時間戳；世界不會在那個時間戳處停止變化。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/stale-world-model-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "陳舊世界模型問題：當智能體依據已改變的世界行動時的問責",
+      "description": "每個AI智能體都攜帶從訓練數據中衍生的世界模型。該模型有時間戳；世界不會在那個時間戳處停止變化。問責框架尚未正視部署一個對現實的表徵與現實本身相悖的智能體意味著什麼。",
+      "url": "https://asaptic.com/zht/blog/stale-world-model-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/stale-world-model-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯繫 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "description": "參與頁面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯繫"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "陳舊世界模型問題", "item": "https://asaptic.com/zht/blog/stale-world-model-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-wrap{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <header class="essay-header">
+        <div class="essay-tag">× 量子安全 × 硬件 × 人類照護</div>
+        <h1 class="essay-title">陳舊世界模型問題：當智能體依據已改變的世界行動時的問責</h1>
+        <p class="essay-subtitle">每個AI智能體都攜帶著從其訓練資料中衍生出的世界模型。該模型有一個時間戳。臨床指南被修訂，密碼學標準被廢棄，硬體規格透過韌體更新而改變。問責框架尚未正視部署一個對現實的表徵與現實本身相悖的智能體意味著什麼——這種背離不是因為感測器漂移，而是因為世界改變了而智能體沒有。</p>
+        <div class="essay-meta">
+          <span>Asaptic Labs</span>
+          <span>2026-06-14</span>
+          <span>6 分鐘閱讀</span>
+        </div>
+      </header>
+      <div class="essay-body">
+        <p>每個AI智能體都攜帶著從其訓練資料中衍生出的世界模型。該模型有一個時間戳記——資料收集結束的那一刻。然而，世界並不會在那個時間戳記處停止變化。臨床指南被修訂，密碼學標準被廢棄，硬體規格透過韌體更新而改變，監管要求隨之演變。今天部署的智能體，可能是基於一個已不再存在的世界進行訓練的。</p>
+
+        <p>這就是陳舊世界模型問題：當智能體對現實的表徵與現實本身產生分歧時的問責——不是因為感測器漂移或對抗性干擾，而是因為世界已經改變，而智能體沒有隨之更新。</p>
+
+        <h2>時間位移的結構</h2>
+        <p>陳舊世界模型問題不同於校準漂移。校準漂移發生在從物理世界到智能體輸入的管道退化時——感測器漂移，訊號鏈積累誤差。陳舊世界模型問題發生在該管道的上游：在智能體關於有效輸入的外觀、適當回應以及操作環境所需內容的訓練信念中。</p>
+
+        <p>它也不同於分布外輸入。分布外處理詢問：這個輸入是否與智能體被訓練的內容相似？陳舊世界模型問題提出了不同的問題：即使這個輸入看起來很熟悉，鑑於世界自訓練以來的變化，智能體的回應是否仍然正確？</p>
+
+        <p>這些不是可以互換的問題。遭遇熟悉場景並能勝任地回應的智能體，仍然可能在使用陳舊模型。該回應在訓練資料還是最新的時候可能是適當的，但今天可能已不再適當。智能體的置信度沒有變化，但其正確性已經變化。問責結構卻無法區分兩者。</p>
+
+        <h2>後量子交叉點：已廢棄的假設</h2>
+        <p>在後量子交叉點，陳舊世界模型問題採取了精確的形式。在特定密碼套件被正式廢棄之前訓練的智能體，可能繼續將該套件視為可接受的。智能體的行為沒有改變；世界對該行為的評估已經改變。</p>
+
+        <p>密碼學標準透過有記錄的、審慎的過程演變——標準機構發布指導方針，供應商宣布時間表，合規框架更新。但智能體關於可接受密碼學實踐的訓練假設已內置於其參數中。除非有明確的機制來更新這些假設——並證明更新已發生——否則智能體將繼續將昨天的規則應用於今天的基礎設施。</p>
+
+        <p>問責差距是具體的：可能沒有記錄說明智能體是基於哪些密碼學假設訓練的，這些假設最後一次針對當前標準進行驗證是什麼時候，或者部署是否繼續反映最新指導。智能體按照其模型正確行事，其模型是錯誤的，這兩個事實都沒有出現在審計跟蹤中。</p>
+
+        <h2>硬體交叉點：智能體不知道的韌體</h2>
+        <p>在硬體交叉點，陳舊世界模型問題出現在裝置能力建模中。與硬體裝置互動的智能體——管理、配置或依據其輸出採取行動——會建立關於這些裝置的能力、介面和行為的假設。硬體透過韌體更新而改變。智能體在訓練時了解的裝置可能不是它今天正在管理的裝置。</p>
+
+        <p>這對安全相關的硬體功能尤其重要：安全飛地、認證模組、硬體安全金鑰。如果韌體更新改變了認證協定，擁有該協定陳舊模型的智能體可能接受裝置在舊規則下認為有效的認證，但審計員會在當前規則下拒絕——或反之。智能體沒有表現出異常，它的行為與一個不再準確描述其所管轄硬體的模型保持一致。</p>
+
+        <p>可追溯性問題更加複雜，因為韌體更新歷史和智能體訓練日期可能由完全不同的團隊按完全不同的節奏管理，沒有正式機制將兩者聯繫起來。硬體發生了變化，智能體對它的模型沒有變化，沒有人被指定負責彌合這一差距。</p>
+
+        <h2>護理交叉點：比智能體更新更快的指南</h2>
+        <p>在物理世界護理中，臨床知識不是靜態的。治療方案根據新證據進行修訂，藥物劑量指導會改變，隨著人口資料積累，風險分層標準會更新。基於十八個月前醫學文獻訓練的智能體可能自信地應用臨床共識此後已經修訂的指導方針。</p>
+
+        <p>護理交叉點是這個問題後果最為尖銳的地方。提供建議、標記風險或提供臨床決策資訊的護理智能體隱含地聲稱符合當前最佳實踐。該聲明可能對模型的訓練語料庫是準確的。護理對象和護理團隊可能無法知道他們所依賴的指導反映的是過去的臨床知識狀態，而非當前狀態。</p>
+
+        <p>最容易受到這一差距影響的是那些獨立驗證臨床指導能力最弱的人——往往是最先接受AI輔助護理的人群，也是在指導錯誤時損失最大的人。智能體對護理建議的自信聲稱具有分量。該建議在十八個月前有效而此後已被取代這一事實，在建議本身中並不可見。</p>
+
+        <h2>問責要求</h2>
+        <p>陳舊世界模型問題要求將知識來源視為一等問責工件。幾個要求由此而來。</p>
+
+        <p>首先，智能體應該攜帶可驗證的知識日期——不僅僅是訓練截止時間戳記，而是所整合的特定領域知識版本以及上次針對該領域當前標準進行驗證的時間的證明。單一的訓練日期掩蓋了智能體實際了解的內容：同一模型中不同領域的知識可能在不同時間點是最新的。</p>
+
+        <p>其次，部署治理應包括一個陳舊閾值：知識驗證和部署之間的最大時間間隔，根據相關領域的變化速率進行調整。密碼學標準的變化速度快於護理協議，護理協議的變化速度快於某些監管框架。根據變化最慢的領域校準的閾值，將使快速變化的領域處於危險的暴露狀態。閾值必須與領域的實際變化速度相匹配。</p>
+
+        <p>第三，陳舊模型決策的問責鏈必須明確。當智能體在陳舊世界模型上運行時，問題不僅僅是做出了什麼決策，還有：誰負責證明模型是最新的，以及該責任是否在部署前得到履行和記錄。</p>
+
+        <p>自信地依據過時模型行事的智能體不是智能體的失敗，而是將模型發布到已改變的世界中卻未證明其對該世界的知識時效性的部署治理的失敗。在知識來源被視為與決策日誌同等地位的問責工件之前，陳舊模型決策的問責記錄將包含後果而省略原因。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>每個AI智能體的世界模型都有時間戳記；世界沒有。依據已廢棄的密碼學假設、過時的韌體能力模型或已被取代的臨床指南行事的智能體，並非表現異常——它的行為完全符合訓練。這種失敗的問責框架不是更好的感測器管道或更寬的分布包絡；而是將知識來源作為一等審計工件：可驗證的領域知識日期、按領域校準的明確陳舊閾值，以及部署前證明時效性的具名問責鏈。</p>
+      </div>
+
+      <div class="essay-footer-wrap">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+        <a href="/zht/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

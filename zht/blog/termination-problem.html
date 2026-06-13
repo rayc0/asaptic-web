@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>終止問題 — Asaptic Labs</title>
+  <meta name="description" content="停止AI智能體聽起來是最簡單的安全保障。在實踐中，這是最難解決的問題之一：嵌入式智能體無法遠程觸達，長期運行的工作流使任務中途停止變得危險，終止信號本身也必須經過認證以防對抗性命令。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/termination-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/termination-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/termination-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/termination-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/termination-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/termination-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="終止問題：何時以及如何停止AI智能體，以及無法停止意味著什麼" />
+  <meta property="og:description" content="終止開關不是架構。真正的終止問題橫跨嵌入式硬件、長期運行的照護工作流、密碼停止信號認證，以及後量子過渡——每一層都比上一層更難解決。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/termination-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "終止問題：何時以及如何停止AI智能體，以及無法停止意味著什麼",
+      "description": "停止AI智能體聽起來是最簡單的安全保障。在實踐中，這是最難解決的問題之一：嵌入式智能體無法遠程觸達，長期運行的工作流使任務中途停止變得危險，終止信號本身也必須經過認證以防對抗性命令。",
+      "url": "https://asaptic.com/zht/blog/termination-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/termination-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "description": "參與頁面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯絡"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "終止問題", "item": "https://asaptic.com/zht/blog/termination-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--gray);margin:0}.essay-footer-block{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">終止問題：何時以及如何停止AI智能體，以及無法停止意味著什麼</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>當AI智能體出現意外行為時，人們首先想到的安全措施是終止開關。聽起來很簡單：發送停止信號，智能體停止，情況得以控制。然而在實踐中，終止問題是智能體架構中最難解決的問題之一——不是因為停止在技術上複雜，而是因為停止安全、經過認證且有意義的條件，遠比表面看起來更為有限。</p>
+
+        <h2>終止開關的幻覺</h2>
+        <p>終止開關不是架構，它是架構之上的一個按鈕，而該架構在任何給定時刻可能支持也可能不支持安全停止。一個正處於事務中間、文件寫入中間、消息發送中間或物理執行中間的智能體，並不總能乾淨地停止。問題不在於是否能切斷進程的電源——通常可以——而在於這樣做是否讓世界處於比讓進程完成更好的狀態。對許多智能體工作流，尤其是那些已經開始與外部系統交互的工作流，答案是模糊的。</p>
+
+        <p>這種模糊性是結構性的。智能體系統被設計為執行一系列動作，每個步驟都依賴於先前的狀態。在中途打斷該序列不會恢復先前狀態——它會創造出一個既不在原始委托人計劃之內、也不在智能體計劃之內的新狀態。一個不考慮智能體在工作流中何處可以安全停止的終止架構，實際上不是一個安全控制措施。它是將責任從智能體轉移到按下按鈕的操作員的一種方式。</p>
+
+        <h2>嵌入式智能體與物理停止問題</h2>
+        <p>對於嵌入在物理世界運行的硬件中的智能體，終止問題最為棘手。在雲環境中運行的軟件智能體可以通過進程信號停止，並從已知檢查點重啟。而在嵌入式設備中運行的智能體——照護設施中的康復單元、臨床環境中的監測系統——在你需要停止它時可能物理上不可達。</p>
+
+        <p>網絡分區、電源事件和設備故障都可能切斷遠程停止信號到達的連接。無法接收停止命令的設備會繼續執行。如果其指令授權它在連接中斷期間自主行動——這是保證照護連續性的必要設計選擇——它將在不知曉委托人已嘗試撤銷該授權的情況下這樣做。</p>
+
+        <p>硬件根認證告訴你設備上運行的智能體是你授權的那個。它無法解決可達性問題。一個憑證有效但網絡連接已斷開的設備，從委托人的角度來看，是一個在沒有監督的情況下運行的智能體——可能正在執行已經被撤銷的決策。設備上的問責記錄可能完整，但智能體在世界中的行動已經在展開。</p>
+
+        <h2>長期運行的工作流：停止作為危險行為</h2>
+        <p>在照護環境中，當停止信號到達時，正處於任務中間的智能體呈現出一個特殊困境。智能體可能正處於監測序列、警報升級或有記錄的干預中間。立即停止滿足了終止命令的字面意義，同時可能造成委托人試圖預防的實際傷害——一個沒有主動監測的患者，一個已經啟動但未完成的升級，一個在中斷點之前準確、之後沉默的照護記錄。</p>
+
+        <p>這是照護領域終止的深層張力：無法停止的智能體是危險的，但隨時可以停止的智能體——在監測中間、在升級中間——也是危險的。一個設計良好的終止架構必須不僅包括停止機制，還要包括每個工作流中一組定義好的安全停止點，以及在收到停止信號時將智能體帶到最近安全點再停止的關閉程序。沒有安全點協議的任務中途終止，相當於切斷手術室的電源——技術上可行，永遠不應這樣做。</p>
+
+        <h2>終止信號的認證問題</h2>
+        <p>終止信號是一條指令。與發送給在對抗性環境中運行的智能體的任何指令一樣，它必須經過認證。能夠偽造可信停止命令的攻擊者，可以在智能體執行合法安全功能時將其靜默——撤銷憑證、記錄檢測到的異常、升級警報。從攻擊者的角度來看，終止智能體的能力也是在入侵時刻使檢測系統失明的能力。</p>
+
+        <p>這造成了一種令人不安的對稱性。停止信號需要足夠容易發出，以便合法委托人能在緊急情況下迅速行動。它們需要足夠難以偽造，以便攻擊者無法壓制智能體的問責功能。這兩個要求相互對立，滿足其中一個的機制往往會削弱另一個。簽署停止命令的硬件根密鑰將終止權限與特定設備和密鑰綁定——但密鑰管理隨後成為每次部署的運營開銷的一部分。</p>
+
+        <h2>後量子停止信號</h2>
+        <p>後量子過渡為終止認證問題增加了一個常被忽視的層面。今天的認證停止信號通常依賴經典非對稱密碼學。能力足夠強大的量子對手可以偽造這些簽名——不是實時，而是可能在未來使用之前捕獲的流量。對於運營生命週期較長的智能體，今天發出的經認證的停止信號可能在未來數年內可驗證，然後在量子能力閾值被突破時變得可偽造。</p>
+
+        <p>對於照護環境中的嵌入式設備——可能在沒有固件替換的情況下運行五到十年的設備——這不是一個假設的遠景。今天製造的帶有經典認證停止信號的設備，可能在支撐這些信號的密碼學假設被打破後仍在運行。在製造時將終止權限與抗後量子密鑰材料綁定，是在設備整個運營生命週期內保持停止信號可信的唯一機制。</p>
+
+        <h2>終止架構需要什麼</h2>
+        <p>一個嚴肅的終止架構在任何智能體部署之前必須具備四個組件。第一，工作流級的安全停止點映射：每個工作流中的明確標記，在這些點智能體可以停止而不使下游系統處於不一致狀態。第二，每個工作流的關閉協議：在收到停止信號時，將智能體帶到最近的安全停止點，而不是立即停止。第三，使用適合設備部署生命週期的密鑰材料的認證停止信號機制——並且對具有未來能力的對手的偽造具有抵抗性。第四，離線繼續策略，精確規定智能體在委托人不可達時可以和不可以做什麼，以便網絡分區不會造成不受約束運行的窗口。</p>
+
+        <p>這些組件都不是終止開關。終止開關作為最後手段仍然存在——物理斷電、進程強制終止、硬件重置。但既是最後手段又是第一手段的手段不是安全控制。它們是承認架構從未被設計為優雅停止。在智能體決策實時影響真實人的領域，優雅停止不是邊緣情況。它是必須在第一次部署之前內置的設計要求，而不是在第一次事故之後附加的。</p>
+      </div>
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>終止信號看似是最簡單的安全保障，實則是智能體架構中最難解決的問題之一。嵌入在照護設施或臨床環境硬件中的智能體，在你需要停止它時可能因網絡中斷而無法被觸達。處於多步驟工作流中間的智能體，即時停止可能比讓其完成更危險。終止信號本身也是一條指令，需要經過認證——能偽造停止命令的攻擊者可以在智能體執行合法安全功能時將其靜默。後量子過渡則增加了一層：今天的認證停止信號依賴經典密碼學，而長期運行的設備可能在這些假設被突破後仍在運行。嚴肅的終止架構需要四個要素：工作流級的安全停止點映射、將智能體引導至最近安全點的關閉協議、適用於設備生命週期的認證停止信號機制，以及指定離線時智能體權限的離線繼續策略。</p>
+      </div>
+      <div class="essay-footer-block">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+        <a href="/zht/blog/" class="essay-footer-back">&larr; 返回博客</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

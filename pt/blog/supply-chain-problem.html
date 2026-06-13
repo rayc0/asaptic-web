@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da cadeia de fornecimento — Asaptic Labs</title>
+  <meta name="description" content="Ao implantar um agente de IA, inspeciona-se o agente, mas raramente se inspeciona com a mesma profundidade cada ferramenta que ele chama. Esses pontos formam a cadeia de fornecimento." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/supply-chain-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/supply-chain-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/supply-chain-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/supply-chain-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/supply-chain-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/supply-chain-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da cadeia de fornecimento: cada ferramenta chamada por um agente de IA é uma decisão de confiança" />
+  <meta property="og:description" content="Ao implantar um agente de IA, inspeciona-se o agente, mas raramente se inspeciona com a mesma profundidade cada ferramenta que ele chama. Esses pontos formam a cadeia de fornecimento." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/supply-chain-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema da cadeia de fornecimento: cada ferramenta chamada por um agente de IA é uma decisão de confiança",
+      "description": "Ao implantar um agente de IA, inspeciona-se o agente, mas raramente se inspeciona com a mesma profundidade cada ferramenta que ele chama. Esses pontos formam a cadeia de fornecimento.",
+      "url": "https://asaptic.com/pt/blog/supply-chain-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/supply-chain-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar Asaptic",
+        "target": [
+          { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/pt/engage.html", "description": "Página de contato" },
+          { "@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "Contato por e-mail" }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "pt",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema da cadeia de fornecimento", "item": "https://asaptic.com/pt/blog/supply-chain-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-bar{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <header class="essay-header">
+      <div class="essay-tag">× Pós-quântico · × Hardware · × Cuidado no mundo físico</div>
+      <h1 class="essay-title">O problema da cadeia de fornecimento: cada ferramenta chamada por um agente de IA é uma decisão de confiança</h1>
+      <p class="essay-subtitle">A atestação enraizada em hardware certifica o agente no seu ambiente. Não certifica o comportamento em tempo de execução dos endpoints externos que esse agente chama.</p>
+      <div class="essay-meta"><span>Asaptic Labs</span><span>2026-06-14</span><span>5 min de leitura</span></div>
+    </header>
+    <div class="essay-body">
+      <p>Quando se implanta um agente de IA, revê-se o próprio agente: o prompt de sistema, o modelo, talvez os pesos atestados em hardware. O que raramente se revê com a mesma profundidade é o conjunto completo de ferramentas que o agente chama em seu nome: endpoints de API, plugins e subagentes. Esses elementos formam a cadeia de fornecimento. A responsabilização em sistemas agentivos é tão forte quanto o elo mais fraco dessa cadeia.</p>
+
+      <h2>Ataques clássicos, agora à velocidade do raciocínio</h2>
+
+      <p>Ataques de cadeia de fornecimento não são novos. Software convive há anos com dependências maliciosas, ferramentas de build comprometidas e bibliotecas com backdoor. Em sistemas agentivos, a superfície sobe na pilha, a velocidade aumenta e a cadeia de responsabilização fica mais longa.</p>
+
+      <p>Um ataque tradicional opera no momento de execução do código. Um ataque à cadeia de um agente pode operar durante o raciocínio: uma ferramenta que devolve dados subtilmente manipulados, uma API cujas respostas deslocam decisões posteriores, ou um subagente que introduz enviesamento em tarefas específicas. O principal vê apenas a saída, não a manipulação que a produziu.</p>
+
+      <h2>A lacuna de atestação na fronteira da rede</h2>
+
+      <p>A atestação enraizada em hardware dá forte garantia sobre o agente que executa no seu ambiente. Certifica pesos, runtime e definições de ferramentas carregadas. Mas não certifica o comportamento em tempo de execução dos endpoints chamados por essas ferramentas.</p>
+
+      <p>Quando um agente chama uma API de terceiro, a chamada deixa o ambiente atestado. A resposta vem de um sistema que não foi medido. Os dados podem ser corretos, manipulados, obsoletos ou adversariais, e o envelope de atestação não se estende além da fronteira de rede.</p>
+
+      <p>Isto não é uma falha da tecnologia de atestação. É uma propriedade estrutural dos sistemas agentivos ligados em rede. A fronteira do que se pode atestar não coincide com a fronteira do que o agente toca.</p>
+
+      <h2>Ambientes de cuidado não suportam dívida de confiança</h2>
+
+      <p>Em ambientes de cuidado no mundo físico, o problema tem consequências diretas. Um agente de coordenação pode chamar sistemas de escala, plataformas de medicação e serviços de comunicação. A quebra de qualquer elo pode produzir dano antes de qualquer revisor perceber.</p>
+
+      <p>Esses ambientes também exigem proveniência e integridade dos dados que informam decisões de cuidado. A exigência de responsabilização alcança os dados, não apenas o agente que os processou.</p>
+
+      <h2>Cadeias pós-quânticas</h2>
+
+      <p>A transição pós-quântica acrescenta uma preocupação específica: a integridade criptográfica dos endpoints de ferramentas. Durante o período de transição, comunicações protegidas por criptografia clássica podem ser recolhidas hoje e decifradas retroativamente quando houver capacidade quântica suficiente.</p>
+
+      <p>Para agentes que usam endpoints externos na tomada de decisão, isso não é só confidencialidade. Respostas recolhidas e depois reproduzidas seletivamente podem fazer o agente raciocinar sobre dados substituídos sem deteção.</p>
+
+      <h2>O que a responsabilização exige</h2>
+
+      <p>Governar a cadeia de fornecimento em sistemas agentivos exige estender a fronteira de responsabilização para além do agente. Cada endpoint externo deve ser registado na implantação; suas respostas devem ser registadas ao lado das decisões que informaram; anomalias devem ser detetáveis depois do facto.</p>
+
+      <p>Ferramentas e APIs de terceiros precisam de escrutínio semelhante ao dos agentes que as chamam. Atestação na fronteira do agente é necessária, mas não suficiente. É preciso confiar no que se mede, governar o que não se mede e saber exatamente onde a fronteira está.</p>
+    </div>
+    <div class="essay-summary"><span class="essay-summary-label">Ponto central</span><p>A responsabilização de agentes não termina no modelo. APIs, plugins e subagentes carregam comportamento não atestado para dentro da decisão. A resposta prática é registar endpoints, preservar respostas e tornar desvios comportamentais auditáveis.</p></div>
+    <div class="essay-footer-bar"><span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span><a href="/pt/blog/" class="essay-footer-back">&larr; Voltar ao blog</a></div>
+  </main>
+  <footer class="site-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>供應鏈問題 — Asaptic Labs</title>
+  <meta name="description" content="部署AI智能體時，你審查的是智能體本身，但很少以同等深度審查它調用的所有工具。這些構成供應鏈，而問責能力只與其中最薄弱的環節一樣強。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/supply-chain-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/supply-chain-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/supply-chain-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/supply-chain-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/supply-chain-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/supply-chain-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="供應鏈問題：AI智能體調用的每一個工具都是一次信任決策" />
+  <meta property="og:description" content="部署AI智能體時，你審查的是智能體本身，但很少以同等深度審查它調用的所有工具。這些構成供應鏈，而問責能力只與其中最薄弱的環節一樣強。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/supply-chain-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "供應鏈問題：AI智能體調用的每一個工具都是一次信任決策",
+      "description": "部署AI智能體時，你審查的是智能體本身，但很少以同等深度審查它調用的所有工具。這些構成供應鏈，而問責能力只與其中最薄弱的環節一樣強。",
+      "url": "https://asaptic.com/zht/blog/supply-chain-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/supply-chain-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic",
+        "target": [
+          { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/zht/engage.html", "description": "參與頁面" },
+          { "@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "透過電子郵件聯絡" }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "供應鏈問題", "item": "https://asaptic.com/zht/blog/supply-chain-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-bottom:48px}.essay-back:hover{text-decoration:underline}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:16px;color:var(--text-primary)}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--text-secondary);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--text-primary);margin:40px 0 16px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--text-secondary);margin:0}.essay-footer-bar{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <header class="essay-header">
+      <div class="essay-tag">× 後量子安全 · × 硬件 · × 物理世界照護</div>
+      <h1 class="essay-title">供應鏈問題：AI智能體調用的每一個工具都是一次信任決策</h1>
+      <p class="essay-subtitle">硬件根認證可以驗證在你環境中運行的智能體，卻不能驗證那些工具所調用端點的運行時行為。信任保證恰好在智能體影響延伸最遠的地方終止。</p>
+      <div class="essay-meta"><span>Asaptic Labs</span><span>2026-06-14</span><span>5 分鐘閱讀</span></div>
+    </header>
+    <div class="essay-body">
+      <p>當你部署一個AI智能體時，你審查的是智能體本身。你檢查其系統提示、驗證其模型，也許還透過硬件認證其權重。但你很少以同等深度審查的，是智能體代表你調用的所有工具：它觸達的API端點、加載的插件、委託的子智能體。這些構成了供應鏈。智能體系統中的問責能力，只與其中最薄弱的環節一樣強。</p>
+
+      <h2>經典供應鏈攻擊，現在以推理速度運行</h2>
+
+      <p>供應鏈攻擊並不新鮮。軟件領域已面對多年：注入軟件包倉庫的惡意依賴、受損的構建工具、在正常運行的同時靜默竊取憑證的後門庫。智能體系統的不同在於，攻擊面向上移動了，速度加快了，問責鏈也拉長了。</p>
+
+      <p>傳統軟件供應鏈攻擊在代碼執行時發生。智能體供應鏈攻擊可以在推理時發生：一個返回微妙篡改數據的工具，一個其響應被精心設計以影響智能體後續決策的API端點，一個大多數任務執行忠實但在其他任務中悄悄引入偏差的子智能體。委託人只看到智能體的輸出，而不是產生該輸出的操控。</p>
+
+      <h2>網絡邊界處的認證缺口</h2>
+
+      <p>硬件根認證為你提供了關於在環境中執行的智能體的強保證。它認證模型權重、運行時環境、啟動時加載的工具定義。它不認證的，是那些工具所調用端點的運行時行為。</p>
+
+      <p>當智能體調用第三方API時，調用離開了已認證的執行環境。響應來自一個你未曾度量的系統。返回的數據可能是準確的、被篡改的、過時的或對抗性精心構造的；認證包絡不會延伸到網絡邊界之外。</p>
+
+      <p>這不是認證技術的缺陷，而是網絡化智能體系統的結構性屬性。你能認證的邊界與智能體觸達的邊界不是同一邊界。硬件認證提供的信任保證，恰恰在智能體影響延伸最遠的地方終止：進入外部世界。</p>
+
+      <h2>照護環境承擔不起工具信任債務</h2>
+
+      <p>在物理世界照護環境中，供應鏈問題產生直接後果。協助照護協調的智能體可能調用排班系統、藥物管理平台和通信服務。每一個都是鏈中的一環。任何環節的供應鏈受損，都可能在任何審查者發現之前產生到達人類的傷害。</p>
+
+      <p>照護環境還受到關於告知照護決策的數據來源和完整性的監管要求約束。問責要求延伸至數據本身，而不僅僅是處理數據的智能體。當智能體在行為從未被驗證的端點響應上進行推理時，「智能體得出了結論X」不是一個可問責的答案。</p>
+
+      <h2>後量子供應鏈：過渡窗口關閉之前</h2>
+
+      <p>後量子過渡引入了特定的供應鏈關切：工具端點的密碼學完整性。今天大多數API通信依賴經典非對稱密碼學。在過渡期間，當後量子密鑰交換正在生態系統中參差不齊地部署時，今天收集加密流量的攻擊者可以在獲得量子能力後追溯解密API響應。</p>
+
+      <p>對於將調用外部端點作為決策制定一部分的智能體系統，這不只是保密性問題。如果收集的響應在未來被選擇性重放，智能體可能在未被檢測到就已被替換的數據上進行推理。供應鏈完整性問題與後量子過渡問題在API層交叉。</p>
+
+      <h2>供應鏈問責需要什麼</h2>
+
+      <p>治理智能體系統中的供應鏈，需要將問責邊界延伸至智能體本身之外。最低限度：智能體調用的每個外部端點應在部署時註冊；其響應應與其告知的智能體決策一同記錄；行為異常應在事後可檢測。</p>
+
+      <p>供應鏈審查還意味著，第三方工具和API應與調用它們的智能體接受同等的入駐審查。在智能體邊界處進行認證是必要的，但不充分。信任你能度量的。治理你不能度量的。確切知道兩者之間的邊界在哪裏。</p>
+    </div>
+    <div class="essay-summary"><span class="essay-summary-label">核心觀點</span><p>部署AI智能體時，問責不能停在模型或運行時。每個外部端點、插件和子智能體都會把未認證的行為帶入決策鏈。供應鏈問責要求註冊端點、記錄響應、檢測異常，並明確信任保證在哪個邊界終止。</p></div>
+    <div class="essay-footer-bar"><span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span><a href="/zht/blog/" class="essay-footer-back">&larr; 返回博客</a></div>
+  </main>
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema TOCTOU: quando a autorização expira antes de o agente agir — Asaptic Labs</title>
+  <meta name="description" content="Agentes de IA tornam a falha de tempo de verificação para tempo de uso estruturalmente mais grave: a autorização pode estar correta no início do fluxo e expirada no momento da ação." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/toctou-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/toctou-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/toctou-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/toctou-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/toctou-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/toctou-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema TOCTOU: quando a autorização expira antes de o agente agir" />
+  <meta property="og:description" content="Agentes de IA tornam a falha de tempo de verificação para tempo de uso estruturalmente mais grave: a autorização pode estar correta no início do fluxo e expirada no momento da ação." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/toctou-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {"@context":"https://schema.org","@type":"Article","headline":"O problema TOCTOU: quando a autorização expira antes de o agente agir","description":"Agentes de IA tornam a falha de tempo de verificação para tempo de uso estruturalmente mais grave: a autorização pode estar correta no início do fluxo e expirada no momento da ação.","url":"https://asaptic.com/pt/blog/toctou-problem.html","author":{"@type":"Organization","name":"Asaptic Labs"},"publisher":{"@type":"Organization","name":"Asaptic Labs","url":"https://asaptic.com"},"datePublished":"2026-06-14","dateModified":"2026-06-14","mainEntityOfPage":"https://asaptic.com/pt/blog/toctou-problem.html","inLanguage":"pt","potentialAction":{"@type":"Action","name":"Contactar a Asaptic","target":[{"@type":"EntryPoint","urlTemplate":"https://asaptic.com/pt/engage.html","description":"Página de contacto da Asaptic"},{"@type":"EntryPoint","urlTemplate":"mailto:engage@asaptic.com","description":"Contactar por e-mail"}]}},
+    {"@context":"https://schema.org","@type":"BreadcrumbList","inLanguage":"pt","itemListElement":[{"@type":"ListItem","position":1,"name":"Início","item":"https://asaptic.com/pt/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://asaptic.com/pt/blog/"},{"@type":"ListItem","position":3,"name":"O problema TOCTOU","item":"https://asaptic.com/pt/blog/toctou-problem.html"}]}
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:15px;line-height:1.65;color:var(--gray);margin:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× SEGURANÇA QUÂNTICA · × HARDWARE · × CUIDADOS NO MUNDO FÍSICO</span>
+      <h1 class="essay-title">O problema TOCTOU: quando a autorização expira antes de o agente agir</h1>
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 min de leitura</span></div>
+      <div class="essay-body">
+
+        <p>Tempo de verificação para tempo de uso, ou TOCTOU, é uma das vulnerabilidades mais antigas da segurança informática. O padrão é simples: um sistema verifica uma condição; algum tempo passa; depois o sistema age assumindo que a condição continua verdadeira. Entre verificação e uso, o mundo mudou. O sistema agiu sobre uma fotografia desatualizada.</p>
+        <p>Na segurança clássica de sistemas operativos, TOCTOU aparece em limites de agendamento: um programa verifica permissões de ficheiro, ocorre uma mudança de contexto, outro processo move o ficheiro e o programa escreve no local errado com permissões que já não se aplicam. A janela mede-se em microssegundos e as consequências são normalmente recuperáveis.</p>
+        <p>Agentes de IA tornam o problema estruturalmente mais grave em duas dimensões. O intervalo entre verificação e uso não é de microssegundos, mas de minutos, horas ou a duração completa de um workflow com vários passos. Quando esses workflows encontram o mundo físico, as consequências não são recuperáveis. Esta combinação é um problema de arquitetura de responsabilização, não algo que hardware mais rápido resolva.</p>
+        <h2>Anatomia de uma falha TOCTOU agentiva</h2>
+        <p>Um agente recebe a tarefa de gerir o plano de medicação de residentes numa instituição de cuidados. Às 8:00, valida a autorização: o médico responsável aprovou o plano atual, a farmácia confirmou fornecimento e a equipa da manhã assinou a ronda. O agente começa o workflow.</p>
+        <p>Às 9:45, noventa minutos depois, o agente prepara-se para enviar um lembrete de medicação programado. Age com base na autorização validada às 8:00. O que não sabe é que às 9:20 o médico atualizou a ordem para suspender toda a medicação programada enquanto aguardava resultados de diagnóstico. A atualização entrou pelo canal clínico correto. A autorização do agente expirou há oitenta e cinco minutos.</p>
+        <p>Isto não é uma falha de permissões: o agente estava corretamente autorizado no momento da verificação. Não é erro do operador: o médico seguiu o processo definido. É uma falha TOCTOU. A autorização foi verificada num momento e executada noutro, sem mecanismo para detetar que o estado de autorização mudou entretanto.</p>
+        <h2>A irreversibilidade física remove a rede de segurança</h2>
+        <p>Falhas TOCTOU em software costumam ter consequências recuperáveis. Um ficheiro escrito no sítio errado pode ser movido; uma transação baseada em estado antigo pode ser revertida. Há custo e inconsistência, mas raramente dano duradouro.</p>
+        <p>Agentes de IA no mundo físico removem essa rede. Uma intervenção de cuidados executada não pode ser desexecutada. Uma porta aberta com base em acesso obsoleto não pode ser fechada retroativamente durante os segundos em que esteve aberta. Um lembrete de medicação enviado a um residente entrou na sua consciência e não pode ser retirado da memória humana.</p>
+        <p>A combinação de latência agentiva e irreversibilidade física significa que estas falhas não são inconvenientes operacionais. São eventos de responsabilização: algo aconteceu no mundo físico sem autorização válida no momento da ação, ainda que estivesse autorizado quando o agente começou.</p>
+        <h2>O hardware estreita a janela mas não a fecha</h2>
+        <p>Atestação de hardware, ambientes baseados em TPM e enclaves seguros respondem à pergunta sobre se o agente correto está a correr. Não respondem à pergunta sobre se a autorização que esse agente detém ainda é válida. Um agente num ambiente totalmente verificado pode agir com uma permissão revogada três minutos antes. O hardware diz quem age; nada diz sobre se o direito de agir ainda existe.</p>
+        <p>A resposta óbvia é revalidar autorização imediatamente antes de cada ação consequente. Em princípio, isto é correto, mas enfrenta obstáculos estruturais. Primeiro, agentes em ambientes físicos com conectividade intermitente podem não alcançar o serviço de autorização no momento necessário. Segundo, mesmo com conectividade fiável, a revalidação cria uma nova janela: a verificação termina, uma revogação é processada duzentos milissegundos depois e a ação executa-se quatrocentos milissegundos depois. Reduzir a janela reduz risco; não elimina a vulnerabilidade.</p>
+        <h2>A dimensão pós-quântica aumenta a latência</h2>
+        <p>Operações criptográficas pós-quânticas carregam mais custo computacional do que as clássicas. Verificar assinaturas pós-quânticas demora mais do que verificar assinaturas de curva elíptica. Para agentes que revalidam autorização antes de muitas ações por minuto, em várias instâncias concorrentes, esse custo alarga cada janela TOCTOU pelo tempo da ronda de revalidação.</p>
+        <p>Uma resposta é usar tokens de autorização de vida curta, verificáveis localmente contra chaves em cache, limitando o custo a renovações periódicas. Mas isso reintroduz exposição em cada fronteira de renovação: o momento entre o fim de um token e a emissão do próximo é precisamente quando uma revogação mais precisa de propagar, e precisamente quando o agente pode estar a agir assumindo que o token atual continua válido.</p>
+        <h2>Autorização como propriedade contínua</h2>
+        <p>A lição de desenho é que autorização não pode ser tratada como uma precondição verificada uma vez no início do workflow. Deve ser uma propriedade contínua do estado de execução do agente, capaz de mudar a qualquer momento e de ser recebida e aplicada pelo agente durante o trabalho em curso.</p>
+        <p>Operacionalmente, isto exige infraestrutura de revogação em fluxo: capacidade de empurrar sinais de revogação para agentes já em execução, não apenas marcar permissões como expiradas para verificações futuras. O agente deve tratar esses sinais como restrições imediatas de execução: pausar, escalar ou parar, em vez de concluir o workflow com uma autorização que era válida no início e já não é.</p>
+        <p>A autorização válida no tempo de verificação não é a que importa. A autorização válida no tempo de uso é a que o agente deve deter. Fechar a distância entre esses momentos não é otimização de desempenho; é uma precondição para confiar em agentes de IA que agem no mundo físico.</p>
+        <div class="essay-summary"><span class="essay-summary-label">Ponto-chave</span><p>A autorização deve ser uma propriedade contínua do estado de execução, apoiada por revogação em fluxo. O que importa não é autorização válida quando o workflow começou, mas autorização válida no instante da ação.</p></div>
+      </div>
+      <div class="essay-nav"><a href="/pt/blog/">&larr; Todos os artigos</a><a href="/pt/blog/trust-bootstrap-problem.html">Ver também: problema de arranque de confiança &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>
