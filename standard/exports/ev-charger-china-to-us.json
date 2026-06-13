@@ -1,0 +1,364 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "dataset_id": "ev-charger-us-vs-cn",
+  "title": "China-to-US EV Charger Compliance Gap Matrix",
+  "product": "EV charger",
+  "target_market": "United States (UL / SAE)",
+  "canonical_url": "https://asaptic.com/standard/ev-charger-china-to-us",
+  "version": "2026-06-11",
+  "last_verified": "2026-06-11",
+  "provenance": "AI-compiled, multi-model cross-checked, not human-verified. Informational only; confirm with the official regulator and a qualified professional. Not legal/certification/customs/market-access advice.",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "row_count": 12,
+  "rows": [
+    {
+      "id": "evus-connector-ac-j1772",
+      "requirement": "AC Charging Connector Standard (SAE J1772 / NACS J3400)",
+      "target_requirement": "US public AC Level 2 charging has historically required the SAE J1772 (Type 1) connector. From 2025 onward, NACS (SAE J3400, derived from Tesla's connector) has been adopted by most major OEMs and is increasingly deployed at public stations. Federal NEVI (National Electric Vehicle Infrastructure) program guidance requires CCS1-compatible ports at NEVI-funded stations; NACS is permitted as an additional or replacement interface. Both J1772 and NACS carry the same AC signal; a simple adapter allows cross-compatibility.",
+      "target_standards": [
+        "SAE J1772 (AC EV Charging Coupler, Type 1)",
+        "SAE J3400 (NACS — North American Charging Standard, formerly Tesla connector)",
+        "23 CFR Part 680 (NEVI Formula Program, FHWA) — requires CCS1 ports at NEVI-funded stations",
+        "IEC 62196-2 Type 1 (international reference for J1772 profile)"
+      ],
+      "china_equivalent": "China uses GB/T 20234.2 for AC charging, defining a physically distinct 7-pin connector incompatible with SAE J1772 or NACS. The pin count, locking mechanism, and connector body shape all differ. A GB/T AC plug cannot mate with a J1772 or NACS socket.",
+      "china_standards": [
+        "GB/T 20234.2-2015 (AC EV charging connector, China)"
+      ],
+      "gap": "Hardware connector is physically incompatible. A Chinese EV with a GB/T AC inlet cannot charge at US public J1772 or NACS AC stations without a physical inlet change. The US market is transitioning from J1772 to NACS (SAE J3400); products entering the US must support at least one of these (or carry an OEM-supplied adapter). GB/T is not used or recognised at US public charging infrastructure.",
+      "mandatory_status": {
+        "target": "De facto mandatory — J1772 is the established US AC standard; NACS (SAE J3400) is rapidly becoming the new default (~2025 OEM adoption); NEVI-funded stations must offer CCS1 (which incorporates J1772 AC) per 23 CFR Part 680",
+        "cn": "Mandatory in China for domestic market — GB/T 20234.2 required for EVs sold in China"
+      },
+      "verdict": "Non-compliant as-is. EVs exported from China to the US must be fitted with an SAE J1772 and/or NACS (SAE J3400) AC inlet. As of 2025, NACS is the dominant new-vehicle standard in the US market; J1772 remains widely deployed. GB/T inlet is not usable at US public charging infrastructure.",
+      "source": {
+        "url": "https://www.sae.org/standards/content/j1772_202401/",
+        "publisher": "SAE International",
+        "accessed": "2026-06-11",
+        "verified": false
+      }
+    },
+    {
+      "id": "evus-connector-dc-ccs1-nacs",
+      "requirement": "DC Fast-Charging Connector Standard (CCS1 / NACS J3400)",
+      "target_requirement": "US public DC fast-charging has been dominated by CCS Combo 1 (CCS1), combining the SAE J1772 AC coupler with two DC pins per IEC 62196-3 / SAE J1772 DC extension. Federal NEVI program (23 CFR Part 680 § 680.106) requires each DCFC port to have at least one permanently attached CCS Type 1 connector. In parallel, NACS (SAE J3400) — originally Tesla's proprietary connector — was published as an SAE standard in December 2023 and adopted by Ford, GM, Rivian, Honda, and others by 2024–2025, making it the emerging dominant DC standard. FHWA guidance permits NACS/J3400 adapters and connectors to be installed alongside mandatory CCS1 ports at NEVI-funded stations; NACS has NOT been formally approved as a replacement for CCS1 under 23 CFR Part 680. The FHWA August 2025 Interim Final Guidance did not alter this minimum standard — CCS1 remains required at all NEVI-funded DCFC stations as of June 2026.",
+      "target_standards": [
+        "SAE J1772 (DC extension / CCS1 basis)",
+        "IEC 62196-3 (CCS Combo 1 DC connector — US variant)",
+        "SAE J3400-2023 (NACS — North American Charging Standard)",
+        "23 CFR Part 680 § 680.106 (NEVI Formula Program, FHWA) — CCS1 permanently attached connector mandatory at each DCFC port at NEVI-funded stations; NACS/J3400 adapters and connectors permitted as supplement per FHWA guidance; NACS is NOT an approved replacement for CCS1 under the current rule (confirmed per FHWA Aug 2025 Interim Final Guidance — 23 CFR 680 minimum standards unchanged)"
+      ],
+      "china_equivalent": "China uses GB/T 20234.3 for DC fast charging, defining a physically distinct 9-pin connector incompatible with CCS1 or NACS. The pin layout, communication protocol (CAN bus per GB/T 27930 vs. Power Line Communication per ISO 15118), and inlet shape all differ. A GB/T DC plug cannot mate with a CCS1 or NACS socket.",
+      "china_standards": [
+        "GB/T 20234.3-2015 (DC EV charging connector, China)",
+        "GB/T 27930-2015 (DC charging communication protocol, China)"
+      ],
+      "gap": "Hardware connector is physically incompatible. Chinese EVs with a GB/T DC inlet cannot fast-charge at US CCS1 or NACS stations. The US is in a transition period: CCS1 remains the federally mandated standard for NEVI-funded infrastructure while NACS (SAE J3400) is the dominant new-vehicle interface from 2025. Products must support CCS1 and/or NACS; GB/T DC inlet is not usable at US public DC fast-charge stations. Communication stack incompatibility (GB/T 27930 CAN vs. ISO 15118 PLC) further precludes any simple adapter solution.",
+      "mandatory_status": {
+        "target": "Mandatory (CCS1) at all NEVI-funded public DC fast-charge stations per 23 CFR Part 680; NACS (SAE J3400) is the dominant emerging standard adopted by most US-market OEMs as of 2025",
+        "cn": "Mandatory in China for domestic market — GB/T 20234.3 required for DC fast-charge EVs sold in China"
+      },
+      "verdict": "Non-compliant as-is. EVs exported from China to the US must be fitted with a CCS1 and/or NACS (SAE J3400) DC inlet to access US public DC fast-charging. As of 2025, NACS is the emerging dominant standard; CCS1 remains federally required at NEVI-funded stations. GB/T DC inlet is not accepted at US public DC fast-charge infrastructure.",
+      "source": {
+        "url": "https://www.sae.org/standards/content/j3400/",
+        "publisher": "SAE International",
+        "accessed": "2026-06-11",
+        "verified": false
+      }
+    },
+    {
+      "id": "evus-emc-fcc-part15",
+      "requirement": "Electromagnetic Compatibility (EMC) — FCC Part 15",
+      "target_requirement": "EV charging equipment sold or operated in the US must comply with FCC Part 15 rules for unintentional radiators, limiting radiated and conducted emissions. Suppliers Declaration of Conformity (SDoC) is required for Class B digital devices; testing must be performed at an accredited laboratory and documentation retained for two years.",
+      "target_standards": [
+        "47 CFR Part 15 — Radio Frequency Devices",
+        "FCC Part 15 Subpart B — Unintentional Radiators",
+        "ANSI C63.4 (measurement procedure reference)"
+      ],
+      "china_equivalent": "China uses GB 17625 series (conducted disturbance) and GB/T 17626 series (immunity) for EMC of electrical equipment, administered by SAMR. EV chargers exported from China to the US must be re-tested to FCC Part 15 limits, which differ from GB standards in frequency ranges, limits, and test methodology.",
+      "china_standards": [
+        "GB 17625.1-2022 — Limits for harmonic current emissions",
+        "GB/T 17626 series — Electromagnetic immunity tests",
+        "GB 4343.1 — EMC for household and similar apparatus"
+      ],
+      "gap": "FCC Part 15 SDoC is mandatory before US market entry; CN GB 17625 CCC certification does not substitute. Test limits, frequency ranges, and measurement procedures differ. A separate FCC-accredited lab test and SDoC filing are required regardless of existing CN certifications.",
+      "mandatory_status": {
+        "target": "mandatory",
+        "cn": "mandatory (for CN domestic market)"
+      },
+      "verdict": "Mandatory. EV chargers exported from China to the US must obtain FCC Part 15 SDoC via an accredited US lab test. Existing CN EMC certifications (GB 17625 / CCC) are not accepted as equivalents. Allow 4–8 weeks for testing and documentation.",
+      "source": {
+        "url": "https://www.fcc.gov/engineering-technology/laboratory-division/general/equipment-authorization",
+        "publisher": "U.S. Federal Communications Commission (FCC)",
+        "accessed": "2026-06-11",
+        "verified": false
+      }
+    },
+    {
+      "id": "evus-energy-star-evse",
+      "requirement": "Energy Efficiency — ENERGY STAR for EVSE",
+      "target_requirement": "ENERGY STAR EVSE (Version 1.2, effective 2023; Version 2.0 in draft as of early 2025) is a voluntary US EPA certification for Level 1 and Level 2 EV charging stations. It sets formula-based maximum power limits for No Vehicle Mode, Partial On Mode, and Idle Mode (e.g., No Vehicle Mode max = 4 W + network wake allowance + auxiliary feature allowances), weighted-average loading-adjusted efficiency requirements across 25%/50%/75%/100% load points, and requires third-party testing by an EPA-recognised lab. Although voluntary at the federal level, ENERGY STAR is often required or preferred by utility rebate programs, state incentives, and the federal NEVI Formula Program guidance for publicly funded charging infrastructure.",
+      "target_standards": [
+        "ENERGY STAR Program Requirements for EVSE Version 1.2 (EPA)",
+        "Federal NEVI Formula Program Guidance (FHWA, Aug 2025 Interim Final Guidance) — ENERGY STAR is referenced as preferred/required by many state and utility programmes that administer NEVI sub-grants; not a direct mandate in 23 CFR Part 680 itself",
+        "California CEC Title 20 Appliance Efficiency Regulations (state-level, may apply separately)"
+      ],
+      "china_equivalent": "China does not have a direct equivalent to ENERGY STAR for EV chargers. The closest analogues are GB/T 29781 (EV charging station general requirements) and NB/T 33008 (charger technical requirements), which include some efficiency provisions. Note: as of March 1, 2025, EV charging equipment in China became subject to mandatory CCC certification (administered by CQC under CNCA rules, implementing GB/T 18487 and related standards) — this replaced the earlier voluntary-only regime. However, this mandatory CCC covers safety and functional requirements; there is still no Chinese certification equivalent to ENERGY STAR EVSE that specifically benchmarks standby/idle energy efficiency or loading-adjusted efficiency the way ENERGY STAR v1.2 does.",
+      "china_standards": [
+        "GB/T 29781-2013 — Electric vehicle charging station general requirements",
+        "NB/T 33008.1-2018 — Electric vehicle off-board charger technical requirements",
+        "CCC mandatory certification (from March 1, 2025) under CQC-C2501-2025 implementing GB/T 18487 — covers safety and function; no ENERGY STAR-equivalent energy-efficiency benchmark"
+      ],
+      "gap": "No CN certification substitutes for ENERGY STAR EVSE. To qualify for US utility rebates (e.g., PG&E, Con Edison) and NEVI-funded projects, manufacturers must independently test to ENERGY STAR EVSE Version 1.2 via a US EPA-recognised lab and list the product on the ENERGY STAR Certified Products database. CN efficiency standards and CQC marks are not recognised.",
+      "mandatory_status": {
+        "target": "voluntary",
+        "cn": "no equivalent (voluntary CQC exists for other appliances)"
+      },
+      "verdict": "Voluntary at federal level, but commercially critical. ENERGY STAR EVSE certification is effectively required to access US utility rebate programs and NEVI-funded public charging projects. Manufacturers exporting from China should plan for independent third-party testing to ENERGY STAR EVSE Version 1.2 and product listing on the EPA database before US market launch.",
+      "source": {
+        "url": "https://www.energystar.gov/products/ev_chargers",
+        "publisher": "U.S. Environmental Protection Agency (EPA) — ENERGY STAR",
+        "accessed": "2026-06-11",
+        "verified": false
+      }
+    },
+    {
+      "id": "evus-market-01",
+      "requirement": "NRTL Listing (UL) + Authority Having Jurisdiction (AHJ) Permit",
+      "target_requirement": "EV chargers (Electric Vehicle Supply Equipment, EVSE) sold or installed in the United States must bear listing or certification from a Nationally Recognized Testing Laboratory (NRTL) recognized by OSHA under 29 CFR 1910.303. UL is the dominant NRTL for EVSE; the applicable product safety standard is UL 2594 (AC Level 2 EVSE) or UL 2202 (DC fast chargers). Beyond the product listing, installation of EVSE requires a permit from the Authority Having Jurisdiction (AHJ) — typically the local building or electrical department — which inspects installation against the National Electrical Code (NEC, NFPA 70), particularly Article 625. AHJ requirements vary by city, county, and state; there is no single national installation permit.",
+      "target_standards": [
+        "29 CFR 1910.303 (OSHA NRTL recognition)",
+        "UL 2594 (Standard for Electric Vehicle Supply Equipment — AC Level 1/2)",
+        "UL 2202 (Standard for Electric Vehicle (EV) Charging System Equipment — DC)",
+        "NFPA 70 / NEC Article 625 (Electric Vehicle Charging System)",
+        "NEC Article 230 / 240 (service and overcurrent protection, as applied by AHJ)"
+      ],
+      "china_equivalent": "In China, EV chargers require China Compulsory Certification (CCC) administered by CNCA through designated certification bodies. The main standards are GB/T 18487.1 (AC charging system requirements) and GB/T 20234 series (connector and interface standards). CCC covers both product safety testing and factory audits. Installation is governed by GB 50054 (low-voltage electrical installations) and GB 50966 (EV charging station design code), enforced by local construction authorities — somewhat analogous to AHJ, but operating under a more unified national code framework.",
+      "china_standards": [
+        "GB/T 18487.1-2015 (AC EV charging system)",
+        "GB/T 20234.1-2015 / GB/T 20234.2-2015 / GB/T 20234.3-2015 (connectors)",
+        "GB 50966-2014 (EV charging station design code)",
+        "GB 50054-2011 (low-voltage electrical installation design code)",
+        "CCC certification (CNCA mandatory)"
+      ],
+      "gap": "CCC certification is not recognised in the United States and does not substitute for NRTL listing. A Chinese EVSE manufacturer must engage a US NRTL (e.g., UL, Intertek, CSA) to test and certify the product against UL 2594 or UL 2202 before it may be sold or installed in the US. In addition, each installation site requires a separate AHJ permit and inspection — a distributed, jurisdiction-by-jurisdiction process that has no direct analogue in China's more centralised code regime. The AHJ may impose additional local code amendments beyond the base NEC, which must be identified and addressed project by project.",
+      "mandatory_status": {
+        "target": "Mandatory — NRTL listing required for market access; AHJ permit required per installation site",
+        "cn": "Mandatory (CCC) for China domestic market; installation permit required per local authority"
+      },
+      "verdict": "[INFORMATIONAL] NRTL listing (UL 2594 / UL 2202) is a hard market-access gate in the US — no NRTL mark, no lawful sale or installation. CCC does not transfer. Beyond the product mark, every installation requires a local AHJ permit; this distributed process is a recurring project cost absent from the Chinese regulatory model.",
+      "source": {
+        "url": "https://www.osha.gov/nationally-recognized-testing-laboratory-program",
+        "publisher": "U.S. Occupational Safety and Health Administration (OSHA)",
+        "accessed": "2026-06-11",
+        "verified": false
+      }
+    },
+    {
+      "id": "evus-market-02",
+      "requirement": "NEVI Program — Uptime, OCPP Networking, Open Payment, and Buy America (Federally Funded Public Chargers)",
+      "target_requirement": "The National Electric Vehicle Infrastructure (NEVI) Formula Program (Infrastructure Investment and Jobs Act, Pub. L. 117-58, Sec. 11401) funds state EV charging networks along designated Alternative Fuel Corridors. FHWA's NEVI Minimum Standards (23 CFR Part 680, original Feb 2023 rule; minimum standards unchanged by FHWA Aug 2025 Interim Final Guidance) impose requirements on any charger installed with NEVI funds: (1) Hardware — minimum 4 DC fast charge (DCFC) ports per station, each capable of simultaneously delivering ≥150 kW; (2) Uptime — stations must maintain ≥97% uptime measured monthly; (3) OCPP 2.0.1 — chargers must use Open Charge Point Protocol 2.0.1 (or later) for communication with a Charging Station Management System (CSMS); (4) Open Payment — stations must accept credit/debit cards (ISO 8583 / EMV contactless) without requiring a network membership or app; (5) Buy America — iron, steel, manufactured products, and construction materials used in the project must be produced in the United States (per IIJA Sec. 70914 and FHWA Buy America requirements; as of Oct 2025, US final assembly required; as of Oct 2026, ≥55% US component cost required; a proposed rule published Feb 2026 would raise this to 100% — as of June 2026 the proposal has not been finalised); (6) Cybersecurity — chargers must conform to NIST Cybersecurity Framework and OCPP security profiles.",
+      "target_standards": [
+        "Infrastructure Investment and Jobs Act (IIJA) Pub. L. 117-58, Sec. 11401 (NEVI authorization)",
+        "IIJA Sec. 70914 (Buy America for federal infrastructure)",
+        "23 CFR Part 680 (FHWA NEVI Minimum Standards, Feb 2023 original rule — minimum standards confirmed unchanged by FHWA Aug 2025 Interim Final Guidance)",
+        "OCPP 2.0.1 (Open Charge Point Protocol — Open Charge Alliance)",
+        "NIST Cybersecurity Framework 2.0",
+        "ISO 8583 / EMVCo contactless payment standards"
+      ],
+      "china_equivalent": "China has no equivalent to NEVI's Buy America requirement or its open-protocol / open-payment mandates for publicly funded chargers. Chinese public charging infrastructure is predominantly deployed by state-owned enterprises (State Grid, Southern Grid) or large private operators (TELD, StarCharge) under national plans (e.g., the 14th Five-Year Plan EV targets). Communication protocols are based on GB/T 27930 (DC) and NB/T 33025 (operator platform), which are proprietary-compatible but not identical to OCPP. Payment is typically via operator apps or WeChat/Alipay; open contactless card payment is not mandated. There is no domestic content requirement analogous to Buy America for equipment procurement.",
+      "china_standards": [
+        "GB/T 27930-2015 (DC charging communication between off-board charger and BMS)",
+        "NB/T 33025-2016 (EV charging network management system — platform communication)",
+        "New Energy Vehicle Industry Development Plan (2021–2035) — State Council, issued Nov 2, 2020 (Chinese: 新能源汽车产业发展规划（2020-2035年）)"
+      ],
+      "gap": "The Buy America requirement is the single largest barrier for Chinese EVSE manufacturers seeking NEVI-funded contracts. Current baseline: for projects obligated on or after October 1, 2025, EV chargers must be finally assembled in the United States; for projects obligated on or after October 1, 2026, ≥55% of component costs must also be US-sourced. A proposed rule published in the Federal Register on February 12, 2026 would increase this to 100% domestic content — as of June 2026 the proposal has not been finalised, but the trend is toward stricter requirements. No blanket waiver exists for Chinese-sourced EV charger components as of June 2026. Beyond Buy America: (1) Chinese charger firmware typically uses GB/T 27930 or proprietary protocols — migration to OCPP 2.0.1 requires firmware redevelopment; (2) Open card payment terminals (EMV contactless) are not standard on Chinese-market DCFC units; (3) 97% monthly uptime SLA requires remote monitoring and rapid field-service infrastructure absent from a fresh market entrant; (4) NIST CSF cybersecurity requirements may conflict with current firmware architectures. Verify latest Buy America waiver status at fhwa.dot.gov before any procurement or grant application.",
+      "mandatory_status": {
+        "target": "Mandatory for chargers installed using NEVI federal formula funds; not mandatory for privately funded installations",
+        "cn": "No equivalent — Chinese public charging programs do not impose Buy America, open-protocol, or open-payment mandates"
+      },
+      "verdict": "[INFORMATIONAL] NEVI Buy America is a structural barrier, not a technical one: Chinese-manufactured EVSE hardware cannot qualify for NEVI-funded deployments without US-based final assembly (required from Oct 2025) and, from Oct 2026, ≥55% US component cost. A proposed 100% domestic content rule (Feb 2026) remains unfinalized as of June 2026 — the trajectory is toward total exclusion of Chinese-sourced hardware. OCPP 2.0.1, open payment terminals, and 97% uptime SLA are operational requirements that must be designed in — they cannot be retrofitted at the permitting stage. Verify current FHWA minimum standards and waiver guidance directly at fhwa.dot.gov before any procurement or grant application.",
+      "source": {
+        "url": "https://www.fhwa.dot.gov/environment/nevi/",
+        "publisher": "U.S. Federal Highway Administration (FHWA)",
+        "accessed": "2026-06-11",
+        "verified": false
+      }
+    },
+    {
+      "id": "evus-market-03",
+      "requirement": "OCPP Networking and Utility/Site Interconnection Approval",
+      "target_requirement": "Beyond product safety certification, US EVSE operators must navigate two further access layers: (1) Network/OCPP: Non-NEVI commercial charging networks increasingly require OCPP 1.6 or 2.0.1 compliance for charger-to-CSMS communication as a de facto market standard; several states (e.g., California under CPUC/CEC programmes) mandate OCPP for grant-funded installations even outside NEVI. (2) Utility and site approval: connecting EVSE to the grid typically requires notification to or approval from the local electric utility (load study, meter upgrade, transformer capacity review). For large DCFC installations (>100 kW), a formal utility interconnection study may be required. Site approvals (building permit, fire marshal sign-off) are AHJ-dependent. In California, the CEC (California Energy Commission) administers additional incentive programmes (e.g., CALeVIP 2.0 Fast Charge California Project, requiring OCPP 2.0.1 or later) with their own technical eligibility rules that change each funding cycle. Confirm the current CPUC decision and CEC CALeVIP round requirements at cpuc.ca.gov and energy.ca.gov before any programme application.",
+      "target_standards": [
+        "OCPP 1.6 / 2.0.1 (Open Charge Point Protocol — Open Charge Alliance, de facto US network standard)",
+        "NFPA 70 NEC Article 625 (EVSE installation, AHJ-enforced)",
+        "IEEE 1547-2018 (Interconnection and Interoperability of Distributed Energy Resources) [applied for larger DCFC grid connections]",
+        "California CPUC Transportation Electrification decisions (including D.18-05-040, SB 350 TE infrastructure; D.22-08-024, EVSE OCPP communication protocols for IOU-funded installations) — confirm the current applicable decision at cpuc.ca.gov/industries-and-topics/electrical-energy/infrastructure/transportation-electrification/key-cpuc-te-decisions-and-resolutions",
+        "California CEC CALeVIP 2.0 — Fast Charge California Project (2025): requires OCPP 2.0.1 or later; incentives up to $100,000 per port; programme rules change each funding cycle — verify current round requirements at energy.ca.gov/programs-and-topics/programs/california-electric-vehicle-infrastructure-project-calevip-20"
+      ],
+      "china_equivalent": "In China, EVSE grid connection is governed by the power grid company's own access rules (State Grid Q/GDW series standards for EV charging). Communication between chargers and the operator's cloud platform uses GB/T 27930 (DC charging) or proprietary protocols per the operator's CSMS. There is no open-protocol mandate equivalent to OCPP. Utility interconnection for EV stations is approved by the local grid company branch (similar in function to US utility interconnection review but under a single vertically integrated utility structure). Site-level permits are issued by local construction authorities under GB 50966.",
+      "china_standards": [
+        "Q/GDW 1591 (State Grid EV charging equipment communication protocol — internal enterprise standard; current version may have been superseded by later Q/GDW editions; not publicly available in English)",
+        "GB/T 27930-2015 (DC charging communication — off-board charger to BMS)",
+        "GB 50966-2014 (EV charging station design code)",
+        "State Grid EV charging access management rules (internal grid company standards)"
+      ],
+      "gap": "Chinese charger firmware and cloud platforms are built around GB/T 27930 and proprietary CSMS protocols — not OCPP. Entering US commercial networks (ChargePoint, Blink, EVgo, Electrify America, etc.) requires OCPP 1.6 or 2.0.1 compliance, which is a firmware and backend integration gap requiring non-trivial development effort. Separately, the fragmented US utility landscape means grid interconnection approval timelines and requirements vary enormously by utility and state — Chinese manufacturers with no US deployment history will face a learning curve on load study documentation, transformer upgrade cost allocation, and utility-specific metering requirements. State incentive programmes (e.g., CEC CALeVIP, NYSERDA) add further eligibility criteria that must be tracked per-programme.",
+      "mandatory_status": {
+        "target": "OCPP: de facto mandatory for US commercial network participation; mandatory for NEVI and many state-funded deployments. Utility interconnection approval: mandatory per local utility rules. State programme eligibility: programme-specific.",
+        "cn": "OCPP not required; grid connection governed by State Grid internal rules; no open-protocol mandate"
+      },
+      "verdict": "[INFORMATIONAL] OCPP 2.0.1 is the practical entry ticket for US commercial charging networks and any federally or state-funded deployment. California's CEC CALeVIP programme and CPUC IOU-funded programmes mandate OCPP 2.0.1 or later for funded installations; programme rules and decision numbers change each cycle — confirm current requirements at energy.ca.gov and cpuc.ca.gov before any application. The US utility interconnection process is fragmented and jurisdiction-specific — it is a project-management and timeline risk, not a certification gap, but must be resourced accordingly. Chinese manufacturers without OCPP-compliant firmware face both a commercial network exclusion and NEVI ineligibility simultaneously.",
+      "source": {
+        "url": "https://www.fhwa.dot.gov/environment/nevi/",
+        "publisher": "U.S. Federal Highway Administration (FHWA)",
+        "accessed": "2026-06-11",
+        "verified": false
+      }
+    },
+    {
+      "id": "evus-nec-01",
+      "requirement": "NEC Article 625 — EV Power Transfer System Installation",
+      "target_requirement": "NFPA 70 (National Electrical Code) Article 625 governs the installation of electric vehicle power transfer systems in the United States, covering EV supply equipment (EVSE), branch circuits, wiring methods, ventilation, and disconnecting means for Level 1, Level 2, and DC fast charging. All EVSE must be listed equipment (certified by a Nationally Recognized Testing Laboratory, NRTL, such as UL or ETL). Installation requires a permit and passes inspection by the local Authority Having Jurisdiction (AHJ). GFCI (ground-fault circuit-interrupter) protection is required for personnel safety. NEC 625.54 mandates GFCI protection for EVSE in certain applications.",
+      "target_standards": [
+        "NFPA 70 (NEC) 2023 — Article 625 Electric Vehicle Power Transfer System",
+        "NFPA 70 (NEC) 2023 — Article 625.54 GFCI Protection",
+        "NFPA 70 (NEC) 2023 — Article 625.40 EVSE Branch Circuit",
+        "UL 2594 — Standard for Electric Vehicle Supply Equipment",
+        "UL 2231 — Personnel Protection Systems for EV Supply Circuits"
+      ],
+      "china_equivalent": "China's primary standards for EV charging installation are GB/T 18487.1 (electric vehicle conductive charging system — general requirements; 2023 revision current) and GB 50966 (code for design of electric vehicle charging station). These cover general electrical safety and charging interface requirements but do not replicate the prescriptive installation rules, listed-equipment mandate, or AHJ permit-and-inspection process of NEC Article 625. As of March 1, 2025, EV charging equipment in China became subject to mandatory CCC certification (administered through CQC under CNCA rules); CCC certification does not constitute NRTL listing and carries no presumption of NEC 625 compliance.",
+      "china_standards": [
+        "GB/T 18487.1-2023",
+        "GB 50966-2014",
+        "GB/T 27930-2023",
+        "CQC 3901-2022"
+      ],
+      "gap": "NEC Article 625 requires EVSE to be listed by an NRTL (e.g., UL 2594) — a certification absent from standard Chinese-market EV chargers certified only to CQC or GB/T schemes. The AHJ permit-and-inspection process is a regulatory mechanism with no direct equivalent in Chinese EV charger installation practice. GFCI personnel protection (NEC 625.54) and dedicated branch circuit sizing (NEC 625.40) rules impose hardware and wiring requirements not present in Chinese standards. Without NRTL listing, a Chinese EV charger cannot legally obtain an electrical permit or pass inspection in the US.",
+      "mandatory_status": {
+        "target": "Mandatory — enforced by AHJ electrical permit and inspection for all EVSE installations in NEC-adopting US jurisdictions; listed equipment required",
+        "cn": "No direct equivalent — GB/T 18487.1 and GB 50966 apply but have different scope and no equivalent AHJ permit-inspection enforcement mechanism"
+      },
+      "verdict": "[INFORMATIONAL] Chinese-market EV chargers certified only to GB/T or CQC standards are not presumed to comply with NEC Article 625. US market installation requires NRTL listing (e.g., UL 2594 for the charger unit) and installation by a licensed electrician following NEC 625 wiring rules and local AHJ permit requirements. Verify current NRTL listing status via the UL Product iQ database (iq.ul.com) or the applicable NRTL directory before installation.",
+      "source": {
+        "url": "https://www.nfpa.org/codes-and-standards/nfpa-70-standard-development/70",
+        "publisher": "NFPA (National Fire Protection Association)",
+        "accessed": "2026-06-11",
+        "verified": false
+      }
+    },
+    {
+      "id": "evus-nec-02",
+      "requirement": "NEC Article 625 — Listed Equipment Requirement and NRTL Certification",
+      "target_requirement": "NEC Article 625.2 and 625.5 require that all EVSE be listed (i.e., certified by a Nationally Recognized Testing Laboratory, NRTL) before installation in the US. The primary product standard is UL 2594 (Electric Vehicle Supply Equipment), which covers Level 1 and Level 2 EVSE. DC fast chargers are covered under UL 2202 (Electric Vehicle (EV) Charging System Equipment). NRTL listing is a prerequisite for AHJ permit approval — an AHJ will not issue an electrical permit for unlisted EVSE. Listed status is verified via the NRTL's public product directory (e.g., UL Product iQ at iq.ul.com).",
+      "target_standards": [
+        "NFPA 70 (NEC) 2023 — Article 625.5 Listed Equipment",
+        "UL 2594 — Standard for Electric Vehicle Supply Equipment",
+        "UL 2202 — Standard for Electric Vehicle (EV) Charging System Equipment (DC fast charge)",
+        "29 CFR 1910.7 — OSHA NRTL Program (defines NRTL recognition)"
+      ],
+      "china_equivalent": "China requires EV charger certification under mandatory CCC (China Compulsory Certification) schemes administered by CQC (China Quality Certification Centre) aligned to GB/T 18487 and related standards; this became mandatory from March 1, 2025 (previously partly voluntary). CCC certification is issued by Chinese conformity assessment bodies and is recognised for the Chinese domestic market. It is not recognised by US AHJs and does not substitute for NRTL listing under NEC Article 625. Some Chinese manufacturers have pursued dual certification (CCC/CQC + UL 2594) specifically for US export; this is voluntary and not yet industry-standard practice.",
+      "china_standards": [
+        "GB/T 18487.1-2023",
+        "CQC 3901-2022",
+        "GB/T 27930-2023"
+      ],
+      "gap": "CQC certification and GB/T conformance carry no recognition under the US AHJ permit system. NEC Article 625.5 requires NRTL listing as a condition for lawful installation — this is a hard gate, not a checklist item. Chinese EV charger OEMs without UL 2594 or UL 2202 NRTL listing cannot obtain US electrical permits and cannot legally be installed in commercial or residential settings. Obtaining NRTL listing requires engaging a recognised testing lab (UL, ETL/Intertek, MET Labs, etc.), testing to the applicable UL product standard, and maintaining a follow-up service programme. The process typically takes 3–12 months and requires product samples and engineering documentation.",
+      "mandatory_status": {
+        "target": "Mandatory — NEC 625.5 requires listed equipment; AHJ will not issue permit for unlisted EVSE; enforced at inspection in all NEC-adopting US jurisdictions",
+        "cn": "Not applicable — CQC certification is required for Chinese domestic market sale but has no equivalence to US NRTL listing"
+      },
+      "verdict": "[INFORMATIONAL] Chinese-market EV chargers bearing only CQC certification cannot be legally installed in permitted US electrical installations under NEC Article 625. NRTL listing to UL 2594 (Level 1/2 EVSE) or UL 2202 (DC fast charge) is a non-negotiable prerequisite for US market entry. Verify listing status at iq.ul.com or the relevant NRTL directory. Confirm AHJ-specific requirements with the local building or electrical department before installation, as some jurisdictions impose additional conditions beyond NEC baseline.",
+      "source": {
+        "url": "https://www.nfpa.org/codes-and-standards/nfpa-70-standard-development/70",
+        "publisher": "NFPA (National Fire Protection Association)",
+        "accessed": "2026-06-11",
+        "verified": false
+      }
+    },
+    {
+      "id": "evus-safety-001",
+      "requirement": "AC EV Supply Equipment (EVSE) Safety Listing",
+      "target_requirement": "AC EVSE sold or installed in the US must be listed to UL 2594 (Standard for Electric Vehicle Supply Equipment) by a Nationally Recognized Testing Laboratory (NRTL). UL listing is required by the NEC (NFPA 70) and enforced by local AHJs. Products without NRTL listing cannot be legally installed.",
+      "target_standards": [
+        "UL 2594 (Ed. 2, 2021) — Standard for Electric Vehicle Supply Equipment",
+        "NFPA 70 / NEC Article 625 — Electric Vehicle Power Transfer System",
+        "29 CFR 1910.7 — OSHA NRTL Program"
+      ],
+      "china_equivalent": "Chinese AC EVSE is typically certified to GB/T 18487.1 (Electric Vehicle Conductive Charging System — General Requirements) and tested by a CNCA-accredited laboratory under the CCC scheme. GB/T 18487.1 covers similar functional safety areas but uses different test methods, connector specifications, and approval infrastructure.",
+      "china_standards": [
+        "GB/T 18487.1-2015 — Electric Vehicle Conductive Charging System Part 1: General Requirements",
+        "CCC (China Compulsory Certification) scheme"
+      ],
+      "gap": "GB/T 18487.1 certification and Chinese CCC test reports are NOT accepted by US AHJs or OSHA as substitutes for NRTL listing to UL 2594. Exporters must retest and obtain a separate UL 2594 listing from an OSHA-recognized NRTL (e.g., UL, Intertek, TÜV SÜD). There is no mutual recognition agreement between the US NRTL program and the Chinese CCC scheme for EVSE.",
+      "mandatory_status": {
+        "target": "Mandatory — required by NEC Article 625 and enforced by local AHJs; OSHA NRTL listing required for workplace installations",
+        "cn": "Mandatory — CCC certification required for AC EVSE sold in China under GB/T 18487.1"
+      },
+      "verdict": "[INFORMATIONAL] Chinese EVSE manufacturers exporting to the US must obtain NRTL listing to UL 2594 from an OSHA-recognized lab. GB/T or CCC documentation alone does not satisfy US requirements. Consult a qualified US compliance engineer before market entry.",
+      "source": {
+        "url": "https://standardscatalog.ul.com/standards/en/standard_2594_2",
+        "publisher": "UL Standards & Engagement / OSHA NRTL Program (osha.gov/nationally-recognized-testing-laboratory-nrtl-program)",
+        "accessed": "2026-06-11",
+        "verified": false
+      }
+    },
+    {
+      "id": "evus-safety-002",
+      "requirement": "DC Fast Charging Equipment Safety Listing",
+      "target_requirement": "DC electric vehicle charging equipment (DCFC) sold in the US must be listed to UL 2202 (Standard for Electric Vehicle (EV) Charging System Equipment) by an OSHA-recognized NRTL. UL 2202 covers DC output chargers including combined charging system (CCS) and CHAdeMO configurations. NEC Article 625 applies to all EV charging equipment installations.",
+      "target_standards": [
+        "UL 2202 (Ed. 2) — Standard for Electric Vehicle (EV) Charging System Equipment",
+        "NFPA 70 / NEC Article 625 — Electric Vehicle Power Transfer System",
+        "29 CFR 1910.7 — OSHA NRTL Program",
+        "SAE J1772 / SAE J2894 — relevant interface standards referenced by UL 2202"
+      ],
+      "china_equivalent": "Chinese DC fast chargers are typically certified to GB/T 18487.1 (general requirements) together with GB/T 27930 (communication protocol for DC charging) and GB/T 20234.3 (DC charging connector). Testing is performed by CNCA-accredited labs. The Chinese GB/T DC connector (\"GB connector\") differs physically and electrically from the US CCS (SAE J1772 combo) standard.",
+      "china_standards": [
+        "GB/T 18487.1-2015 — General Requirements (DC sections)",
+        "GB/T 27930-2015 — Communication Protocol for Non-vehicle Conductive Charger and BMS",
+        "GB/T 20234.3-2015 — DC Charging Coupler"
+      ],
+      "gap": "Chinese GB/T DC charging certifications are not accepted in the US. UL 2202 NRTL listing is required. Additionally, the Chinese GB DC connector is physically incompatible with US CCS (SAE J1772 combo) outlets, requiring hardware redesign for the US market. No mutual recognition exists between the NRTL program and Chinese CCC for DC EVSE.",
+      "mandatory_status": {
+        "target": "Mandatory — NEC Article 625 and local AHJ enforcement; NRTL listing required for commercial and public installations",
+        "cn": "Mandatory — CCC and GB/T certification required for DC chargers sold in China"
+      },
+      "verdict": "[INFORMATIONAL] Chinese DC fast charger manufacturers targeting the US market must obtain UL 2202 NRTL listing and redesign connectors for CCS compatibility. GB/T certification does not transfer. Engage an OSHA-recognized NRTL early in product development. Consult a qualified US compliance engineer.",
+      "source": {
+        "url": "https://standardscatalog.ul.com/standards/en/standard_2202_2",
+        "publisher": "UL Standards & Engagement",
+        "accessed": "2026-06-11",
+        "verified": false
+      }
+    },
+    {
+      "id": "evus-safety-003",
+      "requirement": "Personnel Protection Systems for EVSE (Shock Hazard Protection)",
+      "target_requirement": "US EVSE must incorporate personnel protection systems meeting UL 2231 (Standard for Personnel Protection Systems for EV Supply Circuits). UL 2231 covers ground fault protection, leakage current detection, and automatic de-energization to protect users from electric shock. NEC Article 625.22 mandates ground-fault circuit-interrupter (GFCI) or equivalent protection on all EVSE. These requirements apply to both AC (UL 2594) and DC (UL 2202) equipment.",
+      "target_standards": [
+        "UL 2231 — Standard for Personnel Protection Systems for Electric Vehicle (EV) Supply Circuits",
+        "NFPA 70 / NEC Article 625.22 — Ground-fault protection for EV equipment",
+        "29 CFR 1910.7 — OSHA NRTL Program"
+      ],
+      "china_equivalent": "Chinese EVSE standards address leakage protection and ground-fault detection within GB/T 18487.1 and related product standards, with requirements for residual current devices (RCDs). However, the specific protection levels, trip thresholds, and test methodologies differ from UL 2231. Chinese standards do not have a direct standalone equivalent to UL 2231.",
+      "china_standards": [
+        "GB/T 18487.1-2015 — Sections covering leakage and ground-fault protection",
+        "GB 14050 — Specifications for Residual Current Operated Protective Devices (type A/B)"
+      ],
+      "gap": "UL 2231 personnel protection requirements must be demonstrated as part of UL 2594 or UL 2202 NRTL listing; Chinese RCD and leakage protection test data under GB/T are not accepted as equivalent. US NEC 625.22 mandates specific GFCI trip thresholds (typically 5 mA for personnel protection) that may differ from Chinese GB requirements. Manufacturers must validate protection circuitry against UL 2231 through an NRTL.",
+      "mandatory_status": {
+        "target": "Mandatory — NEC Article 625.22 requires ground-fault protection on all EVSE; verified through NRTL listing process under UL 2231",
+        "cn": "Mandatory (within GB/T 18487.1 scope) — leakage and RCD protection required for EVSE sold in China"
+      },
+      "verdict": "[INFORMATIONAL] Personnel protection to UL 2231 is an integral part of US EVSE NRTL listing and cannot be waived or substituted with Chinese RCD test data. Manufacturers must test and document protection system performance through an OSHA-recognized NRTL as part of UL 2594 or UL 2202 certification. Consult a qualified US compliance engineer.",
+      "source": {
+        "url": "https://standardscatalog.ul.com/standards/en/standard_2231-1",
+        "publisher": "UL Standards & Engagement (UL 2231-1/-2); NFPA 70 NEC Article 625 (nfpa.org)",
+        "accessed": "2026-06-11",
+        "verified": false
+      }
+    }
+  ]
+}
