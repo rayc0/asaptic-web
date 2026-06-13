@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The bystander problem — Asaptic Labs</title>
+
+  <meta name="description" content="AI agents deployed in the physical world observe more than they are authorized to act on. The bystander problem is structural: the gap between what an agent perceives and what it may do is a design constant. Getting it wrong produces two distinct failure modes — both of which belong in the authorization document, not in an emergency procedure invented after the fact." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/bystander-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The bystander problem: accountability when an AI agent observes harm it is not authorized to prevent" />
+  <meta property="og:description" content="AI agents deployed in the physical world observe more than they are authorized to act on. The bystander problem is structural: the gap between what an agent perceives and what it may do is a design constant. Getting it wrong produces two distinct failure modes — both of which belong in the authorization document, not in an emergency procedure invented after the fact." />
+  <meta property="og:url" content="https://asaptic.com/blog/bystander-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-13" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The bystander problem: accountability when an AI agent observes harm it is not authorized to prevent",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-13",
+    "description": "AI agents deployed in the physical world observe more than they are authorized to act on. The bystander problem is structural: the gap between what an agent perceives and what it may do is a design constant.",
+    "url": "https://asaptic.com/blog/bystander-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .essay-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-body p {
+      font-size: 17px;
+      line-height: 1.8;
+      color: var(--fg);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 40px;
+      margin-bottom: 16px;
+    }
+    .essay-summary {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 32px;
+      margin-top: 48px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 0;
+    }
+    .essay-footer {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Asaptic Labs</a>
+    <div class="nav-links">
+      <a href="/crossings">Crossings</a>
+      <a href="/thesis">Thesis</a>
+      <a href="/blog/" class="active">Notes</a>
+      <a href="/engage">Engage</a>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <header class="essay-header">
+      <span class="essay-tag">× Physical-World Care · × Hardware · × Post-Quantum Security</span>
+      <h1 class="essay-title">The bystander problem: accountability when an AI agent observes harm it is not authorized to prevent</h1>
+      <p class="essay-subtitle">Every AI agent deployment has a defined scope of action. Physical-world deployments are equipped with sensors that extend beyond that scope. The gap between what an agent perceives and what it may do is structural — and it produces two distinct accountability failures, each worse than the other.</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-13</span>
+        <span>5 min read</span>
+      </div>
+    </header>
+
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zht">繁體</button>
+    </div>
+
+    <!-- EN -->
+    <div class="essay-lang active" data-lang-content="en">
+      <div class="essay-body">
+        <p>Every AI agent deployment carries an implicit theory of scope. The agent is authorized to act within a defined domain. Everything outside that domain is not its concern. A building-automation agent manages HVAC and access control. A care-coordination agent tracks medication schedules and appointment windows. A logistics agent routes inventory through a facility. Each operates within the boundary its principal hierarchy has drawn.</p>
+
+        <p>The bystander problem arises when an agent, operating legitimately within its scope, perceives conditions that indicate harm to a person — but lacks the authorization, capability, or mandate to intervene. The building agent's camera feed shows someone who has fallen in a corridor it monitors but does not serve. The care-coordination agent's scheduling data reflects a pattern of missed check-ins from an adjacent unit outside its roster. The logistics agent's sensor array detects what appears to be a person in distress in a restricted zone the agent traverses but does not manage.</p>
+
+        <p>Each agent has acquired situational awareness that, for a person in the same position, would constitute an immediate moral obligation to act. The agent, by the terms of its deployment, has no such obligation — or at least no clear one.</p>
+
+        <p>This is not an edge case that arises only in unusual deployments. It is the structural condition of any AI agent operating in the physical world with sensors that extend beyond its operational boundary. Cameras, microphones, environmental sensors, and presence detectors generate situational awareness that covers more than the agent's mandate. The gap between what an agent perceives and what it is authorized to act on is a design constant, not an anomaly.</p>
+
+        <h2>Two failure modes</h2>
+        <p>The accountability problem has two distinct failure modes.</p>
+
+        <p>The first is inaction failure. The agent perceives a harm signal, has no mandate to respond, and does nothing. If the harm materializes and the agent's log shows it had the relevant data — a motion anomaly consistent with a fall, a physiological signal consistent with distress — the question of who bore an implicit obligation to route that signal becomes a legal and ethical dispute that current accountability frameworks are not equipped to resolve. Who is liable? The agent's principal, who constrained its scope? The operator of the broader system, who did not configure cross-agent alerting? The organization that deployed the agent without considering bystander duties in the authorization document?</p>
+
+        <p>The second failure mode is unauthorized intervention. An agent that expands its own scope in response to a perceived emergency has violated its authorization, regardless of the outcome. An agent that correctly identifies a person in distress and summons emergency services has potentially improved an outcome and certainly exceeded its mandate. If the perception was wrong — the pattern was misread, the situation resolved without escalation — the agent's unauthorized action exposes its principal to liability without a compensating benefit. The problem compounds when multiple agents in the same estate reach this decision independently, under different confidence thresholds, producing inconsistent escalation behavior that no single principal authorized and no accountability framework anticipated.</p>
+
+        <h2>The post-quantum security crossing</h2>
+        <p>Both failure modes become worse when sensor data integrity cannot be guaranteed. An agent whose perception channel is vulnerable to manipulation faces a more complex bystander situation: it may be induced to perceive an emergency that does not exist, triggering unauthorized escalation; or induced to fail to perceive one that does, causing inaction at the moment that matters. The integrity of the perception that triggers a bystander response depends on the same chain of hardware attestation and cryptographically verified sensor data that physical-world accountability requires across all three crossings. A bystander determination built on unverified perception is simultaneously an accountability gap and an attack surface. An adversary who can inject a false distress signal can cause an agent to summon emergency services at will; one who can suppress a true signal can prevent it.</p>
+
+        <h2>The hardware crossing</h2>
+        <p>Embedded physical-world agents — those running on sensor nodes, edge devices, and integrated building systems — face the bystander problem with a narrower margin for response latency. The agent that detects a fall event through a body-worn accelerometer or a floor-pressure sensor may have a decision window measured in seconds before the value of an alert degrades. The authorization document cannot have been written with every sensor combination and latency profile in mind. If the bystander policy was not specified in advance, the agent either acts without authorization or delays past the point where action matters. Neither outcome is recoverable in the audit trail.</p>
+
+        <h2>The physical-world care crossing</h2>
+        <p>Care deployments bring the bystander problem into its sharpest relief. A care AI that monitors one resident under an explicit care contract shares environmental sensors — cameras, motion detectors, noise monitors — with neighboring spaces it has no contractual relationship to. On any given night, the agent may be the first system to detect a deterioration in a person it was never deployed to serve. Its data is more current than the nursing station's. Its detection capability may be better than any human observer currently on shift. And by the strict terms of its authorization, it is not permitted to act.</p>
+
+        <p>The argument that care organizations should simply configure alerting to cover adjacent spaces misses the point. The bystander problem does not arise because someone forgot to configure something. It arises because the scope of an agent's authorization and the scope of its sensory reach are structurally different things — and in care environments, the gap between them consistently contains people whose safety depends on someone having thought clearly about which side of the line they fall on.</p>
+
+        <h2>The structural requirement</h2>
+        <p>The structural remedy is explicit bystander policy at the design layer. An agent's authorization document should specify, not leave implicit, its behavior when it perceives conditions suggesting harm outside its operational scope. The policy options are bounded: do nothing and log; preserve a cryptographically signed evidence record for human review; alert a designated recipient outside the normal principal hierarchy; or escalate within the authorization chain to a human who holds bystander authority. Each option carries distinct accountability implications. None can be evaluated post-incident without knowing which one the system was designed to apply.</p>
+
+        <p>The tension that cannot be designed away is this: the agent is deployed to do one thing, and the world continuously produces situations that require something else. The resolution — who to notify, with what confidence threshold, at what cost to scope integrity — is a human judgment that must be made before deployment, not an emergent behavior shaped by accidents of which situations the agent happened to encounter first.</p>
+
+        <p>The accountable bystander agent is not the one that does the right thing when it witnesses harm. It is the one whose designers thought clearly about what the right thing was, wrote it into the authorization document, and built the agent to do exactly and only that — with a signed audit trail proving it did.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Key point</span>
+        <p>Any AI agent operating in the physical world with sensors wider than its mandate faces the bystander problem structurally. Inaction failure — the agent perceives harm and is not authorized to respond — creates a liability dispute with no clear resolution. Unauthorized intervention — the agent escalates beyond its scope — violates authorization regardless of outcome. Neither failure mode can be resolved after the fact. The remedy is explicit bystander policy in the authorization document before deployment: which signals, which response, which authority chain, with a cryptographically signed audit trail confirming the agent did exactly that.</p>
+      </div>
+    </div>
+
+    <!-- ZH -->
+    <div class="essay-lang" data-lang-content="zh">
+      <div class="essay-body">
+        <p>每个AI智能体的部署都带有一种隐含的范围理论。智能体被授权在一个明确的领域内行动，领域之外的一切不在其考量之中。楼宇自动化智能体管理暖通空调和门禁控制；照护协调智能体追踪用药计划和就诊时间窗口；物流智能体在设施内路由库存。每个智能体都在其委托人层级划定的边界内运作。</p>
+
+        <p>当一个合法运营中的智能体感知到对人造成伤害的迹象，却没有干预的授权、能力或职责时，旁观者问题就出现了。楼宇智能体的摄像头画面显示有人在其监控但不服务的走廊里摔倒了。照护协调智能体的日程数据反映出其名单之外的相邻单元存在连续未签到的规律。物流智能体的传感器阵列在其经过但不管理的禁区中检测到疑似处于困境中的人员。</p>
+
+        <p>每个智能体都获得了态势感知信息，而对于处于同一位置的人来说，这些信息将构成立即采取行动的道德义务。但智能体根据其部署条款并无此种义务——或至少没有明确的义务。</p>
+
+        <p>这并非仅在异常部署中才会出现的边缘案例，而是任何配备超出其运营边界的传感器、在物理世界中运行的AI智能体所面临的结构性条件。摄像头、麦克风、环境传感器和存在探测器产生的态势感知覆盖范围超出智能体的职责范围。智能体所感知到的信息与其被授权采取行动的范围之间的差距是设计常量，而非异常。</p>
+
+        <h2>两种失败模式</h2>
+        <p>问责问题有两种截然不同的失败模式。</p>
+
+        <p>第一种是不作为失败。智能体感知到伤害信号，没有响应的职责，于是什么都没做。如果伤害最终发生，而智能体的日志显示它拥有相关数据——与跌倒一致的运动异常，与困境一致的生理信号——那么谁对路由该信号负有隐性义务，就成了当前问责框架难以解决的法律和伦理争议。谁来承担责任？是限制了其范围的智能体委托人？还是未配置跨智能体警报功能的更广泛系统运营者？抑或是在授权文件中未考虑旁观者义务便完成部署的机构？</p>
+
+        <p>第二种失败模式是未授权干预。无论结果如何，擅自扩大范围响应紧急情况的智能体均已违反其授权。正确识别了处于困境的人员并呼叫紧急服务的智能体，可能改善了结果，但肯定超越了其职责。如果感知是错误的——信号被误读，情况无需升级即可解决——智能体的未授权行动使其委托人面临责任风险，却没有相应的收益。当同一部署中的多个智能体在不同置信度阈值下独立作出这一决策时，问题进一步复杂化，产生了无任何单一委托人授权、无任何问责框架预见的不一致上报行为。</p>
+
+        <h2>后量子安全交叉点</h2>
+        <p>当传感器数据的完整性无法保证时，两种失败模式都会变得更糟。感知通道存在被篡改风险的智能体面临更复杂的旁观者情境：它可能被诱导感知不存在的紧急情况，从而触发未授权上报；或被诱导未能感知真实存在的紧急情况，在关键时刻导致不作为。触发旁观者响应的感知的完整性，依赖于物理世界问责在三个交叉点上普遍所需的硬件认证和密码验证传感器数据链。建立在未经验证的感知之上的旁观者判断既是问责缺口，也是攻击面。能够注入虚假窘迫信号的攻击者可随意触发智能体呼叫紧急服务；能够抑制真实信号的攻击者则可阻止这一行为。</p>
+
+        <h2>硬件交叉点</h2>
+        <p>嵌入式物理世界智能体——运行于传感器节点、边缘设备和集成楼宇系统上的智能体——面临着响应延迟余量更小的旁观者问题。通过体佩加速度计或地板压力传感器检测到跌倒事件的智能体，其警报价值随时间迅速下降，可用决策窗口或许只有数秒。授权文件不可能预见每一种传感器组合和延迟特性。如果旁观者政策未被事先指定，智能体要么在未经授权的情况下行动，要么延迟至行动已无意义的时刻。两种结果在审计追踪中均无法挽回。</p>
+
+        <h2>物理世界照护交叉点</h2>
+        <p>照护部署使旁观者问题呈现得最为清晰。在明确照护合同下监测某位居民的照护AI，与它无任何合同关系的相邻空间共享环境传感器——摄像头、运动探测器、噪音监测器。在任意一个夜晚，该智能体都可能是第一个检测到其从未被部署去服务的人员状况恶化的系统。其数据比护士站更为实时，其检测能力或许优于当值的任何人类观察者。而按其授权条款的严格解释，它不被允许采取行动。</p>
+
+        <p>认为照护机构只需配置警报以覆盖相邻空间的论点，没有抓住问题的本质。旁观者问题的出现并非因为有人忘记了进行某项配置，而是因为智能体的授权范围与其感知范围在结构上是不同的事物——在照护环境中，两者之间的差距持续地容纳着那些安全取决于某人是否事先认真思考过他们处于边界哪一侧的人。</p>
+
+        <h2>结构性要求</h2>
+        <p>结构性解决方案是在设计层面明确制定旁观者政策。智能体的授权文件应明确规定——而非默认——智能体在感知到超出其运营范围的伤害迹象时的行为。政策选项是有限的：不作为并记录日志；保存经密码签名的证据记录供人工审查；向智能体正常委托人层级之外的指定接收人发出警报；或在授权链内向持有旁观者授权的人类上报。每个选项都有不同的问责含义，在不知道系统被设计为执行哪个选项的情况下，任何选项都无法在事后进行评估。</p>
+
+        <p>无法通过设计消除的张力在于：智能体被部署来做一件事，而世界不断产生需要其他事情的情境。解决方案——通知谁、置信度阈值如何、以什么代价维护范围完整性——是必须在部署前作出的人类判断，而非由智能体碰巧首先遇到的情境塑造的应急行为。</p>
+
+        <p>负责任的旁观者智能体，不是在目睹伤害时能做出正确行动的智能体，而是其设计者认真思考了正确行动是什么，将其写入授权文件，并构建智能体精确地只做那件事——并有签名审计追踪证明其确实如此的智能体。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>任何在物理世界中运行且传感器范围超出其职责范围的AI智能体，都从结构上面临旁观者问题。不作为失败——智能体感知到伤害但未获授权响应——产生无明确解决方案的责任争议。未授权干预——智能体超出范围上报——无论结果如何均违反授权。两种失败模式均无法事后补救。解决方案是在部署前于授权文件中明确旁观者政策：哪些信号、何种响应、哪条授权链，并以密码签名的审计追踪确认智能体确实如此执行。</p>
+      </div>
+    </div>
+
+    <!-- ZHT -->
+    <div class="essay-lang" data-lang-content="zht">
+      <div class="essay-body">
+        <p>每個AI智能體的部署都帶有一種隱含的範圍理論。智能體被授權在一個明確的領域內行動，領域之外的一切不在其考量之中。樓宇自動化智能體管理暖通空調和門禁控制；照護協調智能體追蹤用藥計劃和就診時間窗口；物流智能體在設施內路由庫存。每個智能體都在其委託人層級劃定的邊界內運作。</p>
+
+        <p>當一個合法運營中的智能體感知到對人造成傷害的跡象，卻沒有干預的授權、能力或職責時，旁觀者問題就出現了。樓宇智能體的攝影機畫面顯示有人在其監控但不服務的走廊裡摔倒了。照護協調智能體的日程資料反映出其名單之外的相鄰單元存在連續未簽到的規律。物流智能體的感測器陣列在其經過但不管理的禁區中偵測到疑似處於困境中的人員。</p>
+
+        <p>每個智能體都獲得了態勢感知資訊，而對於處於同一位置的人來說，這些資訊將構成立即採取行動的道德義務。但智能體根據其部署條款並無此種義務——或至少沒有明確的義務。</p>
+
+        <p>這並非僅在異常部署中才會出現的邊緣案例，而是任何配備超出其運營邊界的感測器、在物理世界中運行的AI智能體所面臨的結構性條件。攝影機、麥克風、環境感測器和存在探測器產生的態勢感知覆蓋範圍超出智能體的職責範圍。智能體所感知到的資訊與其被授權採取行動的範圍之間的差距是設計常量，而非異常。</p>
+
+        <h2>兩種失敗模式</h2>
+        <p>問責問題有兩種截然不同的失敗模式。</p>
+
+        <p>第一種是不作為失敗。智能體感知到傷害信號，沒有響應的職責，於是什麼都沒做。如果傷害最終發生，而智能體的日誌顯示它擁有相關數據——與跌倒一致的運動異常，與困境一致的生理信號——那麼誰對路由該信號負有隱性義務，就成了當前問責框架難以解決的法律和倫理爭議。誰來承擔責任？是限制了其範圍的智能體委託人？還是未配置跨智能體警報功能的更廣泛系統運營者？抑或是在授權文件中未考慮旁觀者義務便完成部署的機構？</p>
+
+        <p>第二種失敗模式是未授權干預。無論結果如何，擅自擴大範圍回應緊急情況的智能體均已違反其授權。正確識別了處於困境的人員並呼叫緊急服務的智能體，可能改善了結果，但肯定超越了其職責。如果感知是錯誤的——信號被誤讀，情況無需升級即可解決——智能體的未授權行動使其委託人面臨責任風險，卻沒有相應的收益。當同一部署中的多個智能體在不同置信度閾值下獨立作出這一決策時，問題進一步複雜化，產生了無任何單一委託人授權、無任何問責框架預見的不一致上報行為。</p>
+
+        <h2>後量子安全交叉點</h2>
+        <p>當感測器數據的完整性無法保證時，兩種失敗模式都會變得更糟。感知通道存在被篡改風險的智能體面臨更複雜的旁觀者情境：它可能被誘導感知不存在的緊急情況，從而觸發未授權上報；或被誘導未能感知真實存在的緊急情況，在關鍵時刻導致不作為。觸發旁觀者響應的感知的完整性，依賴於物理世界問責在三個交叉點上普遍所需的硬體認證和密碼驗證感測器數據鏈。建立在未經驗證的感知之上的旁觀者判斷既是問責缺口，也是攻擊面。能夠注入虛假窘迫信號的攻擊者可隨意觸發智能體呼叫緊急服務；能夠抑制真實信號的攻擊者則可阻止這一行為。</p>
+
+        <h2>硬體交叉點</h2>
+        <p>嵌入式物理世界智能體——運行於感測器節點、邊緣設備和集成樓宇系統上的智能體——面臨著響應延遲餘量更小的旁觀者問題。通過體佩加速度計或地板壓力感測器偵測到跌倒事件的智能體，其警報價值隨時間迅速下降，可用決策窗口或許只有數秒。授權文件不可能預見每一種感測器組合和延遲特性。如果旁觀者政策未被事先指定，智能體要麼在未經授權的情況下行動，要麼延遲至行動已無意義的時刻。兩種結果在審計追蹤中均無法挽回。</p>
+
+        <h2>物理世界照護交叉點</h2>
+        <p>照護部署使旁觀者問題呈現得最為清晰。在明確照護合同下監測某位居民的照護AI，與它無任何合同關係的相鄰空間共享環境感測器——攝影機、運動探測器、噪音監測器。在任意一個夜晚，該智能體都可能是第一個偵測到其從未被部署去服務的人員狀況惡化的系統。其數據比護理站更為即時，其偵測能力或許優於當值的任何人類觀察者。而按其授權條款的嚴格解釋，它不被允許採取行動。</p>
+
+        <p>認為照護機構只需配置警報以覆蓋相鄰空間的論點，沒有抓住問題的本質。旁觀者問題的出現並非因為有人忘記了進行某項配置，而是因為智能體的授權範圍與其感知範圍在結構上是不同的事物——在照護環境中，兩者之間的差距持續地容納著那些安全取決於某人是否事先認真思考過他們處於邊界哪一側的人。</p>
+
+        <h2>結構性要求</h2>
+        <p>結構性解決方案是在設計層面明確制定旁觀者政策。智能體的授權文件應明確規定——而非默認——智能體在感知到超出其運營範圍的傷害跡象時的行為。政策選項是有限的：不作為並記錄日誌；保存經密碼簽名的證據記錄供人工審查；向智能體正常委託人層級之外的指定接收人發出警報；或在授權鏈內向持有旁觀者授權的人類上報。每個選項都有不同的問責含義，在不知道系統被設計為執行哪個選項的情況下，任何選項都無法在事後進行評估。</p>
+
+        <p>無法通過設計消除的張力在於：智能體被部署來做一件事，而世界不斷產生需要其他事情的情境。解決方案——通知誰、置信度閾值如何、以什麼代價維護範圍完整性——是必須在部署前作出的人類判斷，而非由智能體碰巧首先遇到的情境塑造的應急行為。</p>
+
+        <p>負責任的旁觀者智能體，不是在目睹傷害時能做出正確行動的智能體，而是其設計者認真思考了正確行動是什麼，將其寫入授權文件，並構建智能體精確地只做那件事——並有簽名審計追蹤證明其確實如此的智能體。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>任何在物理世界中運行且感測器範圍超出其職責範圍的AI智能體，都從結構上面臨旁觀者問題。不作為失敗——智能體感知到傷害但未獲授權響應——產生無明確解決方案的責任爭議。未授權干預——智能體超出範圍上報——無論結果如何均違反授權。兩種失敗模式均無法事後補救。解決方案是在部署前於授權文件中明確旁觀者政策：哪些信號、何種響應、哪條授權鏈，並以密碼簽名的審計追蹤確認智能體確實如此執行。</p>
+      </div>
+    </div>
+
+    <footer class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-13</span>
+      <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
