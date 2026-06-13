@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>事後修改問題：AI不良事件的運維響應摧毀了調查所需證據時的問責困境 — Asaptic Labs</title>
+  <meta name="description" content="當AI照護智能體造成不良事件時，運維響應——模型更新、配置補丁、固件刷新——會摧毀後續調查所需的事件前系統狀態。這種摧毀是標準運維操作。問責代價在真正需要時才會顯現。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/post-incident-modification-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/post-incident-modification-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/post-incident-modification-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/post-incident-modification-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/post-incident-modification-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/post-incident-modification-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="事後修改問題：AI不良事件的運維響應摧毀了調查所需證據時的問責困境" />
+  <meta property="og:description" content="當AI照護智能體造成不良事件時，運維響應——模型更新、配置補丁、固件刷新——會摧毀後續調查所需的事件前系統狀態。這種摧毀是標準運維操作。問責代價在真正需要時才會顯現。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/post-incident-modification-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "事後修改問題：AI不良事件的運維響應摧毀了調查所需證據時的問責困境",
+      "description": "當AI照護智能體造成不良事件時，運維響應——模型更新、配置補丁、固件刷新——會摧毀後續調查所需的事件前系統狀態。這種摧毀是標準運維操作。問責代價在真正需要時才會顯現。",
+      "url": "https://asaptic.com/zht/blog/post-incident-modification-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/post-incident-modification-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯繫 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: engage"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯繫"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "事後修改問題", "item": "https://asaptic.com/zht/blog/post-incident-modification-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+    .essay-back:hover { text-decoration: underline; }
+    .essay-header { margin-bottom: 48px; }
+    .essay-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .essay-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-body p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .essay-body h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+    }
+    .essay-summary {
+      margin-top: 48px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .essay-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .essay-footer-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .essay-footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .essay-footer-back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <header class="essay-header">
+      <div class="essay-tag">× Post-Quantum Security · × Hardware · × Physical-World Care</div>
+      <h1 class="essay-title">事後修改問題：AI不良事件的運維響應摧毀了調查所需證據時的問責困境</h1>
+      <p class="essay-subtitle">運維正確性與證據正確性不是同一屬性。快速修復故障但抹除事件前狀態的系統，完成了其運維職責，卻未能履行其問責義務——兩者同時為真。</p>
+      <div class="essay-meta">
+        <span>Asaptic Labs</span>
+        <span>2026-06-14</span>
+        <span>5 分鐘閱讀</span>
+      </div>
+    </header>
+    <div class="essay-body">
+      <p>一個AI照護智能體誤讀了患者的生理信號，未能觸發告警升級。運維團隊在數小時內收到通知，推送了配置補丁並觸發模型更新。到第二天早上，系統已恢復正常運行。三週後正式審查啟動時，事件前的系統狀態——模型版本、配置、推斷上下文——已不再以任何可供調查的形式存在。</p>
+
+      <p>這就是事後修改問題：當針對AI不良事件的運維響應，摧毀了後續調查所需的證據狀態時。這種摧毀並非出於惡意，而是標準運維操作——卻與部署者接受的每一項問責義務在結構上相互衝突。</p>
+
+      <h2>三種證據銷毀模式</h2>
+      <p>AI不良事件後的證據銷毀以三種模式發生，每種模式單獨看都有其合理性。</p>
+
+      <p>第一是模型替換。當AI系統產生錯誤輸出時，正確的運維響應是更新它——在糾正後的數據上重新訓練、推送新檢查點、切換到不同版本。事件前的模型被覆蓋或以不總能重現的方式歸檔。產生錯誤輸出的那個確切模型，可能在調查人員要求查看時，已不再以可運行的狀態存在。</p>
+
+      <p>第二是配置變更。物理世界場景中的AI智能體，其不良事件往往源於配置方式，而非底層模型缺陷。提示工程、檢索閾值、告警靈敏度設置、整合參數——每一項都在不觸及模型權重的情況下塑造行為。不良事件後更新配置是如此常規，以至於通常根本不觸發正式的變更管理記錄。導致事件的修改與修復事件的修改，可能相隔數小時，在變更日誌中卻無從區分。</p>
+
+      <p>第三是日誌輪換與基礎設施刷新。那些能夠支撐重建的事件日誌——確切的提示、檢索上下文、中間輸出、事件發生時的硬件狀態——受標準日誌保留策略約束，這些策略是為運維便利而非對抗性調查設計的。在許多部署中，九十天已屬寬鬆。運維的預設假設是日誌用於調試，而非問責。這不是同一個需求。</p>
+
+      <h2>後量子安全交叉點</h2>
+      <p>對模型權重進行後量子密碼學簽名解決的是篡改問題：它確立了今天生產環境中的權重就是開發者簽署的權重。它無法確立今天生產環境中的權重與事件發生時的權重是否相同。已簽名的模型版本是當前狀態的可信記錄，不是部署歷史記錄。</p>
+
+      <p>向後量子簽名基礎設施的遷移引入了一個特定風險。將簽名基礎設施遷移到量子抗性方案的組織，往往會作為遷移的一部分對現有工件重新簽名——這可能切斷原本可能保存事件時狀態的簽名鏈。若一個組織在不良事件和調查之間完成了簽名基礎設施遷移，調查所需的證據鏈可能已因合法安全改進的例行副作用而斷裂。</p>
+
+      <p>機遇同樣存在於結構層面。正在設計和部署的後量子簽名架構，可以明確納入版本歷史保留要求。一個旨在保存而不僅是驗證的簽名方案——維護一個防篡改的、僅追加的簽署內容和時間歷史——將改變其後所有不良事件調查的證據格局。</p>
+
+      <h2>硬件交叉點</h2>
+      <p>物理照護環境中的嵌入式AI系統——床邊監控、輔助設備、帶推斷層的環境傳感器——透過設備管理基礎設施接收固件更新。這些更新是自動化的，在設備級別記錄不完整，且時間戳精度通常不足以支持事件前後的歸因分析。</p>
+
+      <p>硬件證明驗證當前固件是否真實且未被修改。它不提供事件時運行固件的歷史記錄。當設備在不良事件後數小時內收到固件更新時——這在運維上是正常的，因為行為不正確的設備應該被更新——事件前狀態的硬件證明鏈被切斷，且沒有任何正式記錄表明這一切斷已經發生。設備現在是正確的且經過證明的，事件時狀態已經消失。</p>
+
+      <h2>物理世界照護交叉點</h2>
+      <p>照護環境對證據保存產生最強的運維壓力。一個知道AI系統行為異常、卻為保存事件前狀態供調查而選擇推遲修補的照護協調員，是在做出照護領域每一種運維規範都會歸類為失職的決定。保護現有照護對象的職責不能等待調查便利。</p>
+
+      <p>這產生了一個無法透過歸咎於任何個人失職來解決的結構性問題。立即修復問題的運維指令是正確的。調查問題所需的證據仍然被銷毀。調查在基於降級資訊的基礎上進行，問責主張在本應解決它們的證據缺失的情況下被裁定，事件的教訓——導致故障的具體配置或模型行為——可能永遠無法被清楚地歸因。</p>
+
+      <p>這種不對稱性隨時間累積。每一個因補救過程中證據被銷毀而未能被調查的不良事件，都在助長一種問責環境：部署者無法證明盡職盡責，調查人員無法重建原因，AI照護系統服務的群體無法將正式問責作為糾正機制來依賴。</p>
+
+      <h2>邁向問責的回應</h2>
+      <p>事後修改問題的解決，不在於減慢運維響應速度，而在於將運維響應與證據保存解耦。</p>
+
+      <p>實踐要求是自動化的修改前快照：在任何模型更新、配置變更或固件部署之前，系統在運維更新路徑之外的防篡改存儲中，捕獲並保存修改前狀態。快照包括模型版本和哈希值、配置參數、近期結構化日誌和硬件固件狀態。該存儲為一次寫入且單獨證明——運維團隊可以更新線上系統，而更新不會觸及已保存的狀態。</p>
+
+      <p>這是工程要求，不是政策要求。政策無法保存系統從未被設計為保留的證據。將證據保存內置於物理AI系統的時機，是在部署之前——屆時證據要求可以與運維要求共同被設計進去，而不是在第一次嚴重事件後被發現彼此對立。</p>
+
+      <p>在Asaptic Labs，事後修改問題被視為每個交叉點的設計要求。運維正確性與證據正確性不是同一屬性，僅解決前者的系統，在履行運維義務的同時，使其問責義務在結構上無法被調查。在不可逆後果的節點上，這不是一個令人滿意的結果。</p>
+    </div>
+    <div class="essay-summary">
+      <span class="essay-summary-label">核心觀點</span>
+      <p>事後修改問題之所以產生，是因為針對AI不良事件的正確運維響應——更新模型、修補配置、刷新固件——系統性地摧毀了任何有實質意義的調查所需的事件前狀態。每種銷毀模式單獨看都有其合理性，累積效應卻是問責在結構上無法被調查。解決方法是將運維響應與證據保存解耦：在涉及不良事件的系統發生任何變更之前，自動進行一次寫入、單獨證明的修改前快照。這是必須在部署前設計進去的工程要求，而不是事後可以施加的政策。</p>
+    </div>
+    <div class="essay-footer">
+      <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+      <a href="/zht/blog/" class="essay-footer-back">&larr; 返回博客</a>
+    </div>
+  </main>
+  <footer style="border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>
