@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da degradação graciosa: o que um agente de IA lhe deve quando não consegue cumprir — Asaptic Labs</title>
+  <meta name="description" content="A responsabilização de agentes de IA costuma focar ações em funcionamento normal. A degradação graciosa pergunta algo mais difícil: quando o sistema não consegue entregar, que obrigação tem o agente?" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/graceful-degradation-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/graceful-degradation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/graceful-degradation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/graceful-degradation-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/graceful-degradation-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/graceful-degradation-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da degradação graciosa: o que um agente de IA lhe deve quando não consegue cumprir" />
+  <meta property="og:description" content="Um agente que age corretamente no caso nominal, mas improvisa no caso de falha, tem uma enorme lacuna de responsabilização no momento em que o risco é mais alto." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/graceful-degradation-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-05-25" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {"@context":"https://schema.org","@type":"Article","headline":"O problema da degradação graciosa: o que um agente de IA lhe deve quando não consegue cumprir","description":"A responsabilização de agentes de IA costuma focar ações em funcionamento normal. A degradação graciosa pergunta algo mais difícil: quando o sistema não consegue entregar, que obrigação tem o agente?","url":"https://asaptic.com/pt/blog/graceful-degradation-problem.html","author":{"@type":"Organization","name":"Asaptic Labs"},"publisher":{"@type":"Organization","name":"Asaptic Labs","url":"https://asaptic.com"},"datePublished":"2026-05-25","dateModified":"2026-06-14","mainEntityOfPage":"https://asaptic.com/pt/blog/graceful-degradation-problem.html","inLanguage":"pt","potentialAction":{"@type":"Action","name":"Contactar a Asaptic Labs","target":[{"@type":"EntryPoint","urlTemplate":"https://asaptic.com/pt/engage.html","description":"Página de contacto"},{"@type":"EntryPoint","urlTemplate":"mailto:engage@asaptic.com","description":"Contactar por e-mail"}]}},
+    {"@context":"https://schema.org","@type":"BreadcrumbList","inLanguage":"pt","itemListElement":[{"@type":"ListItem","position":1,"name":"Início","item":"https://asaptic.com/pt/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://asaptic.com/pt/blog/"},{"@type":"ListItem","position":3,"name":"Degradação graciosa","item":"https://asaptic.com/pt/blog/graceful-degradation-problem.html"}]}
+  ]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">× SEGURANÇA PÓS-QUÂNTICA · × HARDWARE · × CUIDADOS NO MUNDO FÍSICO</span>
+      <h1 class="essay-title">O problema da degradação graciosa: o que um agente de IA lhe deve quando não consegue cumprir</h1>
+      
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-05-25</span><span class="essay-date">6 min de leitura</span></div>
+      <div class="essay-body">
+        <p>Discussões sobre responsabilização de agentes de IA focam normalmente as ações tomadas: agiu dentro do âmbito autorizado? Emitiu recibo de ação? A ação é atribuível ao principal correto? São perguntas certas, mas pressupõem que o agente está em funcionamento normal.</p>
+        <p>Esse não é o problema inteiro. Sistemas falham, hardware envelhece, redes caem, a confiança do modelo entra em regimes onde continuar a inferir não é apropriado. Em cada caso, o agente enfrenta uma escolha raramente especificada: o que fazer quando não consegue entregar.</p>
+        <p>Degradação graciosa não é uma métrica de fiabilidade anexada ao quadro de responsabilização. É parte do próprio quadro. Um agente correto no caso nominal e arbitrário no caso anómalo tem uma lacuna enorme, que aparece precisamente quando o risco é mais alto.</p>
+        <h2>Três modos de falha</h2>
+        <p>O primeiro é degradação de serviço. Em pipelines multicomponente, qualquer elo pode perder acesso a qualquer momento. Quando o endpoint de autorização está indisponível, muitas implantações continuam porque a continuidade operacional é tratada como prioridade. Para leituras de baixo risco isso pode ser aceitável; para ações físicas em cuidados, tratamento, ajuste de parâmetros ou alerta clínico, continuar sem confirmação de autorização é falha de responsabilização.</p>
+        <p>O segundo é degradação de hardware. Quando a plataforma de execução falha, sensor, enclave seguro ou TPM indisponível, a cadeia de atestação quebra. Um agente que continua depois de a infraestrutura de atestação falhar produz ações que não podem ser verificadas, reproduzidas para investigação ou atribuídas a um contexto de hardware específico.</p>
+        <p>O terceiro é incerteza de modelo. Entradas fora de distribuição, prompts adversariais e contextos diferentes dos dados de treino podem tornar as distribuições de saída pouco fiáveis. Um agente não tem introspeção fiável sobre estes modos de falha. A especificação segura deve depender de monitores externos, limites de confiança e limiares de override.</p>
+        <h2>Porque é requisito de responsabilização</h2>
+        <p>Um agente que só consegue prestar contas no caso nominal construiu metade de um sistema de responsabilização. A outra metade é a especificação do que faz quando algo corre mal, e o trilho de auditoria que prova que fez exatamente isso.</p>
+        <p>Investigadores e operadores não perguntam apenas o que aconteceu quando o agente operou corretamente. Perguntam: quando encontrou uma condição para a qual não foi desenhado, falhou de modo seguro? Escalou? Parou? Ou continuou como se a falha não existisse?</p>
+        <h2>Como aparece nos cruzamentos</h2>
+        <p>No cruzamento pós-quântico, a degradação intersecta infraestrutura criptográfica. Um agente que não consegue verificar a vinculação pós-quântica da sua credencial de autorização não deve prosseguir. O modo correto é parar e escalar, não voltar para criptografia mais fraca.</p>
+        <p>No cruzamento de hardware, a degradação é problema de sensores e atestação. Um agente cujo ambiente perdeu garantias de integridade deve tratar-se como fora da sua fronteira de responsabilização e parar ações consequentes, não assumir que a cadeia de atestação será restaurada.</p>
+        <p>No cruzamento de cuidados físicos, as consequências são imediatas. Um agente de cuidados que degrada em silêncio, continuando recomendações depois de inputs de sensores ou cadeia de autorização quebrarem, está fora de qualquer quadro de responsabilização. Isto não é apenas falha de software; é falha de cuidados.</p>
+        <h2>Especificar o ponto seguro de paragem</h2>
+        <p>A arquitetura correta especifica antecipadamente as condições em que cada categoria de ação consequente deve parar. Isto exige prever modos de falha, atribuir cada tipo de ação a uma classe de degradação e construir monitorização capaz de detetar limiares e acionar uma paragem controlada.</p>
+        <p>Um agente que não consegue descrever o que fará quando não consegue cumprir ainda não terminou o seu desenho de responsabilização. A pergunta não é apenas se agiu corretamente quando podia. É se parou corretamente quando não podia.</p>
+      </div>
+      <div class="essay-summary"><span class="essay-summary-label">Resumo</span><p>A degradação graciosa não é apenas fiabilidade; é parte da responsabilização. Serviço indisponível, cadeia de atestação quebrada e incerteza de modelo exigem comportamentos de paragem e escalamento definidos antes da falha. Um agente que não sabe parar corretamente ainda não concluiu o seu desenho de responsabilização.</p></div>
+      <div class="essay-nav"><a href="/pt/blog/">&larr; Todos os artigos</a><a href="/pt/blog/multi-tenancy-isolation-problem.html">Anterior: Isolamento multi-inquilino &rarr;</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>

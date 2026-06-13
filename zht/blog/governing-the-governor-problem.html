@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>治理者的治理問題：當AI智能體審計AI智能體時的問責困境 — Asaptic Labs</title>
+  <meta name="description" content="多智能體架構越來越多地將AI審計方置於AI執行體之上。當審計方本身也是模型時，問責結構並未得到加强——它只是被推後了一個層級，關聯失效可能在無人察覺的情况下發生。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/governing-the-governor-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/governing-the-governor-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/governing-the-governor-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/governing-the-governor-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/governing-the-governor-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/governing-the-governor-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="治理者的治理問題：當AI智能體審計AI智能體時的問責困境" />
+  <meta property="og:description" content="多智能體架構越來越多地將AI審計方置於AI執行體之上。當審計方本身也是模型時，問責結構並未得到加强——它只是被推後了一個層級。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/governing-the-governor-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-11" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "治理者的治理問題：當AI智能體審計AI智能體時的問責困境",
+      "description": "多智能體架構越來越多地將AI審計方置於AI執行體之上。當審計方本身也是模型時，問責結構並未得到加强——它只是被推後了一個層級，關聯失效可能在無人察覺的情况下發生。",
+      "url": "https://asaptic.com/zht/blog/governing-the-governor-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-11",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/governing-the-governor-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "description": "聯絡頁面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯絡"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "治理者的治理問題", "item": "https://asaptic.com/zht/blog/governing-the-governor-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--gray);margin:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 後量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">治理者的治理問題：當AI智能體審計AI智能體時的問責困境</h1>
+      <p class="essay-subtitle">多智能體架構越來越多地將AI審計方置於AI執行體之上。當審計方本身也是模型時，問責結構並未得到加强——它只是被推後了一個層級，關聯失效可能在無人察覺的情况下發生。</p>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-11</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>當一個AI護理系統發生故障時，第一反應是追問：監督結構是什麼？如今，這個問題诚實的答案往往是：監督本身就是AI。審查隊列由一個模型完成分類，合規摘要由一個模型生成，本應被標記的異常在到达任何人工審查者之前已被一個模型過濾。作出關鍵決策的AI執行體被一個AI過程所審查——而這個審查的失效，正是問責缺口所在。</p>
+
+        <p>這就是"治理者的治理問題"：在AI智能體被委托監督其他AI智能體的系統中，審計方的屬性是被假定的而非被驗證的，問責因此陷入困境。</p>
+
+        <h2>AI中介監督的結構性吸引力</h2>
+        <p>以AI監督AI的逻辑是直接的。人工審查高頻、快節奏的智能體系統已然捉襟見肘。AI審計方可以檢查每一個決策、识別異常、以無可比拟的規模生成結構化的合規報告。如果AI執行體每天作出一千個決策，AI審計方就能為這一千個決策生成摘要——持續、不疲倦、邊際成本低廉。</p>
+
+        <p>結構性問題在於：這並没有解決監督挑戰，只是將其推後一步。AI審計方本身也是一個模型，有其自己的校準方式、分佈假設，以及自己出错的方式。在AI執行體之上增加一個AI層，並不能增加獨立性——它只是增加了另一個模型。問責鏈條變長了，但並没有變得更穩健。</p>
+
+        <h2>關聯失效風險</h2>
+        <p>監督的獨立性不仅仅是一项形式要求，它是一项功能要求。對AI決策持異議的人工審計者，带來的是不同的先驗知識、不同的觀察歷史和不同的失效特征。而當AI審計方對AI執行體持異議時，它可能是在捕捉真實錯誤，也可能只是將一個略有不同但同样存在偏差的模型應用於相同的決策空間。</p>
+
+        <p>在供應商提供全棧系統的護理部署中，AI執行體和AI審計方可能共享訓練譜系、特征詞彙，以及對"正常"交互應當如何的共同假設。最有可能错過執行體錯誤的審計方，正是那個被训練為识別相同模式的審計方。關聯失效——两個系統朝同一方向出错——從結構上而言比獨立失效更危險，因為它能生成一個一致、內部连贯的問責記錄，而這份記錄显示不出任何異常。日誌是幹净的，两個系統意見一致——两者都是错的。</p>
+
+        <p>這在結構上類似於模型單一文化問題，但作用於問責層而非运營層。問責層的關聯失效比运營層的關聯失效更糟糕，因為它消除了檢測两者失效的機制。</p>
+
+        <h2>後量子密碼架構的啟示</h2>
+        <p>在安全關鍵系統中，治理者的治理問題有一個直接的結構類比。一条驗證鏈——簽名被校驗以對應背書證書，背書證書再對應信任根——與AI監督鏈具有相同的拓扑結構。每一層都將驗證委托給下一層。如果任何一層在登記時被錯誤配置，這条鏈可能表面上运作正常，却無法提供任何真實的保證。</p>
+
+        <p>後量子密碼遷移以一種新的方式揭示了這一點。當某一層所依赖的底層原语在密碼學上被弱化，建立於其上的每一層也随之被弱化——包括負責驗證的那些層。一条依赖被損害的審計模型的AI問責鏈類似於此：簽名記錄存在，驗證通過，證據在結構上完好——只在整条鏈斷裂的那個點上除外。</p>
+
+        <p>硬件根信任提供了一個應對模型。安全飛地中的信任錨是运行於其上的軟件無法證明或伪造的东西。應用於AI問責，這意味着監督鏈必须始终終止於AI被治理系統本身無法塑造的某處：一個未經AI過濾的人工審查、一個具有獨立訓練譜系的第三方審計，或一条完全路由於模型棧之外的升級路径。</p>
+
+        <h2>正確架構的要求</h2>
+        <p>解決治理者的治理問題需要显式設计，而非假定自然涌現。問責鏈必须明確在哪些環節需要獨立性——不仅仅是在哪些環節存在監督。AI審計方審查AI執行體，這是監督。但這不是獨立性，除非審計方的校準方式、训練數據和失效模式可以被核實，與其所審查系統存在可問責的差異。</p>
+
+        <p>在實踐中，這意味着護理部署應當記錄：提供了哪些AI監督，AI審計方的谱系和校準依據是什麼，以及升級路径中第一個真正非AI的節點在哪里。這意味着構建能够被審計審計方绩效的系統——以獨立輸入，而非仅以其所審查執行體的輸出為依據。這也意味着抵制全棧AI合規的便利性：自动生成完整問責記錄的吸引力，恰恰是使關聯失效變得不可見的那個屬性。</p>
+
+        <p>在Asaptic Labs，我們認為正確的框架不是"這個決策是否被審計"，而是"審計本身是否可被審計，且是否由具有獨立失效模式的對象进行"。治理者的治理問題，不是通過在其上增加另一個AI層來解決的。在某個節點，這条鏈必须終止於一個AI被治理系統本身無法塑造、證明或損害的問責基础——正是在那個節點，真正的監督才开始。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>以AI審計AI是對問責問題的推遲，而非解決。當AI執行體與AI審計方共享訓練譜系或分佈假設時，關聯失效可以生成一份幹净、內部一致的記錄，從而掩蓋系統性錯誤。穩健的問責要求監督鏈終止於真正獨立的某處——一個被治理AI系統本身無法證明、塑造或損害的節點。鏈條中每一個仅由模型構成的環節，增加的是長度，而非獨立性。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zht/blog/">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>
