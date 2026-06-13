@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The re-identification problem — Asaptic Labs</title>
+
+  <meta name="description" content="Privacy-preserving design assumes that removing identifiers makes outputs safe. In care AI, the outputs that make recommendations useful are often the same outputs that make re-identification tractable." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/reidentification-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The re-identification problem" />
+  <meta property="og:description" content="Privacy-preserving design assumes that removing identifiers makes outputs safe. In care AI, the outputs that make recommendations useful are often the same outputs that make re-identification tractable." />
+  <meta property="og:url" content="https://asaptic.com/blog/reidentification-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-13" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The re-identification problem",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-13",
+    "description": "Privacy-preserving design assumes that removing identifiers makes outputs safe. In care AI, the outputs that make recommendations useful are often the same outputs that make re-identification tractable.",
+    "url": "https://asaptic.com/blog/reidentification-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap { max-width: 680px; margin: 0 auto; padding: 120px 32px 96px; }
+    .essay-back { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: var(--gray); margin-bottom: 48px; transition: color 0.2s; }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; color: var(--cyan); display: block; margin-bottom: 14px; }
+    .essay-title { font-size: clamp(26px, 4vw, 40px); font-weight: 700; line-height: 1.15; margin-bottom: 24px; }
+    .essay-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+    .essay-byline, .essay-date { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gray-dim); }
+    .essay-body p { font-size: 17px; color: var(--gray); line-height: 1.85; margin-bottom: 24px; }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--border); }
+    .essay-summary-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: var(--accent); display: block; margin-bottom: 12px; }
+    .essay-summary p { font-size: 14px; color: var(--gray-dim); line-height: 1.75; margin-bottom: 12px; }
+    .essay-nav { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; font-size: 12px; color: var(--gray-dim); margin-top: 48px; }
+    @media (max-width: 768px) { .essay-wrap { padding: 100px 20px 72px; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× PHYSICAL-WORLD CARE · × POST-QUANTUM SECURITY · × HARDWARE</span>
+      <h1 class="essay-title">The re-identification problem: accountability when privacy-preserving AI outputs expose the person they were designed to protect</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-06-13</span>
+        <span class="essay-date">6 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Privacy-preserving architecture for AI agents rests on a clean assumption: that outputs can be made safe by removing or aggregating the information that identifies individuals. The assumption holds well for point-in-time records and broad statistical queries. It holds poorly for the kind of output that makes an AI care agent useful. In physical-world care — eldercare, supervised rehabilitation, long-duration clinical-adjacent workflows — the specificity that makes a recommendation actionable is often the same specificity that makes re-identification tractable. The privacy architecture and the care architecture are in structural tension at the level of what makes care work.</p>
+
+        <p>Consider the shape of the problem. An AI care agent supervising an older adult in a residential environment generates a continuous stream of outputs: activity patterns, deviation alerts, medication timing flags, routine changes, care recommendations. Each output is designed to travel without personal identifiers — no names, no direct record links, no protected health information in the clear. The architecture is deliberately privacy-preserving. But the output is not independent of the person it describes. It is derived from them, continuously, over time. And derivation at sufficient specificity — combined with the temporal structure that care requires — is identification.</p>
+
+        <p>A gait anomaly pattern recorded at 06:47 combined with a missed medication alert at 08:12 and a reduced activity signature across two consecutive days is not anonymous data. It is a behavioral fingerprint that, in a facility with forty residents and a care team who know all of them, maps to exactly one person without requiring a name field in the record. When that output reaches a downstream platform, a family dashboard, or a third-party analytics layer, the re-identification has already happened — not through breach, but through the ordinary operation of a system designed to provide useful care information.</p>
+
+        <p>Three features of care AI make this problem structurally harder than it appears in standard privacy engineering.</p>
+
+        <p>The first is the minimum specificity requirement. A care recommendation that says "this resident has an elevated fall risk" and cannot be more specific is not deployable in a real care environment. Operators need to know which resident, at what time, showing what precursors, suggesting what intervention. That specificity is the product. And it is a product derived entirely from individualized inference — which means the output carries the identifying information of its source whether or not it carries a name. Generic outputs protect privacy at the cost of usefulness. Useful outputs carry re-identification risk at the cost of privacy. There is no clean architectural position in between; the tradeoff is real.</p>
+
+        <p>The second feature is the temporal aggregation attack surface. Privacy engineering developed its default mitigations — identifier stripping, k-anonymity, differential privacy noise — against point-in-time records. A single care observation record may be adequately protected by these techniques. A week of sequential records from the same agent is a behavioral signature. A month is a near-unique identifier on every metric that care depends on: sleep onset, mobility envelope, medication adherence, social engagement cadence. The temporal structure of care — continuity being the whole purpose — is exactly the structure that makes re-identification tractable from nominally anonymized streams. The protections designed for static records do not carry over to longitudinal behavioral sequences, and care data is almost always longitudinal.</p>
+
+        <p>The third feature is the downstream accountability gap. When care data travels from agent to supervisor platform to family dashboard to third-party analytics, each node has its own privacy controls and compliance certification. A privacy officer at any given node can certify that their layer handles data correctly. No one certifies the re-identification risk that emerges when outputs from multiple nodes are combined by a party outside the accountability chain — an insurer with access to two de-identified datasets that, in combination, triangulate back to an individual. The accountability question is not just who holds the data. It is who holds responsibility for the inferences that can be drawn from its combination, over time, by parties the original operator did not anticipate.</p>
+
+        <p>The structural response requires three architectural shifts, not one.</p>
+
+        <p>The first is treating re-identification entropy as a deployment constraint rather than a post-deployment privacy control. Before an agent's output schema is finalized, the schema must be assessed for its re-identification entropy — how much information it yields, in temporal combination, to an adversary with access to plausible auxiliary data. That assessment belongs in the deployment specification alongside latency and accuracy requirements. It should be revisited each time the output schema changes. The question "can this output be used to identify its subject?" is an engineering question with a measurable answer; it should not be deferred to a legal team after the product ships.</p>
+
+        <p>The second shift is extending the accountability boundary to cover downstream inference. An operator who exports care data — even in aggregated or de-identified form — must be accountable not only for the privacy controls applied before export but for the re-identification risk at the receiving end, including combination attacks the operator cannot directly observe. This requires contractual accountability architecture that most current data processing agreements were not designed to produce. The standard is harder to enforce than GDPR compliance, because the harm is a probabilistic inference rather than a data breach event. But it is the honest perimeter of accountability for outputs that derive their value from individualized inference.</p>
+
+        <p>The third shift is hardware-level privacy enforcement through trusted execution. The cleanest response to the re-identification problem is structural rather than legal: run the inference inside a hardware-attested trusted execution environment, produce only the minimum output required for the authorized care action, and destroy the intermediate representations before they can be combined with auxiliary data outside the original deployment context. This approach eliminates the aggregation attack surface by construction — at the cost of architectural complexity that most currently deployed agents do not support. But the alternative is a privacy model that works at compliance time and fails in practice, which is a worse outcome than the complexity cost of getting the architecture right.</p>
+
+        <p>The re-identification problem is not a failure of anonymization technique. It is a consequence of deploying AI agents in domains where individualized inference is the product. Privacy-preserving labels on outputs do not transfer the privacy burden away from the operator. They defer it — to downstream combinations, to temporal aggregation, to adversaries with auxiliary data that the operator cannot predict. The standard that actually protects the people care AI is designed to serve is not compliance. It is minimum output, structural separation, and accountability for inferences the operator did not intend but nonetheless made possible.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>隐私保护架构假设去除标识符即可使输出安全。但在照护类AI智能体中，使推荐有用的输出往往正是使再识别成为可能的输出。最低特异性要求（通用推荐毫无价值）、纵向行为流结构（月度序列构成近唯一标识符）、以及下游问责缺口（跨节点组合的推断无人负责），共同使传统隐私控制失效。应对之策需要三项架构性转变：将再识别熵纳入部署约束、将下游推断纳入问责边界、并通过硬件级可信执行环境实现结构性隔离。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>隱私保護架構假設去除標識符即可使輸出安全。但在照護類AI智能體中，使推薦有用的輸出往往正是使再識別成為可能的輸出。最低特異性要求（通用推薦毫無價值）、縱向行為流結構（月度序列構成近唯一識別符）、以及下游問責缺口（跨節點組合的推斷無人負責），共同使傳統隱私控制失效。應對之策需要三項架構性轉變：將再識別熵納入部署約束、將下游推斷納入問責邊界、並透過硬件級可信執行環境實現結構性隔離。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/organizational-forgetting-problem.html">&larr; Organizational forgetting</a>
+        <a href="/blog/">All essays →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 物理世界照护 · × 后量子安全 · × 硬件</span>
+      <h1 class="essay-title">再识别问题：当隐私保护AI输出暴露了其本应保护的人</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-13</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>面向AI智能体的隐私保护架构依赖一个清晰的假设：通过去除或聚合识别个体的信息，可以使输出变得安全。这一假设对于时间点记录和宽泛的统计查询成立。但对于使AI照护智能体真正有用的输出，它成立得很差。在物理世界照护领域——长者照护、监督式康复、长时程临近临床的工作流程——使推荐具有可操作性的特异性，往往正是使再识别变得可行的特异性。隐私架构与照护架构，在使照护有效这一层面上存在结构性张力。</p>
+
+        <p>问题的形态如下：一个在居住环境中监督老年人的AI照护智能体，持续生成输出流——活动模式、偏差预警、用药时间标记、日常变化、照护建议。每条输出在设计上不携带个人标识符。但输出并非独立于其描述的对象而存在——它持续地、随时间派生自该对象。以足够的特异性进行的派生，结合照护所要求的时间结构，就是识别。一个结合了步态异常模式、错过用药预警和连续两天活动减少信号的输出，不是匿名数据——而是行为指纹，无需姓名字段即可在已知居住者的环境中唯一对应到一个人。</p>
+
+        <p>三个特征使照护AI中的这一问题在结构上更加棘手。其一，最低特异性要求：无法更具体的通用照护建议在真实照护环境中不可部署，而有价值的输出完全源自个性化推断，因此不论是否包含姓名，都携带着识别信息。其二，时间聚合攻击面：针对时间点记录开发的隐私缓解技术——标识符剥离、k-匿名、差分隐私噪声——无法转移到纵向行为序列；来自同一智能体的一个月顺序记录，在照护所依赖的每项指标上都接近唯一识别符。其三，下游问责缺口：照护数据经过多个节点流转后，没有任何单一节点的合规认证能涵盖由链外主体对多节点输出进行组合所产生的再识别风险。</p>
+
+        <p>结构性应对需要三项架构性转变：将再识别熵纳入部署约束（而非事后隐私控制）；将下游推断的责任边界延伸至出口之外；通过在硬件证明的可信执行环境内运行推断，从架构上消除聚合攻击面。真正保护照护AI所服务人群的标准，不是合规，而是最小化输出、结构性隔离，以及对操作者虽未有意但已使之成为可能的推断承担问责。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/organizational-forgetting-problem.html">&larr; 组织遗忘问题</a>
+        <a href="/blog/">全部文章 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 物理世界照護 · × 後量子安全 · × 硬件</span>
+      <h1 class="essay-title">再識別問題：當隱私保護AI輸出暴露了其本應保護的人</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-13</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>面向AI智能體的隱私保護架構依賴一個清晰的假設：透過去除或聚合識別個體的資訊，可以使輸出變得安全。這一假設對於時間點記錄和寬泛的統計查詢成立。但對於使AI照護智能體真正有用的輸出，它成立得很差。在物理世界照護領域——長者照護、監督式復健、長時程臨近臨床的工作流程——使推薦具有可操作性的特異性，往往正是使再識別變得可行的特異性。隱私架構與照護架構，在使照護有效這一層面上存在結構性張力。</p>
+
+        <p>問題的形態如下：一個在居住環境中監督老年人的AI照護智能體，持續生成輸出流——活動模式、偏差預警、用藥時間標記、日常變化、照護建議。每條輸出在設計上不攜帶個人標識符。但輸出並非獨立於其描述的對象而存在——它持續地、隨時間派生自該對象。以足夠的特異性進行的派生，結合照護所要求的時間結構，就是識別。一個結合了步態異常模式、錯過用藥預警和連續兩天活動減少信號的輸出，不是匿名數據——而是行為指紋，無需姓名欄位即可在已知居住者的環境中唯一對應到一個人。</p>
+
+        <p>三個特徵使照護AI中的這一問題在結構上更加棘手。其一，最低特異性要求：無法更具體的通用照護建議在真實照護環境中不可部署，而有價值的輸出完全源自個性化推斷，因此不論是否包含姓名，都攜帶著識別資訊。其二，時間聚合攻擊面：針對時間點記錄開發的隱私緩解技術——識別符剝離、k-匿名、差分隱私噪聲——無法轉移到縱向行為序列；來自同一智能體的一個月順序記錄，在照護所依賴的每項指標上都接近唯一識別符。其三，下游問責缺口：照護數據經過多個節點流轉後，沒有任何單一節點的合規認證能涵蓋由鏈外主體對多節點輸出進行組合所產生的再識別風險。</p>
+
+        <p>結構性應對需要三項架構性轉變：將再識別熵納入部署約束（而非事後隱私控制）；將下游推斷的責任邊界延伸至出口之外；透過在硬件證明的可信執行環境內運行推斷，從架構上消除聚合攻擊面。真正保護照護AI所服務人群的標準，不是合規，而是最小化輸出、結構性隔離，以及對操作者雖未有意但已使之成為可能的推斷承擔問責。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/organizational-forgetting-problem.html">&larr; 組織遺忘問題</a>
+        <a href="/blog/">全部文章 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
