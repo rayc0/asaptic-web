@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema do sinal físico — Asaptic Labs</title>
+  <meta name="description" content="Os agentes de IA que atuam em ambientes físicos recebem o seu primeiro input do próprio mundo físico — uma leitura de sensor, um dado biométrico, uma medição ambiental. A attestation de hardware e a criptografia pós-quântica protegem tudo depois desse ponto. Não conseguem proteger o ponto de origem." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/physical-signal-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/physical-signal-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/physical-signal-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/physical-signal-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/physical-signal-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/physical-signal-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema do sinal físico: responsabilização quando a cadeia de confiança começa no mundo físico" />
+  <meta property="og:description" content="Os agentes de IA que atuam em ambientes físicos recebem o seu primeiro input do próprio mundo físico — uma leitura de sensor, um dado biométrico, uma medição ambiental. A attestation de hardware e a criptografia pós-quântica protegem tudo depois desse ponto. Não conseguem proteger o ponto de origem." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/physical-signal-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "O problema do sinal físico: responsabilização quando a cadeia de confiança começa no mundo físico",
+      "description": "Os agentes de IA que atuam em ambientes físicos recebem o seu primeiro input do próprio mundo físico — uma leitura de sensor, um dado biométrico, uma medição ambiental. A attestation de hardware e a criptografia pós-quântica protegem tudo depois desse ponto. Não conseguem proteger o ponto de origem.",
+      "url": "https://asaptic.com/pt/blog/physical-signal-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/pt/blog/physical-signal-problem.html",
+      "inLanguage": "pt",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "Contactar a Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "Servidor MCP, ferramenta: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "Contactar por e-mail"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://asaptic.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://asaptic.com/pt/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "O problema do sinal físico", "item": "https://asaptic.com/pt/blog/physical-signal-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-header{margin-bottom:48px}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:16px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;padding-bottom:32px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray)}.essay-body p{font-size:17px;line-height:1.8;color:var(--fg);margin-bottom:24px}.essay-body h2{font-size:20px;font-weight:700;margin-top:40px;margin-bottom:16px}.essay-summary{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:28px 32px;margin-top:48px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:0}.essay-footer{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <header class="essay-header">
+        <span class="essay-tag">× Segurança Quântica × Hardware × Cuidados Humanos</span>
+        <h1 class="essay-title">O problema do sinal físico: responsabilização quando a cadeia de confiança começa no mundo físico</h1>
+        <p class="essay-subtitle">Os agentes de IA que atuam em ambientes físicos recebem o seu primeiro input do próprio mundo físico — uma leitura de sensor, um dado biométrico, uma medição ambiental. A attestation de hardware e a criptografia pós-quântica protegem tudo depois desse ponto. Não conseguem proteger o ponto de origem.</p>
+        <div class="essay-meta">
+          <span>Asaptic Labs</span>
+          <span>2026-06-14</span>
+          <span>6 min de leitura</span>
+        </div>
+      </header>
+      <div class="essay-body">
+        <p>Quando concebemos responsabilização para agentes de IA, começamos tipicamente pela camada de software. Auditamos chamadas de API. Assinamos tokens. Rastreamos qual versão do modelo estava a correr quando uma decisão foi tomada. Aplicamos criptografia pós-quântica para proteger a integridade das comunicações digitais entre agentes e os sistemas de que dependem. Estas medidas são necessárias. Mas em implementações no mundo físico, a cadeia de confiança não começa na camada de software. Começa com um sinal físico: uma leitura de frequência cardíaca, um evento de deteção de movimento, uma medição de sensor ambiental, uma leitura biométrica. E o mundo físico não consegue assinar os seus próprios outputs.</p>
+
+        <p>Este é o problema do sinal físico.</p>
+
+        <h2>A lacuna que a attestation não consegue fechar</h2>
+        <p>Os enclaves de hardware seguros, os chips TPM e as raízes de attestation de hardware podem verificar que o output digital de um sensor não foi adulterado após deixar o dispositivo. Podem provar que o caminho de dados do sensor ao motor de inferência estava intacto. Os esquemas criptográficos pós-quânticos podem garantir que estas attestations permanecem válidas mesmo contra futuros avanços criptanalíticos.</p>
+
+        <p>Mas nada disto responde à questão prévia: o mundo físico produziu efetivamente essa leitura? Uma leitura de 40 bpm de um monitor de frequência cardíaca perfeitamente atestada e criptograficamente intacta pode refletir um doente que removeu o dispositivo, um elétrodo que se desprendeu, ou um sensor que derivou. A attestation de hardware prova que a cadeia estava íntegra em trânsito. Não pode provar que a cadeia estava ligada à realidade na fonte. O limite de attestation termina no alojamento do sensor. Não se estende ao ambiente físico que o sensor habita.</p>
+
+        <h2>Três modos de falha</h2>
+        <p>O problema do sinal físico manifesta-se de três formas distintas, cada uma com diferentes implicações de responsabilização.</p>
+
+        <p>O primeiro é a falha do sensor — degradação de hardware, deriva de calibração ou dano físico que faz com que o sensor reporte mal o mundo sem qualquer anomalia na cadeia digital. Num sistema de software, uma API a falhar retorna um código de erro. Um sensor a falhar retorna frequentemente um número. Um agente treinado para agir com base nesse número agirá, corretamente, com base numa imagem errada do mundo físico.</p>
+
+        <p>O segundo é a manipulação ambiental — interferência deliberada com o sinal físico antes de chegar ao sensor. Um íman colocado perto de um sensor de efeito Hall. Luz infravermelha apontada para um detetor de proximidade. Manipulação acústica de um microfone. Ao contrário dos ataques adversariais em inputs de software, a manipulação física não deixa nenhum rasto de software. O registo de auditoria regista o que o agente recebeu; não consegue registar o que foi feito ao ambiente nos momentos antes da medição.</p>
+
+        <p>O terceiro é o colapso de contexto — o sinal físico é preciso, mas o contexto que lhe dá significado mudou. Uma leitura de saturação de oxigênio no sangue de 95% significa algo diferente para um jovem de 30 anos ativo do que para um idoso de 80 anos sedentário com doença respiratória crónica. O sensor reporta fielmente. O agente interpreta corretamente de acordo com a sua distribuição de treino. Mas o contexto de implementação deriva afastado da distribuição em que os limiares de decisão do agente foram calibrados. O erro não está na medição ou na inferência; está no alinhamento entre o mundo para o qual o agente foi concebido e o mundo em que está a operar.</p>
+
+        <h2>Por que razão isto importa em cada cruzamento</h2>
+        <p>No cruzamento da segurança pós-quântica, o problema do sinal físico define o limite externo do que a criptografia pode proteger. As assinaturas resistentes a quantum podem proteger cada byte de dados que flui do sensor ao motor de inferência ao atuador. Não conseguem certificar retroativamente que o sensor estava corretamente ligado ao ambiente físico quando a leitura foi feita. As obrigações de responsabilização para implementações de agentes no mundo físico devem incluir verificação de conectividade física — não apenas integridade criptográfica da cadeia digital.</p>
+
+        <p>No cruzamento do hardware, o problema do sinal físico clarifica o que a attestation de hardware está efetivamente a atestar. Uma raiz de confiança de hardware estabelece que a computação correu num ambiente confiável. Não atesta os inputs ambientais que desencadearam essa computação. Conceber stacks de hardware para implementação de agentes no mundo físico requer mecanismos separados para validação de sinais físicos: caminhos de sensing redundantes, verificações de consistência cross-modal, deteção de adulteração física no próprio alojamento do sensor. Estes não são melhoramentos à attestation. São um sistema complementar a operar na camada física que a attestation não consegue alcançar.</p>
+
+        <p>No cruzamento dos cuidados no mundo físico, os riscos são mais elevados. Um agente de IA que apoia decisões de cuidados age com base num modelo do estado atual do doente. Esse modelo é construído a partir de sinais físicos. Se os sinais estão sistematicamente errados, o modelo está errado e as ações de cuidados podem causar danos. Ao contrário de uma recomendação errada num domínio de software, uma ação de cuidados errada pode ser irreversível. A obrigação de responsabilização corre para trás ao longo da cadeia de sinais até ao momento da medição física e para a frente através das consequências dos cuidados até ao ponto de dano — e abrange ambos.</p>
+
+        <h2>O que uma implementação no mundo físico responsável requer</h2>
+        <p>Abordar o problema do sinal físico requer combinar medidas de hardware, operacionais e de governança. A camada de hardware deve incluir caminhos de sensing redundantes, e a divergência entre sensores deve gerar sinalizadores explícitos de incerteza em vez de arbitragem silenciosa. A camada operacional deve incluir ciclos periódicos de calibração física que produzem os seus próprios registos atestáveis — fechando o ciclo entre a cadeia criptográfica e o ambiente físico que se destina a representar. A camada de governança deve tratar a validação de sensores e a integridade ambiental como componentes de primeira classe da revisão de implementação, não como preocupações pós-incidente.</p>
+
+        <p>Os sinais físicos não podem ser totalmente verificados por nenhuma cadeia finita de medição. O mundo físico não assina os seus outputs. O que uma arquitetura de responsabilização sólida faz é tornar a lacuna visível, auditável e delimitada — e garantir que os que implementam agentes em ambientes físicos trataram essa lacuna como uma restrição conhecida em vez de uma suposição residual.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">Resumo</span>
+        <p>As implementações de agentes no mundo físico iniciam a sua cadeia de confiança com um sinal físico — uma leitura de sensor, um dado biométrico, uma medição ambiental — que nem a attestation de hardware nem a criptografia pós-quântica conseguem verificar contra o mundo físico. Três modos de falha se seguem: degradação de sensores que produz dados errados de aspeto plausível, manipulação ambiental que não deixa rasto digital, e colapso de contexto onde leituras precisas são interpretadas contra uma calibração desatualizada. A implementação conforme com responsabilização requer sensing redundante, calibração física periódica com registos atestáveis, e frameworks de governança que tratem a validade do sensor como um pré-requisito de implementação em vez de uma suposição de fundo.</p>
+      </div>
+
+      <footer class="essay-footer">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-06-14</span>
+        <a href="/pt/blog/" class="essay-footer-back">&larr; Todos os artigos</a>
+      </footer>
+    </article>
+  </main>
+  <footer class="site-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>
