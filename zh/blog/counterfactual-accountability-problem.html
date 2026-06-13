@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>反事实问责问题：当替代结果不可观察时 — Asaptic Labs</title>
+  <meta name="description" content="对AI智能体的问责要求建立因果关系。因果关系需要反事实：如果情况不同会发生什么？该反事实不可观察。这不是证据缺口，而是问责框架本身的结构性缺口。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/counterfactual-accountability-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/counterfactual-accountability-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/counterfactual-accountability-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/counterfactual-accountability-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/counterfactual-accountability-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/counterfactual-accountability-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="反事实问责问题：当替代结果不可观察时" />
+  <meta property="og:description" content="对AI智能体的问责要求建立因果关系。因果关系需要反事实：如果情况不同会发生什么？该反事实不可观察。这不是证据缺口，而是问责框架本身的结构性缺口。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/counterfactual-accountability-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "反事实问责问题：当替代结果不可观察时",
+      "description": "对AI智能体的问责要求建立因果关系。因果关系需要反事实：如果情况不同会发生什么？该反事实不可观察。这不是证据缺口，而是问责框架本身的结构性缺口。",
+      "url": "https://asaptic.com/zh/blog/counterfactual-accountability-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/counterfactual-accountability-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "反事实问责问题", "item": "https://asaptic.com/zh/blog/counterfactual-accountability-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--gray);margin:0}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 后量子安全 × 硬件 × 物理世界照护</span>
+      <h1 class="essay-title">反事实问责问题：当替代结果不可观察时</h1>
+      <p class="essay-subtitle">对AI智能体的问责要求建立因果关系。因果关系需要反事实：如果智能体采取不同行动会发生什么？该反事实不可观察。这不是证据缺口，而是问责框架本身的结构性缺口。</p>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>人类机构中的问责制建立在一个因果前提之上：被追责的一方必须已经造成了损害，或者在有义务且有能力阻止时未能阻止。侵权法、职业执照、组织治理——都要求回答同一个问题的某种版本：该行为或不作为，是否以原本不会发生的方式产生了该结果？"原本"就是反事实。而在大多数涉及AI智能体的问责程序中，反事实在结构上是不可观察的。</p>
+
+        <p>这在哲学上不是新问题。但当AI智能体在问责具有实质分量的领域运作时——即谁或什么对某一结果负责的问题具有法律、临床或安全后果时——它就成了一个实际的工程和治理问题。当这些智能体部署在三个交叉点时，反事实问题以现有框架无法处理的独特形式出现。</p>
+
+        <h2>为什么因果关系需要反事实</h2>
+        <p>考虑最简单的情况：一个AI监测智能体未能标记病情恶化的患者。患者病情恶化了。智能体负有责任吗？要严格回答这个问题，需要知道如果智能体标记了这种情况会发生什么。护理人员会及时响应吗？他们的干预会有效吗？患者会康复吗？这些都无法观察。你需要与之比较的那个世界——智能体正确行动的那个世界——并未发生。</p>
+
+        <p>相反方向也呈现出同样的结构。一个AI智能体标记了一个异常。护理人员做出了响应。患者病情稳定了。智能体对这一良好结果负有责任吗？同样，不知道反事实就无法判断：如果智能体什么都没有标记会发生什么？也许护理人员本来也会独立注意到异常。也许病情稳定与干预无关。智能体因一个无法以问责所要求的精度归因于它的结果而获得功劳或受到谴责。</p>
+
+        <p>人类问责框架对此有一个由来已久的解决方案：实践标准。问责程序不是问专业人员的行为是否导致了结果，而是问该行为是否符合同等情况下合理专业人员所应遵循的标准。这用程序性检验代替了因果检验，将问题从"它是否导致了这个?"重定向为"它是否做了应该做的?"，从而绕开了反事实。</p>
+
+        <p>AI智能体在其大多数部署领域中还没有确立的实践标准。当问责程序转而寻求因果论证时，它们就遇到了反事实之墙。结果不是问责，而是在无法解决的证据缺口上营造问责的表象。</p>
+
+        <h2>在照护交叉点</h2>
+        <p>在照护场景中，反事实问题最为尖锐，因为其结果在临床上错综复杂，受患者状况干扰，且往往无法恢复。一个未能上报病情恶化患者的照护智能体，无法针对反事实结果进行评估——如果上报发生了会有什么结果——因为那条时间线不存在。回顾性临床审查可以形成关于上报是否有帮助的专家意见，但关于未观察反事实的专家意见是一个薄弱的问责证据基础。</p>
+
+        <p>更深层的结构性问题是，照护场景积累了许多这样的时刻。在长期部署许多患者的智能体会生成决策和结果的统计记录。在总体层面上，该记录可以支持比较分析：在控制患者严重程度的情况下，配置A的智能体产生的结果分布与配置B的不同。群体层面的反事实在个体反事实不可见之处变得可见。但照护场景中的问责通常关于影响特定患者的具体决策，而非整体绩效。群体数据无法解决个体因果归因，法院和执照委员会通常也不以群体统计学方式运作。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>在大规模硬件部署中，反事实问题呈现出不同形式。一个监测设备认证的AI智能体未能上报一个后来被识别为协调固件攻击早期信号的异常。数百台设备最终受到影响。智能体负有责任吗？</p>
+
+        <p>因果问题需要知道：如果智能体上报了异常，安全运营会响应吗？响应会及时吗？对这个特定威胁向量有效吗？该因果链中的每个环节都是反事实的。实际上，异常未被上报，响应未发生，损失无法与替代时间线进行比较。</p>
+
+        <p>硬件安全团队在这种情况下实际做的是重建意图：他们询问智能体是否执行了其设计功能、警报标准是否配置得当，以及附属于智能体的操作流程是否合理。这接近于实践标准检验。但它被追溯性地应用于一个因果问题，"智能体执行了其设计功能"与"智能体导致了这一结果"之间的差距从未完全弥合。</p>
+
+        <h2>在后量子交叉点</h2>
+        <p>后量子过渡创造了反事实问题的一个特别延伸的时间版本。迁移窗口期间做出的决策——首先迁移哪些密码原语、以什么顺序、使用什么验证阈值——将决定对可能在数年后才实现的威胁的暴露程度。一个将迁移期间的验证异常归类为常规噪声的AI智能体，可能正在助长一个在量子计算能力对对手可用之后才被利用的漏洞。因果链跨越数年，而反事实——如果异常被上报并调查会发生什么——在这个时间跨度内变得无法重建。</p>
+
+        <p>这种延伸的时间差距从根本上改变了问责核算。使用问责作为学习机制的组织和治理机制——调查失败、归因、改变实践——在因果链太长无法追溯时失去了这一机制。通常能收紧安全实践的反馈回路被打断了，不是因为任何单一失败，而是因为反事实在结构上无法获取。</p>
+
+        <h2>反事实问题的要求</h2>
+        <p>答案不是放弃因果问责，而是设计AI智能体部署，主动生成使反事实推理可处理的证据条件——即使不能完全解决。</p>
+
+        <p>这意味着不仅要记录智能体的决策，还要记录决策时刻它感知到的内容：输入、置信水平、它评估的替代行动，以及触发不同响应的阈值。一个只记录输出的智能体产生的审计追踪无法支持反事实推理。一个记录其决策状态的智能体——包括什么会改变其决策——创造了提问的证据基础：鉴于智能体所知道的，不同的配置会产生什么结果？</p>
+
+        <p>这也意味着设计明确说明何时使用程序性检验而非因果检验的问责框架。如果核心问题是"智能体是否符合适用的实践标准？"那么该标准需要在智能体部署之前存在，而不是事后构建以适应被审查的结果。AI智能体的实践标准必须提前指定，以可以针对智能体实际产生的决策状态日志进行评估的方式表述。</p>
+
+        <p>反事实无法被观察。但它可以变得不那么难以触及——如果审计架构从一开始就被设计为捕捉替代方案所需要的内容。</p>
+
+        <div class="essay-summary">
+          <span class="essay-summary-label">核心要点</span>
+          <p>问责需要因果关系。因果关系需要反事实。当AI智能体在高风险领域行动时，反事实——如果智能体采取不同行动会发生什么——是不可观察的。人类问责框架通过实践标准绕开了这一问题，但AI智能体在大多数部署领域缺乏既定标准。解决方案是双重的：构建捕捉什么会改变智能体输出的决策状态日志，并在部署前指定实践标准，使问责能够以程序性而非因果性方式评估。反事实无法被观察，但问责架构可以被设计为使其不那么难以触及。</p>
+        </div>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
