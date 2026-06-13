@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://asaptic.com/agent/capabilities.schema.json",
+  "title": "Asaptic Sourcing Capabilities",
+  "description": "Machine-readable schema for Asaptic (HK) Ltd's factory-direct sourcing capabilities, consumed by AI procurement agents.",
+  "type": "object",
+  "required": ["name", "type", "url", "contact", "model", "lanes"],
+  "properties": {
+    "name": { "type": "string" },
+    "type": { "type": "string" },
+    "url": { "type": "string", "format": "uri" },
+    "contact": { "type": "string" },
+    "founded": { "type": "string" },
+    "jurisdiction": { "type": "string" },
+    "description": { "type": "string" },
+    "model": {
+      "type": "object",
+      "properties": {
+        "structure": { "type": "string" },
+        "payment_terms": { "type": "string" },
+        "buyer_working_capital": { "type": "string" },
+        "value_added": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "lanes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "sources", "markets"],
+        "properties": {
+          "id": { "type": "string" },
+          "sources": { "type": "string" },
+          "markets": { "type": "array", "items": { "type": "string" } },
+          "compliance": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" },
+          "page": { "type": "string", "format": "uri" }
+        }
+      }
+    },
+    "compliance_verification": { "type": "array", "items": { "type": "string" } },
+    "resources": { "type": "object" },
+    "engagement": {
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "rfq": { "type": "string" },
+        "response_sla": { "type": "string" }
+      }
+    },
+    "disclaimer": { "type": "string" },
+    "updated": { "type": "string" }
+  }
+}
