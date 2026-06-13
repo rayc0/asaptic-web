@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>权限积累问题 — Asaptic Labs</title>
+  <meta name="description" content="每一项权限授予在孤立来看都是合理的。但在聚合层面，它们悄然构建了一个没有人授权的能力档案。权限积累问题就是AI智能体在无人刻意为之的情况下获得过多权力的方式。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/permission-accumulation-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/permission-accumulation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/permission-accumulation-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/permission-accumulation-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/permission-accumulation-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/permission-accumulation-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="权限积累问题：单独合理的授权如何在聚合层面变得危险" />
+  <meta property="og:description" content="AI智能体的权限被逐项授予，而聚合审计几乎从不进行。单次授权与总体能力档案之间的差距，正是危险权力悄然积累之处。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/permission-accumulation-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "权限积累问题：单独合理的授权如何在聚合层面变得危险",
+      "description": "AI智能体的权限被逐项授予，而聚合审计几乎从不进行。单次授权与总体能力档案之间的差距，正是危险权力悄然积累之处。",
+      "url": "https://asaptic.com/zh/blog/permission-accumulation-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/permission-accumulation-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "权限积累问题", "item": "https://asaptic.com/zh/blog/permission-accumulation-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照护</span>
+      <h1 class="essay-title">权限积累问题：单独合理的授权如何在聚合层面变得危险</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>授予AI智能体的每一项权限都经过了某种形式的审查。有人决定这个智能体在这个部署上下文中需要访问某项能力——于是授权被批准。每个单独的决定通常是站得住脚的。问题不在于任何单一的授权，而在于没有人在审查它们的聚合状态。</p>
+
+        <p>权限在积累。它们跨越会话、跨越部署阶段、跨越不断演进的运营需求而积累。一个最初因某个照护工作流而获得患者记录读取权限的智能体，后来因出院摘要功能而获得了写入权限。一个需要传感器遥测读取权限的硬件控制智能体，后来因维护集成而获得了执行器命令权限。每次扩展在请求和批准时都是合理的。数月后，该智能体的总体能力档案已是无人刻意设计、也无人整体审查过的状态。</p>
+
+        <h2>为何审计缺口是结构性的</h2>
+        <p>对这一担忧的标准回应是"我们有审计日志"。审计日志记录了授予了哪些权限、何时授予、由谁授予。但审计日志是对时间序列事件的记录，而非当前状态的快照。要了解一个智能体今天的总体能力档案，需要重放整个权限历史、计入所有撤销，并生成一个连贯的汇总——这是大多数部署所不具备的主动投入和工具能力所要求的任务。</p>
+
+        <p>这个缺口是结构性的，而非偶发性的。权限管理系统的设计目标是高效处理单次授权决策，而非回答"这个智能体现在总共能做什么，这个总量是否仍适合其当前的部署方式？"这一问题需要跨时间、跨上下文、跨系统的聚合，且通常只有在出现问题之后才会被要求给出答案。</p>
+
+        <h2>不过期权限的复利效应</h2>
+        <p>当权限不会过期时，积累问题最为突出。为支持试点部署、一次性集成或已废弃工作流而授予的权限，可能会无限期有效，除非有人明确撤销。智能体的能力档案因此呈单调增长：权限在需要时被添加，但在不再需要时很少被移除。已废弃用例的残余授权，成为了攻击者——或行为异常的智能体——可以利用的能力表面。</p>
+
+        <p>在后量子安全语境中，这些残余权限比表面上看起来更危险。在经典威胁模型下，今天的残余授权可能看起来无害。但拥有足够算力的攻击者，可以将长期运行智能体积累的能力档案作为攻击面——其聚合权限远比任何单次会话范围更宽广。该智能体在事实上成为了一把被缓慢拼装的万能钥匙——不是因为有人刻意设计，而是因为没有人在追踪总量。</p>
+
+        <h2>硬件维度的具体后果</h2>
+        <p>在与硬件相关的部署中，权限积累具有物理后果。管理工业硬件的智能体可能在部署过程中跨子系统积累命令权限——每次授权都是对合理运营需求的响应。但物理系统中的命令权限与数据访问权限不同，其后果并不可逆。如果一个积累了执行器命令权限的智能体出现异常行为，损害可能是物理的、即时的，且无法通过撤销使能该行为的权限来消除。权限清单必须保持最新，不仅是为了审计目的，更因为在物理层面，基于过时清单采取行动的代价是以物理损害来衡量的。</p>
+
+        <h2>照护环境中的人际维度</h2>
+        <p>物理世界照护场景带来了积累问题的第三个维度：人际关系。照护智能体积累了对患者数据、沟通渠道、照护计划记录和临床工作流的访问。每次授权都对应特定的照护关系或任务。但在聚合层面，该智能体可能比任何单一临床医生都更全面地掌握患者的生活和健康轨迹——且其能力档案一旦被滥用或利用，可能在极为私人的层面造成伤害。同意单项集成的患者，并未同意这些集成在聚合层面所产生的总体能力档案。</p>
+
+        <h2>设计应对</h2>
+        <p>解决积累问题，需要将聚合能力档案作为一等产物来对待——主动维护、定期审查，并与智能体当前的运营范围进行比较。这与逐项授权审查是不同的纪律。它需要定期重新授权：在这个时间点上，现有权限不是默认延续，而是对照当前部署上下文重新审查，予以确认或撤销。它需要能从权限历史中生成连贯当前状态汇总的工具，而不仅仅是日志。它还需要每项权限都明确陈述用途和预期生命周期——以便在用途结束时，权限有明确的过期触发条件。</p>
+
+        <p>硬件绑定的权限状态在这里有所帮助。当权限授予与特定硬件配置锚定——由经硬件证明的密钥签发，并与智能体运行设备的运营上下文绑定——授权在硬件上下文发生变化时自动失效。权限无法在智能体重新部署时悄然跟随。聚合档案被限定在证明其合理性的上下文之内。</p>
+
+        <p>权限积累不是任何单一决策的缺陷，而是系统中单个决策被称职地做出、但系统不产生关于聚合状态信号的属性。在AI智能体从沙箱走向实质影响的领域中，弥合这一缺口不是可有可无的选项。这是有治理的权威与仅仅自然增长的权威之间的区别。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/non-repudiation-problem.html">延伸阅读：不可否认性问题 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="site-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>

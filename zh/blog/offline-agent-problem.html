@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>离线智能体问题：网络中断时的问责 — Asaptic Labs</title>
+  <meta name="description" content="部署于物理世界环境中的AI智能体——照护机构、工业现场、偏远地点的嵌入式硬件——必须在网络中断时继续行动。没有基于硬件的本地认证，离线期间的决策日志无法核实。问责缺口恰好在最关键的地方打开。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/blog/offline-agent-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/offline-agent-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/offline-agent-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/offline-agent-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/offline-agent-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/offline-agent-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="离线智能体问题——网络中断时的问责" />
+  <meta property="og:description" content="当物理世界部署中的AI智能体失去网络访问时，中央日志无法访问。停机不可接受；没有硬件认证的本地缓冲无法核实。基于硬件的离线日志、后量子签名密钥和重连审计协议是架构上的答案。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/offline-agent-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "离线智能体问题：网络中断时的问责",
+      "description": "物理世界部署中的AI智能体必须在网络中断时继续行动。没有基于硬件的本地认证，离线决策日志无法核实。基于硬件的签名、制造时的后量子密钥选择和重连审计协议构成可问责的离线架构。",
+      "url": "https://asaptic.com/zh/blog/offline-agent-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zh/blog/offline-agent-problem.html",
+      "inLanguage": "zh-Hans",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "联系 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zh/engage.html",
+            "contentType": "application/json",
+            "description": "MCP server, tool: engage"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "通过电子邮件联系"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hans",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "离线智能体问题", "item": "https://asaptic.com/zh/blog/offline-agent-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:600;line-height:1.3;margin-top:48px;margin-bottom:16px}.essay-body p{font-size:16px;line-height:1.8;color:var(--text);margin-bottom:24px}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zh/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zh/blog/">博客</a><a href="/zh/engage.html">参与</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">离线智能体问题：网络中断时的问责</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>当AI智能体行动时，问责基础设施假设日志服务器是可以访问的。在数据中心和云端部署中，这一假设成立。在物理世界部署中——照护机构、工业现场、偏远地点的嵌入式硬件——网络时断时续、不可靠，或根本不存在。智能体仍必须行动。但当没有可访问的日志时，问责究竟意味着什么？</p>
+
+        <p>这就是离线智能体问题。它不是边缘案例。恰恰是在智能体具有最直接物理后果的部署场景中——老年照护、临床监测、基础设施管理——网络可靠性往往是系统最薄弱的环节。问责缺口恰好在最关键的地方打开：在那些无法撤销的决策中。</p>
+
+        <h2>两种糟糕的默认方案</h2>
+        <p>对网络中断最天真的回应是停机：如果智能体无法记录其决策，它就不应做出任何决策。在数据中心，这是最安全的策略——停机的代价是任务延迟，未记录行动的代价是问责缺口。但在照护机构，这一算式完全颠倒。负责检测无法自我照护的住户医疗事件的监测智能体，不能因为日志服务器不可访问就停机。在网络中断时停机，以问责层的安全保证换掉了照护层的安全保证。因无法记录日志而拒绝行动的智能体，以更直接的责任失效取代了问责失效。</p>
+
+        <p>相反的默认方案——继续行动、本地缓存日志、网络恢复时同步——在操作上合理，但在密码学上过于天真。本地日志是设备上的可变文件，操作员可以访问。标准本地缓冲区没有任何机制阻止文件在智能体写入之后、上传至中央系统之前被编辑。当智能体重新联网并上传缓冲决策时，没有密码学证据证明日志在离线期间未被修改。中央问责系统无法区分智能体实际行动的如实记录，与事后被筛选以删除操作员不希望留下记录的决策的日志。</p>
+
+        <h2>基于硬件的离线认证</h2>
+        <p>架构上的答案是在每次决策时进行本地认证。在智能体写入日志条目之前，硬件安全模块——TPM、安全飞地或同类芯片——使用硬件绑定且不可从设备导出的密钥对条目进行签名。签名承诺决策内容、时间戳、智能体当前的模型身份，以及将本条目与会话中所有前驱条目链接起来的哈希链。如果任何条目被事后删除、重新排序或修改，哈希链就会断裂。由于签名密钥无法离开硬件，签名无法被重新生成以覆盖被篡改的链。篡改在重连时是可检测的。</p>
+
+        <p>网络恢复时，智能体将签名的、有链式结构的日志上传至中央问责基础设施。中央系统从断连时最后一个已知良好条目开始向前验证哈希链。链中的任何断点、无效签名、违反预期顺序的时间戳，都是将整个离线期间标记为需要人工审查的充分证据——不是恶意意图的证明，而是证明该记录在未经审查的情况下不能被接受为干净记录。</p>
+
+        <p>这在通用安全工程中并非新思路。基于硬件的认证是安全启动、可信执行环境和企业端点完整性产品的基础。真正新颖之处在于：将其专门应用于AI智能体决策日志，作为一等的问责机制，明确目的是桥接中央日志不可访问的时间段，而非将离线运行视为问责的例外情况。</p>
+
+        <h2>后量子维度</h2>
+        <p>离线认证方案中的签名密钥，不仅必须抵御当前的网络级威胁，还必须经受量子过渡的考验。今天嵌入物理基础设施的AI智能体——照护机构、楼宇管理系统、医疗设备——在不更换硬件的情况下可能运行十到十五年。如果其硬件绑定签名密钥使用的椭圆曲线方案在这一运行窗口内对量子能力对手存在漏洞，则离线认证方案提供的问责能力仅在攻击可行之前有效。能够事后破解签名密钥的对手，可以伪造整个离线日志历史，随意插入或删除决策，并生成一条中央系统会接受为完整的签名链。</p>
+
+        <p>这意味着，为物理世界AI智能体预置的硬件安全模块今天就应使用后量子签名方案，即使代价是更大的签名尺寸和稍高的验证开销。做出正确选择的窗口在制造时。在已部署硬件中改装密码学原语技术难度大，在大多数嵌入式设备类别中，需要对每台设备进行物理接触——这在分布式照护基础设施中大规模执行是不现实的。</p>
+
+        <h2>重连时刻</h2>
+        <p>离线期间在网络恢复时结束。重连事件不仅仅是数据同步——它是中央系统在此期间无可见性的阶段的第一次问责审计。正确的处理方式是将重连视为认证审查：从断连点开始向前验证完整的离线决策哈希链，确认断连时记录的智能体模型身份与重连时一致（确认智能体在离线且无人监控期间没有发生静默更新），并确认硬件模块对自身执行环境的认证在间隔期间保持一致。</p>
+
+        <p>如果任何检查失败，正确的回应不是丢弃离线期间的输出或回滚智能体的行动。智能体在此期间的物理世界决策已经完成，且通常不可逆——照护警报已发出或已抑制，门已上锁或已开锁，用药已标记或已放行。问责审查无法撤销这些行动。其目的是将离线期间标记为需要人工审查，对该时间窗口内产生的每个输出附加认证说明，并向负责智能体运营的人员呈现该异常。</p>
+
+        <p>在物理世界照护部署中，这一点尤为关键。在异常情况下离线六小时的智能体，其离线期间的决策应由临床医生审查，然后才能将这些决策作为后续照护计划的权威输入。自动接受已重连的同步——因为上传没有报错——不是问责，而是问责的表象而非实质。</p>
+
+        <h2>从一开始就为离线设计</h2>
+        <p>离线智能体问题无法靠事后工具来解决。本地硬件认证、后量子签名密钥选择和重连审计协议，必须在部署前就设计进智能体架构。它们需要制造时必须具备的特定硬件能力、在智能体整个运行生命周期内必须保持一致的日志格式约定，以及必须在首次部署前集成到中央问责基础设施中的审计工作流。在没有这些机制的情况下部署到物理世界的AI智能体，其在不可避免的离线期间的问责记录是无法核实的——不是因为智能体做了任何错事，而是因为基础设施从未被设计成能够知晓。</p>
+
+        <p>问责不是日志服务器的属性，而是从决策时刻起记录的属性。在物理世界部署中，这意味着问责架构必须在网络不工作时同样有效。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要</span>
+        <p>物理世界部署中的AI智能体（照护机构、工业现场、嵌入式硬件）在网络中断时仍须行动。停机会消除照护层的安全保证；本地缓存日志在密码学上无法核实。解决方案是在每次决策时进行本地认证：硬件安全模块（TPM或安全飞地）用硬件绑定的不可导出密钥对每条日志条目签名，并通过哈希链将条目串联。事后任何篡改都会导致哈希链断裂。由于物理世界设备的运行寿命可达十至十五年，签名密钥应在制造时选用后量子方案。网络恢复时，重连事件是一次认证审计，而非单纯的同步操作：验证完整的哈希链，确认模型身份在离线期间未发生静默更新，并对任何检查失败的时间段标记人工审查。问责是决策时刻记录的属性，而非日志服务器的属性。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/zh/blog/">&larr; 全部文章</a>
+        <a href="/zh/blog/operational-envelope-problem.html">运行包线问题 &rarr;</a>
+      </div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/zh/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zh/blog/">博客</a> &nbsp;·&nbsp; <a href="/zh/engage.html">参与</a> &nbsp;·&nbsp; <a href="/zh/privacy.html">隐私</a></footer>
+</body>
+</html>
