@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>同意粒度問題：當委託人無法以智能體可操作的分辨率指定權限時的問責困境 — Asaptic Labs</title>
+  <meta name="description" content="人類委託人以粗粒度授權AI智能體——授予訪問權限、撤銷訪問權限、調整設置。智能體以細粒度行動——在任何授予的權限內執行數千個不同的操作。委託人能夠指定的內容與智能體能夠做的內容之間的差距，不是界面問題，而是結構性問責缺口。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zht/blog/consent-granularity-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/consent-granularity-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/consent-granularity-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/consent-granularity-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/consent-granularity-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/consent-granularity-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="同意粒度問題：當委託人無法以智能體可操作的分辨率指定權限時的問責困境" />
+  <meta property="og:description" content="人類委託人以粗粒度授權AI智能體——授予訪問權限、撤銷訪問權限、調整設置。智能體以細粒度行動——在任何授予的權限內執行數千個不同的操作。委託人能夠指定的內容與智能體能夠做的內容之間的差距，不是界面問題，而是結構性問責缺口。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/consent-granularity-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "同意粒度問題：當委託人無法以智能體可操作的分辨率指定權限時的問責困境",
+      "description": "人類委託人以粗粒度授權AI智能體，智能體在任何授予權限內執行數千個具體操作。這一分辨率差距造成結構性問責缺口，不能透過更多披露或更细的複選框來彌合，而只能透過操作層面的審計來解決。",
+      "url": "https://asaptic.com/zht/blog/consent-granularity-problem.html",
+      "author": { "@type": "Organization", "name": "Asaptic Labs" },
+      "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+      "datePublished": "2026-06-14",
+      "dateModified": "2026-06-14",
+      "mainEntityOfPage": "https://asaptic.com/zht/blog/consent-granularity-problem.html",
+      "inLanguage": "zh-Hant",
+      "potentialAction": {
+        "@type": "Action",
+        "name": "聯絡 Asaptic Labs",
+        "target": [
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/zht/engage.html",
+            "description": "聯絡頁面"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://asaptic.com/mcp",
+            "contentType": "application/json",
+            "description": "MCP server, tool: submit_rfq"
+          },
+          {
+            "@type": "EntryPoint",
+            "urlTemplate": "mailto:engage@asaptic.com",
+            "description": "透過電子郵件聯絡"
+          }
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "inLanguage": "zh-Hant",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "同意粒度問題", "item": "https://asaptic.com/zht/blog/consent-granularity-problem.html" }
+      ]
+    }
+  ]
+  </script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:22px;font-weight:700;line-height:1.3;margin-top:48px;margin-bottom:16px;color:var(--fg)}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:15px;line-height:1.65;color:var(--gray);margin:0}.essay-footer-wrap{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.site-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}}
+  </style>
+</head>
+<body>
+  <nav><div class="container"><a href="/zht/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/zht/blog/">博客</a><a href="/zht/engage.html">參與</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <span class="essay-topic">× 後量子安全 × 硬件 × 物理世界照護</span>
+      <h1 class="essay-title">同意粒度問題：當委託人無法以智能體可操作的分辨率指定權限時的問責困境</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>每一個有意義的同意框架都建立在這样一個假設之上：同意方在某种可行的分辨率下理解他們同意的內容。分辨率不需要完整——沒有人閱讀軟件許可的每一條款——但它需要足夠充分以锚定問責。如果實際發生的事情與合理預期的內容有實質性偏差，那麼同意就沒有约束那個行動。</p>
+
+        <p>AI智能體的運作分辨率是人類委託人無法匹配的。一個被授權訪問患者日常日程的照護智能體，在该權限內可以從預約模式推斷用药依從性、從訪客頻率檢測社會孤立、将睡眠中斷與照護事件時間關聯，以及将行為異常與縱向基線對比標記。说"是的，智能體可以查看日程"的委託人，并沒有同意這些具體的推斷。他們同意了一個粗略的類別。智能體在该類別的細粒度內容上行動。</p>
+
+        <p>這就是同意粒度問題。它不能透過更好的私隱聲明、更長的服務條款或更細粒度的權限複選框來解決。複選框比操作更粗略。這個差距是結構性的。</p>
+
+        <h2>為什麼這個差距無法透過披露來彌合</h2>
+        <p>對同意差距的標準回應是披露：更具體地告訴用户智能體将做什么。但披露只有在披露列表有限且可理解的情況下才有效。對于在豐富輸入數據上運作的AI智能體，可能操作的列表两者皆非。照護智能體的行為推斷能力不是命名操作的固定列表——它是可用數據、模型當前能力和部署上下文的函數。智能體可能執行在同意時沒有列舉的操作，因為它们來自撰寫披露時不存在的數據組合。</p>
+
+        <p>更多披露不會彌合差距；它将問題從同意转移到理解。一個在點擊"同意"之前收到十页可能代理操作清單的委託人，并沒有以更高分辨率同意。他們同意了清單的存在。問責基礎沒有改善，而是被遮蔽了。</p>
+
+        <h2>在照護交叉点</h2>
+        <p>在物理世界照護中，同意粒度問題在家庭和住宅環境中最為突出。一個授權照護智能體在家中支持老年親屬的家庭，同意了一個一般性目的。他們沒有——通常也無法——列舉智能體可能生成的每一個具體推斷、升級觸發器、數據保留行為或第三方通知。呼叫緊急服務、提醒遠方家庭成员或記錄對家庭環境關注的照護智能體，是在一般授權範圍內行動，但远超任何具體同意所涵蓋的範圍。</p>
+
+        <p>問責問題——這個行動是被授權的吗？——無法透過參考同意記錄來回答，因為同意記錄沒有描述那個行動。它描述了一個包含该行動的類別。因此，建立在同意之上的問責框架治理的是類別，而不是行動。智能體可以以委託人未曾預期、未曾意圖、也不希望的方式行動，同時在技術上仍处于授予類別的範圍內。</p>
+
+        <h2>在硬件交叉点</h2>
+        <p>相鄰硬件的智能體在不同的表面呈現相同的問題。一個被授權管理設備群固件的智能體，被授予了一個權限類別——固件管理——它包含了數百个具體操作：哪些設備以何种順序接收更新、在何种條件下触發什么回滾行為、當檢測到簽名異常時哪些設備被隔離，以及設備在需要人工審查前被隔離多長時間。在授權時，這些具體行為都沒有被列舉。它们隱含在授予的類別中。</p>
+
+        <p>當智能體作出干扰生產操作的固件決定時，問責問題不是智能體是否擁有固件管理權限——它确实擁有。問題是具體決定是否在實際同意的範圍內。在"固件管理"的粒度上，仅從授權記錄來看，這個問題是無法回答的。</p>
+
+        <h2>在后量子交叉点</h2>
+        <p>加密遷移智能體面临相同的結構，但风险更高。一個被授權管理加密基礎設施的智能體，可以在该授權範圍內決定廢棄哪些算法、按照什么時間線、在哪些系統上以什么順序，以及當遷移失敗時采用什么回退行為。這些決定具有重大的操作和安全後果。授予"加密基礎設施管理"的授權沒有指定其中任何一项。它授權了一個類別。智能體填充该類別的內容。</p>
+
+        <p>當智能體的具體選择导致加密覆蓋出現空白——遷移期間某些系統使用已弃用算法的窗口——授權記錄将確認智能體擁有權限。它不會揭示具體的排序決定是否曾被任何委託人考慮、評估或批准。</p>
+
+        <h2>問責的要求</h2>
+        <p>同意粒度問題沒有同意解決方案。它有一個審計解決方案：問責必须建立在智能體在操作層面實際做了什么，而不是類別層面上授權了什么。這要求智能體生成操作層面的記錄——而不是類別層面的日誌——可以在事後與委託人期望進行比較。</p>
+
+        <p>這也要求對"授權"意味著什么保持機構紀律。授予的權限不是该類別內所有操作的空白支票。它是一种臨時授權，携帶隱含的批准要求：委託人應該有持續的機制來確認正在執行的具體操作属于他們實際意圖的範圍。在该機制缺失的地方，授權已经超過了同意。</p>
+
+        <p>委託人能夠指定的內容與智能體能夠做的內容之間的差距，将随着智能體能力的增強而扩大。将粗略授權視為充分同意的問責框架将逐漸减少對智能體實際所做事情的治理。選择不是精细同意與粗略同意之間的選择。而是操作層面審計與名義問責之間的選择。</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心要點</span>
+        <p>人類在類別層面授權AI智能體——"管理固件"、"訪問日程"、"處理加密基礎設施"。智能體在具體操作層面行動，任何单一類別內都包含數千個操作。這些分辨率之間的差距意味著同意記錄在類別層面確認授權，而對所采取的具體行動保持沉默。在照護交叉点，一般授權包含未預期的推斷和升級。在硬件交叉点，固件權限包含未描述的操作決定。在后量子交叉点，遷移權限涵蓋未披露的排序選择。彌合問責差距需要操作層面的審計——而不是更長的披露、更细的複選框——因為這些操作來自數據，而不是來自披露。</p>
+      </div>
+
+      <div class="essay-footer-wrap">
+        <span class="essay-footer-byline">© 2026 Asaptic Labs</span>
+        <a href="/zht/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+  <footer class="site-footer"><a href="/zht/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/zht/blog/">博客</a> &nbsp;·&nbsp; <a href="/zht/engage.html">參與</a> &nbsp;·&nbsp; <a href="/zht/privacy.html">私隱</a></footer>
+</body>
+</html>
