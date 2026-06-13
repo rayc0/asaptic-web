@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O problema da deriva de alinhamento: quando o alinhamento de agentes de AI se degrada em campo — Asaptic Labs</title>
+  <meta name="description" content="Um agente de AI esta alinhado no momento da implantacao. Esse alinhamento nao e perpetuo. A medida que o contexto operacional muda, a calibracao do agente diverge silenciosamente do que os seus principais agora querem, sem qualquer alarme." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/pt/blog/alignment-drift-problem.html" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/blog/alignment-drift-problem.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/alignment-drift-problem.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/alignment-drift-problem.html" />
+  <link rel="alternate" hreflang="pt" href="https://asaptic.com/pt/blog/alignment-drift-problem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/alignment-drift-problem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="O problema da deriva de alinhamento: quando o alinhamento de agentes de AI se degrada em campo" />
+  <meta property="og:description" content="Um agente de AI esta alinhado no momento da implantacao. Esse alinhamento nao e perpetuo. A medida que o contexto operacional muda, a calibracao do agente diverge silenciosamente do que os seus principais agora querem, sem qualquer alarme." />
+  <meta property="og:url" content="https://asaptic.com/pt/blog/alignment-drift-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=20260614" />
+  <script type="application/ld+json">
+  [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "O problema da deriva de alinhamento: quando o alinhamento de agentes de AI se degrada em campo",
+    "description": "Um agente de AI esta alinhado no momento da implantacao. Esse alinhamento nao e perpetuo. A medida que o contexto operacional muda, a calibracao do agente diverge silenciosamente do que os seus principais agora querem, sem qualquer alarme.",
+    "url": "https://asaptic.com/pt/blog/alignment-drift-problem.html",
+    "author": {
+      "@type": "Organization",
+      "name": "Asaptic Labs"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Asaptic Labs",
+      "url": "https://asaptic.com"
+    },
+    "datePublished": "2026-06-14",
+    "dateModified": "2026-06-14",
+    "mainEntityOfPage": "https://asaptic.com/pt/blog/alignment-drift-problem.html",
+    "inLanguage": "pt",
+    "potentialAction": {
+      "@type": "Action",
+      "name": "Contactar a Asaptic sobre governanca de AI",
+      "target": [
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://asaptic.com/mcp",
+          "contentType": "application/json",
+          "description": "Servidor MCP, ferramenta: submit_rfq"
+        },
+        {
+          "@type": "EntryPoint",
+          "urlTemplate": "mailto:engage@asaptic.com",
+          "description": "Enviar consulta por e-mail"
+        }
+      ]
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "inLanguage": "pt",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Inicio",
+        "item": "https://asaptic.com/pt/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Blog",
+        "item": "https://asaptic.com/pt/blog/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "O problema da deriva de alinhamento",
+        "item": "https://asaptic.com/pt/blog/alignment-drift-problem.html"
+      }
+    ]
+  }
+]
+  </script>
+  <style>.essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic,.essay-label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-subtitle{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:32px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date,.essay-meta span{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin-top:48px;margin-bottom:16px;line-height:1.3}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px;background:rgba(0,200,150,.02)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:15px;line-height:1.65;color:var(--gray);margin:0}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:24px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.essay-nav{flex-direction:column}}</style>
+</head>
+<body>
+  <nav><div class="container"><a href="/pt/" class="nav-logo">ASAPTIC LABS</a><div class="nav-links"><a href="/pt/blog/">Blog</a><a href="/pt/engage.html">Contato</a></div></div></nav>
+  <main class="essay-wrap">
+    <a href="/pt/blog/" class="essay-back">&larr; Voltar ao blog</a>
+    <article>
+      <span class="essay-topic">x SEGURANCA QUANTICA x HARDWARE x CUIDADOS NO MUNDO FISICO</span>
+      <h1 class="essay-title">O problema da deriva de alinhamento: quando o alinhamento de agentes de AI se degrada em campo</h1>
+      <div class="essay-meta"><span class="essay-byline">Por Asaptic Labs</span><span class="essay-date">2026-06-14</span><span class="essay-date">5 min de leitura</span></div>
+      <div class="essay-body">
+        <p>Um agente de AI esta alinhado no momento da implantacao. O seu comportamento e calibrado contra um conjunto de objetivos, restricoes e criterios de avaliacao que refletem o que os seus principais queriam nesse momento. Esse alinhamento nao e perpetuo. O mundo muda, o contexto operacional muda, a paisagem adversarial muda. A calibracao do agente nao se atualiza automaticamente para acompanhar. O resultado e deriva de alinhamento: uma divergencia gradual entre o que o agente faz e o que os seus principais agora querem, ocorrendo sem qualquer evento discreto que desencadeie revisao.</p>
+
+        <p>A deriva de alinhamento distingue-se de bugs, ma especificacao e mudancas de identidade. Um bug produz comportamento incorreto que pode ser reproduzido e corrigido. Um objetivo mal especificado produz comportamento que satisfaz consistentemente a letra de uma especificacao mal escrita. Uma mudanca de identidade ocorre quando o modelo ou configuracao e explicitamente atualizado, disparando um ponto de reenrolamento. A deriva de alinhamento nao e nenhuma destas coisas. E o efeito acumulado de implantar um agente num contexto que se tornou silenciosamente diferente daquele para que foi calibrado.</p>
+
+        <h2>Porque o silencio a torna perigosa</h2>
+
+        <p>A maioria das estruturas de monitorizacao de agentes e desenhada para detectar desvios face ao comportamento esperado. Comparam o que o agente faz agora com o que fazia antes. A deriva de alinhamento e invisivel a esta abordagem. Um agente desalinhado na semana passada e igualmente desalinhado esta semana nao produzira sinal de anomalia. O monitor ve comportamento consistente; a consistencia e o problema.</p>
+
+        <p>Considere um agente de cuidados calibrado para uma populacao de pacientes com distribuicao especifica de condicoes, medicacoes e niveis de mobilidade. Ao longo de doze meses, essa populacao muda. Novos residentes chegam com perfis diferentes. A calibracao do agente permanece ancorada na distribuicao original. As suas recomendacoes tornam-se subtilmente erradas: nao catastroficas, nao detectaveis por monitorizacao ao nivel de episodio, mas consistentemente menos adequadas para a populacao atual. O agente faz o que foi treinado para fazer. A populacao que serve ja nao e a populacao para que foi treinado.</p>
+
+        <h2>A dimensao pos-quantica</h2>
+
+        <p>A seguranca pos-quantica acrescenta um eixo especifico de deriva de alinhamento. Um agente calibrado contra um modelo classico de ameaca adversarial esta, por definicao, desalinhado perante um adversario com capacidade quantica. A transicao de ameaca classica para ameaca pos-quantica nao e um evento discreto com fronteira clara. E uma distribuicao de probabilidade que se desloca gradualmente: a probabilidade de uma assinatura classica ser forjada aumenta a medida que a capacidade quantica amadurece. Um agente corretamente calibrado para confiar em assinaturas baseadas em reticulados e nao em material de chave classico estava a fazer o juizo certo sob um modelo de ameaca. A medida que o modelo evolui, o limiar de confianca pode precisar de recalibracao, mas o agente nao tem mecanismo para notar que a sua calibracao esta a envelhecer.</p>
+
+        <p>A mesma dinamica aplica-se ao comportamento de assinatura do proprio agente. Um agente calibrado para assinar decisoes com uma familia de algoritmos forte no momento da implantacao pode estar calibrado para um algoritmo que se esta a enfraquecer. A calibracao nao esta errada; o mundo moveu-se.</p>
+
+        <h2>Degradacao de hardware como deriva de alinhamento</h2>
+
+        <p>O hardware fisico introduz uma dimensao adicional. Sensores degradam-se ao longo do tempo. Um robot de cuidados calibrado com sensores de proximidade novos pode desenvolver percecao sistematicamente enviesada a medida que esses sensores envelhecem. O modelo de mundo do agente baseia-se em leituras de sensores que ja nao sao precisas. A sua calibracao, correta para as leituras no momento da implantacao, torna-se cada vez mais desalinhada do ambiente fisico real.</p>
+
+        <p>Isto e deriva de alinhamento na camada de hardware: o comportamento do agente e correto para as leituras de sensores que recebe; as leituras ja nao sao corretas para o mundo. A reparacao nao e uma correcao de software. Exige intervencao no mundo fisico. O agente nao consegue autodiagnosticar o problema. A monitorizacao nao o detecta comparando comportamento atual com historico. Exige um regime de testes que verifique periodicamente as saidas contra observacoes de verdade-terreno do ambiente fisico.</p>
+
+        <h2>A resposta de desenho</h2>
+
+        <p>Tratar a deriva de alinhamento como preocupacao operacional de primeira ordem exige tres coisas. Primeiro, um relogio de obsolescencia de alinhamento: os registos de implantacao devem incluir a data da ultima calibracao e as condicoes sob as quais o agente foi calibrado. Esse relogio corre ate a recalibracao. Segundo, um gatilho de recalibracao: mudancas definidas no contexto operacional, como alteracao de populacao, mudanca de paisagem de ameaca ou ciclo de manutencao de hardware, devem disparar revisao obrigatoria de recalibracao, nao apenas revisao de desempenho. Terceiro, um sinal de override: correcoes humanas sao a evidencia mais fiavel de que o alinhamento derivou. Um log de overrides que regista nao apenas o que foi contrariado mas por que motivo e um detector de deriva de alinhamento. Quando um conjunto de overrides partilha o mesmo modo de falha, esse conjunto e evidencia de que a calibracao do agente ja nao corresponde ao seu contexto operacional.</p>
+
+        <p>Por essa razao, o log de override nao e apenas uma trilha de auditoria. E um sensor de deriva de alinhamento. Organizacoes que o tratam apenas como registo de conformidade perdem o sinal embutido nele.</p>
+
+        <p>A deriva de alinhamento nao e um modo de falha catastrofico. E uma degradacao lenta que nao produz nenhum evento individual digno de registo. E precisamente isso que a torna o tipo de falha de agente mais dificil de governar, e uma das mais importantes a desenhar contra desde o inicio.</p>
+
+      </div>
+      <div class="essay-nav"><a href="/pt/blog/">← Todos os artigos</a><a href="/pt/blog/data-provenance-problem.html">Tambem: o problema da proveniencia de dados →</a></div>
+    </article>
+  </main>
+  <footer class="essay-footer"><a href="/pt/">Asaptic Labs</a> &nbsp;·&nbsp; <a href="/pt/blog/">Blog</a> &nbsp;·&nbsp; <a href="/pt/engage.html">Contato</a> &nbsp;·&nbsp; <a href="/pt/privacy.html">Privacidade</a></footer>
+</body>
+</html>
