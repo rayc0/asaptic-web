@@ -2,6 +2,21 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    // Canonical host: consolidate all variants to https://asaptic.com (301).
+    // Identical content was served on asaptic.cn + www.* with no redirect,
+    // causing GSC "Duplicate, Google chose different canonical than user".
+    // (*.pages.dev previews and the separate ai.asaptic.com are left alone.)
+    const REDIRECT_HOSTS = new Set([
+      'www.asaptic.com',
+      'asaptic.cn',
+      'www.asaptic.cn',
+    ]);
+    if (REDIRECT_HOSTS.has(url.hostname)) {
+      url.hostname = 'asaptic.com';
+      url.protocol = 'https:';
+      return Response.redirect(url.toString(), 301);
+    }
+
     // Geo endpoint for language detection
     if (url.pathname === '/geo') {
       const country = request.cf?.country || 'US';
