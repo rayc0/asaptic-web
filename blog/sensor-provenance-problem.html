@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The sensor provenance problem — Asaptic Labs</title>
+
+  <meta name="description" content="Care AI makes life-affecting decisions from sensor data it cannot authenticate. Without hardware-rooted, post-quantum-safe attestation at the point of measurement, the physical signal is the attack surface — and current deployments have no way to verify what they read." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/sensor-provenance-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The sensor provenance problem" />
+  <meta property="og:description" content="Care AI makes life-affecting decisions from sensor data it cannot authenticate. Without hardware-rooted, post-quantum-safe attestation at the point of measurement, the physical signal is the attack surface." />
+  <meta property="og:url" content="https://asaptic.com/blog/sensor-provenance-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Article",
+          "headline": "The sensor provenance problem",
+          "author": {
+            "@type": "Organization",
+            "name": "Asaptic Labs"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "Asaptic Labs",
+            "url": "https://asaptic.com"
+          },
+          "datePublished": "2026-06-14",
+          "description": "Care AI makes life-affecting decisions from sensor data it cannot authenticate. Without hardware-rooted, post-quantum-safe attestation at the point of measurement, the physical signal is the attack surface — and current deployments have no way to verify what they read.",
+          "url": "https://asaptic.com/blog/sensor-provenance-problem.html"
+        }
+      ]
+    }
+  </script>
+
+  <style>
+    .essay-wrap { max-width: 680px; margin: 0 auto; padding: 120px 32px 96px; }
+    .essay-back { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: var(--gray); margin-bottom: 48px; transition: color 0.2s; }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; color: var(--cyan); display: block; margin-bottom: 14px; }
+    .essay-title { font-size: clamp(26px, 4vw, 40px); font-weight: 700; line-height: 1.15; margin-bottom: 24px; }
+    .essay-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+    .essay-byline, .essay-date { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gray-dim); }
+    .essay-body p { font-size: 17px; color: var(--gray); line-height: 1.85; margin-bottom: 24px; }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--border); }
+    .essay-summary-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: var(--accent); display: block; margin-bottom: 12px; }
+    .essay-summary p { font-size: 14px; color: var(--gray-dim); line-height: 1.75; margin-bottom: 12px; }
+    .essay-nav { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; font-size: 12px; color: var(--gray-dim); margin-top: 48px; }
+    @media (max-width: 768px) { .essay-wrap { padding: 100px 20px 72px; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× PHYSICAL-WORLD CARE · × HARDWARE · × POST-QUANTUM SECURITY</span>
+      <h1 class="essay-title">The sensor provenance problem: why care AI cannot authenticate what it reads</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Care AI systems are trained to interpret the world through sensors. A vital-signs monitor reports a blood oxygen level; a wearable accelerometer reports gait patterns; an ambient sensor reports room temperature and occupancy. The AI aggregates these readings, weights them against its learned models, and produces recommendations: adjust medication timing, alert a clinician, modify a fall-risk assessment. The clinical quality of those recommendations depends entirely on whether the sensor data is what it claims to be.</p>
+
+        <p>Current deployments have no way to verify this. A sensor reading arrives as a number over a protocol. The number does not carry cryptographic evidence of which physical device produced it, on what hardware, under what calibration state, at what exact timestamp, or whether it passed through any intermediary process that might have modified it. The receiving AI system accepts the value and reasons over it. The gap between what the sensor claims and what the AI can verify is absolute.</p>
+
+        <p>This is not primarily a software problem. Software supply chain attacks are well-understood, and defenses exist: code signing, hash verification, trusted build pipelines. The sensor provenance problem is distinct because the attack surface is the physical measurement itself. An adversary who can modify what a physical sensor reports — by interfering with the hardware, substituting a spoofed signal at the network edge, or replacing a legitimate device with a counterfeit — does not need to touch any software. They corrupt the AI's world-model at its input, before any software-layer defense has any material to inspect.</p>
+
+        <p>The gap widens as care AI is deployed in physically unsecured environments. Enterprise security models assume controlled premises. A care AI operating in a patient's home, a nursing facility common room, or an ambulatory monitoring scenario does not have the physical security guarantees of a data centre. The sensors feeding it are physically accessible to anyone with proximity — facility staff, family members, maintenance personnel, and anyone else who can briefly access the environment. Physical access to a sensor without hardware-rooted trust mechanisms is sufficient to substitute readings.</p>
+
+        <p>Hardware attestation is the correct technical intervention. A sensor equipped with a secure element can generate a cryptographic signature over each measurement: a statement of the form "this value, at this timestamp, produced by this specific hardware instance, under this firmware version and calibration state." The signature is generated inside the secure element, where the private key is inaccessible to any external process, including the sensor's own application firmware. A downstream system can verify the signature before trusting the reading. If verification fails — because the signing key does not match, the timestamp is inconsistent, or the reported calibration state has changed — the receiving system knows the data cannot be authenticated and must treat it accordingly.</p>
+
+        <p>Two obstacles currently prevent this from being deployed at scale in care settings. The first is hardware cost and integration complexity. Adding secure elements to medical-grade sensors is technically feasible but raises unit costs, requires integration into regulatory approval pathways, and demands that downstream systems implement verification logic they do not currently include. The installed base of care sensors does not have these capabilities, and upgrade cycles in healthcare infrastructure are long.</p>
+
+        <p>The second obstacle connects directly to the post-quantum crossing. Sensor attestation built on classical signature schemes — RSA or elliptic curve digital signatures — is vulnerable to the same harvest-now-decrypt-later exposure that threatens healthcare records more broadly. A patient's continuous vital-signs stream, attested with classical signatures throughout a multi-year care period, may retain clinical and legal significance long after quantum computing capabilities could break those signatures. The attestation chain that was supposed to guarantee data integrity becomes a chain of signatures whose authenticity can no longer be verified by the time a legal or clinical dispute arises. Post-quantum attestation requires post-quantum hardware roots of trust in the sensors themselves — hardware that does not yet ship in volume for care applications.</p>
+
+        <p>The result is a layered problem. Near-term, care AI operates over completely unauthenticated sensor data with no signal about whether readings are genuine. Medium-term, even hardware attestation deployments built now use classical cryptography with a limited assurance horizon. Long-term, genuine sensor provenance in care AI requires embedded hardware that can generate post-quantum-safe signatures at low power budgets, integrated into devices designed for clinical-grade sensing. That hardware is beginning to appear in adjacent domains — payment security, automotive identity, supply chain tracking — but its arrival in care sensor deployments remains years out.</p>
+
+        <p>What care AI systems can do now is make the gap explicit. A system that knows it cannot verify its sensor inputs can treat those inputs as having bounded trust: hedging high-stakes decisions against the possibility of corrupted readings, flagging anomalous patterns that might indicate substitution rather than clinical change, and recording the unauthenticated status of input data in audit logs so that downstream accountability assessments have accurate records of what was and was not verified. Acknowledging the gap is not a solution. But designing as if the gap does not exist produces care AI that will be systematically wrong in exactly the adversarial scenarios where being wrong matters most.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>医疗AI系统通过传感器解读世界，但目前没有任何机制可以密码学地验证传感器数据的真实性。读数不携带证明其来源硬件、固件版本或校准状态的密码学证据，任何具有物理访问权限的人都可以在不接触软件的情况下替换传感器数据。硬件证明——传感器内安全元件对每次测量的签名——在技术上可以解决这一问题，但部署规模受硬件成本制约；而且即使是当今部署的硬件证明，也使用在量子威胁面前具有有限保证期限的经典签名方案。医疗AI真正可信的传感器溯源，需要在医疗级传感设备中内置后量子安全签名能力。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>醫療AI系統透過感測器解讀世界，但目前沒有任何機制可以密碼學地驗證感測器資料的真實性。讀數不攜帶證明其來源硬體、韌體版本或校準狀態的密碼學證據，任何具有實體訪問權限的人都可以在不接觸軟體的情況下替換感測器資料。硬體證明——感測器內安全元件對每次測量的簽章——在技術上可以解決這一問題，但部署規模受硬體成本制約；而且即使是當今部署的硬體證明，也使用在量子威脅面前具有有限保證期限的經典簽章方案。醫療AI真正可信的感測器溯源，需要在醫療級感測設備中內建後量子安全簽章能力。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/embedded-jurisdiction-problem.html">&larr; Embedded jurisdiction problem</a>
+        <a href="/blog/">All essays →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 物理世界照护 · × 硬件 · × 后量子安全</span>
+      <h1 class="essay-title">传感器溯源问题：为何医疗AI无法认证其所读取的数据</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>医疗AI系统被训练为通过传感器解读世界。生命体征监测仪报告血氧饱和度；可穿戴加速度计报告步态模式；环境传感器报告室温和占用情况。AI汇总这些读数，以其学习的模型对其进行加权，并生成建议：调整用药时机、提醒临床医生、修改跌倒风险评估。这些建议的临床质量完全取决于传感器数据是否如其所声称的那样。</p>
+
+        <p>当前部署没有办法验证这一点。传感器读数通过协议以数字的形式到达。该数字不携带密码学证据，无法证明是哪个物理设备产生了它、在什么硬件上、处于何种校准状态、在什么精确时间戳，或者它是否经过可能修改它的任何中间过程。接收AI系统接受该值并在其上进行推理。传感器声称的内容与AI能够验证的内容之间的差距是绝对的。</p>
+
+        <p>这不主要是软件问题。软件供应链攻击已被充分理解，防御措施已经存在：代码签名、哈希验证、可信构建流水线。传感器溯源问题的独特之处在于攻击面是物理测量本身。能够修改物理传感器报告内容的攻击者——通过干扰硬件、在网络边缘替换伪造信号或用仿冒品替换合法设备——不需要触碰任何软件。他们在AI世界模型的输入端腐化它，在任何软件层防御能够检查任何材料之前。</p>
+
+        <p>随着医疗AI部署在物理上不安全的环境中，这一差距正在扩大。企业安全模型假设受控场所。在患者家中、护理机构公共区域或流动监测场景中运行的医疗AI，没有数据中心的物理安全保障。为其提供数据的传感器对任何能够接近的人都物理可访问——机构员工、家庭成员、维护人员以及任何可以短暂进入该环境的人。在没有硬件信任机制的情况下，对传感器的物理访问足以替换读数。</p>
+
+        <p>硬件证明是正确的技术干预措施。配备安全元件的传感器可以对每次测量生成密码学签名：形式为"此值、在此时间戳、由此特定硬件实例生成、在此固件版本和校准状态下"的声明。签名在安全元件内部生成，私钥对任何外部进程均不可访问，包括传感器自身的应用固件。下游系统可以在信任读数之前验证签名。如果验证失败——因为签名密钥不匹配、时间戳不一致或报告的校准状态已更改——接收系统知道数据无法被认证，必须相应地处理它。</p>
+
+        <p>目前有两个障碍阻止这一技术在医疗场景中大规模部署。第一个是硬件成本和集成复杂性。为医疗级传感器添加安全元件在技术上是可行的，但会提高单位成本，需要集成到监管审批流程中，并要求下游系统实现它们目前不包含的验证逻辑。已安装的医疗传感器基础设施不具备这些能力，而医疗基础设施的升级周期很长。</p>
+
+        <p>第二个障碍直接与后量子跨越相关。基于经典签名方案——RSA或椭圆曲线数字签名——构建的传感器证明，与更广泛地威胁医疗记录的"现在收集、以后解密"风险同样脆弱。患者在多年护理期间以经典签名持续证明的生命体征数据流，在量子计算能力足以破解这些签名之后，仍可能保留临床和法律意义。本应保证数据完整性的证明链，变成了在法律或临床纠纷出现时其真实性已无法验证的签名链。后量子证明需要传感器本身具有后量子硬件信任根——这种硬件目前尚未在医疗应用中量产。</p>
+
+        <p>结果是一个分层问题。近期，医疗AI在完全未经认证的传感器数据上运行，无法获得读数是否真实的信号。中期，即使是现在构建的硬件证明部署，也使用保证期限有限的经典密码学。长期来看，医疗AI中真正可信的传感器溯源需要嵌入式硬件，能够在低功耗预算下生成后量子安全签名，并集成到为医疗级传感设计的设备中。这种硬件正在相邻领域开始出现——支付安全、汽车身份、供应链追踪——但其进入医疗传感器部署仍需数年时间。</p>
+
+        <p>医疗AI系统现在能做的是使差距显性化。知道无法验证其传感器输入的系统可以将这些输入视为具有有限信任：对高风险决策进行对冲以应对读数被篡改的可能性，标记可能表明替换而非临床变化的异常模式，并在审计日志中记录输入数据的未认证状态，以便下游问责评估能够准确记录哪些内容经过验证、哪些没有。承认差距不是解决方案。但如果设计时假装差距不存在，则会产生在最重要的对抗性场景中系统性出错的医疗AI。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/embedded-jurisdiction-problem.html">&larr; 嵌入式司法管辖问题</a>
+        <a href="/blog/">全部文章 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 物理世界照護 · × 硬件 · × 後量子安全</span>
+      <h1 class="essay-title">感測器溯源問題：為何醫療AI無法認證其所讀取的資料</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>醫療AI系統被訓練為透過感測器解讀世界。生命體徵監測儀報告血氧飽和度；可穿戴加速度計報告步態模式；環境感測器報告室溫和佔用情況。AI匯總這些讀數，以其學習的模型對其進行加權，並生成建議：調整用藥時機、提醒臨床醫生、修改跌倒風險評估。這些建議的臨床品質完全取決於感測器資料是否如其所聲稱的那樣。</p>
+
+        <p>當前部署沒有辦法驗證這一點。感測器讀數透過協定以數字的形式到達。該數字不攜帶密碼學證據，無法證明是哪個實體設備產生了它、在什麼硬體上、處於何種校準狀態、在什麼精確時間戳，或者它是否經過可能修改它的任何中間過程。接收AI系統接受該值並在其上進行推理。感測器聲稱的內容與AI能夠驗證的內容之間的差距是絕對的。</p>
+
+        <p>這不主要是軟體問題。軟體供應鏈攻擊已被充分理解，防禦措施已經存在：程式碼簽章、雜湊驗證、可信構建流水線。感測器溯源問題的獨特之處在於攻擊面是實體測量本身。能夠修改實體感測器報告內容的攻擊者——透過干擾硬體、在網路邊緣替換偽造信號或用仿冒品替換合法設備——不需要接觸任何軟體。他們在AI世界模型的輸入端腐化它，在任何軟體層防禦能夠檢查任何材料之前。</p>
+
+        <p>隨著醫療AI部署在實體上不安全的環境中，這一差距正在擴大。企業安全模型假設受控場所。在患者家中、護理機構公共區域或流動監測場景中運行的醫療AI，沒有資料中心的實體安全保障。為其提供資料的感測器對任何能夠接近的人都實體可訪問——機構員工、家庭成員、維護人員以及任何可以短暫進入該環境的人。在沒有硬體信任機制的情況下，對感測器的實體訪問足以替換讀數。</p>
+
+        <p>硬體證明是正確的技術干預措施。配備安全元件的感測器可以對每次測量生成密碼學簽章：形式為「此值、在此時間戳、由此特定硬體實例生成、在此韌體版本和校準狀態下」的聲明。簽章在安全元件內部生成，私鑰對任何外部進程均不可訪問，包括感測器自身的應用韌體。下游系統可以在信任讀數之前驗證簽章。如果驗證失敗——因為簽章金鑰不匹配、時間戳不一致或報告的校準狀態已更改——接收系統知道資料無法被認證，必須相應地處理它。</p>
+
+        <p>目前有兩個障礙阻止這一技術在醫療場景中大規模部署。第一個是硬體成本和整合複雜性。為醫療級感測器添加安全元件在技術上是可行的，但會提高單位成本，需要整合到監管審批流程中，並要求下游系統實現它們目前不包含的驗證邏輯。已安裝的醫療感測器基礎設施不具備這些能力，而醫療基礎設施的升級週期很長。</p>
+
+        <p>第二個障礙直接與後量子跨越相關。基於經典簽章方案——RSA或橢圓曲線數位簽章——構建的感測器證明，與更廣泛地威脅醫療記錄的「現在收集、以後解密」風險同樣脆弱。患者在多年護理期間以經典簽章持續證明的生命體徵資料流，在量子計算能力足以破解這些簽章之後，仍可能保留臨床和法律意義。本應保證資料完整性的證明鏈，變成了在法律或臨床糾紛出現時其真實性已無法驗證的簽章鏈。後量子證明需要感測器本身具有後量子硬體信任根——這種硬體目前尚未在醫療應用中量產。</p>
+
+        <p>結果是一個分層問題。近期，醫療AI在完全未經認證的感測器資料上運行，無法獲得讀數是否真實的信號。中期，即使是現在構建的硬體證明部署，也使用保證期限有限的經典密碼學。長期來看，醫療AI中真正可信的感測器溯源需要嵌入式硬體，能夠在低功耗預算下生成後量子安全簽章，並整合到為醫療級感測設計的設備中。這種硬體正在相鄰領域開始出現——支付安全、汽車身份、供應鏈追蹤——但其進入醫療感測器部署仍需數年時間。</p>
+
+        <p>醫療AI系統現在能做的是使差距顯性化。知道無法驗證其感測器輸入的系統可以將這些輸入視為具有有限信任：對高風險決策進行對沖以應對讀數被篡改的可能性，標記可能表明替換而非臨床變化的異常模式，並在稽核日誌中記錄輸入資料的未認證狀態，以便下游問責評估能夠準確記錄哪些內容經過驗證、哪些沒有。承認差距不是解決方案。但如果設計時假裝差距不存在，則會產生在最重要的對抗性場景中系統性出錯的醫療AI。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/embedded-jurisdiction-problem.html">&larr; 嵌入式司法管轄問題</a>
+        <a href="/blog/">全部文章 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
