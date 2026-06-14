@@ -151,3 +151,4 @@
 2026-06-14 04:30 UTC · blog: add essay 'The embedded jurisdiction problem' — accountability when care AI carries its training context across borders (EN+ZH+ZHT, firewall clean) · 0739cdb
 2026-06-14 08:30 UTC · blog: add essay 'The sensor provenance problem' — why care AI cannot authenticate physical sensor data (EN+ZH+ZHT, firewall clean) · f99563f
 2026-06-14 12:30 UTC · blog: add essay 'The accountability horizon problem' — when care AI audit trails expire before legal exposure (EN+ZH+ZHT, firewall clean); index catches up 3 missing entries · 22fe821
+2026-06-14 16:30 UTC · blog: add essay 'The time provenance problem' — why care AI cannot prove when its decisions were made (EN+ZH+ZHT) · 49efe27
