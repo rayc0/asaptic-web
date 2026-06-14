@@ -1,0 +1,205 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "dataset_id": "ev-charger-mw-vs-cn",
+  "title": "China-to-Malawi EV Charger Compliance Gap Matrix",
+  "product": "EV charger",
+  "target_market": "Malawi (MBS / MERA / ESCOM)",
+  "canonical_url": "https://asaptic.com/standard/ev-charger-china-to-malawi",
+  "version": "2026-06-11",
+  "last_verified": "2026-06-14",
+  "provenance": "AI-compiled, multi-model cross-checked, not human-verified. Informational only; confirm with the official regulator and a qualified professional. Not legal/certification/customs/market-access advice.",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "row_count": 6,
+  "rows": [
+    {
+      "id": "evmw-connector-1",
+      "requirement": "Connector Interoperability — GB/T 20234 vs IEC 62196 Type 2 / CCS2",
+      "target_requirement": "Malawi does not currently operate a domestic EV connector mandate, reflecting its nascent EV market. However, Malawi's general regulatory framework follows IEC standards through MBS (Malawi Bureau of Standards), and the country's electricity infrastructure uses IEC-family supply standards (230/400 V 50 Hz). Any EV charging equipment introduced to Malawi is expected to align with IEC 62196 connector standards, which govern the majority of AC and DC EV charging infrastructure in sub-Saharan African markets. AC charging is expected to use the IEC 62196-2 Type 2 (Mennekes) coupler, and DC fast charging where deployed is expected to use the Combined Charging System Combo 2 (CCS2) defined in IEC 62196-3 configuration FF. IEC 62196 alignment also ensures compatibility with vehicles sold in Malawi, which are primarily European and Japanese imports — the former using Type 2 / CCS2 and the latter potentially CHAdeMO — rather than Chinese GB/T vehicles. The practical reality is that four-wheel EV penetration in Malawi is extremely low as of 2026, so connector choice is primarily a future-proofing and import-vehicle compatibility consideration rather than an immediate mass-market requirement.",
+      "target_standards": [
+        "IEC 62196-2 — Dimensional compatibility and interchangeability requirements for a.c. pin and contact-tube accessories",
+        "IEC 62196-3 — Dimensional compatibility and interchangeability requirements for DC and AC/DC pin and contact-tube vehicle couplers",
+        "IEC 61851-1:2017 — Electric vehicle conductive charging system — Part 1: General requirements",
+        "IEC 61851-23:2023 — Electric vehicle conductive charging system — Part 23: DC electric vehicle supply equipment",
+        "MBS (Malawi Bureau of Standards) — IEC-aligned national standards adoption framework"
+      ],
+      "china_equivalent": "China AC chargers use GB/T 20234.2 couplers and DC fast chargers use GB/T 20234.3 couplers. Although the GB/T 20234.2 AC coupler has a broadly similar overall shape to the IEC 62196 Type 2, they differ in connector gender (GB/T uses male connector at the charger and female vehicle inlet, opposite to Type 2), signaling protocol (CC/CP versus PP/CP), and contact arrangement, making them physically and electrically incompatible. GB/T 20234.3 DC couplers are geometrically different from CCS2 and use a nine-pin configuration with CAN bus via GB/T 27930 communication, incompatible with the CCS2 / IEC 61851-24 communication stack. Vehicles sold in Malawi are predominantly European and Japanese imports with Type 2 / CCS2 or CHAdeMO inlets — not GB/T inlets — meaning GB/T chargers cannot physically connect to any vehicle likely to be charged in Malawi.",
+      "china_standards": [
+        "GB/T 20234.2-2015 — Connection set for conductive charging of electric vehicles — Part 2: AC charging coupler",
+        "GB/T 20234.3-2023 — Connection set for conductive charging of electric vehicles — Part 3: DC charging coupler",
+        "GB/T 27930-2023 — Communication protocols between off-board conductive charger and battery management system for electric vehicles",
+        "GB/T 18487.1-2023 — Electric vehicle conductive charging system — Part 1: General requirements"
+      ],
+      "gap": "A China GB/T-only charger cannot physically connect to any four-wheel EV likely to be used in Malawi. Conversion to IEC 62196 Type 2 (AC) / CCS2 (DC) requires hardware redesign of the coupler, cable assembly, locking mechanism, proximity pilot and control pilot signaling, DC communication stack (from GB/T 27930 CAN to IEC 61851-24 where CCS2 DC is required), labels, test reports, temperature-rise evidence, and spare-part strategy. Adapters are not an accepted substitute for compliant connector design. Additionally, for e-bike and e-moto applications — the more immediate electrification opportunity in Malawi — separate connector and charging standards (IEC 63397, IEC 61851-1 Mode 1/2, or proprietary connectors) apply and are outside the scope of this row.",
+      "mandatory_status": {
+        "target": "Mandatory from a physical compatibility standpoint — GB/T connectors cannot interface with IEC 62196 vehicle inlets used by European and Japanese EV imports dominant in Malawi; IEC 62196 Type 2 / CCS2 adoption expected for any MBS-compliant or project-specified charger; confirm specific project or tender requirements",
+        "cn": "GB/T 20234 conformity applies to China domestic connector design and is not an IEC 62196 Type 2 / CCS2 substitute; GB/T connectors are physically incompatible with the vehicle fleet in Malawi"
+      },
+      "verdict": "[INFORMATIONAL] Connector redesign from GB/T 20234 to IEC 62196 Type 2 / CCS2 is a hardware requirement, not a paperwork exercise. GB/T connectors are physically incompatible with the European and Japanese EV imports that make up virtually all four-wheel EVs in Malawi. Confirm the vehicle fleet and any project or MBS specifications before quoting or shipping.",
+      "source": {
+        "url": "https://webstore.iec.ch/en/search?query=IEC+62196",
+        "publisher": "International Electrotechnical Commission",
+        "accessed": "2026-06-14",
+        "verified": false
+      }
+    },
+    {
+      "id": "evmw-grid-1",
+      "requirement": "ESCOM Grid Connection — 230/400 V / 50 Hz, Load-Shedding Constraints, and Project Approval",
+      "target_requirement": "Malawi's national grid is operated by ESCOM (Electricity Supply Corporation of Malawi). The nominal supply standard is 230 V single-phase / 400 V three-phase, 50 Hz, aligned with IEC 60038 standard voltages. Any grid-connected EV charging installation requires ESCOM connection approval, including load assessment, metering, and site inspection. Critically, Malawi's grid suffers from chronic capacity shortfalls and scheduled load-shedding (outages of 8–16 hours per day have been reported in recent years), with national peak generation capacity far below demand. The national electrification rate remains very low — the International Energy Agency estimated Malawi's electricity access rate at approximately 14% of the population as of the mid-2020s, with the rural rate far lower. These grid constraints mean that EV charging infrastructure deployment outside ESCOM-serviced urban centres (Lilongwe, Blantyre, Mzuzu) is not currently viable without on-site generation or battery storage backup. The Malawi Energy Regulatory Authority (MERA) is the statutory energy regulator and must grant a licence or permit for commercial electricity supply activities, including public EV charging operations. ESCOM connection approval and MERA licensing are both required gates before any commercial EV charging service can operate.",
+      "target_standards": [
+        "ESCOM (Electricity Supply Corporation of Malawi) — connection approval and metering requirements",
+        "MERA (Malawi Energy Regulatory Authority) — energy service licence / permit for commercial EV charging",
+        "IEC 60038:2009 — IEC standard voltages (230 V / 400 V 50 Hz)",
+        "Malawi Electricity Act (Cap. 73:01) — ESCOM and MERA statutory powers",
+        "IEC 61000 series — electromagnetic compatibility and power quality at point of common coupling"
+      ],
+      "china_equivalent": "China domestic charger installations are accepted under GB/T 18487.1-2023 design evidence, GB/T 20234 connectors, GB/T 27930-2023 communication for DC systems, and local grid-operator project acceptance. China domestic supply is 220 V single-phase / 380 V three-phase, 50 Hz. Malawi's 230/400 V supply is nominally close but the broader grid context is entirely different: China operates a stable, high-penetration national grid, while Malawi's grid has chronic capacity deficits, load-shedding, and low electrification rates that fundamentally alter the deployment context. China grid operator project-acceptance documents carry no weight in a MERA or ESCOM approval process.",
+      "china_standards": [
+        "GB/T 18487.1-2023",
+        "GB/T 20234.2-2015",
+        "GB/T 20234.3-2023",
+        "GB/T 27930-2023",
+        "China local grid operator project-acceptance requirements"
+      ],
+      "gap": "Exporters and project developers must address: (1) ESCOM connection approval — supply capacity assessment, metering, load calculations, and site inspection; (2) MERA licence or permit for commercial EV charging operations; (3) voltage tolerance confirmation — Malawi's grid voltage can vary significantly from the 230 V nominal due to infrastructure constraints, so charger input-range and surge/sag tolerance should be specified; (4) power-quality and harmonic compliance at the point of common coupling per IEC 61000 series; (5) strong consideration of on-site solar PV, battery storage, or generator backup due to chronic load-shedding, which materially changes charger uptime economics; (6) initial deployment focus is realistically limited to urban centres (Lilongwe, Blantyre, Mzuzu) where ESCOM supply exists. China domestic 220 V / 380 V project-acceptance documentation does not substitute for ESCOM or MERA approval.",
+      "mandatory_status": {
+        "target": "Mandatory — ESCOM connection approval is required for any grid-connected installation; MERA licence or permit is required for commercial EV charging service; grid constraints mean on-site backup power is strongly advisable and may be required by project funders",
+        "cn": "China local grid operator acceptance applies domestically only and is not an ESCOM or MERA approval substitute; voltage and grid-stability ratings must be re-confirmed for Malawi conditions"
+      },
+      "verdict": "[INFORMATIONAL] A Malawi-ready EV charger project requires ESCOM connection approval and MERA licensing before commercial operation. Chronic grid load-shedding and low electrification rates make backup power planning essential. Deployment outside Lilongwe, Blantyre, and Mzuzu faces severe grid-access constraints.",
+      "source": {
+        "url": "https://www.escom.mw/",
+        "publisher": "ESCOM — Electricity Supply Corporation of Malawi",
+        "accessed": "2026-06-14",
+        "verified": false
+      }
+    },
+    {
+      "id": "evmw-market-1",
+      "requirement": "MBS Import Conformity Scope for EV Chargers and MERA Licensing",
+      "target_requirement": "The Malawi Bureau of Standards (MBS) is the national standards and conformity assessment body for Malawi and is responsible for import inspection and certification of regulated products, including electrical equipment. MBS adopts IEC and ISO standards and develops Malawi Standards (MS). General electrical equipment imported into Malawi is subject to MBS conformity assessment under the Standards Act (Cap. 51:02) and related subsidiary legislation. A specific mandatory MBS technical regulation or compulsory standard applying exclusively to EV charging equipment (EVSE) could not be confirmed from official sources as of 2026-06-14; however, EV chargers as electrical equipment are expected to fall within MBS's general electrical product import controls, and MBS inspection or a Certificate of Conformity (CoC) based on IEC test reports may be required. Separately, the Malawi Energy Regulatory Authority (MERA) is the statutory regulator under the Energy Regulation Act and must grant energy service licences or permits for commercial electricity supply activities — including public EV charging. MERA approval is a separate gate from MBS product conformity and is required before commercial operation. Exporters should verify the specific MBS compulsory conformity route and MERA licence requirements with the respective authorities before shipment.",
+      "target_standards": [
+        "Malawi Standards Act (Cap. 51:02) — MBS mandate for import conformity assessment",
+        "MBS import inspection and CoC requirements for electrical equipment",
+        "Malawi Energy Regulation Act — MERA statutory mandate",
+        "MERA energy service licence / permit requirements for commercial EV charging",
+        "Malawi Revenue Authority (MRA) — customs and import duty on electrical equipment (HS 85.04 / 85.35 / 85.44 depending on classification)"
+      ],
+      "china_equivalent": "China-market chargers are commonly documented against GB/T 18487.1-2023 for conductive charging system requirements and GB/T 20234 connector standards, with China Compulsory Certification (CCC) applying where the charger falls within CCC scope. China CCC or GB/T test evidence may support an engineering review during a MBS assessment, but does not by itself establish MBS CoC status or MERA licensing. China's domestic regulatory framework for EV charging (NBS, NEA, SAMR) has no direct equivalence in Malawi's MBS / MERA framework.",
+      "china_standards": [
+        "GB/T 18487.1-2023",
+        "GB/T 20234.1-2023",
+        "GB/T 20234.2-2015",
+        "GB/T 20234.3-2023",
+        "China CCC (3C) mandatory certification where in scope"
+      ],
+      "gap": "Exporters should: (1) contact MBS to confirm current compulsory conformity assessment requirements for EVSE under the applicable HS code, as the framework for EV chargers specifically is not yet confirmed in published sources; (2) obtain IEC-based test reports from ILAC-recognised laboratories to support MBS assessment, as GB/T reports alone will not suffice; (3) contact MERA to confirm the licence or permit category required for commercial EV charging operations at the intended site; (4) confirm import duty classification with Malawi Revenue Authority (MRA) — EV chargers may classify under HS 85.04 (electrical transformers / static converters), 85.35/85.36 (electrical apparatus for switching), or other codes, each with different duty rates; (5) note that development-finance-funded EV charging projects in Malawi may have duty exemptions — confirm with MRA and the project sponsor.",
+      "mandatory_status": {
+        "target": "Conditional — MBS import conformity assessment for electrical equipment applies; MERA energy service licence required for commercial EV charging; specific compulsory EV charger MBS standard not confirmed from official sources as of 2026-06-14 — verify with MBS and MERA before shipment",
+        "cn": "Mandatory or recommended depending on China CCC scope; GB/T and China CCC evidence are not MBS CoC substitutes and carry no weight in MERA licensing"
+      },
+      "verdict": "[INFORMATIONAL] Do not claim automatic Malawi market access from China CCC or GB/T reports alone. Verify the MBS conformity route for the specific EVSE product and HS code with MBS, obtain a MERA energy service licence for commercial operation, confirm import duty classification with MRA, and address IEC safety, connector, and EMC evidence separately.",
+      "source": {
+        "url": "https://www.mbs.mw/",
+        "publisher": "MBS — Malawi Bureau of Standards",
+        "accessed": "2026-06-14",
+        "verified": false
+      }
+    },
+    {
+      "id": "evmw-market-2",
+      "requirement": "Malawi EV Market Context — Nascent Four-Wheel Market, E-Bike / E-Moto Opportunity, and Grid Constraints",
+      "target_requirement": "Malawi is among the least electrified countries in the world and has one of the lowest per-capita incomes globally (GNI per capita approximately USD 600–650, World Bank 2023). As of 2026, four-wheel electric vehicle penetration in Malawi is negligible — virtually no fleet of EVs requiring AC/DC conductive car chargers exists in the country. The principal electric mobility opportunity in Malawi is two- and three-wheelers: electric bicycles and electric motorcycles (e-motos), which serve as affordable last-mile transport and logistics vehicles. Multiple development-finance-backed e-moto programmes are active in Malawi (e.g. GreenPower Malawi, Epik Mobility, Kona Mobility). Charging for e-bikes and e-motos typically uses Mode 1 (domestic socket) or Mode 2 (in-cable control box) charging per IEC 61851-1, or proprietary battery-swap and charging station formats — not the IEC 62196 Type 2 / CCS2 / IEC 61851-23 DC charging infrastructure relevant to four-wheel EVs. Future demand for four-wheel EV charging infrastructure may grow if: (a) grid reliability improves materially; (b) import vehicle fleets shift toward EVs, which requires EV-affordable income levels; (c) development-finance-funded public transport electrification projects proceed. Exporters of four-wheel EV chargers should frame Malawi as a speculative future market, not a near-term volume opportunity, while e-moto charging infrastructure represents a more immediate commercial opportunity.",
+      "target_standards": [
+        "IEA (International Energy Agency) — Malawi electricity access rate estimates",
+        "World Bank — Malawi GNI per capita (2023)",
+        "IEC 61851-1:2017 — Mode 1 and Mode 2 charging relevant for e-bike / e-moto applications",
+        "Malawi National Energy Policy — electrification and renewable energy targets",
+        "MERA — energy sector licensing and regulatory framework"
+      ],
+      "china_equivalent": "China's national EV market is the world's largest, with over 10 million EVs sold domestically in 2023, and China's public charging network exceeds 8 million charging points. This scale does not translate into Malawi market relevance. Chinese EV charger manufacturers must separately assess whether a Malawi project represents a viable commercial opportunity given Malawi's nascent four-wheel EV fleet, severe grid constraints, low per-capita income, and the dominance of European / Japanese import vehicles with IEC 62196 inlets rather than GB/T inlets.",
+      "china_standards": [
+        "New Energy Vehicle Industry Development Plan 2021–2035 (China)",
+        "GB/T 18487.1-2023",
+        "China National Development and Reform Commission EV charging-station requirements"
+      ],
+      "gap": "Malawi's EV policy context does not yet create significant procurement demand for IEC-standard four-wheel EV chargers. The more immediate opportunity is e-moto and e-bike charging solutions suited to Mode 1/2 charging or proprietary battery-swap formats for the emerging e-moto logistics market. For the longer-term four-wheel EV infrastructure opportunity, exporters should: (1) monitor MERA and development finance institution (e.g. AfDB, IFC, USAID Power Africa) tender announcements; (2) partner with local energy operators for ESCOM connection and MERA licencing; (3) plan for hybrid grid/solar/battery charger configurations to address load-shedding; (4) size products for the Malawi grid's actual voltage and frequency tolerance rather than the China 220 V / 380 V nominal.",
+      "mandatory_status": {
+        "target": "Policy and market context — not itself a mandatory product standard; technical and conformity requirements under MBS and MERA remain in force independently; nascent market means limited immediate commercial volume for four-wheel EV chargers",
+        "cn": "Policy context only — China's large EV market scale does not affect Malawi conformity obligations or create demand for GB/T-connector chargers in Malawi"
+      },
+      "verdict": "[INFORMATIONAL] Malawi's four-wheel EV market is negligible as of 2026 and is not a near-term volume opportunity for AC/DC car chargers. E-moto and e-bike charging is the more immediate electrification play. Grid constraints (load-shedding, low electrification rate) require hybrid power planning for any charger deployment. China's GB/T connector infrastructure is incompatible with the vehicle fleet and regulatory direction in Malawi.",
+      "source": {
+        "url": "https://www.iea.org/countries/malawi",
+        "publisher": "International Energy Agency — Malawi country profile",
+        "accessed": "2026-06-14",
+        "verified": false
+      }
+    },
+    {
+      "id": "evmw-ocpp-emc-1",
+      "requirement": "OCPP Interoperability and Back-Office Communication for Networked Chargers in Malawi",
+      "target_requirement": "Malawi does not currently operate a national EV charging management platform equivalent to Qatar's Kahramaa Tarsheed system, reflecting the nascent state of its EV market as of 2026. No mandatory OCPP or specific back-office protocol requirement for EV chargers in Malawi could be confirmed from official sources as of 2026-06-14. However, any networked EV charging project in Malawi that is funded by development finance institutions (DFIs), international donors, or multinational operators is very likely to specify OCPP as the back-office protocol, given that OCPP is the internationally dominant open standard for charge point management and is required by the majority of IEC-aligned EV charging networks globally. OCPP 1.6 (JSON) and OCPP 2.0.1 are the most widely required versions. For DC fast chargers, the IEC 61851-24 / ISO 15118 communication stack applies for vehicle-to-charger charging authorisation and smart charging functions, replacing the GB/T 27930 CAN bus protocol used in China. EMC compliance under IEC 61000 series is expected for any electrical equipment imported under MBS framework.",
+      "target_standards": [
+        "OCPP 1.6 (JSON) and OCPP 2.0.1 — Open Charge Point Protocol (Open Charge Alliance)",
+        "IEC 63584 — Standard for OCPP adoption in EV charging (international context)",
+        "IEC 61851-24 — Digital communication between a DC EV charging station and an EV for control of DC charging",
+        "ISO 15118 — Road vehicles — Vehicle to grid communication interface",
+        "IEC 61000 series — Electromagnetic compatibility (EMC) — limits and test methods",
+        "MBS (Malawi Bureau of Standards) — IEC-aligned EMC requirements for imported electrical equipment"
+      ],
+      "china_equivalent": "China DC fast chargers commonly use the GB/T 27930-2023 communication protocol between the off-board charger and the battery management system, which is a CAN bus protocol and is not interoperable with OCPP back-office systems or the CCS2 / IEC 61851-24 / ISO 15118 communication stack. China AC chargers may implement proprietary or OCPP-based back-office protocols depending on the operator, but the underlying connector and signaling stack still uses CC/CP rather than the PP/CP signaling required for IEC 62196 Type 2 and OCPP-integrated systems. EMC compliance for China-market chargers is assessed under GB/T standards rather than IEC 61000 series; a clause-level gap assessment is needed before relying on GB/T EMC evidence for MBS import assessment.",
+      "china_standards": [
+        "GB/T 27930-2023 — Communication protocols between off-board conductive charger and battery management system",
+        "GB/T 18487.1-2023",
+        "China operator-specific back-office protocols",
+        "GB/T EMC standards (GB 17625, GB 9254 series)"
+      ],
+      "gap": "Exporters targeting Malawi EV charging projects should: (1) confirm OCPP support (version 1.6 JSON or 2.0.1) in charger firmware, as DFI-funded or internationally specified projects will require it; (2) for DC fast chargers, replace GB/T 27930 DC vehicle communication with the IEC 61851-24 / ISO 15118 stack to support CCS2-compatible vehicles; (3) provide IEC 61000 series EMC test evidence from an ILAC-recognised laboratory rather than GB/T EMC reports only; (4) confirm that remote monitoring, fault-reporting, and load-management functions can integrate with any management platform specified by the project developer or operator; (5) note that mobile connectivity (GSM/4G back-haul for OCPP) may be unreliable at some Malawi sites — offline or store-and-forward OCPP modes should be considered for grid-constrained deployments.",
+      "mandatory_status": {
+        "target": "No confirmed mandatory national OCPP or back-office requirement in Malawi as of 2026-06-14; OCPP is effectively mandatory for DFI-funded or internationally specified projects; IEC 61000 series EMC compliance expected under MBS import framework — verify current MBS requirements",
+        "cn": "GB/T 27930 is mandatory for China domestic DC charging communication; it is not OCPP-compatible and cannot substitute for IEC 61851-24 / ISO 15118 for CCS2 DC deployments; GB/T EMC standards are not accepted as direct IEC 61000 equivalents without a gap assessment"
+      },
+      "verdict": "[INFORMATIONAL] No national OCPP mandate exists in Malawi, but DFI-funded and internationally specified EV charging projects will require it. GB/T 27930 DC communication is incompatible with CCS2 vehicle charging in Malawi and cannot substitute for IEC 61851-24. EMC evidence should be IEC 61000 series from ILAC-accredited labs. Factor in mobile connectivity limitations at rural or grid-constrained Malawi sites when specifying OCPP back-haul.",
+      "source": {
+        "url": "https://www.openchargealliance.org/protocols/ocpp-16/",
+        "publisher": "Open Charge Alliance — OCPP 1.6 specification",
+        "accessed": "2026-06-14",
+        "verified": false
+      }
+    },
+    {
+      "id": "evmw-safety-1",
+      "requirement": "IEC 61851 Safety Baseline and MBS Import Conformity for EV Charging Equipment",
+      "target_requirement": "Malawi's national standards body, the Malawi Bureau of Standards (MBS), adopts and adapts IEC and ISO standards as the basis for Malawi Standards (MS). General electrical equipment imported into Malawi is subject to MBS import inspection and conformity assessment requirements. A dedicated mandatory MBS technical regulation specifically for EV charging equipment (EVSE) could not be confirmed from official sources as of 2026-06-14; however, EV chargers as electrical equipment fall within the general scope of MBS electrical product import controls and should be expected to require MBS conformity documentation aligned with IEC standards. IEC 61851-1:2017 is the international baseline for conductive EV supply equipment general requirements, covering control pilot behaviour, protective earthing, isolation monitoring, interlocks, overcurrent and over-temperature protection, and emergency stop provisions. IEC 61851-23:2023 addresses DC EV charging stations. Applicable IP protection ratings for Malawi's tropical climate conditions include IP54 minimum for outdoor installations, with higher ingress protection advisable given seasonal heavy rainfall (Malawi's rainy season produces intense precipitation). Thermal design for tropical ambient temperatures (Malawi's central and southern lowlands regularly reach 35–40 °C in hot season) is also required.",
+      "target_standards": [
+        "IEC 61851-1:2017 — Electric vehicle conductive charging system — Part 1: General requirements",
+        "IEC 61851-23:2023 — Electric vehicle conductive charging system — Part 23: DC electric vehicle supply equipment (second edition)",
+        "IEC 61851-24 — Digital communication between a DC EV charging station and an EV for control of DC charging",
+        "IEC 60529 — Degrees of protection provided by enclosures (IP Code) — IP54 minimum for outdoor tropical installations",
+        "MBS (Malawi Bureau of Standards) — import conformity assessment for electrical equipment",
+        "MERA (Malawi Energy Regulatory Authority) — energy equipment approval requirements"
+      ],
+      "china_equivalent": "China's comparable baseline is GB/T 18487.1-2023 (Electric vehicle conductive charging system — Part 1: General requirements, in force April 2024), which corresponds structurally to IEC 61851-1 but incorporates China-specific connector, signaling, and communication requirements. GB/T 18487.1-2023 test evidence may be useful as a design starting-point reference and for engineering review, but does not substitute for IEC 61851-accredited test reports that would be required for MBS import conformity assessment or MERA approval in Malawi. China CCC (China Compulsory Certification) covers certain EV charging products but carries no recognition in Malawi's MBS framework.",
+      "china_standards": [
+        "GB/T 18487.1-2023 — Electric vehicle conductive charging system — Part 1: General requirements (in force April 2024)",
+        "GB/T 18487.5-2024",
+        "GB/T 27930-2023",
+        "China CCC (3C) mandatory certification where in scope"
+      ],
+      "gap": "Exporters should prepare: (1) an IEC 61851-1 clause compliance matrix and accredited IEC safety test reports from an ILAC-recognised laboratory; (2) IEC 61851-23 evidence for DC charging stations; (3) IP-rated enclosure certificates at IP54 minimum for outdoor installations in tropical/rainy conditions, with IP65 advisable; (4) protective device ratings and wiring documentation suitable for local installation by MBS-registered or qualified electricians; (5) thermal design and derating evidence for tropical ambient temperatures (35–40 °C in hot season); (6) verification of current MBS compulsory conformity requirements and applicable MBS/MS standards for EVSE with MBS or a qualified agent before shipment. A standalone GB/T 18487 test report is not accepted as IEC 61851 compliance evidence without a clause-level gap assessment.",
+      "mandatory_status": {
+        "target": "Mandatory baseline — MBS import conformity assessment for electrical equipment applies; IEC 61851 is the expected safety framework; a specific mandatory EV charger MBS standard could not be confirmed from official sources as of 2026-06-14 and must be verified with MBS before shipment",
+        "cn": "GB/T 18487 applies to China domestic design and certification; it is not accepted as direct IEC 61851 evidence in Malawi without additional accredited testing; China CCC carries no MBS recognition"
+      },
+      "verdict": "[INFORMATIONAL] Treat GB/T 18487.1-2023 as a design starting point only. Malawi-facing EVSE documentation must include IEC 61851-1 accredited evidence, IEC 61851-23 evidence for DC stations, IP-rated enclosure certificates suitable for tropical and rainy-season conditions, and a thermal review. Verify the specific MBS compulsory conformity route for EVSE with MBS before shipment.",
+      "source": {
+        "url": "https://www.mbs.mw/",
+        "publisher": "MBS — Malawi Bureau of Standards",
+        "accessed": "2026-06-14",
+        "verified": false
+      }
+    }
+  ]
+}
