@@ -26,17 +26,117 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap?v=20260614" rel="stylesheet" />
   <link rel="stylesheet" href="../../style.css?v=20260614" />
   <script type="application/ld+json">
-  [
-    { "@context": "https://schema.org", "@type": "Article", "headline": "TFLN 調制器採購核查清單：Vπ、帶寬、插入損耗與交貨周期", "description": "TFLN 電光調制器採購技術核查清單：半波電壓 Vπ、3dB 帶寬、插入損耗、消光比、偏振模式，以及普通採購容易漏掉的供應商交貨周期問題。", "url": "https://asaptic.com/zht/blog/tfln-modulator-sourcing-checklist.html", "author": { "@type": "Organization", "name": "Asaptic Labs" }, "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" }, "datePublished": "2026-06-14", "dateModified": "2026-06-14", "mainEntityOfPage": "https://asaptic.com/zht/blog/tfln-modulator-sourcing-checklist.html", "inLanguage": "zh-Hant", "potentialAction": { "@type": "Action", "name": "向 Asaptic 提交採購 RFQ", "target": [ { "@type": "EntryPoint", "urlTemplate": "https://asaptic.com/mcp", "contentType": "application/json", "description": "MCP server, tool: submit_rfq" }, { "@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "透過電子郵件發送規格簡報" } ] } },
-    { "@context": "https://schema.org", "@type": "FAQPage", "inLanguage": "zh-Hant", "mainEntity": [
-      { "@type": "Question", "name": "TFLN 電光調制器的理想 Vπ 是多少？", "acceptedAnswer": { "@type": "Answer", "text": "設計良好的 TFLN Mach-Zehnder 調制器低頻半波電壓 Vπ 通常在 1–4 V。Vπ 取決於調制器電極長度和電光重疊因子。先進 TFLN 調制器的長行波電極可實現低於 2 V·cm 的 Vπ·L 積，即 1 cm 電極對應 Vπ < 2 V。帶光纖耦合和 RF 連接器的實用封裝模組通常在 DC 或 1 MHz 標注 2–3.5 V。TFLN 調制器中高於 5 V 的數值通常意味著波導設計或襯底質量不理想。" } },
-      { "@type": "Question", "name": "TFLN 調制器應預期什麼 3dB 電光帶寬？", "acceptedAnswer": { "@type": "Answer", "text": "帶行波電極的 TFLN Mach-Zehnder 調制器經常展示超過 70 GHz 的 3dB 電光帶寬，最佳報道器件超過 100 GHz。實際封裝帶寬取決於 RF 連接器、鍵合線和封裝寄生參數，以及行波電極的阻抗匹配。研究級未封裝器件可能顯示 100+ GHz；目前多數商業供應商的全封裝模組在合適 RF launch 下通常展示 40–70 GHz 3dB 帶寬。" } },
-      { "@type": "Question", "name": "TFLN 調制器可接受的插入損耗是多少？", "acceptedAnswer": { "@type": "Answer", "text": "C-band 封裝 TFLN Mach-Zehnder 調制器的光纖到光纖總插入損耗包括片上傳播損耗、輸入和輸出端面的光纖晶片耦合損耗，以及任何分束/合束不平衡。設計和封裝良好的器件可實現 3–6 dB 總插入損耗。早期或低質量工藝器件可能為 6–10 dB。高質量 TFLN 波導的傳播損耗應低於 0.1 dB/cm，光纖晶片耦合損耗應低於每端面 1.5 dB。" } },
-      { "@type": "Question", "name": "TFLN 調制器樣品應預期多長交貨周期？", "acceptedAnswer": { "@type": "Answer", "text": "交貨周期隨供應商成熟度和地區差異很大。成熟西方目錄供應商通常對樣品數量報價 6–16 周。中國供應商對標準配置可能報價較短交期（4–10 周），但驗證樣品要求隨器件提供特定表徵數據，可能因額外測量步驟而同樣長或更長。定制電極幾何或非標準波長對任何供應商都應再增加 4–8 周。" } },
-      { "@type": "Question", "name": "TFLN 調制器的 Vπ 會隨溫度漂移嗎？", "acceptedAnswer": { "@type": "Answer", "text": "會。鈮酸鋰具有熱釋電性，溫度變化會產生表面電荷，即使沒有施加信號也會移動 Mach-Zehnder 調制器的 DC 偏置點。這種 DC 漂移表現為工作點緩慢遊走，實際系統中必須由自動偏置控制器（ABC）補償。TFLN 器件 DC 漂移的速率和幅度取決於電極幾何、鈍化層（SiO2 上包層厚度和介電常數）以及工作溫度。務必向供應商索取 DC 漂移規格，並確認是否需要或推薦 ABC 電路。" } }
-    ] },
-    { "@context": "https://schema.org", "@type": "BreadcrumbList", "inLanguage": "zh-Hant", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/" }, { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/" }, { "@type": "ListItem", "position": 3, "name": "TFLN 調制器採購核查清單", "item": "https://asaptic.com/zht/blog/tfln-modulator-sourcing-checklist.html" } ] }
-  ]
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Article",
+          "headline": "TFLN 調制器採購核查清單：Vπ、帶寬、插入損耗與交貨周期",
+          "description": "TFLN 電光調制器採購技術核查清單：半波電壓 Vπ、3dB 帶寬、插入損耗、消光比、偏振模式，以及普通採購容易漏掉的供應商交貨周期問題。",
+          "url": "https://asaptic.com/zht/blog/tfln-modulator-sourcing-checklist.html",
+          "author": {
+            "@type": "Organization",
+            "name": "Asaptic Labs"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "Asaptic Labs",
+            "url": "https://asaptic.com"
+          },
+          "datePublished": "2026-06-14",
+          "dateModified": "2026-06-14",
+          "mainEntityOfPage": "https://asaptic.com/zht/blog/tfln-modulator-sourcing-checklist.html",
+          "inLanguage": "zh-Hant",
+          "potentialAction": {
+            "@type": "Action",
+            "name": "向 Asaptic 提交採購 RFQ",
+            "target": [
+              {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://asaptic.com/mcp",
+                "contentType": "application/json",
+                "description": "MCP server, tool: submit_rfq"
+              },
+              {
+                "@type": "EntryPoint",
+                "urlTemplate": "mailto:engage@asaptic.com",
+                "description": "透過電子郵件發送規格簡報"
+              }
+            ]
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "inLanguage": "zh-Hant",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "TFLN 電光調制器的理想 Vπ 是多少？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "設計良好的 TFLN Mach-Zehnder 調制器低頻半波電壓 Vπ 通常在 1–4 V。Vπ 取決於調制器電極長度和電光重疊因子。先進 TFLN 調制器的長行波電極可實現低於 2 V·cm 的 Vπ·L 積，即 1 cm 電極對應 Vπ < 2 V。帶光纖耦合和 RF 連接器的實用封裝模組通常在 DC 或 1 MHz 標注 2–3.5 V。TFLN 調制器中高於 5 V 的數值通常意味著波導設計或襯底質量不理想。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "TFLN 調制器應預期什麼 3dB 電光帶寬？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "帶行波電極的 TFLN Mach-Zehnder 調制器經常展示超過 70 GHz 的 3dB 電光帶寬，最佳報道器件超過 100 GHz。實際封裝帶寬取決於 RF 連接器、鍵合線和封裝寄生參數，以及行波電極的阻抗匹配。研究級未封裝器件可能顯示 100+ GHz；目前多數商業供應商的全封裝模組在合適 RF launch 下通常展示 40–70 GHz 3dB 帶寬。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "TFLN 調制器可接受的插入損耗是多少？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "C-band 封裝 TFLN Mach-Zehnder 調制器的光纖到光纖總插入損耗包括片上傳播損耗、輸入和輸出端面的光纖晶片耦合損耗，以及任何分束/合束不平衡。設計和封裝良好的器件可實現 3–6 dB 總插入損耗。早期或低質量工藝器件可能為 6–10 dB。高質量 TFLN 波導的傳播損耗應低於 0.1 dB/cm，光纖晶片耦合損耗應低於每端面 1.5 dB。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "TFLN 調制器樣品應預期多長交貨周期？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "交貨周期隨供應商成熟度和地區差異很大。成熟西方目錄供應商通常對樣品數量報價 6–16 周。中國供應商對標準配置可能報價較短交期（4–10 周），但驗證樣品要求隨器件提供特定表徵數據，可能因額外測量步驟而同樣長或更長。定制電極幾何或非標準波長對任何供應商都應再增加 4–8 周。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "TFLN 調制器的 Vπ 會隨溫度漂移嗎？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "會。鈮酸鋰具有熱釋電性，溫度變化會產生表面電荷，即使沒有施加信號也會移動 Mach-Zehnder 調制器的 DC 偏置點。這種 DC 漂移表現為工作點緩慢遊走，實際系統中必須由自動偏置控制器（ABC）補償。TFLN 器件 DC 漂移的速率和幅度取決於電極幾何、鈍化層（SiO2 上包層厚度和介電常數）以及工作溫度。務必向供應商索取 DC 漂移規格，並確認是否需要或推薦 ABC 電路。"
+              }
+            }
+          ]
+        },
+        {
+          "@type": "BreadcrumbList",
+          "inLanguage": "zh-Hant",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "首頁",
+              "item": "https://asaptic.com/zht/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "博客",
+              "item": "https://asaptic.com/zht/blog/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "TFLN 調制器採購核查清單",
+              "item": "https://asaptic.com/zht/blog/tfln-modulator-sourcing-checklist.html"
+            }
+          ]
+        }
+      ]
+    }
   </script>
   <style>
     .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-topic{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--cyan);display:block;margin-bottom:14px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.15;margin-bottom:24px}.essay-meta{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border);flex-wrap:wrap}.essay-byline,.essay-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-body h2{font-size:20px;font-weight:700;color:var(--white);margin:40px 0 16px;line-height:1.3}.essay-body p{font-size:17px;color:var(--gray);line-height:1.85;margin-bottom:24px}.essay-body p:last-child{margin-bottom:0}.checklist-table{width:100%;border-collapse:collapse;margin:0 0 32px 0;font-size:14px}.checklist-table th{text-align:left;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--accent);padding:8px 12px;border-bottom:1px solid var(--border)}.checklist-table td{padding:10px 12px;vertical-align:top;color:var(--gray);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.6}.checklist-table td:first-child{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--white);white-space:nowrap}.essay-faq{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-faq-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:24px}.faq-item{margin-bottom:28px}.faq-item h3{font-size:16px;font-weight:700;color:var(--white);margin-bottom:10px;line-height:1.4}.faq-item p{font-size:15px;color:var(--gray);line-height:1.75;margin-bottom:0}.essay-summary{margin-top:56px;padding-top:32px;border-top:1px solid var(--border)}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:14px;color:var(--gray-dim);line-height:1.75;margin-bottom:12px}.essay-nav{margin-top:56px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);gap:24px}.essay-nav a{transition:opacity .2s}.essay-nav a:hover{opacity:.7}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.checklist-table{font-size:13px}.essay-nav{flex-direction:column}}
