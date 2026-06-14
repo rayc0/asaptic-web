@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The embedded jurisdiction problem — Asaptic Labs</title>
+
+  <meta name="description" content="Care AI models carry their training jurisdiction with them when deployed elsewhere. Regulators in the deployment environment cannot audit training data they lack legal access to — and the cryptographic tools that could bridge this gap are not yet post-quantum resistant." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/embedded-jurisdiction-problem.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The embedded jurisdiction problem" />
+  <meta property="og:description" content="Care AI models carry their training jurisdiction with them when deployed elsewhere. Regulators in the deployment environment cannot audit training data they lack legal access to — and the cryptographic tools that could bridge this gap are not yet post-quantum resistant." />
+  <meta property="og:url" content="https://asaptic.com/blog/embedded-jurisdiction-problem.html" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The embedded jurisdiction problem",
+    "author": { "@type": "Organization", "name": "Asaptic Labs" },
+    "publisher": { "@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com" },
+    "datePublished": "2026-06-14",
+    "description": "Care AI models carry their training jurisdiction with them when deployed elsewhere. Regulators in the deployment environment cannot audit training data they lack legal access to — and the cryptographic tools that could bridge this gap are not yet post-quantum resistant.",
+    "url": "https://asaptic.com/blog/embedded-jurisdiction-problem.html"
+  }
+  </script>
+
+  <style>
+    .essay-wrap { max-width: 680px; margin: 0 auto; padding: 120px 32px 96px; }
+    .essay-back { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: var(--gray); margin-bottom: 48px; transition: color 0.2s; }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; color: var(--cyan); display: block; margin-bottom: 14px; }
+    .essay-title { font-size: clamp(26px, 4vw, 40px); font-weight: 700; line-height: 1.15; margin-bottom: 24px; }
+    .essay-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+    .essay-byline, .essay-date { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gray-dim); }
+    .essay-body p { font-size: 17px; color: var(--gray); line-height: 1.85; margin-bottom: 24px; }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--border); }
+    .essay-summary-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: var(--accent); display: block; margin-bottom: 12px; }
+    .essay-summary p { font-size: 14px; color: var(--gray-dim); line-height: 1.75; margin-bottom: 12px; }
+    .essay-nav { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; font-size: 12px; color: var(--gray-dim); margin-top: 48px; }
+    @media (max-width: 768px) { .essay-wrap { padding: 100px 20px 72px; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× PHYSICAL-WORLD CARE · × POST-QUANTUM SECURITY · × HARDWARE</span>
+      <h1 class="essay-title">The embedded jurisdiction problem: accountability when care AI carries its training context across borders</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Care AI systems do not have passports, but they carry jurisdiction. A model trained on patient records from a specific healthcare system learns not just clinical patterns but the embedded assumptions of that environment: how conditions are coded and documented, which diagnoses are over- or under-represented in that population, which treatments constitute first-line standards of care, how clinical language maps to underlying physiological states. These assumptions travel with the model when it is deployed in a different regulatory environment, invisible to the clinicians and patients who interact with it. The model presents its recommendations with the same confidence it would in its training context. The local context may differ substantially.</p>
+
+        <p>The accountability gap this creates is structural. A regulator in the deployment jurisdiction who wants to audit the care AI system's training data faces an immediate obstacle: that data is likely protected under the privacy laws of the source jurisdiction, which may prohibit cross-border transfer and deny external audit access. The regulatory question that matters most for clinical safety — was this model trained on data representative of the patients it will serve? — cannot currently be answered with verifiable evidence that any independent party can inspect. The model operates. The training provenance is opaque.</p>
+
+        <p>Zero-knowledge proofs offer a technical path toward answering this question without transferring the underlying data. A zero-knowledge proof allows a prover to demonstrate that a statement about a dataset is true — that the training cohort included a specified age distribution, that no data from a given source was included, that the training distribution satisfies a stated demographic property — without revealing the dataset itself. Applied to training data provenance, this approach would let a model deployer generate a cryptographic proof that their training data satisfies a regulator's required properties, without granting the regulator access to the source records. The right to audit and the obligation to protect source data privacy need not be in fundamental conflict.</p>
+
+        <p>In practice, this path has two obstacles that connect directly to the hardware and post-quantum crossings. The first is computational: generating zero-knowledge proofs over the properties of large machine learning training datasets requires significant computation, and the most expressive proof systems for complex ML training properties remain in research rather than production deployment. The second is cryptographic: current zero-knowledge proof systems rely on classical hardness assumptions — elliptic curve discrete logarithm problems or hash function collision resistance — that are vulnerable to sufficiently capable quantum computation. A proof of training data provenance generated today under classical schemes carries an implicit expiration date. The proof will remain convincing for as long as the underlying cryptographic assumption holds, and the quantum transition may shorten that window within the liability horizon of a deployed care AI system.</p>
+
+        <p>Hardware attestation adds the second required layer of assurance. Even a mathematically valid zero-knowledge proof is only meaningful if the entity generating it is the entity it claims to be, running the computation it claims to be running. A compromised or substituted computation environment can produce valid-looking proofs for false statements if the proof generation environment is not itself independently attested. For care AI operating under clinical liability, hardware-rooted attestation of the proof generation environment is what elevates the proof from assertion to evidence. Current hardware attestation standards — trusted platform module specifications, secure enclave attestation protocols — rely on classical signature schemes. A regulatory framework that mandates zero-knowledge proof-based training provenance verification while relying on classical hardware attestation for that verification's integrity is building its accountability mechanism on a cryptographic foundation that will need to be replaced before the mechanism reaches maturity.</p>
+
+        <p>International standards bodies are beginning to address cross-jurisdiction AI accountability. Emerging frameworks focus on documentation requirements: what must be disclosed about training data, how demographic representativeness must be assessed, how cross-population performance gaps must be reported. These requirements are necessary. They are not sufficient to close the embedded jurisdiction gap, because documentation requirements depend on the good faith of the disclosing party, not on cryptographic verification of the claims. An organization that trains a model on a non-representative population can produce documentation asserting representativeness. Documentation is not proof. The gap between what documentation frameworks can verify and what care AI accountability actually requires is the space where cryptographic evidence must eventually sit.</p>
+
+        <p>Closing the embedded jurisdiction gap requires end-to-end accountability chains: training data properties proven through post-quantum-resistant zero-knowledge proofs, generated on hardware whose state is attested through post-quantum-resistant hardware roots of trust, with inference outputs signed by keys whose custody chain is transparent and auditable across jurisdictions. Each of these components exists in prototype or research form. None is integrated into any deployed care AI system. The gap between where regulatory accountability requirements are heading and where the cryptographic and hardware infrastructure currently sits is substantial — and it grows wider each time a care AI system trained in one jurisdiction is deployed across a regulatory border without a verifiable accountability chain to bridge them.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>医疗AI系统没有护照，但携带着司法管辖权——它们在一个监管环境中学习的假设，会随模型迁移至另一个监管环境，对当地临床医生和监管机构而言不可见。部署司法管辖区的监管机构若想审计训练数据，往往被源司法管辖区的隐私法所阻断。零知识证明提供了一条技术路径，允许在不披露底层数据的情况下证明训练数据属性，但当前零知识证明系统依赖在量子攻击面前脆弱的经典密码假设。硬件证明提供了额外的保证层，但同样依赖经典签名方案。真正弥合这一缺口，需要从训练数据属性到硬件状态证明再到推理输出签名的端到端后量子抗性问责链。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>醫療AI系統沒有護照，但攜帶著司法管轄權——它們在一個監管環境中學習的假設，會隨模型遷移至另一個監管環境，對當地臨床醫生和監管機構而言不可見。部署司法管轄區的監管機構若想稽核訓練資料，往往被源司法管轄區的隱私法所阻斷。零知識證明提供了一條技術路徑，允許在不揭露底層資料的情況下證明訓練資料屬性，但當前零知識證明系統依賴在量子攻擊面前脆弱的經典密碼假設。硬體證明提供了額外的保證層，但同樣依賴經典簽章方案。真正彌合這一缺口，需要從訓練資料屬性到硬體狀態證明再到推理輸出簽章的端到端後量子抗性問責鏈。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/machine-unlearning-gap.html">&larr; Machine unlearning gap</a>
+        <a href="/blog/">All essays →</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 物理世界照护 · × 后量子安全 · × 硬件</span>
+      <h1 class="essay-title">嵌入式司法管辖问题：当医疗AI跨境携带其训练语境时的问责</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>医疗AI系统没有护照，但携带着司法管辖权。在某一医疗系统患者记录上训练的模型，不仅学习临床规律，也学习该环境的隐性假设：病症如何编码和记录，哪些诊断在该群体中被过度或低度代表，哪些治疗是一线标准护理，临床语言如何映射到底层生理状态。当模型部署在不同监管环境中时，这些假设随之迁移，对与之交互的临床医生和患者而言是不可见的。模型在新场景中展示其建议时，与在训练场景中同样自信，而当地语境可能存在实质性差异。</p>
+
+        <p>由此产生的问责缺口具有结构性。部署司法管辖区的监管机构若想审计医疗AI系统的训练数据，立即面临障碍：这些数据很可能受源司法管辖区隐私法保护，该法可能禁止跨境传输和外部审计访问。对临床安全最重要的监管问题——该模型是否在代表其所服务患者的数据上进行了训练——目前无法以任何独立方可查验的可验证证据来回答。模型在运行，训练溯源不透明。</p>
+
+        <p>零知识证明提供了一条技术路径，可在不传输底层数据的情况下回答这一问题。零知识证明允许证明者证明关于数据集的陈述为真——训练队列包含特定年龄分布、未纳入来自特定来源的数据、训练分布满足某一人口统计属性——而不需要披露数据集本身。应用于训练数据溯源，这一方法将使模型部署者能够生成密码学证明，证明其训练数据满足监管机构的所需属性，而无需向监管机构开放源记录的访问权限。审计权与保护源数据隐私的义务不必从根本上相互冲突。</p>
+
+        <p>在实践中，这条路径面临两个直接关联硬件和后量子跨越的障碍。第一个是计算性的：针对大型机器学习训练数据集属性生成零知识证明需要大量计算，而最具表达力的复杂机器学习训练属性证明系统仍处于研究阶段而非生产部署。第二个是密码学的：当前零知识证明系统依赖经典难度假设——椭圆曲线离散对数问题或哈希函数抗碰撞性——这些假设在足够强大的量子计算面前是脆弱的。今天使用经典方案生成的训练数据溯源证明携带隐含的有效期：该证明将在底层密码学假设成立的期间内保持可信，而量子转型可能在已部署医疗AI系统的责任范围内缩短这一窗口。</p>
+
+        <p>硬件证明增加了第二层所需的保证。即使数学上有效的零知识证明，也只有当生成它的实体是其声称的实体、运行它声称运行的计算时，才有意义。如果证明生成环境本身未经独立证明，被攻陷或替换的计算环境可以为虚假陈述生成看起来有效的证明。对于承担临床责任的医疗AI，对证明生成环境的硬件信任根证明，是将证明从主张提升为证据的关键。当前硬件证明标准——可信平台模块规范、安全飞地证明协议——依赖经典签名方案。一个要求基于零知识证明的训练溯源验证、却依赖经典硬件证明来保障该验证完整性的监管框架，正在将其问责机制建立在需要在该机制成熟前被替换的密码学基础上。</p>
+
+        <p>国际标准机构正开始着手处理跨司法管辖区AI问责问题。新兴框架聚焦于文档要求：关于训练数据必须披露什么、人口代表性必须如何评估、跨群体性能差距必须如何报告。这些要求是必要的，但不足以弥合嵌入式司法管辖缺口，因为文档要求依赖披露方的诚信，而非对声明的密码学验证。在非代表性群体上训练模型的组织可以出具声称代表性的文档。文档不是证明。文档框架所能验证的内容与医疗AI问责实际所需之间的差距，正是密码学证据最终必须填补的空间。</p>
+
+        <p>弥合嵌入式司法管辖缺口需要端到端的问责链：通过后量子抗性零知识证明证明的训练数据属性、在通过后量子抗性硬件信任根证明其状态的硬件上生成、推理输出由密钥签署且其托管链跨司法管辖区透明可审计。这些组件中的每一个都以原型或研究形式存在，没有任何一个被集成到任何已部署的医疗AI系统中。监管问责要求所指向的方向与密码学和硬件基础设施当前所处位置之间的差距是实质性的——每次在一个司法管辖区训练的医疗AI系统在没有可验证问责链的情况下跨越监管边界部署时，这一差距都在持续扩大。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/machine-unlearning-gap.html">&larr; 机器遗忘缺口</a>
+        <a href="/blog/">全部文章 →</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 物理世界照護 · × 後量子安全 · × 硬件</span>
+      <h1 class="essay-title">嵌入式司法管轄問題：當醫療AI跨境攜帶其訓練語境時的問責</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>醫療AI系統沒有護照，但攜帶著司法管轄權。在某一醫療系統患者記錄上訓練的模型，不僅學習臨床規律，也學習該環境的隱性假設：病症如何編碼和記錄，哪些診斷在該群體中被過度或低度代表，哪些治療是一線標準護理，臨床語言如何映射到底層生理狀態。當模型部署在不同監管環境中時，這些假設隨之遷移，對與之互動的臨床醫生和患者而言是不可見的。模型在新場景中展示其建議時，與在訓練場景中同樣自信，而當地語境可能存在實質性差異。</p>
+
+        <p>由此產生的問責缺口具有結構性。部署司法管轄區的監管機構若想稽核醫療AI系統的訓練資料，立即面臨障礙：這些資料很可能受源司法管轄區隱私法保護，該法可能禁止跨境傳輸和外部稽核訪問。對臨床安全最重要的監管問題——該模型是否在代表其所服務患者的資料上進行了訓練——目前無法以任何獨立方可查驗的可驗證證據來回答。模型在運行，訓練溯源不透明。</p>
+
+        <p>零知識證明提供了一條技術路徑，可在不傳輸底層資料的情況下回答這一問題。零知識證明允許證明者證明關於資料集的陳述為真——訓練隊列包含特定年齡分布、未納入來自特定來源的資料、訓練分布滿足某一人口統計屬性——而不需要揭露資料集本身。應用於訓練資料溯源，這一方法將使模型部署者能夠生成密碼學證明，證明其訓練資料滿足監管機構的所需屬性，而無需向監管機構開放源記錄的訪問權限。稽核權與保護源資料隱私的義務不必從根本上相互衝突。</p>
+
+        <p>在實踐中，這條路徑面臨兩個直接關聯硬體和後量子跨越的障礙。第一個是計算性的：針對大型機器學習訓練資料集屬性生成零知識證明需要大量計算，而最具表達力的複雜機器學習訓練屬性證明系統仍處於研究階段而非生產部署。第二個是密碼學的：當前零知識證明系統依賴經典難度假設——橢圓曲線離散對數問題或雜湊函數抗碰撞性——這些假設在足夠強大的量子計算面前是脆弱的。今天使用經典方案生成的訓練資料溯源證明攜帶隱含的有效期：該證明將在底層密碼學假設成立的期間內保持可信，而量子轉型可能在已部署醫療AI系統的責任範圍內縮短這一窗口。</p>
+
+        <p>硬體證明增加了第二層所需的保證。即使數學上有效的零知識證明，也只有當生成它的實體是其聲稱的實體、運行它聲稱運行的計算時，才有意義。如果證明生成環境本身未經獨立證明，被攻陷或替換的計算環境可以為虛假陳述生成看起來有效的證明。對於承擔臨床責任的醫療AI，對證明生成環境的硬體信任根證明，是將證明從主張提升為證據的關鍵。當前硬體證明標準——可信平台模組規範、安全飛地證明協定——依賴經典簽章方案。一個要求基於零知識證明的訓練溯源驗證、卻依賴經典硬體證明來保障該驗證完整性的監管框架，正在將其問責機制建立在需要在該機制成熟前被替換的密碼學基礎上。</p>
+
+        <p>國際標準機構正開始著手處理跨司法管轄區AI問責問題。新興框架聚焦於文件要求：關於訓練資料必須揭露什麼、人口代表性必須如何評估、跨群體性能差距必須如何報告。這些要求是必要的，但不足以彌合嵌入式司法管轄缺口，因為文件要求依賴揭露方的誠信，而非對聲明的密碼學驗證。在非代表性群體上訓練模型的組織可以出具聲稱代表性的文件。文件不是證明。文件框架所能驗證的內容與醫療AI問責實際所需之間的差距，正是密碼學證據最終必須填補的空間。</p>
+
+        <p>彌合嵌入式司法管轄缺口需要端到端的問責鏈：通過後量子抗性零知識證明證明的訓練資料屬性、在通過後量子抗性硬體信任根證明其狀態的硬體上生成、推理輸出由金鑰簽署且其託管鏈跨司法管轄區透明可稽核。這些組件中的每一個都以原型或研究形式存在，沒有任何一個被整合到任何已部署的醫療AI系統中。監管問責要求所指向的方向與密碼學和硬體基礎設施當前所處位置之間的差距是實質性的——每次在一個司法管轄區訓練的醫療AI系統在沒有可驗證問責鏈的情況下跨越監管邊界部署時，這一差距都在持續擴大。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/machine-unlearning-gap.html">&larr; 機器遺忘缺口</a>
+        <a href="/blog/">全部文章 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
