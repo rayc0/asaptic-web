@@ -148,3 +148,4 @@
 
 2026-06-13 20:15 UTC · blog: add essay 'The emergent authority problem' — accountability when AI agents acquire de facto decision-making power nobody granted (EN+ZH+ZHT) · 7a1264f
 2026-06-14 00:00 UTC · blog: add essay 'The machine unlearning gap' — accountability when the right to erasure cannot reach AI model weights (EN+ZH+ZH-HK, firewall clean) · e10be34
+2026-06-14 04:30 UTC · blog: add essay 'The embedded jurisdiction problem' — accountability when care AI carries its training context across borders (EN+ZH+ZHT, firewall clean) · 0739cdb
