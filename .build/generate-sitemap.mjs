@@ -9,6 +9,14 @@ import { execSync } from "node:child_process";
 import { readdirSync, writeFileSync, existsSync, readFileSync } from "node:fs";
 
 const BASE = "https://asaptic.com";
+// Cloudflare Pages serves pretty (extensionless) URLs and 308-redirects the
+// .html form to them. The sitemap MUST list the final 200 URL (extensionless,
+// "/" for index) so it matches the page <link rel=canonical> — otherwise GSC
+// reports "Page with redirect" / "Duplicate, Google chose different canonical".
+const pretty = (u) =>
+  u.endsWith("/index.html") ? u.slice(0, -10)
+  : u.endsWith(".html") ? u.slice(0, -5)
+  : u;
 const today = process.argv[2] || gitToday();
 function gitToday() {
   try { return execSync("git log -1 --format=%ad --date=short").toString().trim(); }
@@ -37,17 +45,17 @@ const STANDARD_LOCS = [
   { code: "zht", hreflang: "zh-Hant" },
 ];
 function altLinks(suffix) {
-  const out = [`    <xhtml:link rel="alternate" hreflang="en" href="${BASE}/${suffix}"/>`];
+  const out = [`    <xhtml:link rel="alternate" hreflang="en" href="${pretty(`${BASE}/${suffix}`)}"/>`];
   for (const l of LOCS)
-    out.push(`    <xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${BASE}/${l.code}/${suffix}"/>`);
-  out.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE}/${suffix}"/>`);
+    out.push(`    <xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${pretty(`${BASE}/${l.code}/${suffix}`)}"/>`);
+  out.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${pretty(`${BASE}/${suffix}`)}"/>`);
   return out.join("\n");
 }
 function standardAltLinks(suffix) {
-  const out = [`    <xhtml:link rel="alternate" hreflang="en" href="${BASE}/${suffix}"/>`];
+  const out = [`    <xhtml:link rel="alternate" hreflang="en" href="${pretty(`${BASE}/${suffix}`)}"/>`];
   for (const l of STANDARD_LOCS)
-    out.push(`    <xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${BASE}/${l.code}/${suffix}"/>`);
-  out.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE}/${suffix}"/>`);
+    out.push(`    <xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${pretty(`${BASE}/${l.code}/${suffix}`)}"/>`);
+  out.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${pretty(`${BASE}/${suffix}`)}"/>`);
   return out.join("\n");
 }
 function standardDatasetFiles() {
@@ -96,6 +104,7 @@ function standardGuideFiles() {
 const urls = [];
 const seen = new Set();
 const add = (loc, file, priority, alts) => {
+  loc = pretty(loc);
   if (seen.has(loc)) return;
   seen.add(loc);
   urls.push(
