@@ -150,3 +150,4 @@
 2026-06-14 00:00 UTC · blog: add essay 'The machine unlearning gap' — accountability when the right to erasure cannot reach AI model weights (EN+ZH+ZH-HK, firewall clean) · e10be34
 2026-06-14 04:30 UTC · blog: add essay 'The embedded jurisdiction problem' — accountability when care AI carries its training context across borders (EN+ZH+ZHT, firewall clean) · 0739cdb
 2026-06-14 08:30 UTC · blog: add essay 'The sensor provenance problem' — why care AI cannot authenticate physical sensor data (EN+ZH+ZHT, firewall clean) · f99563f
+2026-06-14 12:30 UTC · blog: add essay 'The accountability horizon problem' — when care AI audit trails expire before legal exposure (EN+ZH+ZHT, firewall clean); index catches up 3 missing entries · 22fe821
