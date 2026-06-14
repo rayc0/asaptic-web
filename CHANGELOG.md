@@ -147,3 +147,4 @@
 2026-06-13 12:13 UTC · blog: add essay 'The re-identification problem' — accountability when privacy-preserving AI outputs expose the person they were designed to protect · 3235467
 
 2026-06-13 20:15 UTC · blog: add essay 'The emergent authority problem' — accountability when AI agents acquire de facto decision-making power nobody granted (EN+ZH+ZHT) · 7a1264f
+2026-06-14 00:00 UTC · blog: add essay 'The machine unlearning gap' — accountability when the right to erasure cannot reach AI model weights (EN+ZH+ZH-HK, firewall clean) · e10be34
