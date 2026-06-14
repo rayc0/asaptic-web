@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The time provenance problem — Asaptic Labs</title>
+
+  <meta name="description" content="Care AI decisions are timestamped for accountability, but the timestamps themselves are not cryptographically authenticated. Hardware clocks drift, can be reset, and are not verified by authenticated time protocols. In a post-quantum world, the record can be precisely dated and precisely wrong." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/time-provenance-problem" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The time provenance problem" />
+  <meta property="og:description" content="Care AI decisions are timestamped for accountability, but the timestamps themselves are not cryptographically authenticated. Hardware clocks drift, reset after battery failure, and are not protected by authenticated time protocols. The accountability record can be precisely dated and precisely wrong." />
+  <meta property="og:url" content="https://asaptic.com/blog/time-provenance-problem" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-14" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","headline":"The time provenance problem","author":{"@type":"Organization","name":"Asaptic Labs"},"publisher":{"@type":"Organization","name":"Asaptic Labs","url":"https://asaptic.com"},"datePublished":"2026-06-14","description":"Care AI decisions are timestamped for accountability, but the timestamps themselves are not cryptographically authenticated. Hardware clocks drift, can be reset, and are not verified by authenticated time protocols. In a post-quantum world, the record can be precisely dated and precisely wrong.","url":"https://asaptic.com/blog/time-provenance-problem.html"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://asaptic.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://asaptic.com/blog/"},{"@type":"ListItem","position":3,"name":"The time provenance problem","item":"https://asaptic.com/blog/time-provenance-problem.html"}]}]}</script>
+
+  <style>
+    .essay-wrap { max-width: 680px; margin: 0 auto; padding: 120px 32px 96px; }
+    .essay-back { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: var(--gray); margin-bottom: 48px; transition: color 0.2s; }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; color: var(--cyan); display: block; margin-bottom: 14px; }
+    .essay-title { font-size: clamp(26px, 4vw, 40px); font-weight: 700; line-height: 1.15; margin-bottom: 24px; }
+    .essay-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+    .essay-byline, .essay-date { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gray-dim); }
+    .essay-body p { font-size: 17px; color: var(--gray); line-height: 1.85; margin-bottom: 24px; }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--border); }
+    .essay-summary-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: var(--accent); display: block; margin-bottom: 12px; }
+    .essay-summary p { font-size: 14px; color: var(--gray-dim); line-height: 1.75; margin-bottom: 12px; }
+    .essay-nav { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; font-size: 12px; color: var(--gray-dim); margin-top: 48px; }
+    @media (max-width: 768px) { .essay-wrap { padding: 100px 20px 72px; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× POST-QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
+      <h1 class="essay-title">The time provenance problem: why care AI cannot prove when its decisions were made</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">6 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>Accountability in care AI is built on a chain of timestamped records. Medication adjustments are logged at the moment they are recommended. Fall-risk alerts are stamped to the second. Clinician overrides carry timestamps that anchor the entire record of who decided what, and when. Those timestamps are not cosmetic metadata. They are legally load-bearing. Malpractice statutes of limitations run from specific moments in time. Regulatory incident reporting windows are measured in hours from the event. Clinical liability assessments depend on knowing whether a care AI flagged deterioration before or after a nurse's documented visit. When a care AI's accountability record is reviewed — by a regulator, a court, a quality committee — the timestamps are the skeleton of the case.</p>
+
+        <p>The problem is that care AI timestamps are almost never cryptographically authenticated. When a care AI system logs a decision at 02:14:31, that timestamp is a reading from the device's hardware real-time clock. It is not a signed token from a trusted time authority. It cannot be verified as accurate by an external reviewer. The clock may be correct. It may also be drifted — embedded system clocks regularly accumulate minutes of error per month without correction. It may have been reset after a battery replacement with no restoration of the prior synchronized value. In devices that synchronize over the network, it may reflect a manipulated NTP response that was accepted without authentication. The record says 02:14:31. There is no proof it was 02:14:31.</p>
+
+        <p>Network Time Security (RFC 8915) solves the NTP authentication problem in principle. Authenticated time distribution ensures that a device accepting time from a server can cryptographically verify that the time came from a legitimate source and was not modified in transit. But RFC 8915 is essentially undeployed in care hardware today. Most embedded medical devices use unauthenticated NTP, or rely on local hardware clocks that accumulate uncorrected drift across their operational lifetimes. The infrastructure assumption that time is accurate has no cryptographic backing in most deployed care systems.</p>
+
+        <p>The accountability consequences are concrete. Consider a care AI system that logs an alert at 23:58:12 and a clinician response at 00:03:44. The accountability record shows a five-minute response window — within protocol. But if the device clock drifted twelve minutes forward during the previous month and was never corrected, the actual times were 23:46:12 and 23:51:44: alert at nearly midnight, response seven minutes before midnight of the previous day. The five-minute response was actually a negative-time response. The care window was met. Or not. No one can tell, because the timestamps were never authenticated.</p>
+
+        <p>Timestamping authorities (TSAs) provide a mechanism to solve this: RFC 3161 tokens bind a document hash to a certified time, signed by a trusted authority. A care AI that chains each audit record to a TSA token can later prove that the record existed at the certified time and was not altered after it. This is a well-understood protocol with broad PKI support. The gap is deployment: care AI systems rarely invoke TSA tokens at the moment of record creation. And even where they do, the signing algorithm underlying most deployed TSA infrastructure today is RSA — which is vulnerable to quantum attack. A care AI audit record protected by a classical TSA token faces the same accountability horizon problem as the audit signature itself. The time proof and the audit proof expire together.</p>
+
+        <p>Hardware attestation does not fill this gap. TPM 2.0 remote attestation can prove the software stack running on a device, but it cannot authenticate wall-clock time. The attestation quote includes a monotonic counter — useful for ordering events relative to each other — but a monotonic counter does not anchor events to calendar time without a trusted time source. A device that has been running for an unknown interval since its last clock synchronization cannot attest when its counter value corresponds to. Attestation proves what ran. It does not prove when.</p>
+
+        <p>Closing the time provenance gap requires addressing all three layers simultaneously. At the network layer, care AI deployments should require authenticated time distribution — RFC 8915 NTS for network-connected devices, and GNSS time receivers with authenticated signals for devices in environments where network time is unavailable or untrusted. At the record layer, each care AI audit entry should be chained to a post-quantum-safe TSA token at the moment of creation, using one of the algorithm families now standardized for long-term signature formats. At the hardware layer, procurement specifications for care AI devices should require hardware clock modules with documented accuracy specifications, battery-backed synchronization state, and tamper-evident time registers — the same standards applied to metering and legal-evidence equipment in other regulated domains.</p>
+
+        <p>The time provenance problem is a missing primitive, not a missing feature. It is not a refinement to be considered once core accountability architecture is stable. It is a precondition for that architecture being reliable at all. A care AI system whose audit trail cannot prove when its events occurred has an accountability record in the administrative sense — entries exist, they have dates — but not in the evidentiary sense. Dates that cannot be verified are assertions. Accountability built on unverifiable timestamps will not survive the level of scrutiny that care AI decisions will eventually face in the domains where they are deployed.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>护理AI决策依赖时间戳建立问责记录，但这些时间戳几乎从未经过密码学认证。嵌入式设备的硬件实时时钟会漂移、在电池更换后重置，且通常使用未经认证的NTP同步。网络时间安全协议（RFC 8915）在原则上解决了这一问题，但在护理硬件中几乎未被部署。RFC 3161时间戳令牌提供了可验证的时间证明，但现有部署使用RSA签名，面临与审计签名相同的后量子失效风险。在法律审查中，无法验证的时间戳是断言而非证据。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>護理AI決策依賴時間戳建立問責記錄，但這些時間戳幾乎從未經過密碼學認證。嵌入式裝置的硬體即時時鐘會飄移、在電池更換後重置，且通常使用未經認證的NTP同步。網路時間安全協定（RFC 8915）在原則上解決了這一問題，但在護理硬體中幾乎未被部署。RFC 3161時間戳令牌提供了可驗證的時間證明，但現有部署使用RSA簽章，面臨與稽核簽章相同的後量子失效風險。在法律審查中，無法驗證的時間戳是斷言而非證據。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/accountability-horizon-problem.html">&larr; Accountability horizon problem</a>
+        <a href="/blog/">All essays &rarr;</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 后量子安全 · × 硬件 · × 物理世界照护</span>
+      <h1 class="essay-title">时间溯源问题：为何护理AI无法证明其决策发生的时间</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">6 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>护理AI的问责体系建立在时间戳记录链上。药物调整被记录在建议发出的那一刻。跌倒风险警报精确到秒。临床医生的覆盖操作携带时间戳，锚定了谁在何时做出了何种决策的完整记录。这些时间戳不是装饰性的元数据，而是承载法律重量的要素。医疗过失诉讼时效从特定时刻开始计算。监管事件报告窗口以事件发生后的小时数为单位。临床责任评估取决于了解护理AI是在护士记录的访视之前还是之后发出了病情恶化警报。当护理AI的问责记录接受监管机构、法院或质量委员会审查时，时间戳是案件的骨架。</p>
+
+        <p>问题在于，护理AI的时间戳几乎从未经过密码学认证。当护理AI系统在02:14:31记录一项决策时，该时间戳是设备硬件实时时钟的读数，而不是来自可信时间机构的签名令牌，无法被外部审查者验证为准确。时钟可能是正确的，也可能已经漂移——嵌入式系统时钟在未经校正的情况下每月常常累积数分钟误差。它可能在电池更换后被重置，而未能恢复此前同步的值。在通过网络同步时间的设备上，它可能反映了一个被篡改的NTP响应，而该响应在未经认证的情况下被接受。记录显示02:14:31，但没有证据证明确实是02:14:31。</p>
+
+        <p>网络时间安全协议（RFC 8915）在原则上解决了NTP认证问题。经认证的时间分发确保接受服务器时间的设备能够以密码学方式验证时间来自合法来源且未在传输过程中被修改。但RFC 8915在当今的护理硬件中几乎未被部署。大多数嵌入式医疗设备使用未经认证的NTP，或依赖在整个使用寿命内积累未校正漂移的本地硬件时钟。时间是准确的这一基础设施假设，在大多数已部署的护理系统中没有任何密码学支撑。</p>
+
+        <p>问责后果是具体的。考虑一个护理AI系统在23:58:12记录警报、在00:03:44记录临床响应的场景。问责记录显示五分钟的响应窗口——符合规程。但如果设备时钟在上个月向前漂移了十二分钟且从未被校正，实际时间则是23:46:12的警报和23:51:44的响应——两者均在前一天午夜之前。五分钟的响应变成了负时间响应。护理窗口是否符合规程，无人能够判断，因为时间戳从未经过认证。</p>
+
+        <p>时间戳机构（TSA）提供了解决这一问题的机制：RFC 3161令牌将文档哈希绑定到由可信机构签署的认证时间。在创建审计记录时就将其链接到TSA令牌的护理AI，事后能够证明该记录在认证时间确实存在且未被事后篡改。这是一个有广泛PKI支持的成熟协议。差距在于部署：护理AI系统在记录创建时很少调用TSA令牌。即便有所部署，当前大多数TSA基础设施的底层签名算法也是RSA——容易受到量子攻击。受经典TSA令牌保护的护理AI审计记录，与审计签名本身面临相同的问责视野问题：时间证明与审计证明同时失效。</p>
+
+        <p>硬件证明无法填补这一空白。TPM 2.0远程证明能够证明设备上运行的软件栈，但无法认证挂钟时间。证明引用包含单调计数器——对于事件相互排序有用——但单调计数器在没有可信时间源的情况下无法将事件锚定到日历时间。一台自上次时钟同步以来经历了未知时间间隔的设备，无法证明其计数器值对应于何时。证明能证明运行了什么，但无法证明何时运行。</p>
+
+        <p>弥合时间溯源差距需要同时在三个层面采取行动。在网络层，护理AI部署应要求经认证的时间分发——对于网络连接设备采用RFC 8915 NTS，对于网络时间不可用或不可信环境中的设备采用具有认证信号的GNSS时间接收器。在记录层，每条护理AI审计条目应在创建时链接到后量子安全的TSA令牌，使用现已标准化用于长期签名格式的算法族之一。在硬件层，护理AI设备的采购规范应要求硬件时钟模块具有有据可查的精度规格、电池支持的同步状态和防篡改时间寄存器——与其他受监管领域的计量和法律证据设备所适用的标准相同。</p>
+
+        <p>时间溯源问题是一个缺失的基础原语，而非缺失的功能特性。它不是在核心问责架构稳定后才需考虑的改进。它是该架构可靠性的前提条件。一个审计记录无法证明事件发生时间的护理AI系统，在行政意义上拥有问责记录——条目存在，有日期——但在证据意义上并不具备。无法验证的日期是断言。建立在无法验证时间戳之上的问责，将无法承受护理AI决策在其部署领域最终将面临的审查。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/accountability-horizon-problem.html">&larr; 问责视野问题</a>
+        <a href="/blog/">全部文章 &rarr;</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 後量子安全 · × 硬件 · × 物理世界照護</span>
+      <h1 class="essay-title">時間溯源問題：為何護理AI無法證明其決策發生的時間</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-14</span>
+        <span class="essay-date">6 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>護理AI的問責體系建立在時間戳記錄鏈上。藥物調整被記錄在建議發出的那一刻。跌倒風險警報精確到秒。臨床醫生的覆蓋操作攜帶時間戳，錨定了誰在何時做出了何種決策的完整記錄。這些時間戳不是裝飾性的元數據，而是承載法律重量的要素。醫療過失訴訟時效從特定時刻開始計算。監管事件報告窗口以事件發生後的小時數為單位。臨床責任評估取決於了解護理AI是在護士記錄的訪視之前還是之後發出了病情惡化警報。當護理AI的問責記錄接受監管機構、法院或品質委員會審查時，時間戳是案件的骨架。</p>
+
+        <p>問題在於，護理AI的時間戳幾乎從未經過密碼學認證。當護理AI系統在02:14:31記錄一項決策時，該時間戳是裝置硬體即時時鐘的讀數，而不是來自可信時間機構的簽章令牌，無法被外部審查者驗證為準確。時鐘可能是正確的，也可能已經飄移——嵌入式系統時鐘在未經校正的情況下每月常常累積數分鐘誤差。它可能在電池更換後被重置，而未能恢復此前同步的值。在透過網路同步時間的裝置上，它可能反映了一個被篡改的NTP回應，而該回應在未經認證的情況下被接受。記錄顯示02:14:31，但沒有證據證明確實是02:14:31。</p>
+
+        <p>網路時間安全協定（RFC 8915）在原則上解決了NTP認證問題。經認證的時間分發確保接受伺服器時間的裝置能夠以密碼學方式驗證時間來自合法來源且未在傳輸過程中被修改。但RFC 8915在當今的護理硬體中幾乎未被部署。大多數嵌入式醫療裝置使用未經認證的NTP，或依賴在整個使用壽命內累積未校正飄移的本地硬體時鐘。時間是準確的這一基礎設施假設，在大多數已部署的護理系統中沒有任何密碼學支撐。</p>
+
+        <p>問責後果是具體的。考慮一個護理AI系統在23:58:12記錄警報、在00:03:44記錄臨床回應的場景。問責記錄顯示五分鐘的回應窗口——符合規程。但如果裝置時鐘在上個月向前飄移了十二分鐘且從未被校正，實際時間則是23:46:12的警報和23:51:44的回應——兩者均在前一天午夜之前。五分鐘的回應變成了負時間回應。護理窗口是否符合規程，無人能夠判斷，因為時間戳從未經過認證。</p>
+
+        <p>時間戳機構（TSA）提供了解決這一問題的機制：RFC 3161令牌將文件雜湊值綁定到由可信機構簽署的認證時間。在建立稽核記錄時就將其鏈結到TSA令牌的護理AI，事後能夠證明該記錄在認證時間確實存在且未被事後篡改。這是一個有廣泛PKI支援的成熟協定。差距在於部署：護理AI系統在記錄建立時很少呼叫TSA令牌。即便有所部署，當前大多數TSA基礎設施的底層簽章演算法也是RSA——容易受到量子攻擊。受經典TSA令牌保護的護理AI稽核記錄，與稽核簽章本身面臨相同的問責視野問題：時間證明與稽核證明同時失效。</p>
+
+        <p>硬體證明無法填補這一空白。TPM 2.0遠端證明能夠證明裝置上執行的軟體堆疊，但無法認證掛鐘時間。證明引用包含單調計數器——對於事件相互排序有用——但單調計數器在沒有可信時間源的情況下無法將事件錨定到日曆時間。一台自上次時鐘同步以來經歷了未知時間間隔的裝置，無法證明其計數器值對應於何時。證明能證明執行了什麼，但無法證明何時執行。</p>
+
+        <p>彌合時間溯源差距需要同時在三個層面採取行動。在網路層，護理AI部署應要求經認證的時間分發——對於網路連線裝置採用RFC 8915 NTS，對於網路時間不可用或不可信環境中的裝置採用具有認證訊號的GNSS時間接收器。在記錄層，每條護理AI稽核條目應在建立時鏈結到後量子安全的TSA令牌，使用現已標準化用於長期簽章格式的演算法族之一。在硬體層，護理AI裝置的採購規範應要求硬體時鐘模組具有有據可查的精度規格、電池支援的同步狀態和防篡改時間暫存器——與其他受監管領域的計量和法律證據設備所適用的標準相同。</p>
+
+        <p>時間溯源問題是一個缺失的基礎原語，而非缺失的功能特性。它不是在核心問責架構穩定後才需考慮的改進。它是該架構可靠性的前提條件。一個稽核記錄無法證明事件發生時間的護理AI系統，在行政意義上擁有問責記錄——條目存在，有日期——但在證據意義上並不具備。無法驗證的日期是斷言。建立在無法驗證時間戳之上的問責，將無法承受護理AI決策在其部署領域最終將面臨的審查。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/accountability-horizon-problem.html">&larr; 問責視野問題</a>
+        <a href="/blog/">全部文章 &rarr;</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
