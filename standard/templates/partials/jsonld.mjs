@@ -6,7 +6,10 @@ export function jsonld({ data, lang, locale, slug, faq = [], rows = [] }) {
   const url = cleanStandardUrl({ site, locale, slug });
   const product = t(data.category?.labels, lang) || "";
   const market = t(data.target_market_label, lang) || "";
-  const stripVerdict = (s) => (s || "").replace(/^\s*[\[【][^\]】]*[\]】]\s*/, "").trim();
+  // Strip ALL bracketed disclaimer segments — leading ([INFORMATIONAL]/[仅供参考]),
+  // trailing ([Informational only — verify with <regulator>...]), and any inline —
+  // so auto-generated FAQ answers read cleanly for rich snippets / LLM citation.
+  const stripVerdict = (s) => (s || "").replace(/[\[【][^\]】]*[\]】]/g, " ").replace(/\s+/g, " ").trim();
   let faqEntries = faq
     .map((item) => ({
       question: t(item.question, lang),
