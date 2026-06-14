@@ -23,7 +23,7 @@ export function jsonld({ data, lang, locale, slug, faq = [], rows = [] }) {
         const topic = t(row.requirement_topic, lang);
         const answer = stripVerdict(t(row.compliance_verdict, lang)) || stripVerdict(t(row.gap, lang));
         if (!topic || !answer) return null;
-        const q = product && market ? `${topic} — ${product} (China → ${market})?` : `${topic}?`;
+        const q = `${topic}?`;
         return { question: q, answer };
       })
       .filter(Boolean);
@@ -49,7 +49,14 @@ export function jsonld({ data, lang, locale, slug, faq = [], rows = [] }) {
         "Mandatory vs voluntary status",
         "Official source"
       ],
-      "inLanguage": locale === "zht" ? "zh-Hant" : locale === "zh" ? "zh-Hans" : "en"
+      "inLanguage": locale === "zht" ? "zh-Hant" : locale === "zh" ? "zh-Hans" : "en",
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": `${site}/standard/exports/${slug}.json`
+        }
+      ]
     },
     {
       "@type": "TechArticle",
