@@ -74,7 +74,8 @@ for (const { file, suffix } of PAGES) {
     // canonical -> locale URL (the hreflang cluster already present in the
     // EN source is identical across alternates, so it is copied as-is — do
     // NOT inject a second one).
-    const canonical = `https://asaptic.com/${loc.code}/${suffix}`;
+    const prettySuffix = suffix.endsWith(".html") ? suffix.slice(0, -5) : suffix;
+    const canonical = `https://asaptic.com/${loc.code}/${prettySuffix}`;
     html = html.replace(
       /<link rel="canonical" href="[^"]*" \/>/,
       `<link rel="canonical" href="${canonical}" />`

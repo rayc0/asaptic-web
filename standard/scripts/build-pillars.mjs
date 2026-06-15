@@ -81,12 +81,12 @@ function fmt(key, lang, vars = {}) {
 
 function pillarUrl({ locale = "en", kind, id, site = "" }) {
   const prefix = locale === "en" ? "" : `/${locale}`;
-  return `${site}${prefix}/standard/${kind}/${id}.html`;
+  return `${site}${prefix}/standard/${kind}/${id}`;
 }
 
 function comparisonHref(comparison, locale) {
   const href = comparison.url?.[locale] || comparison.url?.en || "";
-  return href.endsWith(".html") ? href : `${href}.html`;
+  return href.endsWith(".html") ? href.slice(0, -5) : href;
 }
 
 function labelMap(items) {

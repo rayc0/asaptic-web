@@ -34,6 +34,14 @@ const CLUSTERS = [
   { en: `${BASE}/`, suffix: "" },
   { en: `${BASE}/sourcing.html`, suffix: "sourcing.html" },
   { en: `${BASE}/bess-uflpa-compliance.html`, suffix: "bess-uflpa-compliance.html" },
+  { en: `${BASE}/heavy-lift-uav.html`, suffix: "heavy-lift-uav.html" },
+  { en: `${BASE}/physical-ai-robotics.html`, suffix: "physical-ai-robotics.html" },
+  { en: `${BASE}/deep-tech-sourcing.html`, suffix: "deep-tech-sourcing.html" },
+  { en: `${BASE}/medical-device-sourcing.html`, suffix: "medical-device-sourcing.html" },
+  { en: `${BASE}/ev-charger-power-module-sourcing.html`, suffix: "ev-charger-power-module-sourcing.html" },
+  { en: `${BASE}/sourcing/clinical-devices.html`, suffix: "sourcing/clinical-devices.html" },
+  { en: `${BASE}/about.html`, suffix: "about.html" },
+  { en: `${BASE}/process.html`, suffix: "process.html" },
 ];
 const LOCS = [
   { code: "zh", hreflang: "zh-Hans" },
@@ -130,8 +138,7 @@ for (const __p of [...standardPillarFiles("product"), ...standardPillarFiles("ma
   for (const l of STANDARD_LOCS)
     add(`${BASE}/${l.code}/${__p}`, `${l.code}/${__p}`, "0.55", alts);
 }
-  const pillars = ["heavy-lift-uav.html", "physical-ai-robotics.html", "deep-tech-sourcing.html", "medical-device-sourcing.html"];
-for (const p of pillars) if (existsSync(p)) add(`${BASE}/${p}`, p, "0.8");
+  // pillars are now handled within CLUSTERS above
 for (const p of ["engage.html", "thesis.html", "press.html", "crossings.html", "privacy.html"])
   if (existsSync(p)) add(`${BASE}/${p}`, p, "0.7");
 add(`${BASE}/blog/`, "blog", "0.7");
