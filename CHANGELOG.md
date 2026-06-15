@@ -1,3 +1,4 @@
+2026-06-15 04:00 UTC · blog: add essay 'The accountability floor' — four proofs any care AI accountability record must support (EN+ZH+ZHT, firewall clean) · eff7212
 2026-06-15 00:20 UTC · blog: add essay 'The enrollment problem' — why care AI cannot prove it knows who it is caring for (EN+ZH+ZHT, firewall clean) · 410a8aa
 2026-06-14 12:00 UTC · blog: add essay 'The sovereignty gap' — accountability architecture for physical AI agents crossing jurisdictional boundaries (EN+ZH+ZH-HK, firewall clean) · 18f95f3
 2026-06-13 16:15 UTC · blog: add essay 'The sensor conflict problem' — accountability when AI agents adjudicate between conflicting physical inputs (EN+ZH+ZH-HK, firewall clean) · 31164fe
