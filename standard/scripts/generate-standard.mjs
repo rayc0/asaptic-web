@@ -6,7 +6,7 @@ import { comparisonTable } from "../templates/partials/comparison-table.mjs";
 import { disclaimer } from "../templates/partials/disclaimer.mjs";
 import { footer } from "../templates/partials/footer.mjs";
 import { head } from "../templates/partials/head.mjs";
-import { esc, label, t } from "../templates/partials/i18n.mjs";
+import { esc, escAttr, label, t } from "../templates/partials/i18n.mjs";
 import { nav } from "../templates/partials/nav.mjs";
 import { sourceList } from "../templates/partials/source-list.mjs";
 
@@ -14,6 +14,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const DATA_DIR = join(ROOT, "standard/data");
 const FRAGMENT_DIR = join(ROOT, "standard/data/_fragments");
 const FAQ_FILE = join(FRAGMENT_DIR, "faq-eu-inverter.json");
+const INDEX_FILE = join(DATA_DIR, "_index.json");
 
 const locales = [
   { locale: "en", lang: "en", htmlLang: "en", outDir: "standard" },
@@ -23,6 +24,121 @@ const locales = [
 
 function readJson(file) {
   return JSON.parse(readFileSync(file, "utf8"));
+}
+
+// Global comparison index — loaded once for GEO-aware "related comparisons" linking.
+const INDEX = readJson(INDEX_FILE);
+
+// Region lookup table mapping markets to geographical regions
+const REGION_MAP = {
+  us: "na", canada: "na", mexico: "na",
+  eu: "europe", uk: "europe", turkey: "europe", armenia: "europe", georgia: "europe", azerbaijan: "europe",
+  australia: "oceania", "new-zealand": "oceania",
+  japan: "asia-east-se", "south-korea": "asia-east-se", mongolia: "asia-east-se",
+  indonesia: "asia-east-se", vietnam: "asia-east-se", thailand: "asia-east-se", philippines: "asia-east-se",
+  singapore: "asia-east-se", malaysia: "asia-east-se", brunei: "asia-east-se", laos: "asia-east-se", cambodia: "asia-east-se",
+  india: "asia-south-central", pakistan: "asia-south-central", bangladesh: "asia-south-central",
+  nepal: "asia-south-central", "sri-lanka": "asia-south-central",
+  kazakhstan: "asia-south-central", uzbekistan: "asia-south-central", kyrgyzstan: "asia-south-central", tajikistan: "asia-south-central",
+  saudi: "me", uae: "me", bahrain: "me", kuwait: "me", qatar: "me", oman: "me", iraq: "me", israel: "me", jordan: "me", lebanon: "me",
+  brazil: "latam", argentina: "latam", chile: "latam", colombia: "latam", bolivia: "latam",
+  ecuador: "latam", paraguay: "latam", uruguay: "latam", peru: "latam", suriname: "latam", guyana: "latam",
+  "dominican-republic": "latam", "costa-rica": "latam", "el-salvador": "latam", guatemala: "latam", honduras: "latam", nicaragua: "latam", panama: "latam",
+  "south-africa": "africa", nigeria: "africa", egypt: "africa", kenya: "africa", algeria: "africa",
+  zambia: "africa", zimbabwe: "africa", mozambique: "africa", angola: "africa", benin: "africa",
+  botswana: "africa", "burkina-faso": "africa", cameroon: "africa", "congo-brazzaville": "africa",
+  "cote-divoire": "africa", ethiopia: "africa", gabon: "africa", gambia: "africa", ghana: "africa",
+  guinea: "africa", liberia: "africa", madagascar: "africa", malawi: "africa", mali: "africa",
+  mauritania: "africa", namibia: "africa", niger: "africa", rwanda: "africa", senegal: "africa",
+  "sierra-leone": "africa", togo: "africa", tunisia: "africa", uganda: "africa"
+};
+
+/**
+ * Computes up to 6 related comparisons using a GEO-aware tiered selection process.
+ *
+ * @param {Object} idx - Parsed contents of standard/data/_index.json
+ * @param {string} currentSlug - Current page slug (e.g. 'bess-china-to-australia')
+ * @param {string} lang - Active language code ('en', 'zh', 'zht')
+ * @returns {Array<{slug: string, url: string, title: string}>} Array of related items
+ */
+function getRelatedComparisons(idx, currentSlug, lang = "en") {
+  const current = idx.comparisons.find((c) => c.url.en.split("/").pop() === currentSlug);
+  if (!current) return [];
+
+  const currentProduct = current.product;
+  const currentMarket = current.market;
+  const currentRegion = REGION_MAP[currentMarket] || "unknown";
+
+  const prodLabel = Object.fromEntries(idx.products.map((p) => [p.id, p.label]));
+  const mktLabel = Object.fromEntries(idx.markets.map((m) => [m.id, m.label]));
+
+  const makeTitle = (c) => {
+    const pLabel = prodLabel[c.product]?.[lang] || c.product;
+    const mLabel = mktLabel[c.market]?.[lang] || c.market;
+    if (lang === "zh") return `${pLabel} — 中国至${mLabel}`;
+    if (lang === "zht") return `${pLabel} — 中國至${mLabel}`;
+    return `${pLabel} — China to ${mLabel}`;
+  };
+
+  const makeUrl = (c) => {
+    const pref = lang === "en" ? "/standard" : `/${lang}/standard`;
+    return `${pref}/${c.url.en.split("/").pop()}.html`;
+  };
+
+  const pool = idx.comparisons.filter(
+    (c) => c.status === "live" && c.url.en.split("/").pop() !== currentSlug
+  );
+
+  // Prioritization tiers
+  const sameMarketOtherProducts = pool.filter((c) => c.market === currentMarket && c.product !== currentProduct);
+  const sameProductNearRegion = pool.filter((c) => c.product === currentProduct && c.market !== currentMarket && (REGION_MAP[c.market] || "unknown") === currentRegion);
+  const sameProductOtherRegion = pool.filter((c) => c.product === currentProduct && c.market !== currentMarket && (REGION_MAP[c.market] || "unknown") !== currentRegion);
+
+  const results = [];
+  const addedSlugs = new Set();
+
+  const addItems = (items) => {
+    for (const item of items) {
+      if (results.length >= 6) break;
+      const slug = item.url.en.split("/").pop();
+      if (!addedSlugs.has(slug)) {
+        addedSlugs.add(slug);
+        results.push({ slug, url: makeUrl(item), title: makeTitle(item) });
+      }
+    }
+  };
+
+  addItems(sameMarketOtherProducts);
+  addItems(sameProductNearRegion);
+  addItems(sameProductOtherRegion);
+
+  return results;
+}
+
+/**
+ * HTML template renderer for the Related Comparisons section.
+ */
+function relatedSection({ related, lang }) {
+  if (!related || related.length === 0) return "";
+  const sectionLabel = lang === "zh" ? "相关对照" : lang === "zht" ? "相關對照" : "RELATED COMPARISONS";
+  const sectionTitle = lang === "zh" ? "其他合规对照" : lang === "zht" ? "其他合規對照" : "Related Compliance Matrices";
+
+  return `<section class="standard-section related-comparisons">
+      <div class="container">
+        <p class="section-label">${esc(sectionLabel)}</p>
+        <h2 class="section-title standard-content-heading">${esc(sectionTitle)}</h2>
+        <div class="related-grid">
+          ${related
+            .map(
+              (item) => `<a class="related-card" href="${escAttr(item.url)}">
+            <span class="related-card__title">${esc(item.title)}</span>
+            <span class="related-card__arrow">&rarr;</span>
+          </a>`
+            )
+            .join("\n")}
+        </div>
+      </div>
+    </section>`;
 }
 
 function datasetFiles() {
@@ -174,6 +290,7 @@ function faqSection({ faq, lang }) {
 
 function page({ data, rows, faq, lang, locale, htmlLang }) {
   const slug = data.slug;
+  const related = getRelatedComparisons(INDEX, slug, lang);
   return `<!DOCTYPE html>
 <html lang="${htmlLang}">
 ${head({ data, lang, locale, slug, rows, faq })}
@@ -191,6 +308,7 @@ ${head({ data, lang, locale, slug, rows, faq })}
       </div>
     </section>
     ${faqSection({ faq, lang })}
+    ${relatedSection({ related, lang })}
     <section class="standard-section">
       <div class="container">
         ${disclaimer({ data, lang })}
