@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The sampling interval problem — Asaptic Labs</title>
+
+  <meta name="description" content="Care AI depends on sensors that sample vital signs at rates determined by hardware constraints, not clinical need. When a clinical event occurs between samples, the record shows nothing — no gap, no flag, no alert. The accountability architecture has no mechanism to detect its own observational blind spots." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/sampling-interval-problem" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The sampling interval problem" />
+  <meta property="og:description" content="Care AI samples at hardware-determined rates, not clinical ones. Events between measurements leave no gap in the record — just silence the architecture cannot explain." />
+  <meta property="og:url" content="https://asaptic.com/blog/sampling-interval-problem" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-15" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","headline":"The sampling interval problem","author":{"@type":"Organization","name":"Asaptic Labs"},"publisher":{"@type":"Organization","name":"Asaptic Labs","url":"https://asaptic.com"},"datePublished":"2026-06-15","description":"Care AI depends on sensors that sample vital signs at rates determined by hardware constraints, not clinical need. When a clinical event occurs between samples, the record shows nothing — no gap, no flag, no alert. The accountability architecture has no mechanism to detect its own observational blind spots.","url":"https://asaptic.com/blog/sampling-interval-problem.html"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://asaptic.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://asaptic.com/blog/"},{"@type":"ListItem","position":3,"name":"The sampling interval problem","item":"https://asaptic.com/blog/sampling-interval-problem.html"}]}]}</script>
+
+  <style>
+    .essay-wrap { max-width: 680px; margin: 0 auto; padding: 120px 32px 96px; }
+    .essay-back { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: var(--gray); margin-bottom: 48px; transition: color 0.2s; }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; color: var(--cyan); display: block; margin-bottom: 14px; }
+    .essay-title { font-size: clamp(26px, 4vw, 40px); font-weight: 700; line-height: 1.15; margin-bottom: 24px; }
+    .essay-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+    .essay-byline, .essay-date { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gray-dim); }
+    .essay-body p { font-size: 17px; color: var(--gray); line-height: 1.85; margin-bottom: 24px; }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--border); }
+    .essay-summary-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: var(--accent); display: block; margin-bottom: 12px; }
+    .essay-summary p { font-size: 14px; color: var(--gray-dim); line-height: 1.75; margin-bottom: 12px; }
+    .essay-nav { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; font-size: 12px; color: var(--gray-dim); margin-top: 48px; }
+    @media (max-width: 768px) { .essay-wrap { padding: 100px 20px 72px; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× PHYSICAL-WORLD CARE · × HARDWARE · × POST-QUANTUM SECURITY</span>
+      <h1 class="essay-title">The sampling interval problem: accountability when care AI observes the world between measurements</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-06-15</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>A wearable vital signs monitor records a reading every fifteen minutes. The readings logged at 2:00 AM, 2:15 AM, and 2:30 AM are all within normal range. At 2:47 AM, nursing staff respond to an emergency call and find the resident in acute distress. The interval between the 2:30 reading and the emergency call contained events that no sensor captured. The care AI generated no alert. Its record shows three normal readings and then a gap.</p>
+
+        <p>That gap is not a failure of detection. It is a failure of architecture.</p>
+
+        <p>The distinction matters. When a sensor fails, the gap is visible: the record shows missing data, and the accountability structure responds accordingly — the absence is logged, the device is flagged, and the care decisions made in the absence of data are labeled as such. When a sensor is operating correctly but sampling at a rate insufficient to observe a clinical event, the gap is invisible. The record appears complete. The AI system functioned exactly as designed. No alert was triggered because no measurement crossed a threshold. The accountability record documents compliance with a sampling protocol that was never adequate for the clinical situation it was monitoring.</p>
+
+        <p>Care AI depends on wearable and embedded sensors that sample vital signs at rates determined by hardware constraints: battery life, data transmission bandwidth, onboard processing capacity, regulatory certification bounds. These rates — fifteen minutes, five minutes, one minute — are technical defaults chosen by device engineers balancing multiple competing constraints. They are not clinical parameters. They are not set by clinicians, reviewed by clinical governance, or documented in care plans. They are factory settings that persist unchanged through the life of the device.</p>
+
+        <p>The clinical adequacy of a sampling interval depends on the rate at which the condition being monitored can deteriorate. For a resident with stable chronic conditions, a fifteen-minute interval may represent adequate surveillance. For a resident in acute deterioration, or for a condition known to produce rapid-onset events — cardiac arrhythmia, hypoglycemic crisis, respiratory decompensation — a fifteen-minute interval is not monitoring. It is periodic documentation of the states between which significant clinical events can occur unobserved.</p>
+
+        <p>The accountability problem is that the sampling interval is invisible in the care record. The record shows what was measured, not what was not measured. A clinician reviewing the overnight log sees a sequence of normal readings terminating in an emergency call. There is nothing in the record to indicate that the monitoring architecture was insufficient for the clinical situation. The care AI produced the record it was designed to produce. Whether that record constitutes adequate monitoring of this particular resident at this particular time is not a question the care AI can answer about itself.</p>
+
+        <p>At the hardware-software boundary, the sampling rate is typically fixed in certified firmware. Medical devices undergo regulatory certification for a specific configuration. Increasing the sampling rate without a firmware change may not be possible; modifying the firmware triggers recertification. A care provider who determines that a resident needs closer monitoring than the device default cannot reconfigure a certified device's sampling interval in real time. They can add manual observation rounds or change the device entirely — but the monitoring rate is not a clinical dial they can turn.</p>
+
+        <p>This creates a systematic gap between clinical need and technical capability. As a resident's condition changes — following a hospital discharge, during a period of acute illness, after a medication change — the sampling interval appropriate for their previous stable state may be inadequate for their current one. The care AI cannot flag this inadequacy because it has no model of its own observational limitations relative to the resident's condition profile. It monitors at the rate it was built to monitor. It reports what it found. It cannot report what it missed.</p>
+
+        <p>The post-quantum dimension compounds the accountability problem. Every sample carries a timestamp. That timestamp is the foundation of the record: it establishes when each reading was taken, in what sequence, and whether any gap in the log represents actual elapsed time or a device anomaly. Most embedded medical devices generate timestamps from hardware clocks that are not cryptographically authenticated. The timestamp cannot be verified as accurate, unmodified, or synchronized to a trusted time source. After the quantum transition, classical timestamp integrity mechanisms will be retroactively suspect. An accountability record built on unattested hardware timestamps cannot be reliably defended in subsequent clinical or legal review — and the problem is that this describes the majority of care monitoring infrastructure deployed today.</p>
+
+        <p>The required change is straightforward to describe and difficult to enforce. The sampling interval must be treated as a governed clinical parameter: documented in the care plan, justified against the resident's current risk profile, and reviewed at every care plan update and whenever the resident's condition changes materially. A care plan that specifies monitoring without specifying the monitoring rate is incomplete. Gaps in observation — periods where a sensor was not sampling at a rate sufficient for the documented risk profile — must be logged explicitly, not silently elided. And timestamp integrity must be hardware-attested at the device level, a requirement that needs to be built into procurement standards and certification frameworks, not retrofitted after deployment.</p>
+
+        <p>The care AI cannot compensate for the gaps in its own observational window. That compensation requires human judgment: about what needs to be observed, at what rate, given who this particular person is right now and what their condition profile demands. When that judgment is not encoded in the care plan, it is not being made. The accountability for the events that occur between measurements falls on the architecture that created the gap — and on the governance frameworks that permitted hardware defaults to substitute for clinical decisions.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>护理AI依赖按固定间隔采样的传感器——十五分钟、五分钟、一分钟——这些间隔由硬件约束决定，而非临床需要。当临床事件发生在两次采样之间，记录中不会出现任何缺口：系统显示一系列正常读数，然后是紧急呼叫。问责架构没有检测到任何失败，因为系统的运作完全符合设计。这种不可见性是核心问题：采样间隔是设备出厂默认值，不是临床参数，不写入护理计划，也不随护理对象病情变化而审查。在后量子背景下，时间戳完整性问题进一步加剧这一风险——大多数嵌入式医疗设备无法对时间戳进行硬件认证，使整个问责记录面临质疑。解决方案是将采样间隔纳入临床治理：在护理计划中记录、根据当前风险状况进行论证，并随病情变化进行审查。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>護理AI依賴按固定間隔採樣的感測器——十五分鐘、五分鐘、一分鐘——這些間隔由硬件約束決定，而非臨床需要。當臨床事件發生在兩次採樣之間，記錄中不會出現任何缺口：系統顯示一系列正常讀數，然後是緊急呼叫。問責架構沒有檢測到任何失敗，因為系統的運作完全符合設計。這種不可見性是核心問題：採樣間隔是設備出廠預設值，不是臨床參數，不寫入護理計劃，也不隨護理對象病情變化而審查。在後量子背景下，時間戳完整性問題進一步加劇這一風險——大多數嵌入式醫療設備無法對時間戳進行硬件認證，使整個問責記錄面臨質疑。解決方案是將採樣間隔納入臨床治理：在護理計劃中記錄、根據當前風險狀況進行論證，並隨病情變化進行審查。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/predictive-labeling-problem.html">&larr; The predictive labeling problem</a>
+        <a href="/blog/">All essays &rarr;</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 物理世界照护 · × 硬件 · × 后量子安全</span>
+      <h1 class="essay-title">采样间隔问题：护理AI在两次测量之间观察世界时的问责困境</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-15</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>一台可穿戴生命体征监测仪每十五分钟记录一次读数。凌晨2:00、2:15和2:30记录的读数均在正常范围内。凌晨2:47，护理人员响应紧急呼叫，发现护理对象处于急性危重状态。2:30读数与紧急呼叫之间的十七分钟内，发生了传感器未能捕捉到的事件。护理AI没有发出任何警报。其记录显示三次正常读数，然后是一段空白。</p>
+
+        <p>这段空白不是检测失败，而是架构失败。</p>
+
+        <p>这一区别至关重要。当传感器故障时，缺口是可见的：记录显示数据缺失，问责结构随之响应——缺失被记录，设备被标记，在数据缺失情况下做出的护理决策被相应标注。而当传感器运行正常但采样频率不足以观测到临床事件时，缺口是不可见的。记录看似完整。AI系统完全按照设计运行。没有警报触发，因为没有任何测量值超过阈值。问责记录证明了对一个从未适合于其所监测临床情况的采样协议的合规性。</p>
+
+        <p>护理AI依赖按硬件约束决定的频率采样的可穿戴和嵌入式传感器：电池寿命、数据传输带宽、板载处理能力、监管认证范围。这些频率——十五分钟、五分钟、一分钟——是设备工程师在多种相互竞争的约束中做出的技术默认选择。它们不是临床参数，不由临床医生设定，不经临床治理审查，也不记录在护理计划中。它们是在设备整个生命周期内保持不变的出厂设置。</p>
+
+        <p>采样间隔的临床充分性取决于所监测状况可能恶化的速度。对于病情稳定的慢性病护理对象，十五分钟的间隔可能代表充分的监测。对于处于急性恶化期的护理对象，或对于已知会产生快速发作事件的状况——心律失常、低血糖危机、呼吸功能失代偿——十五分钟间隔不是监测，而是对重要临床事件可能在无人观察的情况下发生的各状态的周期性记录。</p>
+
+        <p>问责问题在于采样间隔在护理记录中是不可见的。记录显示测量到了什么，而不是没有测量到什么。回顾夜间记录的临床医生看到的是一系列以紧急呼叫结尾的正常读数。记录中没有任何内容表明监测架构对当时的临床情况是不充分的。护理AI生成了它被设计产生的记录。这份记录是否构成对此时此刻这位护理对象的充分监测，是护理AI无法回答的关于自身的问题。</p>
+
+        <p>在硬件-软件边界，采样率通常固定在经过认证的固件中。医疗设备针对特定配置进行监管认证。在不修改固件的情况下提高采样率可能不可行；修改固件则会触发重新认证。认定护理对象需要比设备默认更密切监测的护理提供者，无法实时重新配置已认证设备的采样间隔。他们可以增加人工观察频次或更换设备，但监测率不是一个可以随时调整的临床参数。</p>
+
+        <p>这在临床需求与技术能力之间造成了系统性差距。随着护理对象病情变化——出院后、急性病期间、药物调整后——适合其此前稳定状态的采样间隔，可能对其当前状态并不充分。护理AI无法标记这种不充分性，因为它没有关于自身相对于护理对象当前病情状况的观察局限性的模型。它以其被构建时的频率进行监测，报告其发现的内容，无法报告其遗漏的内容。</p>
+
+        <p>后量子维度进一步加剧了问责问题。每次采样都携带时间戳。时间戳是记录的基础：它确定每次读数的时间、顺序，以及记录中的任何缺口是否代表实际经过的时间或设备异常。大多数嵌入式医疗设备从未经过密码学认证的硬件时钟生成时间戳。时间戳无法验证为准确、未修改或与可信时间源同步。后量子转型后，经典时间戳完整性机制将受到追溯性质疑。建立在未认证硬件时间戳之上的问责记录在后续临床或法律审查中无法可靠维护——而这正是当今部署的大多数护理监测基础设施的现状。</p>
+
+        <p>所需的变革在描述上很简单，在执行上却很困难。采样间隔必须被视为受治理的临床参数：记录在护理计划中，根据护理对象当前风险状况进行论证，在每次护理计划更新时以及护理对象病情出现实质性变化时进行审查。未明确监测率的护理计划是不完整的。观察缺口——传感器采样频率不足以满足记录风险状况的时期——必须明确记录，而不是被悄无声息地省略。时间戳完整性必须在设备级别进行硬件认证，这一要求需要纳入采购标准和认证框架，而不是在部署后进行追溯改造。</p>
+
+        <p>护理AI无法弥补其自身观察窗口中的缺口。弥补这些缺口需要人类判断：需要观察什么、以何种频率，针对此时此刻这位特定护理对象及其病情状况。当这种判断没有被编入护理计划，它就没有被做出。在两次测量之间发生的事件的责任，落在制造这一缺口的架构上——以及允许硬件默认值替代临床决策的治理框架上。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/predictive-labeling-problem.html">&larr; 预测性标签问题</a>
+        <a href="/blog/">全部文章 &rarr;</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 物理世界照護 · × 硬件 · × 後量子安全</span>
+      <h1 class="essay-title">採樣間隔問題：護理AI在兩次測量之間觀察世界時的問責困境</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-15</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>一台可穿戴生命體徵監測儀每十五分鐘記錄一次讀數。凌晨2:00、2:15和2:30記錄的讀數均在正常範圍內。凌晨2:47，護理人員響應緊急呼叫，發現護理對象處於急性危重狀態。2:30讀數與緊急呼叫之間的十七分鐘內，發生了感測器未能捕捉到的事件。護理AI沒有發出任何警報。其記錄顯示三次正常讀數，然後是一段空白。</p>
+
+        <p>這段空白不是檢測失敗，而是架構失敗。</p>
+
+        <p>這一區別至關重要。當感測器故障時，缺口是可見的：記錄顯示數據缺失，問責結構隨之響應——缺失被記錄，設備被標記，在數據缺失情況下做出的護理決策被相應標注。而當感測器運行正常但採樣頻率不足以觀測到臨床事件時，缺口是不可見的。記錄看似完整。AI系統完全按照設計運行。沒有警報觸發，因為沒有任何測量值超過閾值。問責記錄證明了對一個從未適合於其所監測臨床情況的採樣協議的合規性。</p>
+
+        <p>護理AI依賴按硬件約束決定的頻率採樣的可穿戴和嵌入式感測器：電池壽命、數據傳輸頻寬、板載處理能力、監管認證範圍。這些頻率——十五分鐘、五分鐘、一分鐘——是設備工程師在多種相互競爭的約束中做出的技術預設選擇。它們不是臨床參數，不由臨床醫生設定，不經臨床治理審查，也不記錄在護理計劃中。它們是在設備整個生命週期內保持不變的出廠設定。</p>
+
+        <p>採樣間隔的臨床充分性取決於所監測狀況可能惡化的速度。對於病情穩定的慢性病護理對象，十五分鐘的間隔可能代表充分的監測。對於處於急性惡化期的護理對象，或對於已知會產生快速發作事件的狀況——心律失常、低血糖危機、呼吸功能失代償——十五分鐘間隔不是監測，而是對重要臨床事件可能在無人觀察情況下發生的各狀態的週期性記錄。</p>
+
+        <p>問責問題在於採樣間隔在護理記錄中是不可見的。記錄顯示測量到了什麼，而不是沒有測量到什麼。回顧夜間記錄的臨床醫生看到的是一系列以緊急呼叫結尾的正常讀數。記錄中沒有任何內容表明監測架構對當時的臨床情況是不充分的。護理AI生成了它被設計產生的記錄。這份記錄是否構成對此時此刻這位護理對象的充分監測，是護理AI無法回答的關於自身的問題。</p>
+
+        <p>在硬件-軟件邊界，採樣率通常固定在經過認證的韌體中。醫療設備針對特定配置進行監管認證。在不修改韌體的情況下提高採樣率可能不可行；修改韌體則會觸發重新認證。認定護理對象需要比設備預設更密切監測的護理提供者，無法即時重新設定已認證設備的採樣間隔。他們可以增加人工觀察頻次或更換設備，但監測率不是一個可以隨時調整的臨床參數。</p>
+
+        <p>這在臨床需求與技術能力之間造成了系統性差距。隨著護理對象病情變化——出院後、急性病期間、藥物調整後——適合其此前穩定狀態的採樣間隔，可能對其當前狀態並不充分。護理AI無法標記這種不充分性，因為它沒有關於自身相對於護理對象當前病情狀況的觀察局限性的模型。它以其被建構時的頻率進行監測，報告其發現的內容，無法報告其遺漏的內容。</p>
+
+        <p>後量子維度進一步加劇了問責問題。每次採樣都攜帶時間戳。時間戳是記錄的基礎：它確定每次讀數的時間、順序，以及記錄中的任何缺口是否代表實際經過的時間或設備異常。大多數嵌入式醫療設備從未經過密碼學認證的硬件時鐘生成時間戳。時間戳無法驗證為準確、未修改或與可信時間源同步。後量子轉型後，經典時間戳完整性機制將受到追溯性質疑。建立在未認證硬件時間戳之上的問責記錄在後續臨床或法律審查中無法可靠維護——而這正是當今部署的大多數護理監測基礎設施的現狀。</p>
+
+        <p>所需的變革在描述上很簡單，在執行上卻很困難。採樣間隔必須被視為受治理的臨床參數：記錄在護理計劃中，根據護理對象當前風險狀況進行論證，在每次護理計劃更新時以及護理對象病情出現實質性變化時進行審查。未明確監測率的護理計劃是不完整的。觀察缺口——感測器採樣頻率不足以滿足記錄風險狀況的時期——必須明確記錄，而不是被悄無聲息地省略。時間戳完整性必須在設備級別進行硬件認證，這一要求需要納入採購標準和認證框架，而不是在部署後進行追溯改造。</p>
+
+        <p>護理AI無法彌補其自身觀察窗口中的缺口。彌補這些缺口需要人類判斷：需要觀察什麼、以何種頻率，針對此時此刻這位特定護理對象及其病情狀況。當這種判斷沒有被編入護理計劃，它就沒有被做出。在兩次測量之間發生的事件的責任，落在製造這一缺口的架構上——以及允許硬件預設值替代臨床決策的治理框架上。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/predictive-labeling-problem.html">&larr; 預測性標籤問題</a>
+        <a href="/blog/">全部文章 &rarr;</a>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    (function () {
+      const btns = document.querySelectorAll('.lang-btn');
+      const sections = document.querySelectorAll('[data-lang-content]');
+      function activate(lang) {
+        sections.forEach(s => {
+          s.classList.toggle('active', s.dataset.langContent === lang);
+        });
+        btns.forEach(b => {
+          b.classList.toggle('active', b.dataset.lang === lang);
+        });
+        localStorage.setItem('al-lang', lang);
+      }
+      btns.forEach(b => b.addEventListener('click', () => activate(b.dataset.lang)));
+      activate(localStorage.getItem('al-lang') || 'en');
+    })();
+  </script>
+</body>
+</html>
