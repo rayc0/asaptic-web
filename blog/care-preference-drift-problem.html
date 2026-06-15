@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The care preference drift problem — Asaptic Labs</title>
+
+  <meta name="description" content="Care AI builds behavioral models of residents' preferences over years. When preferences change through cognitive decline or illness, the model lags — and there is no formal mechanism to override the model itself, only individual decisions. That gap is an accountability problem." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/care-preference-drift-problem" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The care preference drift problem" />
+  <meta property="og:description" content="Care AI builds behavioral models of residents' preferences over years. When preferences change through cognitive decline or illness, the model lags — and there is no formal mechanism to override the model itself, only individual decisions." />
+  <meta property="og:url" content="https://asaptic.com/blog/care-preference-drift-problem" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-15" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","headline":"The care preference drift problem","author":{"@type":"Organization","name":"Asaptic Labs"},"publisher":{"@type":"Organization","name":"Asaptic Labs","url":"https://asaptic.com"},"datePublished":"2026-06-15","description":"Care AI builds behavioral models of residents' preferences over years. When preferences change through cognitive decline or illness, the model lags — and there is no formal mechanism to override the model itself, only individual decisions. That gap is an accountability problem.","url":"https://asaptic.com/blog/care-preference-drift-problem.html"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://asaptic.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://asaptic.com/blog/"},{"@type":"ListItem","position":3,"name":"The care preference drift problem","item":"https://asaptic.com/blog/care-preference-drift-problem.html"}]}]}</script>
+
+  <style>
+    .essay-wrap { max-width: 680px; margin: 0 auto; padding: 120px 32px 96px; }
+    .essay-back { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: var(--gray); margin-bottom: 48px; transition: color 0.2s; }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; color: var(--cyan); display: block; margin-bottom: 14px; }
+    .essay-title { font-size: clamp(26px, 4vw, 40px); font-weight: 700; line-height: 1.15; margin-bottom: 24px; }
+    .essay-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+    .essay-byline, .essay-date { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gray-dim); }
+    .essay-body p { font-size: 17px; color: var(--gray); line-height: 1.85; margin-bottom: 24px; }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--border); }
+    .essay-summary-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: var(--accent); display: block; margin-bottom: 12px; }
+    .essay-summary p { font-size: 14px; color: var(--gray-dim); line-height: 1.75; margin-bottom: 12px; }
+    .essay-nav { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; font-size: 12px; color: var(--gray-dim); margin-top: 48px; }
+    @media (max-width: 768px) { .essay-wrap { padding: 100px 20px 72px; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× PHYSICAL-WORLD CARE · × HARDWARE · × POST-QUANTUM SECURITY</span>
+      <h1 class="essay-title">The care preference drift problem: accountability when the model of who a person is falls behind who they have become</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-06-15</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>A care AI accumulates a model of its resident over time. The person who wanted tea at seven, who found classical music calming during afternoon rest, who set an explicit instruction against calls from certain family members — all of this becomes operational knowledge. The agent learns what comfort looks like for this person. It calibrates escalation thresholds against this person's individual baseline. In long-running care relationships, the preference model becomes the AI's primary working picture of who the resident is.</p>
+
+        <p>Preferences change. Cognitive decline shifts what counts as soothing and what counts as overstimulation. Physical decline renegotiates the boundary between independence and assistance. A stroke can redirect a personality in ways that make the prior preference record actively misleading. The accumulated model the AI holds predates the change. It continues to act on preferences that no longer hold, for a person who is no longer quite the same person.</p>
+
+        <p>This is not the problem of a stale world model, where the AI acts on outdated facts about an external situation. It is a problem of a stale identity model, where the AI acts on an outdated understanding of the person it is serving. The distinction matters for accountability. When an AI acts on a wrong external fact, the error is traceable to the fact source and correctable by updating the record. When an AI acts on a wrong model of who a person is, there is no clear record to update — because the preference model is not a record. It is an inference baked into the agent's behavioral patterns, distributed across months of interaction history, and not represented anywhere in the accountability log as a discrete, revocable claim.</p>
+
+        <p>The override problem this creates is structurally different from the standard case. Standard overrides address decisions: the care team instructs the AI to take action Y instead of X, the override is logged, the chain of accountability is maintained. The preference drift problem generates overrides of a different kind: the care team notices that the AI's overall orientation toward the resident seems wrong — not any specific decision, but the general behavioral posture — and wants to instruct the AI to recalibrate. That instruction has no formal home. Care AI systems do not currently have a mechanism to receive, log, and attribute a model-level override. The care team can update individual care instructions; it cannot formally instruct the AI to update its picture of who the person is.</p>
+
+        <p>The accountability gap widens because care AI mediates the care team's access to the resident. When the AI interprets the resident's signals, prioritizes their care tasks, and determines when to escalate, it becomes the lens through which the care team sees the person. If the AI's model of the resident has drifted, the care team's view has drifted with it. The team loses independent calibration. It begins to evaluate the resident's needs through the AI's interpretation of those needs, and the feedback loop closes in a way that makes the drift invisible from inside the system.</p>
+
+        <p>This is precisely the condition in which the most serious care quality failures accumulate: not through dramatic single decisions, but through the gradual, unobserved misalignment between who the person has become and what the care system believes about them. The override log is clean because no individual override was needed. The accountability record is complete. The care was wrong in a way that left no trace.</p>
+
+        <p>The accountability architecture required here is specific. Preference models must be maintained as first-class auditable objects — not behavioral residue, but recorded claims about a person that carry revocability and attribution. Override logs must distinguish between decision-level overrides and model-level overrides, with both carrying the same formal standing: who instructed the recalibration, when, on what evidence, and what the prior model state was. Preference models must carry expiry signals — not hard expiry dates, but automated prompts for formal review at intervals appropriate to the rate of change expected for a person of this age, condition, and care trajectory.</p>
+
+        <p>None of this is technically complex. What it requires is that care AI procurement frameworks treat the preference model as a governed object rather than an implementation detail. The question of whether the AI's picture of the resident is currently correct is not a software question. It is a care quality question, and it needs the same formal oversight architecture as any other clinical record.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>护理AI会在长期照护关系中积累护理对象的偏好模型。当认知衰退或疾病改变了一个人的实际偏好时，AI的模型会滞后——而目前的护理AI系统没有正式机制来接收、记录和归因于"模型级"覆写，只能记录个别决策的覆写。护理团队无法正式指示AI重新校准其对护理对象的整体认知。这种差距是一个问责漏洞：偏好模型必须作为可审计对象来治理，与同意记录享有同等的法律地位与可撤销性。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>護理AI會在長期照護關係中積累護理對象的偏好模型。當認知衰退或疾病改變了一個人的實際偏好時，AI的模型會滯後——而目前的護理AI系統沒有正式機制來接收、記錄和歸因於「模型級」覆寫，只能記錄個別決策的覆寫。護理團隊無法正式指示AI重新校準其對護理對象的整體認知。這種差距是一個問責漏洞：偏好模型必須作為可稽核物件來治理，與知情同意記錄享有同等的法律地位與可撤銷性。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/embedded-constraint.html">&larr; The embedded constraint</a>
+        <a href="/blog/">All essays &rarr;</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 物理世界照护 · × 硬件 · × 后量子安全</span>
+      <h1 class="essay-title">护理偏好漂移问题：当AI对一个人的认知落后于其真实变化</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-15</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>护理AI在长期运行中会积累对护理对象的认知模型。那个习惯七点喝茶的人、午休时偏爱古典音乐的人、明确指示不接受某些家属来电的人——这一切都成为操作性知识。AI学会了这个人的舒适感是什么样的，根据这个人的个体基线校准升级阈值。在长期护理关系中，偏好模型成为AI对护理对象最主要的工作图像。</p>
+
+        <p>然而，偏好会改变。认知衰退会改变什么是安抚性的、什么是过度刺激的。身体衰退会重新划定独立与协助之间的边界。一次中风可能会以让先前偏好记录变得积极误导性的方式重塑一个人的性格。AI持有的积累模型早于这些变化形成，它继续按照那些已不再成立的偏好行事——为一个已经不完全是同一个人的护理对象服务。</p>
+
+        <p>这不是"世界模型过时"的问题——即AI依据关于外部情况的过时事实行动。这是"身份模型过时"的问题——AI依据对其服务对象的过时理解行动。这一区别对问责至关重要。当AI依据错误的外部事实行动时，错误可追溯到事实来源并通过更新记录来纠正。当AI依据对一个人的错误模型行动时，没有明确的记录可以更新——因为偏好模型不是记录，而是一种推断，烙印于代理的行为模式中，分布于数月的交互历史中，并没有在问责日志中以独立的、可撤销的声明形式呈现。</p>
+
+        <p>由此产生的覆写问题在结构上有别于标准情形。标准覆写针对的是决策：护理团队指示AI执行Y而非X，覆写被记录，问责链得以维护。偏好漂移问题产生的是另一种覆写：护理团队注意到AI对护理对象的整体取向似乎有误——不是某个具体决策，而是整体行为姿态——并希望指示AI重新校准。这个指令没有正式的归宿。护理AI系统目前没有机制来接收、记录和归因于"模型级"覆写。护理团队可以更新个别护理指令；但无法正式指示AI更新其对这个人的整体认知。</p>
+
+        <p>由于护理AI中介了护理团队对护理对象的认知渠道，问责缺口进一步扩大。当AI解读护理对象的信号、排列其护理任务优先级、决定何时升级时，它成为护理团队观察这个人的镜头。如果AI的护理对象模型已经漂移，护理团队的视角也随之漂移。团队失去了独立的校准基准，开始通过AI对护理对象需求的解读来评估其需求，反馈回路以使漂移从系统内部不可见的方式闭合。</p>
+
+        <p>这正是最严重的护理质量失误积累的条件：不是通过戏剧性的单一决策，而是通过护理对象已变成的样子与护理系统对其认知之间缓慢、无声的错位。覆写日志是干净的，因为没有需要个别覆写的情况。问责记录是完整的。但护理是错的，而且没有留下痕迹。</p>
+
+        <p>这里所需的问责架构是具体的：偏好模型必须作为一级可审计对象来维护——不是行为残留，而是具有可撤销性和归因的关于一个人的记录性声明；覆写日志必须区分决策级覆写和模型级覆写，两者具有同等的正式地位；偏好模型必须携带过期信号——不是硬性的过期日期，而是根据该人的年龄、状况和护理轨迹预期的变化速率，在适当间隔内进行正式审查的自动提示。</p>
+
+        <p>这在技术上并不复杂。所需要的是：护理AI采购框架将偏好模型作为受治理的对象，而非实施细节。AI对护理对象的认知当前是否准确，不是一个软件问题，而是一个护理质量问题——它需要与任何其他临床记录相同的正式监督架构。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/embedded-constraint.html">&larr; 嵌入式约束</a>
+        <a href="/blog/">全部文章 &rarr;</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 物理世界照護 · × 硬件 · × 後量子安全</span>
+      <h1 class="essay-title">護理偏好漂移問題：當AI對一個人的認知落後於其真實變化</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-15</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>護理AI在長期運行中會積累對護理對象的認知模型。那個習慣七點喝茶的人、午休時偏好古典音樂的人、明確指示不接受某些家屬來電的人——這一切都成為操作性知識。AI學會了這個人的舒適感是什麼樣的，根據這個人的個體基線校準升級閾值。在長期護理關係中，偏好模型成為AI對護理對象最主要的工作圖像。</p>
+
+        <p>然而，偏好會改變。認知衰退會改變什麼是安撫性的、什麼是過度刺激的。身體衰退會重新劃定獨立與協助之間的界線。一次中風可能會以讓先前偏好記錄變得積極誤導性的方式重塑一個人的性格。AI持有的積累模型早於這些變化形成，它繼續按照那些已不再成立的偏好行事——為一個已經不完全是同一個人的護理對象服務。</p>
+
+        <p>這不是「世界模型過時」的問題——即AI依據關於外部情況的過時事實行動。這是「身份模型過時」的問題——AI依據對其服務對象的過時理解行動。這一區別對問責至關重要。當AI依據錯誤的外部事實行動時，錯誤可追溯到事實來源並透過更新記錄來糾正。當AI依據對一個人的錯誤模型行動時，沒有明確的記錄可以更新——因為偏好模型不是記錄，而是一種推斷，烙印於代理的行為模式中，分佈於數月的互動歷史中，並沒有在問責日誌中以獨立的、可撤銷的聲明形式呈現。</p>
+
+        <p>由此產生的覆寫問題在結構上有別於標準情形。標準覆寫針對的是決策：護理團隊指示AI執行Y而非X，覆寫被記錄，問責鏈得以維護。偏好漂移問題產生的是另一種覆寫：護理團隊注意到AI對護理對象的整體取向似乎有誤——不是某個具體決策，而是整體行為姿態——並希望指示AI重新校準。這個指令沒有正式的歸宿。護理AI系統目前沒有機制來接收、記錄和歸因於「模型級」覆寫。護理團隊可以更新個別護理指令；但無法正式指示AI更新其對這個人的整體認知。</p>
+
+        <p>由於護理AI中介了護理團隊對護理對象的認知渠道，問責缺口進一步擴大。當AI解讀護理對象的訊號、排列其護理任務優先順序、決定何時升級時，它成為護理團隊觀察這個人的鏡頭。如果AI的護理對象模型已經漂移，護理團隊的視角也隨之漂移。團隊失去了獨立的校準基準，開始透過AI對護理對象需求的解讀來評估其需求，回饋迴路以使漂移從系統內部不可見的方式閉合。</p>
+
+        <p>這正是最嚴重的護理品質失誤積累的條件：不是透過戲劇性的單一決策，而是透過護理對象已變成的樣子與護理系統對其認知之間緩慢、無聲的錯位。覆寫日誌是乾淨的，因為沒有需要個別覆寫的情況。問責記錄是完整的。但護理是錯的，而且沒有留下痕跡。</p>
+
+        <p>這裡所需的問責架構是具體的：偏好模型必須作為一級可稽核物件來維護——不是行為殘留，而是具有可撤銷性和歸因的關於一個人的記錄性聲明；覆寫日誌必須區分決策級覆寫和模型級覆寫，兩者具有同等的正式地位；偏好模型必須攜帶過期訊號——不是硬性的過期日期，而是根據該人的年齡、狀況和護理軌跡預期的變化速率，在適當間隔內進行正式審查的自動提示。</p>
+
+        <p>這在技術上並不複雜。所需要的是：護理AI採購框架將偏好模型作為受治理的物件，而非實施細節。AI對護理對象的認知當前是否準確，不是一個軟體問題，而是一個護理品質問題——它需要與任何其他臨床記錄相同的正式監督架構。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/embedded-constraint.html">&larr; 嵌入式約束</a>
+        <a href="/blog/">全部文章 &rarr;</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
+    function applyLang(lang) {
+      document.querySelectorAll('.essay-lang').forEach(el => {
+        el.classList.toggle('active', el.dataset.langContent === lang);
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      localStorage.setItem('asaptic-lang', lang);
+    }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    applyLang(savedLang);
+  </script>
+</body>
+</html>
