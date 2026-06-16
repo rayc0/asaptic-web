@@ -1,3 +1,4 @@
+2026-06-16 16:00 UTC · blog: add essay 'The pre-processing gap' — accountability when care AI firmware discards raw signals before signing (EN+ZH+ZHT) · 017ff48
 2026-06-16 11:45 UTC · blog: add essay 'The forensic signature gap' — accountability when care AI records race a quantum clock (EN+ZH+ZHT, firewall clean); index catches up sampling-interval in ZH/ZHT · c16724f
 2026-06-15 20:15 UTC · blog: add essay 'The sampling interval problem' — accountability when care AI observes the world between measurements (EN+ZH+ZHT, firewall clean); ZH/ZHT index catches up predictive-labeling · 58ab670
 2026-06-15 20:00 UTC · blog: add essay 'The predictive labeling problem' — accountability when care AI risk scores outlive the evidence that generated them (EN+ZH+ZHT, firewall clean) · 9dfcfe8
