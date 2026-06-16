@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The pre-processing gap — Asaptic Labs</title>
+
+  <meta name="description" content="Care AI models do not receive raw physiological signals. They receive features extracted by firmware pre-processing pipelines that discard the original data. When a care AI errs, the evidence that would reveal why is gone — signed away at the wrong layer." />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/blog/preprocessing-gap" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The pre-processing gap: when care AI discards what it cannot sign" />
+  <meta property="og:description" content="Care AI models do not receive raw physiological signals. They receive features extracted by firmware pipelines that discard the original data. When a care AI errs, the evidence that would reveal why is gone — signed away at the wrong layer." />
+  <meta property="og:url" content="https://asaptic.com/blog/preprocessing-gap" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="article:published_time" content="2026-06-16" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","headline":"The pre-processing gap: when care AI discards what it cannot sign","author":{"@type":"Organization","name":"Asaptic Labs"},"publisher":{"@type":"Organization","name":"Asaptic Labs","url":"https://asaptic.com"},"datePublished":"2026-06-16","description":"Care AI models do not receive raw physiological signals. They receive features extracted by firmware pre-processing pipelines that discard the original data. When a care AI errs, the evidence that would reveal why is gone — signed away at the wrong layer.","url":"https://asaptic.com/blog/preprocessing-gap.html","mainEntityOfPage":"https://asaptic.com/blog/preprocessing-gap.html","inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://asaptic.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://asaptic.com/blog/"},{"@type":"ListItem","position":3,"name":"The pre-processing gap","item":"https://asaptic.com/blog/preprocessing-gap.html"}]}]}</script>
+
+  <style>
+    .essay-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 120px 32px 96px;
+    }
+    .essay-back {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .essay-back:hover { color: var(--accent); }
+    .essay-topic {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 14px;
+    }
+    .essay-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .essay-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .essay-byline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-dim);
+    }
+    .essay-body p {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .essay-body p:last-child { margin-bottom: 0; }
+    .essay-summary {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .essay-summary-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .essay-summary p {
+      font-size: 14px;
+      color: var(--gray-dim);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    .essay-nav {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .essay-nav a { transition: opacity 0.2s; }
+    .essay-nav a:hover { opacity: 0.7; }
+    .essay-lang { display: none; }
+    .essay-lang.active { display: block; }
+    .essay-footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-dim);
+      margin-top: 48px;
+    }
+    @media (max-width: 768px) {
+      .essay-wrap { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <div class="nav-links">
+        <a href="/blog/">Blog</a>
+        <a href="/engage.html">Engage</a>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="zh">简</button>
+        <button class="lang-btn" data-lang="zht">繁</button>
+        <a class="lang-btn" href="/pt/blog/">PT</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="essay-wrap">
+    <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
+
+    <!-- ─── English ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="en">
+      <span class="essay-topic">× HARDWARE · × PHYSICAL-WORLD CARE · × POST-QUANTUM SECURITY</span>
+      <h1 class="essay-title">The pre-processing gap: when care AI discards what it cannot sign</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">By Asaptic Labs</span>
+        <span class="essay-date">2026-06-16</span>
+        <span class="essay-date">5 min read</span>
+      </div>
+      <div class="essay-body">
+        <p>A care AI model does not receive a heartbeat. It receives a number — a heart rate value computed from a raw photoplethysmography waveform that was collected by a wearable sensor, transmitted to a gateway device, cleaned of motion artifacts by a noise-rejection filter, smoothed with a moving average algorithm, and finally converted from a waveform into a scalar before being handed to the inference layer. At every step in that pipeline, information was discarded. The raw waveform — the actual physical signal — is, in almost all commercial deployments, gone by the time the care AI makes its decision.</p>
+
+        <p>This is not an oversight. It is an engineering choice that makes good sense under most circumstances. Raw physiological waveforms are large. Real-time transmission of unfiltered waveform data from many residents through a care network would impose bandwidth and storage costs that most deployments cannot justify. Pre-processing filters reduce noise, remove artifacts caused by movement or poor sensor contact, and extract the features that models were trained on. The pre-processed feature is also what the model expects: it was trained on pre-processed inputs, evaluated on pre-processed inputs, and certified — where certification exists — on pre-processed inputs. Running the model on raw signals would produce different, likely worse, results.</p>
+
+        <p>The accountability problem is structural. When a care AI generates a decision — an alert, a recommendation, a risk score — what gets logged and signed is the model's output, sometimes alongside the input features the model received. Rarely is the raw signal logged. Even more rarely is it signed. The chain of custody that matters for forensic accountability runs from the sensor to the care decision, but the legal audit infrastructure typically begins at the pre-processed feature. Everything before that point is architectural folklore: the system worked a certain way because that is how it was designed, but no signed record substantiates the design's faithful execution at any specific moment.</p>
+
+        <p>Consider what is lost. A raw PPG waveform contains information that a scalar heart rate does not: the shape of individual pulse peaks, which can indicate sensor contact quality; waveform irregularities that survive artifact rejection but reveal abnormal rhythm patterns; the noise profile itself, which can distinguish poor sensor placement from genuine physiological signal. A care AI that alerts on an elevated heart rate may be responding to a genuine clinical condition, or to a sensor that has shifted position, or to an artifact pattern that the filter partially but not fully rejected. The scalar input that drove the decision cannot distinguish between these cases. The raw waveform could.</p>
+
+        <p>The hardware dimension compounds this. Pre-processing pipelines live in firmware — typically in the sensor gateway device or the wearable itself — at a layer below the AI model and often below the operating system that manages the model's runtime. Firmware pre-processing code may have different certification requirements, different audit regimes, and different update cycles than the AI model it feeds. A firmware update to the pre-processing pipeline can change which features the model receives without touching the model or triggering any AI-specific regulatory review. If the pre-processing algorithm silently changes how it handles a particular artifact class, every care decision downstream is affected. There is typically no audit log for this change at the feature level: the model's output log records what the model did with what it received, but contains no trace of the pipeline change that altered what it received.</p>
+
+        <p>The post-quantum dimension is less obvious but structurally important. Care records signed with cryptographic keys authenticate the content of the log at the moment of signing. The forensic value of that signature depends entirely on what was included in the signed record. If the signed record contains only post-processed features and model outputs, then even a perfectly authenticated record cannot support reconstruction of the physiological state that preceded the care decision. The signature is genuine, but it authenticates the shadow, not the thing that cast it. Post-quantum signature standards — which the field is migrating toward now — will make those signatures harder to forge but will not change what they protect. Signing a degraded record with a quantum-resistant algorithm still produces a quantum-resistant attestation of a degraded record.</p>
+
+        <p>The gap this creates is most consequential in adverse event investigations. When a care AI fails to alert on a deteriorating resident, or generates a false alert that delays or misdirects care, investigators need to understand what the model saw and why. The post-processed feature that was logged tells them the input; it does not tell them whether that input faithfully represented the patient. A heart rate of 72 bpm, cleanly logged and signed, may have been derived from a reliable signal or from an artifact-dominated waveform that the filter partially cleaned. These scenarios have different accountability implications — one implicates the model's inference, the other implicates the sensor infrastructure — but the log, however well authenticated, cannot tell them apart.</p>
+
+        <p>The fix is not to log all raw data everywhere. That is the wrong framing. The question is where the signing boundary should be, and what claims a signed care record is actually making. A care record that signs only post-processed features is making an implicit claim: that the pre-processing pipeline operated correctly and that the feature reflects the physiological state. That claim is load-bearing for accountability purposes, and it is currently unverified. The alternative is to extend the signing boundary upstream — to sign raw signal snapshots, or pre-processing provenance metadata, or algorithm version hashes alongside the features — so that what gets authenticated is not just the model's inference but the integrity of the pipeline that prepared its inputs.</p>
+
+        <p>This is an architectural decision, not a configuration parameter. It requires pre-processing firmware and AI model infrastructure to share a logging and signing surface — a co-design requirement that most current care AI deployments do not meet. Addressing it before the accountability gap becomes an adversarial target, rather than after an investigation exposes it, is the same logic that motivates the move to post-quantum signatures: the cost of getting the architecture right is much lower than the cost of discovering it was wrong at the moment you most needed it to be right.</p>
+      </div>
+
+      <div class="essay-summary">
+        <span class="essay-summary-label">摘要 — 简体</span>
+        <p>护理AI模型不接收原始生理信号，而是接收经固件预处理管道——噪声过滤、伪影剔除、特征提取——处理后的特征值。原始信号通常在推理前被丢弃且不被签名。这意味着经签名认证的护理记录仅能证明模型对预处理特征的响应，而无法证明该特征是否忠实反映了患者的生理状态。在不良事件调查中，这一区别至关重要：相同的经签名心率值可能来自可靠的信号，也可能来自伪影主导的波形。固件预处理管道可以在不触发AI特定监管审查的情况下静默更新。签名边界需向上游延伸——涵盖原始信号快照或预处理溯源元数据——以使认证涵盖整个推理管道的完整性，而不仅仅是其输出。</p>
+        <span class="essay-summary-label">摘要 — 繁體</span>
+        <p>護理AI模型不接收原始生理信號，而是接收經韌體預處理管道——噪聲過濾、偽影剔除、特徵提取——處理後的特徵值。原始信號通常在推理前被丟棄且不被簽名。這意味著經簽名認證的護理記錄僅能證明模型對預處理特徵的響應，而無法證明該特徵是否忠實反映了患者的生理狀態。在不良事件調查中，這一區別至關重要：相同的經簽名心率值可能來自可靠的信號，也可能來自偽影主導的波形。韌體預處理管道可以在不觸發AI特定監管審查的情況下靜默更新。簽名邊界需向上游延伸——涵蓋原始信號快照或預處理溯源元數據——以使認證涵蓋整個推理管道的完整性，而不僅僅是其輸出。</p>
+      </div>
+
+      <div class="essay-nav">
+        <a href="/blog/forensic-signature-gap.html">&larr; The forensic signature gap</a>
+        <a href="/blog/">All essays &rarr;</a>
+      </div>
+    </div>
+
+    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zh">
+      <span class="essay-topic">× 硬件 · × 物理世界照护 · × 后量子安全</span>
+      <h1 class="essay-title">预处理缺口：护理AI丢弃了它无法签名的东西</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-16</span>
+        <span class="essay-date">5 分钟阅读</span>
+      </div>
+      <div class="essay-body">
+        <p>护理AI模型接收的不是心跳，而是一个数值——一个由原始光电容积描记波形计算得出的心率值。这一波形由可穿戴传感器采集，传输至网关设备，经运动伪影噪声消除滤波器清洗，经滑动平均算法平滑处理，最终从波形转化为标量，才被交付给推理层。在这一管道的每个步骤中，信息都在被丢弃。而原始波形——真实的物理信号——在护理AI做出决策时，在几乎所有商业部署中早已不复存在。</p>
+
+        <p>这不是疏漏，而是工程选择。原始生理波形体积庞大；从众多住院患者的可穿戴设备实时传输未经过滤的波形数据，会带来大多数部署无法承担的带宽和存储成本。预处理过滤器负责降噪、消除运动或传感器接触不良引起的伪影，并提取模型所训练的特征。预处理后的特征也正是模型所期望的输入：它在预处理输入上接受训练、评估，并在存在认证的情况下通过认证。</p>
+
+        <p>问责问题在结构上根深蒂固。当护理AI生成决策——警报、建议或风险评分——被记录和签名的是模型输出，有时还包括模型接收到的输入特征。原始信号极少被记录，被签名的更是凤毛麟角。对取证问责而言至关重要的监管链从传感器延伸至护理决策，但法律审计基础设施通常始于预处理特征。此前的一切都是架构层面的口口相传：系统之所以如此运作，是因为它如此设计，但没有任何经签名的记录证实该设计在任何特定时刻的忠实执行。</p>
+
+        <p>试想失去的是什么。原始PPG波形包含标量心率所不具备的信息：单个脉搏峰值的形状（可指示传感器接触质量）、经过伪影剔除后依然存在的波形不规则性（揭示异常心律模式），以及噪声特征本身（可区分传感器放置不当与真实生理信号）。驱动决策的标量输入无法区分这些情形，而原始波形可以。</p>
+
+        <p>硬件维度进一步加剧了这一问题。预处理管道存在于固件层——通常位于传感器网关设备或可穿戴设备本身——处于AI模型之下，往往也处于管理模型运行时的操作系统之下。固件预处理代码可能具有不同的认证要求、不同的审计机制和不同的更新周期。对预处理管道的固件更新可以在不触碰模型的情况下改变模型所接收的特征，且不触发任何AI特定的监管审查。</p>
+
+        <p>后量子维度不那么直观，但在结构上同样重要。以加密密钥签名的护理记录在签名时认证了日志内容。若签名记录仅包含预处理特征和模型输出，则即便是经过完美认证的记录，也无法支持对护理决策之前生理状态的重建。签名是真实的，但它认证的是影子，而非投下影子的本体。向后量子签名标准的迁移将使签名更难伪造，但无法改变签名所保护的内容。</p>
+
+        <p>修复之道不在于随处记录所有原始数据。问题的关键在于：签名边界应在哪里划定，以及经签名的护理记录实际声明了什么。一份仅对预处理特征签名的护理记录隐含着一项声明：预处理管道正确运行，且特征反映了生理状态。这一声明在问责层面具有决定性作用，但目前尚未经过验证。替代方案是将签名边界向上游延伸——对原始信号快照、预处理溯源元数据或算法版本哈希值与特征一并签名——使认证不仅涵盖模型的推理，还涵盖准备其输入的管道的完整性。这是一项架构决策，而非配置参数。它需要预处理固件与AI模型基础设施共享日志与签名界面——这是大多数当前护理AI部署尚未满足的协同设计要求。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/forensic-signature-gap.html">&larr; 法证签名缺口</a>
+        <a href="/blog/">全部文章 &rarr;</a>
+      </div>
+    </div>
+
+    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
+    <div class="essay-lang" data-lang-content="zht">
+      <span class="essay-topic">× 硬件 · × 物理世界照護 · × 後量子安全</span>
+      <h1 class="essay-title">預處理缺口：護理AI丟棄了它無法簽名的東西</h1>
+      <div class="essay-meta">
+        <span class="essay-byline">作者：Asaptic Labs</span>
+        <span class="essay-date">2026-06-16</span>
+        <span class="essay-date">5 分鐘閱讀</span>
+      </div>
+      <div class="essay-body">
+        <p>護理AI模型接收的不是心跳，而是一個數值——一個由原始光電容積描記波形計算得出的心率值。這一波形由可穿戴傳感器採集，傳輸至閘道設備，經運動偽影噪聲消除濾波器清洗，經滑動平均算法平滑處理，最終從波形轉化為標量，才被交付給推理層。在這一管道的每個步驟中，信息都在被丟棄。而原始波形——真實的物理信號——在護理AI做出決策時，在幾乎所有商業部署中早已不復存在。</p>
+
+        <p>這不是疏漏，而是工程選擇。原始生理波形體積龐大；從眾多住院患者的可穿戴設備即時傳輸未經過濾的波形數據，會帶來大多數部署無法承擔的帶寬和存儲成本。預處理濾波器負責降噪、消除運動或傳感器接觸不良引起的偽影，並提取模型所訓練的特徵。預處理後的特徵也正是模型所期望的輸入：它在預處理輸入上接受訓練、評估，並在存在認證的情況下通過認證。</p>
+
+        <p>問責問題在結構上根深蒂固。當護理AI生成決策——警報、建議或風險評分——被記錄和簽名的是模型輸出，有時還包括模型接收到的輸入特徵。原始信號極少被記錄，被簽名的更是鳳毛麟角。對取證問責而言至關重要的監管鏈從傳感器延伸至護理決策，但法律審計基礎設施通常始於預處理特徵。此前的一切都是架構層面的口口相傳：系統之所以如此運作，是因為它如此設計，但沒有任何經簽名的記錄證實該設計在任何特定時刻的忠實執行。</p>
+
+        <p>試想失去的是什麼。原始PPG波形包含標量心率所不具備的信息：單個脈搏峰值的形狀（可指示傳感器接觸質量）、經過偽影剔除後依然存在的波形不規則性（揭示異常心律模式），以及噪聲特徵本身（可區分傳感器放置不當與真實生理信號）。驅動決策的標量輸入無法區分這些情形，而原始波形可以。</p>
+
+        <p>硬件維度進一步加劇了這一問題。預處理管道存在於韌體層——通常位於傳感器閘道設備或可穿戴設備本身——處於AI模型之下，往往也處於管理模型運行時的作業系統之下。韌體預處理代碼可能具有不同的認證要求、不同的審計機制和不同的更新週期。對預處理管道的韌體更新可以在不觸碰模型的情況下改變模型所接收的特徵，且不觸發任何AI特定的監管審查。</p>
+
+        <p>後量子維度不那麼直觀，但在結構上同樣重要。以加密密鑰簽名的護理記錄在簽名時認證了日誌內容。若簽名記錄僅包含預處理特徵和模型輸出，則即便是經過完美認證的記錄，也無法支持對護理決策之前生理狀態的重建。簽名是真實的，但它認證的是影子，而非投下影子的本體。向後量子簽名標準的遷移將使簽名更難偽造，但無法改變簽名所保護的內容。</p>
+
+        <p>修復之道不在於隨處記錄所有原始數據。問題的關鍵在於：簽名邊界應在哪裡劃定，以及經簽名的護理記錄實際聲明了什麼。一份僅對預處理特徵簽名的護理記錄隱含著一項聲明：預處理管道正確運行，且特徵反映了生理狀態。這一聲明在問責層面具有決定性作用，但目前尚未經過驗證。替代方案是將簽名邊界向上游延伸——對原始信號快照、預處理溯源元數據或算法版本雜湊值與特徵一併簽名——使認證不僅涵蓋模型的推理，還涵蓋準備其輸入的管道的完整性。這是一項架構決策，而非配置參數。它需要預處理韌體與AI模型基礎設施共享日誌與簽名界面——這是大多數當前護理AI部署尚未滿足的協同設計要求。</p>
+      </div>
+      <div class="essay-nav">
+        <a href="/blog/forensic-signature-gap.html">&larr; 法證簽名缺口</a>
+        <a href="/blog/">全部文章 &rarr;</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="essay-footer">
+    <a href="/">Asaptic Labs</a> &nbsp;·&nbsp;
+    <a href="/blog/">Blog</a> &nbsp;·&nbsp;
+    <a href="/engage.html">Engage</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    (function () {
+      const btns = document.querySelectorAll('.lang-btn');
+      const sections = document.querySelectorAll('[data-lang-content]');
+      function activate(lang) {
+        sections.forEach(s => {
+          s.classList.toggle('active', s.dataset.langContent === lang);
+        });
+        btns.forEach(b => {
+          b.classList.toggle('active', b.dataset.lang === lang);
+        });
+        localStorage.setItem('al-lang', lang);
+      }
+      btns.forEach(b => b.addEventListener('click', () => activate(b.dataset.lang)));
+      activate(localStorage.getItem('al-lang') || 'en');
+    })();
+  </script>
+</body>
+</html>
