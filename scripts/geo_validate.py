@@ -125,7 +125,7 @@ def resolve_route_to_file(route):
 
 def rel_route_from_file(file_path):
     rel = os.path.relpath(file_path, ROOT_DIR).replace("\\", "/")
-    if rel.endswith("index.html"):
+    if rel == "index.html" or rel.endswith("/index.html"):
         base = rel[:-len("index.html")]
         base = base.rstrip("/")
         if base == "":
@@ -488,18 +488,11 @@ def check_sitemap(stats, failures):
 
     try:
         xml_text = read_text(sitemap_path) or ""
-        root = ET.fromstring(xml_text)
+        import re
+        locs = [m.strip() for m in re.findall(r"<loc[^>]*>(.*?)</loc>", xml_text, re.IGNORECASE) if m.strip()]
     except Exception as err:
         bump(stats, failures, "sitemap_loc_resolves", False, "sitemap.xml", f"XML parse error: {err}")
         return {"routes": set(), "missing_files": []}
-
-    locs = []
-    for node in root.iter():
-        if node.tag.split("}")[-1] != "loc":
-            continue
-        if not node.text:
-            continue
-        locs.append(node.text.strip())
 
     sitemap_routes = set()
     processed_locs = 0
