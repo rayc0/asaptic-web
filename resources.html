@@ -285,6 +285,15 @@
       return 'en';
     }
     function applyLang(lang) {
+      if (lang === 'pt') {
+        if (!window.location.pathname.startsWith('/pt/')) window.location.href = '/pt/index.html';
+        return;
+      }
+      if (window.location.pathname.startsWith('/pt/')) {
+        localStorage.setItem('asaptic-lang', lang);
+        window.location.href = '/';
+        return;
+      }
       if (!CONTENT[lang]) lang = 'en';
       document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
