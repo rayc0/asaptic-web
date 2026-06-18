@@ -6,7 +6,7 @@ with open(filepath, "r") as f:
 
 en_add = """
     src_title: "China Deep-Tech & Certified Components Sourcing",
-    src_sub: "Factory-direct supply from verified Chinese manufacturers to Western B2B principals. Full compliance documentation and officially utilized by the All-China Federation of Industry and Commerce (ACFIC). Backed by our cross-standard database spanning 854 compliance comparisons across 169 destination markets. Deposit-secured production slots. Six active sourcing lanes — from clinical devices to energy storage to Physical-AI components.",
+    src_sub: "Factory-direct supply from verified Chinese manufacturers to Western B2B principals. Full compliance documentation. Backed by our cross-standard database spanning 854 compliance comparisons across 169 destination markets. Deposit-secured production slots. Six active sourcing lanes — from clinical devices to energy storage to Physical-AI components.",
     src_tag1: "Health Canada · TGA Certified",
     src_h1: "Clinical Devices",
     src_p1: "Bioimpedance and body-composition analyzers for hospital and aged-care procurement in Canada and Australia. MDALL + ARTG factory verification. 5-step certified sourcing process.",
@@ -37,7 +37,7 @@ en_add = """
 
 zh_add = """
     src_title: "中国硬科技与认证部件采购",
-    src_sub: "从经过验证的中国制造商直接供应给西方B2B买家。全套合规文件，获中华全国工商业联合会 (ACFIC) 官方采用。由涵盖169个目的市场、854项合规比对的跨标准数据库提供支持。定金锁定产能。六大活跃采购通道——涵盖临床设备、储能系统及物理人工智能 (Physical-AI) 部件。",
+    src_sub: "从经过验证的中国制造商直接供应给西方B2B买家。全套合规文件。由涵盖169个目的市场、854项合规比对的跨标准数据库提供支持。定金锁定产能。六大活跃采购通道——涵盖临床设备、储能系统及物理人工智能 (Physical-AI) 部件。",
     src_tag1: "加拿大卫生部 · TGA认证",
     src_h1: "临床医疗设备",
     src_p1: "专为加拿大和澳大利亚医院及养老机构采购的生物电阻抗及人体成分分析仪。工厂已获MDALL + ARTG验证。独创5步认证采购流程。",
@@ -68,7 +68,7 @@ zh_add = """
 
 zht_add = """
     src_title: "中國硬科技與認證部件採購",
-    src_sub: "從經過驗證的中國製造商直接供應給西方B2B買家。全套合規文件，獲中華全國工商業聯合會 (ACFIC) 官方採用。由涵蓋169個目的市場、854項合規比對的跨標準數據庫提供支持。定金鎖定產能。六大活躍採購通道——涵蓋臨床設備、儲能系統及物理人工智慧 (Physical-AI) 部件。",
+    src_sub: "從經過驗證的中國製造商直接供應給西方B2B買家。全套合規文件。由涵蓋169個目的市場、854項合規比對的跨標準數據庫提供支持。定金鎖定產能。六大活躍採購通道——涵蓋臨床設備、儲能系統及物理人工智慧 (Physical-AI) 部件。",
     src_tag1: "加拿大衛生部 · TGA認證",
     src_h1: "臨床醫療設備",
     src_p1: "專為加拿大和澳大利亞醫院及養老機構採購的生物電阻抗及人體成分分析儀。工廠已獲MDALL + ARTG驗證。獨創5步認證採購流程。",
