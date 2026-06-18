@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# ============================================================================
+# CROSS-STANDARD LOCK — installed 2026-06-19 at Raymond's instruction.
+# The public-interest "Cross-Standard" charity pages must NOT be changed by
+# other projects / automated build waves without Raymond's explicit approval.
+# See CROSS_STANDARD_LOCK.md in the repo root.
+# Override (only after Raymond approves):  ALLOW_CROSS_STANDARD_EDIT=1 git commit ...
+# ============================================================================
+locked_re='^(standard/|zh/standard/|zht/standard/|pt/standard/)'
+staged=$(git diff --cached --name-only --diff-filter=ACMRD)
+hits=$(printf '%s\n' "$staged" | grep -E "$locked_re")
+
+if [ -n "$hits" ]; then
+  if [ "$ALLOW_CROSS_STANDARD_EDIT" = "1" ]; then
+    echo "⚠️  Cross-Standard lock OVERRIDDEN (ALLOW_CROSS_STANDARD_EDIT=1) — assuming Raymond approved these changes."
+    exit 0
+  fi
+  echo "🔒 ============================================================" >&2
+  echo "🔒  CROSS-STANDARD PAGES ARE LOCKED  (public-interest / 公益)"   >&2
+  echo "🔒  Commit BLOCKED."                                            >&2
+  echo "🔒"                                                             >&2
+  echo "🔒  These pages must not be modified by other projects or"      >&2
+  echo "🔒  automated waves. The following staged files are locked:"    >&2
+  printf '%s\n' "$hits" | sed 's/^/🔒    - /'                           >&2
+  echo "🔒"                                                             >&2
+  echo "🔒  REQUIRED BEFORE ANY CHANGE:"                                >&2
+  echo "🔒  Send Raymond a warning describing EXACTLY what you want to"  >&2
+  echo "🔒  change and why, and get his explicit approval FIRST."        >&2
+  echo "🔒  Channel: email raymond.thu@gmail.com (or a Bitable 🎫 ticket)." >&2
+  echo "🔒"                                                             >&2
+  echo "🔒  Only after he approves, re-run with the override:"          >&2
+  echo "🔒    ALLOW_CROSS_STANDARD_EDIT=1 git commit ..."               >&2
+  echo "🔒 ============================================================" >&2
+  exit 1
+fi
+exit 0
