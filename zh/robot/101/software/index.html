@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>机器人软件栈详解 — ROS 2、Nav2、MoveIt 2 | 机器人 101 | Asaptic</title>
+
+  <meta name="description" content="为什么 ROS 2 成为机器人行业默认中间件、运行它的计算分层、Nav2 导航栈、MoveIt 2 操作栈，以及 CAN FD 与 EtherCAT 网络。" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/robot/101/software/" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/robot/101/software/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/101/software/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/101/software/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="机器人软件栈详解 — ROS 2、Nav2、MoveIt 2" />
+  <meta property="og:description" content="中间件、计算分层、导航、操作与网络——机器人软件如何把感知变成动作。" />
+  <meta property="og:url" content="https://asaptic.com/zh/robot/101/software/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="机器人软件栈详解 — ROS 2、Nav2、MoveIt 2" />
+  <meta name="twitter:description" content="ROS 2、Nav2、MoveIt 2 与现场总线网络如何把感知变成动作。" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "机器人零部件", "item": "https://asaptic.com/zh/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "机器人 101：软件栈", "item": "https://asaptic.com/zh/robot/101/software/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "机器人软件栈：从中间件到运动",
+    "description": "为什么 ROS 2 成为机器人行业默认中间件、运行它的计算分层、Nav2 导航栈、MoveIt 2 操作栈，以及 CAN FD 与 EtherCAT 网络。",
+    "inLanguage": "zh-Hans",
+    "url": "https://asaptic.com/zh/robot/101/software/",
+    "isPartOf": { "@type": "WebPage", "name": "机器人 101", "url": "https://asaptic.com/zh/robot/#robot-101" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "机器人为什么用 ROS 2 而不是自研软件？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ROS 2 是中间件而非操作系统——它运行在 Linux 之上，提供发布-订阅通信、服务调用和软件包生态。截至2026年，在开源与主流商业机器人生态中，几乎每家传感器厂商、机器人厂商和主流库（Nav2、MoveIt 2、仿真环境）都支持 ROS 2，脱离它意味着独自重建这整套集成层。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Nav2 和 MoveIt 2 有什么区别？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nav2 负责让整台机器人底盘在建筑物内移动，依靠代价图、全局/局部规划器和恢复行为；MoveIt 2 负责让机械臂末端到达指定位姿或沿路径运动，依靠逆运动学、基于采样的运动规划和碰撞检测。一台移动操作机器人通常两者同时运行。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "机器人为什么用 CAN FD 或 EtherCAT，而不是只用 Wi-Fi？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "关节级控制需要消费级无线网络无法保证的确定性、低抖动时序。CAN FD（最高 8 Mbit/s，64 字节帧）或 EtherCAT（亚100微秒周期）通过有线现场总线传输电机指令；Wi-Fi 或 5G 则专用于机器人到建筑网络与云端的上行连接，不承担内部控制回路。"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/zh/sourcing" class="nav-logo">ASAPTIC</a>
+    </div>
+  </nav>
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/zh/robot/" style="color:inherit;text-decoration:none;">Asaptic 机器人手册</a></span>
+        <nav class="rb-langs" aria-label="语言">
+          <a href="/robot/101/software/">EN</a>
+          <span class="rb-lang-sep">&middot;</span>
+          <a href="/zh/robot/101/software/" aria-current="page">简</a>
+        </nav>
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">机器人 101 · 第 05 章</p>
+      <h1 class="rb-title">机器人软件栈：从中间件到运动</h1>
+
+      <section class="rb-answer" aria-label="摘要">
+        <p><strong>一段话说清：</strong>硬件和 AI 之间，还有一层软件把传感器数据变成协调一致的动作。
+        截至2026年，在开源与主流商业机器人生态中，几乎所有团队都把这一层建立在 ROS 2 之上——它是一套中间件，让每个传感器
+        和每个规划库都能说同一种“语言”。运行它的是一套异构计算栈：一块微控制器负责硬实时控制，
+        一块带 GPU 的板子负责感知与规划，云端负责训练与机群管理。Nav2 负责让底盘在建筑物内移动；
+        MoveIt 2 负责让机械臂到达指定位姿；一条有线现场总线——CAN FD 或 EtherCAT——承载它们之间
+        对时序要求苛刻的指令，无线网络则留给一切非安全关键的通信。</p>
+      </section>
+
+      <h2 class="rb-h2">ROS 2 为何成为行业默认</h2>
+      <p>ROS 2（机器人操作系统2）在传统意义上并非操作系统——它是运行在 Linux 之上的中间件与工具链，
+      截至2026年通常以 Humble、Jazzy 等长期支持版本发布。它提供发布-订阅消息层（话题）、请求-响应层
+      （服务）、长时间运行任务层（动作），以及包构建与启动系统。今天它之所以几乎是机器人团队不可绕开
+      的选择，原因很简单：全球开发者生态都建立在它之上。传感器厂商提供 ROS 2 驱动，拥有开放 SDK 的
+      机器人厂商发布 ROS 2 接口，主流的导航、操作和仿真库也都原生支持 ROS 2。在这套生态之外编写
+      机器人软件栈，意味着独自重建成千上万工程师已经在免费维护的这层集成代码。</p>
+      <p>ROS 2 相对 ROS 1 的架构性进步，是用 DDS（数据分发服务）作为传输层，取代了单一集中式“主
+      节点”，实现无单点故障的容错点对点通信。在此之上是具备实时能力的执行机制、生命周期管理节点
+      （通过配置→激活→停用→关闭的受控流程实现安全启动），以及按话题设置的服务质量策略——在可靠性、
+      消息持久性与投递时限之间做权衡。在各 DDS 实现中，CycloneDDS 在控制回路那种“小而频繁”的消息上，
+      常被报告延迟低于默认的 FastDDS——两者之间切换通常只需改一行环境变量。</p>
+
+      <h2 class="rb-h2">计算架构：三层分工，而非一块板子包打天下</h2>
+      <p>机器人的计算必须同时满足三个约束，而没有哪块单一芯片能同时把三者都做好：硬实时确定性
+      （控制回路必须以固定周期运行、抖动在亚毫秒级）、AI 推理吞吐（用数十亿参数的视觉语言模型做
+      场景理解需要 GPU 或 NPU 加速），以及电池供电平台上有限的功耗预算。常见的答案是一套异构的
+      三层计算栈。</p>
+      <ul>
+        <li><strong>第一层——实时控制（MCU）：</strong>例如 ARM Cortex-M 系列微控制器，运行裸机
+        固件或 RTOS，负责电机电流控制、中断驱动的传感器读取和紧急停止逻辑——这一层绝不能错过
+        截止时间。</li>
+        <li><strong>第二层——主机器人计算机（SBC/SOM）：</strong>一块带 GPU 或 NPU 的板子（截至2026年，
+        Jetson 系列是常见例子之一），运行 Linux 与 ROS 2、完整的导航与操作栈，以及感知管线。</li>
+        <li><strong>第三层——云端/离板：</strong>用于模型训练、全机群遥测与 OTA 更新编排，以及用于
+        合成数据生成的仿真。设计良好的机器人应仅凭第一层和第二层就能完整运行——云连接是增强而非
+        依赖，因为室内网络的可用性并不总能保证。</li>
+      </ul>
+
+      <h2 class="rb-h2">导航栈：Nav2</h2>
+      <p>Nav2 是标准的 ROS 2 导航框架，负责让移动底盘在建筑物内移动。一个行为树执行器协调一组插件：
+      全局规划器（在整张已知地图上计算路径）、局部规划器（在接下来几米范围内做反应式避障）、代价图
+      （由预建静态地图层、机载传感器实时障碍物层，以及保持机身与墙面/家具留有间隙的膨胀层叠加而成），
+      以及一组恢复行为——原地旋转、后退，或清除代价图——在规划器找不到路径时触发。</p>
+      <p>为室内服务环境调优 Nav2，主要功夫花在代价图和恢复行为上。使用预建静态地图可以避免实时
+      建图带来的计算开销，也避免把一个被误判的移动物体永久固化成"幽灵障碍物"的风险。实时障碍物层
+      设置较短的衰减时间，能让某人在走廊短暂停留而不会造成长期阻塞。膨胀半径按空间调整：宽走廊
+      放宽，机器人必须近距离通过的门道则收紧。恢复序列的选择也要看场景——"原地旋转"这种在仓库里
+      无伤大雅的恢复动作，在有人的场所可能会让人受惊，因此许多室内服务场景的调优会优先选择"等待、
+      再重新规划"作为默认的第一步。</p>
+
+      <h2 class="rb-h2">操作栈：MoveIt 2</h2>
+      <p>MoveIt 2 是标准的 ROS 2 机械臂操作框架。它从 URDF 描述加载机器人的运动学模型（连杆质量、
+      关节限位、碰撞几何体），通过逆运动学把目标末端执行器位姿换算成关节角度，用基于采样的规划器
+      规划无碰撞运动，并检查候选轨迹是否与环境中的物体相交。</p>
+      <p>对于日常操作任务——摆放物体、递交物品、操作门把手——笛卡尔规划（直接在空间中指定末端
+      执行器的路径，而不只是终点）往往优于自由式的目标位姿规划：产生的运动对旁边的人来说更可预测，
+      更容易验证与已知位置物体的间隙，也更容易用任务语言来描述。真实的室内空间里有椅子、推车和行动
+      不可预测的人——不像被围栏隔开的工厂单元——因此规划场景需要从感知管线近实时更新，把深度相机
+      数据转换成规划器可以据以反应的碰撞对象，每秒更新若干次。</p>
+
+      <h2 class="rb-h2">网络：CAN FD、EtherCAT 与保持更新</h2>
+      <p>实时控制器与伺服驱动器之间的关节级通信走的是有线现场总线，而不是 Wi-Fi——电机控制所需的
+      时序保证，是消费级无线网络无法承诺的。CAN FD（控制器局域网灵活数据率）把经典 CAN 的
+      1 Mbit/s、8字节负载扩展到 5–8 Mbit/s、最高 64 字节帧，让一条多关节机械臂能以较高更新率
+      高效上报力矩、位置、速度和温度。EtherCAT 则以牺牲一部分简洁性换来更严苛的时序——数十个节点
+      上实现亚100微秒的确定性周期——做法是每个设备在以太网帧经过时读取并改写属于自己的那部分数据，
+      无需中央交换机。对于电机驱动器数量不多的机器人，CAN FD 通常更易搭建和调试；随着节点数量和精度
+      要求提升（例如拥有数十个关节的完整人形机器人），EtherCAT 会成为更合适的选择。</p>
+      <p>无线网络（截至2026年常见的是 Wi-Fi 6 或 5G）承担机器人到建筑网络与云端的上行连接——
+      视频、遥测数据和远程指令——与内部控制回路彼此隔离。同一条链路也是机器人保持更新的方式：
+      典型的空中（OTA）更新会先在机群的一小部分上灰度发布，观察一段时间后再扩大范围；固件安装到
+      备用分区，机器人可以启动进入新固件，一旦失败则自动回滚；更新通常安排在充电等停机时段，而
+      不会在任务执行中进行。可以说，这套更新流程是任何机器人机群在现场运行时最重要的一项 DevOps
+      能力——它让软件改进无需技术人员逐台上门就能完成。</p>
+
+      <div class="rb-note">
+        <p><strong>采购提示。</strong>硬件与软件在驱动层交汇。Asaptic 采购的关节模组与部件，提供
+        集成团队所需的英文接口文档——涵盖 CAN FD、EtherCAT、RS-485 规格说明——让部件无需靠猜测
+        就能接入你的软件栈。<a href="mailto:engage@asaptic.com?subject=%E8%BD%AF%E4%BB%B6%E9%9B%86%E6%88%90%E9%87%87%E8%B4%AD%E5%92%A8%E8%AF%A2">发送集成采购咨询</a>，或查看<a href="/zh/robot/">我们采购什么</a>。</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">快速问答</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">机器人为什么用 ROS 2 而不是自研软件？</div>
+          <div class="rb-faq-a">ROS 2 是中间件而非操作系统——它运行在 Linux 之上，提供发布-订阅通信、服务调用和软件包生态。截至2026年，在开源与主流商业机器人生态中，几乎每家传感器厂商、机器人厂商和主流库（Nav2、MoveIt 2、仿真环境）都支持 ROS 2，脱离它意味着独自重建这整套集成层。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">Nav2 和 MoveIt 2 有什么区别？</div>
+          <div class="rb-faq-a">Nav2 负责让整台机器人底盘在建筑物内移动，依靠代价图、全局/局部规划器和恢复行为；MoveIt 2 负责让机械臂末端到达指定位姿或沿路径运动，依靠逆运动学、基于采样的运动规划和碰撞检测。一台移动操作机器人通常两者同时运行。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">机器人为什么用 CAN FD 或 EtherCAT，而不是只用 Wi-Fi？</div>
+          <div class="rb-faq-a">关节级控制需要消费级无线网络无法保证的确定性、低抖动时序。CAN FD（最高 8 Mbit/s，64 字节帧）或 EtherCAT（亚100微秒周期）通过有线现场总线传输电机指令；Wi-Fi 或 5G 则专用于机器人到建筑网络与云端的上行连接，不承担内部控制回路。</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/zh/robot/101/batteries/">← 04 · 电池与电源系统</a>
+        <a href="/zh/robot/101/ai/">06 · 机器人如何学习 →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        《机器人 101》是 <a href="/zh/robot/">Asaptic</a> 的科普内容，不构成认证、法律或进口建议。
+        文中引用的软件版本、硬件示例与规格为截至2026年的指示性数据，变化频繁——设计前请以最新文档
+        为准。
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robot Field Maintenance &amp; Spare Parts Explained | Robot 101 | Asaptic</title>
+
+  <meta name="description" content="Why uptime is the real product once robots deploy: wear items, preventive maintenance vs run-to-failure, spare-parts kits, and remote diagnostics." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/robot/101/maintenance/" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/robot/101/maintenance/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/101/maintenance/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/101/maintenance/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Keeping Robots Running: Field Maintenance and Spare Parts" />
+  <meta property="og:description" content="Wear items, preventive scheduling, spare-parts kits, remote diagnostics, and how maintainability decisions at design time drive field costs for years." />
+  <meta property="og:url" content="https://asaptic.com/robot/101/maintenance/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="zh_CN" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Keeping Robots Running: Field Maintenance and Spare Parts" />
+  <meta name="twitter:description" content="Wear items, preventive scheduling, spare-parts kits, and remote diagnostics — how fleets stay up." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Robot Parts", "item": "https://asaptic.com/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "Robot 101: Maintenance", "item": "https://asaptic.com/robot/101/maintenance/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Keeping Robots Running: Field Maintenance and Spare Parts",
+    "description": "Wear items and typical lifetimes, preventive maintenance vs run-to-failure, spare-parts kits, remote diagnostics and OTA, and design-for-maintainability.",
+    "inLanguage": "en",
+    "url": "https://asaptic.com/robot/101/maintenance/",
+    "isPartOf": { "@type": "WebPage", "name": "Robot 101", "url": "https://asaptic.com/robot/#robot-101" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What parts wear out fastest on a deployed robot?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Soft, physically exposed, or cyclically loaded parts wear fastest: gripper contact pads, caster and wheel tyres, high-flex cables at moving joints, and the battery pack. Structural frames and low-speed gear stages typically outlast all of these by a wide margin."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should a fleet run preventive maintenance or run-to-failure?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most fleets use both, split by consequence: cheap, predictable, easy-to-swap consumables are often run closer to failure and replaced on a fixed calendar; components whose failure strands a robot mid-task or risks safety are serviced preventively on operating hours or cycle counts."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does remote diagnostics reduce fleet maintenance cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A telemetry dashboard tracking battery health, joint temperatures, and task-success rates catches degradation before failure. Paired with OTA updates for software and calibration, many software or calibration issues can be resolved without an unplanned site visit."
+      }
+    }
+  ]
+}
+  </script>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/sourcing" class="nav-logo">ASAPTIC</a>
+    </div>
+  </nav>
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/robot/" style="color:inherit;text-decoration:none;">Asaptic Robotics Handbook</a></span>
+        <nav class="rb-langs" aria-label="Language">
+          <a href="/robot/101/maintenance/" aria-current="page">EN</a>
+          <span class="rb-lang-sep">&middot;</span>
+          <a href="/zh/robot/101/maintenance/">简</a>
+        </nav>
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">Robot 101 · Chapter 11</p>
+      <h1 class="rb-title">Keeping robots running: field maintenance and spare parts</h1>
+
+      <section class="rb-answer" aria-label="Summary">
+        <p><strong>In one paragraph:</strong> Once a robot leaves the lab and enters daily service, uptime
+        — not any single spec sheet number — becomes the real product. A handful of wear items (joint
+        lubrication, cables and connectors, batteries, casters and wheels) drive most service events, and
+        fleets manage them with a mix of preventive scheduling and run-to-failure, backed by a stocked
+        spare-parts kit. Remote diagnostics and over-the-air updates catch problems early and cut the
+        number of site visits needed. None of this is free: it has to be designed in from the first
+        prototype, through connectorized wiring, modular joints, and accessible fasteners, or field costs
+        stay high for the life of the fleet.</p>
+      </section>
+
+      <h2 class="rb-h2">Why uptime is the real product</h2>
+      <p>A robot that performs beautifully in a demo but spends one day in five offline for repair has
+      not solved the problem it was built for. For any operator running a fleet — in a warehouse, a
+      factory, or a care facility — the commercial reality is that every hour a unit is down is an hour
+      of lost service, and every unplanned technician visit adds labour and logistics cost on top of the
+      part itself. That shifts the engineering question from "does it work" to "how long does it keep
+      working, and how quickly can it be brought back online when it doesn't." Maintainability is a
+      product decision as much as a mechanical one, and it has to be made early, because retrofitting it
+      after a design is frozen is far more expensive than designing for it from the first prototype.</p>
+
+      <h2 class="rb-h2">Wear items and typical lifetimes</h2>
+      <p>A small number of components account for most service events on a deployed robot. Joint
+      lubrication is one: gearboxes and harmonic drives depend on grease that degrades with heat and
+      cycle count, and periodic relubrication (or a sealed-for-life unit rated for a specified number of
+      operating hours) is what keeps a joint from becoming the failure point. Cables and connectors at
+      moving joints see continuous flex fatigue, so robots built for real duty cycles typically use
+      cabling rated for a high number of bending cycles rather than off-the-shelf wire, and connectors
+      that are keyed so a cable can only be reattached the right way. Battery packs degrade gradually
+      through charge-discharge cycling; a pack is typically rated to retain a defined capacity threshold
+      (commonly on the order of 80%) after a stated number of cycles, after which range and runtime
+      noticeably shorten even though the battery still functions. Casters and wheels wear through direct
+      contact with the floor and are usually specified as solid tyres rather than pneumatic, precisely
+      because a punctured tyre is an unplanned failure while tyre wear is a predictable, schedulable one.</p>
+
+      <h2 class="rb-h2">Preventive maintenance vs run-to-failure</h2>
+      <p>Not every part deserves the same maintenance strategy. The choice usually comes down to two
+      questions: how expensive is it to replace on a fixed schedule regardless of actual wear, and how
+      bad is it if the part fails unexpectedly instead. Cheap, fast-to-swap consumables — gripper pads,
+      tyres — are often left closer to run-to-failure, or replaced on a simple calendar interval, because
+      an operator would rather absorb the occasional early swap than build a monitoring system for a
+      ten-dollar part. Components whose failure strands a robot mid-task, creates a safety issue, or is
+      expensive to diagnose after the fact — batteries, structural fasteners, joint lubrication — are
+      usually put on a preventive schedule tied to elapsed operating hours or cycle counts, serviced
+      before they fail rather than after. The right split is specific to each fleet's economics, but the
+      underlying logic generalizes across robot types.</p>
+
+      <h2 class="rb-h2">The spare-parts kit: what to stock, what to order</h2>
+      <p>A fleet operator's spare-parts strategy usually separates parts into two tiers. On-site stock
+      covers the handful of components that fail often enough, and are cheap and fast enough to swap,
+      that waiting for a shipment would cause unacceptable downtime — typically gripper pads, a couple of
+      wheel assemblies, connectors, and a spare battery pack or two, sized to the fleet's failure rate.
+      Everything else — structural parts, less common sensor modules, whole joint assemblies — is ordered
+      against forecast demand rather than held on every site, since holding a deep inventory of every
+      possible part at every location is rarely worth the carrying cost. Getting this split right depends
+      on having reliable part numbers, lead times, and documentation for the long tail of components a
+      robot is built from — which is as much a sourcing problem as a maintenance one.</p>
+
+      <h2 class="rb-h2">Remote diagnostics and OTA: fewer site visits</h2>
+      <p>The most effective lever for reducing service cost is often not a better part — it is catching a
+      problem before it causes a failure at all. A telemetry pipeline that reports battery state of
+      charge and state of health, joint temperatures, torque utilization, and task-success rates back to
+      a fleet dashboard lets an operator watch for degradation trends rather than wait for an outright
+      fault. Simple anomaly detection — a temperature trend drifting upward, a success rate dropping over
+      a rolling window, battery health crossing a threshold — can flag a robot for scheduled service
+      before it fails in the field, so a technician arrives with the right part already in hand instead
+      of running a diagnostic session on site. Over-the-air (OTA) updates extend this further: many issues
+      that would once have needed a site visit — calibration drift, a software bug, a sensor
+      recalibration — can be pushed as a remote update instead, leaving physical visits for the wear
+      items that genuinely require hands-on replacement.</p>
+
+      <h2 class="rb-h2">Maintainability by design</h2>
+      <p>Everything above is easier or harder depending on decisions made long before a robot ships.
+      Connectorized wiring — each cable assembly terminating in a keyed connector rather than being
+      soldered or spliced in place — turns a rewiring job into a swap. Modular joints, built as a single
+      unit containing the motor, reducer, encoder, and driver, let a technician replace a whole joint as
+      one part rather than repairing it in place. Accessible fasteners and tool-free access panels for
+      consumable components mean a field replacement takes minutes with a standard driver set instead of
+      requiring a partial teardown. None of this is free at the design stage — connectorized, modular
+      hardware typically costs more up front than a tightly integrated equivalent — but for any robot
+      that will be deployed at scale rather than built once, that tradeoff usually pays for itself many
+      times over across the life of the fleet.</p>
+
+      <div class="rb-note">
+        <p><strong>Sourcing note.</strong> Fleets live on consumables and spares — high-flex cables,
+        keyed connectors, wear parts, and replacement modules. Asaptic keeps this long tail sourced and
+        documented so operators aren't hunting part numbers at 2 a.m. <a href="mailto:engage@asaptic.com?subject=Maintenance%20%26%20spares%20sourcing%20enquiry">Send
+        a spares sourcing enquiry</a> or see <a href="/robot/">what we source</a>.</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">Quick answers</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">What parts wear out fastest on a deployed robot?</div>
+          <div class="rb-faq-a">Soft, physically exposed, or cyclically loaded parts wear fastest: gripper contact pads, caster and wheel tyres, high-flex cables at moving joints, and the battery pack. Structural frames and low-speed gear stages typically outlast all of these by a wide margin.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">Should a fleet run preventive maintenance or run-to-failure?</div>
+          <div class="rb-faq-a">Most fleets use both, split by consequence: cheap, predictable, easy-to-swap consumables are often run closer to failure and replaced on a fixed calendar; components whose failure strands a robot mid-task or risks safety are serviced preventively on operating hours or cycle counts.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">How does remote diagnostics reduce fleet maintenance cost?</div>
+          <div class="rb-faq-a">A telemetry dashboard tracking battery health, joint temperatures, and task-success rates catches degradation before failure. Paired with OTA updates for software and calibration, many software or calibration issues can be resolved without an unplanned site visit.</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/robot/101/manufacturing/">← 10 · From prototype to production</a>
+        <a href="/robot/">Robot 101 index →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        Robot 101 is educational material by <a href="/robot/">Asaptic</a>. It is not certification,
+        legal, or import advice. Component prices and specifications cited are indicative industry
+        figures and change frequently — verify against current datasheets before designing.
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>
