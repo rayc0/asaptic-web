@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>From Prototype to Production — Robot Manufacturing Explained | Robot 101 | Asaptic</title>
+
+  <meta name="description" content="Why a prototype and 100 units are different problems: DFM/DFA, supplier qualification, tooling/MOQ economics, quality systems, and classic failure modes." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/robot/101/manufacturing/" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/robot/101/manufacturing/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/101/manufacturing/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/101/manufacturing/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="From Prototype to Production — Robot Manufacturing Explained" />
+  <meta property="og:description" content="DFM/DFA, supplier qualification, tooling and MOQ economics, quality systems, and the classic failure modes of scaling a robot from one unit to a hundred." />
+  <meta property="og:url" content="https://asaptic.com/robot/101/manufacturing/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="zh_CN" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="From Prototype to Production — Robot Manufacturing Explained" />
+  <meta name="twitter:description" content="Why a prototype and 100 units are different engineering problems, and how teams bridge the gap." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Robot Parts", "item": "https://asaptic.com/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "Robot 101: Manufacturing", "item": "https://asaptic.com/robot/101/manufacturing/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "From Prototype to Production: The Manufacturing Journey",
+    "description": "DFM/DFA basics, supplier qualification, tooling and MOQ economics, quality systems and traceability, and the classic failure modes of scaling a robot into production.",
+    "inLanguage": "en",
+    "url": "https://asaptic.com/robot/101/manufacturing/",
+    "isPartOf": { "@type": "WebPage", "name": "Robot 101", "url": "https://asaptic.com/robot/#robot-101" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why is going from a prototype to 100 units so hard?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A prototype only has to prove the concept works, built with the fastest parts available even at several times production cost. A 100-unit build has to be repeatable — every unit meeting the same tolerances, passing the same tests, and traceable back to its components — which forces DFM/DFA changes, supplier qualification, and quality systems a one-off prototype never needed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is First Article Inspection (FAI) and why does it matter?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A full inspection of the first production units: 100% dimensional checks on critical features, a functional test of every joint and sensor, and typically a burn-in run under load. Failed units are reworked or scrapped before shipping. The resulting report becomes the documented baseline later batches are measured against."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the most common manufacturing failure modes for small-batch robots?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Single-sourcing a critical part with no qualified backup, trusting a supplier's datasheet or verbal claim without independent test data, and leaving compliance or safety testing until late in the schedule, where a failure forces a redesign after tooling is already committed."
+      }
+    }
+  ]
+}
+  </script>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/sourcing" class="nav-logo">ASAPTIC</a>
+    </div>
+  </nav>
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/robot/" style="color:inherit;text-decoration:none;">Asaptic Robotics Handbook</a></span>
+        <nav class="rb-langs" aria-label="Language">
+          <a href="/robot/101/manufacturing/" aria-current="page">EN</a>
+          <span class="rb-lang-sep">&middot;</span>
+          <a href="/zh/robot/101/manufacturing/">简</a>
+        </nav>
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">Robot 101 · Chapter 10</p>
+      <h1 class="rb-title">From prototype to production: the manufacturing journey</h1>
+
+      <section class="rb-answer" aria-label="Summary">
+        <p><strong>In one paragraph:</strong> A working prototype and a repeatable production unit are
+        different engineering problems, not the same problem at different volumes. Prototypes are built
+        to learn, fast and expensive; production units must be identical, inspectable, and traceable.
+        Getting from one to the other means running design-for-manufacture and design-for-assembly
+        reviews, qualifying suppliers with real test data instead of datasheet claims, understanding
+        tooling and minimum-order-quantity economics at small robot volumes, and building a quality and
+        traceability system before the first sale — not after the first field failure.</p>
+      </section>
+
+      <h2 class="rb-h2">Two different engineering problems</h2>
+      <p>In the prototype phase — typically the first one to three units — the goal is not manufacturing,
+      it is learning. Components are sourced from whichever supplier can deliver fastest, even at three
+      to five times what the same part will cost in production. 3D printing often replaces machined metal
+      for structural parts and brackets where the function allows it; off-the-shelf motors, development
+      boards, and evaluation-kit sensors stand in for the custom electronics that will eventually be
+      designed. It is common for the prototype bill of materials to run four to eight times the target
+      production cost, and that is expected — the question at this stage is whether the robot performs
+      the target tasks, whether the software stack runs on the hardware, and whether any physics
+      surprises (thermal hotspots, resonant frequencies, torque limits) demand a design change before
+      anyone commits money to tooling.</p>
+      <p>A 100-unit production run is a different problem entirely. Every unit has to meet the same
+      tolerances, pass the same tests, and be traceable back to the specific batch of components it was
+      built from. A part that "worked fine" on a hand-built prototype can become a production headache the
+      moment it has to be made the same way one hundred times in a row by a factory floor, not a bench.
+      That shift is why teams treat the move from prototype to volume as its own phase, with its own
+      reviews and its own failure modes, rather than simply ordering more of the same parts.</p>
+
+      <h2 class="rb-h2">Design for manufacture and design for assembly</h2>
+      <p>Before committing to a tooled build of even ten units, most teams run a design-for-manufacturing
+      (DFM) and design-for-assembly (DFA) review. DFM asks whether a part can be made repeatably, at the
+      specified tolerances, by a standard process — CNC milling or turning, injection molding, sheet-metal
+      forming — or whether it requires a specialized process such as Swiss turning, EDM, or multi-axis
+      simultaneous milling that adds both cost and lead time. A part that looked simple in CAD sometimes
+      turns out to require a process only a handful of shops can run economically, which quietly triples
+      unit cost.</p>
+      <p>DFA asks a complementary question: how many steps does a trained technician need to install a
+      given subassembly, and which of those steps are prone to error — small fasteners reached through
+      deep recesses, asymmetric parts that can be installed backwards, wiring that has to be routed by
+      feel rather than by a visible guide. Reducing part count, adding self-locating features, and making
+      asymmetric parts either symmetric or impossible to install wrong are standard DFA moves that pay
+      for themselves many times over once hundreds of technician-hours are on the line instead of one
+      engineer's afternoon.</p>
+
+      <h2 class="rb-h2">Qualifying a supplier before you qualify the part</h2>
+      <p>Supplier qualification is the step that separates a part that works in isolation from a part that
+      will work reliably across hundreds of units and multiple production batches. The standard sequence
+      is to request samples against a specification, cross-check the supplier's own test data rather than
+      accepting it at face value, run a small pilot batch, and apply Acceptable Quality Limit (AQL)
+      sampling inspection on that batch to estimate the defect rate the supplier's process actually
+      produces — not the defect rate their marketing material claims.</p>
+      <p>For the first production batch specifically, teams typically run a First Article Inspection
+      (FAI) on a representative sample: a full dimensional check on the features that matter most —
+      bearing fits, mounting concentricity, cable-routing clearances — a functional test that powers and
+      commands every joint and sensor through its full range, and usually a burn-in run under nominal
+      load while temperature, current draw, and position error are monitored. Because early builds carry
+      more variability than a mature line, teams often combine FAI with heightened or 100% inspection on
+      those early units rather than relying on the first-article sample alone. Units that fail are reworked
+      or scrapped before they ever leave the factory. The resulting FAI report — photographs, measurement
+      data, functional test logs — becomes the documented baseline that later batches are compared
+      against, and it is often the single most valuable artifact a small manufacturing program produces.</p>
+
+      <h2 class="rb-h2">Tooling and minimum-order-quantity economics</h2>
+      <p>Robot volumes are small compared to consumer electronics, and that changes the economics of
+      tooling. A custom injection-molded part might need a tool costing tens of thousands of dollars that
+      only makes sense once volume is high enough to amortize it; at ten or a hundred units, machined
+      parts or lower-cost tooling (aluminum rather than hardened steel molds, simpler single-cavity
+      tooling) are often the more sensible choice even though the per-unit cost is higher. Component
+      suppliers similarly set minimum order quantities that can be far larger than a small robot program
+      actually needs, which forces a choice between over-ordering (tying up cash in inventory) or paying
+      a premium for a below-MOQ order. Neither choice is free, and the right one depends on how confident
+      the team is in near-term volume — a judgment call worth making deliberately rather than by default.</p>
+
+      <h2 class="rb-h2">Quality systems and traceability</h2>
+      <p>A production run introduces challenges that simply do not exist at prototype scale. Incoming
+      material inspection verifies that the batteries, actuators, and sensors arriving from a supplier
+      actually match the samples that were originally qualified — batch-to-batch variance from the same
+      supplier is one of the most common sources of field failures. Production tooling — jigs for
+      repeatable cable routing, torque-controlled fastening tools at every joint, automated test fixtures
+      that run a full functional test in minutes per unit — is what makes a hundred units consistent
+      instead of merely similar.</p>
+      <p>Traceability ties it together: each unit gets a serial number, and every sub-component — battery
+      pack, actuator by joint position, compute board, sensor by type — is recorded against that serial
+      number. When a failure surfaces in the field, a traceability system is what lets a team identify
+      exactly which batch of components is implicated and issue a targeted recall, instead of guessing
+      or recalling every unit ever shipped. Building this system before the first sale, not after the
+      first field failure, is one of the clearest markers of a manufacturing program that is actually
+      ready to scale.</p>
+
+      <h2 class="rb-h2">The classic failure modes</h2>
+      <p>A handful of mistakes recur across small-batch hardware programs regardless of what the product
+      is. Single-sourcing a critical part — an actuator, a battery cell, a sensor — with no qualified
+      second supplier leaves a program exposed to a single factory's capacity, quality, or business
+      problems; qualifying a backup source, even one used rarely, is cheap insurance. Trusting a
+      supplier's datasheet or verbal claim without independent test data is the second recurring mistake
+      — the gap between a claimed specification and a verified one is exactly what supplier qualification
+      exists to close. The third is leaving compliance or safety testing until late in the schedule: when
+      a late test reveals a problem after tooling has already been committed and a production batch is on
+      order, the fix is far more expensive than it would have been earlier, and the schedule slip lands at
+      the worst possible time. None of these are exotic risks — they are the ordinary, well-documented
+      ways small manufacturing programs go over budget and behind schedule, and each has a straightforward
+      countermeasure applied early.</p>
+
+      <div class="rb-note">
+        <p><strong>Sourcing note.</strong> Supplier qualification is exactly the work Asaptic packages for
+        robot teams: sample validation, cross-checking supplier test data, coordinating third-party
+        inspection, and documentation — so a robot team can reach production without flying to Shenzhen
+        every month. <a href="mailto:engage@asaptic.com?subject=Manufacturing%20and%20supplier%20qualification%20enquiry">Send
+        a manufacturing enquiry</a> or see <a href="/robot/">what we source</a>.</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">Quick answers</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">Why is going from a prototype to 100 units so hard?</div>
+          <div class="rb-faq-a">A prototype only has to prove the concept works, built with the fastest parts available even at several times production cost. A 100-unit build has to be repeatable — every unit meeting the same tolerances, passing the same tests, and traceable back to its components — which forces DFM/DFA changes, supplier qualification, and quality systems a one-off prototype never needed.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">What is First Article Inspection (FAI) and why does it matter?</div>
+          <div class="rb-faq-a">A full inspection of the first production units: 100% dimensional checks on critical features, a functional test of every joint and sensor, and typically a burn-in run under load. Failed units are reworked or scrapped before shipping. The resulting report becomes the documented baseline later batches are measured against.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">What are the most common manufacturing failure modes for small-batch robots?</div>
+          <div class="rb-faq-a">Single-sourcing a critical part with no qualified backup, trusting a supplier's datasheet or verbal claim without independent test data, and leaving compliance or safety testing until late in the schedule, where a failure forces a redesign after tooling is already committed.</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/robot/101/market/">← 09 · The robotics market landscape</a>
+        <a href="/robot/101/maintenance/">11 · Keeping robots running →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        Robot 101 is educational material by <a href="/robot/">Asaptic</a>. It is not certification,
+        legal, or import advice. Practices described are common industry patterns and vary by product,
+        supplier, and region — verify against your own specification and quality requirements before
+        committing to a production plan.
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

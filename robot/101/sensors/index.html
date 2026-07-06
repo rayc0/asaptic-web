@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robot Sensors & Perception Explained — LiDAR, Depth Cameras, IMU, Sensor Fusion | Robot 101 | Asaptic</title>
+
+  <meta name="description" content="How robots sense the world: LiDAR, depth cameras, IMU, force-torque sensors, the perception pipeline, and Kalman-filter sensor fusion explained." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/robot/101/sensors/" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/robot/101/sensors/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/101/sensors/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/101/sensors/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Robot Sensors & Perception Explained — LiDAR, Cameras, IMU, Fusion" />
+  <meta property="og:description" content="The sensor modalities behind robot perception, the pipeline that turns raw data into a world model, and how sensor fusion combines them." />
+  <meta property="og:url" content="https://asaptic.com/robot/101/sensors/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="zh_CN" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Robot Sensors & Perception Explained — LiDAR, Cameras, IMU, Fusion" />
+  <meta name="twitter:description" content="How a robot senses the world and turns raw sensor data into a usable model of its surroundings." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Robot Parts", "item": "https://asaptic.com/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "Robot 101: Sensors", "item": "https://asaptic.com/robot/101/sensors/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Sensors and Perception: How a Robot Sees the World",
+    "description": "The sensor modalities behind robot perception (cameras, LiDAR, IMU, force-torque, tactile), the perception pipeline from raw data to world model, and Kalman-filter sensor fusion.",
+    "inLanguage": "en",
+    "url": "https://asaptic.com/robot/101/sensors/",
+    "isPartOf": { "@type": "WebPage", "name": "Robot 101", "url": "https://asaptic.com/robot/#robot-101" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between LiDAR and a depth camera?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "LiDAR fires laser pulses and times their return to build a precise 3D point cloud over a wide field of view, and works in the dark. A depth camera produces a denser per-pixel depth map over a shorter range, which a robot needs to know an object's exact 3D pose before grasping it. Many robots carry both."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does a robot need an IMU if it already has cameras and LiDAR?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An IMU reports rotation and acceleration hundreds to thousands of times per second, far faster than a camera or LiDAR scan completes. That speed lets a robot react to a sudden tip or bump before the next visual frame arrives, and fills in motion estimates when cameras or LiDAR briefly lose track."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a Kalman filter and how is it commonly used in sensor fusion?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Kalman filter (or its robotics workhorse, the Extended Kalman Filter) continuously predicts a robot's position and motion, then corrects that prediction using each new sensor reading, weighted by how much that sensor is normally trusted. The result is a single estimate more accurate and stable than any one sensor alone."
+      }
+    }
+  ]
+}
+  </script>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/sourcing" class="nav-logo">ASAPTIC</a>
+    </div>
+  </nav>
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/robot/" style="color:inherit;text-decoration:none;">Asaptic Robotics Handbook</a></span>
+        <nav class="rb-langs" aria-label="Language">
+          <a href="/robot/101/sensors/" aria-current="page">EN</a>
+          <span class="rb-lang-sep">&middot;</span>
+          <a href="/zh/robot/101/sensors/">简</a>
+        </nav>
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">Robot 101 · Chapter 03</p>
+      <h1 class="rb-title">Sensors &amp; perception: how a robot sees the world</h1>
+
+      <section class="rb-answer" aria-label="Summary">
+        <p><strong>In one paragraph:</strong> A robot builds its picture of the world from several
+        sensor types at once — cameras and LiDAR for shape and distance, an IMU for fast motion sensing,
+        force-torque and tactile sensors for what it feels through contact. A perception pipeline turns
+        that raw data into detected objects and a map the robot can navigate. Because every sensor has
+        blind spots and noise, sensor fusion — commonly using an Extended Kalman Filter in many systems — combines them into
+        one estimate that is more reliable than any single sensor on its own.</p>
+      </section>
+
+      <h2 class="rb-h2">Seeing shape and distance: cameras and LiDAR</h2>
+      <p>LiDAR (Light Detection and Ranging) fires laser pulses and times how long they take to bounce
+      back, building a precise 3D point cloud of everything around the robot. Mechanical spinning
+      LiDARs — the kind that rotate a bank of lasers through 360 degrees, with 16 to 128 channels — have
+      long been the standard on autonomous vehicles and outdoor mobile robots, though at a cost that can
+      run from a few thousand to tens of thousands of dollars (indicative figures; check current
+      pricing). Solid-state LiDARs use MEMS mirrors or phased arrays to scan without any rotating parts,
+      cost well under a thousand dollars, and tolerate vibration far better — which is why they are the
+      clear trend for indoor service robots. A unit like the Livox Mid-360 (a well-known example, priced
+      indicatively under US$800) covers a 40-metre range with a 360°/59° field of view, enough to map an
+      entire room for indoor navigation.</p>
+      <p>Depth cameras generate a per-pixel depth map instead of a sparse point cloud, using either
+      structured light (projecting a known infrared pattern and measuring how it distorts) or stereo
+      vision (two cameras computing depth from disparity, the same trick human binocular vision uses).
+      A popular stereo depth module, the Intel RealSense D435i, is a common first choice for robot
+      developers at an indicative $200–$400, with sub-centimetre accuracy at 0.5–3 metres. Some stereo
+      modules add an on-device neural chip that runs object detection directly on the camera, without a
+      separate GPU. Depth cameras matter most for manipulation: picking up an object requires knowing
+      its full 3D pose — position and orientation together — not just where it appears in a flat image.</p>
+
+      <h2 class="rb-h2">Inertial measurement: sensing motion between updates</h2>
+      <p>An Inertial Measurement Unit (IMU) packs a 3-axis accelerometer and a 3-axis gyroscope onto one
+      small chip, reporting linear acceleration and rotation rate hundreds to thousands of times per
+      second — far faster than any camera frame or LiDAR scan. Mathematically, integrating acceleration
+      gives velocity and integrating again gives position, but small constant errors compound quickly,
+      so an IMU used alone drifts within well under a second. In practice an IMU is never used alone: it
+      is fused with wheel odometry on ground robots, with LiDAR for LiDAR-inertial odometry, or with
+      cameras for visual-inertial odometry. For a robot that must keep dynamic balance — a walking
+      humanoid, for instance — the IMU's speed and low latency are what let the balance controller react
+      to a disturbance before it can propagate through the rest of the body.</p>
+
+      <h2 class="rb-h2">Force, torque, and touch: sensing contact</h2>
+      <p>Force-torque (F/T) sensors mounted at a robot's wrist measure all three forces and all three
+      torques being applied there — a full six-axis picture of contact. That reading is what enables
+      compliant manipulation: detecting that contact has occurred, regulating how hard the robot pushes
+      (critical near delicate objects or people), noticing that a grasped object is starting to slip, and
+      yielding smoothly when pushed rather than fighting back rigidly. Industrial-grade F/T sensors run
+      from roughly two thousand to several thousand dollars indicatively, with capable lower-cost
+      alternatives increasingly available.</p>
+      <p>Tactile sensors take the idea further, spreading many pressure-sensitive elements across an
+      entire contact surface — a fingertip, a palm, a strip of synthetic skin — rather than reporting one
+      combined reading at the wrist. That finer spatial resolution enables slip detection before an
+      object is actually dropped, basic texture recognition, and safer contact where a wrist-only
+      sensor simply cannot tell where on the hand something touched — useful anywhere a robot works in
+      close physical contact with people, care settings included.</p>
+
+      <h2 class="rb-h2">From pixels to objects: the perception pipeline</h2>
+      <p>The perception pipeline is the chain of algorithms that turns raw sensor bytes into a
+      structured model the robot's planning software can reason about — usually running at 10–30 times
+      per second, and expected to cope with changing light and moving people. Object detection models
+      such as YOLOv8 are the common baseline: can reach real-time latency on suitable embedded GPUs
+      for obstacle avoidance, though limited to categories seen during training. Open-vocabulary
+      detectors like Grounding DINO can recognise objects described by text prompts, including
+      categories not in a fixed detector label set, but run slower, so they suit deliberate search tasks rather than split-second
+      reactions. Segmentation models such as Segment Anything trace precise object outlines when a
+      manipulation task needs an exact contour rather than a bounding box, and pose-estimation models
+      can recover an object's full 3D orientation from a single depth frame — the key input for a
+      confident grasp.</p>
+      <p>A newer layer sits on top of this fast, purely geometric loop: vision-language models that turn
+      a camera frame into a natural-language scene description ("the cup is on the left edge of the
+      tray"), useful for higher-level task understanding and human-robot interaction. These models are
+      typically too slow to run at the same rate as the core detection loop, so most systems run two
+      perception rates side by side — a fast loop (tens of times per second) for immediate obstacle
+      avoidance and grasping, and a slower loop (a few times per second) for semantic understanding of a
+      scene.</p>
+
+      <h2 class="rb-h2">Building the map: point clouds and SLAM</h2>
+      <p>Raw point clouds are large and noisy, so they are typically cleaned up before use: downsampling
+      reduces a hundred-thousand-point scan to a more tractable number of representative points, plane
+      fitting separates the floor from obstacles, and clustering groups points into distinct objects.
+      SLAM (Simultaneous Localisation and Mapping) algorithms use this processed data to build a map of
+      an unfamiliar space while simultaneously tracking the robot's own position within it — LiDAR-inertial
+      approaches are common for richly-sensored mobile robots, while simpler 2D LiDAR SLAM suits
+      lower-cost bases. A practical pattern many indoor service robots follow: run full SLAM once to map
+      a new space thoroughly on first visit, then switch to a lighter localisation-only mode against
+      that pre-built map for day-to-day operation — the map rarely changes once furniture settles, and
+      reusing it cuts the computational load of repetitive routes substantially.</p>
+
+      <h2 class="rb-h2">Sensor fusion: combining noisy signals into one estimate</h2>
+      <p>No individual sensor tells the whole story: a camera struggles in the dark, LiDAR alone cannot
+      tell how fast the robot is spinning between scans, and an IMU drifts if trusted for more than a
+      moment. Sensor fusion combines several noisy, partial signals into a single estimate that is more
+      accurate than any one input. A commonly used tool in many systems is the Extended Kalman Filter (EKF): it predicts the
+      robot's next position and motion from what it already knows, then corrects that prediction using
+      each new sensor reading, weighting each source by how much it is normally trusted. In practice the
+      IMU catches fast rotational changes quicker than a LiDAR scan matcher can, the LiDAR corrects the
+      IMU's slow drift over longer distances, and wheel odometry fills gaps during moments when the
+      LiDAR briefly loses a clean read.</p>
+      <p>Two supporting details matter in practice. First, every sensor pair needs careful calibration —
+      the fixed geometric offset between a camera and a LiDAR, for example, must be known to within a
+      few millimetres and a fraction of a degree, or the two data streams will not line up. Second,
+      sensors report at different rates and with different delays — a camera frame, a LiDAR scan, and an
+      IMU reading rarely arrive at exactly the same instant — so precise time synchronisation across all
+      sensors is what keeps the fused result from developing visible "time warp" artefacts, particularly
+      as a robot moves faster.</p>
+
+      <div class="rb-note">
+        <p><strong>Sourcing note.</strong> Asaptic sources the perception components covered above —
+        depth cameras, LiDAR units, IMUs, force-torque sensors, and encoders — from vetted Shenzhen-area
+        manufacturers, with spec cross-checks against datasheet claims, landed-cost math for your
+        destination, and English documentation. <a href="mailto:engage@asaptic.com?subject=Sensor%20sourcing%20enquiry">Send
+        a sensor sourcing enquiry</a> or see <a href="/robot/">what we source</a>.</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">Quick answers</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">What is the difference between LiDAR and a depth camera?</div>
+          <div class="rb-faq-a">LiDAR fires laser pulses and times their return to build a precise 3D point cloud over a wide field of view, and works in the dark. A depth camera produces a denser per-pixel depth map over a shorter range, which a robot needs to know an object's exact 3D pose before grasping it. Many robots carry both.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">Why does a robot need an IMU if it already has cameras and LiDAR?</div>
+          <div class="rb-faq-a">An IMU reports rotation and acceleration hundreds to thousands of times per second, far faster than a camera or LiDAR scan completes. That speed lets a robot react to a sudden tip or bump before the next visual frame arrives, and fills in motion estimates when cameras or LiDAR briefly lose track.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">What is a Kalman filter and how is it commonly used in sensor fusion?</div>
+          <div class="rb-faq-a">A Kalman filter (or its robotics workhorse, the Extended Kalman Filter) continuously predicts a robot's position and motion, then corrects that prediction using each new sensor reading, weighted by how much that sensor is normally trusted. The result is a single estimate more accurate and stable than any one sensor alone.</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/robot/101/actuators/">← 02 · Actuators &amp; joint modules</a>
+        <a href="/robot/101/batteries/">04 · Batteries &amp; power systems →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        Robot 101 is educational material by <a href="/robot/">Asaptic</a>. It is not certification,
+        legal, or import advice. Component prices and specifications cited are indicative industry
+        figures and change frequently — verify against current datasheets before designing.
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>机器人执行器详解 — 谐波减速器、QDD、伺服 | 机器人 101 | Asaptic</title>
+
+  <meta name="description" content="机器人关节如何工作：伺服电机、谐波减速器（应变波齿轮）、准直驱 BLDC 执行器、自由度，以及工程师选型执行器的四轴决策框架。" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/robot/101/actuators/" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/robot/101/actuators/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/101/actuators/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/101/actuators/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="机器人执行器详解 — 谐波减速器、QDD、伺服" />
+  <meta property="og:description" content="伺服电机、谐波减速器、准直驱关节、自由度，以及工程师实际的执行器选型方法。" />
+  <meta property="og:url" content="https://asaptic.com/zh/robot/101/actuators/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="机器人执行器详解 — 谐波减速器、QDD、伺服" />
+  <meta name="twitter:description" content="机器人关节如何工作，以及工程师如何选型。" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "机器人零部件", "item": "https://asaptic.com/zh/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "机器人 101：执行器", "item": "https://asaptic.com/zh/robot/101/actuators/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "执行器与关节模组：机器人的肌肉",
+    "description": "伺服电机、谐波减速器、准直驱 BLDC 执行器、自由度，以及执行器选型的四轴决策框架。",
+    "inLanguage": "zh-Hans",
+    "url": "https://asaptic.com/zh/robot/101/actuators/",
+    "isPartOf": { "@type": "WebPage", "name": "机器人 101", "url": "https://asaptic.com/zh/robot/#robot-101" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "什么是谐波减速器？机器人关节为什么用它？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "椭圆波发生器使柔轮与刚轮渐进啮合的应变波齿轮——近零反向间隙、单级 50:1–160:1、极致紧凑。这个组合让大多数精密机器人关节都离不开它。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "什么是准直驱（QDD）执行器？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "高扭矩无刷电机配极低传动比（约 6:1–12:1）或零减速。低传动比带来反驱动性——能感知并顺从接触——因此许多现代人形机器人在人类周围都用 QDD。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "工程师怎么选执行器？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "四轴同时权衡：扭矩密度、反驱动性、精度、成本。肩部要扭矩和柔顺，腕部要精度，夹爪按夹持力选。"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/zh/sourcing" class="nav-logo">ASAPTIC</a>
+    </div>
+  </nav>
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/zh/robot/" style="color:inherit;text-decoration:none;">Asaptic 机器人手册</a></span>
+        <nav class="rb-langs" aria-label="语言">
+          <a href="/robot/101/actuators/">EN</a>
+          <span class="rb-lang-sep">&middot;</span>
+          <a href="/zh/robot/101/actuators/" aria-current="page">简</a>
+        </nav>
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">机器人 101 · 第 02 章</p>
+      <h1 class="rb-title">执行器与关节模组：机器人的"肌肉"</h1>
+
+      <section class="rb-answer" aria-label="摘要">
+        <p><strong>一段话说清：</strong>执行器让机器人动起来。精密机器人在每个关节上组合电机、
+        减速器、编码器和驱动器。谐波减速器在极小的体积里做到近零反向间隙和超高传动比，是工业
+        机械臂关节的默认选择。准直驱（QDD）无刷关节用少许精度换来反驱动性，让机器人能感知并
+        顺从接触，是许多现代人形机器人采用的方案。工程师在两者之间权衡扭矩密度、反驱动性、精度与
+        成本来做选型。</p>
+      </section>
+
+      <h2 class="rb-h2">伺服电机：闭环主力</h2>
+      <p>一台伺服将直流或无刷电机、减速箱、位置编码器和闭环控制器集成为一个整体。编码器把轴角
+      反馈给 PID 控制器，控制器将实际位置与命令位置比较并相应调整电机电流。正是这个闭环产生了
+      伺服的核心特征：可重复、精确的定位。高端工业伺服系统的角度重复定位精度可达角秒级；整机的直线精度（精密机械臂常标称约
+      ±0.01&nbsp;mm）取决于整个机构，而不只是电机本身。</p>
+      <p>评估伺服时，两个核心规格是<strong>扭矩-重量比</strong>（每千克电机质量的输出扭矩）和
+      <strong>刚度</strong>（输出轴在偏轴负载下的挠曲量）。减速箱与电机同样关键：标准正齿轮和
+      斜齿轮会引入<strong>反向间隙</strong>——啮合齿之间的机械"松动"——降低精度并激发振动。
+      谐波减速器正是为彻底消除这个问题而生。</p>
+
+      <h2 class="rb-h2">谐波减速器：精密关节的心脏</h2>
+      <p>谐波减速器（又称应变波齿轮）存在于大多数精密机器人关节内部，从工业六轴机械臂到人形
+      机器人的手指。原理十分精妙：一个带外齿的薄壁椭圆钢杯（<em>柔轮</em>）被电机轴驱动的椭圆
+      <em>波发生器</em>变形。波发生器旋转时，柔轮的齿与比它多两个齿的刚性齿圈（<em>刚轮</em>）
+      渐进啮合。</p>
+      <p>这种渐进波形啮合同时实现三件事：</p>
+      <ul>
+        <li><strong>近零反向间隙</strong>——始终有多对齿保持接触；</li>
+        <li><strong>极高单级传动比</strong>——单级即可做到 50:1 至 160:1；</li>
+        <li><strong>极致紧凑</strong>——整套传动装进关节壳体内部。</li>
+      </ul>
+      <p>长期主导供应商是谐波传动 SE（日本/德国）。以来福谐波、北京中技克美为代表的中国厂商在
+      过去十年间已明显缩小质量差距，报价通常明显低于日系目录价（视规格与批量而定）——据行业观察，
+      价格优势使珠三角成为机器人供应链的重要一环。</p>
+
+      <h2 class="rb-h2">QDD：人形机器人时代的突破</h2>
+      <p><strong>准直驱（QDD）</strong>架构的无刷直流电机（BLDC）是现代人形与足式机器人近年来
+      最重要的执行方案转变之一。QDD 不再用小电机配 100:1 减速，而是将大直径、高扭矩密度的 BLDC
+      电机与极低传动比（约 6:1 至 12:1）甚至零减速配对。磁场定向控制（FOC）把电机电流分解为
+      产生扭矩和产生磁通的分量并独立控制，带来异常平顺、高效的扭矩输出。</p>
+      <p>关键优势是<strong>反驱动性</strong>。在 100:1 的谐波关节中，经减速机构折算回来的摩擦与
+      惯量随传动比急剧增大，关节在外力下几乎不动——对外力基本是刚性的，一旦机器人接触到人就
+      非常危险。QDD 的低传动比让这部分折算阻力很小，控制器可以通过电机感知外力并顺从退让——
+      机器人因此能<em>感知</em>它碰到了什么。这就是近几年许多人形与
+      四足机器人（包括 MIT 猎豹系列等研究平台）转向 QDD 或近 QDD 关节的原因。
+      代价是扭矩密度与定位精度略低于谐波关节——在人类身边工作时，这笔交换是值得的。</p>
+
+      <h2 class="rb-h2">步进电机与线性执行器：知道它们适合哪里</h2>
+      <p>步进电机以离散角度增量运动——标准 1.8° 步进电机每圈 200 步，细分驱动器再把每步细分
+      16 或 32 倍。其决定性限制是<strong>开环</strong>：控制器假设每个命令步都被执行了。过载时
+      电机悄然失步，位置误差无声累积。这使步进电机不适合高扭矩机器人关节，但非常适合 3D 打印机、
+      CNC 机床和扭矩可预测的低负载夹爪机构。</p>
+      <p>线性执行器——滚珠丝杠（高精度、中等力、高成本）、气动缸（快、便宜、精度差、需要空压机）、
+      液压缸（力密度最高、设备沉重）——在工业机械中常见，但在现代服务机器人中很少见：用丝杠或
+      齿轮齿条把电动旋转电机转成直线运动，能在精度、紧凑性和清洁性上取得最佳组合。对部署在安静
+      室内环境的机器人来说，"不需要空压机"这一条常常就是决定性的。</p>
+
+      <h2 class="rb-h2">自由度：关节数为何爆炸</h2>
+      <p>自由度（DOF）计算完全指定机器人构型所需的独立参数数量。门铰链 1 个自由度；人类手臂从
+      肩到腕 7 个；标准工业机械臂 6 个——三个关节控制末端执行器在 XYZ 空间的位置，三个控制其
+      姿态（横滚、俯仰、偏航）。6 自由度是"任意点＋任意姿态"的最低要求，对结构化的工厂任务已经
+      足够。</p>
+      <p>7 自由度手臂增加一个冗余关节，在构型空间中创造一维零空间：同一个手部位姿有无限多种
+      关节角组合可以实现。这种冗余不是浪费——它换来障碍物避让（手保持位置的同时肘部绕开柜边）、
+      更合理的姿态，以及扭矩重分配。但每增加一个自由度都要多一个执行器、一个编码器、一块驱动板、
+      更多标定工作和更难的逆运动学。一台完整人形——两条 7 自由度手臂、两条 6 自由度腿、3 自由度
+      颈部、3 自由度腰部——关节总数轻松超过 35 个，每个都要在 500–1,000&nbsp;Hz 的实时频率下
+      供电、感测与控制。这就是执行系统通常是机器人物料清单中最大单项的原因。</p>
+
+      <h2 class="rb-h2">四轴选型框架</h2>
+      <p>为某个关节选执行器，意味着同时在四个轴上权衡：</p>
+      <ul>
+        <li><strong>扭矩密度</strong>——每千克执行器质量输出多少 Nm；</li>
+        <li><strong>反驱动性</strong>——外力推动关节的难易（高＝人机接触安全；低＝更刚、定位更准）；</li>
+        <li><strong>精度</strong>——定位重复性（外科级要角秒，多数服务任务角分即可）；</li>
+        <li><strong>成本</strong>——从不足 100 美元的大宗 BLDC 模块到数千美元的高端谐波伺服组合。</li>
+      </ul>
+      <p>实践中的规律：<strong>近端关节</strong>（肩、肘——承担手臂自重）要高扭矩＋高反驱动性；
+      <strong>远端关节</strong>（腕——只承担负载）要更高精度、较低扭矩；<strong>夹爪</strong>按
+      夹持力选型。把减速器、无框力矩电机、双编码器和伺服驱动器按轴打包成关节模组，让机器人
+      团队把这整套决策当作一个已验证的单元来采购，而不是四个独立的集成难题。</p>
+
+      <div class="rb-note">
+        <p><strong>采购提示。</strong>关节模组与执行部件是 Asaptic 的核心采购品类：深圳生态的
+        谐波减速器、无框电机、编码器与伺服驱动器，逐一对照供应商测试数据核验，附目的国到岸
+        成本测算与英文文档。
+        <a href="mailto:engage@asaptic.com?subject=%E6%89%A7%E8%A1%8C%E5%99%A8%E9%87%87%E8%B4%AD%E5%92%A8%E8%AF%A2">发送执行器采购咨询</a>，或查看<a href="/zh/robot/">我们采购什么</a>。</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">快速问答</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">什么是谐波减速器？机器人关节为什么用它？</div>
+          <div class="rb-faq-a">椭圆波发生器使柔轮与刚轮渐进啮合的应变波齿轮——近零反向间隙、单级 50:1–160:1、极致紧凑。这个组合让大多数精密机器人关节都离不开它。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">什么是准直驱（QDD）执行器？</div>
+          <div class="rb-faq-a">高扭矩无刷电机配极低传动比（约 6:1–12:1）或零减速。低传动比带来反驱动性——能感知并顺从接触——因此许多现代人形机器人在人类周围都用 QDD。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">工程师怎么选执行器？</div>
+          <div class="rb-faq-a">四轴同时权衡：扭矩密度、反驱动性、精度、成本。肩部要扭矩和柔顺，腕部要精度，夹爪按夹持力选。</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/zh/robot/101/anatomy/">← 01 · 机器人由什么构成？</a>
+        <a href="/zh/robot/101/sensors/">03 · 传感器与感知 →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        《机器人 101》是 <a href="/zh/robot/">Asaptic</a> 的科普内容，不构成认证、法律或进口建议。
+        文中引用的部件价格与规格为行业指示性数据，变化频繁——设计前请以最新规格书为准。
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

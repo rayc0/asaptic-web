@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How Robots Learn — Imitation, Data, and the Loop | Robot 101 | Asaptic</title>
+
+  <meta name="description" content="How robots learn: imitation learning, ACT and Diffusion Policy, teleoperation data, the data-quality rule, safe RL, and the retraining loop." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/robot/101/ai/" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/robot/101/ai/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/101/ai/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/101/ai/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="How Robots Learn — Imitation, Data, and the Loop" />
+  <meta property="og:description" content="Behaviour cloning, ACT and Diffusion Policy, teleoperation data collection, the data-quality rule, safe RL, and the deployment loop that keeps a policy improving." />
+  <meta property="og:url" content="https://asaptic.com/robot/101/ai/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="zh_CN" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How Robots Learn — Imitation, Data, and the Loop" />
+  <meta name="twitter:description" content="How a robot learns from demonstration, why data quality beats quantity, and how policies keep improving after deployment." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Robot Parts", "item": "https://asaptic.com/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "Robot 101: How Robots Learn", "item": "https://asaptic.com/robot/101/ai/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "How Robots Learn: Imitation, Data, and the Loop",
+    "description": "Behaviour cloning and generalisation, ACT and Diffusion Policy, teleoperation data collection, the data-quality rule, safe reinforcement learning, and the shadow-mode deployment loop.",
+    "inLanguage": "en",
+    "url": "https://asaptic.com/robot/101/ai/",
+    "isPartOf": { "@type": "WebPage", "name": "Robot 101", "url": "https://asaptic.com/robot/#robot-101" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is behaviour cloning, and why does it fail to generalise?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Behaviour cloning trains a policy to copy a human demonstrator's actions from matching observations. It fails outside the training distribution: if the demonstrations never showed a tray offset 15 cm from where it usually sits, the policy has never seen that state and small errors compound into failure. DAgger fixes this by having an expert correct the robot's own mistakes and folding those corrections back into training."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between ACT and Diffusion Policy?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ACT (Action Chunking with Transformers) predicts a short sequence of future actions at once, reducing compounding error, and uses a CVAE to pick one valid way to complete an ambiguous task. Diffusion Policy models the action as a denoising process, the same math behind image generators, which represents multi-modal choices even better but is slower at inference — often requiring distillation into a faster single-step sampler for real-time control."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why does data quality matter more than data quantity?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Studies since 2022, including work behind the ALOHA project and the Open X-Embodiment dataset, consistently find that a few thousand clean demonstrations outperform tens of thousands of mediocre ones. Roughly 20-40% of raw teleoperation recordings get rejected for failed grasps, timeouts, force violations, or corrupted frames, because including failures in training data teaches the policy to fail too."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/sourcing" class="nav-logo">ASAPTIC</a>
+    </div>
+  </nav>
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/robot/" style="color:inherit;text-decoration:none;">Asaptic Robotics Handbook</a></span>
+        <nav class="rb-langs" aria-label="Language">
+          <a href="/robot/101/ai/" aria-current="page">EN</a>
+          <span class="rb-lang-sep">&middot;</span>
+          <a href="/zh/robot/101/ai/">简</a>
+        </nav>
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">Robot 101 · Chapter 06</p>
+      <h1 class="rb-title">How robots learn: imitation, data, and the loop</h1>
+
+      <section class="rb-answer" aria-label="Summary">
+        <p><strong>In one paragraph:</strong> Most modern manipulation robots learn by imitation, not
+        hand-coded rules. A human demonstrates a task via teleoperation, a policy is trained to copy
+        the demonstrated actions, and the robot deploys that policy. Behaviour cloning is simple but
+        brittle outside its training distribution; DAgger and reinforcement learning push past that
+        ceiling. Architectures like ACT and Diffusion Policy turn raw demonstrations into smooth,
+        multi-step actions. None of this works without disciplined data collection and rejection —
+        in many reported benchmarks and collection studies, cleaner demonstrations often outperform
+        larger noisy sets. And the policy is never really
+        "finished": it improves through a continuous loop of shadow testing, versioning, and
+        retraining.</p>
+      </section>
+
+      <h2 class="rb-h2">Imitation learning: teaching a robot by demonstration</h2>
+      <p>Behaviour cloning (BC) is the simplest form of imitation learning: record a human performing a
+      task, train a policy to predict the demonstrator's action from the same observation, and run that
+      policy on the robot. No reward function, no physics simulator, none of the instability of
+      reinforcement learning from scratch. The catch is that BC is only as good as its training
+      distribution. If every demonstration starts with an object centred on a counter, and the robot
+      meets that object offset 15&nbsp;cm to one side, the policy has never seen that state — a small
+      error nudges it into an even less familiar one, and the failure compounds.</p>
+      <p><strong>DAgger</strong> (Dataset Aggregation) is the standard fix: while the trained policy runs,
+      a human expert periodically supplies the corrective action for its current state — not the action
+      the robot was about to take. Those corrections are folded back into training. After a few rounds,
+      the training distribution covers the error states the robot actually meets in the field, not just
+      the clean states a demonstrator chose to show it. In practice, every new deployment site or task
+      variation is a new distribution: a handful of correction rounds — often a couple of hours of an
+      expert's time — can adapt a policy trained elsewhere to a new layout, lighting, or object
+      variation, and each site's corrections make the shared policy better for the next one.</p>
+
+      <h2 class="rb-h2">ACT and Diffusion Policy: two ways to plan the next move</h2>
+      <p><strong>ACT</strong> (Action Chunking with Transformers) was an influential early policy
+      architecture for manipulating flexible objects consistently — folding cloth, inserting small parts
+      with both hands — from camera images alone, no point clouds required. Its key idea is
+      <em>action chunking</em>: instead of predicting one action per timestep, it predicts a short
+      sequence of future actions (a "chunk") and executes it while the next chunk is computed in
+      parallel, which avoids much of the compounding error plain BC suffers from. ACT also uses a
+      conditional variational autoencoder to handle tasks with more than one valid solution — there are
+      several ways to fold a shirt, and the model commits to one and executes it consistently rather
+      than averaging them into a physically meaningless motion.</p>
+      <p><strong>Diffusion Policy</strong> takes a different route, modelling the action as a denoising
+      process — the same mathematics behind image-generation models. It starts from random noise in
+      action space and iteratively denoises it, conditioned on the current camera image and the robot's
+      own joint state, producing a smooth trajectory. It represents genuinely multi-modal choices (which
+      hand goes first, which side of an object to grasp) better than chunked transformers can, because
+      diffusion doesn't average across valid modes. The cost is speed: it can require many denoising steps
+      and may be too slow for tight control loops (in some reported setups, adding up to roughly
+      200&nbsp;milliseconds of inference against a 30&nbsp;Hz control loop) unless accelerated or
+      distilled — so it's often distilled into a single-step sampler, trading a little representational
+      richness for faster inference.</p>
+
+      <h2 class="rb-h2">Teleoperation data collection and the ALOHA lesson</h2>
+      <p>Model architecture matters less than the data it is trained on. Since around 2022, benchmark
+      after benchmark has found that a few thousand high-quality demonstrations beat tens of thousands
+      of mediocre ones. That lesson traces to <strong>ALOHA</strong> (a low-cost, open-source bimanual
+      teleoperation rig from Stanford) and the subsequent Open X-Embodiment dataset — a Google
+      DeepMind-led collaboration spanning 22 robot bodies and over a million recorded demonstrations.
+      The collection method shapes the data distribution, and the data distribution shapes what the
+      policy can and cannot do.</p>
+      <p>The ALOHA-style approach is <strong>leader-follower teleoperation</strong>: two matching small
+      arms, where a human physically moves the "leader" and the "follower" — the one that will deploy —
+      mirrors its joint angles in real time over a low-latency link. Because the operator moves the arm
+      the way they'd move their own, rather than fighting a joystick, trained operators in reported
+      ALOHA-style setups have hit 85-95% completion on well-defined tasks. A complete rig in such setups
+      has run roughly $8,000-$15,000 in off-the-shelf arms and a small recording computer. <strong>VR teleoperation</strong> (headset plus hand
+      controllers) is the usual alternative for mobile-base navigation and coarse task sequencing —
+      faster to drive, but hand tremor and latency make it a poor fit for sub-centimetre manipulation.</p>
+
+      <h2 class="rb-h2">Why many demonstrations get thrown away</h2>
+      <p>A raw teleoperation recording is not training data — it has to pass a quality pipeline first.
+      Across large-scale collection efforts, a recurring pattern has been reported: <strong>a meaningful
+      share of raw demonstrations get rejected</strong> — commonly cited figures fall in the rough
+      20-40% range — where the operator lost control, the object
+      slipped mid-task, or the task simply wasn't completed in a reasonable time. Including those
+      failures in training data doesn't just waste storage; it can teach the policy failure
+      modes alongside successes, degrading final performance relative to a clean
+      dataset. Typical rejection checks include: did the task actually complete (verified against a goal
+      image); did it finish within roughly twice the median expert time; did any joint torque spike high
+      enough to suggest the operator was fighting the robot's dynamics; did the gripper leave the
+      intended workspace; and are the camera frames sharp enough to use. Demonstrations that fail on
+      completion or timing are simply discarded; borderline cases go to a human reviewer, who can trim
+      the hesitant lead-in of a recording or discard it outright.</p>
+      <p>What survives is annotated automatically — object labels, the frames where contact begins and
+      ends, a phase segmentation (approach/grasp/transport/release), and a language instruction — then
+      stored in a standard cross-robot data format that feeds directly into common training frameworks.
+      Unglamorous and labour-intensive, but this stage is what actually determines whether the resulting
+      policy is any good.</p>
+
+      <h2 class="rb-h2">Reinforcement learning with safety constraints</h2>
+      <p>Imitation gets a policy to a competent starting point, but reinforcement learning (RL) pushes
+      performance past what any demonstrator achieved. For mobile-base navigation, <strong>PPO</strong>
+      (Proximal Policy Optimization) is standard — stable to train, and commonly used in legged-robot
+      locomotion research and some deployed controllers. A typical reward is simple: a bonus for reaching the
+      goal, a penalty for a collision, a small time penalty, and a bonus for smooth rather than jerky
+      velocity. For contact-rich manipulation — opening a door, or anything where robot and environment
+      physically push back — <strong>SAC</strong> (Soft Actor-Critic) is usually preferred, since it is
+      more sample-efficient and explores more broadly than on-policy methods like PPO.</p>
+      <p>The harder problem is safety. Left unconstrained, an RL policy will happily discover that faster
+      motion earns more average reward, even if an occasional abrupt movement is unwelcome around
+      people. <strong>Safe RL</strong> adds hard constraints on top of the reward — a cap on
+      end-effector velocity near a person, a cap on joint torque during contact, a minimum stand-off
+      distance on approach. The standard implementation is a constrained Markov decision process with
+      Lagrangian relaxation: a penalty is added to the reward for any constraint violation, and a
+      separate optimiser tunes how heavily that penalty is weighted. This framework, or close variants of
+      it, underlies safety-constrained controllers across the industry.</p>
+
+      <h2 class="rb-h2">The deployment loop: shadow mode, versioning, and continuous retraining</h2>
+      <p>A deployed policy is never a finished artefact — it needs to keep improving as new field data
+      accumulates, and the infrastructure to do that safely looks more like software MLOps with extra
+      guardrails than a one-off training run. Every checkpoint is stored in a versioned model registry;
+      a major version bump requires passing a full validation suite across all trained tasks at a high
+      success-rate threshold, a minor version needs task-specific validation, and a patch only needs
+      regression tests on representative demonstrations.</p>
+      <p>Before any new version reaches the full fleet, it typically runs in <strong>shadow mode</strong>:
+      deployed to a small subset of robots where it computes actions from live sensor input but never
+      actually executes them — the production policy still drives the robot. A comparison process logs
+      where the shadow policy and the production policy disagree, and a human reviews the more
+      significant disagreements. If the shadow policy's proposed action would have been better, that's a
+      case for faster rollout; if it would have been worse or unsafe, the issue goes back to the model
+      team before the new version ever touches production behaviour. A typical weekly cadence looks
+      like: early in the week, run the previous week's execution logs through the quality pipeline and
+      add newly accepted demonstrations to the training set; mid-week, fine-tune the policy on the
+      updated dataset; later, run automated validation; and only then, if validation passes, push to
+      shadow deployment. Each site that contributes clean data through this loop makes the shared policy
+      a little better for every other site running it.</p>
+
+      <div class="rb-note">
+        <p><strong>Sourcing note.</strong> Learning-based robots are still built from physical parts:
+        teleoperation rigs, cameras, force sensing, and the reliable actuation covered earlier in this
+        series. Asaptic sources these components with test data and English documentation.
+        <a href="mailto:engage@asaptic.com?subject=Robot%20AI%20hardware%20sourcing%20enquiry">Send an
+        enquiry</a> or see <a href="/robot/">what we source</a>.</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">Quick answers</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">What is behaviour cloning, and why does it fail to generalise?</div>
+          <div class="rb-faq-a">Behaviour cloning trains a policy to copy a human demonstrator's actions from matching observations. It fails outside the training distribution: if the demonstrations never showed a tray offset 15 cm from where it usually sits, the policy has never seen that state and small errors compound into failure. DAgger fixes this by having an expert correct the robot's own mistakes and folding those corrections back into training.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">What is the difference between ACT and Diffusion Policy?</div>
+          <div class="rb-faq-a">ACT (Action Chunking with Transformers) predicts a short sequence of future actions at once, reducing compounding error, and uses a CVAE to pick one valid way to complete an ambiguous task. Diffusion Policy models the action as a denoising process, the same math behind image generators, which represents multi-modal choices even better but is slower at inference — often requiring distillation into a faster single-step sampler for real-time control.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">Why does data quality matter more than data quantity?</div>
+          <div class="rb-faq-a">Studies since 2022, including work behind the ALOHA project and the Open X-Embodiment dataset, consistently find that a few thousand clean demonstrations outperform tens of thousands of mediocre ones. Roughly 20-40% of raw teleoperation recordings get rejected for failed grasps, timeouts, force violations, or corrupted frames, because including failures in training data teaches the policy to fail too.</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/robot/101/software/">← 05 · The robot software stack</a>
+        <a href="/robot/101/compliance/">07 · Compliance &amp; certification →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        Robot 101 is educational material by <a href="/robot/">Asaptic</a>. It is not certification,
+        legal, or import advice. Figures cited are indicative research and industry findings and change
+        as the field moves — verify against current papers and datasheets before designing.
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>机器人传感器与感知详解 — 激光雷达、深度相机、IMU、传感器融合 | 机器人 101 | Asaptic</title>
+
+  <meta name="description" content="机器人如何感知世界：激光雷达、深度相机、IMU、六维力传感器、感知管线，以及卡尔曼滤波传感器融合，通俗讲清。" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/robot/101/sensors/" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/robot/101/sensors/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/101/sensors/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/101/sensors/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="机器人传感器与感知详解 — 激光雷达、相机、IMU、融合" />
+  <meta property="og:description" content="机器人感知背后的传感器类型、把原始数据变成世界模型的感知管线，以及传感器融合如何把它们组合起来。" />
+  <meta property="og:url" content="https://asaptic.com/zh/robot/101/sensors/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="机器人传感器与感知详解 — 激光雷达、相机、IMU、融合" />
+  <meta name="twitter:description" content="机器人如何感知世界，以及如何把原始传感器数据变成可用的环境模型。" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "机器人零部件", "item": "https://asaptic.com/zh/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "机器人 101：传感器", "item": "https://asaptic.com/zh/robot/101/sensors/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "传感器与感知：机器人如何看世界",
+    "description": "机器人感知背后的传感器类型（相机、激光雷达、IMU、六维力、触觉），从原始数据到世界模型的感知管线，以及卡尔曼滤波传感器融合。",
+    "inLanguage": "zh-Hans",
+    "url": "https://asaptic.com/zh/robot/101/sensors/",
+    "isPartOf": { "@type": "WebPage", "name": "机器人 101", "url": "https://asaptic.com/zh/robot/#robot-101" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "激光雷达和深度相机有什么区别？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "激光雷达发射激光脉冲并计时反射回来的时间，在较大视场范围内建立精确的3D 点云，且在黑暗中也能工作。深度相机在较短距离内生成更密集的逐像素深度图——这正是机器人在抓取物体前判断其精确3D 位姿所需要的。很多机器人两者都会配备。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "机器人已经有相机和激光雷达了，为什么还需要IMU？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "IMU每秒能报告数百到数千次旋转与加速度数据，远快于一帧相机图像或一次激光雷达扫描的完成速度。这种速度让机器人能在下一帧图像到来之前对突然的倾斜或碰撞做出反应，也能在相机或激光雷达短暂失效时填补运动估计的空白。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "什么是卡尔曼滤波器？传感器融合中通常如何使用它？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "卡尔曼滤波器（机器人领域常用扩展卡尔曼滤波器EKF）持续预测机器人的位置与运动状态，再用每个新的传感器读数按可信程度加权修正预测。结果是一个比任何单一传感器都更准确、更稳定的综合估计。"
+      }
+    }
+  ]
+}
+  </script>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/zh/sourcing" class="nav-logo">ASAPTIC</a>
+    </div>
+  </nav>
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/zh/robot/" style="color:inherit;text-decoration:none;">Asaptic 机器人手册</a></span>
+        <nav class="rb-langs" aria-label="语言">
+          <a href="/robot/101/sensors/">EN</a>
+          <span class="rb-lang-sep">&middot;</span>
+          <a href="/zh/robot/101/sensors/" aria-current="page">简</a>
+        </nav>
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">机器人 101 · 第 03 章</p>
+      <h1 class="rb-title">传感器与感知：机器人如何看世界</h1>
+
+      <section class="rb-answer" aria-label="摘要">
+        <p><strong>一段话说清：</strong>机器人同时用多种传感器来构建对世界的理解——相机和激光雷达
+        感知形状与距离，IMU 提供快速的运动感知，六维力与触觉传感器感知接触时的力与压力。感知管线
+        把这些原始数据变成检测到的物体和一张可供导航的地图。因为每种传感器都有各自的盲区和噪声，
+        传感器融合——许多系统中常用扩展卡尔曼滤波器——把它们组合成一个比任何单一传感器都更可靠的综合估计。</p>
+      </section>
+
+      <h2 class="rb-h2">感知形状与距离：相机与激光雷达</h2>
+      <p>激光雷达（LiDAR）发射激光脉冲并计时其反射回来所需的时间，从而建立机器人周围环境的精确
+      3D 点云。机械旋转激光雷达——旋转一组激光发射器完成360度扫描，通道数从16到128不等——长期以来
+      一直是自动驾驶和室外移动机器人的标准配置，价格从数千美元到数万美元不等（为行业指示性数据，
+      请以最新报价为准）。固态激光雷达使用MEMS反射镜或相控阵实现无旋转部件扫描，价格常低于千美元，
+      耐振动性也更强——这正是室内服务机器人的明确趋势。例如 Livox Mid-360（一个广为人知的例子，
+      指示性售价低于800美元）覆盖40米量程，具有360°/59° 视场角，足以为室内导航完成整个房间的建图。</p>
+      <p>深度相机不生成稀疏点云，而是通过结构光（投射已知红外图案并测量其畸变）或立体视觉（两个
+      相机通过视差计算深度，与人类双目视觉的原理相同）生成逐像素的深度图。一款广受欢迎的立体视觉
+      模块——Intel RealSense D435i，是机器人开发者的常见首选，指示性价格约200-400美元，在0.5-3米
+      范围内可达到亚厘米级精度。部分立体视觉模块还内置片上神经推理芯片，无需外部GPU即可直接在
+      相机上运行物体检测。深度相机对操作任务尤其重要：抓取一个物体需要知道它完整的3D 位姿——位置
+      加朝向——而不仅仅是它在平面图像中出现的位置。</p>
+
+      <h2 class="rb-h2">惯性测量：在两次更新之间感知运动</h2>
+      <p>惯性测量单元（IMU）把三轴加速度计和三轴陀螺仪集成在一块小芯片上，每秒能报告数百到数千次
+      线性加速度和旋转角速度——远快于任何一帧相机图像或一次激光雷达扫描。从数学上说，对加速度积分
+      可得速度，再积分一次可得位置，但微小的恒定误差会迅速累积，因此单独使用IMU时，其可靠性通常
+      只能维持在远短于一秒的时间窗口内。实践中IMU从不单独使用：在地面机器人上与轮式里程计融合，
+      与激光雷达融合形成激光雷达惯性里程计，或与相机融合形成视觉惯性里程计。对于必须保持动态平衡
+      的机器人——例如行走的人形机器人——IMU的高速与低延迟正是让平衡控制器能在扰动传播到全身之前
+      就做出反应的关键。</p>
+
+      <h2 class="rb-h2">力、力矩与触觉：感知接触</h2>
+      <p>安装在机器人腕部的六维力矩传感器（F/T传感器）测量施加在该处的全部三个力和三个力矩——完整
+      的六轴接触信息。这一读数正是柔顺操作的关键：检测是否已发生接触、调节推力大小（在接触精密
+      物体或人体时至关重要）、察觉抓取的物体正在打滑，以及在被推动时平顺地顺从退让而不是僵硬对抗。
+      工业级六维力传感器指示性价格约在两千到数千美元之间，性能相当的更低成本替代方案也越来越多。</p>
+      <p>触觉传感器把这个思路更进一步：不是在腕部给出一个综合读数，而是在整个接触表面——指尖、
+      手掌、一块合成皮肤——分布许多压敏元件。这种更细的空间分辨率能够在物体真正掉落之前检测到
+      打滑、识别基本的材质纹理，并在仅靠腕部传感器无法判断手上具体哪个位置发生接触时提供更安全
+      的接触感知——这在机器人需要与人近距离身体接触的任何场景（包括护理场景）都很有用。</p>
+
+      <h2 class="rb-h2">从像素到物体：感知管线</h2>
+      <p>感知管线是把原始传感器字节流转化为机器人规划软件可以推理的结构化模型的一连串算法——通常
+      每秒运行10到30次，并需要应对变化的光照和移动的人员。YOLOv8 等目标检测模型是常见基准：在合适的嵌入式GPU上可达到实时推理速度，足够用于避障，但只能识别训练时见过的类别。像 Grounding
+      DINO 这样的开放词汇检测模型能识别由文本提示描述的物体，包括不在固定检测器标签集中的类别——
+      但速度较慢，因此更适合有目的的搜索任务而非分秒必争的实时反应。像 Segment Anything 这样的
+      分割模型能在操作任务需要精确轮廓而非包围框时勾勒出物体的准确边界，而位姿估计模型能从单帧
+      深度图像中恢复物体完整的3D 朝向——这是可靠抓取的关键输入。</p>
+      <p>在这条快速的、纯几何的感知回路之上，还有一层更新的能力：视觉语言模型能把一帧相机画面
+      转化为自然语言的场景描述（例如"杯子在托盘的左边缘"），有助于更高层的任务理解和人机交互。
+      这类模型通常太慢，无法以核心检测回路同样的速度运行，因此多数系统会并行运行两种感知速率——
+      一种快速回路（每秒数十次）用于即时避障和抓取，一种较慢的回路（每秒数次）用于场景的语义
+      理解。</p>
+
+      <h2 class="rb-h2">建图：点云处理与SLAM</h2>
+      <p>原始点云数据量大且带噪声，使用前通常要先做清理：下采样把十万级别的点云扫描降到更易处理的
+      代表性点数，平面拟合把地面从障碍物中分离出来，聚类则把点归并为独立的物体。SLAM（同步定位
+      与建图）算法利用处理过的数据，在探索陌生空间的同时建图，并同步追踪机器人自身在图中的位置——
+      激光雷达惯性方案常用于传感器配置丰富的移动机器人，更简单的2D激光雷达SLAM则适合成本较低的
+      机器人底座。许多室内服务机器人遵循一种实用模式：首次进入新空间时先完整运行一次 SLAM，以彻底
+      建图，日常运行时则切换到更轻量的"仅定位"模式，在已建好的地图上工作——一旦家具摆放稳定，地图很少
+      再变化，重复使用地图能大幅降低重复性路线的计算负担。</p>
+
+      <h2 class="rb-h2">传感器融合：把多路噪声信号合成一个估计</h2>
+      <p>没有任何单一传感器能讲清全部故事：相机在暗处表现不佳，激光雷达单独无法判断两次扫描之间
+      机器人转动的速度，而IMU如果被信任的时间稍长就会产生漂移。传感器融合把多路带噪声、各有侧重
+      的信号合并成一个比任何单一输入都更准确的估计。许多系统常用的工具是扩展卡尔曼滤波器（EKF）：它根据已
+      知信息预测机器人下一时刻的位置和运动，再用每一个新的传感器读数——按其通常的可信程度加权——
+      修正这个预测。实践中，IMU比激光雷达扫描匹配器更快捕捉到快速的旋转变化；激光雷达在较长距离
+      上修正IMU的缓慢漂移；轮式里程计则在激光雷达短暂丢失清晰读数的瞬间填补空白。</p>
+      <p>实践中还有两个支撑性细节很关键。第一，每一对传感器都需要仔细标定——例如相机与激光雷达
+      之间固定的几何偏移量，必须精确到几毫米和零点几度以内，否则两路数据将无法对齐。第二，各传感器
+      的输出速率和延迟各不相同——一帧相机图像、一次激光雷达扫描和一次IMU读数几乎从不在同一时刻
+      到达——因此对所有传感器进行精确的时间同步，才能避免融合结果出现明显的"时间扭曲"伪影，机器人
+      移动越快，这一点就越重要。</p>
+
+      <div class="rb-note">
+        <p><strong>采购提示。</strong>Asaptic 从经筛选的深圳生态制造商采购上述感知部件——深度
+        相机、激光雷达、IMU、六维力传感器与编码器——并提供规格核验、目的国到岸成本测算与英文
+        文档。<a href="mailto:engage@asaptic.com?subject=%E4%BC%A0%E6%84%9F%E5%99%A8%E9%87%87%E8%B4%AD%E5%92%A8%E8%AF%A2">发送传感器采购咨询</a>，或查看<a href="/zh/robot/">我们采购什么</a>。</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">快速问答</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">激光雷达和深度相机有什么区别？</div>
+          <div class="rb-faq-a">激光雷达发射激光脉冲并计时反射回来的时间，在较大视场范围内建立精确的3D 点云，且在黑暗中也能工作。深度相机在较短距离内生成更密集的逐像素深度图——这正是机器人在抓取物体前判断其精确3D 位姿所需要的。很多机器人两者都会配备。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">机器人已经有相机和激光雷达了，为什么还需要IMU？</div>
+          <div class="rb-faq-a">IMU每秒能报告数百到数千次旋转与加速度数据，远快于一帧相机图像或一次激光雷达扫描的完成速度。这种速度让机器人能在下一帧图像到来之前对突然的倾斜或碰撞做出反应，也能在相机或激光雷达短暂失效时填补运动估计的空白。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">什么是卡尔曼滤波器？传感器融合中通常如何使用它？</div>
+          <div class="rb-faq-a">卡尔曼滤波器（机器人领域常用扩展卡尔曼滤波器EKF）持续预测机器人的位置与运动状态，再用每个新的传感器读数按可信程度加权修正预测。结果是一个比任何单一传感器都更准确、更稳定的综合估计。</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/zh/robot/101/actuators/">← 02 · 执行器与关节模组</a>
+        <a href="/zh/robot/101/batteries/">04 · 电池与电源系统 →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        《机器人 101》是 <a href="/zh/robot/">Asaptic</a> 的科普内容，不构成认证、法律或进口建议。
+        文中引用的部件价格与规格为行业指示性数据，变化频繁——设计前请以最新规格书为准。
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

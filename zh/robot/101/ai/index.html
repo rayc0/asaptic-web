@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>机器人如何学习 — 模仿、数据与闭环 | 机器人 101 | Asaptic</title>
+
+  <meta name="description" content="机器人如何学习：行为克隆、ACT 与扩散策略、遥操作数据采集、数据质量规则与安全强化学习，以及持续重训练闭环。" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/robot/101/ai/" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/robot/101/ai/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/101/ai/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/101/ai/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="机器人如何学习 — 模仿、数据与闭环" />
+  <meta property="og:description" content="行为克隆、ACT 与扩散策略、遥操作数据采集、数据质量规则、安全强化学习，以及让策略持续变好的部署闭环。" />
+  <meta property="og:url" content="https://asaptic.com/zh/robot/101/ai/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="机器人如何学习 — 模仿、数据与闭环" />
+  <meta name="twitter:description" content="机器人如何从演示中学习，为什么数据质量比数量更重要，以及策略部署后如何持续改进。" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "机器人零部件", "item": "https://asaptic.com/zh/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "机器人 101：机器人如何学习", "item": "https://asaptic.com/zh/robot/101/ai/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "机器人如何学习：模仿、数据与闭环",
+    "description": "行为克隆与泛化、ACT 与扩散策略、遥操作数据采集、数据质量规则、带安全约束的强化学习，以及影子模式部署闭环。",
+    "inLanguage": "zh-Hans",
+    "url": "https://asaptic.com/zh/robot/101/ai/",
+    "isPartOf": { "@type": "WebPage", "name": "机器人 101", "url": "https://asaptic.com/zh/robot/#robot-101" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "什么是行为克隆？它为什么难以泛化？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "行为克隆训练一个策略，从观测中模仿人类演示者的动作。它在训练分布之外会失效：如果演示中物体从未偏离常规位置 15 厘米，策略就没见过这种状态，微小误差会不断累积导致失败。DAgger 通过让专家纠正机器人自身的错误、再把这些纠正数据加入训练来解决这个问题。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "ACT 与扩散策略有什么区别？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ACT（带 Transformer 的动作分块）一次预测一小段未来动作序列，减少误差累积，并用 CVAE 在有多种合理做法的任务中选定一种一致执行。扩散策略把动作建模为去噪过程，与图像生成模型背后的数学原理相同，能更好地表示多模态选择，但推理更慢——通常需要蒸馏成更快的单步采样器才能用于实时控制。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "为什么数据质量比数量更重要？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "自 2022 年以来的研究，包括 ALOHA 项目和 Open X-Embodiment 数据集背后的工作，一致发现几千个高质量演示胜过几万个平庸演示。原始遥操作录像中约 20%–40% 会因抓取失败、超时、力矩违规或画面损坏而被拒绝，因为把失败案例混入训练数据也会教会策略如何失败。"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/zh/sourcing" class="nav-logo">ASAPTIC</a>
+    </div>
+  </nav>
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/zh/robot/" style="color:inherit;text-decoration:none;">Asaptic 机器人手册</a></span>
+        <nav class="rb-langs" aria-label="语言">
+          <a href="/robot/101/ai/">EN</a>
+          <span class="rb-lang-sep">&middot;</span>
+          <a href="/zh/robot/101/ai/" aria-current="page">简</a>
+        </nav>
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">机器人 101 · 第 06 章</p>
+      <h1 class="rb-title">机器人如何学习：模仿、数据与闭环</h1>
+
+      <section class="rb-answer" aria-label="摘要">
+        <p><strong>一段话说清：</strong>如今大多数操作机器人靠模仿学习，而非手写规则。人类通过
+        遥操作演示任务，一个策略被训练来模仿演示动作，机器人随后部署这个策略。行为克隆简单但
+        在训练分布之外很脆弱；DAgger 与强化学习能突破这个天花板。ACT 与扩散策略这类架构把原始
+        演示变成平滑、多步骤的动作。若没有严格的数据采集与拒绝机制，这一切都无从谈起——在许多已报告的基准测试与数据采集研究中，更干净的演示往往优于规模更大但更嘈杂
+        的数据集。而策略也从来不是“完工”的：它通过影子测试、版本管理与重训练
+        构成的持续闭环不断改进。</p>
+      </section>
+
+      <h2 class="rb-h2">模仿学习：靠演示教会机器人</h2>
+      <p>行为克隆（BC）是最简单的模仿学习形式：记录人类完成任务的过程，训练一个策略从相同观测
+      预测演示者的动作，然后在机器人上运行这个策略。它不需要奖励函数，不需要物理仿真，也没有
+      从零训练强化学习那种不稳定性。问题在于，BC 的表现完全取决于训练演示的分布。如果每次演示
+      都是物体居中放在台面上，而部署时物体偏移了 15&nbsp;厘米，策略就从未见过这种状态。一个小的
+      动作误差会把机器人推向更陌生的状态，下一步动作更差，误差不断累积最终导致失败。</p>
+      <p><strong>DAgger</strong>（数据集聚合）是标准的解决办法：当训练好的策略在机器人上运行时，
+      人类专家定期观察机器人当前的状态，给出正确的纠正动作——而不是机器人本来打算采取的动作。
+      这些纠正数据被并入训练集，策略被重新训练。经过几轮之后，训练分布覆盖了机器人在实际部署
+      中真正会遇到的错误状态，而不只是演示者选择展示的干净状态。实践中，每个新的部署场景或任务
+      变体都是一种新分布：几轮纠正——往往只需专家几个小时的时间——就能把在别处训练的策略适配到
+      新的布局、光照或物体变化上。每个贡献了纠正数据的场景，都会让底层策略对下一个场景更好用。</p>
+
+      <h2 class="rb-h2">ACT 与扩散策略：两种规划下一步的方式</h2>
+      <p><strong>ACT</strong>（带 Transformer 的动作分块）是一种有影响力的早期策略架构，仅凭摄像头
+      图像（无需点云输入）就能一致地操作柔性物体——折叠布料、双手插入小零件。它的核心
+      思想是"动作分块"：不是每个时间步预测一个动作，而是预测一小段未来动作序列（一个"块"），
+      并在计算下一个块的同时执行当前块。以块而非单步来推理，避免了纯 BC 那样的复合误差。ACT 还
+      使用条件变分自编码器来处理有多种合理解法的任务——比如折叠衬衫有好几种方式，模型会选定
+      一种并一致地执行，而不是把它们平均成一个物理上没有意义的动作。</p>
+      <p><strong>扩散策略</strong>走了另一条路：把动作建模为去噪过程——与图像生成模型背后相同的
+      数学原理。它从动作空间中的随机噪声出发，以当前摄像头图像与机器人自身关节状态为条件迭代
+      去噪，产生一条平滑轨迹。这种方式能更好地表示真正的多模态选择（先用哪只手、从物体哪一侧
+      抓取），因为扩散过程不会把多个有效模式平均掉。代价是速度：它可能需要多步去噪，除非经过加速或
+      蒸馏，否则对于时延要求严格的控制回路可能太慢（在部分已报告的场景中，累计推理耗时可达约
+      200&nbsp;毫秒，而控制回路运行在 30&nbsp;Hz）。因此常见做法是把扩散模型蒸馏成单步采样器，
+      牺牲一点表示能力，换来更快的推理速度。</p>
+
+      <h2 class="rb-h2">数据采集：遥操作装置与 ALOHA 的教训</h2>
+      <p>模型架构的重要性不及它所训练的数据。自 2022 年前后起，一次又一次的基准测试都发现，几
+      千个高质量演示胜过几万个平庸演示。这一教训可以追溯到<strong>ALOHA</strong>（斯坦福大学
+      开发的低成本开源双臂遥操作装置）以及随后的 Open X-Embodiment 数据集——由 Google DeepMind
+      主导、涵盖 22 种不同机器人形体、超过一百万条演示记录的协作项目。结论是：采集方法决定了
+      数据分布，数据分布决定了策略能做什么、不能做什么。</p>
+      <p>ALOHA 式的方法是<strong>主从（leader-follower）遥操作</strong>：两条相同的小型机械臂，人类直接移动"领导者"
+      臂，而实际会部署的"跟随者"臂通过低延迟链路实时镜像其关节角度。因为操作员是像移动自己的
+      手臂一样操作，而不是与操纵杆或手柄搏斗，在已报告的 ALOHA 式设置中，训练有素的操作员在定义
+      明确的任务上曾达到 85%–95% 的完成率。在这类设置中，用现成的机械臂加一台小型记录用计算机，
+      整套装置大约花费 8,000–15,000&nbsp;美元即可搭建。<strong>VR 遥操作</strong>（头显加手部控制器）通常是移动
+      底座导航与粗粒度全任务演示的替代方案——驾驶起来更快，但手部颤抖与延迟使它不适合亚厘米级
+      精细操作，这方面主从遥操作装置仍然占优。</p>
+
+      <h2 class="rb-h2">为什么许多演示会被丢弃</h2>
+      <p>原始遥操作录像并不是训练数据——它必须先通过质量管线。在大规模数据采集实践中，一个反复
+      被报告的现象是：<strong>相当一部分原始演示会被拒绝</strong>——常见引用的比例大致落在
+      20%–40% 区间——原因包括操作员失去控制、物体
+      在任务中滑落，或任务没有在合理时间内完成。把这些失败案例纳入训练数据，不只是浪费存储；
+      它可能会把失败模式和成功模式一起教给策略，导致相对于干净数据集最终性能下降。典型
+      的拒绝检查包括：任务是否真正完成（与目标图像比对验证）；是否在专家中位时间的大约两倍以内
+      完成；关节力矩是否出现异常高峰，暗示操作员在与机器人的动力学‘较劲’；夹爪是否离开了预定
+      工作空间；以及摄像头画面是否清晰可用。未通过完成度或时间检查的演示会被直接丢弃；边界情况
+      则交给人工审核，可以修剪掉录像开头犹豫不决的部分，或者干脆整段丢弃。</p>
+      <p>通过筛选的演示会被自动标注——物体标签、接触开始与结束的帧、接近/抓取/运输/释放的阶段
+      划分，以及描述任务的语言指令——并存储为一种跨机器人的标准数据格式，可以直接送入常见的
+      训练框架。这是整个管线中最不起眼、也最耗人力的一环，但它恰恰决定了最终策略的好坏。</p>
+
+      <h2 class="rb-h2">带安全约束的强化学习</h2>
+      <p>模仿学习能让策略达到一个不错的起点，但真正把性能推到超越任何单个演示者水平的是强化学习
+      （RL）。对于移动底座导航，<strong>PPO</strong>（近端策略优化）是标准选择——训练稳定，广泛用于足式机器人
+      运动控制的研究中，也被用于部分量产控制器。典型奖励很简单：到达目标给予奖励，发生碰撞
+      给予惩罚，每个时间步施加一个小的时间惩罚，速度曲线平滑则给予额外奖励。对于接触丰富的操作
+      任务——比如开门，或任何机器人与环境会物理相互推挤的任务——<strong>软演员-评论家（SAC）</strong>通常更受青睐，因为它比 PPO 这类同策略方法样本效率更高、探索范围更广。</p>
+      <p>更难的问题是安全性。如果不加约束，RL 策略很容易发现更快的动作能获得更高的平均奖励，即使
+      偶尔的急促动作在人身边并不受欢迎。<strong>安全强化学习</strong>的做法是在奖励之上叠加硬性
+      约束——例如在人员附近限制末端执行器速度上限、在接触期间限制关节力矩上限，以及接近过程中
+      设定最小安全距离。标准实现是带拉格朗日松弛的约束马尔可夫决策过程：任何约束违反都会给奖励
+      加上一个惩罚项，另一个优化器负责调整这个惩罚的权重。这一框架，或其近似变体，支撑着业界许多
+      带安全约束的运动与操作控制器。</p>
+
+      <h2 class="rb-h2">部署闭环：影子模式、版本管理与持续重训练</h2>
+      <p>一个已部署的策略从来不是最终成品——它需要随着现场数据的积累持续改进，而支撑这一过程的
+      基础设施，比起一次性训练，更像是带了额外安全阀的软件 MLOps。每个检查点都存储在带版本号的
+      模型注册表中；主版本升级需要在所有已训练任务上通过完整验证套件并达到较高的成功率门槛，次
+      版本需要针对特定任务的验证，补丁版本只需要对代表性演示做回归测试。</p>
+      <p>任何新版本在推送到全部机群之前，通常会先运行在<strong>影子模式</strong>：部署到一小部分
+      机器人上，它从实时传感器输入计算动作，但从不真正执行——生产策略仍然驱动机器人。一个比较
+      进程记录影子策略与生产策略的分歧之处，人工审核较显著的分歧。如果影子策略的动作本来会更好，
+      这就是加快上线的理由；如果它本来会更差或不安全，问题会在新版本触及生产行为之前退回模型
+      团队处理。一个典型的每周节奏是：一周伊始，把上周的执行日志跑一遍质量管线，把新通过的演示
+      加入训练集；周中，对更新后的数据集微调策略；随后运行自动化验证；只有验证通过，才推送到
+      影子部署。每个通过这一闭环贡献干净数据的场景，都会让所有使用同一策略的其他场景受益一点。</p>
+
+      <div class="rb-note">
+        <p><strong>采购提示。</strong>基于学习的机器人依然由实体部件构成：遥操作装置、摄像头、
+        力传感器，以及本系列前文讲到的可靠执行系统。Asaptic 可协助采购这些部件，并视具体供应商/部件
+        提供测试数据与英文文档（以实际交付为准）。<a href="mailto:engage@asaptic.com?subject=%E6%9C%BA%E5%99%A8%E4%BA%BAAI%E7%A1%AC%E4%BB%B6%E9%87%87%E8%B4%AD%E5%92%A8%E8%AF%A2">发送采购咨询</a>，或查看<a href="/zh/robot/">我们采购什么</a>。</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">快速问答</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">什么是行为克隆？它为什么难以泛化？</div>
+          <div class="rb-faq-a">行为克隆训练一个策略，从观测中模仿人类演示者的动作。它在训练分布之外会失效：如果演示中物体从未偏离常规位置 15 厘米，策略就没见过这种状态，微小误差会不断累积导致失败。DAgger 通过让专家纠正机器人自身的错误、再把这些纠正数据加入训练来解决这个问题。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">ACT 与扩散策略有什么区别？</div>
+          <div class="rb-faq-a">ACT（带 Transformer 的动作分块）一次预测一小段未来动作序列，减少误差累积，并用 CVAE 在有多种合理做法的任务中选定一种一致执行。扩散策略把动作建模为去噪过程，与图像生成模型背后的数学原理相同，能更好地表示多模态选择，但推理更慢——通常需要蒸馏成更快的单步采样器才能用于实时控制。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">为什么数据质量比数量更重要？</div>
+          <div class="rb-faq-a">自 2022 年以来的研究，包括 ALOHA 项目和 Open X-Embodiment 数据集背后的工作，一致发现几千个高质量演示胜过几万个平庸演示。原始遥操作录像中约 20%–40% 会因抓取失败、超时、力矩违规或画面损坏而被拒绝，因为把失败案例混入训练数据也会教会策略如何失败。</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/zh/robot/101/software/">← 05 · 机器人软件栈</a>
+        <a href="/zh/robot/101/compliance/">07 · 合规与认证 →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        《机器人 101》是 <a href="/zh/robot/">Asaptic</a> 的科普内容，不构成认证、法律或进口建议。
+        文中引用的数据为研究与行业指示性发现，会随领域发展而变化——设计前请以最新论文与规格书为准。
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>
