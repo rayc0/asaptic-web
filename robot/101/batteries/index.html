@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robot Batteries &amp; Power Systems Explained — LFP vs NMC, BMS, UN38.3 | Robot 101 | Asaptic</title>
+
+  <meta name="description" content="How robot power systems work: LFP vs NMC chemistry, C-rate, the BMS, 48V bus and PDU design, thermal management, runtime sizing, UN38.3 shipping." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/robot/101/batteries/" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/robot/101/batteries/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/101/batteries/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/101/batteries/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Robot Batteries &amp; Power Systems Explained — LFP vs NMC, BMS, UN38.3" />
+  <meta property="og:description" content="Cell chemistry trade-offs, C-rate, the BMS, bus voltage and thermal design, runtime sizing, and the shipping-compliance reality of lithium batteries." />
+  <meta property="og:url" content="https://asaptic.com/robot/101/batteries/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="zh_CN" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Robot Batteries &amp; Power Systems Explained — LFP vs NMC, BMS, UN38.3" />
+  <meta name="twitter:description" content="How robot power systems are designed, sized, and shipped." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Robot Parts", "item": "https://asaptic.com/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "Robot 101: Batteries", "item": "https://asaptic.com/robot/101/batteries/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Batteries and Power Systems: The Energy Foundation",
+    "description": "LFP vs NMC cell chemistry, C-rate, the BMS, 48V bus and PDU design, thermal management, runtime sizing, and UN38.3 shipping compliance.",
+    "inLanguage": "en",
+    "url": "https://asaptic.com/robot/101/batteries/",
+    "isPartOf": { "@type": "WebPage", "name": "Robot 101", "url": "https://asaptic.com/robot/#robot-101" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Should a robot use LFP or NMC batteries?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "LFP has a much higher thermal-runaway threshold (~270°C vs ~150°C for NMC) and 2-4x the cycle life, making it the safer default around people. NMC packs more energy per kilogram, so weight-sensitive humanoids and quadrupeds often accept the lower safety margin for a lighter pack."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is C-rate and why does it matter for a robot battery?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "C-rate is how fast a cell can charge or discharge relative to its capacity. Robots draw 3C-10C spikes during acceleration and can push similar pulses back in during regenerative braking, so cells and the BMS must be rated above real peak draw, not just average power."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is UN38.3 and why does every lithium robot battery need it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A mandatory eight-test protocol (altitude, thermal, vibration, shock, short circuit, crush, overcharge, forced discharge) every lithium pack must pass before air shipment. The resulting Test Summary Report is what airlines, freight forwarders, and customs require — without it, shipment is refused."
+      }
+    }
+  ]
+}
+  </script>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/sourcing" class="nav-logo">ASAPTIC</a>
+    </div>
+  </nav>
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/robot/" style="color:inherit;text-decoration:none;">Asaptic Robotics Handbook</a></span>
+        <nav class="rb-langs" aria-label="Language">
+          <a href="/robot/101/batteries/" aria-current="page">EN</a>
+          <span class="rb-lang-sep">&middot;</span>
+          <a href="/zh/robot/101/batteries/">简</a>
+        </nav>
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">Robot 101 · Chapter 04</p>
+      <h1 class="rb-title">Batteries &amp; power systems: the energy foundation</h1>
+
+      <section class="rb-answer" aria-label="Summary">
+        <p><strong>In one paragraph:</strong> A robot's battery pack is a system, not a component. The
+        cell chemistry (LFP vs NMC) sets the baseline trade-off between safety, cycle life, and weight.
+        The Battery Management System (BMS) monitors each series cell group and decides when to cut power. The pack
+        connects to a power-distribution architecture — typically a 48V bus — that has to survive
+        current spikes, dissipate heat, and fail safe. Runtime has to be sized against the robot's real
+        duty cycle, not its average draw. And because the pack is lithium, it cannot be shipped by air
+        or through international dangerous-goods channels without required UN38.3 documentation — the
+        test protocol every airline and customs authority checks for.</p>
+      </section>
+
+      <h2 class="rb-h2">Cell chemistry: LFP vs NMC</h2>
+      <p>Lithium Iron Phosphate (LFP, LiFePO&#8324;) and Lithium Nickel Manganese Cobalt Oxide (NMC,
+      LiNi&#8339;Mn&#8391;Co&#8348;O&#8322;) are the two cell chemistries that dominate robot power systems, and choosing
+      between them is one of the more consequential decisions in a robot's hardware design. LFP's
+      standout property is thermal stability: thermal-runaway onset is roughly 270°C versus about 150°C
+      for NMC, a large safety margin that matters when the pack sits inside a robot operating around
+      people. LFP also delivers 2,000-4,000 charge cycles to 80% capacity versus 500-1,500 for NMC — a
+      service robot that charges daily gets three to five times the pack lifespan.</p>
+      <p>The trade-off is energy density: LFP runs 150-200 Wh/kg against NMC's 200-300 Wh/kg, so an LFP
+      pack for the same stored energy is heavier and bulkier. NMC wins on weight, which is why agile,
+      highly weight-sensitive platforms — quadrupeds and humanoids, where every added kilogram
+      multiplies inertia and cuts agility — more often accept NMC's narrower safety margin. There is no
+      universally correct answer; it is a genuine design trade-off between safety/longevity and
+      weight/energy density, made per platform and per use case.</p>
+
+      <h2 class="rb-h2">C-rate: how much power a cell can actually deliver</h2>
+      <p>The C-rate describes how fast a cell can charge or discharge relative to its rated capacity. A
+      1C discharge empties the cell in one hour (a 10&nbsp;Ah cell at 1C delivers 10&nbsp;A); 2C does the
+      same in 30 minutes at 20&nbsp;A. This matters enormously for mobile robots: motor acceleration
+      draws current spikes of roughly 3C-10C lasting milliseconds to seconds, and regenerative braking
+      can push similar 2C-4C pulses back into the pack as the motors decelerate. A pack that cannot
+      handle these transients sags in voltage during acceleration — which can destabilize motor control
+      — and degrades faster under the added stress.</p>
+      <p>Industrial-grade LFP cells are commonly rated for 3C-5C continuous discharge; high-drain
+      cylindrical NMC cells can reach 10C-15C. The BMS has to be selected to match the cells and the
+      application: a BMS rated for only 2C continuous protecting a robot that peaks at 5C will trip its
+      protection circuit and shut the robot down mid-task, well before anything is actually unsafe.</p>
+
+      <h2 class="rb-h2">The BMS: the line between a power source and a fire hazard</h2>
+      <p>The Battery Management System is the electronics board inside every pack that keeps individual
+      cells safe and reports the pack's real condition. Its core jobs: monitoring each cell's voltage
+      individually (not just the pack total — a single weak cell in a long series string can fail
+      catastrophically without cell-level monitoring); estimating state of charge (coulomb counting plus
+      voltage correlation, usually refined with a Kalman filter) and state of health (capacity fade over
+      the pack's life); balancing cells so they stay at equal charge; and cutting the main contactor on
+      over-voltage, under-voltage, over-current, short-circuit, or over-temperature events.</p>
+      <p>In a robot, the BMS also needs to talk — typically over CAN bus or SMBus — to the robot's main
+      computer, streaming real-time state of charge, state of health, temperature, and fault status so
+      the robot can plan its own runtime, decide when to dock and recharge, and log anomalies for
+      maintenance. A pack is only as good as its BMS: pairing certified cells with a well-specified,
+      well-documented BMS is what turns a bag of cells into a validated, dependable power source.</p>
+
+      <h2 class="rb-h2">Pack and power-system architecture: bus voltage, PDU, thermal design</h2>
+      <p>Many mid-size mobile robots above consumer-toy grade run a 48V power bus rather than the older
+      24V standard: 48V is common when designers want lower current at a given power, for a simple
+      physics reason — power equals voltage times current, so at a given power
+      draw a higher bus voltage means lower current, thinner wiring, and lower resistive (I&sup2;R)
+      losses as heat. On a 48V bus, motor drivers typically run directly at bus voltage while separate
+      DC-DC converters step down to 24V for sensors and 5V/3.3V for compute and control logic.</p>
+      <p>Between the pack and every device sits the Power Distribution Unit (PDU) — the board that
+      routes power safely. A well-designed PDU includes a main contactor that opens within tens of
+      milliseconds of an emergency stop; per-circuit electronic fuses that limit current on each output
+      independently; current monitoring on every major branch; a pre-charge circuit so capacitor banks
+      in motor drivers don't draw an inrush spike large enough to trip a fuse the moment they're
+      connected; and isolation monitoring that watches for leakage between the bus and the chassis.
+      Thermal management then has to keep motor drivers, compute modules, and the battery itself below
+      their safe continuous operating temperatures, usually through a mix of heat-spreading metal,
+      filtered forced-air cooling in a sealed, positive-pressure enclosure, and thermal interface
+      materials between hot components and the chassis. In practice, PDU and thermal validation — load
+      testing, fuse-trip testing, contactor life-cycling — consumes a disproportionate share of hardware
+      engineering time on a new robot platform, precisely because it is where field failures concentrate.</p>
+
+      <h2 class="rb-h2">Sizing a battery for real duty cycles</h2>
+      <p>Runtime is not simply "capacity divided by average power." A robot's duty cycle mixes idle
+      periods, steady cruising, and short high-current bursts (acceleration, lifting, climbing), and
+      each of those draws a different current. Sizing a pack correctly means adding margin for the
+      highest sustained C-rate the duty cycle actually demands, not just its time-averaged draw, and
+      then adding further margin for cell aging — internal resistance rises over a pack's life, which
+      both reduces usable capacity and increases heat generated per amp delivered. Buyers evaluating a
+      pack should ask for the manufacturer's continuous and peak discharge ratings alongside the cycle
+      life at the depth of discharge the robot will actually use, not just a single headline Wh/kg or
+      cycle-count number quoted under ideal test conditions.</p>
+
+      <h2 class="rb-h2">UN38.3 and the compliance reality of shipping lithium</h2>
+      <p>UN38.3 is the mandatory eight-test protocol — covering altitude simulation, thermal cycling,
+      vibration, shock, external short circuit, crush/impact, overcharge, and forced discharge — that
+      every lithium cell or pack must pass before it can travel by air. A pack that clears all eight
+      tests receives a UN38.3 Test Summary Report, and airlines, freight forwarders, and customs
+      authorities all require that document before they will move the shipment; without it, a battery
+      shipment is refused at check-in. Some further national and regional rules add supply-chain
+      traceability requirements on top of UN38.3 for battery materials entering certain markets, so
+      buyers sourcing internationally should also confirm the paper trail behind the cells themselves,
+      not only the transport test result.</p>
+
+      <div class="rb-note">
+        <p><strong>Sourcing note.</strong> Asaptic sources robot and AMR battery packs and BMS
+        electronics from vetted manufacturers, delivered with the compliance paperwork this category
+        demands — UN38.3 test summary reports, dangerous-goods shipping documentation, and cell
+        traceability. <a href="mailto:engage@asaptic.com?subject=Battery%20sourcing%20enquiry">Send a
+        battery sourcing enquiry</a> or see <a href="/robot/">what we source</a>.</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">Quick answers</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">Should a robot use LFP or NMC batteries?</div>
+          <div class="rb-faq-a">LFP has a much higher thermal-runaway threshold (~270°C vs ~150°C for NMC) and 2-4x the cycle life, making it the safer default around people. NMC packs more energy per kilogram, so weight-sensitive humanoids and quadrupeds often accept the lower safety margin for a lighter pack.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">What is C-rate and why does it matter for a robot battery?</div>
+          <div class="rb-faq-a">C-rate is how fast a cell can charge or discharge relative to its capacity. Robots draw 3C-10C spikes during acceleration and can push similar pulses back in during regenerative braking, so cells and the BMS must be rated above real peak draw, not just average power.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">What is UN38.3 and why does every lithium robot battery need it?</div>
+          <div class="rb-faq-a">A mandatory eight-test protocol (altitude, thermal, vibration, shock, short circuit, crush, overcharge, forced discharge) every lithium pack must pass before air shipment. The resulting Test Summary Report is what airlines, freight forwarders, and customs require — without it, shipment is refused.</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/robot/101/sensors/">← 03 · Sensors &amp; perception</a>
+        <a href="/robot/101/software/">05 · The robot software stack →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        Robot 101 is educational material by <a href="/robot/">Asaptic</a>. It is not certification,
+        legal, or import advice. Component prices and specifications cited are indicative industry
+        figures and change frequently — verify against current datasheets and test reports before
+        designing or shipping.
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

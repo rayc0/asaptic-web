@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robot Software Stack Explained — ROS 2, Nav2, MoveIt 2 | Robot 101 | Asaptic</title>
+
+  <meta name="description" content="Why ROS 2 became the robotics default, the compute tiers that run it, the Nav2 navigation stack, MoveIt 2 manipulation, and CAN FD vs EtherCAT networking." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/robot/101/software/" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/robot/101/software/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/101/software/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/101/software/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Robot Software Stack Explained — ROS 2, Nav2, MoveIt 2" />
+  <meta property="og:description" content="Middleware, compute tiers, navigation, manipulation, and networking — how a robot's software actually turns sensing into motion." />
+  <meta property="og:url" content="https://asaptic.com/robot/101/software/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="zh_CN" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Robot Software Stack Explained — ROS 2, Nav2, MoveIt 2" />
+  <meta name="twitter:description" content="How ROS 2, Nav2, MoveIt 2, and fieldbus networking turn sensing into motion." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Robot Parts", "item": "https://asaptic.com/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "Robot 101: Software Stack", "item": "https://asaptic.com/robot/101/software/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "The Robot Software Stack: From Middleware to Motion",
+    "description": "Why ROS 2 became the robotics default, the compute tiers that run it, the Nav2 navigation stack, MoveIt 2 manipulation, and CAN FD vs EtherCAT networking.",
+    "inLanguage": "en",
+    "url": "https://asaptic.com/robot/101/software/",
+    "isPartOf": { "@type": "WebPage", "name": "Robot 101", "url": "https://asaptic.com/robot/#robot-101" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Why do robots use ROS 2 instead of custom software?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ROS 2 is middleware, not an operating system — it runs on Linux and provides pub-sub messaging, services, and a package ecosystem. As of 2026 nearly every sensor maker, robot OEM, and library (Nav2, MoveIt 2, simulators) ships ROS 2 support, so building outside it means re-creating that integration layer alone."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between Nav2 and MoveIt 2?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nav2 moves the whole robot base around a building using costmaps, global/local planners, and recovery behaviors. MoveIt 2 moves an arm's end-effector to a pose or along a path using inverse kinematics, sampling-based motion planning, and collision checking. A mobile manipulator typically runs both at once."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why do robots use CAN FD or EtherCAT instead of just Wi-Fi?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Joint-level control needs deterministic, low-jitter timing that consumer wireless cannot guarantee. CAN FD (up to 8 Mbit/s, 64-byte frames) or EtherCAT (sub-100-microsecond cycles) carry motor commands over a wired fieldbus; Wi-Fi or 5G is reserved for the robot's uplink to the building network and cloud, not its internal control loop."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/sourcing" class="nav-logo">ASAPTIC</a>
+    </div>
+  </nav>
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/robot/" style="color:inherit;text-decoration:none;">Asaptic Robotics Handbook</a></span>
+        <nav class="rb-langs" aria-label="Language">
+          <a href="/robot/101/software/" aria-current="page">EN</a>
+          <span class="rb-lang-sep">&middot;</span>
+          <a href="/zh/robot/101/software/">简</a>
+        </nav>
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">Robot 101 · Chapter 05</p>
+      <h1 class="rb-title">The robot software stack: from middleware to motion</h1>
+
+      <section class="rb-answer" aria-label="Summary">
+        <p><strong>In one paragraph:</strong> Between the hardware and the AI sits a layer of software that
+        turns sensor data into coordinated motion. As of 2026, almost the entire industry builds this layer
+        on ROS 2, a middleware that gives every sensor and every planning library a common language.
+        A heterogeneous compute stack runs it — a microcontroller for hard real-time control, a
+        GPU-equipped board for perception and planning, and cloud for training and fleet management.
+        Nav2 handles moving the base around a building; MoveIt 2 handles moving an arm to a pose; and a
+        wired fieldbus — CAN FD or EtherCAT — carries the time-critical commands between them, with
+        wireless reserved for everything that isn't safety-critical.</p>
+      </section>
+
+      <h2 class="rb-h2">Why ROS 2 became the industry default</h2>
+      <p>ROS 2 (Robot Operating System 2) is not an operating system in the traditional sense — it is
+      middleware and a toolchain that runs on top of Linux, currently distributed as long-term-support
+      releases such as Humble or Jazzy as of 2026. It provides a publish-subscribe messaging layer
+      (topics), a request-response layer (services), a long-running task layer (actions), and a package
+      build and launch system. The reason it is close to non-negotiable for a robotics team today is
+      simple: the global developer ecosystem builds on top of it. Sensor manufacturers ship ROS 2
+      drivers, robot OEMs with open SDKs publish ROS 2 interfaces, and the standard navigation,
+      manipulation, and simulation libraries all speak ROS 2 natively. Writing a robot stack outside
+      that ecosystem means rebuilding, alone, the integration layer thousands of other engineers already
+      maintain for free.</p>
+      <p>ROS 2's architectural advance over ROS 1 is DDS (Data Distribution Service) as the transport
+      layer, replacing a single centralized "master" node with fault-tolerant peer-to-peer
+      communication — no single point of failure. On top of that sit real-time-capable execution,
+      lifecycle-managed nodes (a controlled configure → activate → deactivate → shutdown sequence for
+      safe startup), and per-topic quality-of-service policies that trade reliability, message
+      durability, and delivery deadlines against each other. Among DDS implementations, CycloneDDS has
+      often been reported to show lower latency than the default FastDDS for the small, frequent
+      messages a control loop sends — and switching between them is typically a single environment
+      variable.</p>
+
+      <h2 class="rb-h2">Compute architecture: three tiers, not one board</h2>
+      <p>A robot's compute has to satisfy three constraints that no single chip handles well at once:
+      hard real-time determinism (a control loop that must run on a fixed period with sub-millisecond
+      jitter), AI inference throughput (running a multi-billion-parameter vision-language model for
+      scene understanding needs GPU or NPU acceleration), and a tight power budget on a battery-powered
+      platform. The common answer is a heterogeneous, three-tier stack.</p>
+      <ul>
+        <li><strong>Tier 1 — real-time control (MCU):</strong> a microcontroller such as an ARM
+        Cortex-M running bare-metal firmware or an RTOS, handling motor current control, interrupt-driven
+        sensor reads, and emergency-stop logic — the layer that must never miss a deadline.</li>
+        <li><strong>Tier 2 — main robot computer (SBC/SOM):</strong> a GPU- or NPU-equipped board (the
+        Jetson family is a common as-of-2026 example) running Linux and ROS 2, the navigation and
+        manipulation stack, and the perception pipeline.</li>
+        <li><strong>Tier 3 — cloud/offboard:</strong> used for model training, fleet-wide telemetry and
+        over-the-air update orchestration, and simulation for synthetic data generation. A well-designed
+        robot remains fully functional on Tiers 1 and 2 alone — cloud connectivity is an enhancement,
+        not a dependency, since network availability can't always be guaranteed indoors.</li>
+      </ul>
+
+      <h2 class="rb-h2">The navigation stack: Nav2</h2>
+      <p>Nav2 is the standard ROS 2 navigation framework for moving a mobile base around a building.
+      A behavior-tree executor coordinates a set of plugins: a global planner (computing a path across
+      the whole known map), a local planner (reactive obstacle avoidance in the next few meters), a
+      costmap (a grid combining a static pre-built map layer, a live obstacle layer from onboard
+      sensors, and an inflation layer that keeps the robot's body clear of walls and furniture), and a
+      set of recovery behaviors — spinning in place, backing up, or clearing the costmap — triggered
+      when the planner can't find a path.</p>
+      <p>Tuning Nav2 for an indoor service environment is mostly about the costmap and recovery
+      behaviors. A pre-built static map avoids the computational cost — and the risk — of a live map
+      being corrupted by a misclassified moving object turning into a permanent phantom obstacle. A
+      short decay time on the live obstacle layer means someone briefly standing in a corridor doesn't
+      create a lasting blockage. Inflation radius is tuned per space: wider for open corridors, tighter
+      for doorways the robot must pass through closely. And the recovery sequence is chosen for the
+      setting — a "spin in place" recovery that's harmless in a warehouse can be startling around
+      people, so many indoor-service tunings favor "wait, then re-plan" as the default first move.</p>
+
+      <h2 class="rb-h2">The manipulation stack: MoveIt 2</h2>
+      <p>MoveIt 2 is the standard ROS 2 framework for arm manipulation. It loads a kinematic model of
+      the robot from a URDF description (link masses, joint limits, collision geometry), solves inverse
+      kinematics to convert a target end-effector pose into joint angles, plans a collision-free motion
+      using sampling-based planners, and checks that a candidate trajectory doesn't intersect anything
+      in the environment.</p>
+      <p>For everyday manipulation tasks — placing an object, handing something over, operating a door
+      handle — Cartesian planning (specifying the end-effector's path directly in space, rather than
+      only its destination) tends to be preferred over free-form goal-pose planning: the resulting
+      motion is more predictable to people nearby, easier to verify for clearance around known objects,
+      and simpler to describe in task terms. Because real indoor spaces contain chairs, carts, and
+      people moving unpredictably — unlike a fenced factory cell — the planning scene needs to update
+      from the perception pipeline in near real time, turning depth-camera data into collision objects
+      the planner can react to, several times per second.</p>
+
+      <h2 class="rb-h2">Networking: CAN FD, EtherCAT, and staying up to date</h2>
+      <p>Joint-level communication between the real-time controller and servo drivers runs over a wired
+      fieldbus, not Wi-Fi — the timing guarantees needed for motor control are not something consumer
+      wireless can promise. CAN FD (Controller Area Network Flexible Data-rate) extends classic CAN's
+      1 Mbit/s and 8-byte payload to 5–8 Mbit/s with up to 64-byte frames, letting a multi-joint arm
+      report torque, position, velocity, and temperature efficiently at high update rates. EtherCAT
+      trades some simplicity for tighter timing — sub-100-microsecond deterministic cycles across dozens
+      of nodes — by having each device read and rewrite its slice of an Ethernet frame as it passes
+      through, with no central switch. For a robot with a modest number of motor drivers, CAN FD is
+      usually simpler to build and debug; EtherCAT becomes the better fit as node count and precision
+      requirements climb, such as in a full humanoid with dozens of joints.</p>
+      <p>Wireless (Wi-Fi 6 or 5G, as of 2026) handles the robot's uplink to the building network and the
+      cloud — video, telemetry, and remote commands — kept separate from the internal control loop.
+      That same link is also how a robot stays current: a typical over-the-air update rolls out to a
+      small slice of a fleet first, is monitored before wider release, installs onto an inactive
+      partition so the robot can boot into the new firmware and roll back automatically if it fails, and
+      is scheduled for downtime such as a charging period rather than mid-task. That update pipeline is
+      arguably the single most consequential piece of DevOps for any robot fleet in the field, since it
+      is what lets software improve without a technician visiting every unit.</p>
+
+      <div class="rb-note">
+        <p><strong>Sourcing note.</strong> Hardware and software meet at the driver. Asaptic-sourced
+        joint modules and components ship with the interface documentation — CAN FD, EtherCAT, and
+        RS-485 specifications, in English — that integration teams need to bring a component into their
+        stack without guesswork. <a href="mailto:engage@asaptic.com?subject=Software%20integration%20sourcing%20enquiry">Send
+        an integration sourcing enquiry</a> or see <a href="/robot/">what we source</a>.</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">Quick answers</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">Why do robots use ROS 2 instead of custom software?</div>
+          <div class="rb-faq-a">ROS 2 is middleware, not an operating system — it runs on Linux and provides pub-sub messaging, services, and a package ecosystem. As of 2026 nearly every sensor maker, robot OEM, and library (Nav2, MoveIt 2, simulators) ships ROS 2 support, so building outside it means re-creating that integration layer alone.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">What is the difference between Nav2 and MoveIt 2?</div>
+          <div class="rb-faq-a">Nav2 moves the whole robot base around a building using costmaps, global/local planners, and recovery behaviors. MoveIt 2 moves an arm's end-effector to a pose or along a path using inverse kinematics, sampling-based motion planning, and collision checking. A mobile manipulator typically runs both at once.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">Why do robots use CAN FD or EtherCAT instead of just Wi-Fi?</div>
+          <div class="rb-faq-a">Joint-level control needs deterministic, low-jitter timing that consumer wireless cannot guarantee. CAN FD (up to 8 Mbit/s, 64-byte frames) or EtherCAT (sub-100-microsecond cycles) carry motor commands over a wired fieldbus; Wi-Fi or 5G is reserved for the robot's uplink to the building network and cloud, not its internal control loop.</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/robot/101/batteries/">← 04 · Batteries &amp; power systems</a>
+        <a href="/robot/101/ai/">06 · How robots learn →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        Robot 101 is educational material by <a href="/robot/">Asaptic</a>. It is not certification,
+        legal, or import advice. Software versions, hardware examples, and specifications cited are
+        indicative as of 2026 and change frequently — verify against current documentation before
+        designing.
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

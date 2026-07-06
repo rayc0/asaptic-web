@@ -1,5 +1,14 @@
 # Asaptic Cross-Standard Build Pipeline — Progress Document
 
+## 2026-07-07 — /robot hub + Robot 101 primer built (branch feat/robot-page)
+
+- NEW public surface: **asaptic.com/robot/** (EN) + **/zh/robot/** (简体) — robot-parts sourcing hub ("Asaptic Robotics Handbook", tender-bulletin design language, robot/robot.css) + **Robot 101** bilingual 科普 series, 11 chapters × 2 langs = 24 pages total.
+- Chapters: 01 anatomy · 02 actuators (exemplar) · 03 sensors · 04 batteries · 05 software · 06 ai · 07 compliance · 08 glossary (49 terms, DefinedTermSet) · 09 market · 10 manufacturing · 11 maintenance.
+- Content adapted from 00PhysicalAI Robot CEO/CTO Guide docx, scrubbed of all internal strategy (Kinaite/venture/funding/tariff-strategy content removed; market numbers hedged). Fleet build: Fable conductor + Fable/Opus writer agents + codex(gpt-5.5)×10 + kimi×20 review lanes + Sonnet rendered-QA.
+- SEO/GEO: BreadcrumbList/TechArticle/FAQPage(+DefinedTermSet) JSON-LD on every page, GEO answer blocks, EN↔zh hreflang, 24 URLs added to sitemap-core.xml, llms.txt "Robot parts & Robot 101" section, nav+card links from sourcing.html + zh/sourcing.html.
+- CTA = mailto:engage@asaptic.com (trade-first: portal de-emphasized). Deploy = `wrangler pages deploy` (git push ≠ deploy) — awaiting Raymond gate.
+
+
 **Last updated:** 2026-06-17  
 **Current state:** 1,039 comparisons / 185 markets / 23 categories  
 **Live at:** https://asaptic.com

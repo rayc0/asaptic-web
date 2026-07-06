@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robot Actuators Explained — Harmonic Drives, QDD, Servos | Robot 101 | Asaptic</title>
+
+  <meta name="description" content="How robot joints work: servo motors, harmonic drives (strain-wave gears), quasi-direct-drive BLDC actuators, degrees of freedom, and the four-axis framework engineers use to select actuators." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/robot/101/actuators/" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/robot/101/actuators/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/101/actuators/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/101/actuators/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Robot Actuators Explained — Harmonic Drives, QDD, Servos" />
+  <meta property="og:description" content="Servo motors, harmonic drives, quasi-direct-drive joints, degrees of freedom, and how engineers actually select actuators." />
+  <meta property="og:url" content="https://asaptic.com/robot/101/actuators/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="zh_CN" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Robot Actuators Explained — Harmonic Drives, QDD, Servos" />
+  <meta name="twitter:description" content="How robot joints work, and how engineers select them." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Robot Parts", "item": "https://asaptic.com/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "Robot 101: Actuators", "item": "https://asaptic.com/robot/101/actuators/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Actuators and Joint Modules: The Muscles of a Robot",
+    "description": "Servo motors, harmonic drives, quasi-direct-drive BLDC actuators, degrees of freedom, and the four-axis actuator selection framework.",
+    "inLanguage": "en",
+    "url": "https://asaptic.com/robot/101/actuators/",
+    "isPartOf": { "@type": "WebPage", "name": "Robot 101", "url": "https://asaptic.com/robot/#robot-101" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a harmonic drive and why do robot joints use them?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A strain-wave gear that meshes a flexible cup against a rigid ring gear via an elliptical wave generator — giving near-zero backlash, 50:1–160:1 single-stage ratios, and a very compact form. That combination is why most precision robot joints use one."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a quasi-direct-drive (QDD) actuator?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A high-torque brushless motor with a very low gear ratio (~6:1–12:1) or none. The low ratio makes the joint backdrivable — able to feel and yield to contact — which is why many modern humanoids use QDD around people."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do engineers choose an actuator?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Four axes at once: torque density, backdrivability, precision, cost. Shoulders want torque and compliance; wrists want precision; grippers are sized by clamping force."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/sourcing" class="nav-logo">ASAPTIC</a>
+    </div>
+  </nav>
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/robot/" style="color:inherit;text-decoration:none;">Asaptic Robotics Handbook</a></span>
+        <nav class="rb-langs" aria-label="Language">
+          <a href="/robot/101/actuators/" aria-current="page">EN</a>
+          <span class="rb-lang-sep">&middot;</span>
+          <a href="/zh/robot/101/actuators/">简</a>
+        </nav>
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">Robot 101 · Chapter 02</p>
+      <h1 class="rb-title">Actuators &amp; joint modules: the muscles of a robot</h1>
+
+      <section class="rb-answer" aria-label="Summary">
+        <p><strong>In one paragraph:</strong> An actuator is what makes a robot move. Precision robots
+        combine a motor, a gearbox, an encoder, and a driver at every joint. Harmonic drives give
+        near-zero backlash and huge gear ratios in a tiny package — the default inside industrial arms.
+        Quasi-direct-drive (QDD) brushless joints trade a little precision for backdrivability, so the
+        robot can feel and yield to contact — the default inside modern humanoids. Engineers select
+        between them by weighing torque density, backdrivability, precision, and cost.</p>
+      </section>
+
+      <h2 class="rb-h2">Servo motors: the closed-loop workhorse</h2>
+      <p>A servo integrates a DC or brushless motor, a gearbox, a position encoder, and a closed-loop
+      controller into one unit. The encoder feeds the shaft angle back to a PID controller, which
+      compares actual position against commanded position and adjusts motor current accordingly. That
+      closed loop is what produces the servo's defining characteristic: repeatable, precise
+      positioning. High-end industrial servo systems reach angular repeatability in the arc-second class; the
+      finished machine's linear accuracy (often quoted near ±0.01&nbsp;mm for precision arms) depends
+      on the whole mechanism, not the motor alone.</p>
+      <p>When you evaluate a servo for a robot design, the two headline specifications are
+      <strong>torque-to-weight ratio</strong> (output torque per kilogram of motor mass) and
+      <strong>stiffness</strong> (how much the output shaft deflects under off-axis load). The gearbox
+      matters just as much as the motor: standard spur and helical gears introduce
+      <strong>backlash</strong> — mechanical slop between meshing teeth — which degrades precision and
+      excites vibration. That is the problem the harmonic drive was invented to eliminate.</p>
+
+      <h2 class="rb-h2">Harmonic drives: the heart of the precision joint</h2>
+      <p>Harmonic drives (also called strain-wave gears) sit inside most precision robot joints,
+      from industrial six-axis arms down to humanoid fingers. The principle is elegant: a
+      thin-walled elliptical steel cup with external teeth (the <em>flex spline</em>) is deformed by
+      an elliptical <em>wave generator</em> driven by the motor shaft. As the wave generator rotates,
+      the flex spline's teeth mesh progressively against a rigid ring gear (the <em>circular
+      spline</em>) that has two more teeth than the flex spline.</p>
+      <p>This progressive wave-meshing achieves three things at once:</p>
+      <ul>
+        <li><strong>Near-zero backlash</strong> — multiple tooth pairs are always in contact;</li>
+        <li><strong>Very high single-stage ratios</strong> — 50:1 to 160:1 in one stage;</li>
+        <li><strong>Extreme compactness</strong> — the whole transmission fits inside the joint housing.</li>
+      </ul>
+      <p>The long-time dominant supplier is Harmonic Drive SE (Japan/Germany). Chinese manufacturers
+      such as Leaderdrive (来福谐波) and Beijing CTKM (中技克美) have narrowed the quality gap
+      substantially over the past decade and are often quoted well below Japanese list prices,
+      depending on specification and volume — one reason more of the robot supply chain now runs
+      through the Pearl River Delta.</p>
+
+      <h2 class="rb-h2">QDD: the humanoid-era breakthrough</h2>
+      <p>Brushless DC motors (BLDC) in a <strong>quasi-direct-drive (QDD)</strong> architecture are
+      the defining actuation shift of modern humanoid and legged robotics. Instead of a small motor
+      spun through a 100:1 reduction, QDD pairs a large-diameter, high-torque-density BLDC motor with
+      a very low gear ratio — roughly 6:1 to 12:1 — or no gearbox at all. Field-Oriented Control (FOC)
+      decomposes the motor current into torque-producing and flux-producing components and controls
+      them independently, giving exceptionally smooth, efficient torque.</p>
+      <p>The critical advantage is <strong>backdrivability</strong>. In a 100:1 harmonic joint, the
+      friction and inertia reflected through the gearing scale steeply with the ratio, so the joint
+      barely yields to external force — effectively rigid, which is dangerous if the robot contacts
+      a person. A QDD joint's low ratio keeps that reflected resistance small, so the controller can
+      sense contact through the motor and yield — the robot can <em>feel</em> what it touches. That is
+      why many recent humanoids and quadrupeds — including research platforms like MIT's Cheetah
+      family — have moved to QDD or near-QDD joints. The trade-off: slightly
+      lower torque density and positioning precision than a harmonic-drive joint. Around humans, that
+      trade is worth making.</p>
+
+      <h2 class="rb-h2">Steppers and linear actuators: know when they fit</h2>
+      <p>Stepper motors move in discrete angular increments — a standard 1.8° stepper takes 200 steps
+      per revolution, and microstepping drivers subdivide each step 16 or 32 times. Their defining
+      limitation is that they are <strong>open-loop</strong>: the controller assumes every commanded
+      step was executed. Under overload the motor stalls silently and position error accumulates.
+      That rules steppers out of high-torque robot joints but makes them ideal for 3D printers, CNC
+      machines, and low-load gripper mechanisms with predictable torque.</p>
+      <p>Linear actuators — ball-screw (high precision, medium force, high cost), pneumatic (fast,
+      cheap, imprecise, needs a compressor), hydraulic (maximum force density, heavy infrastructure) —
+      are common in industrial machinery but rare in modern service robots, where electric rotary
+      motors converted to linear motion via lead screws or rack-and-pinion give the best package of
+      precision, compactness, and cleanliness. For robots deployed in quiet indoor environments the
+      absence of a compressor is often decisive on its own.</p>
+
+      <h2 class="rb-h2">Degrees of freedom: why joint count explodes</h2>
+      <p>Degrees of freedom (DOF) count the independent parameters needed to specify a robot's
+      configuration. A door hinge has 1 DOF. A human arm from shoulder to wrist has 7. The standard
+      industrial arm has 6 — three joints position the end-effector in XYZ, three orient it (roll,
+      pitch, yaw). Six is the minimum to reach an arbitrary point at an arbitrary orientation, and for
+      structured factory tasks it is enough.</p>
+      <p>A 7-DOF arm adds one redundant joint, creating a null space of configurations: infinitely
+      many joint-angle combinations reach the same hand pose. That redundancy buys obstacle avoidance
+      (the elbow swings clear while the hand holds position), ergonomic posturing, and torque
+      redistribution. But every added DOF costs an actuator, an encoder, a driver board, calibration,
+      and a harder inverse-kinematics problem. A full humanoid — two 7-DOF arms, two 6-DOF legs, a
+      3-DOF neck, a 3-DOF waist — easily exceeds 35 joints, each powered, sensed, and controlled in
+      real time at 500–1,000&nbsp;Hz. This is why actuation is typically the largest single line item
+      in a robot's bill of materials.</p>
+
+      <h2 class="rb-h2">The four-axis selection framework</h2>
+      <p>Selecting an actuator for a given joint means trading off four axes simultaneously:</p>
+      <ul>
+        <li><strong>Torque density</strong> — Nm of output per kg of actuator mass;</li>
+        <li><strong>Backdrivability</strong> — how easily external forces move the joint (high = safe
+        human contact; low = stiffer, more precise positioning);</li>
+        <li><strong>Precision</strong> — positioning repeatability (arc-second class for surgical work,
+        arc-minute class for most service tasks);</li>
+        <li><strong>Cost</strong> — from well under US$100 for a commodity BLDC module to several
+        thousand dollars for a premium harmonic-drive servo package.</li>
+      </ul>
+      <p>The pattern in practice: <strong>proximal joints</strong> (shoulder, elbow — carrying the arm's
+      own weight) want high torque and high backdrivability; <strong>distal joints</strong> (wrist —
+      payload only) want higher precision at lower torque; <strong>grippers</strong> are specified by
+      clamping force. A joint module that packages the reducer, frameless torque motor, dual encoders,
+      and servo driver per axis lets a robot builder buy this decision as one validated unit instead
+      of four separate integration problems.</p>
+
+      <div class="rb-note">
+        <p><strong>Sourcing note.</strong> Joint modules and actuation components are Asaptic's core
+        sourcing category: Shenzhen-ecosystem harmonic reducers, frameless motors, encoders, and
+        servo drivers, cross-checked against supplier test data and delivered with landed-cost math
+        for your destination and English documentation. <a href="mailto:engage@asaptic.com?subject=Actuator%20sourcing%20enquiry">Send
+        an actuator enquiry</a> or see <a href="/robot/">what we source</a>.</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">Quick answers</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">What is a harmonic drive and why do robot joints use them?</div>
+          <div class="rb-faq-a">A strain-wave gear that meshes a flexible cup against a rigid ring gear via an elliptical wave generator — giving near-zero backlash, 50:1–160:1 single-stage ratios, and a very compact form. That combination is why most precision robot joints use one.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">What is a quasi-direct-drive (QDD) actuator?</div>
+          <div class="rb-faq-a">A high-torque brushless motor with a very low gear ratio (~6:1–12:1) or none. The low ratio makes the joint backdrivable — able to feel and yield to contact — which is why many modern humanoids use QDD around people.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">How do engineers choose an actuator?</div>
+          <div class="rb-faq-a">Four axes at once: torque density, backdrivability, precision, cost. Shoulders want torque and compliance; wrists want precision; grippers are sized by clamping force.</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/robot/101/anatomy/">← 01 · What is a robot made of?</a>
+        <a href="/robot/101/sensors/">03 · Sensors &amp; perception →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        Robot 101 is educational material by <a href="/robot/">Asaptic</a>. It is not certification,
+        legal, or import advice. Component prices and specifications cited are indicative industry
+        figures and change frequently — verify against current datasheets before designing.
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>机器人电池与电源系统详解 — LFP与NMC、BMS、UN38.3 | 机器人 101 | Asaptic</title>
+
+  <meta name="description" content="机器人电源系统如何工作：LFP与NMC电芯化学、C率、BMS、48V总线与PDU设计、热管理、续航配置，以及UN38.3运输合规规则。" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/robot/101/batteries/" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/robot/101/batteries/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/101/batteries/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/101/batteries/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="机器人电池与电源系统详解 — LFP与NMC、BMS、UN38.3" />
+  <meta property="og:description" content="电芯化学权衡、C率、BMS、总线电压与热设计、续航配置，以及锂电池运输合规的现实。" />
+  <meta property="og:url" content="https://asaptic.com/zh/robot/101/batteries/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="机器人电池与电源系统详解 — LFP与NMC、BMS、UN38.3" />
+  <meta name="twitter:description" content="机器人电源系统如何设计、配置与运输。" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "机器人零部件", "item": "https://asaptic.com/zh/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "机器人 101：电池", "item": "https://asaptic.com/zh/robot/101/batteries/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "电池与电源系统：机器人的能源基础",
+    "description": "LFP与NMC电芯化学、C率、BMS、48V总线与PDU设计、热管理、续航配置，以及UN38.3运输合规。",
+    "inLanguage": "zh-Hans",
+    "url": "https://asaptic.com/zh/robot/101/batteries/",
+    "isPartOf": { "@type": "WebPage", "name": "机器人 101", "url": "https://asaptic.com/zh/robot/#robot-101" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "机器人应该用LFP还是NMC电池？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "LFP的热失控阈值远高于NMC（约270°C对约150°C），循环寿命是NMC的2-4倍，在人群周围运行时更安全。NMC每公斤储能更高，因此重量敏感的人形与四足机器人常接受较低的安全裕量以换取更轻的电池组。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "什么是C率？为什么它对机器人电池很重要？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "C率是电芯相对于自身容量的充放电速度。机器人在加速时会产生3C到10C的电流尖峰，再生制动也可能推回类似强度的脉冲，因此电芯与BMS的额定值都必须高于实际峰值电流，而非仅平均功率。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "什么是UN38.3？为什么每块锂电池都需要它？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "一项强制性八项测试协议（高度、热循环、振动、冲击、短路、挤压、过充、强制放电），每个锂电池组在航空运输前都必须通过。测试合格后的摘要报告是航空公司、货运代理与海关都要求的文件——没有它货物会被拒收。"
+      }
+    }
+  ]
+}
+  </script>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/zh/sourcing" class="nav-logo">ASAPTIC</a>
+    </div>
+  </nav>
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/zh/robot/" style="color:inherit;text-decoration:none;">Asaptic 机器人手册</a></span>
+        <nav class="rb-langs" aria-label="语言">
+          <a href="/robot/101/batteries/">EN</a>
+          <span class="rb-lang-sep">&middot;</span>
+          <a href="/zh/robot/101/batteries/" aria-current="page">简</a>
+        </nav>
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">机器人 101 · 第 04 章</p>
+      <h1 class="rb-title">电池与电源系统：机器人的能源基础</h1>
+
+      <section class="rb-answer" aria-label="摘要">
+        <p><strong>一段话说清：</strong>机器人的电池组是一套系统，而不是一个零件。电芯化学（LFP或
+        NMC）决定了安全性、循环寿命与重量之间的基本权衡。电池管理系统（BMS）监控每一串联电芯组并决定
+        何时切断电源。电池组连接到电源分配架构——通常是48V总线——它必须承受电流尖峰、散去热量，
+        并在故障时安全断电。续航要按机器人真实的工作循环来配置，而不是按平均功耗估算。而且因为
+        电池组是锂电池，若要经航空运输或国际危险品运输渠道出货，必须具备符合UN38.3要求的测试文件——这是每家航空公司和海关都会核查的测试协议。</p>
+      </section>
+
+      <h2 class="rb-h2">电芯化学：LFP与NMC</h2>
+      <p>磷酸铁锂（LFP，LiFePO&#8324;）与镍锰钴酸锂（NMC，LiNixMnyCozO2（x+y+z=1））是主导机器人电源系统的
+      两种电芯化学体系，两者之间的选择是机器人硬件设计中较为关键的决策之一。LFP最突出的特性是热
+      稳定性：其热失控起始温度约为270°C，而NMC约为150°C，这样大的安全裕量在电池组位于需要在人群
+      周围运行的机器人内部时尤为重要。LFP还提供2,000至4,000次循环至80%容量的循环寿命，而NMC为
+      500至1,500次——每天充放电的服务机器人使用LFP电池组的寿命可达NMC的三到五倍。</p>
+      <p>代价在于能量密度：LFP为150-200 Wh/kg，NMC为200-300 Wh/kg，因此储存相同能量时LFP电池组
+      更重更大。NMC在重量上占优，这也是为什么对重量极为敏感的敏捷平台——四足和人形机器人，结构
+      每增加一公斤都会显著增加关节惯量并削弱灵活性——更常接受NMC较窄的安全裕量。这里没有普遍正确的
+      答案，这是安全性/寿命与重量/能量密度之间真实的设计权衡，需要针对每个平台和使用场景分别决定。</p>
+
+      <h2 class="rb-h2">C率：电芯究竟能输出多少功率</h2>
+      <p>C率描述电芯相对于额定容量的充放电速度。1C放电在一小时内耗尽电芯（10Ah电芯以1C放电时输出
+      10A）；2C则在30分钟内以20A完成同样的放电。这对移动机器人极为重要：电机加速时会产生持续数
+      毫秒到数秒、约3C到10C的电流尖峰；再生制动在电机减速时也可能向电池组推回类似强度的2C到4C
+      充电脉冲。无法承受这些瞬态的电池组会在加速时出现电压下垂——可能导致电机控制不稳定——并因
+      额外应力而更快衰减。</p>
+      <p>工业级LFP电芯通常额定持续放电3C到5C；高放电率的圆柱形NMC电芯可达10C到15C。BMS的选型必须
+      与电芯和应用场景匹配：如果机器人峰值需求达到5C，而BMS仅额定持续2C，就会提前触发保护电路，
+      在任务中途关闭机器人——远早于真正出现安全问题之前。</p>
+
+      <h2 class="rb-h2">BMS：可靠电源与火灾隐患之间的分界线</h2>
+      <p>电池管理系统是每个电池组内部的电子板，负责保证单体电芯安全并上报电池组的真实状态。其核心
+      职责包括：独立监控每颗电芯的电压（而非仅测量电池组总电压——长串联结构中的单个弱电芯若没有
+      电芯级监控可能灾难性失效）；估算荷电状态（库仑计数加电压校正，通常再用卡尔曼滤波器细化精度）
+      与健康状态（电池组使用寿命中的容量衰减）；对电芯进行均衡以保持相同荷电水平；以及在过压、
+      欠压、过流、短路或过温事件发生时切断主接触器。</p>
+      <p>在机器人上，BMS还需要通过CAN总线或SMBus等方式与机器人主计算机通信，实时输出荷电状态、
+      健康状态、温度与故障信息，使机器人能够规划自身续航、决定何时对接充电，并记录异常供维护参考。
+      电池组的可靠性取决于其BMS：把认证电芯与规格明确、文档完整的BMS配对，才能把一堆电芯变成一套
+      经过验证、值得信赖的电源。</p>
+
+      <h2 class="rb-h2">电池组与电源系统架构：总线电压、PDU、热设计</h2>
+      <p>许多消费级玩具及以上的中型移动机器人采用48V电源总线，而非更老的24V标准——当设计者希望在同样
+      功率下降低电流时，48V是常见选择：功率等于电压乘以电流，同样的功率下总线电压越高，电流越小，
+      导线越细，电阻性（I&sup2;R）损耗
+      产生的热量也越少。在48V总线上，电机驱动器通常直接在总线电压下工作，再由独立的DC-DC转换器
+      降压至24V供传感器使用，5V/3.3V供计算与控制逻辑使用。</p>
+      <p>电池组与每个用电器之间是电源分配单元（PDU）——负责安全路由电力的电路板。一个设计良好的
+      PDU包括：在紧急停止后数十毫秒内断开的主接触器；每路独立限流的电子保险丝；每个主要支路上的
+      电流监控；预充电电路，避免电机驱动器中的电容组在刚接入总线时产生足以触发保险丝的浪涌电流；
+      以及监测总线与机箱之间漏电情况的绝缘监控。热管理则必须让电机驱动器、计算模块与电池本身都
+      保持在安全的连续工作温度以下，通常靠导热金属散热、经过过滤的正压强制风冷机箱，以及发热部件
+      与机箱之间的导热界面材料共同实现。在实践中，PDU与热设计的验证——负载测试、保险丝跳闸测试、
+      接触器寿命循环测试——往往占用不成比例的大量硬件工程时间，正是因为现场故障最常出在这里。</p>
+
+      <h2 class="rb-h2">按真实工作循环配置电池</h2>
+      <p>续航时间不能简单地用“容量除以平均功率”来估算。机器人的工作循环混合了待机、稳定巡航和
+      短时高电流爆发（加速、举升、爬坡），每一种状态对应不同的电流。正确配置电池组，需要按工作
+      循环实际要求的最高持续C率留出余量，而不只是按时间平均功耗计算，还要为电芯老化再留出余量——
+      内阻会随电池组寿命增长而升高，既降低可用容量，又提高每安培输出所产生的热量。买家在评估电池
+      组时，应该向厂商索取持续与峰值放电额定值，以及在机器人实际会用到的放电深度下的循环寿命数据，
+      而不是只看在理想测试条件下得出的单一Wh/kg或循环次数标称数字。</p>
+
+      <h2 class="rb-h2">UN38.3与锂电池运输合规的现实</h2>
+      <p>UN38.3是一项强制性的八项测试协议——涵盖高度模拟、热循环、振动、冲击、外部短路、挤压/
+      撞击、过充电和强制放电——每颗锂电芯或电池组在通过航空运输前都必须通过。全部八项测试合格的
+      电池组会获得一份UN38.3测试摘要报告，航空公司、货运代理和海关当局都要求提供这份文件；没有它，
+      电池货物会在托运时被拒收。部分国家和地区在UN38.3之外，还对进入某些市场的电池材料附加了供应
+      链可追溯性要求，因此跨境采购的买家也应确认电芯本身的溯源文件，而不只是运输测试结果。</p>
+
+      <div class="rb-note">
+        <p><strong>采购提示。</strong>Asaptic从经过验证的制造商处采购机器人与AMR电池组及BMS电子
+        设备，并附带这一品类所需的合规文件——UN38.3测试摘要报告、危险品运输文件与电芯溯源信息。
+        <a href="mailto:engage@asaptic.com?subject=%E7%94%B5%E6%B1%A0%E9%87%87%E8%B4%AD%E5%92%A8%E8%AF%A2">发送电池采购咨询</a>，或查看<a href="/zh/robot/">我们采购什么</a>。</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">快速问答</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">机器人应该用LFP还是NMC电池？</div>
+          <div class="rb-faq-a">LFP的热失控阈值远高于NMC（约270°C对约150°C），循环寿命是NMC的2-4倍，在人群周围运行时更安全。NMC每公斤储能更高，因此重量敏感的人形与四足机器人常接受较低的安全裕量以换取更轻的电池组。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">什么是C率？为什么它对机器人电池很重要？</div>
+          <div class="rb-faq-a">C率是电芯相对于自身容量的充放电速度。机器人在加速时会产生3C到10C的电流尖峰，再生制动也可能推回类似强度的脉冲，因此电芯与BMS的额定值都必须高于实际峰值电流，而非仅平均功率。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">什么是UN38.3？为什么每块锂电池都需要它？</div>
+          <div class="rb-faq-a">一项强制性八项测试协议（高度、热循环、振动、冲击、短路、挤压、过充、强制放电），每个锂电池组在航空运输前都必须通过。测试合格后的摘要报告是航空公司、货运代理与海关都要求的文件——没有它货物会被拒收。</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/zh/robot/101/sensors/">← 03 · 传感器与感知</a>
+        <a href="/zh/robot/101/software/">05 · 机器人软件栈 →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        《机器人 101》是 <a href="/zh/robot/">Asaptic</a> 的科普内容，不构成认证、法律或进口建议。
+        文中引用的部件价格与规格为行业指示性数据，变化频繁——设计或运输前请以最新规格书与测试报告
+        为准。
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>
