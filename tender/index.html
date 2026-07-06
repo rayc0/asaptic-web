@@ -114,7 +114,7 @@
       --tw-seal: #BE3A2B;
       --tw-stone: #6E7378;
       --tw-line: #D8D2C4;
-      --tw-serif: "Source Serif 4", "Songti SC", "Songti TC", "Noto Serif CJK SC", serif;
+      --tw-serif: "Source Serif 4", Georgia, "Songti SC", "Songti TC", "Noto Serif CJK SC", serif;
       --tw-body: Inter, "PingFang SC", "PingFang TC", system-ui, -apple-system, sans-serif;
       --tw-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
@@ -122,25 +122,6 @@
       margin: 0 auto;
       padding: 72px 24px 96px;
       font-family: var(--tw-body);
-    }
-
-    .tw-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--tw-mono);
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      color: var(--gray);
-      text-decoration: none;
-      margin-bottom: 32px;
-      transition: color 0.2s;
-    }
-    .tw-back:hover { color: var(--tw-paper); }
-    .tw-back:focus-visible {
-      outline: 2px solid var(--tw-paper);
-      outline-offset: 3px;
-      border-radius: 2px;
     }
 
     /* ── The sheet ───────────────────────────────────────────────────── */
@@ -165,6 +146,13 @@
     }
 
     /* ── Masthead ────────────────────────────────────────────────────── */
+    .tw-masthead-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
     .tw-eyebrow {
       display: block;
       font-family: var(--tw-mono);
@@ -174,6 +162,39 @@
       text-transform: uppercase;
       color: var(--tw-stone);
     }
+
+    /* ── Quiet language switcher (replaces the site-wide blue pill on this page) ── */
+    .tw-langs {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-family: var(--tw-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .tw-langs a {
+      color: var(--tw-stone);
+      text-decoration: none;
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+    .tw-langs a:hover { color: var(--tw-ink); }
+    .tw-langs a[aria-current="page"] {
+      color: var(--tw-ink);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: var(--tw-seal);
+      text-decoration-thickness: 2px;
+    }
+    .tw-langs a:focus-visible {
+      outline: 2px solid var(--tw-ink);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    .tw-langs .tw-lang-sep { color: var(--tw-line); }
     .tw-rule {
       margin: 12px 0 16px;
     }
@@ -286,21 +307,27 @@
     .tw-index-row:last-child { border-bottom: none; }
 
     .tw-cat-name {
+      flex: 0 1 auto;
+      font-size: 14.5px;
+      color: var(--tw-ink);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    a.tw-cat-name:hover {
+      text-decoration: underline;
+      text-decoration-color: var(--tw-ink);
+      text-underline-offset: 3px;
+    }
+    .tw-dots {
       flex: 1 1 auto;
       overflow: hidden;
       white-space: nowrap;
+      min-width: 24px;
       font-size: 14.5px;
-      color: var(--tw-ink);
-    }
-    .tw-cat-name::after {
-      content: " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ";
       color: var(--tw-line);
     }
-    .tw-cat-zh {
-      display: block;
-      font-size: 11.5px;
-      color: var(--tw-stone);
-      margin-top: 2px;
+    .tw-dots::after {
+      content: " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ";
     }
     .tw-count {
       flex: 0 0 auto;
@@ -401,8 +428,20 @@
       color: var(--tw-stone);
       line-height: 1.7;
     }
+    .tw-archive-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: var(--tw-ink);
+      text-decoration: none;
+      font-size: 11.5px;
+      letter-spacing: 0.02em;
+    }
+    .tw-archive-link:hover {
+      text-decoration: underline;
+      text-decoration-color: var(--tw-ink);
+      text-underline-offset: 3px;
+    }
 
-    a.tw-back:focus-visible,
     .tw-sheet a:focus-visible,
     .tw-sheet button:focus-visible {
       outline: 2px solid var(--tw-ink);
@@ -415,7 +454,8 @@
       .tw-sheet { padding: 32px 20px 32px; }
       .tw-stats { flex-direction: column; align-items: flex-start; gap: 20px; }
       .tw-index-row { flex-wrap: wrap; row-gap: 4px; }
-      .tw-cat-name { flex-basis: 100%; }
+      .tw-cat-name { flex-basis: 100%; order: 1; }
+      .tw-dots { display: none; }
       .tw-count { order: 2; }
       .tw-closing { order: 3; margin-left: auto; }
       .tw-faq { grid-template-columns: 1fr; }
@@ -428,19 +468,22 @@
   <nav>
     <div class="container">
       <a href="/" class="nav-logo">ASAPTIC LABS</a>
-      <div class="lang-switcher">
-        <a class="lang-btn active" href="/tender/">EN</a>
-        <a class="lang-btn" href="/zh/tender/">简</a>
-        <a class="lang-btn" href="/zht/tender/">繁</a>
-      </div>
     </div>
   </nav>
 
   <main class="tw-frame">
-    <a href="/" class="tw-back">&larr; Asaptic Labs</a>
 
     <div class="tw-sheet">
-      <span class="tw-eyebrow">Asaptic Tender Bulletin</span>
+      <div class="tw-masthead-row">
+        <span class="tw-eyebrow">Asaptic Tender Bulletin</span>
+        <nav class="tw-langs" aria-label="Language">
+          <a href="/tender/" aria-current="page">EN</a>
+          <span class="tw-lang-sep">&middot;</span>
+          <a href="/zh/tender/">简</a>
+          <span class="tw-lang-sep">&middot;</span>
+          <a href="/zht/tender/">繁</a>
+        </nav>
+      </div>
       <div class="tw-rule">
         <div class="tw-rule-thin"></div>
         <div class="tw-rule-thick"></div>
@@ -506,6 +549,7 @@
 
       <div class="tw-footer-note">
         Listings are summarized from publicly available Hong Kong government and public-body tender sources. Asaptic is not the procuring body for any tender referenced here and is not affiliated with the Government of the Hong Kong Special Administrative Region.
+        <br /><a href="/tender/archive/" class="tw-archive-link">Past issues →</a>
       </div>
     </div>
   </main>
@@ -531,6 +575,14 @@
         if (days <= 14) return 'amber';
         return 'green';
       }
+
+      // Launch-set category landing pages (EN). No entry = no link.
+      var CATEGORY_LINKS = {
+        'Medical equipment': '/tender/c/medical-equipment/',
+        'IT & software': '/tender/c/it-software/',
+        'Medical services & pharma': '/tender/c/medical-services-pharma/',
+        'Construction & works': '/tender/c/construction-works/'
+      };
 
       function fmtDate(dateStr) {
         var d = new Date(dateStr + 'T00:00:00');
@@ -581,14 +633,28 @@
         tbody.innerHTML = '';
         (data.categories || []).forEach(function (cat) {
           var days = daysLeft(cat.soonest_closing);
-          var cls = badgeClass(days);
-          var daysLabel = days < 0 ? 'closed' : (days === 0 ? 'today' : days + 'd left');
+          var closingHtml;
+          if (days === 0) {
+            closingHtml = '<span class="tw-badge red">closes today</span>';
+          } else if (days > 0) {
+            var cls = badgeClass(days);
+            closingHtml = 'closes from ' + fmtDate(cat.soonest_closing) + ' <span class="tw-badge ' + cls + '">' + days + 'd left</span>';
+          } else {
+            closingHtml = '';
+          }
+
+          var href = CATEGORY_LINKS[cat.name_en];
+          var nameHtml = href
+            ? '<a class="tw-cat-name" href="' + href + '">' + cat.name_en + '</a>'
+            : '<span class="tw-cat-name">' + cat.name_en + '</span>';
+
           var row = document.createElement('div');
           row.className = 'tw-index-row';
           row.innerHTML =
-            '<span class="tw-cat-name">' + cat.name_en + '<span class="tw-cat-zh">' + cat.name_zh + '</span></span>' +
+            nameHtml +
+            '<span class="tw-dots"></span>' +
             '<span class="tw-count">' + cat.count + '</span>' +
-            '<span class="tw-closing">closes from ' + fmtDate(cat.soonest_closing) + ' <span class="tw-badge ' + cls + '">' + daysLabel + '</span></span>';
+            '<span class="tw-closing">' + closingHtml + '</span>';
           tbody.appendChild(row);
         });
       }
