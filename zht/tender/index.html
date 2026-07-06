@@ -104,188 +104,356 @@
   </script>
   <!-- /JSONLD_MERGE -->
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/style.css" />
 
   <style>
-    .tw-wrap {
-      max-width: 920px;
+    /* ── Bulletin design tokens (page-scoped) ───────────────────────── */
+    .tw-frame {
+      --tw-paper: #F6F3EC;
+      --tw-ink: #191B1E;
+      --tw-seal: #BE3A2B;
+      --tw-stone: #6E7378;
+      --tw-line: #D8D2C4;
+      --tw-serif: "Source Serif 4", Georgia, "Songti SC", "Songti TC", "Noto Serif CJK SC", serif;
+      --tw-body: Inter, "PingFang SC", "PingFang TC", system-ui, -apple-system, sans-serif;
+      --tw-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 120px 32px 96px;
+      padding: 72px 24px 96px;
+      font-family: var(--tw-body);
     }
-    .tw-back {
-      display: inline-block;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
+
+    /* ── The sheet ───────────────────────────────────────────────────── */
+    .tw-sheet {
+      background: var(--tw-paper);
+      color: var(--tw-ink);
+      border-radius: 2px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35), 0 2px 0 rgba(0, 0, 0, 0.08);
+      padding: 48px 44px 40px;
+      opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .tw-sheet {
+        opacity: 0;
+        transform: translateY(8px);
+        animation: tw-sheet-in 250ms ease-out forwards;
+      }
+    }
+    @keyframes tw-sheet-in {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Masthead ────────────────────────────────────────────────────── */
+    .tw-masthead-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .tw-eyebrow {
+      display: block;
+      font-family: var(--tw-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--tw-stone);
+    }
+
+    /* ── Quiet language switcher (replaces the site-wide blue pill on this page) ── */
+    .tw-langs {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-family: var(--tw-mono);
+      font-size: 11px;
+      font-weight: 700;
       letter-spacing: 0.1em;
-      color: var(--gray);
-      margin-bottom: 40px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .tw-langs a {
+      color: var(--tw-stone);
+      text-decoration: none;
+      padding-bottom: 2px;
       transition: color 0.2s;
     }
-    .tw-back:hover { color: var(--accent); }
-    .tw-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      color: var(--accent);
-      display: block;
-      margin-bottom: 16px;
+    .tw-langs a:hover { color: var(--tw-ink); }
+    .tw-langs a[aria-current="page"] {
+      color: var(--tw-ink);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: var(--tw-seal);
+      text-decoration-thickness: 2px;
     }
+    .tw-langs a:focus-visible {
+      outline: 2px solid var(--tw-ink);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    .tw-langs .tw-lang-sep { color: var(--tw-line); }
+    .tw-rule {
+      margin: 12px 0 16px;
+    }
+    .tw-rule .tw-rule-thin { height: 1px; background: var(--tw-ink); }
+    .tw-rule .tw-rule-thick { height: 3px; background: var(--tw-seal); margin-top: 2px; }
+
+    .tw-issue-line {
+      font-family: var(--tw-mono);
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      color: var(--tw-stone);
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 8px;
+    }
+    .tw-issue-line strong { color: var(--tw-ink); font-weight: 700; }
+
     .tw-title {
-      font-size: clamp(30px, 4.5vw, 48px);
-      font-weight: 700;
-      line-height: 1.15;
-      margin-bottom: 24px;
-    }
-    .tw-intro {
-      font-size: 16px;
-      color: var(--gray);
-      line-height: 1.85;
-      max-width: 720px;
-      margin-bottom: 48px;
+      font-family: var(--tw-serif);
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 600;
+      line-height: 1.3;
+      margin: 4px 0 18px;
     }
 
+    .tw-intro {
+      font-size: 15px;
+      color: var(--tw-stone);
+      line-height: 1.8;
+      max-width: 640px;
+      margin-bottom: 36px;
+    }
+
+    /* ── Stat strip ──────────────────────────────────────────────────── */
     .tw-stats {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-top: 2px solid var(--cyan);
-      border-radius: 10px;
-      padding: 28px 32px;
-      margin-bottom: 48px;
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
-      gap: 24px;
+      gap: 32px;
+      padding: 20px 0 28px;
+      border-top: 1px solid var(--tw-line);
+      border-bottom: 1px solid var(--tw-line);
+      margin-bottom: 36px;
+      align-items: flex-end;
       justify-content: space-between;
     }
-    .tw-stats-nums {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 40px;
-    }
+    .tw-stats-nums { display: flex; flex-wrap: wrap; gap: 36px; }
     .tw-stat-num {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 32px;
+      font-family: var(--tw-mono);
+      font-size: 30px;
       font-weight: 700;
-      color: var(--cyan);
+      color: var(--tw-ink);
       line-height: 1;
+      font-variant-numeric: tabular-nums;
     }
     .tw-stat-label {
-      font-size: 12px;
-      color: var(--gray);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      color: var(--tw-stone);
       margin-top: 6px;
-      letter-spacing: 0.02em;
     }
     .tw-stats-updated {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--tw-mono);
       font-size: 11px;
-      color: var(--gray-dim);
-      letter-spacing: 0.05em;
+      color: var(--tw-stone);
+      letter-spacing: 0.03em;
     }
 
+    /* ── Index (gazette table) ──────────────────────────────────────── */
+    .tw-index-heading {
+      font-family: var(--tw-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--tw-stone);
+      margin-bottom: 14px;
+    }
+    .tw-index { margin-bottom: 40px; }
+    .tw-index-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--tw-line);
+      opacity: 1;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .tw-index-row {
+        opacity: 0;
+        animation: tw-row-in 320ms ease-out forwards;
+      }
+      .tw-index-row:nth-child(1)  { animation-delay: 0ms; }
+      .tw-index-row:nth-child(2)  { animation-delay: 30ms; }
+      .tw-index-row:nth-child(3)  { animation-delay: 60ms; }
+      .tw-index-row:nth-child(4)  { animation-delay: 90ms; }
+      .tw-index-row:nth-child(5)  { animation-delay: 120ms; }
+      .tw-index-row:nth-child(6)  { animation-delay: 150ms; }
+      .tw-index-row:nth-child(7)  { animation-delay: 180ms; }
+      .tw-index-row:nth-child(8)  { animation-delay: 210ms; }
+      .tw-index-row:nth-child(9)  { animation-delay: 240ms; }
+      .tw-index-row:nth-child(10) { animation-delay: 270ms; }
+      .tw-index-row:nth-child(11) { animation-delay: 300ms; }
+      .tw-index-row:nth-child(12) { animation-delay: 330ms; }
+      .tw-index-row:nth-child(13) { animation-delay: 360ms; }
+      .tw-index-row:nth-child(14) { animation-delay: 390ms; }
+      .tw-index-row:nth-child(15) { animation-delay: 420ms; }
+    }
+    @keyframes tw-row-in {
+      to { opacity: 1; }
+    }
+    .tw-index-row:last-child { border-bottom: none; }
+
+    .tw-cat-name {
+      flex: 0 1 auto;
+      font-size: 14.5px;
+      color: var(--tw-ink);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .tw-dots {
+      flex: 1 1 auto;
+      overflow: hidden;
+      white-space: nowrap;
+      min-width: 24px;
+      font-size: 14.5px;
+      color: var(--tw-line);
+    }
+    .tw-dots::after {
+      content: " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ";
+    }
+    .tw-count {
+      flex: 0 0 auto;
+      font-family: var(--tw-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--tw-ink);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      min-width: 22px;
+    }
+    .tw-closing {
+      flex: 0 0 auto;
+      font-family: var(--tw-mono);
+      font-size: 11.5px;
+      color: var(--tw-stone);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tw-badge {
+      display: inline-block;
+      font-family: var(--tw-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      padding: 2px 7px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .tw-badge.red   { background: rgba(190, 58, 43, 0.14); color: var(--tw-seal); }
+    .tw-badge.amber { background: rgba(180, 130, 20, 0.14); color: #9A6B10; }
+    .tw-badge.green { background: rgba(60, 110, 70, 0.14); color: #3E7248; }
+
+    /* ── CTA ─────────────────────────────────────────────────────────── */
     .tw-cta {
       display: inline-block;
-      background: var(--accent);
-      color: var(--bg) !important;
+      background: var(--tw-seal);
+      color: var(--tw-paper) !important;
+      font-family: var(--tw-body);
       font-weight: 600;
       font-size: 14px;
-      padding: 12px 22px;
-      border-radius: 6px;
+      padding: 13px 24px;
+      border-radius: 4px;
       text-decoration: none;
       white-space: nowrap;
       transition: opacity 0.2s;
     }
-    .tw-cta:hover { opacity: 0.85; }
-    .tw-cta-bottom {
-      display: block;
-      text-align: center;
-      margin: 56px auto 0;
-      max-width: 320px;
+    .tw-cta:hover { opacity: 0.88; }
+    .tw-cta:focus-visible {
+      outline: 2px solid var(--tw-ink);
+      outline-offset: 3px;
     }
-
-    .tw-section-heading {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 20px;
+    #tw-content > .tw-cta {
+      margin-top: 8px;
     }
-
-    .tw-table-wrap {
-      overflow-x: auto;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      margin-bottom: 16px;
-    }
-    table.tw-table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 560px;
-    }
-    .tw-table th, .tw-table td {
-      text-align: left;
-      padding: 14px 18px;
-      font-size: 14px;
-      border-bottom: 1px solid var(--border);
-    }
-    .tw-table th {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      color: var(--gray);
-      text-transform: uppercase;
-      background: var(--bg-darker);
-    }
-    .tw-table tr:last-child td { border-bottom: none; }
-    .tw-table .tw-cat-name { color: #fff; font-weight: 500; }
-    .tw-table .tw-cat-en { color: var(--gray); font-size: 12px; margin-top: 3px; display: block; }
-    .tw-table td.tw-count { font-family: 'JetBrains Mono', monospace; color: var(--cyan); }
-
-    .tw-badge {
-      display: inline-block;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      padding: 3px 9px;
-      border-radius: 20px;
-      white-space: nowrap;
-    }
-    .tw-badge.red { background: rgba(255, 82, 82, 0.15); color: #FF6B6B; }
-    .tw-badge.amber { background: rgba(255, 179, 0, 0.15); color: #FFB300; }
-    .tw-badge.green { background: rgba(0, 229, 154, 0.15); color: #00E59A; }
-
+    /* ── Fallback state ──────────────────────────────────────────────── */
     .tw-fallback {
-      border: 1px dashed var(--border);
-      border-radius: 10px;
-      padding: 40px;
+      border: 1px dashed var(--tw-line);
+      border-radius: 2px;
+      padding: 44px 32px;
       text-align: center;
-      color: var(--gray);
-      font-size: 15px;
-    }
-
-    .tw-faq {
-      margin-top: 72px;
-      padding-top: 40px;
-      border-top: 1px solid var(--border);
-    }
-    .tw-faq-item { margin-bottom: 28px; }
-    .tw-faq-item:last-child { margin-bottom: 0; }
-    .tw-faq-q { font-weight: 600; font-size: 15px; margin-bottom: 8px; }
-    .tw-faq-a { font-size: 14px; color: var(--gray); line-height: 1.75; }
-
-    .tw-footer-note {
-      margin-top: 56px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
-      font-size: 12px;
-      color: var(--gray-dim);
+      color: var(--tw-stone);
+      font-size: 14.5px;
       line-height: 1.7;
     }
 
+    /* ── FAQ ─────────────────────────────────────────────────────────── */
+    .tw-faq {
+      margin-top: 44px;
+      padding-top: 32px;
+      border-top: 1px solid var(--tw-line);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 40px;
+    }
+    .tw-faq-heading {
+      grid-column: 1 / -1;
+      font-family: var(--tw-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--tw-stone);
+      margin-bottom: 12px;
+    }
+    .tw-faq-item { margin-bottom: 22px; }
+    .tw-faq-q { font-weight: 600; font-size: 14px; margin-bottom: 6px; color: var(--tw-ink); }
+    .tw-faq-a { font-size: 13.5px; color: var(--tw-stone); line-height: 1.7; }
+
+    .tw-footer-note {
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid var(--tw-line);
+      font-size: 11.5px;
+      color: var(--tw-stone);
+      line-height: 1.7;
+    }
+    .tw-archive-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: var(--tw-ink);
+      text-decoration: none;
+      font-size: 11.5px;
+      letter-spacing: 0.02em;
+    }
+    .tw-archive-link:hover {
+      text-decoration: underline;
+      text-decoration-color: var(--tw-ink);
+      text-underline-offset: 3px;
+    }
+
+    .tw-sheet a:focus-visible,
+    .tw-sheet button:focus-visible {
+      outline: 2px solid var(--tw-ink);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
     @media (max-width: 640px) {
-      .tw-wrap { padding: 100px 20px 72px; }
-      .tw-stats { flex-direction: column; align-items: flex-start; }
+      .tw-frame { padding: 56px 16px 72px; }
+      .tw-sheet { padding: 32px 20px 32px; }
+      .tw-stats { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .tw-index-row { flex-wrap: wrap; row-gap: 4px; }
+      .tw-cat-name { flex-basis: 100%; order: 1; }
+      .tw-dots { display: none; }
+      .tw-count { order: 2; }
+      .tw-closing { order: 3; margin-left: auto; }
+      .tw-faq { grid-template-columns: 1fr; }
       .tw-cta { width: 100%; text-align: center; }
     }
   </style>
@@ -295,91 +463,89 @@
   <nav>
     <div class="container">
       <a href="/" class="nav-logo">ASAPTIC LABS</a>
-      <div class="lang-switcher">
-        <a class="lang-btn" href="/tender/">EN</a>
-        <a class="lang-btn" href="/zh/tender/">简</a>
-        <a class="lang-btn active" href="/zht/tender/">繁</a>
-      </div>
     </div>
   </nav>
 
-  <main class="tw-wrap">
-    <a href="/" class="tw-back">&larr; Asaptic Labs</a>
+  <main class="tw-frame">
 
-    <span class="tw-label">每週簡報</span>
-    <h1 class="tw-title">香港招標每週簡報</h1>
-    <p class="tw-intro">
-      Asaptic 每週免費公佈香港政府部門與公營機構的招標數量統計——按類別劃分、附截標日期。完整脫敏後的招標名單（不含來源部門標識）需一次性免費登記後於 portal.asaptic.com 獲取，專為擬投標香港公共採購項目的內地及香港供應商而設。
-    </p>
+    <div class="tw-sheet">
+      <div class="tw-masthead-row">
+        <span class="tw-eyebrow">Asaptic 招標週報</span>
+        <nav class="tw-langs" aria-label="語言">
+          <a href="/tender/">EN</a>
+          <span class="tw-lang-sep">&middot;</span>
+          <a href="/zh/tender/">简</a>
+          <span class="tw-lang-sep">&middot;</span>
+          <a href="/zht/tender/" aria-current="page">繁</a>
+        </nav>
+      </div>
+      <div class="tw-rule">
+        <div class="tw-rule-thin"></div>
+        <div class="tw-rule-thick"></div>
+      </div>
+      <p class="tw-issue-line" id="tw-issue-line">第<strong id="tw-issue-no">—</strong>期 &middot; <strong id="tw-week-date">—</strong>當週 &middot; 共<strong id="tw-issue-total">—</strong>宗公開招標</p>
 
-    <div id="tw-content">
-      <div class="tw-stats">
-        <div class="tw-stats-nums">
-          <div>
-            <div class="tw-stat-num" id="tw-total">—</div>
-            <div class="tw-stat-label">本週開放招標總數</div>
+      <h1 class="tw-title">香港招標每週簡報</h1>
+      <p class="tw-intro">
+        Asaptic 每週免費公布香港政府部門與公營機構的招標數量統計——按類別劃分、附截標日期。完整脫敏後的招標名單（不含來源部門標識）需一次性免費登記後於 portal.asaptic.com 獲取，專為擬投標香港公共採購項目的內地及香港供應商而設。
+      </p>
+
+      <div id="tw-content">
+        <div class="tw-stats">
+          <div class="tw-stats-nums">
+            <div>
+              <div class="tw-stat-num" id="tw-total">—</div>
+              <div class="tw-stat-label">本週開放招標總數</div>
+            </div>
+            <div>
+              <div class="tw-stat-num" id="tw-gov">—</div>
+              <div class="tw-stat-label">政府部門</div>
+            </div>
+            <div>
+              <div class="tw-stat-num" id="tw-pub">—</div>
+              <div class="tw-stat-label">公營機構</div>
+            </div>
           </div>
-          <div>
-            <div class="tw-stat-num" id="tw-gov">—</div>
-            <div class="tw-stat-label">政府部門</div>
-          </div>
-          <div>
-            <div class="tw-stat-num" id="tw-pub">—</div>
-            <div class="tw-stat-label">公營機構</div>
-          </div>
-        </div>
-        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:12px;">
           <span class="tw-stats-updated" id="tw-updated">更新於 —</span>
-          <a href="https://portal.asaptic.com/register.html?src=asaptic_tender" class="tw-cta">免費登記查看完整清單 →</a>
+        </div>
+
+        <h2 class="tw-index-heading">目錄 — 按類別劃分的公開招標</h2>
+        <div class="tw-index" id="tw-tbody">
+        </div>
+
+        <a href="https://portal.asaptic.com/register.html?src=asaptic_tender" class="tw-cta">免費登記閱讀完整簡報 →</a>
+      </div>
+
+      <div id="tw-fallback" class="tw-fallback" style="display:none;">
+        新招標資訊每週一發布——本期簡報正在準備中，請稍後查看。
+      </div>
+
+      <!-- SEO_COPY_MERGE -->
+      <div class="tw-faq">
+        <div class="tw-faq-heading">常見問題</div>
+        <div class="tw-faq-item">
+          <div class="tw-faq-q">每週免費招標數量統計包含什麼內容？</div>
+          <div class="tw-faq-a">本週香港開放招標的總數，按類別細分，並附截標日期——資料來源為政府部門及公營機構。查看統計數字無需登記。</div>
+        </div>
+        <div class="tw-faq-item">
+          <div class="tw-faq-q">查看完整招標名單是否需要登記？</div>
+          <div class="tw-faq-a">需要。統計數字免費公開；完整脫敏後的招標名單（含品類、地區、截標日期，但不含具體來源部門標識以外的一般分類資訊）需在 portal.asaptic.com 完成一次性免費登記後獲取。</div>
+        </div>
+        <div class="tw-faq-item">
+          <div class="tw-faq-q">這份招標週報適合哪些企業？</div>
+          <div class="tw-faq-a">適合有意投標香港公共採購項目的內地及香港供應商——涵蓋政府部門及公營機構兩類招標來源。</div>
+        </div>
+        <div class="tw-faq-item">
+          <div class="tw-faq-q">名單多久更新一次？</div>
+          <div class="tw-faq-a">每週更新一次，涵蓋當週新開放的招標及其截標日期。</div>
         </div>
       </div>
+      <!-- /SEO_COPY_MERGE -->
 
-      <h2 class="tw-section-heading">分類統計</h2>
-      <div class="tw-table-wrap">
-        <table class="tw-table">
-          <thead>
-            <tr>
-              <th>類別</th>
-              <th>開放招標數</th>
-              <th>最快截止日期</th>
-            </tr>
-          </thead>
-          <tbody id="tw-tbody">
-          </tbody>
-        </table>
+      <div class="tw-footer-note">
+        以上資訊摘要自公開的香港政府及公營機構招標來源。Asaptic 並非本頁所述任何招標的招標機構，亦與香港特別行政區政府無任何關聯。
+        <br /><a href="/zht/tender/archive/" class="tw-archive-link">往期簡報 →</a>
       </div>
-    </div>
-
-    <div id="tw-fallback" class="tw-fallback" style="display:none;">
-      本週簡報正在準備中，請稍後再查看。
-    </div>
-
-    <a href="https://portal.asaptic.com/register.html?src=asaptic_tender" class="tw-cta tw-cta-bottom">免費登記查看完整清單 →</a>
-
-    <!-- SEO_COPY_MERGE -->
-    <div class="tw-faq">
-      <h2 class="tw-section-heading">常見問題</h2>
-      <div class="tw-faq-item">
-        <div class="tw-faq-q">每週免費招標數量統計包含什麼內容？</div>
-        <div class="tw-faq-a">本週香港開放招標的總數，按類別細分，並附截標日期——資料來源為政府部門及公營機構。查看統計數字無需登記。</div>
-      </div>
-      <div class="tw-faq-item">
-        <div class="tw-faq-q">查看完整招標名單是否需要登記？</div>
-        <div class="tw-faq-a">需要。統計數字免費公開；完整脫敏後的招標名單（含品類、地區、截標日期，但不含具體來源部門標識以外的一般分類資訊）需在 portal.asaptic.com 完成一次性免費登記後獲取。</div>
-      </div>
-      <div class="tw-faq-item">
-        <div class="tw-faq-q">這份招標週報適合哪些企業？</div>
-        <div class="tw-faq-a">適合有意投標香港公共採購項目的內地及香港供應商——涵蓋政府部門及公營機構兩類招標來源。</div>
-      </div>
-      <div class="tw-faq-item">
-        <div class="tw-faq-q">名單多久更新一次？</div>
-        <div class="tw-faq-a">每週更新一次，涵蓋當週新開放的招標及其截標日期。</div>
-      </div>
-    </div>
-    <!-- /SEO_COPY_MERGE -->
-
-    <div class="tw-footer-note">
-      以上資訊摘要自公開的香港政府及公營機構招標來源。Asaptic 並非本頁所述任何招標的招標機構，亦與香港特別行政區政府無任何關聯。
     </div>
   </main>
 
@@ -407,15 +573,44 @@
 
       function fmtDate(dateStr) {
         var d = new Date(dateStr + 'T00:00:00');
-        return d.toLocaleDateString('zh-HK', { year: 'numeric', month: 'short', day: 'numeric' });
+        return d.toLocaleDateString('zh-TW', { month: 'short', day: 'numeric' });
       }
 
       function fmtUpdated(iso) {
         var d = new Date(iso);
-        return '更新於 ' + d.toLocaleDateString('zh-HK', { year: 'numeric', month: 'short', day: 'numeric' });
+        return '更新於 ' + d.toLocaleDateString('zh-TW', { year: 'numeric', month: 'short', day: 'numeric' });
+      }
+
+      // ISO week helpers — derive "第N期" and "<date>當週" from teaser.json's "week" field (e.g. "2026-W27").
+      function isoWeekMonday(year, week) {
+        var simple = new Date(Date.UTC(year, 0, 1 + (week - 1) * 7));
+        var dow = simple.getUTCDay() || 7;
+        if (dow <= 4) {
+          simple.setUTCDate(simple.getUTCDate() - dow + 1);
+        } else {
+          simple.setUTCDate(simple.getUTCDate() + 8 - dow);
+        }
+        return simple;
+      }
+
+      function renderIssueLine(data) {
+        var weekStr = data.week;
+        if (weekStr && /^\d{4}-W\d{1,2}$/.test(weekStr)) {
+          var parts = weekStr.split('-W');
+          var year = parseInt(parts[0], 10);
+          var week = parseInt(parts[1], 10);
+          var monday = isoWeekMonday(year, week);
+          document.getElementById('tw-issue-no').textContent = week;
+          document.getElementById('tw-week-date').textContent = monday.toLocaleDateString('zh-TW', { month: 'long', day: 'numeric', year: 'numeric' });
+        } else {
+          document.getElementById('tw-issue-line').style.display = 'none';
+        }
+        document.getElementById('tw-issue-total').textContent = data.total;
       }
 
       function render(data) {
+        renderIssueLine(data);
+
         document.getElementById('tw-total').textContent = data.total;
         document.getElementById('tw-gov').textContent = (data.sources && data.sources.government) != null ? data.sources.government : '—';
         document.getElementById('tw-pub').textContent = (data.sources && data.sources.public_bodies) != null ? data.sources.public_bodies : '—';
@@ -425,15 +620,25 @@
         tbody.innerHTML = '';
         (data.categories || []).forEach(function (cat) {
           var days = daysLeft(cat.soonest_closing);
-          var cls = badgeClass(days);
-          var daysLabel = days < 0 ? '已截止' : (days === 0 ? '今天截止' : '剩 ' + days + ' 天');
-          var catNameZht = cat.name_zht || cat.name_zh;
-          var tr = document.createElement('tr');
-          tr.innerHTML =
-            '<td><span class="tw-cat-name">' + catNameZht + '</span><span class="tw-cat-en">' + cat.name_en + '</span></td>' +
-            '<td class="tw-count">' + cat.count + '</td>' +
-            '<td>' + fmtDate(cat.soonest_closing) + ' <span class="tw-badge ' + cls + '">' + daysLabel + '</span></td>';
-          tbody.appendChild(tr);
+          var closingHtml;
+          if (days === 0) {
+            closingHtml = '<span class="tw-badge red">今日截止</span>';
+          } else if (days > 0) {
+            var cls = badgeClass(days);
+            closingHtml = fmtDate(cat.soonest_closing) + ' 起截止 <span class="tw-badge ' + cls + '">剩' + days + '天</span>';
+          } else {
+            closingHtml = '';
+          }
+
+          // zht category landing pages do not exist yet — names are never linked.
+          var row = document.createElement('div');
+          row.className = 'tw-index-row';
+          row.innerHTML =
+            '<span class="tw-cat-name">' + cat.name_zht + '</span>' +
+            '<span class="tw-dots"></span>' +
+            '<span class="tw-count">' + cat.count + '</span>' +
+            '<span class="tw-closing">' + closingHtml + '</span>';
+          tbody.appendChild(row);
         });
       }
 
