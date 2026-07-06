@@ -100,6 +100,13 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    .tw-masthead-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
     .tw-eyebrow {
       display: block;
       font-family: var(--tw-mono);
@@ -109,6 +116,39 @@
       text-transform: uppercase;
       color: var(--tw-stone);
     }
+
+    /* Quiet language switcher (replaces the site-wide blue pill on these pages) */
+    .tw-langs {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-family: var(--tw-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .tw-langs a {
+      color: var(--tw-stone);
+      text-decoration: none;
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+    .tw-langs a:hover { color: var(--tw-ink); }
+    .tw-langs a[aria-current="page"] {
+      color: var(--tw-ink);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: var(--tw-seal);
+      text-decoration-thickness: 2px;
+    }
+    .tw-langs a:focus-visible {
+      outline: 2px solid var(--tw-ink);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    .tw-langs .tw-lang-sep { color: var(--tw-line); }
     .tw-rule { margin: 12px 0 16px; }
     .tw-rule .tw-rule-thin { height: 1px; background: var(--tw-ink); }
     .tw-rule .tw-rule-thick { height: 3px; background: var(--tw-seal); margin-top: 2px; }
@@ -238,21 +278,21 @@
     .tw-index-row:last-child { border-bottom: none; }
 
     .tw-cat-name {
+      flex: 0 1 auto;
+      font-size: 14.5px;
+      color: var(--tw-ink);
+      white-space: nowrap;
+    }
+    .tw-dots {
       flex: 1 1 auto;
       overflow: hidden;
       white-space: nowrap;
+      min-width: 24px;
       font-size: 14.5px;
-      color: var(--tw-ink);
-    }
-    .tw-cat-name::after {
-      content: " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ";
       color: var(--tw-line);
     }
-    .tw-cat-zh {
-      display: block;
-      font-size: 11.5px;
-      color: var(--tw-stone);
-      margin-top: 2px;
+    .tw-dots::after {
+      content: " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ";
     }
     .tw-count {
       flex: 0 0 auto;
@@ -366,7 +406,8 @@
       .tw-sheet { padding: 32px 20px 32px; }
       .tw-stats { flex-direction: column; align-items: flex-start; gap: 20px; }
       .tw-index-row { flex-wrap: wrap; row-gap: 4px; }
-      .tw-cat-name { flex-basis: 100%; }
+      .tw-cat-name { flex-basis: 100%; order: 1; }
+      .tw-dots { display: none; }
       .tw-count { order: 2; }
       .tw-closing { order: 3; margin-left: auto; }
       .tw-cta { width: 100%; text-align: center; }
@@ -381,11 +422,6 @@
   <nav>
     <div class="container">
       <a href="/" class="nav-logo">ASAPTIC LABS</a>
-      <div class="lang-switcher">
-        <a class="lang-btn" href="/tender/archive/">EN</a>
-        <a class="lang-btn" href="/zh/tender/archive/">简</a>
-        <a class="lang-btn active" href="/zht/tender/archive/">繁</a>
-      </div>
     </div>
   </nav>
 
@@ -394,7 +430,16 @@
     <a href="/zht/tender/" class="tw-back">查看最新一期 →</a>
 
     <div class="tw-sheet">
-      <span class="tw-eyebrow">Asaptic 招標週報 — 存檔</span>
+      <div class="tw-masthead-row">
+        <span class="tw-eyebrow">Asaptic 招標週報 — 存檔</span>
+        <nav class="tw-langs" aria-label="Language">
+          <a href="/tender/archive/">EN</a>
+          <span class="tw-lang-sep">&middot;</span>
+          <a href="/zh/tender/archive/">简</a>
+          <span class="tw-lang-sep">&middot;</span>
+          <a href="/zht/tender/archive/" aria-current="page">繁</a>
+        </nav>
+      </div>
       <div class="tw-rule">
         <div class="tw-rule-thin"></div>
         <div class="tw-rule-thick"></div>

@@ -102,6 +102,13 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    .tw-masthead-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
     .tw-eyebrow {
       display: block;
       font-family: var(--tw-mono);
@@ -111,6 +118,39 @@
       text-transform: uppercase;
       color: var(--tw-stone);
     }
+
+    /* Quiet language switcher (replaces the site-wide blue pill on these pages) */
+    .tw-langs {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-family: var(--tw-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .tw-langs a {
+      color: var(--tw-stone);
+      text-decoration: none;
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+    .tw-langs a:hover { color: var(--tw-ink); }
+    .tw-langs a[aria-current="page"] {
+      color: var(--tw-ink);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: var(--tw-seal);
+      text-decoration-thickness: 2px;
+    }
+    .tw-langs a:focus-visible {
+      outline: 2px solid var(--tw-ink);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    .tw-langs .tw-lang-sep { color: var(--tw-line); }
     .tw-rule { margin: 12px 0 16px; }
     .tw-rule .tw-rule-thin { height: 1px; background: var(--tw-ink); }
     .tw-rule .tw-rule-thick { height: 3px; background: var(--tw-seal); margin-top: 2px; }
@@ -240,21 +280,21 @@
     .tw-index-row:last-child { border-bottom: none; }
 
     .tw-cat-name {
+      flex: 0 1 auto;
+      font-size: 14.5px;
+      color: var(--tw-ink);
+      white-space: nowrap;
+    }
+    .tw-dots {
       flex: 1 1 auto;
       overflow: hidden;
       white-space: nowrap;
+      min-width: 24px;
       font-size: 14.5px;
-      color: var(--tw-ink);
-    }
-    .tw-cat-name::after {
-      content: " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ";
       color: var(--tw-line);
     }
-    .tw-cat-zh {
-      display: block;
-      font-size: 11.5px;
-      color: var(--tw-stone);
-      margin-top: 2px;
+    .tw-dots::after {
+      content: " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ";
     }
     .tw-count {
       flex: 0 0 auto;
@@ -368,7 +408,8 @@
       .tw-sheet { padding: 32px 20px 32px; }
       .tw-stats { flex-direction: column; align-items: flex-start; gap: 20px; }
       .tw-index-row { flex-wrap: wrap; row-gap: 4px; }
-      .tw-cat-name { flex-basis: 100%; }
+      .tw-cat-name { flex-basis: 100%; order: 1; }
+      .tw-dots { display: none; }
       .tw-count { order: 2; }
       .tw-closing { order: 3; margin-left: auto; }
       .tw-cta { width: 100%; text-align: center; }
@@ -383,11 +424,6 @@
   <nav>
     <div class="container">
       <a href="/" class="nav-logo">ASAPTIC LABS</a>
-      <div class="lang-switcher">
-        <a class="lang-btn" href="/tender/archive/">EN</a>
-        <a class="lang-btn active" href="/zh/tender/archive/">简</a>
-        <a class="lang-btn" href="/zht/tender/archive/">繁</a>
-      </div>
     </div>
   </nav>
 
@@ -396,7 +432,16 @@
     <a href="/zh/tender/archive/" class="tw-back">← 存档目录</a>
 
     <div class="tw-sheet">
-      <span class="tw-eyebrow">Asaptic 招标周报</span>
+      <div class="tw-masthead-row">
+        <span class="tw-eyebrow">Asaptic 招标周报</span>
+        <nav class="tw-langs" aria-label="Language">
+          <a href="/tender/archive/2026-w28/">EN</a>
+          <span class="tw-lang-sep">&middot;</span>
+          <a href="/zh/tender/archive/2026-w28/" aria-current="page">简</a>
+          <span class="tw-lang-sep">&middot;</span>
+          <a href="/zht/tender/archive/2026-w28/">繁</a>
+        </nav>
+      </div>
       <div class="tw-rule">
         <div class="tw-rule-thin"></div>
         <div class="tw-rule-thick"></div>
@@ -432,57 +477,68 @@
       
       <div class="tw-index">
         <div class="tw-index-row">
-          <span class="tw-cat-name">医疗设备<span class="tw-cat-zh">Medical equipment</span></span>
+          <span class="tw-cat-name">医疗设备</span>
+          <span class="tw-dots"></span>
           <span class="tw-count">36</span>
           <span class="tw-closing">最快截止 2026年7月7日</span>
         </div>
         <div class="tw-index-row">
-          <span class="tw-cat-name">医疗服务与药品<span class="tw-cat-zh">Medical services & pharma</span></span>
+          <span class="tw-cat-name">医疗服务与药品</span>
+          <span class="tw-dots"></span>
           <span class="tw-count">37</span>
           <span class="tw-closing">最快截止 2026年7月10日</span>
         </div>
         <div class="tw-index-row">
-          <span class="tw-cat-name">IT与软件<span class="tw-cat-zh">IT & software</span></span>
+          <span class="tw-cat-name">IT与软件</span>
+          <span class="tw-dots"></span>
           <span class="tw-count">76</span>
           <span class="tw-closing">最快截止 2026年7月7日</span>
         </div>
         <div class="tw-index-row">
-          <span class="tw-cat-name">网络与安全<span class="tw-cat-zh">Networking & security</span></span>
+          <span class="tw-cat-name">网络与安全</span>
+          <span class="tw-dots"></span>
           <span class="tw-count">5</span>
           <span class="tw-closing">最快截止 2026年7月8日</span>
         </div>
         <div class="tw-index-row">
-          <span class="tw-cat-name">食品与餐饮<span class="tw-cat-zh">Food & catering</span></span>
+          <span class="tw-cat-name">食品与餐饮</span>
+          <span class="tw-dots"></span>
           <span class="tw-count">4</span>
           <span class="tw-closing">最快截止 2026年7月7日</span>
         </div>
         <div class="tw-index-row">
-          <span class="tw-cat-name">设施与保洁<span class="tw-cat-zh">Facilities & cleaning</span></span>
+          <span class="tw-cat-name">设施与保洁</span>
+          <span class="tw-dots"></span>
           <span class="tw-count">8</span>
           <span class="tw-closing">最快截止 2026年7月13日</span>
         </div>
         <div class="tw-index-row">
-          <span class="tw-cat-name">车辆与物流<span class="tw-cat-zh">Vehicles & logistics</span></span>
+          <span class="tw-cat-name">车辆与物流</span>
+          <span class="tw-dots"></span>
           <span class="tw-count">11</span>
           <span class="tw-closing">最快截止 2026年7月7日</span>
         </div>
         <div class="tw-index-row">
-          <span class="tw-cat-name">工程与建造<span class="tw-cat-zh">Construction & works</span></span>
+          <span class="tw-cat-name">工程与建造</span>
+          <span class="tw-dots"></span>
           <span class="tw-count">6</span>
           <span class="tw-closing">最快截止 2026年7月10日</span>
         </div>
         <div class="tw-index-row">
-          <span class="tw-cat-name">顾问与研究<span class="tw-cat-zh">Consultancy & studies</span></span>
+          <span class="tw-cat-name">顾问与研究</span>
+          <span class="tw-dots"></span>
           <span class="tw-count">1</span>
           <span class="tw-closing">最快截止 2026年7月15日</span>
         </div>
         <div class="tw-index-row">
-          <span class="tw-cat-name">印刷与出版<span class="tw-cat-zh">Printing & publishing</span></span>
+          <span class="tw-cat-name">印刷与出版</span>
+          <span class="tw-dots"></span>
           <span class="tw-count">3</span>
           <span class="tw-closing">最快截止 2026年7月16日</span>
         </div>
         <div class="tw-index-row">
-          <span class="tw-cat-name">其他<span class="tw-cat-zh">Other</span></span>
+          <span class="tw-cat-name">其他</span>
+          <span class="tw-dots"></span>
           <span class="tw-count">37</span>
           <span class="tw-closing">最快截止 2026年7月7日</span>
         </div>

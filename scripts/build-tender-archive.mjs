@@ -265,6 +265,13 @@ const BULLETIN_CSS = `
       to { opacity: 1; transform: translateY(0); }
     }
 
+    .tw-masthead-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
     .tw-eyebrow {
       display: block;
       font-family: var(--tw-mono);
@@ -274,6 +281,39 @@ const BULLETIN_CSS = `
       text-transform: uppercase;
       color: var(--tw-stone);
     }
+
+    /* Quiet language switcher (replaces the site-wide blue pill on these pages) */
+    .tw-langs {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-family: var(--tw-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .tw-langs a {
+      color: var(--tw-stone);
+      text-decoration: none;
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+    .tw-langs a:hover { color: var(--tw-ink); }
+    .tw-langs a[aria-current="page"] {
+      color: var(--tw-ink);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: var(--tw-seal);
+      text-decoration-thickness: 2px;
+    }
+    .tw-langs a:focus-visible {
+      outline: 2px solid var(--tw-ink);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    .tw-langs .tw-lang-sep { color: var(--tw-line); }
     .tw-rule { margin: 12px 0 16px; }
     .tw-rule .tw-rule-thin { height: 1px; background: var(--tw-ink); }
     .tw-rule .tw-rule-thick { height: 3px; background: var(--tw-seal); margin-top: 2px; }
@@ -403,21 +443,21 @@ const BULLETIN_CSS = `
     .tw-index-row:last-child { border-bottom: none; }
 
     .tw-cat-name {
+      flex: 0 1 auto;
+      font-size: 14.5px;
+      color: var(--tw-ink);
+      white-space: nowrap;
+    }
+    .tw-dots {
       flex: 1 1 auto;
       overflow: hidden;
       white-space: nowrap;
+      min-width: 24px;
       font-size: 14.5px;
-      color: var(--tw-ink);
-    }
-    .tw-cat-name::after {
-      content: " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ";
       color: var(--tw-line);
     }
-    .tw-cat-zh {
-      display: block;
-      font-size: 11.5px;
-      color: var(--tw-stone);
-      margin-top: 2px;
+    .tw-dots::after {
+      content: " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ";
     }
     .tw-count {
       flex: 0 0 auto;
@@ -531,7 +571,8 @@ const BULLETIN_CSS = `
       .tw-sheet { padding: 32px 20px 32px; }
       .tw-stats { flex-direction: column; align-items: flex-start; gap: 20px; }
       .tw-index-row { flex-wrap: wrap; row-gap: 4px; }
-      .tw-cat-name { flex-basis: 100%; }
+      .tw-cat-name { flex-basis: 100%; order: 1; }
+      .tw-dots { display: none; }
       .tw-count { order: 2; }
       .tw-closing { order: 3; margin-left: auto; }
       .tw-cta { width: 100%; text-align: center; }
@@ -540,20 +581,27 @@ const BULLETIN_CSS = `
     }
 `;
 
-function navHtml(langKey) {
-  const isEn = langKey === 'en';
-  const isZh = langKey === 'zh';
-  const isZht = langKey === 'zht';
+function navHtml() {
   return `  <nav>
     <div class="container">
       <a href="/" class="nav-logo">ASAPTIC LABS</a>
-      <div class="lang-switcher">
-        <a class="lang-btn${isEn ? ' active' : ''}" href="/tender/archive/">EN</a>
-        <a class="lang-btn${isZh ? ' active' : ''}" href="/zh/tender/archive/">简</a>
-        <a class="lang-btn${isZht ? ' active' : ''}" href="/zht/tender/archive/">繁</a>
-      </div>
     </div>
   </nav>`;
+}
+
+// Quiet small-caps "EN · 简 · 繁" masthead switcher — matches /tender/index.html.
+// relPath is the language-neutral path (no lang prefix), e.g. '/tender/archive/'
+// or '/tender/archive/2026-w28/'.
+function langSwitcherHtml(langKey, relPath) {
+  const labels = { en: 'EN', zh: '简', zht: '繁' };
+  const links = LANG_KEYS.map((k) => {
+    const prefix = LANGS[k].prefix ? `/${LANGS[k].prefix}` : '';
+    const current = k === langKey ? ' aria-current="page"' : '';
+    return `<a href="${prefix}${relPath}"${current}>${labels[k]}</a>`;
+  });
+  return `        <nav class="tw-langs" aria-label="Language">
+          ${links.join('\n          <span class="tw-lang-sep">&middot;</span>\n          ')}
+        </nav>`;
 }
 
 function footerHtml() {
@@ -644,14 +692,17 @@ ${BULLETIN_CSS}
 </head>
 <body>
 
-${navHtml(langKey)}
+${navHtml()}
 
   <main class="tw-frame">
     <a href="/" class="tw-back">${L.backToSite}</a>
     <a href="${currentIssuePath}" class="tw-back">${L.viewCurrent}</a>
 
     <div class="tw-sheet">
-      <span class="tw-eyebrow">${L.archiveEyebrow}</span>
+      <div class="tw-masthead-row">
+        <span class="tw-eyebrow">${L.archiveEyebrow}</span>
+${langSwitcherHtml(langKey, '/tender/archive/')}
+      </div>
       <div class="tw-rule">
         <div class="tw-rule-thin"></div>
         <div class="tw-rule-thick"></div>
@@ -708,7 +759,6 @@ function buildIssuePageHtml(langKey, snapshot, allSnapshots) {
   const indexRows = data.categories
     .map((cat) => {
       const catName = langKey === 'en' ? cat.name_en : langKey === 'zh' ? cat.name_zh : cat.name_zht || cat.name_zh;
-      const subName = langKey === 'en' ? cat.name_zh : cat.name_en;
       let closingHtml = '';
       if (cat.soonest_closing) {
         const d = new Date(cat.soonest_closing + 'T00:00:00Z');
@@ -716,7 +766,8 @@ function buildIssuePageHtml(langKey, snapshot, allSnapshots) {
         closingHtml = `<span class="tw-closing">${L.closesFrom} ${dateLabel}</span>`;
       }
       return `        <div class="tw-index-row">
-          <span class="tw-cat-name">${catName}<span class="tw-cat-zh">${subName}</span></span>
+          <span class="tw-cat-name">${catName}</span>
+          <span class="tw-dots"></span>
           <span class="tw-count">${cat.count}</span>
           ${closingHtml}
         </div>`;
@@ -779,14 +830,17 @@ ${BULLETIN_CSS}
 </head>
 <body>
 
-${navHtml(langKey)}
+${navHtml()}
 
   <main class="tw-frame">
     <a href="/" class="tw-back">${L.backToSite}</a>
     <a href="${archiveIndexPath}" class="tw-back">${L.backToArchive}</a>
 
     <div class="tw-sheet">
-      <span class="tw-eyebrow">${L.eyebrow}</span>
+      <div class="tw-masthead-row">
+        <span class="tw-eyebrow">${L.eyebrow}</span>
+${langSwitcherHtml(langKey, `/tender/archive/${snapshot.key}/`)}
+      </div>
       <div class="tw-rule">
         <div class="tw-rule-thin"></div>
         <div class="tw-rule-thick"></div>
