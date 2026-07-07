@@ -205,6 +205,15 @@ function hreflangLinks(rel) {
 }
 
 // ---------------------------------------------------------------------------
+// Cloudflare Web Analytics beacon (tender-funnel measurement — sprint/analytics)
+// PLACEHOLDER token — Raymond must swap in the real site token from the CF
+// dashboard (Analytics & Logs -> Web Analytics -> Add a site) before this is
+// live-tracking. Beacon-only, no PII, no cookies.
+// ---------------------------------------------------------------------------
+
+const CF_ANALYTICS_BEACON = `  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"REPLACE_WITH_CF_ANALYTICS_TOKEN"}'></script>`;
+
+// ---------------------------------------------------------------------------
 // Shared page-scoped CSS (bulletin paper-sheet system — matches /tender/index.html)
 // ---------------------------------------------------------------------------
 
@@ -690,6 +699,7 @@ ${webPageJsonLd}
   <style>
 ${BULLETIN_CSS}
   </style>
+${CF_ANALYTICS_BEACON}
 </head>
 <body>
 
@@ -828,6 +838,7 @@ ${webPageJsonLd}
   <style>
 ${BULLETIN_CSS}
   </style>
+${CF_ANALYTICS_BEACON}
 </head>
 <body>
 
