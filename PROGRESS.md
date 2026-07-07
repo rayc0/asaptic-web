@@ -1,5 +1,14 @@
 # Asaptic Cross-Standard Build Pipeline — Progress Document
 
+## 2026-07-07 (evening) — /robot/build/ v1 "Assembly Bay" GAME — DEPLOYED
+
+- **DEPLOYED to asaptic.com** (main @5982f748, wrangler 7aef57ee): /robot/build/ + /zh/robot/build/ rebuilt as a 4-stage game per Raymond's direction ("build it like a game — select parts, put in the robot, simulate, checkout, we ship the hardware, generate the user manual").
+- Stages: 1 MISSION (chassis + payload/reach) → 2 ASSEMBLE (slots start EMPTY; click slot → part picker w/ suggested badge; auto-fit button; build meter; ghost/dashed SVG arm fills in as parts are fitted) → 3 TEST (deterministic 2-link IK pick-and-place cycle; green clean / amber slow+strain / red lift-aborted — all from the existing torque check) → 4 CHECKOUT (BOM + landed cost + "we assemble, QA-test and ship the hardware" + test verdict in order summary).
+- NEW **robot/build/manual.js** (430 lines): bilingual print-ready preliminary user manual generated from the configured build (cover, sizing table, assembly overview, power-on checklist, operation limits, maintenance, safety, support). Honest framing: PRELIMINARY banner, final manual ships with hardware, no invented lead times/certifications.
+- Sizing formulas + component table UNCHANGED from v0. No backend, no external requests. FAQ + JSON-LD gained "Do you ship the hardware?" entry; llms.txt tool line updated.
+- Fleet: Fable spec+conduct+QA · Fable fork built manual.js · Opus rebuilt EN · Sonnet ported zh · 2 Fable planning forks produced V2 plans (share-a-build URL top pick; checkout→ship funnel: mailto+order-ref now, 🦾 Robot Build Orders Bitable, supplier reality = the real gate).
+- QA: headless-Chrome click-throughs (local + LIVE, EN + zh): green/amber/red sim paths, checkout gating, manual generation, 360px no-h-scroll, zero console errors. IndexNow pinged.
+
 ## 2026-07-07 (later) — /robot/build/ interactive arm configurator v0 (feat/robot-page)
 
 - NEW: **asaptic.com/robot/build/** + **/zh/robot/build/** — game-like robot-ARM configurator: template (4/6/7-axis) → payload/reach sliders → auto-suggested AJM tier per joint group (override chips) → options → destination → live torque status lights + indicative BOM band + landed-cost band → "Request this build" mailto with full BOM + copy-summary. Pure static vanilla JS, deterministic ("rules decide, no AI guesses"), real SKU pricing (AJM-Lite $699 / Mid $1,099 / Pro $1,599 from bizplan).
