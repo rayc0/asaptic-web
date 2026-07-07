@@ -11,7 +11,7 @@ set -euo pipefail
 # Forbidden token regex (case-insensitive).
 # This string is the single authorised appearance of these tokens in the script.
 # ---------------------------------------------------------------------------
-FORBIDDEN='pqsafe|pinnacle|seniordeli|softmeal|kangleling|carewells|hkma|t-?sata|tsata|dsa-?65|lingualeap|deeptech100'
+FORBIDDEN='pqsafe|pinnacle|seniordeli|softmeal|kangleling|carewells|hkma|t-?sata|tsata|dsa-?65|lingualeap|deeptech100|cash.?engine|funding.?ladder|pitch.?track'
 
 # ---------------------------------------------------------------------------
 # Scan paths: positional args, or default to current directory
