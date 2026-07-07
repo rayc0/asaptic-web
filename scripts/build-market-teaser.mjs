@@ -172,26 +172,82 @@ function categorize(title) {
 }
 
 // ── Org-class → government / public_bodies classification ────────────────
-// GB: org values are already sanitized org-class strings.
-// AU: org is either 'a federal government department' or null/unset.
-// MO: org holds actual department names (not a judged org-class) — per spec,
-//     fall back to counting everything as "government".
+// GB: org holds REAL contracting-authority names (e.g. "Kent County Council",
+//     "NHS England", "University of Glasgow"), NOT a pre-sanitized org-class
+//     string as an earlier comment here incorrectly assumed — that mismatch
+//     is why classifyOrgGB previously matched nothing and government was
+//     stuck at 0/300. Predicate re-derived 2026-07-07 (W4-CLASSIFY-FIX) against
+//     the live 300-row GB registry (00Tender/_registry/GB/tenders_registry.json):
+//     org values are dominated by councils/NHS bodies/universities/housing
+//     associations/statutory corporations (public institutions), with a smaller
+//     set of genuine central/devolved-government departments, ministries and
+//     Crown/Cabinet Office bodies (e.g. "Ministry of Defence", "Scottish
+//     Government", "The Minister for the Cabinet Office acting through Crown
+//     Commercial Service", "The Department for Science, Innovation &
+//     Technology (DSIT)", "Social Security Scotland", "Transport Scotland",
+//     "Forestry and Land Scotland", "Scottish Prison Service").
+// AU: org holds real Australian Commonwealth entity names (e.g. "Department
+//     of Defence - DSRG"). Previous predicate only matched the literal phrase
+//     "government department"/"federal government department", which never
+//     occurs verbatim in the real data (the flagged bug: "department of
+//     defence - dsrg" fell through to public_bodies). Predicate re-derived
+//     against the live 79-row AU registry (00Tender/_registry/AU/tenders_registry.json):
+//     the large majority of rows are literal "Department of ..." entries;
+//     the remainder are statutory authorities/corporations/commissions/agencies
+//     /bureaus (Commonwealth entities that are not core departments, e.g.
+//     "Grains Research and Development Corporation", "Australian Fisheries
+//     Management Authority", "Reserve Bank of Australia").
 function classifyOrgGB(org) {
   if (!org) return 'government';
   const o = org.toLowerCase();
-  if (o.includes('central government department')) return 'government';
-  // NHS/health bodies, councils, universities, colleges, police/fire authorities,
-  // and generic "UK contracting authority" all count as public bodies & institutions.
-  return 'public_bodies';
+  // Public bodies & institutions: NHS trusts/boards/ICBs, local councils,
+  // universities/colleges, housing associations, fire/police authorities,
+  // statutory corporations & utilities, museums/parliamentary estates,
+  // school/academy learning trusts.
+  const PUBLIC_BODY_PATTERNS = [
+    'nhs', 'council', 'borough', 'university', 'college', 'housing association', 'housing society',
+    'housing group', 'fire brigade', 'fire and rescue', 'police authority',
+    'police and crime commissioner', 'constabulary', 'water', 'ferries', 'ferry',
+    'trains limited', 'airport', 'canals', 'maritime', 'museum', 'botanic garden',
+    'learning trust', 'academy trust', 'parish', 'partnership for transport',
+    'foundation trust', 'health board',
+  ];
+  for (const p of PUBLIC_BODY_PATTERNS) {
+    if (o.includes(p)) return 'public_bodies';
+  }
+  // Central/devolved government departments, ministries, agencies, Crown bodies.
+  const GOVERNMENT_PATTERNS = [
+    'department', 'ministry', 'government', 'cabinet office', 'crown commercial service',
+    'hm ', 'prison service', 'forestry and land', 'courts and tribunals',
+  ];
+  for (const p of GOVERNMENT_PATTERNS) {
+    if (o.includes(p)) return 'government';
+  }
+  // Default ambiguous → government (this is a gov-tender feed; avoid silently
+  // parking unmatched contracting authorities in public_bodies).
+  return 'government';
 }
 
 function classifyOrgAU(org) {
   if (!org) return 'government';
   const o = org.toLowerCase();
-  if (o.includes('federal government department') || o.includes('government department')) {
+  // Literal "Department of ..." / "Department for ..." entries are core
+  // Commonwealth departments → government.
+  if (o.includes('department of') || o.includes('department for') || o.startsWith('department')) {
     return 'government';
   }
-  return 'public_bodies';
+  // Statutory authorities/corporations/commissions/agencies/bureaus/museums/trusts —
+  // Commonwealth entities that sit outside the core departmental structure.
+  const PUBLIC_BODY_PATTERNS = [
+    'authority', 'corporation', 'commission', 'agency', 'bureau', 'museum', 'trust',
+    'parliamentary services', 'parliament house', 'reserve bank', 'services australia',
+    'tourism australia', 'export finance australia',
+  ];
+  for (const p of PUBLIC_BODY_PATTERNS) {
+    if (o.includes(p)) return 'public_bodies';
+  }
+  // Default ambiguous → government (gov-tender feed).
+  return 'government';
 }
 
 // MO: org holds real department/entity names (繁體). Predicate measured 2026-07-07
