@@ -298,6 +298,8 @@
 .cf-verdict.green{ color:#2E7D42; }
 .cf-verdict.amber{ color:#8A5B00; }
 .cf-verdict.red{ color:var(--rb-seal); }
+#cf-optimal-badge{ display:inline-block;margin-bottom:10px; }
+#cf-optimal-badge[hidden]{ display:none; }
 .cf-sim-btn{
   border:1px solid var(--rb-ink);background:var(--rb-ink);color:var(--rb-paper);
   font:inherit;font-weight:650;font-size:13.5px;padding:9px 16px;border-radius:2px;cursor:pointer;min-height:44px;
@@ -405,6 +407,8 @@
             <p class="cf-shop-title" id="cf-shop-h">装配台 — 实时预览</p>
             <span class="cf-verdict" id="cf-verdict"></span>
             <button type="button" class="cf-sim-btn" id="cf-sim-btn">▶ 运行测试循环</button>
+            <button type="button" class="cf-btn cf-btn-secondary" id="cf-share-btn">复制分享链接</button>
+            <span id="cf-share-status" role="status" aria-live="polite" style="font-size:12.5px;color:#2E7D42;"></span>
           </div>
           <div class="cf-arm-stage" id="cf-arm-main"></div>
           <p class="cf-sim-msg" id="cf-sim-msg" role="status" aria-live="polite"></p>
@@ -413,6 +417,17 @@
       </div>
 
       <p id="cf-joint-live" class="cf-visually-hidden" role="status" aria-live="polite"></p>
+
+      <div class="cf-notice" id="cf-hydrate-notice" role="status" hidden>
+        <span id="cf-hydrate-text">已载入分享的构建 — 可复核、运行测试或继续修改。</span>
+        <button type="button" class="cf-btn cf-btn-secondary" id="cf-hydrate-dismiss-btn" style="margin-left:10px;">关闭</button>
+      </div>
+
+      <div class="cf-notice" id="cf-resume-banner" role="status" hidden>
+        <span id="cf-resume-text"></span>
+        <button type="button" class="cf-btn cf-btn-secondary" id="cf-resume-btn" style="margin-left:10px;">继续</button>
+        <button type="button" class="cf-btn cf-btn-secondary" id="cf-resume-fresh-btn" style="margin-left:6px;">重新开始</button>
+      </div>
 
       <!-- STAGE 1 — MISSION -->
       <section aria-labelledby="cf-stage-mission-h" id="cf-stage-mission">
@@ -486,6 +501,7 @@
         <div class="cf-market-row" id="cf-market-group" role="group" aria-label="目的地市场"></div>
 
         <p id="cf-mass-line" class="cf-caption" style="margin-top:16px;"></p>
+        <span class="cf-verdict green" id="cf-optimal-badge" hidden>最优选配 — 每个关节均以最精简的合适模组通过初步校核。</span>
         <table class="cf-bom-table" id="cf-bom-table" aria-label="指示性物料清单">
           <thead>
             <tr><th>项目</th><th class="num">数量</th><th class="num">单价</th><th class="num">小计</th></tr>
@@ -507,6 +523,11 @@
         <p style="margin:10px 0;">
           <button type="button" class="cf-copy-btn" id="cf-copy-btn">复制构建摘要</button>
           <span id="cf-copy-status" role="status" aria-live="polite" style="margin-left:10px;font-size:13px;color:#2E7D42;"></span>
+        </p>
+
+        <p style="margin:10px 0;">
+          <a href="#" id="cf-share-link-checkout" class="cf-copy-btn" style="text-decoration:none;display:inline-block;">复制分享链接</a>
+          <span id="cf-share-status-checkout" role="status" aria-live="polite" style="margin-left:10px;font-size:13px;color:#2E7D42;"></span>
         </p>
 
         <p style="margin:16px 0;">
@@ -534,9 +555,9 @@
         <div style="margin-top:12px;font-size:14px;color:var(--rb-stone);max-width:68ch;">
           <p>本工具是确定性的：使用公开公式和精选部件表，没有 AI 猜测。</p>
           <p><strong style="color:var(--rb-ink);">首轮结构质量估算：</strong>手臂结构质量 = 4 × 工作半径（kg）——仅为管件与支架的粗略估算，不含基座、外壳、线束布线与刚度余量，最终质量以 CAD/BOM 为准。</p>
-          <p><strong style="color:var(--rb-ink);">腕部所需扭矩：</strong>（负载 + 已装配夹爪与腕部传感器质量）× 9.81 × 0.15 m 工具偏距 × 1.5 动态系数。</p>
-          <p><strong style="color:var(--rb-ink);">肘部所需扭矩：</strong>（负载 + 0.25 × 结构质量 + 若装配夹爪则加其质量）× 9.81 × （0.55 × 工作半径）× 1.5。</p>
-          <p><strong style="color:var(--rb-ink);">肩部所需扭矩：</strong>（负载 + 0.5 × 结构质量 + 若装配夹爪则加其质量）× 9.81 × 工作半径 × 1.5。</p>
+          <p><strong style="color:var(--rb-ink);">腕部所需扭矩：</strong>（负载 + 已装配夹爪、腕部传感器与深度相机质量）× 9.81 × 0.15 m 工具偏距 × 1.5 动态系数——夹爪质量按所选类型计。</p>
+          <p><strong style="color:var(--rb-ink);">肘部所需扭矩：</strong>（负载 + 0.25 × 结构质量 + 若装配夹爪则加其质量）× 9.81 × （0.55 × 工作半径）× 1.5——夹爪质量按所选类型计。</p>
+          <p><strong style="color:var(--rb-ink);">肩部所需扭矩：</strong>（负载 + 0.5 × 结构质量 + 若装配夹爪则加其质量）× 9.81 × 工作半径 × 1.5——夹爪质量按所选类型计。</p>
           <p><strong style="color:var(--rb-ink);">状态：</strong>绿色 = 额定扭矩 ≥ 1.2 × 所需扭矩（通过首轮重力校核）。黄色 = 额定扭矩 ≥ 所需扭矩但低于 1.2 倍（偏紧——请与我们复核）。红色 = 额定扭矩低于所需扭矩（选型不足）。这是静态首轮校核，不是动态验证——高速或高惯量动作可能需要 2–3 倍余量或完整惯量选型，工程复核阶段会覆盖。</p>
           <p><strong style="color:var(--rb-ink);">扭矩额定值：</strong>20 / 50 / 120 Nm 为指示性输出额定值；正式报价会按型号确认持续/峰值扭矩、热工况与减速器寿命。</p>
           <p><strong style="color:var(--rb-ink);">小计区间：</strong>指示性小计至指示性小计的 1.15 倍，四舍五入至最接近的 US$50。</p>
@@ -630,18 +651,28 @@
     },
     tierOrder: ['lite','mid','pro'],
     tiers: {
-      lite: { name: 'AJM-Lite', frame: 14, torque: 20,  mass: 0.9, priceFrom: 699 },
-      mid:  { name: 'AJM-Mid',  frame: 17, torque: 50,  mass: 1.4, priceFrom: 1099 },
-      pro:  { name: 'AJM-Pro',  frame: 20, torque: 120, mass: 2.1, priceFrom: 1599 }
+      lite: { name: 'AJM-Lite', frame: 14, torque: 20,  mass: 0.9, priceFrom: 699,
+        meta2: '框架尺寸 14 · 紧凑型谐波减速器＋无框力矩电机＋双编码器＋伺服驱动器' },
+      mid:  { name: 'AJM-Mid',  frame: 17, torque: 50,  mass: 1.4, priceFrom: 1099,
+        meta2: '框架尺寸 17 · 中减速比谐波减速器、更高扭矩电机绕组＋双编码器＋伺服驱动器' },
+      pro:  { name: 'AJM-Pro',  frame: 20, torque: 120, mass: 2.1, priceFrom: 1599,
+        meta2: '框架尺寸 20 · 大容量谐波减速器、峰值扭矩绕组＋双编码器＋伺服驱动器' }
     },
     groups: ['shoulder','elbow','wrist'],
     groupLabel: { shoulder: '肩部组', elbow: '肘部组', wrist: '腕部组' },
     options: [
-      { id: 'gripper',    label: '平行电动夹爪（末端执行器）',               priceMin: 250, priceMax: 450,  mass: 0.9 },
+      { id: 'gripper',    label: '夹爪（末端执行器）' },
       { id: 'ftSensor',   label: '腕部力矩传感器',               priceMin: 800, priceMax: 1500, mass: 0.3 },
       { id: 'controller', label: '手臂控制器＋软件许可',      priceMin: 600, priceMax: 1200, mass: 1.5 },
-      { id: 'cableSet',   label: '高柔性机器人线缆套装（每臂）',          priceMin: 120, priceMax: 200,  mass: 0.8 }
+      { id: 'cableSet',   label: '高柔性机器人线缆套装（每臂）',          priceMin: 120, priceMax: 200,  mass: 0.8 },
+      { id: 'depthCam',   label: '深度相机（腕部安装）',             priceMin: 300, priceMax: 700,  mass: 0.2 }
     ],
+    gripperTypeOrder: ['parallel','vacuum','soft'],
+    gripperTypes: {
+      parallel: { name: '平行电动夹爪',   priceMin: 250, priceMax: 450, mass: 0.9 },
+      vacuum:   { name: '真空吸盘夹持 + 真空发生器',     priceMin: 300, priceMax: 600, mass: 0.8 },
+      soft:     { name: '柔性自适应夹爪',      priceMin: 400, priceMax: 800, mass: 0.6 }
+    },
     markets: {
       eu:   { label: '欧盟 / 英国',       dutyLow: 0,    dutyHigh: 0.045, note: '关税 ≈ 0–4.5%（指示性）+ 预估空运费，不含增值税（企业通常可抵扣）。' },
       us:   { label: '美国', dutyLow: 0.30, dutyHigh: 0.50,  note: '贸易措施 ≈ 30–50%，具体取决于 HS 编码分类（2026 年指示性数据；由买方承担）+ 预估空运费。' },
@@ -661,7 +692,8 @@
     reach: 0.9,
     overrides: { shoulder: null, elbow: null, wrist: null },
     filled: { shoulder: false, elbow: false, wrist: false },
-    options: { gripper: false, ftSensor: false, controller: false, cableSet: false },
+    options: { gripper: false, ftSensor: false, controller: false, cableSet: false, depthCam: false },
+    gripperType: 'parallel',
     market: 'eu',
     pickerGroup: null,
     testCompleted: false,
@@ -669,6 +701,10 @@
   };
 
   var STAGES = ['mission','assemble','test','checkout'];
+  var hasInteracted = false;
+  var DRAFT_KEY = 'asaptic-build-v1';
+  var DRAFT_MAX_DAYS = 30;
+  var saveDraftTimer = null;
 
   // ---- helpers ----
   function clamp(v, lo, hi){ return Math.min(hi, Math.max(lo, v)); }
@@ -687,14 +723,31 @@
   }
   function structureMass(reach){ return 4 * reach; }
 
+  function optionSpecById(id){
+    var found = null;
+    DB.options.forEach(function(o){ if (o.id === id) found = o; });
+    return found;
+  }
+
+  function optionDisplay(opt){
+    if (opt.id === 'gripper'){
+      var gv = DB.gripperTypes[state.gripperType];
+      return { label: gv.name, priceMin: gv.priceMin, priceMax: gv.priceMax, mass: gv.mass };
+    }
+    return { label: opt.label, priceMin: opt.priceMin, priceMax: opt.priceMax, mass: opt.mass };
+  }
+
   function requiredTorque(group, s){
     var payload = s.payload, reach = s.reach;
     var sMass = structureMass(reach);
-    var grip = s.options.gripper ? 0.9 : 0;
-    var ft = s.options.ftSensor ? 0.3 : 0;
+    var grip = s.options.gripper ? DB.gripperTypes[s.gripperType].mass : 0;
+    var ftSpec = optionSpecById('ftSensor');
+    var ft = s.options.ftSensor ? ftSpec.mass : 0;
+    var dcSpec = optionSpecById('depthCam');
+    var dc = s.options.depthCam ? dcSpec.mass : 0;
     var g = DB.g;
     if (group === 'wrist'){
-      return (payload + grip + ft) * g * 0.15 * 1.5;
+      return (payload + grip + ft + dc) * g * 0.15 * 1.5;
     }
     if (group === 'elbow'){
       return (payload + 0.25 * sMass + grip) * g * (0.55 * reach) * 1.5;
@@ -740,6 +793,7 @@
     var totalGroups = 0;
     var filledGroups = 0;
 
+    var allSuggestedTier = true;
     DB.groups.forEach(function(group){
       var count = groupCount(state.template, group);
       if (count === 0) return;
@@ -747,7 +801,9 @@
       if (!state.filled[group]) return;
       filledGroups++;
       var required = requiredTorque(group, state);
-      var tierKey = state.overrides[group] || suggestTier(required);
+      var suggested = suggestTier(required);
+      var tierKey = state.overrides[group] || suggested;
+      if (tierKey !== suggested) allSuggestedTier = false;
       var tier = DB.tiers[tierKey];
       var status = statusFor(tierKey, required);
       m.groups[group] = { count: count, required: required, tierKey: tierKey, tier: tier, status: status };
@@ -771,17 +827,18 @@
     var optionsSubtotalMid = 0;
     DB.options.forEach(function(opt){
       if (!state.options[opt.id]) return;
-      var mid = (opt.priceMin + opt.priceMax) / 2;
-      if (opt.id !== 'controller') optionsMass += opt.mass;
+      var disp = optionDisplay(opt);
+      var mid = (disp.priceMin + disp.priceMax) / 2;
+      if (opt.id !== 'controller') optionsMass += disp.mass;
       optionsSubtotalMid += mid;
       optionLines.push({
-        label: opt.label + ' (indicative US$' + opt.priceMin + '–' + opt.priceMax + ')',
+        label: disp.label + ' (indicative US$' + disp.priceMin + '–' + disp.priceMax + ')',
         qty: 1,
         unit: mid,
         total: mid,
         isBand: true,
-        priceMin: opt.priceMin,
-        priceMax: opt.priceMax
+        priceMin: disp.priceMin,
+        priceMax: disp.priceMax
       });
     });
 
@@ -816,6 +873,7 @@
       if (rank[lvl] > rank[worst]) worst = lvl;
     });
     m.overallStatus = worst;
+    m.optimalFit = m.assemblyComplete && allSuggestedTier && m.overallStatus === 'green';
 
     return m;
   }
@@ -1180,6 +1238,239 @@
     if (el) el.textContent = text;
   }
 
+  // ---- share-a-build URL (feature 1) ----
+  function buildShareParams(){
+    var parts = [];
+    parts.push('t=' + encodeURIComponent(state.template));
+    parts.push('p=' + encodeURIComponent(state.payload));
+    parts.push('r=' + encodeURIComponent(state.reach));
+    var jSlots = ['shoulder', 'elbow', 'wrist'].map(function(g){
+      return (state.filled[g] && state.overrides[g]) ? state.overrides[g] : 'x';
+    });
+    parts.push('j=' + jSlots.join('-'));
+    var oParts = [];
+    DB.options.forEach(function(opt){
+      if (!state.options[opt.id]) return;
+      if (opt.id === 'gripper'){ oParts.push('gripper:' + state.gripperType); }
+      else { oParts.push(opt.id); }
+    });
+    if (oParts.length) parts.push('o=' + oParts.join(','));
+    parts.push('m=' + encodeURIComponent(state.market));
+    return parts.join('&');
+  }
+
+  function buildShareUrl(){
+    return window.location.origin + window.location.pathname + '?' + buildShareParams();
+  }
+
+  function hydrateFromURL(){
+    var qs = window.location.search;
+    if (!qs) return false;
+    var params;
+    try { params = new URLSearchParams(qs); } catch (e){ return false; }
+    var applied = false;
+
+    var t = params.get('t');
+    if (t && DB.templates[t]){
+      state.template = t;
+      state.payload = DB.templates[t].payload;
+      state.reach = DB.templates[t].reach;
+      applied = true;
+    }
+
+    var p = params.get('p');
+    if (p !== null){
+      var pv = parseFloat(p);
+      if (isFinite(pv)){ state.payload = clamp(pv, 0.5, 20); applied = true; }
+    }
+    var r = params.get('r');
+    if (r !== null){
+      var rv = parseFloat(r);
+      if (isFinite(rv)){ state.reach = clamp(rv, 0.3, 1.5); applied = true; }
+    }
+
+    var j = params.get('j');
+    if (j){
+      var slots = j.split('-');
+      var groups = ['shoulder', 'elbow', 'wrist'];
+      if (slots.length === 3){
+        groups.forEach(function(g, i){
+          var key = slots[i];
+          if (key && key !== 'x' && DB.tiers[key] && groupCount(state.template, g) > 0){
+            state.overrides[g] = key;
+            state.filled[g] = true;
+            applied = true;
+          }
+        });
+      }
+    }
+
+    var o = params.get('o');
+    if (o){
+      o.split(',').forEach(function(token){
+        if (!token) return;
+        var idKey = token, variant = null;
+        if (token.indexOf(':') > -1){
+          var pieces = token.split(':');
+          idKey = pieces[0]; variant = pieces[1];
+        }
+        var known = optionSpecById(idKey);
+        if (!known) return;
+        state.options[idKey] = true;
+        applied = true;
+        if (idKey === 'gripper' && variant && DB.gripperTypes[variant]){
+          state.gripperType = variant;
+        }
+      });
+    }
+
+    var m = params.get('m');
+    if (m && DB.markets[m]){ state.market = m; applied = true; }
+
+    return applied;
+  }
+
+  function showHydrateNotice(){
+    var el = document.getElementById('cf-hydrate-notice');
+    if (!el) return;
+    el.hidden = false;
+    var btn = document.getElementById('cf-hydrate-dismiss-btn');
+    if (btn) btn.addEventListener('click', function(){ el.hidden = true; });
+  }
+
+  function initShareControls(){
+    wireShareButton('cf-share-btn', 'cf-share-status');
+    wireShareButton('cf-share-link-checkout', 'cf-share-status-checkout');
+  }
+
+  function wireShareButton(btnId, statusId){
+    var btn = document.getElementById(btnId);
+    if (!btn) return;
+    var status = document.getElementById(statusId);
+    btn.addEventListener('click', function(e){
+      if (e && e.preventDefault) e.preventDefault();
+      var url = buildShareUrl();
+      function ok(){
+        if (status){ status.textContent = '已复制。'; setTimeout(function(){ status.textContent = ''; }, 2500); }
+        try { window.history.replaceState(null, '', url); } catch (e2){ /* ignore */ }
+      }
+      function fail(){
+        var ta = document.createElement('textarea');
+        ta.value = url;
+        ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        try {
+          if (document.execCommand('copy') === true){ ok(); }
+          else if (status){ status.textContent = '无法复制 — 请手动复制：' + url; }
+        } catch (e3){
+          if (status) status.textContent = '无法复制 — 请手动复制：' + url;
+        }
+        document.body.removeChild(ta);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(url).then(ok, fail);
+      } else {
+        fail();
+      }
+    });
+  }
+
+  // ---- resume-your-last-build draft (feature 2) ----
+  function stateSnapshotForSave(){
+    return {
+      template: state.template,
+      payload: state.payload,
+      reach: state.reach,
+      overrides: { shoulder: state.overrides.shoulder, elbow: state.overrides.elbow, wrist: state.overrides.wrist },
+      filled: { shoulder: state.filled.shoulder, elbow: state.filled.elbow, wrist: state.filled.wrist },
+      options: {
+        gripper: state.options.gripper, ftSensor: state.options.ftSensor,
+        controller: state.options.controller, cableSet: state.options.cableSet, depthCam: state.options.depthCam
+      },
+      gripperType: state.gripperType,
+      market: state.market
+    };
+  }
+
+  function isDefaultSnapshot(s){
+    if (!s) return true;
+    var noFilled = !s.filled.shoulder && !s.filled.elbow && !s.filled.wrist;
+    var opts = s.options || {};
+    var noOptions = !opts.gripper && !opts.ftSensor && !opts.controller && !opts.cableSet && !opts.depthCam;
+    return s.template === 'general-6' && s.payload === 5 && s.reach === 0.9 && noFilled && noOptions && s.market === 'eu';
+  }
+
+  function saveDraftNow(){
+    try {
+      var snap = stateSnapshotForSave();
+      if (isDefaultSnapshot(snap)) return;
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ s: snap, ts: Date.now() }));
+    } catch (e){ /* Safari private mode or unavailable — ignore */ }
+  }
+
+  function scheduleSaveDraft(){
+    if (saveDraftTimer) clearTimeout(saveDraftTimer);
+    saveDraftTimer = setTimeout(saveDraftNow, 500);
+  }
+
+  function loadDraft(){
+    try {
+      var raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return null;
+      var obj = JSON.parse(raw);
+      if (!obj || !obj.s || !obj.ts) return null;
+      return obj;
+    } catch (e){ return null; }
+  }
+
+  function clearDraft(){
+    try { localStorage.removeItem(DRAFT_KEY); } catch (e){ /* ignore */ }
+  }
+
+  function applyDraftToState(s){
+    state.template = s.template || state.template;
+    state.payload = (typeof s.payload === 'number') ? s.payload : state.payload;
+    state.reach = (typeof s.reach === 'number') ? s.reach : state.reach;
+    state.overrides = s.overrides || { shoulder: null, elbow: null, wrist: null };
+    state.filled = s.filled || { shoulder: false, elbow: false, wrist: false };
+    state.options = s.options || { gripper: false, ftSensor: false, controller: false, cableSet: false, depthCam: false };
+    state.gripperType = s.gripperType || 'parallel';
+    state.market = s.market || 'eu';
+  }
+
+  function maybeShowResumeBanner(){
+    var draft = loadDraft();
+    if (!draft) return;
+    var ageDays = (Date.now() - draft.ts) / 86400000;
+    if (ageDays < 0 || ageDays > DRAFT_MAX_DAYS) return;
+    if (isDefaultSnapshot(draft.s)) return;
+    var banner = document.getElementById('cf-resume-banner');
+    var textEl = document.getElementById('cf-resume-text');
+    if (!banner || !textEl) return;
+    var n = Math.max(0, Math.round(ageDays));
+    textEl.textContent = '继续上次的构建？（' + n + ' 天前保存）';
+    banner.hidden = false;
+    var resumeBtn = document.getElementById('cf-resume-btn');
+    var freshBtn = document.getElementById('cf-resume-fresh-btn');
+    if (resumeBtn){
+      resumeBtn.addEventListener('click', function(){
+        applyDraftToState(draft.s);
+        hasInteracted = true;
+        banner.hidden = true;
+        resetTest();
+        syncSliders();
+        render();
+      });
+    }
+    if (freshBtn){
+      freshBtn.addEventListener('click', function(){
+        clearDraft();
+        banner.hidden = true;
+      });
+    }
+  }
+
   // ---- DOM builders (static parts, built once) ----
   var els = {};
 
@@ -1205,6 +1496,7 @@
 
   function selectTemplate(key){
     if (state.template === key) return;
+    hasInteracted = true;
     state.template = key;
     state.payload = DB.templates[key].payload;
     state.reach = DB.templates[key].reach;
@@ -1234,10 +1526,19 @@
       btn.textContent = mkt.label;
       btn.addEventListener('click', function(){
         state.market = key;
+        hasInteracted = true;
         render();
       });
       wrap.appendChild(btn);
     });
+  }
+
+  function optionMetaText(opt){
+    if (opt.id === 'gripper'){
+      var gv = DB.gripperTypes[state.gripperType];
+      return '已选：' + gv.name + ' — 指示性 US$' + gv.priceMin + '–' + gv.priceMax + ' · ' + gv.mass + ' kg';
+    }
+    return '指示性价格区间 US$' + opt.priceMin + '–' + opt.priceMax + ' · ' + opt.mass + ' kg';
   }
 
   function buildOptionRows(){
@@ -1246,6 +1547,7 @@
     DB.options.forEach(function(opt){
       var row = document.createElement('div');
       row.className = 'cf-opt-row';
+      row.dataset.optId = opt.id;
       var id = 'cf-opt-' + opt.id;
       var metaId = id + '-meta';
       var cb = document.createElement('input');
@@ -1253,6 +1555,7 @@
       cb.setAttribute('aria-describedby', metaId);
       cb.addEventListener('change', function(){
         state.options[opt.id] = cb.checked;
+        hasInteracted = true;
         resetTest();
         render();
       });
@@ -1265,8 +1568,38 @@
       var meta = document.createElement('div');
       meta.className = 'cf-opt-meta';
       meta.id = metaId;
-      meta.textContent = '指示性价格区间 US$' + opt.priceMin + '–' + opt.priceMax + ' · ' + opt.mass + ' kg';
+      meta.textContent = optionMetaText(opt);
       copy.appendChild(label); copy.appendChild(meta);
+
+      if (opt.id === 'gripper'){
+        var variantWrap = document.createElement('div');
+        variantWrap.className = 'cf-chip-row';
+        variantWrap.id = 'cf-gripper-variant-row';
+        variantWrap.setAttribute('role', 'group');
+        variantWrap.setAttribute('aria-label', '夹爪类型');
+        variantWrap.style.marginTop = '10px';
+        variantWrap.hidden = !state.options.gripper;
+        DB.gripperTypeOrder.forEach(function(vk){
+          var gv = DB.gripperTypes[vk];
+          var chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'cf-chip';
+          chip.dataset.variant = vk;
+          chip.setAttribute('aria-pressed', String(state.gripperType === vk));
+          chip.setAttribute('aria-label', gv.name + '，US$' + gv.priceMin + '–' + gv.priceMax + '，' + gv.mass + ' kg');
+          chip.innerHTML = '<span class="cf-chip-name">' + gv.name + '</span>' +
+            '<div class="cf-chip-meta">US$' + gv.priceMin + '–' + gv.priceMax + ' · ' + gv.mass + ' kg</div>';
+          chip.addEventListener('click', function(){
+            state.gripperType = vk;
+            hasInteracted = true;
+            resetTest();
+            render();
+          });
+          variantWrap.appendChild(chip);
+        });
+        copy.appendChild(variantWrap);
+      }
+
       row.appendChild(cb); row.appendChild(copy);
       wrap.appendChild(row);
     });
@@ -1334,6 +1667,7 @@
   }
 
   function pickTier(group, tierKey){
+    hasInteracted = true;
     var wasComplete = allGroupsFilled();
     state.overrides[group] = tierKey;
     state.filled[group] = true;
@@ -1348,6 +1682,7 @@
   }
 
   function removeSlot(group){
+    hasInteracted = true;
     state.filled[group] = false;
     state.overrides[group] = null;
     resetTest();
@@ -1356,6 +1691,7 @@
   }
 
   function autoFitAll(){
+    hasInteracted = true;
     var wasComplete = allGroupsFilled();
     DB.groups.forEach(function(group){
       if (groupCount(state.template, group) > 0 && !state.filled[group]){
@@ -1397,7 +1733,7 @@
       html += '<span class="cf-chip-preview" style="background:' + dotColor + ';" aria-hidden="true"></span>';
       html += '<span class="cf-chip-name">' + tier.name + (tierKey === suggested ? '<span class="cf-chip-badge">建议档</span>' : '') + '</span>';
       html += '<div class="cf-chip-meta">额定 ' + tier.torque + ' Nm · 指示性起价 ' + fmtUSD(tier.priceFrom) + '</div>';
-      html += '<div class="cf-chip-meta">框架尺寸 ' + tier.frame + ' · 谐波减速器＋无框力矩电机＋双编码器＋伺服驱动器</div>';
+      html += '<div class="cf-chip-meta">' + tier.meta2 + '</div>';
       html += '</button>';
     });
     html += '</div>';
@@ -1471,7 +1807,8 @@
       lines.push('');
       lines.push('可选项：');
       selectedOptions.forEach(function(o){
-        lines.push('- ' + o.label + '（指示性 US$' + o.priceMin + '-' + o.priceMax + '）');
+        var disp = optionDisplay(o);
+        lines.push('- ' + disp.label + '（指示性 US$' + disp.priceMin + '-' + disp.priceMax + '）');
       });
     }
     lines.push('');
@@ -1523,7 +1860,7 @@
           statusLabel: gm.status.label
         };
       }),
-      options: DB.options.filter(function(o){ return state.options[o.id]; }).map(function(o){ return { label: o.label }; }),
+      options: DB.options.filter(function(o){ return state.options[o.id]; }).map(function(o){ return { label: optionDisplay(o).label }; }),
       market: { label: model.market.label, note: model.market.note },
       subtotalLow: model.subtotalLow,
       subtotalHigh: model.subtotalHigh,
@@ -1619,6 +1956,21 @@
       btn.setAttribute('aria-pressed', String(keys[idx] === state.market));
     });
 
+    // option rows: gripper variant chips + meta refresh
+    document.querySelectorAll('#cf-options .cf-opt-row').forEach(function(row){
+      var opt = optionSpecById(row.dataset.optId);
+      if (!opt) return;
+      var metaEl = row.querySelector('.cf-opt-meta');
+      if (metaEl) metaEl.textContent = optionMetaText(opt);
+    });
+    var variantRow = document.getElementById('cf-gripper-variant-row');
+    if (variantRow){
+      variantRow.hidden = !state.options.gripper;
+      variantRow.querySelectorAll('.cf-chip').forEach(function(chip){
+        chip.setAttribute('aria-pressed', String(chip.dataset.variant === state.gripperType));
+      });
+    }
+
     // assemble stage: slots, picker, meter
     renderSlots(model);
     renderPicker();
@@ -1627,6 +1979,10 @@
     // mass line
     document.getElementById('cf-mass-line').textContent =
       '预估运动质量 ≈ ' + model.movingMass + ' kg，含模组、臂上选配及约 ' + round1(model.armStructureMass) + ' kg 首轮结构估算（控制器为臂外安装，不计入）。';
+
+    // optimal-fit badge (feature 5)
+    var optimalBadge = document.getElementById('cf-optimal-badge');
+    if (optimalBadge) optimalBadge.hidden = !model.optimalFit;
 
     // BOM table
     var tbody = document.getElementById('cf-bom-body');
@@ -1686,6 +2042,8 @@
 
     // stage visibility + gating
     updateStageNav(model);
+
+    if (hasInteracted) scheduleSaveDraft();
   }
 
   // ---- copy button ----
@@ -1752,6 +2110,7 @@
       var v = clamp(parseFloat(payloadEl.value), 0.5, 20);
       if (!isFinite(v)) v = state.payload;
       state.payload = v;
+      hasInteracted = true;
       resetTest();
       render();
     });
@@ -1759,6 +2118,7 @@
       var v = clamp(parseFloat(reachEl.value), 0.3, 1.5);
       if (!isFinite(v)) v = state.reach;
       state.reach = v;
+      hasInteracted = true;
       resetTest();
       render();
     });
@@ -1783,6 +2143,12 @@
   }
 
   function init(){
+    var hydrated = false;
+    try { hydrated = hydrateFromURL(); } catch (e){ hydrated = false; }
+    if (hydrated){
+      state.stage = 'assemble';
+      hasInteracted = true;
+    }
     buildTemplateCards();
     buildMarketChips();
     buildOptionRows();
@@ -1792,7 +2158,13 @@
     initStageNav();
     initSimButton();
     initManualButton();
+    initShareControls();
     render();
+    if (hydrated){
+      showHydrateNotice();
+    } else {
+      maybeShowResumeBanner();
+    }
   }
 
   if (document.readyState === 'loading'){
