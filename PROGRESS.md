@@ -1,5 +1,13 @@
 # Asaptic Cross-Standard Build Pipeline — Progress Document
 
+## 2026-07-07 (night) — /robot/build/ v2 — share-a-build + parts depth — DEPLOYED
+
+- **DEPLOYED** (main @1f48f37f, wrangler ad609192): V2 cut on both /robot/build/ + /zh/robot/build/ — Fable led, Opus built, Fable independently verified live.
+- Share-a-build URL (`?t=&p=&r=&j=pro-mid-lite&o=gripper:parallel,controller&m=`) with validation/clamping + "Copy shareable link"; hydrated pages land on ASSEMBLE pre-fitted with a dismissible notice. Resume-your-last-build (localStorage, 30d, try/catch-safe). Gripper variants (parallel/vacuum/soft) + wrist depth camera — real masses feed the UNCHANGED torque formulas (hardcoded masses generalized to DB). Tier-specific reducer copy. Optimal-fit badge (only lean all-green builds).
+- Bugfix found in Fable's verification: inline `display:inline-block` defeated the badge's `hidden` attr → badge showed on overspec builds; moved display to CSS with `[hidden]{display:none}` (both langs, CSS still byte-identical).
+- Demo artifact for Raymond (claude.ai artifact a6ac32dc): 7-step screenshot walkthrough + live share-link demo.
+- Demand-gen plan saved (robot_build_demand_gen_PLAN_2026-07-07.md): top trust gaps = zero social proof / no named principal / no mailto confirmation loop; GEO + 知乎 + share-URLs = near-term channels; classic SEO dead for months (young domain). 5 AI-executable items queued; 3 need Raymond (identity surfacing, outreach approval, KOL calendar).
+
 ## 2026-07-07 (evening) — /robot/build/ v1 "Assembly Bay" GAME — DEPLOYED
 
 - **DEPLOYED to asaptic.com** (main @5982f748, wrangler 7aef57ee): /robot/build/ + /zh/robot/build/ rebuilt as a 4-stage game per Raymond's direction ("build it like a game — select parts, put in the robot, simulate, checkout, we ship the hardware, generate the user manual").
