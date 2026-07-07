@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Build a Robot Arm — Interactive Configurator | Asaptic</title>
+<meta name="description" content="Configure a robot arm: pick a template, size joint modules with a deterministic torque check, and get an indicative BOM and landed cost." />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://asaptic.com/robot/build/" />
+<link rel="alternate" hreflang="en" href="https://asaptic.com/robot/build/" />
+<link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/build/" />
+<link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/build/" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Build a Robot Arm — Interactive Configurator | Asaptic" />
+<meta property="og:description" content="Configure a robot arm: pick a template, size joint modules with a deterministic torque check, and get an indicative BOM and landed cost." />
+<meta property="og:url" content="https://asaptic.com/robot/build/" />
+<meta property="og:site_name" content="Asaptic" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:locale:alternate" content="zh_CN" />
+<meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Build a Robot Arm — Interactive Configurator | Asaptic" />
+<meta name="twitter:description" content="Pick a template, set payload and reach, get an indicative joint-module BOM and landed cost — deterministic formulas, no AI guessing." />
+
+<link rel="stylesheet" href="/style.css" />
+<link rel="stylesheet" href="/robot/robot.css" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://asaptic.com/robot/build/#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://asaptic.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Robot Parts", "item": "https://asaptic.com/robot/" },
+        { "@type": "ListItem", "position": 3, "name": "Build", "item": "https://asaptic.com/robot/build/" }
+      ]
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://asaptic.com/robot/build/#webapp",
+      "name": "Asaptic Robot Arm Configurator",
+      "applicationCategory": "EngineeringApplication",
+      "operatingSystem": "Web",
+      "url": "https://asaptic.com/robot/build/",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "inLanguage": "en",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is this a quote?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No — indicative budgeting tool; request the build to get a firm quotation with test data and verified landed cost."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How accurate is the torque check?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "First-pass static sizing with a dynamic factor; real selection depends on speed, duty cycle, and inertia — the engineering review covers that."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I order parts individually?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes — modules, sensors, batteries, and consumables can be quoted individually; the configurator just makes a complete arm easier to spec."
+      }
+    }
+  ]
+}
+</script>
+
+<style>
+/* Page-scoped additions for the configurator only, cf- prefix.
+   Skeleton (rb-frame / rb-sheet / rb-eyebrow / rb-title / rb-answer / rb-h2 / rb-cta /
+   rb-note / rb-faq / rb-pager / rb-footer-note) comes from /robot/robot.css — do not
+   redefine it here. Colors below read the --rb-* custom properties robot.css defines
+   on .rb-frame; every cf- element in this page is a descendant of .rb-frame so they
+   inherit those tokens directly. */
+
+.cf-wide{ max-width: 1180px;--cf-stone-dark:#565B60; }
+
+.cf-step-label{
+  display:block;font-family:var(--rb-mono);font-size:11px;font-weight:700;
+  letter-spacing:0.14em;text-transform:uppercase;color:var(--rb-seal);margin:0 0 4px;
+}
+.cf-caption{ font-size:13px;color:var(--cf-stone-dark);margin:6px 0 14px;max-width:66ch; }
+
+/* Two-column live-build layout: article sheet + sticky rail on desktop,
+   fixed bottom bar on mobile. */
+.cf-layout{ display:grid;grid-template-columns:1fr;gap:20px; }
+@media (min-width:980px){
+  .cf-layout{ grid-template-columns:1fr 300px;align-items:start; }
+  .cf-rail{ position:sticky;top:88px; }
+  .cf-bar{ display:none; }
+}
+@media (max-width:979px){ .cf-rail{ display:none; } }
+.cf-rail .rb-sheet{ padding:24px; }
+.cf-rail-title{
+  font-family:var(--rb-mono);font-size:11px;text-transform:uppercase;
+  letter-spacing:0.1em;color:var(--rb-stone);font-weight:700;margin:0 0 10px;
+}
+.cf-rail-total{ font-family:var(--rb-serif);font-size:24px;font-weight:700;margin:4px 0 10px;color:var(--rb-ink); }
+.cf-rail-row{
+  display:flex;justify-content:space-between;font-size:13px;padding:5px 0;
+  border-top:1px solid var(--rb-line);color:var(--rb-ink);
+}
+.cf-rail-row:first-of-type{ border-top:none; }
+.cf-rail-status{ display:flex;align-items:center;gap:6px;font-size:12.5px;margin:3px 0;color:var(--rb-ink); }
+
+/* Status colors (green/amber/red) are not part of the rb token set — configurator-specific. */
+.cf-status-dot{ width:11px;height:11px;border-radius:50%;flex:0 0 auto;display:inline-block; }
+.cf-status-dot.green{ background:#2E7D42; }
+.cf-status-dot.amber{ background:#8A5B00; }
+.cf-status-dot.red{ background:var(--rb-seal); }
+.cf-status-line{ font-size:13px;margin-top:6px;font-weight:600; }
+.cf-status-line.green{ color:#2E7D42; }
+.cf-status-line.amber{ color:#8A5B00; }
+.cf-status-line.red{ color:var(--rb-seal); }
+.cf-req{ font-size:12.5px;color:var(--cf-stone-dark); }
+
+/* Step 1 — template cards */
+.cf-card-grid{ display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:6px 0 8px; }
+@media (max-width:720px){ .cf-card-grid{ grid-template-columns:1fr; } }
+.cf-card{
+  text-align:left;border:1px solid var(--rb-line);border-radius:2px;
+  background:rgba(255,255,255,0.4);padding:16px;cursor:pointer;font:inherit;color:inherit;
+}
+.cf-card[aria-pressed="true"]{ border-color:var(--rb-ink);background:var(--rb-wash); }
+.cf-card:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+.cf-card h3{ font-family:var(--rb-serif);margin:0 0 6px;font-size:16px;color:var(--rb-ink); }
+.cf-card p{ margin:0;font-size:13px;color:var(--cf-stone-dark); }
+.cf-card .cf-joints{ font-size:12px;color:var(--cf-stone-dark);margin-top:8px; }
+
+/* Step 2 — sliders */
+.cf-slider-row{ margin-bottom:18px;max-width:66ch; }
+.cf-slider-row label{ display:flex;justify-content:space-between;font-weight:650;font-size:14px;margin-bottom:6px;color:var(--rb-ink); }
+.cf-slider-row output{ font-weight:700;color:var(--rb-seal); }
+.cf-slider-row input[type="range"]{ width:100%; }
+
+/* Step 3 — joint groups */
+.cf-group{ border-top:1px solid var(--rb-line);padding:16px 0; }
+.cf-group:first-of-type{ border-top:none;padding-top:0; }
+.cf-group-head{ display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px; }
+.cf-chip-row{ display:flex;gap:10px;flex-wrap:wrap; }
+.cf-chip{
+  border:1px solid var(--rb-line);border-radius:2px;background:rgba(255,255,255,0.5);
+  padding:10px 12px;text-align:left;cursor:pointer;font:inherit;color:inherit;min-width:150px;flex:1 1 150px;
+  min-height:44px;
+}
+.cf-chip[aria-pressed="true"]{ border-color:var(--rb-ink);background:var(--rb-wash); }
+.cf-chip:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+.cf-chip .cf-chip-name{ font-weight:700;font-size:14px;color:var(--rb-ink); }
+.cf-chip .cf-chip-meta{ font-size:12px;color:var(--cf-stone-dark);margin-top:3px; }
+
+/* Step 4 — options */
+.cf-opt-row{ display:flex;align-items:flex-start;gap:12px;border-top:1px solid var(--rb-line);padding:12px 0;min-height:44px; }
+.cf-opt-row:first-of-type{ border-top:none;padding-top:0; }
+.cf-opt-row input[type="checkbox"]{ width:19px;height:19px;margin-top:2px;flex:0 0 auto; }
+.cf-opt-copy{ flex:1; }
+.cf-opt-copy .cf-opt-name{ font-weight:650;font-size:14.5px;color:var(--rb-ink); }
+.cf-opt-copy .cf-opt-meta{ font-size:13px;color:var(--cf-stone-dark); }
+
+/* Step 5 — market chips */
+.cf-market-row{ display:flex;gap:10px;flex-wrap:wrap; }
+.cf-market-chip{
+  border:1px solid var(--rb-line);border-radius:2px;background:rgba(255,255,255,0.5);
+  padding:9px 16px;cursor:pointer;font:inherit;color:inherit;font-weight:650;font-size:14px;
+  min-height:44px;
+}
+.cf-market-chip[aria-pressed="true"]{ border-color:var(--rb-seal);background:var(--rb-wash);color:var(--rb-seal); }
+.cf-market-chip:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+
+/* Step 6 — review, BOM table, landed cost, summary + copy */
+.cf-bom-table{ width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0; }
+.cf-bom-table th,.cf-bom-table td{ text-align:left;padding:7px 8px;border-bottom:1px solid var(--rb-line);color:var(--rb-ink); }
+.cf-bom-table th{
+  font-family:var(--rb-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;
+  color:var(--rb-stone);border-bottom:2px solid var(--rb-ink);
+}
+.cf-bom-table td.num,.cf-bom-table th.num{ text-align:right; }
+.cf-landed-box{ background:var(--rb-wash);border:1px solid var(--rb-line);border-radius:2px;padding:14px;margin:12px 0; }
+.cf-landed-box .cf-landed-amt{ font-family:var(--rb-serif);font-size:20px;font-weight:700;color:var(--rb-ink); }
+#cf-summary-text{
+  width:100%;min-height:160px;font-family:var(--rb-mono);font-size:12.5px;
+  border:1px solid var(--rb-line);border-radius:2px;padding:10px;background:#fff;color:var(--rb-ink);
+}
+.cf-copy-btn{
+  border:1px solid var(--rb-ink);background:transparent;color:var(--rb-ink);font-weight:650;
+  padding:9px 16px;border-radius:2px;cursor:pointer;font-size:13.5px;min-height:44px;
+}
+.cf-copy-btn:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+.cf-visually-hidden{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+/* Mobile bottom bar (kept inside .rb-frame in the DOM so it can read --rb-* tokens,
+   even though it is visually fixed to the viewport). */
+.cf-bar{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;
+  background:var(--rb-paper);border-top:1px solid var(--rb-line);
+  box-shadow:0 -4px 16px rgba(0,0,0,0.18);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.cf-bar-summary{
+  display:flex;align-items:center;justify-content:space-between;width:100%;
+  padding:12px 16px;background:none;border:none;font:inherit;color:inherit;cursor:pointer;
+  min-height:44px;
+}
+.cf-bar-summary .cf-bar-total{ font-weight:700;font-size:16px;color:var(--rb-ink); }
+.cf-bar-detail{ max-height:0;overflow:hidden;padding:0 16px; }
+@media (prefers-reduced-motion:no-preference){
+  .cf-bar-detail{ transition:max-height 0.2s ease; }
+}
+.cf-bar-detail.open{ max-height:260px;overflow-y:auto;padding:0 16px 14px; }
+@media (max-width:979px){
+  body{ padding-bottom:calc(64px + env(safe-area-inset-bottom)); }
+  body.cf-bar-open{ padding-bottom:calc(64px + 280px + env(safe-area-inset-bottom)); }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="/sourcing" class="nav-logo">ASAPTIC</a>
+  </div>
+</nav>
+
+<main class="rb-frame cf-wide">
+  <div class="cf-layout">
+    <div class="rb-sheet">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/robot/" style="color:inherit;text-decoration:none;">Asaptic Robotics Handbook</a></span>
+        <nav class="rb-langs" aria-label="Language">
+          <a href="/robot/build/" aria-current="page">EN</a>
+          <span class="rb-lang-sep">&middot;</span>
+          <a href="/zh/robot/build/">简</a>
+        </nav>
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">Robotics Handbook · Build Tool</p>
+      <h1 class="rb-title">Build a robot arm</h1>
+
+      <section class="rb-answer" aria-label="Summary">
+        <p>This tool configures a robot arm — template, joint modules, options, and destination market —
+        and runs a deterministic first-pass torque check on each joint group as you go, then estimates
+        an indicative bill of materials and landed cost. AJM joint modules from an indicative US$699/axis.
+        Nothing here is AI-generated: every number comes from a published formula and a fixed component table.</p>
+      </section>
+
+      <!-- STEP 1 -->
+      <section aria-labelledby="cf-step1-h">
+        <p class="cf-step-label">Step 1</p>
+        <h2 class="rb-h2" id="cf-step1-h">Choose your arm template</h2>
+        <p class="cf-caption">Each template sets a starting payload and reach and a fixed joint layout. You can adjust payload and reach in step 2.</p>
+        <div class="cf-card-grid" id="cf-template-grid" role="group" aria-label="Arm template"></div>
+      </section>
+
+      <!-- STEP 2 -->
+      <section aria-labelledby="cf-step2-h">
+        <p class="cf-step-label">Step 2</p>
+        <h2 class="rb-h2" id="cf-step2-h">Set payload and reach</h2>
+        <div class="cf-slider-row">
+          <label for="cf-payload">Payload <output id="cf-payload-out" for="cf-payload"></output></label>
+          <input type="range" id="cf-payload" min="0.5" max="20" step="0.5" />
+        </div>
+        <div class="cf-slider-row">
+          <label for="cf-reach">Reach <output id="cf-reach-out" for="cf-reach"></output></label>
+          <input type="range" id="cf-reach" min="0.3" max="1.5" step="0.05" />
+        </div>
+      </section>
+
+      <!-- STEP 3 -->
+      <section aria-labelledby="cf-step3-h">
+        <p class="cf-step-label">Step 3</p>
+        <h2 class="rb-h2" id="cf-step3-h">Joint modules</h2>
+        <p class="cf-caption">Each group is auto-suggested from the sizing formula below. Choosing a lighter tier than suggested is allowed but shows an amber or red status.</p>
+        <p id="cf-joint-live" class="cf-visually-hidden" aria-live="polite"></p>
+        <div id="cf-groups"></div>
+      </section>
+
+      <!-- STEP 4 -->
+      <section aria-labelledby="cf-step4-h">
+        <p class="cf-step-label">Step 4</p>
+        <h2 class="rb-h2" id="cf-step4-h">Options</h2>
+        <p class="cf-caption">All prices are an indicative market band; final pricing by quotation.</p>
+        <div id="cf-options"></div>
+      </section>
+
+      <!-- STEP 5 -->
+      <section aria-labelledby="cf-step5-h">
+        <p class="cf-step-label">Step 5</p>
+        <h2 class="rb-h2" id="cf-step5-h">Destination market</h2>
+        <div class="cf-market-row" id="cf-market-group" role="group" aria-label="Destination market"></div>
+      </section>
+
+      <!-- STEP 6 -->
+      <section aria-labelledby="cf-step6-h">
+        <p class="cf-step-label">Step 6</p>
+        <h2 class="rb-h2" id="cf-step6-h">Review and request</h2>
+        <p id="cf-mass-line" class="cf-caption"></p>
+        <table class="cf-bom-table" id="cf-bom-table" aria-label="Indicative bill of materials">
+          <thead>
+            <tr><th>Item</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Line total</th></tr>
+          </thead>
+          <tbody id="cf-bom-body"></tbody>
+        </table>
+        <p class="cf-caption">All prices indicative: modules shown at from-prices, options at market-band midpoint. Final pricing by quotation.</p>
+        <p class="cf-caption" id="cf-subtotal-line"></p>
+
+        <div class="cf-landed-box">
+          <p class="cf-rail-title" style="margin-bottom:4px;">Landed cost estimate</p>
+          <p class="cf-landed-amt" id="cf-landed-amt"></p>
+          <p class="cf-caption" id="cf-landed-assumption"></p>
+          <p class="cf-caption"><strong>First-pass estimate for budgeting only — duty rates depend on HS classification and change; your quotation includes a verified landed-cost breakdown.</strong></p>
+        </div>
+
+        <label for="cf-summary-text" style="font-weight:650;font-size:13px;display:block;margin-bottom:6px;color:var(--rb-ink);">Build summary (plain text)</label>
+        <textarea id="cf-summary-text" readonly></textarea>
+        <p style="margin:10px 0;">
+          <button type="button" class="cf-copy-btn" id="cf-copy-btn">Copy build summary</button>
+          <span id="cf-copy-status" role="status" aria-live="polite" style="margin-left:10px;font-size:13px;color:#2E7D42;"></span>
+        </p>
+
+        <p style="margin-top:16px;">
+          <a class="rb-cta" id="cf-cta-link" href="#">Request this build →</a>
+        </p>
+        <div class="rb-note">
+          <p>We reply with a verified shortlist, test data, and a landed-cost breakdown — normally within one business day.</p>
+        </div>
+      </section>
+
+      <details>
+        <summary style="cursor:pointer;font-weight:650;font-size:15px;color:var(--rb-ink);">How this calculator works</summary>
+        <div style="margin-top:12px;font-size:14px;color:var(--rb-stone);max-width:68ch;">
+          <p>This tool is deterministic: published formulas and a curated component table. No AI guesses.</p>
+          <p><strong style="color:var(--rb-ink);">First-pass structure mass:</strong> arm structure mass = 4 × reach (kg) — a crude tube-and-bracket allowance only; excludes base, covers, harness routing, and stiffness reserve. Final mass comes from CAD/BOM.</p>
+          <p><strong style="color:var(--rb-ink);">Wrist required torque:</strong> (payload + fitted gripper and wrist-sensor mass) × 9.81 × 0.15 m tool offset × 1.5 dynamic factor.</p>
+          <p><strong style="color:var(--rb-ink);">Elbow required torque:</strong> (payload + 0.25 × structure mass + gripper mass if fitted) × 9.81 × (0.55 × reach) × 1.5.</p>
+          <p><strong style="color:var(--rb-ink);">Shoulder required torque:</strong> (payload + 0.5 × structure mass + gripper mass if fitted) × 9.81 × reach × 1.5.</p>
+          <p><strong style="color:var(--rb-ink);">Status:</strong> green = rated torque ≥ 1.2 × required (passes the first-pass gravity check). Amber = rated torque ≥ required but below 1.2× (tight — review with us). Red = rated torque below required (undersized). This is a static first-pass check, not dynamic validation — high-speed or high-inertia moves can need 2–3× margin or full inertia sizing, which our engineering review covers.</p>
+          <p><strong style="color:var(--rb-ink);">Torque ratings:</strong> the 20 / 50 / 120 Nm figures are indicative output ratings; the quotation confirms continuous vs peak torque, thermal duty, and reducer life per model.</p>
+          <p><strong style="color:var(--rb-ink);">Subtotal band:</strong> indicative subtotal to 1.15 × indicative subtotal, rounded to the nearest US$50.</p>
+          <p><strong style="color:var(--rb-ink);">Landed cost:</strong> subtotal band × (1 + duty range) + estimated freight (US$40 per joint module + US$60 base), rounded to the nearest US$50. This is a first-pass estimate, not a customs ruling.</p>
+        </div>
+      </details>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">Quick answers</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">Is this a quote?</div>
+          <div class="rb-faq-a">No — indicative budgeting tool; request the build to get a firm quotation with test data and verified landed cost.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">How accurate is the torque check?</div>
+          <div class="rb-faq-a">First-pass static sizing with a dynamic factor; real selection depends on speed, duty cycle, and inertia — the engineering review covers that.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">Can I order parts individually?</div>
+          <div class="rb-faq-a">Yes — modules, sensors, batteries, and consumables can be quoted individually; the configurator just makes a complete arm easier to spec.</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/robot/">← Robot parts hub</a>
+        <a href="/robot/101/actuators/">Robot 101 · Actuators →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        First-pass estimate, not engineering validation. Final specification and pricing by quotation. Educational tool.
+      </div>
+
+    </div>
+
+    <aside class="cf-rail" aria-label="Live build summary">
+      <div class="rb-sheet">
+        <p class="cf-rail-title">Live build</p>
+        <div role="status" aria-live="polite">
+          <p class="cf-rail-total" id="cf-rail-total"></p>
+          <div id="cf-rail-status"></div>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--rb-line);margin:10px 0;" />
+        <div class="cf-rail-row"><span>Est. moving mass</span><span id="cf-rail-mass"></span></div>
+        <div class="cf-rail-row"><span>Modules</span><span id="cf-rail-modules"></span></div>
+        <div class="cf-rail-row"><span>Options</span><span id="cf-rail-options"></span></div>
+      </div>
+    </aside>
+
+    <div class="cf-bar" id="cf-bar">
+      <button type="button" class="cf-bar-summary" id="cf-bar-toggle" aria-expanded="false" aria-controls="cf-bar-detail" aria-label="Live build summary — expand">
+        <span role="status" aria-live="polite" style="display:contents;">
+          <span class="cf-bar-total" id="cf-bar-total"></span>
+          <span id="cf-bar-dot-wrap"></span>
+        </span>
+        <span aria-hidden="true">▲</span>
+      </button>
+      <div class="cf-bar-detail" id="cf-bar-detail">
+        <div id="cf-bar-status"></div>
+        <p class="cf-caption" id="cf-bar-mass"></p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<noscript>
+  <div style="padding:24px;max-width:640px;margin:0 auto;font-family:sans-serif;">
+    <p>This build tool needs JavaScript to run the sizing calculation. You can still reach us directly:</p>
+    <p><a href="mailto:engage@asaptic.com?subject=Robot%20build%20request">engage@asaptic.com</a></p>
+  </div>
+</noscript>
+
+<script>
+'use strict';
+(function(){
+
+  // ---- DB: indicative figures, final pricing by quotation ----
+  var DB = {
+    templates: {
+      'compact-4': { label: 'Compact 4-axis', desc: 'Light pick-and-place / small-parts assembly.', payload: 3, reach: 0.5,
+        joints: ['shoulder','shoulder','elbow','wrist'] },
+      'general-6': { label: 'General 6-axis', desc: 'General industrial arm — the common six-axis layout.', payload: 5, reach: 0.9,
+        joints: ['shoulder','shoulder','elbow','wrist','wrist','wrist'] },
+      'research-7': { label: 'Redundant 7-axis', desc: 'Extra shoulder DOF for obstacle avoidance / research.', payload: 5, reach: 0.9,
+        joints: ['shoulder','shoulder','shoulder','elbow','wrist','wrist','wrist'] }
+    },
+    tierOrder: ['lite','mid','pro'],
+    tiers: {
+      lite: { name: 'AJM-Lite', frame: 14, torque: 20,  mass: 0.9, priceFrom: 699 },
+      mid:  { name: 'AJM-Mid',  frame: 17, torque: 50,  mass: 1.4, priceFrom: 1099 },
+      pro:  { name: 'AJM-Pro',  frame: 20, torque: 120, mass: 2.1, priceFrom: 1599 }
+    },
+    groups: ['shoulder','elbow','wrist'],
+    groupLabel: { shoulder: 'Shoulder group', elbow: 'Elbow', wrist: 'Wrist group' },
+    options: [
+      { id: 'gripper',    label: 'Parallel electric gripper',               priceMin: 250, priceMax: 450,  mass: 0.9 },
+      { id: 'ftSensor',   label: 'Force-torque wrist sensor',               priceMin: 800, priceMax: 1500, mass: 0.3 },
+      { id: 'controller', label: 'Arm controller + software licence',      priceMin: 600, priceMax: 1200, mass: 1.5 },
+      { id: 'cableSet',   label: 'High-flex cable set (per arm)',          priceMin: 120, priceMax: 200,  mass: 0.8 }
+    ],
+    markets: {
+      eu:   { label: 'EU / UK',       dutyLow: 0,    dutyHigh: 0.045, note: 'Duty ≈ 0–4.5% + estimated air freight, excl. VAT (typically recoverable for businesses).' },
+      us:   { label: 'United States', dutyLow: 0.30, dutyHigh: 0.50,  note: 'Trade measures ≈ 30–50% depending on HS classification (2026 indicative; buyer-paid) + estimated air freight.' },
+      apac: { label: 'Asia-Pacific',  dutyLow: 0,    dutyHigh: 0.05,  note: 'Duty ≈ 0–5% + estimated air freight.' },
+      other:{ label: 'Other / ask us', dutyLow: null, dutyHigh: null, note: 'Ask us — landed cost quoted per destination.' }
+    },
+    freightPerModule: 40,
+    freightBase: 60,
+    g: 9.81
+  };
+
+  // ---- state ----
+  var state = {
+    template: 'general-6',
+    payload: 5,
+    reach: 0.9,
+    overrides: { shoulder: null, elbow: null, wrist: null },
+    options: { gripper: false, ftSensor: false, controller: false, cableSet: false },
+    market: 'eu'
+  };
+
+  // ---- helpers ----
+  function clamp(v, lo, hi){ return Math.min(hi, Math.max(lo, v)); }
+  function round1(n){ return Math.round(n * 10) / 10; }
+  function roundTo50(n){ return Math.round(n / 50) * 50; }
+  function fmtUSD(n){
+    if (!isFinite(n)) return 'US$0';
+    return 'US$' + Math.round(n).toLocaleString('en-US');
+  }
+  function fmtBand(lo, hi){ return fmtUSD(lo) + '–' + fmtUSD(hi).replace('US$',''); }
+  function groupCount(templateKey, group){
+    var t = DB.templates[templateKey];
+    var n = 0;
+    for (var i = 0; i < t.joints.length; i++){ if (t.joints[i] === group) n++; }
+    return n;
+  }
+  function structureMass(reach){ return 4 * reach; }
+
+  function requiredTorque(group, s){
+    var payload = s.payload, reach = s.reach;
+    var sMass = structureMass(reach);
+    var grip = s.options.gripper ? 0.9 : 0;
+    var ft = s.options.ftSensor ? 0.3 : 0;
+    var g = DB.g;
+    if (group === 'wrist'){
+      return (payload + grip + ft) * g * 0.15 * 1.5;
+    }
+    if (group === 'elbow'){
+      return (payload + 0.25 * sMass + grip) * g * (0.55 * reach) * 1.5;
+    }
+    // shoulder
+    return (payload + 0.5 * sMass + grip) * g * reach * 1.5;
+  }
+
+  function suggestTier(required){
+    for (var i = 0; i < DB.tierOrder.length; i++){
+      var key = DB.tierOrder[i];
+      if (DB.tiers[key].torque >= required) return key;
+    }
+    return DB.tierOrder[DB.tierOrder.length - 1]; // Pro, even if inadequate -> red
+  }
+
+  function statusFor(tierKey, required){
+    var torque = DB.tiers[tierKey].torque;
+    if (!isFinite(required) || required <= 0){
+      return { level: 'green', label: 'passes first-pass check' };
+    }
+    if (torque >= 1.2 * required) return { level: 'green', label: 'passes first-pass check' };
+    if (torque >= required) return { level: 'amber', label: 'tight — review with us' };
+    return { level: 'red', label: 'undersized' };
+  }
+
+  function effectiveTier(group){
+    var override = state.overrides[group];
+    if (override) return override;
+    return suggestTier(requiredTorque(group, state));
+  }
+
+  // ---- one computed model, used by every render target ----
+  function computeModel(){
+    var m = {};
+    m.template = DB.templates[state.template];
+    m.groups = {};
+    var totalModuleCount = 0;
+    var moduleMass = 0;
+    var moduleLines = [];
+
+    DB.groups.forEach(function(group){
+      var count = groupCount(state.template, group);
+      if (count === 0) return;
+      var required = requiredTorque(group, state);
+      var tierKey = effectiveTier(group);
+      var tier = DB.tiers[tierKey];
+      var status = statusFor(tierKey, required);
+      m.groups[group] = { count: count, required: required, tierKey: tierKey, tier: tier, status: status };
+      totalModuleCount += count;
+      moduleMass += tier.mass * count;
+      moduleLines.push({
+        label: DB.groupLabel[group] + ' — ' + tier.name + ' ×' + count,
+        qty: count,
+        unit: tier.priceFrom,
+        total: tier.priceFrom * count
+      });
+    });
+
+    m.totalModuleCount = totalModuleCount;
+
+    var optionLines = [];
+    var optionsMass = 0;
+    var optionsSubtotalMid = 0;
+    DB.options.forEach(function(opt){
+      if (!state.options[opt.id]) return;
+      var mid = (opt.priceMin + opt.priceMax) / 2;
+      if (opt.id !== 'controller') optionsMass += opt.mass;
+      optionsSubtotalMid += mid;
+      optionLines.push({
+        label: opt.label + ' (indicative US$' + opt.priceMin + '–' + opt.priceMax + ')',
+        qty: 1,
+        unit: mid,
+        total: mid,
+        isBand: true,
+        priceMin: opt.priceMin,
+        priceMax: opt.priceMax
+      });
+    });
+
+    m.armStructureMass = structureMass(state.reach);
+    m.movingMass = round1(moduleMass + m.armStructureMass + optionsMass);
+    m.bomLines = moduleLines.concat(optionLines);
+
+    var moduleSubtotal = moduleLines.reduce(function(a, l){ return a + l.total; }, 0);
+    var subtotalMid = moduleSubtotal + optionsSubtotalMid;
+    m.subtotalLow = roundTo50(subtotalMid * 1.0);
+    m.subtotalHigh = roundTo50(subtotalMid * 1.15);
+    if (m.subtotalHigh < m.subtotalLow) m.subtotalHigh = m.subtotalLow;
+
+    var market = DB.markets[state.market];
+    m.market = market;
+    if (state.market === 'other' || market.dutyLow === null){
+      m.landedLow = null;
+      m.landedHigh = null;
+    } else {
+      var freight = DB.freightPerModule * totalModuleCount + DB.freightBase;
+      m.freight = freight;
+      m.landedLow = roundTo50(m.subtotalLow * (1 + market.dutyLow) + freight);
+      m.landedHigh = roundTo50(m.subtotalHigh * (1 + market.dutyHigh) + freight);
+      if (m.landedHigh < m.landedLow) m.landedHigh = m.landedLow;
+    }
+
+    // overall status = worst of the three group statuses
+    var rank = { green: 0, amber: 1, red: 2 };
+    var worst = 'green';
+    Object.keys(m.groups).forEach(function(g){
+      var lvl = m.groups[g].status.level;
+      if (rank[lvl] > rank[worst]) worst = lvl;
+    });
+    m.overallStatus = worst;
+
+    return m;
+  }
+
+  // ---- DOM builders (static parts, built once) ----
+  var els = {};
+
+  function buildTemplateCards(){
+    var grid = document.getElementById('cf-template-grid');
+    grid.innerHTML = '';
+    Object.keys(DB.templates).forEach(function(key){
+      var t = DB.templates[key];
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cf-card';
+      btn.setAttribute('aria-pressed', String(state.template === key));
+      btn.dataset.template = key;
+      var h3 = document.createElement('h3'); h3.textContent = t.label;
+      var p = document.createElement('p'); p.textContent = t.desc;
+      var joints = document.createElement('p'); joints.className = 'cf-joints';
+      joints.textContent = t.joints.length + ' joints · default ' + t.payload + ' kg / ' + t.reach + ' m';
+      btn.appendChild(h3); btn.appendChild(p); btn.appendChild(joints);
+      btn.addEventListener('click', function(){ selectTemplate(key); });
+      grid.appendChild(btn);
+    });
+  }
+
+  function selectTemplate(key){
+    if (state.template === key) return;
+    state.template = key;
+    state.payload = DB.templates[key].payload;
+    state.reach = DB.templates[key].reach;
+    state.overrides = { shoulder: null, elbow: null, wrist: null };
+    els.overrideNote = true;
+    syncSliders();
+    render();
+  }
+
+  function syncSliders(){
+    document.getElementById('cf-payload').value = state.payload;
+    document.getElementById('cf-reach').value = state.reach;
+  }
+
+  function buildMarketChips(){
+    var wrap = document.getElementById('cf-market-group');
+    wrap.innerHTML = '';
+    Object.keys(DB.markets).forEach(function(key){
+      var mkt = DB.markets[key];
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cf-market-chip';
+      btn.setAttribute('aria-pressed', String(state.market === key));
+      btn.textContent = mkt.label;
+      btn.addEventListener('click', function(){
+        state.market = key;
+        render();
+      });
+      wrap.appendChild(btn);
+    });
+  }
+
+  function buildOptionRows(){
+    var wrap = document.getElementById('cf-options');
+    wrap.innerHTML = '';
+    DB.options.forEach(function(opt){
+      var row = document.createElement('div');
+      row.className = 'cf-opt-row';
+      var id = 'cf-opt-' + opt.id;
+      var metaId = id + '-meta';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.id = id; cb.checked = state.options[opt.id];
+      cb.setAttribute('aria-describedby', metaId);
+      cb.addEventListener('change', function(){
+        state.options[opt.id] = cb.checked;
+        render();
+      });
+      var copy = document.createElement('div');
+      copy.className = 'cf-opt-copy';
+      var label = document.createElement('label');
+      label.setAttribute('for', id);
+      label.className = 'cf-opt-name';
+      label.textContent = opt.label;
+      var meta = document.createElement('div');
+      meta.className = 'cf-opt-meta';
+      meta.id = metaId;
+      meta.textContent = 'Indicative market band US$' + opt.priceMin + '–' + opt.priceMax + ' · ' + opt.mass + ' kg';
+      copy.appendChild(label); copy.appendChild(meta);
+      row.appendChild(cb); row.appendChild(copy);
+      wrap.appendChild(row);
+    });
+  }
+
+  function buildGroupBlocks(){
+    var wrap = document.getElementById('cf-groups');
+    wrap.innerHTML = '';
+    DB.groups.forEach(function(group){
+      var block = document.createElement('div');
+      block.className = 'cf-group';
+      block.dataset.group = group;
+
+      var head = document.createElement('div');
+      head.className = 'cf-group-head';
+      var dot = document.createElement('span');
+      dot.className = 'cf-status-dot';
+      dot.setAttribute('aria-hidden', 'true');
+      var h3 = document.createElement('h3');
+      h3.style.margin = '0';
+      h3.style.fontSize = '15px';
+      h3.style.color = 'var(--rb-ink)';
+      h3.textContent = DB.groupLabel[group];
+      var req = document.createElement('span');
+      req.className = 'cf-req';
+      head.appendChild(dot); head.appendChild(h3); head.appendChild(req);
+      block.appendChild(head);
+
+      var chipRow = document.createElement('div');
+      chipRow.className = 'cf-chip-row';
+      chipRow.setAttribute('aria-label', DB.groupLabel[group] + ' tier options');
+      DB.tierOrder.forEach(function(tierKey){
+        var tier = DB.tiers[tierKey];
+        var chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'cf-chip';
+        chip.dataset.tier = tierKey;
+        chip.setAttribute('aria-label', DB.groupLabel[group] + ' ' + tier.name + ', rated ' + tier.torque + ' Nm');
+        var name = document.createElement('div'); name.className = 'cf-chip-name'; name.textContent = tier.name;
+        var meta = document.createElement('div'); meta.className = 'cf-chip-meta';
+        meta.textContent = 'Rated ' + tier.torque + ' Nm · indicative from ' + fmtUSD(tier.priceFrom);
+        var meta2 = document.createElement('div'); meta2.className = 'cf-chip-meta';
+        meta2.textContent = 'Frame ' + tier.frame + ' · harmonic reducer + frameless torque motor + dual encoders + servo driver';
+        chip.appendChild(name); chip.appendChild(meta); chip.appendChild(meta2);
+        chip.addEventListener('click', function(){
+          state.overrides[group] = tierKey;
+          render();
+        });
+        chipRow.appendChild(chip);
+      });
+      block.appendChild(chipRow);
+
+      var statusLine = document.createElement('p');
+      statusLine.className = 'cf-status-line';
+      block.appendChild(statusLine);
+
+      wrap.appendChild(block);
+    });
+  }
+
+  function buildStatusList(container, model){
+    container.innerHTML = '';
+    DB.groups.forEach(function(group){
+      var g = model.groups[group];
+      if (!g) return;
+      var row = document.createElement('div');
+      row.className = 'cf-rail-status';
+      var dot = document.createElement('span');
+      dot.className = 'cf-status-dot ' + g.status.level;
+      dot.setAttribute('aria-hidden', 'true');
+      var text = document.createElement('span');
+      text.textContent = DB.groupLabel[group] + ': ' + g.tier.name + ' (' + g.status.label + ')';
+      row.appendChild(dot); row.appendChild(text);
+      container.appendChild(row);
+    });
+  }
+
+  // ---- mailto + summary text ----
+  function buildSummaryText(model){
+    var lines = [];
+    lines.push('Asaptic robot arm build request');
+    lines.push('Template: ' + model.template.label);
+    lines.push('Payload: ' + state.payload + ' kg · Reach: ' + state.reach + ' m');
+    lines.push('');
+    lines.push('Joint modules:');
+    DB.groups.forEach(function(group){
+      var g = model.groups[group];
+      if (!g) return;
+      lines.push('- ' + DB.groupLabel[group] + ' x' + g.count + ': ' + g.tier.name + ' (' + g.tier.torque + ' Nm, required ' + round1(g.required) + ' Nm, ' + g.status.label + ')');
+    });
+    var selectedOptions = DB.options.filter(function(o){ return state.options[o.id]; });
+    if (selectedOptions.length){
+      lines.push('');
+      lines.push('Options:');
+      selectedOptions.forEach(function(o){
+        lines.push('- ' + o.label + ' (indicative US$' + o.priceMin + '-' + o.priceMax + ')');
+      });
+    }
+    lines.push('');
+    lines.push('Est. moving mass: approx ' + model.movingMass + ' kg');
+    lines.push('Indicative subtotal: ' + fmtBand(model.subtotalLow, model.subtotalHigh) + ' (EXW Shenzhen)');
+    lines.push('Destination market: ' + model.market.label);
+    if (model.landedLow !== null){
+      lines.push('Indicative landed cost: ' + fmtBand(model.landedLow, model.landedHigh));
+    } else {
+      lines.push('Landed cost: ask us - quoted per destination');
+    }
+    lines.push('');
+    lines.push('Generated by the Asaptic build tool - indicative configuration, please quote.');
+    var text = lines.join('\n');
+    while (encodeURIComponent(text).length > 1800 && text.length > 3) {
+      text = text.slice(0, text.length - 60) + '...';
+    }
+    return text;
+  }
+
+  function buildMailto(model, summaryText){
+    var subject = 'Robot build request — ' + model.template.label + ' · ' + state.payload + ' kg · ' + state.reach + ' m';
+    var href = 'mailto:engage@asaptic.com'
+      + '?subject=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent(summaryText);
+    return href;
+  }
+
+  // ---- single render pass ----
+  function render(){
+    var model = computeModel();
+
+    // template cards
+    document.querySelectorAll('#cf-template-grid .cf-card').forEach(function(btn){
+      btn.setAttribute('aria-pressed', String(btn.dataset.template === state.template));
+    });
+
+    // sliders
+    document.getElementById('cf-payload-out').textContent = state.payload + ' kg';
+    document.getElementById('cf-reach-out').textContent = state.reach + ' m';
+
+    // market chips
+    document.querySelectorAll('#cf-market-group .cf-market-chip').forEach(function(btn, idx){
+      var keys = Object.keys(DB.markets);
+      btn.setAttribute('aria-pressed', String(keys[idx] === state.market));
+    });
+
+    // option checkboxes stay in sync already (user-driven)
+
+    // joint groups
+    var liveParts = [];
+    DB.groups.forEach(function(group){
+      var block = document.querySelector('#cf-groups .cf-group[data-group="' + group + '"]');
+      if (!block) return;
+      var g = model.groups[group];
+      var dot = block.querySelector('.cf-status-dot');
+      var req = block.querySelector('.cf-req');
+      var statusLine = block.querySelector('.cf-status-line');
+      if (!g){
+        block.style.display = 'none';
+        return;
+      }
+      block.style.display = '';
+      dot.className = 'cf-status-dot ' + g.status.level;
+      req.textContent = 'Required ≈ ' + round1(g.required) + ' Nm × ' + g.count;
+      block.querySelectorAll('.cf-chip').forEach(function(chip){
+        var pressed = chip.dataset.tier === g.tierKey;
+        chip.setAttribute('aria-pressed', String(pressed));
+      });
+      statusLine.textContent = g.tier.name + ' selected — ' + g.status.label + ' (rated ' + g.tier.torque + ' Nm vs required ' + round1(g.required) + ' Nm)';
+      statusLine.className = 'cf-status-line ' + g.status.level;
+      liveParts.push(DB.groupLabel[group] + ': ' + g.status.label);
+    });
+    var liveEl = document.getElementById('cf-joint-live');
+    var note = els.overrideNote ? ' Template changed — suggestions reset.' : '';
+    liveEl.textContent = liveParts.join('; ') + note;
+    els.overrideNote = false;
+
+    // mass line
+    document.getElementById('cf-mass-line').textContent =
+      'Estimated moving mass ≈ ' + model.movingMass + ' kg, including modules, on-arm options, and ≈ ' + round1(model.armStructureMass) + ' kg first-pass arm structure (controller box excluded — it mounts off-arm).';
+
+    // BOM table
+    var tbody = document.getElementById('cf-bom-body');
+    tbody.innerHTML = '';
+    model.bomLines.forEach(function(line){
+      var tr = document.createElement('tr');
+      var tdLabel = document.createElement('td'); tdLabel.textContent = line.label;
+      var tdQty = document.createElement('td'); tdQty.className = 'num'; tdQty.textContent = String(line.qty);
+      var tdUnit = document.createElement('td'); tdUnit.className = 'num'; tdUnit.textContent = fmtUSD(line.unit);
+      var tdTotal = document.createElement('td'); tdTotal.className = 'num'; tdTotal.textContent = fmtUSD(line.total);
+      tr.appendChild(tdLabel); tr.appendChild(tdQty); tr.appendChild(tdUnit); tr.appendChild(tdTotal);
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('cf-subtotal-line').textContent =
+      'Indicative subtotal: ' + fmtBand(model.subtotalLow, model.subtotalHigh) + ' (indicative EXW Shenzhen).';
+
+    // landed cost
+    var landedAmt = document.getElementById('cf-landed-amt');
+    var landedAssumption = document.getElementById('cf-landed-assumption');
+    if (model.landedLow !== null){
+      landedAmt.textContent = fmtBand(model.landedLow, model.landedHigh) + ' landed, ' + model.market.label;
+    } else {
+      landedAmt.textContent = 'Ask us — ' + model.market.label;
+    }
+    landedAssumption.textContent = model.market.note;
+
+    // summary text + mailto
+    var summaryText = buildSummaryText(model);
+    document.getElementById('cf-summary-text').value = summaryText;
+    document.getElementById('cf-cta-link').setAttribute('href', buildMailto(model, summaryText));
+
+    // rail (desktop)
+    document.getElementById('cf-rail-total').textContent = fmtBand(model.subtotalLow, model.subtotalHigh);
+    buildStatusList(document.getElementById('cf-rail-status'), model);
+    document.getElementById('cf-rail-mass').textContent = '≈ ' + model.movingMass + ' kg';
+    document.getElementById('cf-rail-modules').textContent = String(model.totalModuleCount);
+    var optCount = DB.options.filter(function(o){ return state.options[o.id]; }).length;
+    document.getElementById('cf-rail-options').textContent = String(optCount);
+
+    // bottom bar (mobile)
+    document.getElementById('cf-bar-total').textContent = fmtBand(model.subtotalLow, model.subtotalHigh);
+    var dotWrap = document.getElementById('cf-bar-dot-wrap');
+    dotWrap.innerHTML = '';
+    var barDot = document.createElement('span');
+    barDot.className = 'cf-status-dot ' + model.overallStatus;
+    barDot.style.display = 'inline-block';
+    barDot.setAttribute('aria-hidden', 'true');
+    dotWrap.appendChild(barDot);
+    buildStatusList(document.getElementById('cf-bar-status'), model);
+    document.getElementById('cf-bar-mass').textContent = 'Est. moving mass ≈ ' + model.movingMass + ' kg';
+  }
+
+  // ---- copy button ----
+  function initCopyButton(){
+    var btn = document.getElementById('cf-copy-btn');
+    var status = document.getElementById('cf-copy-status');
+    var textarea = document.getElementById('cf-summary-text');
+    btn.addEventListener('click', function(){
+      var text = textarea.value;
+      function ok(){ status.textContent = 'Copied.'; setTimeout(function(){ status.textContent = ''; }, 2500); }
+      function fail(){
+        try {
+          textarea.focus();
+          textarea.select();
+          if (document.execCommand('copy') === true) { ok(); }
+          else { status.textContent = 'Could not copy — text is selected, use Cmd/Ctrl+C.'; }
+        } catch (e){
+          status.textContent = 'Could not copy — text is selected, use Cmd/Ctrl+C.';
+        }
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(ok, fail);
+      } else {
+        fail();
+      }
+    });
+  }
+
+  // ---- bottom bar toggle ----
+  function initBarToggle(){
+    var toggle = document.getElementById('cf-bar-toggle');
+    var detail = document.getElementById('cf-bar-detail');
+    toggle.addEventListener('click', function(){
+      var open = detail.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(open));
+      document.body.classList.toggle('cf-bar-open', open);
+    });
+  }
+
+  // ---- sliders ----
+  function initSliders(){
+    var payloadEl = document.getElementById('cf-payload');
+    var reachEl = document.getElementById('cf-reach');
+    payloadEl.value = state.payload;
+    reachEl.value = state.reach;
+    payloadEl.addEventListener('input', function(){
+      var v = clamp(parseFloat(payloadEl.value), 0.5, 20);
+      if (!isFinite(v)) v = state.payload;
+      state.payload = v;
+      render();
+    });
+    reachEl.addEventListener('input', function(){
+      var v = clamp(parseFloat(reachEl.value), 0.3, 1.5);
+      if (!isFinite(v)) v = state.reach;
+      state.reach = v;
+      render();
+    });
+  }
+
+  function init(){
+    buildTemplateCards();
+    buildMarketChips();
+    buildOptionRows();
+    buildGroupBlocks();
+    initSliders();
+    initCopyButton();
+    initBarToggle();
+    render();
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
+</body>
+</html>
