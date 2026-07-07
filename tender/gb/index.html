@@ -497,11 +497,11 @@
               <div class="tw-stat-num" id="tw-total">—</div>
               <div class="tw-stat-label">Total open tenders</div>
             </div>
-            <div>
+            <div id="tw-gov-stat">
               <div class="tw-stat-num" id="tw-gov">—</div>
               <div class="tw-stat-label">Central government</div>
             </div>
-            <div>
+            <div id="tw-pub-stat">
               <div class="tw-stat-num" id="tw-pub">—</div>
               <div class="tw-stat-label">Public bodies &amp; institutions</div>
             </div>
@@ -611,8 +611,16 @@
         renderIssueLine(data);
 
         document.getElementById('tw-total').textContent = data.total;
-        document.getElementById('tw-gov').textContent = (data.sources && data.sources.government) != null ? data.sources.government : '—';
-        document.getElementById('tw-pub').textContent = (data.sources && data.sources.public_bodies) != null ? data.sources.public_bodies : '—';
+        var govCount = data.sources && data.sources.government;
+        var pubCount = data.sources && data.sources.public_bodies;
+        document.getElementById('tw-gov').textContent = govCount != null ? govCount : '—';
+        document.getElementById('tw-pub').textContent = pubCount != null ? pubCount : '—';
+        // Hide a source-breakdown stat entirely when its count is a measured zero
+        // (distinct from '—' unknown) — a "0 public bodies" tile is not useful info.
+        var govStat = document.getElementById('tw-gov-stat');
+        var pubStat = document.getElementById('tw-pub-stat');
+        if (govStat) govStat.style.display = govCount === 0 ? 'none' : '';
+        if (pubStat) pubStat.style.display = pubCount === 0 ? 'none' : '';
         document.getElementById('tw-updated').textContent = fmtUpdated(data.generated);
 
         var tbody = document.getElementById('tw-tbody');
