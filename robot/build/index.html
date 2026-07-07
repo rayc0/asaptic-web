@@ -210,6 +210,49 @@
   clip:rect(0,0,0,0);white-space:nowrap;border:0;
 }
 
+/* Workshop — live arm preview + test-cycle simulation. The drawing and the
+   animation verdict are read from the same computed model as step 3 — no
+   physics engine, no AI. */
+.cf-shop{ border:1px solid var(--rb-line);border-radius:2px;background:var(--rb-wash);padding:16px;margin:20px 0 4px; }
+.cf-shop-head{ display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px; }
+.cf-shop-title{ font-family:var(--rb-mono);font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--rb-stone);margin:0;flex:1 1 auto; }
+.cf-verdict{
+  font-family:var(--rb-mono);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+  padding:4px 9px;border-radius:2px;border:1px solid currentColor;
+}
+.cf-verdict.green{ color:#2E7D42; }
+.cf-verdict.amber{ color:#8A5B00; }
+.cf-verdict.red{ color:var(--rb-seal); }
+.cf-sim-btn{
+  border:1px solid var(--rb-ink);background:var(--rb-ink);color:var(--rb-paper);
+  font:inherit;font-weight:650;font-size:13.5px;padding:9px 16px;border-radius:2px;cursor:pointer;min-height:44px;
+}
+.cf-sim-btn:disabled{ opacity:0.55;cursor:default; }
+.cf-sim-btn:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+.cf-arm-stage{ background:var(--rb-paper);border:1px solid var(--rb-line);border-radius:2px; }
+.cf-sim-msg{ font-size:13.5px;font-weight:600;margin:10px 0 0;min-height:19px;color:var(--rb-ink); }
+.cf-sim-msg.green{ color:#2E7D42; }
+.cf-sim-msg.amber{ color:#8A5B00; }
+.cf-sim-msg.red{ color:var(--rb-seal); }
+.cf-rail-arm{ margin:0 0 12px; }
+.cf-svg-ground{ stroke:var(--rb-ink);stroke-width:2; }
+.cf-svg-dim{ stroke:var(--rb-stone);stroke-width:1; }
+.cf-svg-text{ font-family:var(--rb-mono);font-size:11px;fill:var(--rb-stone); }
+.cf-svg-boxtext{ font-family:var(--rb-mono);font-size:10px;fill:#fff;font-weight:700; }
+.cf-svg-plinth{ fill:#3E4348; }
+.cf-svg-limb{ stroke:#565B60;stroke-linecap:round; }
+.cf-svg-limb2{ stroke:#6E7378; }
+.cf-svg-grip{ stroke:var(--rb-ink);stroke-width:3;stroke-linecap:round;fill:none; }
+.cf-svg-box{ fill:#7A7E83;stroke:#565B60; }
+.cf-svg-joint{ stroke:var(--rb-paper);stroke-width:2; }
+.cf-svg-joint.green{ fill:#2E7D42; }
+.cf-svg-joint.amber{ fill:#8A5B00; }
+.cf-svg-joint.red{ fill:var(--rb-seal); }
+.cf-svg-joint.cf-clickable{ cursor:pointer; }
+@keyframes cf-strain{ 50%{ opacity:0.3; } }
+.cf-svg-joint.cf-strain{ animation:cf-strain 0.55s linear infinite; }
+@media (prefers-reduced-motion:reduce){ .cf-svg-joint.cf-strain{ animation:none; } }
+
 /* Mobile bottom bar (kept inside .rb-frame in the DOM so it can read --rb-* tokens,
    even though it is visually fixed to the viewport). */
 .cf-bar{
@@ -265,6 +308,18 @@
         and runs a deterministic first-pass torque check on each joint group as you go, then estimates
         an indicative bill of materials and landed cost. AJM joint modules from an indicative US$699/axis.
         Nothing here is AI-generated: every number comes from a published formula and a fixed component table.</p>
+      </section>
+
+      <!-- WORKSHOP — live preview + test cycle -->
+      <section class="cf-shop" aria-labelledby="cf-shop-h">
+        <div class="cf-shop-head">
+          <p class="cf-shop-title" id="cf-shop-h">Workshop — live preview</p>
+          <span class="cf-verdict" id="cf-verdict"></span>
+          <button type="button" class="cf-sim-btn" id="cf-sim-btn">▶ Run test cycle</button>
+        </div>
+        <div class="cf-arm-stage" id="cf-arm-main"></div>
+        <p class="cf-sim-msg" id="cf-sim-msg" role="status" aria-live="polite"></p>
+        <p class="cf-caption" style="margin:8px 0 0;">Stylized side view drawn live from your selections — joint colors and the test-cycle outcome come from the same deterministic torque check as step 3, not a physics engine. Click a joint to jump to its module.</p>
       </section>
 
       <!-- STEP 1 -->
