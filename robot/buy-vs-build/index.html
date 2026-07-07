@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buy an Assembled Robot Arm, or Build From Modules? | Asaptic</title>
+
+  <meta name="description" content="A sizing-first comparison of buying an assembled robot arm versus building from joint modules, including a 5 kg at 0.9 m shoulder-torque example." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/robot/buy-vs-build/" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/robot/buy-vs-build/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/buy-vs-build/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/buy-vs-build/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Buy an Assembled Robot Arm, or Build From Modules?" />
+  <meta property="og:description" content="When to buy complete, when to build from modules, and why the sizing math is the same either way." />
+  <meta property="og:url" content="https://asaptic.com/robot/buy-vs-build/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="zh_CN" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Buy an Assembled Robot Arm, or Build From Modules?" />
+  <meta name="twitter:description" content="A sizing-first comparison for robot-arm sourcing decisions." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Robot Parts", "item": "https://asaptic.com/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "Buy vs Build Robot Arm", "item": "https://asaptic.com/robot/buy-vs-build/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Buy an assembled robot arm, or build it from modules? A sizing-first comparison",
+    "description": "A practical comparison of assembled robot arms versus modular robot-arm builds, centered on torque sizing, integration effort, and sourcing trade-offs.",
+    "inLanguage": "en",
+    "url": "https://asaptic.com/robot/buy-vs-build/",
+    "isPartOf": { "@type": "WebPage", "name": "Robot Parts", "url": "https://asaptic.com/robot/" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is it cheaper to build a robot arm from parts or buy one assembled?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Neither route is universally cheaper. A module build can remove an integrator margin, but it adds your own assembly time, cabling, validation, and support responsibility. An assembled arm usually costs more per unit, but it arrives tested with one warranty and support contact."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What determines whether to buy or build a robot arm?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Buy assembled when speed, low integration burden, and one accountable supplier matter most. Build from modules when payload, reach, geometry, upgrade path, or volume economics make a stock arm a poor fit."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I know what torque rating I need for a robot arm joint?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Start with a first-pass gravity-torque check for the payload and reach, then leave margin for dynamic moves. The same check applies whether you are reading an assembled arm specification or choosing joint modules."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/sourcing" class="nav-logo">ASAPTIC</a>
+    </div>
+  </nav>
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/robot/" style="color:inherit;text-decoration:none;">Asaptic Robotics Handbook</a></span>
+        <nav class="rb-langs" aria-label="Language">
+          <a href="/robot/buy-vs-build/" aria-current="page">EN</a>
+          <span class="rb-lang-sep">&middot;</span>
+          <a href="/zh/robot/buy-vs-build/">简</a>
+        </nav>
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">Robot sourcing guide</p>
+      <h1 class="rb-title">Buy an assembled robot arm, or build it from modules? A sizing-first comparison</h1>
+
+      <section class="rb-answer" aria-label="Summary">
+        <p>Buy assembled when you need a working arm now, don't have in-house integration time, and value a
+        single warranty and support contact over lower unit cost. Build from modules when your payload and
+        reach requirements are unusual enough that a stock arm over- or under-specs for your task, when you
+        want to swap components as your application changes, or when landed module cost genuinely beats an
+        integrator's markup at your volume. Neither is universally cheaper — module builds save on
+        integrator margin but add your own assembly time, cabling, and first-pass validation; assembled
+        arms cost more per unit but arrive tested and ready. The sizing math is the same either way: a
+        joint module (or an assembled arm's joints) has to be rated for at least the gravity torque your
+        payload and reach demand, with margin for dynamic moves — see the first-pass torque check below,
+        or run it directly in our build configurator (link to /robot/build/).</p>
+      </section>
+
+      <h2 class="rb-h2">When buying assembled makes sense</h2>
+      <p>An assembled arm is usually the right answer when the robot itself is not the project. If your team
+      needs to automate a test fixture, move parts between machines, or validate a process quickly, the
+      premium you pay for a complete arm can be less important than the calendar time you avoid losing.</p>
+      <ul>
+        <li><strong>Speed to deployment.</strong> A complete arm should arrive with joints, wiring,
+        controller, software, safety documentation, and factory test already bundled. That shortens the path
+        from purchase order to first motion.</li>
+        <li><strong>No spare integration capacity.</strong> If your engineers are already committed to the
+        application, end effector, fixtures, or vision stack, asking the same team to integrate every joint
+        can slow the work that actually differentiates the system.</li>
+        <li><strong>Single point of accountability.</strong> A complete arm gives procurement and operations
+        one support contact. When a joint, cable, or controller fault appears, the warranty conversation is
+        simpler than a multi-supplier root-cause debate.</li>
+      </ul>
+      <p>This does not mean assembled is technically superior. It means the vendor is selling integration,
+      documentation, and support as part of the product. For many teams, especially early deployments, that
+      packaged responsibility is worth more than shaving the unit bill of materials.</p>
+
+      <h2 class="rb-h2">When building from modules makes sense</h2>
+      <p>A module build starts to make sense when the arm you need is not well described by a catalog arm.
+      The decision is less about liking custom hardware and more about whether your application sits outside
+      a standard envelope.</p>
+      <ul>
+        <li><strong>Non-standard payload or reach.</strong> A stock arm may be too light for the shoulder
+        torque you need, too heavy for your moving platform, or too short for the workstation. Joint modules
+        let the architecture follow the task instead of forcing the task into a fixed arm family.</li>
+        <li><strong>Modularity and upgrade path.</strong> If your end effector, payload, or workspace may
+        change, buying modules can make later swaps less disruptive. A shoulder joint, wrist group, cable
+        set, or controller can be changed without replacing the whole robot.</li>
+        <li><strong>Cost at volume.</strong> At small quantities, your own integration time can overwhelm
+        any module savings. At repeat volumes, the picture can change: the same validated module set can be
+        reused, procurement can buy on clearer specifications, and landed module cost may compare favorably
+        against a finished-arm markup.</li>
+      </ul>
+      <p>The real test is not whether modules look cheaper on a quote. It is whether your team can absorb
+      assembly, cabling, calibration, risk review, first-pass validation, spares planning, and after-sales
+      support without erasing the savings.</p>
+
+      <h2 class="rb-h2">The sizing question is identical either way</h2>
+      <p>Whether you buy assembled or build from modules, the shoulder joint still has to hold the same load
+      at the same reach. The elbow and wrist still see the same payload, tool mass, structure mass, and
+      motion profile. A glossy arm brochure and a modular bill of materials are just two ways of packaging
+      the same physics.</p>
+      <p>For first-pass selection, engineers begin with gravity-torque sizing and then add margin for
+      acceleration, deceleration, duty cycle, thermal limits, and reducer life. The same check helps you ask
+      better questions of an assembled-arm specification sheet and also prevents a module build from being
+      undersized at the first joint. For the full derivation and actuator-selection context, read
+      <a href="/robot/101/actuators/">Robot 101: actuators and joint modules</a>.</p>
+      <p>That is why a sourcing conversation should start with payload and reach, not a preferred brand,
+      frame size, or price target. Once the torque envelope is clear, the buy-versus-build choice becomes a
+      commercial and operational decision rather than a guess.</p>
+
+      <h3>A worked example — 5 kg payload at 0.9 m reach</h3>
+      <p>Take a general-purpose arm with a 5&nbsp;kg payload and 0.9&nbsp;m reach. In the configurator's
+      first-pass shoulder check, the assumed structure mass is 3.6&nbsp;kg, so half of that structure mass
+      contributes 1.8&nbsp;kg to the shoulder load term. With the dynamic margin included, the shoulder
+      requirement is about 90&nbsp;Nm. That is already above a light joint-module class.</p>
+      <p>Asaptic's current AJM module tiers are AJM-Lite, rated at 20&nbsp;Nm from US$699 in frame 14;
+      AJM-Mid, rated at 50&nbsp;Nm from US$1,099 in frame 17; and AJM-Pro, rated at 120&nbsp;Nm from
+      US$1,599 in frame 20. For this example, a shoulder joint that needs roughly 90&nbsp;Nm points toward
+      AJM-Pro, while lighter elbow or wrist positions may be able to use smaller modules depending on the
+      full arm layout. You can test that directly in the <a href="/robot/build/">robot-arm build
+      configurator</a>.</p>
+      <p>The same reasoning applies to an assembled arm: if the shoulder joints are not rated for the
+      required gravity torque with margin, the arm is undersized no matter how cleanly it ships. If the
+      assembled arm is far above the requirement, you may be paying for unused capacity. The useful
+      comparison is therefore not "modules versus robot" in the abstract; it is the required torque,
+      validation burden, support model, and landed cost for your exact task.</p>
+
+      <h2 class="rb-h2">Try it yourself</h2>
+      <p>Use the <a href="/robot/build/">Asaptic build configurator</a> to set payload, reach, joint
+      groups, and destination market. It gives a first-pass module recommendation and landed-cost band, then
+      turns that configuration into an enquiry for engineering review. Treat it as a sizing and budgeting
+      tool, not a final design release.</p>
+
+      <div class="rb-note">
+        <p><strong>Related reading.</strong> For component-level trade-offs, compare
+        <a href="/robot/servo-comparison/">AJM-class joint modules with servo-plus-gearbox sourcing</a>. For
+        import math, see the <a href="/robot/landed-cost-example/">landed-cost example for robot components
+        from Shenzhen</a>.</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">Quick answers</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">Is it cheaper to build a robot arm from parts or buy one assembled?</div>
+          <div class="rb-faq-a">Neither is universally cheaper. Module builds can save integrator margin but add assembly, cabling, validation, and support work. Assembled arms cost more per unit but arrive tested with one warranty contact.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">What determines whether to buy or build a robot arm?</div>
+          <div class="rb-faq-a">Buy assembled for speed, limited integration capacity, and single-supplier accountability. Build from modules when payload, reach, geometry, upgrade path, or volume economics make a stock arm a poor match.</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">How do I know what torque rating I need for a robot arm joint?</div>
+          <div class="rb-faq-a">Start with a gravity-torque check for payload and reach, then leave margin for dynamic moves, duty cycle, and thermal limits. The same sizing logic applies to assembled arms and module builds.</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/robot/101/actuators/">← Robot 101 · Actuators</a>
+        <a href="/robot/servo-comparison/">AJM modules vs servo + gearbox →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        Robot 101 is educational material by <a href="/robot/">Asaptic</a>. It is not certification,
+        legal, or import advice. Component prices and specifications cited are indicative industry
+        figures and change frequently — verify against current datasheets before designing.
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>
