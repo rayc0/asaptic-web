@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>购买整机机器人手臂，还是用模组自建？| Asaptic</title>
+
+  <meta name="description" content="从选型计算出发，比较购买整机机器人手臂与用关节模组自建，包括 5 kg、0.9 m 肩关节扭矩示例。" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/zh/robot/buy-vs-build/" />
+  <link rel="alternate" hreflang="en" href="https://asaptic.com/robot/buy-vs-build/" />
+  <link rel="alternate" hreflang="zh-CN" href="https://asaptic.com/zh/robot/buy-vs-build/" />
+  <link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/buy-vs-build/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="购买整机机器人手臂，还是用模组自建？" />
+  <meta property="og:description" content="什么时候买整机，什么时候用模组自建，以及为什么两条路线的选型计算本质相同。" />
+  <meta property="og:url" content="https://asaptic.com/zh/robot/buy-vs-build/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="购买整机机器人手臂，还是用模组自建？" />
+  <meta name="twitter:description" content="面向机器人手臂采购决策、从选型计算出发的实用比较。" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "机器人零部件", "item": "https://asaptic.com/zh/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "购买或自建机器人手臂", "item": "https://asaptic.com/zh/robot/buy-vs-build/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "购买整机机器人手臂，还是用模组自建？从选型计算出发的比较",
+    "description": "围绕扭矩选型、集成工作量与采购取舍，实用比较整机机器人手臂与模块化机器人手臂方案。",
+    "inLanguage": "zh-CN",
+    "url": "https://asaptic.com/zh/robot/buy-vs-build/",
+    "isPartOf": { "@type": "WebPage", "name": "机器人零部件", "url": "https://asaptic.com/zh/robot/" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "用零部件自建机器人手臂会比购买整机更便宜吗？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "没有哪条路线一定更便宜。模组化自建可以省掉集成商利润，但会增加你自己的装配时间、布线、验证和支持责任。整机手臂通常单价更高，但到货时已经测试，并且只有一个质保和支持联系人。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "什么因素决定应该购买还是自建机器人手臂？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "如果最重要的是速度、低集成负担和单一负责供应商，就买整机。如果负载、臂展、几何形态、升级路径或批量经济性让标准手臂不适合任务，就用模组自建。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "怎么知道机器人手臂关节需要多大的扭矩等级？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "先按负载和臂展做第一轮重力扭矩校核，再为动态运动留余量。无论你是在阅读整机手臂规格，还是在选择关节模组，同一套校核都适用。"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <a href="/zh/sourcing" class="nav-logo">ASAPTIC</a>
+    </div>
+  </nav>
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/zh/robot/" style="color:inherit;text-decoration:none;">Asaptic 机器人手册</a></span>
+        <nav class="rb-langs" aria-label="语言">
+          <a href="/robot/buy-vs-build/">EN</a>
+          <span class="rb-lang-sep">&middot;</span>
+          <a href="/zh/robot/buy-vs-build/" aria-current="page">简</a>
+        </nav>
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">机器人采购指南</p>
+      <h1 class="rb-title">购买整机机器人手臂，还是用模组自建？从选型计算出发的比较</h1>
+
+      <section class="rb-answer" aria-label="摘要">
+        <p>当你现在就需要一条能工作的手臂、没有内部集成时间，并且相比更低单价更看重单一质保和
+        支持联系人时，选择整机。若你的负载与臂展需求足够特殊，标准手臂会对任务过度配置或配置不足；
+        若你希望应用变化时可以更换部件；或若在你的批量下，模组到岸成本确实优于集成商加价，则用
+        模组自建。两者没有绝对更便宜的一方——模组化自建省掉集成商利润，但增加你自己的装配时间、
+        布线和初轮验证；整机手臂单价更高，但到货时已经测试并可直接使用。两条路线的选型计算相同：
+        关节模组（或整机手臂中的关节）至少必须满足负载与臂展所需的重力扭矩，并为动态运动留出余量——
+        见下方第一轮扭矩校核，或直接在我们的构建配置器中运行（链接至 /robot/build/）。</p>
+      </section>
+
+      <h2 class="rb-h2">什么时候购买整机更合理</h2>
+      <p>当机器人本身不是项目核心时，整机手臂通常是正确答案。如果你的团队需要自动化测试夹具、
+      在机器之间搬运零件，或快速验证流程，那么为完整手臂支付的溢价，可能没有你避免损失的日历时间
+      重要。</p>
+      <ul>
+        <li><strong>部署速度。</strong>完整手臂应当随关节、线缆、控制器、软件、安全文档和工厂测试
+        一起交付。这会缩短从采购订单到第一次运动的路径。</li>
+        <li><strong>没有多余集成能力。</strong>如果你的工程师已经投入应用、末端执行器、夹具或视觉
+        系统，让同一团队再集成每个关节，会拖慢真正让系统产生差异化的工作。</li>
+        <li><strong>单一责任点。</strong>完整手臂给采购和运营一个支持联系人。当关节、线缆或控制器
+        故障出现时，质保沟通比多供应商根因争论简单得多。</li>
+      </ul>
+      <p>这并不意味着整机在技术上更优。它意味着供应商把集成、文档和支持作为产品的一部分一起销售。
+      对许多团队，特别是早期部署而言，这种打包责任比压低单位物料清单更有价值。</p>
+
+      <h2 class="rb-h2">什么时候用模组自建更合理</h2>
+      <p>当你需要的手臂无法被目录型手臂很好描述时，模组化自建开始有意义。这个决定不在于是否喜欢
+      定制硬件，而在于你的应用是否落在标准范围之外。</p>
+      <ul>
+        <li><strong>非标准负载或臂展。</strong>标准手臂可能肩部扭矩不够，可能对移动平台太重，或对
+        工位太短。关节模组让架构跟随任务，而不是把任务强行塞进固定手臂系列。</li>
+        <li><strong>模块化与升级路径。</strong>如果你的末端执行器、负载或工作空间可能变化，购买模组
+        能让后续替换更少中断。肩关节、腕部组合、线缆组或控制器可以更换，而不必替换整台机器人。</li>
+        <li><strong>批量成本。</strong>小批量时，你自己的集成时间可能抵消任何模组节省。到重复批量时，
+        情况可能改变：同一套已验证模组可以复用，采购可以基于更清晰规格下单，模组到岸成本也可能比
+        成品手臂加价更有优势。</li>
+      </ul>
+      <p>真正的测试不是模组在报价单上看起来是否更便宜，而是你的团队能否承受装配、布线、校准、风险
+      评审、初轮验证、备件规划和售后支持，同时不把节省额消耗掉。</p>
+
+      <h2 class="rb-h2">选型问题在两条路线中完全相同</h2>
+      <p>无论你买整机还是用模组自建，肩关节仍然必须在同一臂展下承受同一负载。肘部和腕部仍然面对
+      同样的负载、工具质量、结构质量和运动曲线。精美的手臂宣传册与模块化物料清单，只是同一物理
+      问题的两种包装方式。</p>
+      <p>第一轮选型时，工程师从重力扭矩计算开始，然后为加速、减速、工作循环、热限制和减速器寿命
+      加余量。同一项校核能帮助你更好地询问整机手臂规格书，也能防止模组化自建在第一个关节就选小。
+      完整推导和执行器选型背景见
+      <a href="/zh/robot/101/actuators/">机器人 101：执行器与关节模组</a>。</p>
+      <p>因此，采购对话应从负载和臂展开始，而不是从偏好的品牌、框号或目标价格开始。扭矩范围清楚
+      之后，买整机还是自建就变成商业与运营决策，而不是猜测。</p>
+
+      <h3>计算示例——5 kg 负载、0.9 m 臂展</h3>
+      <p>以一条通用手臂为例，负载为 5&nbsp;kg、臂展为 0.9&nbsp;m。在配置器的第一轮肩关节校核中，
+      假设结构质量为 3.6&nbsp;kg，因此其中一半结构质量，即 1.8&nbsp;kg，会计入肩部负载项。包含
+      动态余量后，肩部需求约为 90&nbsp;Nm。这已经高于轻型关节模组等级。</p>
+      <p>Asaptic 当前 AJM 模组等级包括 AJM-Lite，额定 20&nbsp;Nm、起价 US$699、框号 14；
+      AJM-Mid，额定 50&nbsp;Nm、起价 US$1,099、框号 17；以及 AJM-Pro，额定
+      120&nbsp;Nm、起价 US$1,599、框号 20。对这个示例而言，需要约 90&nbsp;Nm 的肩关节指向 AJM-Pro，
+      而较轻的肘部或腕部位置，视完整手臂布局而定，可能可以使用更小的模组。你可以直接在
+      <a href="/zh/robot/build/">机器人手臂构建配置器</a>中测试。</p>
+      <p>同样的推理也适用于整机手臂：如果肩关节的额定值不能在留有余量的情况下满足所需重力扭矩，
+      那么无论它出厂多整洁，这条手臂都偏小。如果整机手臂远高于需求，你可能在为未使用的能力付费。
+      因此，有用的比较并不是抽象地讨论“模组还是机器人”，而是针对你的确切任务比较所需扭矩、验证
+      负担、支持模式和到岸成本。</p>
+
+      <h2 class="rb-h2">自己试算</h2>
+      <p>使用 <a href="/zh/robot/build/">Asaptic 构建配置器</a>设置负载、臂展、关节组和目的地市场。
+      它会给出第一轮模组建议和到岸成本区间，然后把该配置转成工程审核询盘。把它视作选型与预算工具，
+      而不是最终设计发布。</p>
+
+      <div class="rb-note">
+        <p><strong>相关阅读。</strong>如需了解部件层面的取舍，可比较
+        <a href="/zh/robot/servo-comparison/">AJM 级关节模组与伺服加减速箱采购</a>。如需进口成本计算，
+        见<a href="/zh/robot/landed-cost-example/">深圳机器人部件到岸成本示例</a>。</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">快速问答</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">用零部件自建机器人手臂会比购买整机更便宜吗？</div>
+          <div class="rb-faq-a">没有哪条路线一定更便宜。模组化自建可以省掉集成商利润，但会增加装配、布线、验证和支持工作。整机手臂单价更高，但到货时已经测试，并且只有一个质保联系人。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">什么因素决定应该购买还是自建机器人手臂？</div>
+          <div class="rb-faq-a">为速度、有限集成能力和单一供应商责任选择整机。当负载、臂展、几何形态、升级路径或批量经济性让标准手臂不匹配时，用模组自建。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">怎么知道机器人手臂关节需要多大的扭矩等级？</div>
+          <div class="rb-faq-a">先按负载和臂展做重力扭矩校核，再为动态运动、工作循环和热限制留余量。同一套选型逻辑适用于整机手臂和模组化自建。</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/zh/robot/101/actuators/">← 机器人 101 · 执行器</a>
+        <a href="/zh/robot/servo-comparison/">AJM 模组与伺服 + 减速箱 →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        《机器人 101》是 <a href="/zh/robot/">Asaptic</a> 的科普内容，不构成认证、法律或进口建议。
+        文中引用的部件价格与规格为行业指示性数据，变化频繁——设计前请以最新规格书为准。
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>
