@@ -1,5 +1,12 @@
 # Asaptic Cross-Standard Build Pipeline — Progress Document
 
+## 2026-07-07 (later) — /robot/build/ interactive arm configurator v0 (feat/robot-page)
+
+- NEW: **asaptic.com/robot/build/** + **/zh/robot/build/** — game-like robot-ARM configurator: template (4/6/7-axis) → payload/reach sliders → auto-suggested AJM tier per joint group (override chips) → options → destination → live torque status lights + indicative BOM band + landed-cost band → "Request this build" mailto with full BOM + copy-summary. Pure static vanilla JS, deterministic ("rules decide, no AI guesses"), real SKU pricing (AJM-Lite $699 / Mid $1,099 / Pro $1,599 from bizplan).
+- Fleet: Fable spec/conduct · Opus built EN + zh twin (JS byte-identical minus strings) · Sonnet wiring + interactive QA (all checks both langs) + 2 fix waves · codex×10 review (math/JS/honesty/SEO/XSS/a11y/mobile/eng-plausibility/copy/consistency) · kimi×20 (zh + consistency + compute-check; several lanes hit known 0-byte CLI flakiness, covered by codex).
+- Post-review model amendments (spec §v0.1): wrist torque includes distal option masses; controller excluded from moving mass; "passes first-pass check" status language + dynamics caveat; encoded-mailto length guard; execCommand return check; full indicative labeling; a11y (live region, chip group labels, contrast token, 44px targets) + iOS safe-area + reduced-motion.
+- Wiring: hub rb-note promos (EN+zh), sitemap-core.xml +2 URLs, llms.txt tool line.
+
 ## 2026-07-07 — /robot hub + Robot 101 primer built (branch feat/robot-page)
 
 - NEW public surface: **asaptic.com/robot/** (EN) + **/zh/robot/** (简体) — robot-parts sourcing hub ("Asaptic Robotics Handbook", tender-bulletin design language, robot/robot.css) + **Robot 101** bilingual 科普 series, 11 chapters × 2 langs = 24 pages total.
