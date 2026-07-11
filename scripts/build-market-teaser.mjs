@@ -6,7 +6,7 @@
  * in the same schema as tender/teaser.json (the HK bulletin), for use by
  * tender/<mkt>/index.html.
  *
- * Usage: node scripts/build-market-teaser.mjs <MO|GB|AU>
+ * Usage: node scripts/build-market-teaser.mjs <MO|GB|AU|SG>
  */
 
 import fs from 'node:fs';
@@ -20,8 +20,8 @@ const REGISTRY_ROOT =
   '/Users/tun/Library/CloudStorage/OneDrive-Personal/0 0 to do/00AIprojects/00Tender/_registry';
 
 const MARKET = (process.argv[2] || '').toUpperCase();
-if (!['MO', 'GB', 'AU'].includes(MARKET)) {
-  console.error('Usage: node scripts/build-market-teaser.mjs <MO|GB|AU>');
+if (!['MO', 'GB', 'AU', 'SG'].includes(MARKET)) {
+  console.error('Usage: node scripts/build-market-teaser.mjs <MO|GB|AU|SG>');
   process.exit(1);
 }
 
@@ -165,6 +165,21 @@ function classifyOrgAU(org) {
   return 'public_bodies';
 }
 
+// SG: org holds actual department/agency names (like MO), not a judged
+// org-class string. Heuristic split: Ministries / MINDEF / government
+// departments → government; statutory boards (HDB, LTA, NEA, PUB, town
+// councils, universities, etc.) → public_bodies. Null/unset → government.
+function classifyOrgSG(org) {
+  if (!org) return 'government';
+  const o = org.toLowerCase();
+  if (o.includes('ministry') || o.includes('mindef') || o.startsWith('mnd') ||
+      o.includes('government department') || o.includes('prime minister') ||
+      o.includes("attorney-general") || o.includes('attorney general')) {
+    return 'government';
+  }
+  return 'public_bodies';
+}
+
 // ── Load registry ──────────────────────────────────────────────────────────
 const registryPath = path.join(REGISTRY_ROOT, MARKET, 'tenders_registry.json');
 const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
@@ -192,6 +207,7 @@ for (const rec of records) {
   let cls;
   if (MARKET === 'GB') cls = classifyOrgGB(rec.org);
   else if (MARKET === 'AU') cls = classifyOrgAU(rec.org);
+  else if (MARKET === 'SG') cls = classifyOrgSG(rec.org);
   else cls = 'government'; // MO — no judged org-class available, fallback per spec
 
   if (cls === 'government') govCount += 1;
