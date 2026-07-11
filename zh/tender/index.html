@@ -561,7 +561,7 @@
       <div class="tw-footer-note">
         以上信息摘要自公开的香港政府及公营机构招标来源。Asaptic 并非本页所述任何招标的招标机构，亦与香港特别行政区政府无任何关联。
         <br /><a href="/zh/tender/archive/" class="tw-archive-link">往期简报 →</a>
-        <br /><span style="font-size:11.5px;">其他市场：<a href="/tender/mo/" class="tw-archive-link" style="margin-top:0;">澳门</a> &middot; <a href="/tender/gb/" class="tw-archive-link" style="margin-top:0;">英国</a> &middot; <a href="/tender/au/" class="tw-archive-link" style="margin-top:0;">澳大利亚</a></span>
+        <br /><span style="font-size:11.5px;">其他市场：<a href="/tender/mo/" class="tw-archive-link" style="margin-top:0;">澳门</a> &middot; <a href="/tender/gb/" class="tw-archive-link" style="margin-top:0;">英国</a> &middot; <a href="/tender/au/" class="tw-archive-link" style="margin-top:0;">澳大利亚</a> &middot; <a href="/tender/sg/" class="tw-archive-link" style="margin-top:0;">新加坡</a></span>
       </div>
     </div>
   </main>
@@ -656,17 +656,22 @@
           }
 
           var href = CATEGORY_LINKS[cat.name_zh];
-          var nameHtml = href
-            ? '<a class="tw-cat-name" href="' + href + '">' + cat.name_zh + '</a>'
-            : '<span class="tw-cat-name">' + cat.name_zh + '</span>';
-
           var row = document.createElement('div');
           row.className = 'tw-index-row';
-          row.innerHTML =
-            nameHtml +
-            '<span class="tw-dots"></span>' +
-            '<span class="tw-count">' + cat.count + '</span>' +
-            '<span class="tw-closing">' + closingHtml + '</span>';
+          var nameEl = document.createElement(href ? 'a' : 'span');
+          nameEl.className = 'tw-cat-name';
+          if (href) nameEl.href = href;
+          nameEl.textContent = cat.name_zh;
+          row.appendChild(nameEl);
+          row.appendChild(document.createElement('span')).className = 'tw-dots';
+          var countEl = document.createElement('span');
+          countEl.className = 'tw-count';
+          countEl.textContent = cat.count;
+          row.appendChild(countEl);
+          var closingEl = document.createElement('span');
+          closingEl.className = 'tw-closing';
+          closingEl.innerHTML = closingHtml;
+          row.appendChild(closingEl);
           tbody.appendChild(row);
         });
       }
@@ -676,13 +681,13 @@
         document.getElementById('tw-fallback').style.display = 'block';
       }
 
-      fetch('/tender/teaser.json', { signal: AbortSignal.timeout(3000) })
+      fetch('/tender/teaser.json', (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? { signal: AbortSignal.timeout(8000) } : {})
         .then(function (res) {
           if (!res.ok) throw new Error('bad status');
           return res.json();
         })
         .then(function (data) {
-          if (!data || !data.total || !Array.isArray(data.categories)) throw new Error('invalid data');
+          if (!data || !Number.isFinite(data.total) || !Array.isArray(data.categories)) throw new Error('invalid data');
           render(data);
         })
         .catch(function () {
