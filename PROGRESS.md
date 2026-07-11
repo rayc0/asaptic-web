@@ -1,5 +1,15 @@
 # Asaptic Cross-Standard Build Pipeline — Progress Document
 
+## 2026-07-12 (early AM) — post-MP wave: tender automation + i18n + official data sources — DEPLOYED
+
+- **DEPLOYED** (main @b272b6c8, prior bb96b4ac): 30-lane multi-model wave (Fable conductor; opus/sonnet agents + codex gpt-5.5 + gemini 3.1 pro panels + 3-lens Fable-team review).
+- **Tender-freshness automation LIVE** (outside repo): ~/bin/asaptic_tender_refresh.sh + LaunchAgent 2×/day on tun-MBA → registry fold → leak-gated teasers (5 markets) → archive freeze → auto commit/push/deploy. Hardened per codex review (lock/sentinel/keychain-preflight/race-guards/deploy-retry).
+- **Official data re-points**: SG 7(fixture!)→525 real GeBIZ (playwright), AU→AusTender official (84), GB→FTS OCDS API (292). Live total 1,282; /demo trued to 1,200+.
+- **i18n**: zh/zht/pt nav + mobile hamburger rollout (index/about), NEW zh/zht/pt agents.html, nav labels harmonized (贸易 AI), locale nav hrefs localized, sitemaps updated.
+- **Fixes**: PCMS leak scrubbed from agents.html+content.js (en/zh/zht) + ?v=20260712a; fundraising-refusal purged 4 langs (engage.html incl. EN); research-residue ([UNVERIFIED]/corpus-silent) rewritten to public caveats on all top-level service pages; tender-page JS robustness (8s feature-detected timeout, safe DOM rows, Number.isFinite, per-market switchers incl. SG, au→gb switcher bug, date locales); assets/ internal templates noindexed ×13; archive back-link wordmark →ASAPTIC.
+- **Known debt/blockers**: HK PCMS2 public scrape needs iAM Smart (PENDING A71; scraper hardened, staleness alert wired); blog corpus [UNVERIFIED] residue deferred; zh/zht/pt inner-page metadata localization deferred. 12M plan: 00Asaptic/PLAN_TENDER_SYSTEM_12M_2026-07-12.md.
+
+
 ## 2026-07-07 (night) — /robot/build/ v2 — share-a-build + parts depth — DEPLOYED
 
 - **DEPLOYED** (main @1f48f37f, wrangler ad609192): V2 cut on both /robot/build/ + /zh/robot/build/ — Fable led, Opus built, Fable independently verified live.
