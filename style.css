@@ -143,6 +143,113 @@ nav {
   color: var(--bg);
 }
 
+/* ============================================================
+   Asaptic — mobile nav (hamburger + drawer)
+   ============================================================ */
+
+/* Burger button — hidden on desktop by default */
+.nav-burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-burger-bar {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--steel);
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.nav-burger:hover {
+  border-color: var(--border-bright);
+}
+
+/* Open state: burger morphs into an X */
+nav.nav-open .nav-burger-bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+nav.nav-open .nav-burger-bar:nth-child(2) {
+  opacity: 0;
+}
+nav.nav-open .nav-burger-bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+@media (max-width: 980px) {
+  /* Show the burger, and reorder the shell: logo | burger | lang-switcher.
+     nav-links is pulled out of flow into a full-screen drawer below. */
+  .nav-burger {
+    display: flex;
+  }
+
+  .nav-links {
+    /* was: display: none;  — replaced with an accessible off-canvas drawer */
+    position: fixed;
+    inset: 68px 0 0 0; /* below the 68px nav bar; see 62px override at <=640px below */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 12px 24px 32px;
+    background: var(--bg-darker);
+    border-top: 1px solid var(--border);
+    transform: translateY(-8px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
+    overflow-y: auto;
+    z-index: 99;
+  }
+
+  nav.nav-open .nav-links {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0s;
+  }
+
+  .nav-links a {
+    padding: 16px 4px;
+    font-size: 17px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-links a.nav-cta {
+    margin-top: 16px;
+    text-align: center;
+    border: 1px solid var(--accent);
+    border-bottom: 1px solid var(--accent);
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-links {
+    inset: 62px 0 0 0; /* matches the 62px nav height already set at this breakpoint */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-links,
+  .nav-burger-bar {
+    transition: none !important;
+  }
+}
+
 .hero {
   position: relative;
   min-height: 100vh;
@@ -928,10 +1035,6 @@ section {
 }
 
 @media (max-width: 980px) {
-  .nav-links {
-    display: none;
-  }
-
   .hero-grid,
   .strategy-grid,
   .authority-grid,
