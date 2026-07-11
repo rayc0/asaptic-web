@@ -585,7 +585,7 @@ const BULLETIN_CSS = `
 function navHtml() {
   return `  <nav>
     <div class="container">
-      <a href="/" class="nav-logo">ASAPTIC LABS</a>
+      <a href="/" class="nav-logo">ASAPTIC</a>
     </div>
   </nav>`;
 }
