@@ -646,13 +646,13 @@
         document.getElementById('tw-fallback').style.display = 'block';
       }
 
-      fetch('/tender/mo/teaser.json', { signal: AbortSignal.timeout(3000) })
+      fetch('/tender/mo/teaser.json', (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? { signal: AbortSignal.timeout(8000) } : {})
         .then(function (res) {
           if (!res.ok) throw new Error('bad status');
           return res.json();
         })
         .then(function (data) {
-          if (!data || !data.total || !Array.isArray(data.categories)) throw new Error('invalid data');
+          if (!data || !Number.isFinite(data.total) || !Array.isArray(data.categories)) throw new Error('invalid data');
           render(data);
         })
         .catch(function () {

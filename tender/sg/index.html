@@ -540,7 +540,7 @@
 
       <div class="tw-footer-note">
         Listings are summarized from publicly available Singapore public-sector procurement publications (GeBIZ, statutory boards, town councils, universities and other public bodies). Asaptic is not the procuring body for any tender referenced here and is not affiliated with the Government of Singapore.
-        <br /><a href="/tender/" class="tw-archive-link">Other markets: Hong Kong · Macao · United Kingdom · Australia →</a>
+        <br /><span style="font-size:11.5px;">Other markets: <a href="/tender/" class="tw-archive-link" style="margin-top:0;">Hong Kong</a> &middot; <a href="/tender/mo/" class="tw-archive-link" style="margin-top:0;">Macao</a> &middot; <a href="/tender/gb/" class="tw-archive-link" style="margin-top:0;">United Kingdom</a> &middot; <a href="/tender/au/" class="tw-archive-link" style="margin-top:0;">Australia</a></span>
       </div>
     </div>
   </main>
@@ -630,17 +630,22 @@
           }
 
           var href = CATEGORY_LINKS[cat.name_en];
-          var nameHtml = href
-            ? '<a class="tw-cat-name" href="' + href + '">' + cat.name_en + '</a>'
-            : '<span class="tw-cat-name">' + cat.name_en + '</span>';
-
           var row = document.createElement('div');
           row.className = 'tw-index-row';
-          row.innerHTML =
-            nameHtml +
-            '<span class="tw-dots"></span>' +
-            '<span class="tw-count">' + cat.count + '</span>' +
-            '<span class="tw-closing">' + closingHtml + '</span>';
+          var nameEl = document.createElement(href ? 'a' : 'span');
+          nameEl.className = 'tw-cat-name';
+          if (href) nameEl.href = href;
+          nameEl.textContent = cat.name_en;
+          row.appendChild(nameEl);
+          row.appendChild(document.createElement('span')).className = 'tw-dots';
+          var countEl = document.createElement('span');
+          countEl.className = 'tw-count';
+          countEl.textContent = cat.count;
+          row.appendChild(countEl);
+          var closingEl = document.createElement('span');
+          closingEl.className = 'tw-closing';
+          closingEl.innerHTML = closingHtml;
+          row.appendChild(closingEl);
           tbody.appendChild(row);
         });
       }
@@ -650,13 +655,13 @@
         document.getElementById('tw-fallback').style.display = 'block';
       }
 
-      fetch('/tender/sg/teaser.json', { signal: AbortSignal.timeout(3000) })
+      fetch('/tender/sg/teaser.json', (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? { signal: AbortSignal.timeout(8000) } : {})
         .then(function (res) {
           if (!res.ok) throw new Error('bad status');
           return res.json();
         })
         .then(function (data) {
-          if (!data || !data.total || !Array.isArray(data.categories)) throw new Error('invalid data');
+          if (!data || !Number.isFinite(data.total) || !Array.isArray(data.categories)) throw new Error('invalid data');
           render(data);
         })
         .catch(function () {
