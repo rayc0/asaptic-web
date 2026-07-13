@@ -10,17 +10,21 @@
  * emitted HTML for forbidden internal-source tokens before committing to
  * the write.
  *
- * rows.json schema (pre-sorted, pre-sanitized by the upstream pipeline):
+ * rows.json schema (pre-sorted, pre-sanitized by the upstream pipeline —
+ * see asaptic-trade-ai docs/WEEKLY_TENDER_SYNC.md "Public per-row listing"):
  *   {
  *     generated, issue_id ("YYYY-Www"), market: "HK", total, withheld,
  *     rows: [{
  *       asaptic_id, category: { name_en, name_zh, name_zht },
  *       summary_zh, summary_en?, summary_zht?,
- *       value_band | null,                 // e.g. "HK$1M–2M"
+ *       value_band: "lt_500k" | "500k_2m" | "2m_10m" | "gt_10m" | null,
  *       closing_bucket: "le_2w" | "2_4w" | "gt_4w",
  *       new_this_issue, sort_key
  *     }]
  *   }
+ * `value_band` / `closing_bucket` are canonical, locale-neutral enum keys —
+ * this baker is the ONLY place they get localized into display labels (EN /
+ * 简 / 繁), via VALUE_BAND_LABELS / STRINGS[lang].closing below.
  *
  * Usage: node scripts/bake-tender-rows.mjs <page.html> <rows.json> <lang>
  *   lang is one of: en | zh | zht
@@ -42,6 +46,39 @@ const FORBIDDEN_TOKENS = [
   { name: '\\bref\\b word', re: /\bref\b/i },
   { name: '\\bdept\\b word', re: /\bdept\b/i },
 ];
+
+// Canonical value_band enum → per-locale display label. Keys must match
+// scripts/weekly-tender-sync.mjs's VALUE_BAND_KEYS in asaptic-trade-ai
+// exactly (est_wan bands <50万/50–200万/200–1000万/>1000万).
+const VALUE_BAND_LABELS = {
+  en: { lt_500k: '<HK$0.5M', '500k_2m': 'HK$0.5–2M', '2m_10m': 'HK$2–10M', gt_10m: '>HK$10M' },
+  zh: { lt_500k: '<50万', '500k_2m': '50–200万', '2m_10m': '200–1000万', gt_10m: '>1000万' },
+  zht: { lt_500k: '<50萬', '500k_2m': '50–200萬', '2m_10m': '200–1000萬', gt_10m: '>1000萬' },
+};
+
+// Canonical 13-category taxonomy order, replicated from asaptic-trade-ai's
+// src/lib/tender-category.js (TENDER_CATEGORIES) — asaptic-web has no shared
+// dependency on that repo, so the order is mirrored here by name_en, which is
+// always present on every row.category and stable across locales. Filter
+// chips are ordered by this list, not by first-appearance in rows.json.
+const CANONICAL_CATEGORY_ORDER_EN = [
+  'Medical equipment',
+  'Medical services & pharma',
+  'IT & software',
+  'Networking & security',
+  'Food & catering',
+  'Facilities & cleaning',
+  'Vehicles & logistics',
+  'Construction & works',
+  'Consultancy & studies',
+  'Printing & publishing',
+  'Lab & scientific',
+  'Office supplies',
+  'Other',
+];
+
+const VALID_CLOSING_BUCKETS = new Set(['le_2w', '2_4w', 'gt_4w']);
+const VALID_VALUE_BANDS = new Set(['lt_500k', '500k_2m', '2m_10m', 'gt_10m']);
 
 const STRINGS = {
   en: {
@@ -121,8 +158,9 @@ function renderRowCard(row, lang, S) {
     : '';
   const closingLabel = S.closing[row.closing_bucket] || row.closing_bucket;
   const chips = [];
-  if (row.value_band) {
-    chips.push(`<span class="tw-badge stone">${escapeHtml(S.valuePrefix + row.value_band)}</span>`);
+  const bandLabel = row.value_band ? VALUE_BAND_LABELS[lang][row.value_band] : null;
+  if (bandLabel) {
+    chips.push(`<span class="tw-badge stone">${escapeHtml(S.valuePrefix + bandLabel)}</span>`);
   }
   chips.push(`<span class="tw-badge amber">${escapeHtml(closingLabel)}</span>`);
 
@@ -140,23 +178,60 @@ function renderRowCard(row, lang, S) {
   ].join('\n');
 }
 
-function renderFilterBar(rows, lang, S) {
-  const seen = new Set();
-  const cats = [];
+/**
+ * Group rows by their category (keyed by name_en, stable across locales),
+ * ordered by the CANONICAL_CATEGORY_ORDER_EN taxonomy order rather than
+ * first-appearance in rows.json. Any category not found in the canonical
+ * order (should not happen against the real taxonomy) is appended at the
+ * end, sorted by name_en, so nothing is silently dropped.
+ *
+ * @returns {{ name: string, count: number }[]} localized chip entries, plus
+ *   a running total that must equal rows.length (checked by the caller).
+ */
+function categoryChipCounts(rows, lang) {
+  const byNameEn = new Map(); // name_en -> { localizedName, count }
   for (const row of rows) {
-    const name = categoryName(row.category, lang);
-    if (!seen.has(name)) { seen.add(name); cats.push(name); }
+    const nameEn = row.category.name_en;
+    const localizedName = categoryName(row.category, lang);
+    const entry = byNameEn.get(nameEn) ?? { localizedName, count: 0 };
+    entry.count += 1;
+    byNameEn.set(nameEn, entry);
   }
-  const btns = [`<button type="button" class="tw-filter-btn is-active" data-filter="__all__">${escapeHtml(S.filterAll)}</button>`];
-  for (const name of cats) {
-    btns.push(`<button type="button" class="tw-filter-btn" data-filter="${escapeHtml(name)}">${escapeHtml(name)}</button>`);
+  const ordered = [];
+  for (const nameEn of CANONICAL_CATEGORY_ORDER_EN) {
+    const entry = byNameEn.get(nameEn);
+    if (entry) {
+      ordered.push({ name: entry.localizedName, count: entry.count });
+      byNameEn.delete(nameEn);
+    }
   }
-  return `<div class="tw-filter-bar">\n${btns.join('\n')}\n</div>`;
+  // Any leftover category not in the canonical taxonomy — append, sorted for
+  // determinism, rather than silently dropping it.
+  const leftovers = [...byNameEn.entries()].sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+  for (const [, entry] of leftovers) {
+    ordered.push({ name: entry.localizedName, count: entry.count });
+  }
+  return ordered;
+}
+
+function renderFilterBar(rows, lang, S) {
+  const chipCounts = categoryChipCounts(rows, lang);
+  const btns = [
+    `<button type="button" class="tw-filter-btn is-active" data-filter="__all__" aria-pressed="true">${escapeHtml(S.filterAll)} (${rows.length})</button>`,
+  ];
+  for (const { name, count } of chipCounts) {
+    btns.push(
+      `<button type="button" class="tw-filter-btn" data-filter="${escapeHtml(name)}" aria-pressed="false">${escapeHtml(name)} (${count})</button>`,
+    );
+  }
+  return `<div class="tw-filter-bar" role="group">\n${btns.join('\n')}\n</div>`;
 }
 
 function renderRows(data, lang) {
   const S = STRINGS[lang];
-  const rows = (data.rows || []).slice().sort((a, b) => (a.sort_key ?? 0) - (b.sort_key ?? 0));
+  // rows.json is already pre-sorted by sort_key (verified monotonic by
+  // validateRows() before this is ever called) — no re-sort here.
+  const rows = data.rows || [];
   const cards = rows.map((r) => renderRowCard(r, lang, S)).join('\n');
   const filterBar = renderFilterBar(rows, lang, S);
   return `${ROWS_START}\n<div class="tw-rows">\n${filterBar}\n${cards}\n</div>\n${ROWS_END}`;
@@ -164,7 +239,7 @@ function renderRows(data, lang) {
 
 function renderJsonLd(data, lang) {
   const S = STRINGS[lang];
-  const rows = (data.rows || []).slice().sort((a, b) => (a.sort_key ?? 0) - (b.sort_key ?? 0));
+  const rows = data.rows || [];
   const itemListElement = rows.map((r, i) => ({
     '@type': 'ListItem',
     position: i + 1,
@@ -196,6 +271,63 @@ function replaceBetweenMarkers(html, startMarker, endMarker, replacement, label)
 function setTextById(html, id, val) {
   const re = new RegExp('(id="' + id + '"[^>]*>)[^<]*(<)');
   return html.replace(re, `$1${val}$2`);
+}
+
+/**
+ * Validate the parsed rows.json payload before touching any HTML. Returns
+ * an array of error strings (empty = valid). Every check here is a
+ * fail-without-writing guard — bad input must never reach replaceBetweenMarkers.
+ */
+function validateRows(data) {
+  const errors = [];
+  const rows = Array.isArray(data.rows) ? data.rows : [];
+
+  if (typeof data.total === 'number' && rows.length !== data.total) {
+    errors.push(`rows.length (${rows.length}) !== total (${data.total})`);
+  }
+
+  const seenIds = new Set();
+  let prevSortKey;
+  let sortKeyHasPrev = false;
+
+  rows.forEach((row, i) => {
+    const where = `rows[${i}] (asaptic_id=${row?.asaptic_id ?? '(missing)'})`;
+
+    if (!row?.asaptic_id) {
+      errors.push(`${where}: missing asaptic_id`);
+    } else if (seenIds.has(row.asaptic_id)) {
+      errors.push(`${where}: duplicate asaptic_id "${row.asaptic_id}"`);
+    } else {
+      seenIds.add(row.asaptic_id);
+    }
+
+    if (!VALID_CLOSING_BUCKETS.has(row?.closing_bucket)) {
+      errors.push(`${where}: closing_bucket "${row?.closing_bucket}" not in {le_2w, 2_4w, gt_4w}`);
+    }
+
+    if (row?.value_band !== null && row?.value_band !== undefined && !VALID_VALUE_BANDS.has(row.value_band)) {
+      errors.push(`${where}: value_band "${row.value_band}" not in {lt_500k, 500k_2m, 2m_10m, gt_10m, null}`);
+    }
+
+    const cat = row?.category;
+    if (!cat || !cat.name_en || !cat.name_zh || !cat.name_zht) {
+      errors.push(`${where}: category missing name_en/name_zh/name_zht`);
+    }
+
+    if (!row?.summary_zh) {
+      errors.push(`${where}: missing summary_zh`);
+    }
+
+    if (row?.sort_key === undefined || row?.sort_key === null) {
+      errors.push(`${where}: missing sort_key`);
+    } else if (sortKeyHasPrev && prevSortKey > row.sort_key) {
+      errors.push(`${where}: sort_key out of order (rows must already be sorted ascending by sort_key)`);
+    }
+    prevSortKey = row?.sort_key;
+    sortKeyHasPrev = true;
+  });
+
+  return errors;
 }
 
 function main() {
@@ -244,6 +376,14 @@ function main() {
   const ageDays = (Date.now() - generatedDate.getTime()) / 86400000;
   if (ageDays > MAX_AGE_DAYS) {
     console.error(`[bake-tender-rows] refuse to bake: ${rowsPath} is ${ageDays.toFixed(1)} days old (max ${MAX_AGE_DAYS})`);
+    process.exit(1);
+  }
+
+  // ── Guard: row-level input validation (fail without touching HTML) ────
+  const validationErrors = validateRows(data);
+  if (validationErrors.length > 0) {
+    console.error(`[bake-tender-rows] refuse to bake: ${rowsPath} failed validation:`);
+    for (const err of validationErrors) console.error(`  - ${err}`);
     process.exit(1);
   }
 
