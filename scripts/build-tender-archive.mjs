@@ -861,15 +861,15 @@ ${langSwitcherHtml(langKey, `/tender/archive/${snapshot.key}/`)}
             <div class="tw-stat-num">${data.total}</div>
             <div class="tw-stat-label">${L.statTotal}</div>
           </div>
-          <div>
-            <div class="tw-stat-num">${data.sources && data.sources.government != null ? data.sources.government : '—'}</div>
+${data.sources ? `          <div>
+            <div class="tw-stat-num">${data.sources.government != null ? data.sources.government : '—'}</div>
             <div class="tw-stat-label">${L.statGov}</div>
           </div>
           <div>
-            <div class="tw-stat-num">${data.sources && data.sources.public_bodies != null ? data.sources.public_bodies : '—'}</div>
+            <div class="tw-stat-num">${data.sources.public_bodies != null ? data.sources.public_bodies : '—'}</div>
             <div class="tw-stat-label">${L.statPub}</div>
           </div>
-        </div>
+` : ''}        </div>
         <span class="tw-stats-updated">${updatedLabel}</span>
       </div>
 
