@@ -14,8 +14,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Make sweep script executable
-        run: chmod +x .github/scripts/firewall_sweep.sh
+      - name: Make sweep scripts executable
+        run: chmod +x .github/scripts/firewall_sweep.sh .github/scripts/gating_sweep.sh
 
-      - name: Run firewall sweep
+      - name: Run firewall sweep (brand-string leakage)
         run: bash .github/scripts/firewall_sweep.sh .
+
+      # Brand-string leakage alone doesn't catch an internal-audience page
+      # (workbench/ops/dashboard tool) shipping ungated in the public
+      # deploy output — added 2026-07-14 after the workbench false-alarm
+      # showed the firewall had no gating check at all.
+      - name: Run gating sweep (ungated internal-audience pages)
+        run: bash .github/scripts/gating_sweep.sh .
