@@ -3575,24 +3575,77 @@
 
 
   <script>
-    // Progressive-enhancement category filter for the baked row cards.
-    // All cards are already present in the static HTML — this only toggles
-    // visibility, so the section still works with JS disabled (all shown).
+    // Progressive-enhancement two-dimension filter (category × status) for
+    // the baked row cards. All cards are already present in the static
+    // HTML — this only toggles visibility, so the section still works with
+    // JS disabled (all shown, both dimensions default to "all").
     (function () {
-      var bar = document.querySelector('.tw-filter-bar');
-      if (!bar) return;
-      bar.addEventListener('click', function (e) {
-        var btn = e.target.closest('.tw-filter-btn');
-        if (!btn) return;
-        var cat = btn.getAttribute('data-filter');
-        var buttons = bar.querySelectorAll('.tw-filter-btn');
-        for (var i = 0; i < buttons.length; i++) { buttons[i].classList.remove('is-active'); buttons[i].setAttribute('aria-pressed', 'false'); }
+      var cards = document.querySelectorAll('.tw-rc');
+      if (!cards.length) return;
+      var pastHeading = document.querySelector('.tw-index-heading-past');
+      var pastSection = document.querySelector('.tw-rows-past');
+      var activeCat = '__all__';
+      var activeStatus = '__all__';
+      // Market bar is only baked when rows span >1 market (see
+      // renderMarketFilterBar in bake-tender-rows.mjs) — when absent,
+      // activeMarket simply stays '__all__' forever and matchesMarket is
+      // always true, so this is a no-op on a single-market page.
+      var activeMarket = '__all__';
+
+      function applyFilters() {
+        var anyPassedVisible = false;
+        for (var j = 0; j < cards.length; j++) {
+          var card = cards[j];
+          var matchesCat = activeCat === '__all__' || card.getAttribute('data-cat') === activeCat;
+          var matchesStatus = activeStatus === '__all__' || card.getAttribute('data-status') === activeStatus;
+          var matchesMarket = activeMarket === '__all__' || card.getAttribute('data-market') === activeMarket;
+          var show = matchesCat && matchesStatus && matchesMarket;
+          card.style.display = show ? '' : 'none';
+          if (show && card.getAttribute('data-status') === 'deadline_passed') anyPassedVisible = true;
+        }
+        // Hide the "Past requirements" subheading/section whenever no
+        // deadline-passed card is currently visible (e.g. status=open
+        // selected, or a category/market with zero passed rows).
+        if (pastHeading) pastHeading.style.display = anyPassedVisible ? '' : 'none';
+        if (pastSection) pastSection.style.display = anyPassedVisible ? '' : 'none';
+      }
+
+      function setActiveButton(btn) {
+        var group = btn.closest('.tw-cat-bar') || btn.closest('.tw-status-bar') || btn.closest('.tw-market-bar') || btn.closest('.tw-filter-bar');
+        if (!group) return;
+        var buttons = group.querySelectorAll('.tw-filter-btn');
+        for (var i = 0; i < buttons.length; i++) {
+          buttons[i].classList.remove('is-active');
+          buttons[i].setAttribute('aria-pressed', 'false');
+        }
         btn.classList.add('is-active');
         btn.setAttribute('aria-pressed', 'true');
-        var cards = document.querySelectorAll('.tw-rc');
-        for (var j = 0; j < cards.length; j++) {
-          var show = cat === '__all__' || cards[j].getAttribute('data-cat') === cat;
-          cards[j].style.display = show ? '' : 'none';
+      }
+
+      document.addEventListener('click', function (e) {
+        // Status/market buttons also carry the generic .tw-filter-btn class
+        // (for shared pill styling) — check the more specific
+        // .tw-status-btn / .tw-market-btn classes first so those clicks
+        // never fall through to the category branch below.
+        var statusBtn = e.target.closest('.tw-status-btn');
+        if (statusBtn) {
+          activeStatus = statusBtn.getAttribute('data-status');
+          setActiveButton(statusBtn);
+          applyFilters();
+          return;
+        }
+        var marketBtn = e.target.closest('.tw-market-btn');
+        if (marketBtn) {
+          activeMarket = marketBtn.getAttribute('data-market');
+          setActiveButton(marketBtn);
+          applyFilters();
+          return;
+        }
+        var catBtn = e.target.closest('.tw-filter-btn');
+        if (catBtn) {
+          activeCat = catBtn.getAttribute('data-filter');
+          setActiveButton(catBtn);
+          applyFilters();
         }
       });
     })();
