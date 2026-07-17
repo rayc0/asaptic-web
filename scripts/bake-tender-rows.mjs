@@ -116,9 +116,9 @@ const VALID_MARKET_RE = /^[A-Z]{2}$/;
 // uppercase code still validates (VALID_MARKET_RE) and just renders as the
 // raw code itself, so a brand-new market never blocks a bake.
 const MARKET_NAMES = {
-  en: { HK: 'Hong Kong', SG: 'Singapore', MO: 'Macau', GB: 'UK', AU: 'Australia' },
-  zh: { HK: '香港', SG: '新加坡', MO: '澳门', GB: '英国', AU: '澳大利亚' },
-  zht: { HK: '香港', SG: '新加坡', MO: '澳門', GB: '英國', AU: '澳大利亞' },
+  en: { HK: 'Hong Kong', SG: 'Singapore', MO: 'Macau', GB: 'UK', AU: 'Australia', CA: 'Canada', EU: 'EU' },
+  zh: { HK: '香港', SG: '新加坡', MO: '澳门', GB: '英国', AU: '澳大利亚', CA: '加拿大', EU: '欧盟' },
+  zht: { HK: '香港', SG: '新加坡', MO: '澳門', GB: '英國', AU: '澳大利亞', CA: '加拿大', EU: '歐盟' },
 };
 
 function marketName(code, lang) {
