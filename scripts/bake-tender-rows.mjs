@@ -318,9 +318,21 @@ function validateRows(data) {
   const seenIds = new Set();
   let prevSortKey;
   let sortKeyHasPrev = false;
+  let inPassedGroup = false;
 
   rows.forEach((row, i) => {
     const where = `rows[${i}] (asaptic_id=${row?.asaptic_id ?? '(missing)'})`;
+
+    // Rows arrive as TWO contiguous groups (2026-07-17 policy): open rows
+    // first, then deadline_passed. sort_key ascending is enforced WITHIN
+    // each group; the sequence resets at the group boundary.
+    const isPassed = row?.closing_bucket === 'deadline_passed';
+    if (isPassed && !inPassedGroup) {
+      inPassedGroup = true;
+      sortKeyHasPrev = false;
+    } else if (!isPassed && inPassedGroup) {
+      errors.push(`${where}: open row after the deadline_passed group (rows must be grouped open-first)`);
+    }
 
     if (!row?.asaptic_id) {
       errors.push(`${where}: missing asaptic_id`);
@@ -331,7 +343,7 @@ function validateRows(data) {
     }
 
     if (!VALID_CLOSING_BUCKETS.has(row?.closing_bucket)) {
-      errors.push(`${where}: closing_bucket "${row?.closing_bucket}" not in {le_2w, 2_4w, gt_4w}`);
+      errors.push(`${where}: closing_bucket "${row?.closing_bucket}" not in {le_2w, 2_4w, gt_4w, deadline_passed}`);
     }
 
     if (row?.value_band !== null && row?.value_band !== undefined && !VALID_VALUE_BANDS.has(row.value_band)) {
