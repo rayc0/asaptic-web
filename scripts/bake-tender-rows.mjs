@@ -33,6 +33,15 @@
  * renderRows(). rows.json is already pre-sorted open-rows-first, so the
  * split point is just the first row with closing_bucket === 'deadline_passed'.
  *
+ * Two independent, AND-combined filter dimensions (2026-07-17 follow-up):
+ * every card is stamped `data-status="open"` or `data-status="deadline_passed"`
+ * (derived from closing_bucket) alongside the pre-existing `data-cat`. A
+ * second baked chip group (class `tw-status-bar`, buttons `tw-status-btn`)
+ * lets visitors filter to still-open tenders independently of category. The
+ * page-shell JS (outside the bake markers, see tender/index.html /
+ * zh|zht/tender/index.html) combines both with AND and hides the "Past
+ * requirements" subheading whenever no deadline_passed card is visible.
+ *
  * Usage: node scripts/bake-tender-rows.mjs <page.html> <rows.json> <lang>
  *   lang is one of: en | zh | zht
  *   (the refresh pipeline calls it once per locale after bake-teaser.mjs)
@@ -98,6 +107,9 @@ const STRINGS = {
     lang: 'en',
     listName: "This Week's HK Public-Sector Tenders",
     pastHeading: 'Past requirements (deadline passed)',
+    statusAll: 'All statuses',
+    statusOpen: 'Still open',
+    statusPassed: 'Deadline passed',
   },
   zh: {
     closing: { le_2w: '≤2周', '2_4w': '2–4周', gt_4w: '>4周', deadline_passed: '已过截止' },
@@ -109,6 +121,9 @@ const STRINGS = {
     lang: 'zh',
     listName: '本周香港公共采购招标',
     pastHeading: '过往需求（已过截止）',
+    statusAll: '全部',
+    statusOpen: '未截止',
+    statusPassed: '已过截止',
   },
   zht: {
     closing: { le_2w: '≤2週', '2_4w': '2–4週', gt_4w: '>4週', deadline_passed: '已過截止' },
@@ -120,6 +135,9 @@ const STRINGS = {
     lang: 'zht',
     listName: '本週香港公共採購招標',
     pastHeading: '過往需求（已過截止）',
+    statusAll: '全部',
+    statusOpen: '未截止',
+    statusPassed: '已過截止',
   },
 };
 
@@ -159,8 +177,19 @@ function summaryFor(row, lang) {
   return { text: row.summary_zh, lang: null };
 }
 
+/**
+ * Derive the coarse two-state STATUS filter dimension from a row's
+ * closing_bucket — independent of, and AND-combined with, the category
+ * filter dimension by the page-shell JS. 'deadline_passed' rows are
+ * 'deadline_passed'; every other (still-open) bucket is 'open'.
+ */
+function rowStatus(row) {
+  return row.closing_bucket === 'deadline_passed' ? 'deadline_passed' : 'open';
+}
+
 function renderRowCard(row, lang, S) {
   const catName = categoryName(row.category, lang);
+  const status = rowStatus(row);
   const summary = summaryFor(row, lang);
   const langAttr = summary.lang ? ` lang="${summary.lang}"` : '';
   const newBadge = row.new_this_issue
@@ -175,7 +204,7 @@ function renderRowCard(row, lang, S) {
   chips.push(`<span class="tw-badge amber">${escapeHtml(closingLabel)}</span>`);
 
   return [
-    `<div class="tw-rc" data-cat="${escapeHtml(catName)}">`,
+    `<div class="tw-rc" data-cat="${escapeHtml(catName)}" data-status="${status}">`,
     `  <div class="tw-rc-top">`,
     `    <span class="tw-rc-id">${escapeHtml(row.asaptic_id)}</span>`,
     `    <span class="tw-rc-cat">${escapeHtml(catName)}</span>`,
@@ -234,7 +263,27 @@ function renderFilterBar(rows, lang, S) {
       `<button type="button" class="tw-filter-btn" data-filter="${escapeHtml(name)}" aria-pressed="false">${escapeHtml(name)} (${count})</button>`,
     );
   }
-  return `<div class="tw-filter-bar" role="group">\n${btns.join('\n')}\n</div>`;
+  // tw-cat-bar is a scoping hook for the page-shell JS (mirrors tw-status-bar
+  // below) — reuses tw-filter-bar for layout/spacing, distinguishable from
+  // the status bar for is-active bookkeeping.
+  return `<div class="tw-filter-bar tw-cat-bar" role="group">\n${btns.join('\n')}\n</div>`;
+}
+
+/**
+ * Second, independent filter dimension (2026-07-17 follow-up): still-open
+ * vs deadline-passed, AND-combined with the category filter by the
+ * page-shell JS. Counts are computed fresh from `rows` on every bake so they
+ * never drift from the category chip counts / masthead totals.
+ */
+function renderStatusFilterBar(rows, lang, S) {
+  const openCount = rows.filter((r) => rowStatus(r) === 'open').length;
+  const passedCount = rows.filter((r) => rowStatus(r) === 'deadline_passed').length;
+  const btns = [
+    `<button type="button" class="tw-filter-btn tw-status-btn is-active" data-status="__all__" aria-pressed="true">${escapeHtml(S.statusAll)} (${rows.length})</button>`,
+    `<button type="button" class="tw-filter-btn tw-status-btn" data-status="open" aria-pressed="false">${escapeHtml(S.statusOpen)} (${openCount})</button>`,
+    `<button type="button" class="tw-filter-btn tw-status-btn" data-status="deadline_passed" aria-pressed="false">${escapeHtml(S.statusPassed)} (${passedCount})</button>`,
+  ];
+  return `<div class="tw-filter-bar tw-status-bar" role="group">\n${btns.join('\n')}\n</div>`;
 }
 
 function renderRows(data, lang) {
@@ -248,8 +297,9 @@ function renderRows(data, lang) {
 
   // Filter bar / category chip counts span ALL rows (open + deadline-passed)
   // so the counts reflect the full volume of content on the page, not just
-  // the open subset.
+  // the open subset. Same for the second (status) filter dimension.
   const filterBar = renderFilterBar(rows, lang, S);
+  const statusBar = renderStatusFilterBar(rows, lang, S);
   const openCards = openRows.map((r) => renderRowCard(r, lang, S)).join('\n');
 
   let pastSection = '';
@@ -261,7 +311,7 @@ function renderRows(data, lang) {
   }
 
   return (
-    `${ROWS_START}\n<div class="tw-rows">\n${filterBar}\n${openCards}\n</div>` +
+    `${ROWS_START}\n<div class="tw-rows">\n${filterBar}\n${statusBar}\n${openCards}\n</div>` +
     `${pastSection}\n${ROWS_END}`
   );
 }
