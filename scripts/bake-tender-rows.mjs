@@ -15,13 +15,28 @@
  *   {
  *     generated, issue_id ("YYYY-Www"), market: "HK", total, withheld,
  *     rows: [{
- *       asaptic_id, category: { name_en, name_zh, name_zht },
+ *       asaptic_id, market ("HK" | "SG" | ... — 2-letter code, OURS, same as
+ *         asaptic_id — defaults to "HK" upstream for legacy records),
+ *       category: { name_en, name_zh, name_zht },
  *       summary_zh, summary_en?, summary_zht?,
  *       value_band: "lt_500k" | "500k_2m" | "2m_10m" | "gt_10m" | null,
  *       closing_bucket: "le_2w" | "2_4w" | "gt_4w" | "deadline_passed",
  *       new_this_issue, sort_key
  *     }]
  *   }
+ *
+ * Market filter (2026-07-17 follow-up — feedback_tender_market_dimension):
+ * every card is additionally stamped `data-market="HK"` etc. A THIRD baked
+ * chip group (class `tw-market-bar`, buttons `tw-market-btn`) lets visitors
+ * filter by market, AND-combined with category + status by the page-shell
+ * JS — but ONLY when the baked rows span more than one market; a
+ * single-market bake renders no market bar at all, so the page looks
+ * exactly as it did before this dimension existed. Rows themselves are
+ * NEVER grouped/re-sorted by market — the existing open-then-deadline-passed
+ * sort_key ordering is global across all markets (see
+ * asaptic-trade-ai docs/WEEKLY_TENDER_SYNC.md's ordering-contract note);
+ * grouping by market here would recreate the exact source-block
+ * identification signal that ordering exists to avoid.
  * `value_band` / `closing_bucket` are canonical, locale-neutral enum keys —
  * this baker is the ONLY place they get localized into display labels (EN /
  * 简 / 繁), via VALUE_BAND_LABELS / STRINGS[lang].closing below.
@@ -95,6 +110,20 @@ const CANONICAL_CATEGORY_ORDER_EN = [
 
 const VALID_CLOSING_BUCKETS = new Set(['le_2w', '2_4w', 'gt_4w', 'deadline_passed']);
 const VALID_VALUE_BANDS = new Set(['lt_500k', '500k_2m', '2m_10m', 'gt_10m']);
+const VALID_MARKET_RE = /^[A-Z]{2}$/;
+
+// Known market codes get a proper per-locale name; any other 2-letter
+// uppercase code still validates (VALID_MARKET_RE) and just renders as the
+// raw code itself, so a brand-new market never blocks a bake.
+const MARKET_NAMES = {
+  en: { HK: 'Hong Kong', SG: 'Singapore', MO: 'Macau', GB: 'UK', AU: 'Australia' },
+  zh: { HK: '香港', SG: '新加坡', MO: '澳门', GB: '英国', AU: '澳大利亚' },
+  zht: { HK: '香港', SG: '新加坡', MO: '澳門', GB: '英國', AU: '澳大利亞' },
+};
+
+function marketName(code, lang) {
+  return (MARKET_NAMES[lang] && MARKET_NAMES[lang][code]) || code;
+}
 
 const STRINGS = {
   en: {
@@ -110,6 +139,7 @@ const STRINGS = {
     statusAll: 'All statuses',
     statusOpen: 'Still open',
     statusPassed: 'Deadline passed',
+    marketAll: 'All markets',
   },
   zh: {
     closing: { le_2w: '≤2周', '2_4w': '2–4周', gt_4w: '>4周', deadline_passed: '已过截止' },
@@ -124,6 +154,7 @@ const STRINGS = {
     statusAll: '全部',
     statusOpen: '未截止',
     statusPassed: '已过截止',
+    marketAll: '全部市场',
   },
   zht: {
     closing: { le_2w: '≤2週', '2_4w': '2–4週', gt_4w: '>4週', deadline_passed: '已過截止' },
@@ -138,6 +169,7 @@ const STRINGS = {
     statusAll: '全部',
     statusOpen: '未截止',
     statusPassed: '已過截止',
+    marketAll: '全部市場',
   },
 };
 
@@ -190,6 +222,7 @@ function rowStatus(row) {
 function renderRowCard(row, lang, S) {
   const catName = categoryName(row.category, lang);
   const status = rowStatus(row);
+  const market = row.market || 'HK';
   const summary = summaryFor(row, lang);
   const langAttr = summary.lang ? ` lang="${summary.lang}"` : '';
   const newBadge = row.new_this_issue
@@ -204,7 +237,7 @@ function renderRowCard(row, lang, S) {
   chips.push(`<span class="tw-badge amber">${escapeHtml(closingLabel)}</span>`);
 
   return [
-    `<div class="tw-rc" data-cat="${escapeHtml(catName)}" data-status="${status}">`,
+    `<div class="tw-rc" data-cat="${escapeHtml(catName)}" data-status="${status}" data-market="${escapeHtml(market)}">`,
     `  <div class="tw-rc-top">`,
     `    <span class="tw-rc-id">${escapeHtml(row.asaptic_id)}</span>`,
     `    <span class="tw-rc-cat">${escapeHtml(catName)}</span>`,
@@ -286,6 +319,33 @@ function renderStatusFilterBar(rows, lang, S) {
   return `<div class="tw-filter-bar tw-status-bar" role="group">\n${btns.join('\n')}\n</div>`;
 }
 
+/**
+ * Third, independent filter dimension (2026-07-17 follow-up): market,
+ * AND-combined with category + status by the page-shell JS. ONLY rendered
+ * (returns '') when the baked rows span a single market — a single-market
+ * bake must look exactly like it did before this dimension existed. Counts
+ * are computed fresh from `rows` on every bake, same as the status bar.
+ */
+function renderMarketFilterBar(rows, lang, S) {
+  const counts = new Map(); // code -> count, insertion order = first-appearance
+  for (const row of rows) {
+    const code = row.market || 'HK';
+    counts.set(code, (counts.get(code) || 0) + 1);
+  }
+  if (counts.size <= 1) return '';
+
+  const codes = [...counts.keys()].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  const btns = [
+    `<button type="button" class="tw-filter-btn tw-market-btn is-active" data-market="__all__" aria-pressed="true">${escapeHtml(S.marketAll)} (${rows.length})</button>`,
+  ];
+  for (const code of codes) {
+    btns.push(
+      `<button type="button" class="tw-filter-btn tw-market-btn" data-market="${escapeHtml(code)}" aria-pressed="false">${escapeHtml(marketName(code, lang))} (${counts.get(code)})</button>`,
+    );
+  }
+  return `<div class="tw-filter-bar tw-market-bar" role="group">\n${btns.join('\n')}\n</div>`;
+}
+
 function renderRows(data, lang) {
   const S = STRINGS[lang];
   // rows.json is already pre-sorted by sort_key WITHIN two groups — all
@@ -300,6 +360,7 @@ function renderRows(data, lang) {
   // the open subset. Same for the second (status) filter dimension.
   const filterBar = renderFilterBar(rows, lang, S);
   const statusBar = renderStatusFilterBar(rows, lang, S);
+  const marketBar = renderMarketFilterBar(rows, lang, S);
   const openCards = openRows.map((r) => renderRowCard(r, lang, S)).join('\n');
 
   let pastSection = '';
@@ -311,7 +372,7 @@ function renderRows(data, lang) {
   }
 
   return (
-    `${ROWS_START}\n<div class="tw-rows">\n${filterBar}\n${statusBar}\n${openCards}\n</div>` +
+    `${ROWS_START}\n<div class="tw-rows">\n${filterBar}\n${statusBar}\n${marketBar}\n${openCards}\n</div>` +
     `${pastSection}\n${ROWS_END}`
   );
 }
@@ -407,6 +468,10 @@ function validateRows(data) {
 
     if (!row?.summary_zh) {
       errors.push(`${where}: missing summary_zh`);
+    }
+
+    if (row?.market !== undefined && row?.market !== null && !VALID_MARKET_RE.test(row.market)) {
+      errors.push(`${where}: market "${row.market}" is not a 2-letter uppercase code`);
     }
 
     if (row?.sort_key === undefined || row?.sort_key === null) {
