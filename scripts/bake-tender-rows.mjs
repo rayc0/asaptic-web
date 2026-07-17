@@ -18,13 +18,20 @@
  *       asaptic_id, category: { name_en, name_zh, name_zht },
  *       summary_zh, summary_en?, summary_zht?,
  *       value_band: "lt_500k" | "500k_2m" | "2m_10m" | "gt_10m" | null,
- *       closing_bucket: "le_2w" | "2_4w" | "gt_4w",
+ *       closing_bucket: "le_2w" | "2_4w" | "gt_4w" | "deadline_passed",
  *       new_this_issue, sort_key
  *     }]
  *   }
  * `value_band` / `closing_bucket` are canonical, locale-neutral enum keys —
  * this baker is the ONLY place they get localized into display labels (EN /
  * 简 / 繁), via VALUE_BAND_LABELS / STRINGS[lang].closing below.
+ *
+ * `closing_bucket: "deadline_passed"` rows (2026-07-17 policy — old/closed
+ * tenders stay on the public page instead of disappearing, so visitors see
+ * the volume of content) are rendered AFTER all non-deadline-passed rows,
+ * under a separate "Past requirements (deadline passed)" subheading — see
+ * renderRows(). rows.json is already pre-sorted open-rows-first, so the
+ * split point is just the first row with closing_bucket === 'deadline_passed'.
  *
  * Usage: node scripts/bake-tender-rows.mjs <page.html> <rows.json> <lang>
  *   lang is one of: en | zh | zht
@@ -77,12 +84,12 @@ const CANONICAL_CATEGORY_ORDER_EN = [
   'Other',
 ];
 
-const VALID_CLOSING_BUCKETS = new Set(['le_2w', '2_4w', 'gt_4w']);
+const VALID_CLOSING_BUCKETS = new Set(['le_2w', '2_4w', 'gt_4w', 'deadline_passed']);
 const VALID_VALUE_BANDS = new Set(['lt_500k', '500k_2m', '2m_10m', 'gt_10m']);
 
 const STRINGS = {
   en: {
-    closing: { le_2w: '≤2 weeks', '2_4w': '2–4 weeks', gt_4w: '>4 weeks' },
+    closing: { le_2w: '≤2 weeks', '2_4w': '2–4 weeks', gt_4w: '>4 weeks', deadline_passed: 'Deadline passed' },
     valuePrefix: 'rough est. ',
     newBadge: 'NEW',
     cta: 'Request supplier specification pack',
@@ -90,9 +97,10 @@ const STRINGS = {
     fmtUpdated: (d) => 'Updated ' + d.toLocaleDateString('en-HK', { year: 'numeric', month: 'short', day: 'numeric' }),
     lang: 'en',
     listName: "This Week's HK Public-Sector Tenders",
+    pastHeading: 'Past requirements (deadline passed)',
   },
   zh: {
-    closing: { le_2w: '≤2周', '2_4w': '2–4周', gt_4w: '>4周' },
+    closing: { le_2w: '≤2周', '2_4w': '2–4周', gt_4w: '>4周', deadline_passed: '已过截止' },
     valuePrefix: '粗估 ',
     newBadge: '新',
     cta: '申请供应商规格包',
@@ -100,9 +108,10 @@ const STRINGS = {
     fmtUpdated: (d) => '更新于 ' + d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' }),
     lang: 'zh',
     listName: '本周香港公共采购招标',
+    pastHeading: '过往需求（已过截止）',
   },
   zht: {
-    closing: { le_2w: '≤2週', '2_4w': '2–4週', gt_4w: '>4週' },
+    closing: { le_2w: '≤2週', '2_4w': '2–4週', gt_4w: '>4週', deadline_passed: '已過截止' },
     valuePrefix: '粗估 ',
     newBadge: '新',
     cta: '申請供應商規格包',
@@ -110,6 +119,7 @@ const STRINGS = {
     fmtUpdated: (d) => '更新於 ' + d.toLocaleDateString('zh-HK', { year: 'numeric', month: 'short', day: 'numeric' }),
     lang: 'zht',
     listName: '本週香港公共採購招標',
+    pastHeading: '過往需求（已過截止）',
   },
 };
 
@@ -229,12 +239,31 @@ function renderFilterBar(rows, lang, S) {
 
 function renderRows(data, lang) {
   const S = STRINGS[lang];
-  // rows.json is already pre-sorted by sort_key (verified monotonic by
-  // validateRows() before this is ever called) — no re-sort here.
+  // rows.json is already pre-sorted by sort_key WITHIN two groups — all
+  // non-deadline-passed rows first, then all deadline_passed rows (see
+  // asaptic-trade-ai's buildPublicRows() ordering) — no re-sort here.
   const rows = data.rows || [];
-  const cards = rows.map((r) => renderRowCard(r, lang, S)).join('\n');
+  const openRows = rows.filter((r) => r.closing_bucket !== 'deadline_passed');
+  const closedRows = rows.filter((r) => r.closing_bucket === 'deadline_passed');
+
+  // Filter bar / category chip counts span ALL rows (open + deadline-passed)
+  // so the counts reflect the full volume of content on the page, not just
+  // the open subset.
   const filterBar = renderFilterBar(rows, lang, S);
-  return `${ROWS_START}\n<div class="tw-rows">\n${filterBar}\n${cards}\n</div>\n${ROWS_END}`;
+  const openCards = openRows.map((r) => renderRowCard(r, lang, S)).join('\n');
+
+  let pastSection = '';
+  if (closedRows.length > 0) {
+    const closedCards = closedRows.map((r) => renderRowCard(r, lang, S)).join('\n');
+    pastSection =
+      `\n<h2 class="tw-index-heading tw-index-heading-past">${escapeHtml(S.pastHeading)}</h2>\n` +
+      `<div class="tw-rows tw-rows-past">\n${closedCards}\n</div>`;
+  }
+
+  return (
+    `${ROWS_START}\n<div class="tw-rows">\n${filterBar}\n${openCards}\n</div>` +
+    `${pastSection}\n${ROWS_END}`
+  );
 }
 
 function renderJsonLd(data, lang) {
