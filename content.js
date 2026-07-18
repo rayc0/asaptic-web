@@ -1,6 +1,7 @@
 const CONTENT = {
   en: {
     nav_physical: "Engineering",
+    nav_robot: "Robot 101",
     nav_sourcing: "Sourcing",
     nav_watchlist: "Watchlist",
     nav_engage: "Engage",
@@ -212,6 +213,7 @@ const CONTENT = {
   },
   zh: {
     nav_physical: "工程",
+    nav_robot: "Robot 101",
     nav_sourcing: "采购",
     nav_watchlist: "观察名单",
     nav_engage: "参与",
@@ -423,6 +425,7 @@ const CONTENT = {
   },
   zht: {
     nav_physical: "工程",
+    nav_robot: "Robot 101",
     nav_sourcing: "採購",
     nav_watchlist: "觀察名單",
     nav_engage: "參與",
@@ -633,6 +636,7 @@ const CONTENT = {
   },
   pt: {
     nav_physical: "Engenharia",
+    nav_robot: "Robot 101",
     nav_sourcing: "Sourcing",
     nav_watchlist: "Watchlist",
     nav_engage: "Envolver",
