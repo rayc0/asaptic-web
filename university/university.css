@@ -1,0 +1,351 @@
+/* ── Asaptic Trade University — shared page styles (/university/**) ────
+   Same paper-sheet "gazette" design language as Robot 101 and the Tender
+   Bulletin, reused verbatim (.rb-* classes) for visual consistency across
+   Asaptic's content hubs. Page-scoped: everything hangs off .rb-frame.  */
+
+.rb-frame {
+  --rb-paper: #F6F3EC;
+  --rb-ink: #191B1E;
+  --rb-seal: #BE3A2B;
+  --rb-stone: #6E7378;
+  --rb-line: #D8D2C4;
+  --rb-wash: #EEE9DD;
+  --rb-serif: "Source Serif 4", Georgia, "Songti SC", "Noto Serif CJK SC", serif;
+  --rb-body-font: Inter, "PingFang SC", system-ui, -apple-system, sans-serif;
+  --rb-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 72px 24px 96px;
+  font-family: var(--rb-body-font);
+}
+
+.rb-sheet {
+  background: var(--rb-paper);
+  color: var(--rb-ink);
+  border-radius: 2px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35), 0 2px 0 rgba(0, 0, 0, 0.08);
+  padding: 48px 44px 40px;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rb-sheet {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: rb-sheet-in 250ms ease-out forwards;
+  }
+}
+@keyframes rb-sheet-in { to { opacity: 1; transform: translateY(0); } }
+
+/* ── Masthead ── */
+.rb-masthead-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.rb-eyebrow {
+  display: block;
+  font-family: var(--rb-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--rb-stone);
+}
+.rb-langs {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--rb-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.rb-langs a { color: var(--rb-stone); text-decoration: none; }
+.rb-langs a[aria-current="page"] { color: var(--rb-ink); border-bottom: 2px solid var(--rb-seal); }
+.rb-langs a:hover { color: var(--rb-ink); }
+.rb-lang-sep { color: var(--rb-line); }
+/* Neutralize site-wide fixed-nav rule (style.css nav{position:fixed}) */
+nav.rb-langs {
+  position: static;
+  height: auto;
+  background: transparent;
+  border: 0;
+  backdrop-filter: none;
+  z-index: auto;
+}
+
+.rb-rule { margin: 14px 0 22px; }
+.rb-rule-thin { height: 1px; background: var(--rb-ink); }
+.rb-rule-thick { height: 4px; background: var(--rb-ink); margin-top: 2px; }
+
+/* ── Headings & prose ── */
+.rb-title {
+  font-family: var(--rb-serif);
+  font-size: clamp(30px, 5vw, 44px);
+  line-height: 1.12;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 6px 0 16px;
+  color: var(--rb-ink);
+}
+.rb-kicker {
+  font-family: var(--rb-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rb-seal);
+  margin: 0 0 10px;
+}
+.rb-intro {
+  font-size: 16.5px;
+  line-height: 1.75;
+  color: var(--rb-ink);
+  max-width: 62ch;
+  margin: 0 0 28px;
+}
+.rb-h2 {
+  font-family: var(--rb-serif);
+  font-size: 24px;
+  font-weight: 700;
+  margin: 44px 0 14px;
+  padding-top: 28px;
+  border-top: 1px solid var(--rb-line);
+}
+.rb-h3 {
+  font-size: 16px;
+  font-weight: 650;
+  margin: 26px 0 8px;
+}
+.rb-body, .rb-prose p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--rb-ink);
+  margin: 0 0 16px;
+  max-width: 68ch;
+}
+.rb-prose ul, .rb-prose ol {
+  margin: 0 0 16px;
+  padding-left: 22px;
+  max-width: 66ch;
+}
+.rb-prose li { font-size: 15px; line-height: 1.75; margin-bottom: 8px; }
+.rb-prose strong { font-weight: 650; }
+
+/* ── GEO answer block ── */
+.rb-answer {
+  background: var(--rb-wash);
+  border-left: 3px solid var(--rb-seal);
+  border-radius: 2px;
+  padding: 18px 22px;
+  margin: 0 0 8px;
+}
+.rb-answer p { font-size: 14.5px; line-height: 1.75; margin: 0; color: var(--rb-ink); }
+
+/* ── Category grid (hub) ── */
+.rb-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  margin: 6px 0 8px;
+}
+.rb-card {
+  border: 1px solid var(--rb-line);
+  border-radius: 2px;
+  padding: 18px 18px 16px;
+  background: rgba(255, 255, 255, 0.35);
+}
+.rb-card-hero {
+  grid-column: 1 / -1;
+  background: var(--rb-wash);
+  border-color: var(--rb-ink);
+}
+.rb-card h3 {
+  font-family: var(--rb-serif);
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+.rb-card p { font-size: 13.5px; line-height: 1.65; color: var(--rb-stone); margin: 0; }
+.rb-card-hero p { color: var(--rb-ink); font-size: 14px; max-width: 70ch; }
+
+/* ── Steps ── */
+.rb-steps {
+  counter-reset: rb-step;
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 22px;
+  max-width: 66ch;
+}
+.rb-steps li {
+  counter-increment: rb-step;
+  position: relative;
+  padding: 0 0 18px 52px;
+  font-size: 15px;
+  line-height: 1.75;
+}
+.rb-steps li::before {
+  content: counter(rb-step, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 2px;
+  font-family: var(--rb-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--rb-seal);
+}
+
+/* ── CTA ── */
+.rb-cta {
+  display: inline-block;
+  background: var(--rb-ink);
+  color: var(--rb-paper);
+  font-family: var(--rb-mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 14px 26px;
+  border-radius: 2px;
+  margin: 6px 0 10px;
+}
+.rb-cta:hover { opacity: 0.88; }
+.rb-cta:focus-visible { outline: 2px solid var(--rb-ink); outline-offset: 3px; }
+
+/* ── Robot 101 table of contents ── */
+.rb-toc { margin: 10px 0 6px; }
+.rb-toc-item {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 13px 6px;
+  border-bottom: 1px solid var(--rb-line);
+  text-decoration: none;
+  color: var(--rb-ink);
+  flex-wrap: wrap;
+}
+.rb-toc-item:hover .rb-toc-name { text-decoration: underline; text-underline-offset: 3px; }
+.rb-toc-no {
+  font-family: var(--rb-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--rb-seal);
+}
+.rb-toc-name {
+  font-family: var(--rb-serif);
+  font-size: 17px;
+  font-weight: 700;
+}
+.rb-toc-sub {
+  font-size: 12.5px;
+  color: var(--rb-stone);
+  margin-left: auto;
+}
+
+/* ── Sourcing note (articles) ── */
+.rb-note {
+  background: var(--rb-wash);
+  border: 1px solid var(--rb-line);
+  border-left: 3px solid var(--rb-seal);
+  border-radius: 2px;
+  padding: 16px 20px;
+  margin: 26px 0;
+  max-width: 68ch;
+}
+.rb-note p { font-size: 13.5px; line-height: 1.7; margin: 0; color: var(--rb-ink); }
+.rb-note a { color: var(--rb-ink); }
+
+/* ── Data tables (glossary, comparisons) ── */
+.rb-table-wrap { overflow-x: auto; margin: 12px 0 22px; }
+.rb-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+.rb-table th {
+  font-family: var(--rb-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rb-stone);
+  text-align: left;
+  padding: 8px 14px 8px 0;
+  border-bottom: 2px solid var(--rb-ink);
+}
+.rb-table td {
+  padding: 9px 14px 9px 0;
+  border-bottom: 1px solid var(--rb-line);
+  vertical-align: top;
+}
+
+/* ── FAQ ── */
+.rb-faq {
+  margin-top: 44px;
+  padding-top: 32px;
+  border-top: 1px solid var(--rb-line);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 40px;
+}
+.rb-faq-heading {
+  grid-column: 1 / -1;
+  font-family: var(--rb-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--rb-stone);
+  margin-bottom: 12px;
+}
+.rb-faq-item { margin-bottom: 22px; }
+.rb-faq-q { font-weight: 600; font-size: 14px; margin-bottom: 6px; color: var(--rb-ink); }
+.rb-faq-a { font-size: 13.5px; color: var(--rb-stone); line-height: 1.7; }
+
+/* ── Prev/next pager (articles) ── */
+.rb-pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 36px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rb-line);
+  flex-wrap: wrap;
+}
+.rb-pager a {
+  font-family: var(--rb-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--rb-ink);
+  text-decoration: none;
+}
+.rb-pager a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.rb-footer-note {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rb-line);
+  font-size: 11.5px;
+  color: var(--rb-stone);
+  line-height: 1.7;
+}
+.rb-footer-note a { color: var(--rb-stone); }
+
+.rb-sheet a:focus-visible { outline: 2px solid var(--rb-ink); outline-offset: 2px; border-radius: 2px; }
+
+@media (max-width: 720px) {
+  .rb-frame { padding: 56px 16px 72px; }
+  .rb-sheet { padding: 32px 20px 32px; }
+  .rb-grid { grid-template-columns: 1fr; }
+  .rb-faq { grid-template-columns: 1fr; }
+  .rb-toc-sub { margin-left: 0; flex-basis: 100%; padding-left: 28px; }
+  .rb-cta { width: 100%; text-align: center; box-sizing: border-box; }
+}
