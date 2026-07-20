@@ -231,9 +231,19 @@ const categories = CATEGORIES
   .filter(Boolean)
   .sort((a, b) => b.count - a.count);
 
+// ISO week of today (was hardcoded '2026-W28' — went stale; caught by the
+// 2026-07-20 site audit).
+function isoWeek(d = new Date()) {
+  const u = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  u.setUTCDate(u.getUTCDate() + 4 - (u.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(u.getUTCFullYear(), 0, 1));
+  const week = Math.ceil(((u - yearStart) / 86400000 + 1) / 7);
+  return `${u.getUTCFullYear()}-W${String(week).padStart(2, '0')}`;
+}
+
 const teaser = {
   generated: new Date().toISOString(),
-  week: '2026-W28',
+  week: isoWeek(),
   market: MARKET,
   total: records.length,
   sources: {
