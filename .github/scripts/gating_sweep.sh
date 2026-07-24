@@ -42,7 +42,7 @@ ALLOWLIST_FILE="${SCRIPT_DIR}/gating_allowlist.txt"
 # at-wt-fees/scripts/gen-asaptic-index.mjs (INTERNAL_NAME_HINTS). Keep these
 # two lists in sync when either changes.
 # ---------------------------------------------------------------------------
-DENY_REGEX='__REDACTED__'
+DENY_REGEX="${GATING_DENY:-__none__}"
 
 # ---------------------------------------------------------------------------
 # Scan paths: positional args, or default to current directory

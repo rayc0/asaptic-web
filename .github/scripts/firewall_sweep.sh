@@ -11,7 +11,7 @@ set -euo pipefail
 # Forbidden token regex (case-insensitive).
 # This string is the single authorised appearance of these tokens in the script.
 # ---------------------------------------------------------------------------
-FORBIDDEN='__REDACTED__'
+FORBIDDEN="${FIREWALL_TERMS:-__no_terms_configured__}"
 
 # ---------------------------------------------------------------------------
 # Scan paths: positional args, or default to current directory

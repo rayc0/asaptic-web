@@ -18,6 +18,8 @@ jobs:
         run: chmod +x .github/scripts/firewall_sweep.sh .github/scripts/gating_sweep.sh
 
       - name: Run firewall sweep (brand-string leakage)
+        env:
+          FIREWALL_TERMS: ${{ secrets.FIREWALL_TERMS }}
         run: bash .github/scripts/firewall_sweep.sh .
 
       # Brand-string leakage alone doesn't catch an internal-audience page
@@ -25,4 +27,6 @@ jobs:
       # deploy output — added 2026-07-14 after the workbench false-alarm
       # showed the firewall had no gating check at all.
       - name: Run gating sweep (ungated internal-audience pages)
+        env:
+          GATING_DENY: ${{ secrets.GATING_DENY }}
         run: bash .github/scripts/gating_sweep.sh .
