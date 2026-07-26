@@ -41,5 +41,17 @@
   Content-Type: application/json; charset=utf-8
   Cache-Control: public, max-age=3600
 
+# Tender LISTING feed — the single public data source read by asaptic.com/tender,
+# app.asaptic.com, radar.asaptic.com, go.asaptic.com and the iOS/Android builds.
+# Had NO rule until 2026-07-26, so it fell through to the Pages default
+# (max-age=0, must-revalidate, cf-cache-status: DYNAMIC) — every request from every
+# consumer revalidated against origin. Updates land ~2x/day, so 5 minutes is still
+# far fresher than the publish cadence while cutting origin hits sharply.
+# Access-Control-Allow-Origin must stay: app/radar/go fetch this cross-origin.
+/tender/rows.json
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
+
 /university/_TEMPLATE.html
   X-Robots-Tag: noindex, nofollow
