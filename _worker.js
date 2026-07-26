@@ -89,6 +89,41 @@ export default {
       return new Response('Method Not Allowed', { status: 405, headers: cors });
     }
 
+    // Tender LISTING feed — served from R2 so publishing DATA no longer requires
+    // deploying the SITE. This is the single public data source read by
+    // asaptic.com/tender, app.asaptic.com, radar.asaptic.com, go.asaptic.com and
+    // the iOS/Android builds. The URL is deliberately unchanged: the native apps
+    // hardcode it at build time and have no OTA channel, so it can never move.
+    //
+    // Must sit BEFORE the static-asset passthrough below, whose regex would
+    // otherwise claim any *.json path.
+    //
+    // Fail-safe: any problem (no binding, missing object, empty body, thrown
+    // error) falls through to the last baked static copy. A data outage degrades
+    // to yesterday's tenders — never to an empty list across six surfaces.
+    if (url.pathname === '/tender/rows.json') {
+      try {
+        const obj = env.TENDER_DATA && await env.TENDER_DATA.get('rows.json');
+        if (obj) {
+          const body = await obj.text();
+          if (body && body.length > 0) {
+            return new Response(body, {
+              headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Access-Control-Allow-Origin': '*',
+                'Cache-Control': 'public, max-age=300, must-revalidate',
+                'ETag': obj.httpEtag,
+                'X-Data-Source': 'r2',
+              },
+            });
+          }
+        }
+      } catch (e) {
+        // swallow — never surface a storage error to a public consumer
+      }
+      return env.ASSETS.fetch(request);
+    }
+
     // Static assets and well-known files: always pass through to ASSETS
     // (prevents SPA catch-all from serving text/html for these paths)
     if (
