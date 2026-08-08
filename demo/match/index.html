@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow, noarchive">
 <title>Asaptic — Demo: matching a real company to live government tenders</title>
-<meta name="description" content="A working demonstration: Asaptic's matching engine scores every open government tender against one real company's supplier profile, and ranks what it should actually bid.">
+<meta name="description" content="A working demonstration: Asaptic's matching engine scores every open government tender against one real company's supplier profile, separates direct bids from partner-assembly and no-gos, and ranks what it should actually bid.">
 <style>
   :root{
     --frame:#15140f; --paper:#f4f1e9; --paper-2:#ece7d8; --edge:#e8e2d3;
@@ -31,26 +31,25 @@
   .lede{color:var(--ink-2);font-size:15px;max-width:62ch}
   .amt{font-family:var(--mono);color:var(--seal);font-weight:700}
 
-  /* subject company */
   .subject{background:var(--paper-2);border:1px solid var(--line);padding:16px 18px;margin:10px 0 0}
   .subject .nm{font-family:var(--serif);font-size:20px;font-weight:700}
   .subject .rl{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin-top:2px}
   .chips{margin:12px 0 0;display:flex;flex-wrap:wrap;gap:6px}
   .chip{font-family:var(--mono);font-size:11.5px;color:var(--ink);border:1px solid var(--line-2);padding:3px 9px;border-radius:2px;background:var(--paper)}
 
-  /* stats */
   .stats{display:grid;grid-template-columns:repeat(4,1fr);background:var(--paper-2);margin:14px 0 0;border:1px solid var(--line)}
   .stat{padding:14px 16px;border-right:1px solid var(--line)}
   .stat:last-child{border-right:0}
   .stat .n{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink)}
   .stat .n.hl{color:var(--seal)}
+  .stat .n.routes-n{font-size:15px;font-weight:400}
+  .stat .n.routes-n b{color:var(--seal);font-weight:700}
   .stat .k{font-size:11.5px;color:var(--ink-2);margin-top:2px;line-height:1.35}
   @media(max-width:640px){.stats{grid-template-columns:1fr 1fr}.stat{border-bottom:1px solid var(--line)}}
 
   .spread{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);margin:10px 2px 0;display:flex;flex-wrap:wrap;gap:4px 14px}
   .spread .mk b{color:var(--ink)}
 
-  /* register of matches */
   .register{list-style:none;padding:0;margin:10px 0 0;border-top:1px solid var(--seal)}
   .row{display:grid;grid-template-columns:34px 62px 1fr;gap:0;border-bottom:1px solid var(--line);padding:14px 0 13px;align-items:start}
   .rank{font-size:11px;color:var(--line-2);padding-top:3px}
@@ -63,26 +62,54 @@
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .title-zh{font-family:var(--serif);font-size:13px;color:var(--ink-2);margin:3px 0 0;line-height:1.4;
     display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
-  .tags{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:5px}
+  .tags{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
   .tag{font-size:10.5px;letter-spacing:.03em;color:var(--ink-2);border:1px solid var(--line-2);padding:2px 7px;border-radius:2px}
   .tag.hk{color:var(--seal);border-color:var(--seal)}
   .tag.le_2w{color:var(--seal);border-color:var(--seal)}
   .tag.ref{color:var(--line-2)}
-  .why{font-size:10.5px;color:var(--ink-2);margin:6px 0 0;letter-spacing:.02em}
-  @media(max-width:640px){
-    .row{grid-template-columns:26px 54px 1fr}
-    .body{padding:24px 18px 26px 6px}
-    .sec{grid-template-columns:40px 1fr}
-    .docket{padding-left:12px}
-  }
+  .tag.prov{color:var(--ink-2);border-style:dashed}
 
-  /* how it scores */
+  .route-chip{font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:3px 8px;border-radius:2px;display:inline-block;line-height:1.4;white-space:nowrap}
+  .route-chip.direct{background:var(--seal);color:#fff;border:1px solid var(--seal)}
+  .route-chip.partner{background:transparent;color:var(--seal);border:1px solid var(--seal)}
+  .route-chip.oem{background:var(--paper-2);color:var(--ink-2);border:1px solid var(--line-2)}
+  .route-chip.noroute{background:var(--paper-2);color:var(--ink-2);border:1px solid var(--line-2)}
+  .route-chip.expansion{background:var(--paper-2);color:var(--ink-2);border:1px solid var(--line-2)}
+
+  .route-note{font-family:var(--serif);font-size:12px;font-style:italic;color:var(--ink-2);margin:5px 0 0;line-height:1.45}
+  .decomp{font-size:10.5px;color:var(--ink-2);margin:5px 0 0;letter-spacing:.02em}
+  .why{font-size:10.5px;color:var(--ink-2);margin:6px 0 0;letter-spacing:.02em}
+
+  .expansion{margin:12px 0 0;border:1px solid var(--line);background:var(--paper-2);border-radius:3px}
+  .expansion summary{cursor:pointer;padding:16px 18px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--ink);list-style:none}
+  .expansion summary::-webkit-details-marker{display:none}
+  .expansion summary::before{content:'▸  ';color:var(--seal)}
+  .expansion[open] summary::before{content:'▾  '}
+  .expansion summary .count{color:var(--seal);font-weight:700}
+  .expansion-body{padding:0 18px 6px}
+  .expansion-body .expl{font-size:13px;color:var(--ink-2);line-height:1.6;margin:0 0 14px;max-width:62ch}
+  .expansion .register{margin-top:0;border-top:1px solid var(--seal)}
+
   .formula{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);background:var(--paper-2);margin:10px 0 0}
   .fx{padding:13px 14px;border-right:1px solid var(--line)}
   .fx:last-child{border-right:0}
   .fx .w{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--seal)}
   .fx .l{font-size:11.5px;color:var(--ink-2);margin-top:3px;line-height:1.4}
   @media(max-width:640px){.formula{grid-template-columns:1fr 1fr}.fx{border-bottom:1px solid var(--line)}}
+
+  .honesty{background:var(--paper-2);border:1px solid var(--line);padding:16px 18px;margin:12px 0 0}
+  .honesty p{font-size:13.5px;color:var(--ink);line-height:1.6;margin:.6em 0}
+  .honesty p:first-child{margin-top:0}
+  .honesty p:last-child{margin-bottom:0}
+  .honesty .threshold{font-family:var(--mono);color:var(--seal);font-weight:700}
+  .honesty .audit{font-family:var(--mono);font-size:12px;color:var(--ink-2);line-height:1.6}
+
+  @media(max-width:640px){
+    .row{grid-template-columns:26px 54px 1fr}
+    .body{padding:24px 18px 26px 6px}
+    .sec{grid-template-columns:40px 1fr}
+    .docket{padding-left:12px}
+  }
 
   footer{padding:22px 30px 30px;border-top:1px solid var(--seal)}
   footer .row2{font-family:var(--mono);font-size:12px;color:var(--ink-2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
@@ -113,7 +140,7 @@
     <div class="body">
       <p class="eyebrow">Demonstration — tender matching</p>
       <h1>We pointed the matching engine at one real company and asked: <span class="amt">what should it bid?</span></h1>
-      <p class="lede">Every open government tender in our registry, scored against a single company's supplier profile. No shortlist was prepared by hand — the ranking below is the engine's own output, produced in one pass on 2026-08-06.</p>
+      <p class="lede">The engine reduced 653 open notices to 167 sector candidates, 45 in the company's home market — and the next layer separates direct bids, partner-assembly opportunities, and no-gos. No shortlist was prepared by hand; one pass on 2026-08-09.</p>
     </div>
   </section>
 
@@ -122,15 +149,16 @@
     <div class="body">
       <p class="eyebrow">Subject company · a real Asaptic entity</p>
       <div class="subject">
-        <div class="nm">Carewells Limited</div>
+        <div class="nm">A Hong Kong–based trading company</div>
         <div class="rl">Supplier profile · home market HK</div>
         <div class="chips">
-          <span class="chip">Medical equipment</span>
-          <span class="chip">Medical services &amp; pharma</span>
-          <span class="chip">Food &amp; catering</span>
+          <span class="chip">Medical devices</span>
+          <span class="chip">Food &amp; beverage</span>
+          <span class="chip">Pharma supply</span>
         </div>
       </div>
-      <p class="note">That profile is the entire input. Three category selections and a home market — the same three fields any supplier fills in at sign-up.</p>
+      <p class="note">That profile is the entire input. Three category selections and a home market — the same fields any supplier fills in at sign-up.</p>
+      <p class="note">Issuing bodies and exact closing dates are withheld on this public page by policy — full detail lives in the product.</p>
     </div>
   </section>
 
@@ -139,20 +167,20 @@
     <div class="body">
       <p class="eyebrow">Result</p>
       <div class="stats">
-        <div class="stat"><div class="n">753</div><div class="k">open tenders scanned</div></div>
-        <div class="stat"><div class="n hl">188</div><div class="k">scored as a match</div></div>
-        <div class="stat"><div class="n">52</div><div class="k">in its home market</div></div>
-        <div class="stat"><div class="n">95</div><div class="k">top score of 100</div></div>
+        <div class="stat"><div class="n">653</div><div class="k">open notices scanned</div></div>
+        <div class="stat"><div class="n hl">167</div><div class="k">sector candidates</div></div>
+        <div class="stat"><div class="n">45</div><div class="k">in home market</div></div>
+        <div class="stat"><div class="n routes-n"><b>4</b> direct · <b>9</b> partner</div><div class="k">top-20 routes separated</div></div>
       </div>
-      <div class="spread"><span class="mk mono"><b>60</b> EU</span><span class="mk mono"><b>60</b> GB</span><span class="mk mono"><b>52</b> HK</span><span class="mk mono"><b>8</b> SG</span><span class="mk mono"><b>5</b> CA</span><span class="mk mono"><b>3</b> AU</span></div>
-      <p class="note">Tenders closing too soon to realistically bid are excluded before ranking, so what remains is a work list rather than a search result.</p>
+      <div class="spread"><span class="mk mono"><b>55</b> GB</span><span class="mk mono"><b>53</b> EU</span><span class="mk mono"><b>45</b> HK</span><span class="mk mono"><b>8</b> SG</span><span class="mk mono"><b>4</b> CA</span><span class="mk mono"><b>2</b> AU</span></div>
+      <p class="note">A candidate list to select from — not a commitment to bid all 167. Clients typically pursue 5–15 per month where an execution structure can be assembled; near-zero bid cost is what makes each attempt rational.</p>
     </div>
   </section>
 
   <section class="sec">
     <div class="docket">§04</div>
     <div class="body">
-      <p class="eyebrow">The engine's ranking · top 20 of 188</p>
+      <p class="eyebrow">The engine's ranking · home market · 45 rows · routes separated</p>
       <ol class="register">
       <li class="row">
         <div class="rank mono">01</div>
@@ -166,31 +194,37 @@
           <p class="title">Supply and installation of minimally invasive surgical telemanipulation systems (surgical robots) for a large public healthcare institution, for precision minimally invasive surgery, including installation, verification and staff training services.</p>
           <p class="title-zh">为大型公立医疗机构采购微创手术遥控操作系统（手术机器人），用于精准微创外科手术，含设备安装、校验及人员培训服务。</p>
           <p class="tags mono">
+            <span class="route-chip oem">OEM-CHANNEL LOCKED / 渠道锁定</span>
             <span class="tag hk">HK</span>
-            <span class="tag">Medical equipment · 医疗设备</span>
+            <span class="tag prov">engine class: medical</span>
             <span class="tag 2_4w">Closing 2–4 weeks</span>
             <span class="tag ref">AT-HK-2630-313</span>
           </p>
+          <p class="route-note">OEM-channel locked — surgical-robot supply runs through exclusive manufacturer distribution; shown for transparency, not ranked as a recommended bid</p>
+          <p class="decomp mono">category 45/45 · keywords 25/25 · market 15/15 · runway 10/15</p>
           <p class="why mono">category fit · keyword overlap · home market · 2–4 weeks to bid</p>
         </div>
       </li>
       <li class="row">
         <div class="rank mono">02</div>
         <div class="score">
-          <div class="sc mono">94</div>
-          <div class="meter" role="img" aria-label="Match score 94 out of 100">
-            <span style="width:94%"></span>
+          <div class="sc mono">88</div>
+          <div class="meter" role="img" aria-label="Match score 88 out of 100">
+            <span style="width:88%"></span>
           </div>
         </div>
         <div class="entry">
-          <p class="title">Supply of Enzalutamide 40mg capsules or tablets to a large public healthcare institution network, meeting applicable pharmaceutical registration and quality standards, with stable long-term supply required.</p>
-          <p class="title-zh">为大型公立医疗机构网络供应恩杂鲁胺（Enzalutamide）40毫克胶囊或片剂，需符合相关药品注册及质量标准，要求长期稳定供货。</p>
+          <p class="title">Supply of Halal food for use across multiple hospitals.</p>
+          <p class="title-zh">采购清真食品，供多间医院使用。</p>
           <p class="tags mono">
+            <span class="route-chip direct">DIRECT PATH / 可直接投标</span>
             <span class="tag hk">HK</span>
-            <span class="tag">Medical services &amp; pharma · 医疗服务与药品</span>
+            <span class="tag prov">engine class: food</span>
             <span class="tag 2_4w">Closing 2–4 weeks</span>
-            <span class="tag ref">AT-HK-2630-296</span>
+            <span class="tag ref">AT-HK-2632-394</span>
           </p>
+          <p class="route-note">Direct path plausible — food supply within the company's existing trading lines; buyer onboarding unverified</p>
+          <p class="decomp mono">category 45/45 · keywords 18/25 · market 15/15 · runway 10/15</p>
           <p class="why mono">category fit · keyword overlap · home market · 2–4 weeks to bid</p>
         </div>
       </li>
@@ -203,55 +237,1082 @@
           </div>
         </div>
         <div class="entry">
-          <p class="title">Supply of Halal food for use across multiple hospitals.</p>
-          <p class="title-zh">采购清真食品，供多间医院使用。</p>
+          <p class="title">Supply of halal food for several public hospitals.</p>
+          <p class="title-zh">为多间公立医院供应清真食品。</p>
           <p class="tags mono">
+            <span class="route-chip direct">DIRECT PATH / 可直接投标</span>
             <span class="tag hk">HK</span>
-            <span class="tag">Food &amp; catering · 食品与餐饮</span>
+            <span class="tag prov">engine class: food</span>
             <span class="tag 2_4w">Closing 2–4 weeks</span>
-            <span class="tag ref">AT-HK-2632-394</span>
+            <span class="tag ref">AT-HK-2631-337</span>
           </p>
+          <p class="route-note">Direct path plausible — food supply within the company's existing trading lines; buyer onboarding unverified</p>
+          <p class="decomp mono">category 45/45 · keywords 18/25 · market 15/15 · runway 10/15</p>
           <p class="why mono">category fit · keyword overlap · home market · 2–4 weeks to bid</p>
         </div>
       </li>
       <li class="row">
         <div class="rank mono">04</div>
         <div class="score">
-          <div class="sc mono">88</div>
-          <div class="meter" role="img" aria-label="Match score 88 out of 100">
-            <span style="width:88%"></span>
+          <div class="sc mono">82</div>
+          <div class="meter" role="img" aria-label="Match score 82 out of 100">
+            <span style="width:82%"></span>
           </div>
         </div>
         <div class="entry">
-          <p class="title">Supply of halal food for several public hospitals.</p>
-          <p class="title-zh">为多间公立医院供应清真食品。</p>
+          <p class="title">Procure 40 mg solid oral androgen-pathway inhibitor medicine, with equivalent alternatives when needed, meeting registration and quality rules while ensuring stable long-term replenishment.</p>
+          <p class="title-zh">为区域大型医疗体系持续采购40mg规格的口服抗雄激素制剂（片剂/胶囊型）并保留等效替代源，满足注册与质量要求，支持稳定长期分批供货。</p>
           <p class="tags mono">
+            <span class="route-chip partner">PARTNER-ASSEMBLY / 需组装持牌伙伴</span>
             <span class="tag hk">HK</span>
-            <span class="tag">Food &amp; catering · 食品与餐饮</span>
+            <span class="tag prov">engine class: medical_services</span>
             <span class="tag 2_4w">Closing 2–4 weeks</span>
-            <span class="tag ref">AT-HK-2631-337</span>
+            <span class="tag ref">AT-HK-2630-296</span>
           </p>
+          <p class="route-note">Partner-assembly — requires a licensed pharmaceutical wholesaler in the execution structure</p>
+          <p class="decomp mono">category 45/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
           <p class="why mono">category fit · keyword overlap · home market · 2–4 weeks to bid</p>
         </div>
       </li>
       <li class="row">
         <div class="rank mono">05</div>
         <div class="score">
-          <div class="sc mono">87</div>
-          <div class="meter" role="img" aria-label="Match score 87 out of 100">
-            <span style="width:87%"></span>
+          <div class="sc mono">82</div>
+          <div class="meter" role="img" aria-label="Match score 82 out of 100">
+            <span style="width:82%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Procure psychological wellbeing support for a trial health programme, including graded assessment, counselling, case follow-up and referral coordination, serving participants with stress or emotional difficulties throughout the contract period.</p>
+          <p class="title-zh">采购心理福祉与干预服务，用于一项试点公共健康计划，需提供分级评估、咨询辅导、个案跟进及转介衔接，服务对象为有心理压力、情绪困扰的目标人群，按合同周期持续交付。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: medical_services</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2631-374</span>
+          </p>
+          <p class="route-note">Low feasibility — local clinical-service operation, outside a trading company's scope</p>
+          <p class="decomp mono">category 45/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">category fit · keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">06</div>
+        <div class="score">
+          <div class="sc mono">82</div>
+          <div class="meter" role="img" aria-label="Match score 82 out of 100">
+            <span style="width:82%"></span>
           </div>
         </div>
         <div class="entry">
           <p class="title">Provision of services for a mental health support hotline.</p>
           <p class="title-zh">提供精神健康支援热线服务</p>
           <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
             <span class="tag hk">HK</span>
-            <span class="tag">Medical services &amp; pharma · 医疗服务与药品</span>
-            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag prov">engine class: medical_services</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
             <span class="tag ref">AT-HK-2630-314</span>
           </p>
-          <p class="why mono">category fit · keyword overlap · home market · 4+ weeks to bid</p>
+          <p class="route-note">Low feasibility — local service operation, outside a trading company's scope</p>
+          <p class="decomp mono">category 45/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">category fit · keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">07</div>
+        <div class="score">
+          <div class="sc mono">79</div>
+          <div class="meter" role="img" aria-label="Match score 79 out of 100">
+            <span style="width:79%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Supply of table salt (food grade).</p>
+          <p class="title-zh">采购食用盐产品。</p>
+          <p class="tags mono">
+            <span class="route-chip direct">DIRECT PATH / 可直接投标</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: food</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2629-267</span>
+          </p>
+          <p class="route-note">Direct path — food-grade commodity within existing trading lines</p>
+          <p class="decomp mono">category 45/45 · keywords 9/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">category fit · keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">08</div>
+        <div class="score">
+          <div class="sc mono">75</div>
+          <div class="meter" role="img" aria-label="Match score 75 out of 100">
+            <span style="width:75%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Expression of interest for the leasing of angiography/interventional radiographic-fluoroscopic imaging systems for a radiology department.</p>
+          <p class="title-zh">就放射及影像部门用血管造影／介入放射系统的租赁征询市场意向。</p>
+          <p class="tags mono">
+            <span class="route-chip partner">PARTNER-ASSEMBLY / 需组装持牌伙伴</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: medical</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-HK-2632-401</span>
+          </p>
+          <p class="route-note">Partner-assembly — requires a licensed/qualified partner in the execution structure</p>
+          <p class="decomp mono">category 45/45 · keywords 0/25 · market 15/15 · runway 15/15</p>
+          <p class="why mono">category fit · home market · 4+ weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">09</div>
+        <div class="score">
+          <div class="sc mono">70</div>
+          <div class="meter" role="img" aria-label="Match score 70 out of 100">
+            <span style="width:70%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Procure enteric-coated immunosuppressant tablets for long-term maintenance therapy, with release-quality requirements, dependable replenishment, expiry control, and complete batch traceability records.</p>
+          <p class="title-zh">采购肠溶包衣型免疫抑制口服片剂，用于长期维持治疗方案，要求药物放行标准、持续供货、有效期控制及完整追溯记录。</p>
+          <p class="tags mono">
+            <span class="route-chip partner">PARTNER-ASSEMBLY / 需组装持牌伙伴</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: medical_services</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2630-290</span>
+          </p>
+          <p class="route-note">Partner-assembly — requires a licensed/qualified partner in the execution structure</p>
+          <p class="decomp mono">category 45/45 · keywords 0/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">category fit · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">10</div>
+        <div class="score">
+          <div class="sc mono">70</div>
+          <div class="meter" role="img" aria-label="Match score 70 out of 100">
+            <span style="width:70%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Supply neuro-interventional implants and associated consumables for procedure kits, with specification-based replenishment, compliance control, and traceable supply with technical support.</p>
+          <p class="title-zh">供应神经介入手术用植入器械及配套一次性耗材，覆盖不同术式配套清单，需按规格供货、合规管理并建立可追溯供给与技术支持。</p>
+          <p class="tags mono">
+            <span class="route-chip partner">PARTNER-ASSEMBLY / 需组装持牌伙伴</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: medical</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2630-312</span>
+          </p>
+          <p class="route-note">Partner-assembly — requires a licensed/qualified partner in the execution structure</p>
+          <p class="decomp mono">category 45/45 · keywords 0/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">category fit · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">11</div>
+        <div class="score">
+          <div class="sc mono">70</div>
+          <div class="meter" role="img" aria-label="Match score 70 out of 100">
+            <span style="width:70%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Expression of interest for the supply and installation of a surgical telemanipulation system (surgical robot) for minimally invasive surgery.</p>
+          <p class="title-zh">就微创外科手术远程操控系统（手术机械人）的供应安装征询市场意向。</p>
+          <p class="tags mono">
+            <span class="route-chip oem">OEM-CHANNEL LOCKED / 渠道锁定</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: medical</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2632-412</span>
+          </p>
+          <p class="route-note">OEM-channel locked — surgical-robot class runs through exclusive manufacturer distribution</p>
+          <p class="decomp mono">category 45/45 · keywords 0/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">category fit · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">12</div>
+        <div class="score">
+          <div class="sc mono">70</div>
+          <div class="meter" role="img" aria-label="Match score 70 out of 100">
+            <span style="width:70%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Procure a broad-spectrum antiseptic disinfectant for instrument and surface hygiene, with verifiable composition consistency, full quality release documentation, controlled storage readiness, and lot traceability across replenishment cycles.</p>
+          <p class="title-zh">采购用于器械与表面快速消毒的广谱防腐消毒液，要求成分一致性可核验、质量放行文件齐全、温湿度受控连续供给及批号批次可追溯。</p>
+          <p class="tags mono">
+            <span class="route-chip direct">DIRECT PATH / 可直接投标</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: medical_services</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2630-289</span>
+          </p>
+          <p class="route-note">Direct path — commodity medical consumable, sourceable and suppliable directly</p>
+          <p class="decomp mono">category 45/45 · keywords 0/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">category fit · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">13</div>
+        <div class="score">
+          <div class="sc mono">70</div>
+          <div class="meter" role="img" aria-label="Match score 70 out of 100">
+            <span style="width:70%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Supply of a batch of needle-free injection plug consumables.</p>
+          <p class="title-zh">采购无针注射接口（needle-free injection plug）耗材一批。</p>
+          <p class="tags mono">
+            <span class="route-chip partner">PARTNER-ASSEMBLY / 需组装持牌伙伴</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: medical_services</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2632-388</span>
+          </p>
+          <p class="route-note">Partner-assembly — requires a licensed/qualified partner in the execution structure</p>
+          <p class="decomp mono">category 45/45 · keywords 0/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">category fit · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">14</div>
+        <div class="score">
+          <div class="sc mono">70</div>
+          <div class="meter" role="img" aria-label="Match score 70 out of 100">
+            <span style="width:70%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Procure dialysis replacement fluid and equivalent alternatives for treatment workflow support, with acceptance based on safety and stability criteria, monitored transport and storage controls, and phased replenishment management.</p>
+          <p class="title-zh">采购透析替代液及等效替代品，用于临床透析流程支撑，需按安全性与稳定性指标验收，建立运输及仓储监测和分批供货管理制度。</p>
+          <p class="tags mono">
+            <span class="route-chip partner">PARTNER-ASSEMBLY / 需组装持牌伙伴</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: medical</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2632-393</span>
+          </p>
+          <p class="route-note">Partner-assembly — requires a licensed/qualified partner in the execution structure</p>
+          <p class="decomp mono">category 45/45 · keywords 0/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">category fit · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">15</div>
+        <div class="score">
+          <div class="sc mono">70</div>
+          <div class="meter" role="img" aria-label="Match score 70 out of 100">
+            <span style="width:70%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Supply and installation of an acute-care physiologic monitoring system for a cardiac care unit.</p>
+          <p class="title-zh">采购并安装心脏监护病房用生理监测系统。</p>
+          <p class="tags mono">
+            <span class="route-chip partner">PARTNER-ASSEMBLY / 需组装持牌伙伴</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: medical</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2632-399</span>
+          </p>
+          <p class="route-note">Partner-assembly — requires a licensed/qualified partner in the execution structure</p>
+          <p class="decomp mono">category 45/45 · keywords 0/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">category fit · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">16</div>
+        <div class="score">
+          <div class="sc mono">70</div>
+          <div class="meter" role="img" aria-label="Match score 70 out of 100">
+            <span style="width:70%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Supply of an endovascular stent graft system for thoracic aortic aneurysm repair.</p>
+          <p class="title-zh">采购胸主动脉瘤修复用血管腔内支架移植系统。</p>
+          <p class="tags mono">
+            <span class="route-chip partner">PARTNER-ASSEMBLY / 需组装持牌伙伴</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: medical</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2632-406</span>
+          </p>
+          <p class="route-note">Partner-assembly — requires a licensed/qualified partner in the execution structure</p>
+          <p class="decomp mono">category 45/45 · keywords 0/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">category fit · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">17</div>
+        <div class="score">
+          <div class="sc mono">60</div>
+          <div class="meter" role="img" aria-label="Match score 60 out of 100">
+            <span style="width:60%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Supply and installation of a hydrotherapy pool for a medical rehabilitation centre.</p>
+          <p class="title-zh">采购并安装医疗复康中心用水疗池。</p>
+          <p class="tags mono">
+            <span class="route-chip partner">PARTNER-ASSEMBLY / 需组装持牌伙伴</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: other</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-HK-2632-398</span>
+          </p>
+          <p class="route-note">Partner-assembly — requires a licensed/qualified partner in the execution structure</p>
+          <p class="decomp mono">category 9/45 · keywords 21/25 · market 15/15 · runway 15/15</p>
+          <p class="why mono">keyword overlap · home market · 4+ weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">18</div>
+        <div class="score">
+          <div class="sc mono">59</div>
+          <div class="meter" role="img" aria-label="Match score 59 out of 100">
+            <span style="width:59%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">One-year group medical insurance service for a specified staff grade and their dependents.</p>
+          <p class="title-zh">为特定职系雇员及其受养人提供为期一年的团体医疗保险服务。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: other</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2629-264</span>
+          </p>
+          <p class="decomp mono">category 9/45 · keywords 25/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">19</div>
+        <div class="score">
+          <div class="sc mono">59</div>
+          <div class="meter" role="img" aria-label="Match score 59 out of 100">
+            <span style="width:59%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">One-year group medical insurance for designated staff and their dependants of an education authority.</p>
+          <p class="title-zh">为一个教育行政机构的指定职级人员及其受养人提供一年期团体医疗保险服务。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: other</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2631-327</span>
+          </p>
+          <p class="decomp mono">category 9/45 · keywords 25/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">20</div>
+        <div class="score">
+          <div class="sc mono">55</div>
+          <div class="meter" role="img" aria-label="Match score 55 out of 100">
+            <span style="width:55%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Provision of laundry (washing and ironing) services for hospital linens and uniforms under a 24-month contract for a public institution with medical facilities, covering collection, washing, disinfection and delivery.</p>
+          <p class="title-zh">采购医院被服及制服的洗熨（洗涤及熨烫）服务，合约期24个月，服务对象为一所设有医疗设施的公共机构，涵盖收集、清洗、消毒及配送。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: facilities</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-HK-2631-377</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 25/25 · market 15/15 · runway 15/15</p>
+          <p class="why mono">keyword overlap · home market · 4+ weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">21</div>
+        <div class="score">
+          <div class="sc mono">51</div>
+          <div class="meter" role="img" aria-label="Match score 51 out of 100">
+            <span style="width:51%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Implementation of the main works for a smart water supply system, including installation of smart water meters, deployment of monitoring and sensing equipment on the water supply network, data acquisition, and construction of a central monitoring and management system — a large-scale smart water infrastructure project.</p>
+          <p class="title-zh">实施智能供水系统主体工程，包括智能水表安装、供水管网监测感应设备布设、数据采集及中央监控管理系统建设，属大型智慧水务基建项目。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: construction</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-HK-2628-179</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 21/25 · market 15/15 · runway 15/15</p>
+          <p class="why mono">keyword overlap · home market · 4+ weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">22</div>
+        <div class="score">
+          <div class="sc mono">51</div>
+          <div class="meter" role="img" aria-label="Match score 51 out of 100">
+            <span style="width:51%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Provision of local organisation and implementation services for an international large-scale student assessment programme, covering sampling design, field administration, data processing and results reporting, with all deliverables completed within the agreed period.</p>
+          <p class="title-zh">提供一项国际性大规模学生能力评估计划在本地的组织与实施服务，涵盖抽样设计、现场施测、数据处理与结果报告，全部交付物须于约定期限内完成。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: other</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-HK-2630-316</span>
+          </p>
+          <p class="decomp mono">category 9/45 · keywords 12/25 · market 15/15 · runway 15/15</p>
+          <p class="why mono">keyword overlap · home market · 4+ weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">23</div>
+        <div class="score">
+          <div class="sc mono">51</div>
+          <div class="meter" role="img" aria-label="Match score 51 out of 100">
+            <span style="width:51%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Development of a single plot within a cross-boundary innovation-and-technology park development project, including site preparation, earthworks and enabling infrastructure.</p>
+          <p class="title-zh">为一个跨境创新科技园区开发项目的一幅地块提供场地开发服务，进行土地平整、基础设施及相关工程。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: other</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-HK-2631-346</span>
+          </p>
+          <p class="decomp mono">category 9/45 · keywords 12/25 · market 15/15 · runway 15/15</p>
+          <p class="why mono">keyword overlap · home market · 4+ weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">24</div>
+        <div class="score">
+          <div class="sc mono">50</div>
+          <div class="meter" role="img" aria-label="Match score 50 out of 100">
+            <span style="width:50%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Supply of hardware equipment and provision of related services for a Network Detection and Response (NDR) system, including deployment, integration and maintenance support</p>
+          <p class="title-zh">为网络侦测及回应（NDR）系统供应硬件设备并提供相关服务，包括部署、集成及维护支援</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: networking</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2628-253</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 25/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">25</div>
+        <div class="score">
+          <div class="sc mono">49</div>
+          <div class="meter" role="img" aria-label="Match score 49 out of 100">
+            <span style="width:49%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Provision of promotional and registration-assistance services for a healthcare information platform, covering multiple clinics and organisational events.</p>
+          <p class="title-zh">采购医疗信息平台的推广及登记协助服务，服务对象涵盖多间诊所及机构活动。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: software</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2632-391</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 24/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">26</div>
+        <div class="score">
+          <div class="sc mono">46</div>
+          <div class="meter" role="img" aria-label="Match score 46 out of 100">
+            <span style="width:46%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Expression of interest for the supply and installation of ceiling-mounted facility booms and a surgical light system for an oral-maxillofacial surgery operating theatre.</p>
+          <p class="title-zh">就口腔颌面外科手术室天花吊挂设备臂及手术无影灯系统的供应安装征询市场意向。</p>
+          <p class="tags mono">
+            <span class="route-chip partner">PARTNER-ASSEMBLY / 需组装持牌伙伴</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: other</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2632-385</span>
+          </p>
+          <p class="route-note">Partner-assembly — requires a licensed/qualified partner in the execution structure</p>
+          <p class="decomp mono">category 9/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">27</div>
+        <div class="score">
+          <div class="sc mono">42</div>
+          <div class="meter" role="img" aria-label="Match score 42 out of 100">
+            <span style="width:42%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Provision of digital data service lines for a Terrestrial Trunked Radio (TETRA) communications system under a 24-month contract, covering line provisioning, maintenance and technical support for a public institution's communications network.</p>
+          <p class="title-zh">采购集束无线电通讯（TETRA）系统的数字式数据服务线路，合约期24个月，供一所公共机构的通讯网络使用，涵盖线路提供、维护及技术支援。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: networking</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-HK-2631-378</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 15/15</p>
+          <p class="why mono">keyword overlap · home market · 4+ weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">28</div>
+        <div class="score">
+          <div class="sc mono">42</div>
+          <div class="meter" role="img" aria-label="Match score 42 out of 100">
+            <span style="width:42%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Procure several two-wheel medical-response vehicles for urgent deployment, with all units handed over and cleared for operations within the first 12 months after contract commencement, ready for immediate on-scene care transport and support tasks.</p>
+          <p class="title-zh">采购若干辆用于急救联动作业的两轮医疗支援车，要求合同生效后12个月内交付并完成可用性验收，可直接投入现场紧急救治、转运和支援任务。</p>
+          <p class="tags mono">
+            <span class="route-chip partner">PARTNER-ASSEMBLY / 需组装持牌伙伴</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: vehicles</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-HK-2631-371</span>
+          </p>
+          <p class="route-note">Partner-assembly — requires a licensed/qualified partner in the execution structure</p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 15/15</p>
+          <p class="why mono">keyword overlap · home market · 4+ weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">29</div>
+        <div class="score">
+          <div class="sc mono">42</div>
+          <div class="meter" role="img" aria-label="Match score 42 out of 100">
+            <span style="width:42%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Deliver recurring international student assessment services, including programme planning, field operations, data capture and processing, secure archival handling, quality audits, and reporting.</p>
+          <p class="title-zh">承接周期性国际学生成绩评估项目服务，包括计划编制、现场实施、数据采集与处理、信息安全保管、质量复核与结果报告。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: networking</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-HK-2631-329</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 15/15</p>
+          <p class="why mono">keyword overlap · home market · 4+ weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">30</div>
+        <div class="score">
+          <div class="sc mono">39</div>
+          <div class="meter" role="img" aria-label="Match score 39 out of 100">
+            <span style="width:39%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Provision of an advertising concession partnership, covering planning of on-site advertising spaces, advertising content deployment and operation, and related revenue-sharing arrangements, being an advertising operation concession contract for the venue.</p>
+          <p class="title-zh">提供广告经营权特许合作，涉及场地内广告位规划、广告内容投放运营及相关收益分成安排，属场地广告经营特许合约。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: other</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-HK-2628-240</span>
+          </p>
+          <p class="decomp mono">category 9/45 · keywords 0/25 · market 15/15 · runway 15/15</p>
+          <p class="why mono">home market · 4+ weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">31</div>
+        <div class="score">
+          <div class="sc mono">39</div>
+          <div class="meter" role="img" aria-label="Match score 39 out of 100">
+            <span style="width:39%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Set up a framework-based procurement for steel reinforcement, with batched release against project phases, common technical specs, acceptance traceability, and rolling inventory replenishment.</p>
+          <p class="title-zh">为基础设施项目建立框架式钢筋供应安排，按批次或阶段性下达采购任务，统一材质标准并实施验收追溯、库存滚动补充和异常预警。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: other</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-HK-2631-322</span>
+          </p>
+          <p class="decomp mono">category 9/45 · keywords 0/25 · market 15/15 · runway 15/15</p>
+          <p class="why mono">home market · 4+ weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">32</div>
+        <div class="score">
+          <div class="sc mono">37</div>
+          <div class="meter" role="img" aria-label="Match score 37 out of 100">
+            <span style="width:37%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Expression of interest for comprehensive maintenance services for an uninterruptible power supply (UPS) system.</p>
+          <p class="title-zh">就不间断电源（UPS）系统全面维护服务征询市场意向。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: facilities</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2632-386</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">33</div>
+        <div class="score">
+          <div class="sc mono">37</div>
+          <div class="meter" role="img" aria-label="Match score 37 out of 100">
+            <span style="width:37%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Procure and install a digital slide scanner for pathology samples, covering image capture, data management, and sharing workflows, with commissioning, system interface integration, and after-sales care.</p>
+          <p class="title-zh">采购并安装数字化切片扫描系统，用于组织病理样本图像数字化采集、管理与共享，包含安装调试、接口联调及后续保养服务。</p>
+          <p class="tags mono">
+            <span class="route-chip partner">PARTNER-ASSEMBLY / 需组装持牌伙伴</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: software</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2630-292</span>
+          </p>
+          <p class="route-note">Partner-assembly — requires a licensed/qualified partner in the execution structure</p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">34</div>
+        <div class="score">
+          <div class="sc mono">37</div>
+          <div class="meter" role="img" aria-label="Match score 37 out of 100">
+            <span style="width:37%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Provide outreach and registration coordination for a digital primary-care health program in clinic settings, including campaign material rollout, process coaching, patient guidance, appointment support, and cleaned data consolidation.</p>
+          <p class="title-zh">提供家医门诊场景下的数字健康项目外宣与登记协同服务，含活动内容发布、流程宣教、患者咨询引导、预约资料归集和数据清洗更新。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: consultancy</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2630-295</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">35</div>
+        <div class="score">
+          <div class="sc mono">37</div>
+          <div class="meter" role="img" aria-label="Match score 37 out of 100">
+            <span style="width:37%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Provision of design, content curation and project management services for a cultural exhibition centre display, covering exhibition design, content production and project coordination.</p>
+          <p class="title-zh">采购一间文化展示场馆的设计、内容策划及项目管理服务，涵盖展览设计、内容制作及项目统筹执行。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: facilities</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2631-375</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">36</div>
+        <div class="score">
+          <div class="sc mono">37</div>
+          <div class="meter" role="img" aria-label="Match score 37 out of 100">
+            <span style="width:37%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Expression of interest for cleansing and disinfection services.</p>
+          <p class="title-zh">就院内清洁及消毒服务征询市场意向。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: facilities</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2632-380</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">37</div>
+        <div class="score">
+          <div class="sc mono">37</div>
+          <div class="meter" role="img" aria-label="Match score 37 out of 100">
+            <span style="width:37%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Provision of API management software and related maintenance services.</p>
+          <p class="title-zh">采购应用程序介面（API）管理软件及相关维护服务。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: software</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2632-392</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">38</div>
+        <div class="score">
+          <div class="sc mono">37</div>
+          <div class="meter" role="img" aria-label="Match score 37 out of 100">
+            <span style="width:37%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Provision of x86 and ARM processor-based server hardware and related services.</p>
+          <p class="title-zh">采购x86及ARM处理器架构伺服器硬件及相关服务。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: software</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2632-395</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">39</div>
+        <div class="score">
+          <div class="sc mono">37</div>
+          <div class="meter" role="img" aria-label="Match score 37 out of 100">
+            <span style="width:37%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Cleansing and support services for designated office premises.</p>
+          <p class="title-zh">为指定办公场所提供清洁及辅助支援服务。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: facilities</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2629-266</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">40</div>
+        <div class="score">
+          <div class="sc mono">37</div>
+          <div class="meter" role="img" aria-label="Match score 37 out of 100">
+            <span style="width:37%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Enhancement of an uninterruptible power supply system for a large public healthcare institution.</p>
+          <p class="title-zh">为大型公立医疗机构提升不间断电源系统。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: facilities</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2631-369</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">41</div>
+        <div class="score">
+          <div class="sc mono">37</div>
+          <div class="meter" role="img" aria-label="Match score 37 out of 100">
+            <span style="width:37%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Cleansing and support services for designated office premises.</p>
+          <p class="title-zh">为指定办公场所提供清洁及辅助支援服务。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: facilities</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2631-331</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">42</div>
+        <div class="score">
+          <div class="sc mono">37</div>
+          <div class="meter" role="img" aria-label="Match score 37 out of 100">
+            <span style="width:37%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Vehicle washing and cleaning service for a vehicle fleet.</p>
+          <p class="title-zh">为车辆车队提供洗车清洁服务。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: vehicles</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2629-265</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">43</div>
+        <div class="score">
+          <div class="sc mono">37</div>
+          <div class="meter" role="img" aria-label="Match score 37 out of 100">
+            <span style="width:37%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Provision of a system upgrade with migration to a virtualization platform for a public emergency services organisation, covering planning, implementation and acceptance support.</p>
+          <p class="title-zh">采购一套IT系统升级及虚拟化平台迁移服务，为一家公共紧急服务机构进行现有系统升级并迁移至新的虚拟化平台，涵盖规划、实施及验收支援。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: software</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2631-372</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">44</div>
+        <div class="score">
+          <div class="sc mono">37</div>
+          <div class="meter" role="img" aria-label="Match score 37 out of 100">
+            <span style="width:37%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Carry out phase-one civil works for a wetland conservation site, including land grading, roads, drainage systems, boundary structures, and foundation facilities, with stage acceptance and handover of environmental-operation interfaces.</p>
+          <p class="title-zh">承担湿地生态场地的一期工程服务，提供场地平整、道路与排水、边界及地基设施等基础建设，并完成阶段验收和生态运行配套接口及资料移交。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: construction</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2631-326</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">45</div>
+        <div class="score">
+          <div class="sc mono">37</div>
+          <div class="meter" role="img" aria-label="Match score 37 out of 100">
+            <span style="width:37%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Cleansing services for a designated border control point facility.</p>
+          <p class="title-zh">为指定口岸设施提供清洁服务。</p>
+          <p class="tags mono">
+            <span class="route-chip noroute">LOW FEASIBILITY / 可行性低</span>
+            <span class="tag hk">HK</span>
+            <span class="tag prov">engine class: facilities</span>
+            <span class="tag 2_4w">Closing 2–4 weeks</span>
+            <span class="tag ref">AT-HK-2631-339</span>
+          </p>
+          <p class="decomp mono">category 0/45 · keywords 12/25 · market 15/15 · runway 10/15</p>
+          <p class="why mono">keyword overlap · home market · 2–4 weeks to bid</p>
+        </div>
+      </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="docket">§05</div>
+    <div class="body">
+      <p class="eyebrow">Market expansion surface</p>
+      <details class="expansion">
+        <summary>Market expansion — <span class="count">122</span> GPA-eligible candidates in GB/EU/SG/CA/AU (assembly required)</summary>
+        <div class="expansion-body">
+          <p class="expl">Hong Kong is a WTO GPA party; these notices are legally biddable but require local partners or a service presence in-market. Shown as expansion surface — excluded from the default work list above. Top 12 by score below.</p>
+          <ol class="register">
+      <li class="row">
+        <div class="rank mono">01</div>
+        <div class="score">
+          <div class="sc mono">85</div>
+          <div class="meter" role="img" aria-label="Match score 85 out of 100">
+            <span style="width:85%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Procure primary-care medical services for adults, including outpatient consultations, chronic-care follow-up, medication and health counseling, referral coordination, and core diagnostic support.</p>
+          <p class="title-zh">采购面向成人患者的基层综合医疗服务，涵盖门诊诊疗、慢病随访、用药与健康管理咨询、转诊协调及基础医学支持，按约定周期持续供给。</p>
+          <p class="tags mono">
+            <span class="route-chip expansion">EXPANSION / 拓展市场</span>
+            <span class="tag">GB</span>
+            <span class="tag prov">engine class: medical_services</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-GB-2630-338</span>
+          </p>
+          <p class="decomp mono">category 45/45 · keywords 25/25 · market 0/15 · runway 15/15</p>
+          <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">02</div>
+        <div class="score">
+          <div class="sc mono">85</div>
+          <div class="meter" role="img" aria-label="Match score 85 out of 100">
+            <span style="width:85%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Supply miscellaneous medical devices and sterile closed-circuit preparation and administration systems for handling and administering antineoplastic, cytotoxic, and biological medicines.</p>
+          <p class="title-zh">供应多类医疗耗材与设备，并配置无菌闭路输注与配药系统，用于抗肿瘤/细胞毒及生物制剂药物的配置和给药流程。</p>
+          <p class="tags mono">
+            <span class="route-chip expansion">EXPANSION / 拓展市场</span>
+            <span class="tag">EU</span>
+            <span class="tag prov">engine class: medical_services</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-EU-2629-146</span>
+          </p>
+          <p class="decomp mono">category 45/45 · keywords 25/25 · market 0/15 · runway 15/15</p>
+          <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">03</div>
+        <div class="score">
+          <div class="sc mono">85</div>
+          <div class="meter" role="img" aria-label="Match score 85 out of 100">
+            <span style="width:85%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Collective catering services for an administrative staff restaurant.</p>
+          <p class="title-zh">为行政机构提供集体餐饮供餐服务</p>
+          <p class="tags mono">
+            <span class="route-chip expansion">EXPANSION / 拓展市场</span>
+            <span class="tag">EU</span>
+            <span class="tag prov">engine class: food</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-EU-2630-247</span>
+          </p>
+          <p class="decomp mono">category 45/45 · keywords 25/25 · market 0/15 · runway 15/15</p>
+          <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">04</div>
+        <div class="score">
+          <div class="sc mono">85</div>
+          <div class="meter" role="img" aria-label="Match score 85 out of 100">
+            <span style="width:85%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Procurement of specimen-imaging equipment for confirming completeness of surgically removed tissue, including installation, commissioning and ongoing maintenance support.</p>
+          <p class="title-zh">采购用于手术切除组织标本影像确认的专用摄影成像设备，协助核实切除范围是否完整，并涵盖设备安装调试及后续维护保养相关配套服务。</p>
+          <p class="tags mono">
+            <span class="route-chip expansion">EXPANSION / 拓展市场</span>
+            <span class="tag">EU</span>
+            <span class="tag prov">engine class: medical</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-EU-2630-166</span>
+          </p>
+          <p class="decomp mono">category 45/45 · keywords 25/25 · market 0/15 · runway 15/15</p>
+          <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
+        </div>
+      </li>
+      <li class="row">
+        <div class="rank mono">05</div>
+        <div class="score">
+          <div class="sc mono">85</div>
+          <div class="meter" role="img" aria-label="Match score 85 out of 100">
+            <span style="width:85%"></span>
+          </div>
+        </div>
+        <div class="entry">
+          <p class="title">Need full-scope maintenance and management services for existing bio/elektromedical devices, covering preventive servicing, fault response, calibration, and spare-parts supply under high-availability responsibility conditions.</p>
+          <p class="title-zh">为在用生物/电子医疗设备提供全覆盖管理与维护服务，含定期保养、故障响应、校准与备件供应，按高可用责任模式保障运行。</p>
+          <p class="tags mono">
+            <span class="route-chip expansion">EXPANSION / 拓展市场</span>
+            <span class="tag">EU</span>
+            <span class="tag prov">engine class: medical</span>
+            <span class="tag gt_4w">Closing 4+ weeks</span>
+            <span class="tag ref">AT-EU-2630-215</span>
+          </p>
+          <p class="decomp mono">category 45/45 · keywords 25/25 · market 0/15 · runway 15/15</p>
+          <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
         </div>
       </li>
       <li class="row">
@@ -263,14 +1324,16 @@
           </div>
         </div>
         <div class="entry">
-          <p class="title">Requirement for catering services with meal planning, preparation, and service across multiple sites over the contract period.</p>
-          <p class="title-zh">需求为餐饮服务供给，覆盖多个服务点的日常餐饮安排、食品准备与配送，按合同期持续执行。</p>
+          <p class="title">Long-term school catering and meal supply service covering nurseries, pre-school bridge programmes, public and municipal kindergartens, primary schools and lower-secondary schools across a metropolitan area, structured into 15 separate lots each awarded to a single operator over an approximately 48-month term.</p>
+          <p class="title-zh">为都会区内的托儿所、学前衔接班、公立及市立幼儿园、小学与初中等多类教育机构提供长期学生餐饮供应服务，项目按区域划分为15个批次，每个批次由单一供应商承接，服务期约为48个月。</p>
           <p class="tags mono">
+            <span class="route-chip expansion">EXPANSION / 拓展市场</span>
             <span class="tag">EU</span>
-            <span class="tag">Food &amp; catering · 食品与餐饮</span>
+            <span class="tag prov">engine class: food</span>
             <span class="tag gt_4w">Closing 4+ weeks</span>
-            <span class="tag ref">AT-EU-2629-143</span>
+            <span class="tag ref">AT-EU-2630-180</span>
           </p>
+          <p class="decomp mono">category 45/45 · keywords 25/25 · market 0/15 · runway 15/15</p>
           <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
         </div>
       </li>
@@ -283,14 +1346,16 @@
           </div>
         </div>
         <div class="entry">
-          <p class="title">Procure primary-care medical services for adults, including outpatient consultations, chronic-care follow-up, medication and health counseling, referral coordination, and core diagnostic support.</p>
-          <p class="title-zh">采购面向成人患者的基层综合医疗服务，涵盖门诊诊疗、慢病随访、用药与健康管理咨询、转诊协调及基础医学支持，按约定周期持续供给。</p>
+          <p class="title">Need operation of quick-service dining points and supporting retail counters for patients and related users in a healthcare site, including meal stock planning, point operation management, flow handling, and hygiene maintenance.</p>
+          <p class="title-zh">在医疗场域建设面向患者及其家属的快餐式餐饮服务点，提供餐品备货、快消售卖终端运营、现场秩序管理与卫生保洁。</p>
           <p class="tags mono">
-            <span class="tag">GB</span>
-            <span class="tag">Medical services &amp; pharma · 医疗服务与药品</span>
+            <span class="route-chip expansion">EXPANSION / 拓展市场</span>
+            <span class="tag">EU</span>
+            <span class="tag prov">engine class: food</span>
             <span class="tag gt_4w">Closing 4+ weeks</span>
-            <span class="tag ref">AT-GB-2630-338</span>
+            <span class="tag ref">AT-EU-2630-212</span>
           </p>
+          <p class="decomp mono">category 45/45 · keywords 25/25 · market 0/15 · runway 15/15</p>
           <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
         </div>
       </li>
@@ -303,14 +1368,16 @@
           </div>
         </div>
         <div class="entry">
-          <p class="title">Supply miscellaneous medical devices and sterile closed-circuit preparation and administration systems for handling and administering antineoplastic, cytotoxic, and biological medicines.</p>
-          <p class="title-zh">供应多类医疗耗材与设备，并配置无菌闭路输注与配药系统，用于抗肿瘤/细胞毒及生物制剂药物的配置和给药流程。</p>
+          <p class="title">Need refrigerated ready-meal and staple food provision with delivery support for social service facilities, including cold-chain transport, batch production, on-time delivery management, and return/feedback handling.</p>
+          <p class="title-zh">为社会支持机构及服务点供应冷链即食餐与常规食品，包含冷藏运输、批量出餐、送达时间管理及回收反馈流程。</p>
           <p class="tags mono">
+            <span class="route-chip expansion">EXPANSION / 拓展市场</span>
             <span class="tag">EU</span>
-            <span class="tag">Medical services &amp; pharma · 医疗服务与药品</span>
+            <span class="tag prov">engine class: food</span>
             <span class="tag gt_4w">Closing 4+ weeks</span>
-            <span class="tag ref">AT-EU-2629-146</span>
+            <span class="tag ref">AT-EU-2630-222</span>
           </p>
+          <p class="decomp mono">category 45/45 · keywords 25/25 · market 0/15 · runway 15/15</p>
           <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
         </div>
       </li>
@@ -323,14 +1390,16 @@
           </div>
         </div>
         <div class="entry">
-          <p class="title">Collective catering services for an administrative staff restaurant.</p>
-          <p class="title-zh">为行政机构提供集体餐饮供餐服务</p>
+          <p class="title">Hot-chain and cold-chain catering services across multiple sites.</p>
+          <p class="title-zh">为多个场所提供热链及冷链餐饮配送服务</p>
           <p class="tags mono">
+            <span class="route-chip expansion">EXPANSION / 拓展市场</span>
             <span class="tag">EU</span>
-            <span class="tag">Food &amp; catering · 食品与餐饮</span>
+            <span class="tag prov">engine class: food</span>
             <span class="tag gt_4w">Closing 4+ weeks</span>
-            <span class="tag ref">AT-EU-2630-247</span>
+            <span class="tag ref">AT-EU-2630-239</span>
           </p>
+          <p class="decomp mono">category 45/45 · keywords 25/25 · market 0/15 · runway 15/15</p>
           <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
         </div>
       </li>
@@ -343,14 +1412,16 @@
           </div>
         </div>
         <div class="entry">
-          <p class="title">Procurement of specimen-imaging equipment for confirming completeness of surgically removed tissue, including installation, commissioning and ongoing maintenance support.</p>
-          <p class="title-zh">采购用于手术切除组织标本影像确认的专用摄影成像设备，协助核实切除范围是否完整，并涵盖设备安装调试及后续维护保养相关配套服务。</p>
+          <p class="title">Preparation, supply and cold-chain delivery of ready-prepared meals for municipal collective catering settings such as schools and public canteens, requiring an unbroken cold chain and consistently fresh, hygienic meal quality.</p>
+          <p class="title-zh">以冷链配送方式提供预制餐食的制作、供应及配送服务，用于市政集体餐饮场景（如学校、公共食堂等），需保证低温链全程稳定运作及餐食新鲜卫生。</p>
           <p class="tags mono">
+            <span class="route-chip expansion">EXPANSION / 拓展市场</span>
             <span class="tag">EU</span>
-            <span class="tag">Medical equipment · 医疗设备</span>
+            <span class="tag prov">engine class: food</span>
             <span class="tag gt_4w">Closing 4+ weeks</span>
-            <span class="tag ref">AT-EU-2630-166</span>
+            <span class="tag ref">AT-EU-2630-161</span>
           </p>
+          <p class="decomp mono">category 45/45 · keywords 25/25 · market 0/15 · runway 15/15</p>
           <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
         </div>
       </li>
@@ -363,14 +1434,16 @@
           </div>
         </div>
         <div class="entry">
-          <p class="title">Need full-scope maintenance and management services for existing bio/elektromedical devices, covering preventive servicing, fault response, calibration, and spare-parts supply under high-availability responsibility conditions.</p>
-          <p class="title-zh">为在用生物/电子医疗设备提供全覆盖管理与维护服务，含定期保养、故障响应、校准与备件供应，按高可用责任模式保障运行。</p>
+          <p class="title">Need radiotherapy treatment equipment, planning software, and related services, including deployment integration, compatibility testing, commissioning, operator training, annual warranty coverage, and continuous technical support.</p>
+          <p class="title-zh">采购放疗治疗设备与软件及关联服务，覆盖部署集成、治疗计划兼容、验收测试、员工培训、年度质保和持续技术支持。</p>
           <p class="tags mono">
+            <span class="route-chip expansion">EXPANSION / 拓展市场</span>
             <span class="tag">EU</span>
-            <span class="tag">Medical equipment · 医疗设备</span>
+            <span class="tag prov">engine class: medical</span>
             <span class="tag gt_4w">Closing 4+ weeks</span>
-            <span class="tag ref">AT-EU-2630-215</span>
+            <span class="tag ref">AT-EU-2630-219</span>
           </p>
+          <p class="decomp mono">category 45/45 · keywords 25/25 · market 0/15 · runway 15/15</p>
           <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
         </div>
       </li>
@@ -383,202 +1456,50 @@
           </div>
         </div>
         <div class="entry">
-          <p class="title">Long-term school catering and meal supply service covering nurseries, pre-school bridge programmes, public and municipal kindergartens, primary schools and lower-secondary schools across a metropolitan area, structured into 15 separate lots each awarded to a single operator over an approximately 48-month term.</p>
-          <p class="title-zh">为都会区内的托儿所、学前衔接班、公立及市立幼儿园、小学与初中等多类教育机构提供长期学生餐饮供应服务，项目按区域划分为15个批次，每个批次由单一供应商承接，服务期约为48个月。</p>
-          <p class="tags mono">
-            <span class="tag">EU</span>
-            <span class="tag">Food &amp; catering · 食品与餐饮</span>
-            <span class="tag gt_4w">Closing 4+ weeks</span>
-            <span class="tag ref">AT-EU-2630-180</span>
-          </p>
-          <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
-        </div>
-      </li>
-      <li class="row">
-        <div class="rank mono">13</div>
-        <div class="score">
-          <div class="sc mono">85</div>
-          <div class="meter" role="img" aria-label="Match score 85 out of 100">
-            <span style="width:85%"></span>
-          </div>
-        </div>
-        <div class="entry">
-          <p class="title">Need operation of quick-service dining points and supporting retail counters for patients and related users in a healthcare site, including meal stock planning, point operation management, flow handling, and hygiene maintenance.</p>
-          <p class="title-zh">在医疗场域建设面向患者及其家属的快餐式餐饮服务点，提供餐品备货、快消售卖终端运营、现场秩序管理与卫生保洁。</p>
-          <p class="tags mono">
-            <span class="tag">EU</span>
-            <span class="tag">Food &amp; catering · 食品与餐饮</span>
-            <span class="tag gt_4w">Closing 4+ weeks</span>
-            <span class="tag ref">AT-EU-2630-212</span>
-          </p>
-          <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
-        </div>
-      </li>
-      <li class="row">
-        <div class="rank mono">14</div>
-        <div class="score">
-          <div class="sc mono">85</div>
-          <div class="meter" role="img" aria-label="Match score 85 out of 100">
-            <span style="width:85%"></span>
-          </div>
-        </div>
-        <div class="entry">
-          <p class="title">Need refrigerated ready-meal and staple food provision with delivery support for social service facilities, including cold-chain transport, batch production, on-time delivery management, and return/feedback handling.</p>
-          <p class="title-zh">为社会支持机构及服务点供应冷链即食餐与常规食品，包含冷藏运输、批量出餐、送达时间管理及回收反馈流程。</p>
-          <p class="tags mono">
-            <span class="tag">EU</span>
-            <span class="tag">Food &amp; catering · 食品与餐饮</span>
-            <span class="tag gt_4w">Closing 4+ weeks</span>
-            <span class="tag ref">AT-EU-2630-222</span>
-          </p>
-          <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
-        </div>
-      </li>
-      <li class="row">
-        <div class="rank mono">15</div>
-        <div class="score">
-          <div class="sc mono">85</div>
-          <div class="meter" role="img" aria-label="Match score 85 out of 100">
-            <span style="width:85%"></span>
-          </div>
-        </div>
-        <div class="entry">
-          <p class="title">Hot-chain and cold-chain catering services across multiple sites.</p>
-          <p class="title-zh">为多个场所提供热链及冷链餐饮配送服务</p>
-          <p class="tags mono">
-            <span class="tag">EU</span>
-            <span class="tag">Food &amp; catering · 食品与餐饮</span>
-            <span class="tag gt_4w">Closing 4+ weeks</span>
-            <span class="tag ref">AT-EU-2630-239</span>
-          </p>
-          <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
-        </div>
-      </li>
-      <li class="row">
-        <div class="rank mono">16</div>
-        <div class="score">
-          <div class="sc mono">85</div>
-          <div class="meter" role="img" aria-label="Match score 85 out of 100">
-            <span style="width:85%"></span>
-          </div>
-        </div>
-        <div class="entry">
-          <p class="title">Preparation, supply and cold-chain delivery of ready-prepared meals for municipal collective catering settings such as schools and public canteens, requiring an unbroken cold chain and consistently fresh, hygienic meal quality.</p>
-          <p class="title-zh">以冷链配送方式提供预制餐食的制作、供应及配送服务，用于市政集体餐饮场景（如学校、公共食堂等），需保证低温链全程稳定运作及餐食新鲜卫生。</p>
-          <p class="tags mono">
-            <span class="tag">EU</span>
-            <span class="tag">Food &amp; catering · 食品与餐饮</span>
-            <span class="tag gt_4w">Closing 4+ weeks</span>
-            <span class="tag ref">AT-EU-2630-161</span>
-          </p>
-          <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
-        </div>
-      </li>
-      <li class="row">
-        <div class="rank mono">17</div>
-        <div class="score">
-          <div class="sc mono">85</div>
-          <div class="meter" role="img" aria-label="Match score 85 out of 100">
-            <span style="width:85%"></span>
-          </div>
-        </div>
-        <div class="entry">
-          <p class="title">Need radiotherapy treatment equipment, planning software, and related services, including deployment integration, compatibility testing, commissioning, operator training, annual warranty coverage, and continuous technical support.</p>
-          <p class="title-zh">采购放疗治疗设备与软件及关联服务，覆盖部署集成、治疗计划兼容、验收测试、员工培训、年度质保和持续技术支持。</p>
-          <p class="tags mono">
-            <span class="tag">EU</span>
-            <span class="tag">Medical equipment · 医疗设备</span>
-            <span class="tag gt_4w">Closing 4+ weeks</span>
-            <span class="tag ref">AT-EU-2630-219</span>
-          </p>
-          <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
-        </div>
-      </li>
-      <li class="row">
-        <div class="rank mono">18</div>
-        <div class="score">
-          <div class="sc mono">85</div>
-          <div class="meter" role="img" aria-label="Match score 85 out of 100">
-            <span style="width:85%"></span>
-          </div>
-        </div>
-        <div class="entry">
           <p class="title">Long-term catering supply service for a public school and education network within a local municipal district, covering daily meal preparation, delivery and dining management for students and staff on an ongoing basis.</p>
           <p class="title-zh">为地方市政辖区内公立学校及教育机构网络提供长期餐饮供应服务，涵盖学生及教职员工的日常膳食准备、配送与供餐管理，属持续性服务需求。</p>
           <p class="tags mono">
+            <span class="route-chip expansion">EXPANSION / 拓展市场</span>
             <span class="tag">EU</span>
-            <span class="tag">Food &amp; catering · 食品与餐饮</span>
+            <span class="tag prov">engine class: food</span>
             <span class="tag gt_4w">Closing 4+ weeks</span>
             <span class="tag ref">AT-EU-2630-207</span>
           </p>
+          <p class="decomp mono">category 45/45 · keywords 25/25 · market 0/15 · runway 15/15</p>
           <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
         </div>
       </li>
-      <li class="row">
-        <div class="rank mono">19</div>
-        <div class="score">
-          <div class="sc mono">85</div>
-          <div class="meter" role="img" aria-label="Match score 85 out of 100">
-            <span style="width:85%"></span>
-          </div>
+          </ol>
         </div>
-        <div class="entry">
-          <p class="title">Framework agreement for the supply of catering and food services.</p>
-          <p class="title-zh">建立餐饮服务供应框架协议采购安排</p>
-          <p class="tags mono">
-            <span class="tag">EU</span>
-            <span class="tag">Food &amp; catering · 食品与餐饮</span>
-            <span class="tag gt_4w">Closing 4+ weeks</span>
-            <span class="tag ref">AT-EU-2630-227</span>
-          </p>
-          <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
-        </div>
-      </li>
-      <li class="row">
-        <div class="rank mono">20</div>
-        <div class="score">
-          <div class="sc mono">84</div>
-          <div class="meter" role="img" aria-label="Match score 84 out of 100">
-            <span style="width:84%"></span>
-          </div>
-        </div>
-        <div class="entry">
-          <p class="title">Provide restaurant/food-service operations (dining hall scope) for an initial one-year term, with an option to add one additional year.</p>
-          <p class="title-zh">提供餐饮服务（餐厅与食堂化）并开展为期1年的餐饮营运，含1次一年续展权限。</p>
-          <p class="tags mono">
-            <span class="tag">EU</span>
-            <span class="tag">Food &amp; catering · 食品与餐饮</span>
-            <span class="tag gt_4w">Closing 4+ weeks</span>
-            <span class="tag ref">AT-EU-2629-131</span>
-          </p>
-          <p class="why mono">category fit · keyword overlap · 4+ weeks to bid</p>
-        </div>
-      </li>
-      </ol>
+      </details>
     </div>
   </section>
 
   <section class="sec">
-    <div class="docket">§05</div>
+    <div class="docket">§06</div>
     <div class="body">
-      <p class="eyebrow">How the score is built</p>
-      <h2>Four signals, no black box.</h2>
+      <p class="eyebrow">How the score works</p>
+      <h2>Four signals, stated plainly.</h2>
       <div class="formula">
-        <div class="fx"><div class="w">45</div><div class="l">Category fit against the shared 13-category taxonomy</div></div>
-        <div class="fx"><div class="w">25</div><div class="l">Keyword overlap across English, 简体 and 繁體 text</div></div>
+        <div class="fx"><div class="w">45</div><div class="l">Category fit against the shared taxonomy</div></div>
+        <div class="fx"><div class="w">25</div><div class="l">Keyword overlap across EN, 简体, 繁體</div></div>
         <div class="fx"><div class="w">15</div><div class="l">Home-market fit</div></div>
-        <div class="fx"><div class="w">15</div><div class="l">Runway — is there still time to bid it properly</div></div>
+        <div class="fx"><div class="w">15</div><div class="l">Runway — time left to bid properly</div></div>
       </div>
-      <p class="note">Every score on this page decomposes into those four numbers, which is why each row can state its own reasons. Closing windows are shown as coarse bands here, exactly as suppliers see them.</p>
+      <div class="honesty">
+        <p>Minimum threshold to appear on this page: <span class="threshold">35</span>. A category match alone contributes <span class="threshold">45</span> — which clears it. We show the arithmetic rather than dress it up.</p>
+        <p>The fit-score measures <strong>relevance</strong>, not win-probability. Route separation (§04) and spec-level analysis are the layers above — a high score says the engine found a sector match, not that the bid will succeed.</p>
+        <p class="audit">Top-20 human review: 4 direct-path · 9 partner-assembly · 7 not routable. The engine generates candidates; the honest number is the point — it makes the system measurable.</p>
+      </div>
     </div>
   </section>
 
   <footer>
     <div class="row2">
       <span class="wm">Asaptic — tender matching</span>
-      <span>Registry snapshot 2026-08-06 · <a href="/tender/">live tender index</a></span>
+      <span>Registry snapshot 2026-08-09 · <a href="/tender/">live tender index</a></span>
     </div>
-    <p class="note">Demonstration page. Figures are the engine's real output against the registry on the date shown; a live run returns a different set as tenders open and close. Issuing departments are not named on this page.</p>
+    <p class="note">Demonstration page. One-pass output of 2026-08-09 — a live run returns a different set as tenders open and close. Closing windows are shown as coarse bands, not exact dates; issuing bodies are not named on this page. Route classifications are the engine's own judgment, shown as such; candidates are not contracted partners. The product layer adds spec-level analysis and execution-structure assembly.</p>
   </footer>
 
 </main>
