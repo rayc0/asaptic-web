@@ -131,6 +131,27 @@ test('a forbidden field on an input row never reaches output', () => {
   assert.deepEqual(Object.keys(pickPublic(dirty.rows[0])).sort(), [...PUBLIC_FIELDS].sort());
 });
 
+// --- XML-illegal control characters must not break well-formedness ----------
+test('control chars in a summary do not produce non-well-formed XML', () => {
+  const dirty = { generated: '2026-08-10T00:00:00Z', rows: [{
+    asaptic_id: 'AT-TEST-HK-0000-099', market: 'HK',
+    category: { name_en: 'IT' },
+    // \x00 NUL, \x0B vertical tab, \x0C form feed — all illegal in XML 1.0.
+    summary_en: 'bad\x00null\x0Bvt\x0Cff end', closing_bucket: 'le_2w',
+  }] };
+  const built = buildFeeds(dirty);
+  for (const [name, xml] of Object.entries(built.files)) {
+    assert.ok(parseXml(xml).tags > 0, name);
+    assert.ok(!/[\x00\x0B\x0C]/.test(xml), 'illegal control char survived in ' + name);
+  }
+  // astral-plane content (emoji) must NOT be stripped by the illegal-char filter.
+  const emoji = buildFeeds({ generated: '2026-08-10T00:00:00Z', rows: [{
+    asaptic_id: 'AT-TEST-HK-0000-098', market: 'HK', category: { name_en: 'IT' },
+    summary_en: 'fire 🚒 truck', closing_bucket: 'le_2w',
+  }] });
+  assert.ok(emoji.files['all.atom.xml'].includes('🚒'), 'emoji stripped');
+});
+
 // --- sentinel -------------------------------------------------------------
 test('sentinel reports the committed surfaces clean', () => {
   assert.deepEqual(scanPaths(), []);

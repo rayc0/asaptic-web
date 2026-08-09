@@ -53,8 +53,16 @@ const BAND_LABEL = {
 
 // --- helpers -----------------------------------------------------------------
 
+// XML 1.0 forbids most control characters entirely — they cannot be represented
+// even as numeric entities. A stray \x00 / \x0B / \x0C (paste artifacts, bad
+// upstream data) would otherwise produce non-well-formed output that every feed
+// reader rejects. Strip anything outside the legal Char production before escaping.
+// Legal: #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF].
+const XML_ILLEGAL = /[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u{10000}-\u{10FFFF}]/gu;
+
 export function xmlEscape(s) {
   return String(s ?? '')
+    .replace(XML_ILLEGAL, '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
