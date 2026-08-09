@@ -133,6 +133,17 @@
   .chips{display:flex;flex-wrap:wrap;gap:9px;margin:8px 0 0}
   .chip{font-family:var(--mono);font-size:12.5px;color:var(--ink);border:1px solid var(--edge2);background:var(--card);padding:8px 14px;border-radius:20px}
   .chip b{color:var(--emerald-l)}
+  /* 06 · live dev surface — deliberately NOT the emerald ✓/glow evidence language */
+  .termcard{background:#08080f;border:1px solid var(--edge2);border-radius:12px;overflow:hidden;margin-top:24px;box-shadow:0 14px 36px rgba(0,0,0,.4)}
+  .termhead{display:flex;align-items:center;gap:7px;padding:10px 14px;border-bottom:1px solid var(--edge);background:var(--card2)}
+  .tdd{width:9px;height:9px;border-radius:50%;background:var(--ink3)}
+  .tdd.on{background:var(--emerald-l);box-shadow:0 0 7px rgba(16,185,129,.5)}
+  .termtitle{margin-left:8px;font-family:var(--mono);font-size:11px;color:var(--ink3)}
+  .termbody{margin:0;padding:16px 18px;font-size:12.5px;color:var(--ink2);line-height:1.7;white-space:pre-wrap;overflow-x:auto}
+  .termbody::first-line{color:var(--emerald-l)}
+  .epills{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+  .epill{font-family:var(--mono);font-size:11.5px;color:var(--ink);border:1px solid var(--edge2);background:var(--card);padding:8px 13px;border-radius:20px;transition:border-color .15s;text-decoration:none}
+  .epill:hover{border-color:var(--cyan)}
   .links{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
   .lk{font-family:var(--mono);font-size:13px;color:var(--ink);border:1px solid var(--edge2);border-radius:9px;padding:12px 16px;background:var(--card);transition:border-color .15s,transform .15s}
   .lk:hover{border-color:var(--cyan);transform:translateY(-1px)}
@@ -259,6 +270,31 @@
     <a class="lk" href="/demo"><b>asaptic.com/demo</b> · 签约证据</a>
     <a class="lk" href="/demo/match"><b>asaptic.com/demo/match</b> · 在线匹配引擎</a>
   </div>
+</div></section>
+
+<section class="z" id="live"><div class="wrap">
+  <p class="eyebrow" style="color:var(--ink3)">06 · 附：这套系统本身也是活的</p>
+  <h2 style="font-size:clamp(19px,2.3vw,26px)">上面是一次<span class="cy">重构</span>。下面是一条<span class="cy">现在就能 curl</span> 的产品线。</h2>
+  <p class="sub" style="max-width:66ch">Asaptic 每周把公开招标情报结构化，通过 keyless REST + MCP 提供给 agent 订阅。这与上面 C0009 的赢标决策链是<b style="color:var(--ink2)">两条不同的东西</b> —— 赢标链不是、也不会做成可调用端点。</p>
+  <div class="termcard" role="group" aria-label="真实可执行的开发者端点">
+    <div class="termhead"><span class="tdd"></span><span class="tdd"></span><span class="tdd on"></span><span class="termtitle">asaptic.com/api/v1/health — live</span></div>
+    <pre class="termbody mono">$ curl -s https://asaptic.com/api/v1/health
+{
+  "status": "ok",
+  "rows_total": 2395,
+  "issue_id": "2026-W33",
+  "feed_fresh": true,
+  "schema": "asaptic.tender.v1"
+}</pre>
+  </div>
+  <div class="epills">
+    <a class="epill" href="https://asaptic.com/api/v1/health" target="_blank" rel="noopener">GET /api/v1/health</a>
+    <a class="epill" href="https://asaptic.com/tender/rows.json" target="_blank" rel="noopener">GET /tender/rows.json</a>
+    <a class="epill" href="https://asaptic.com/agent/capabilities.json" target="_blank" rel="noopener">GET /agent/capabilities.json</a>
+    <a class="epill" href="https://asaptic.com/llms.txt" target="_blank" rel="noopener">GET /llms.txt</a>
+    <a class="epill" href="https://asaptic.com/mcp" target="_blank" rel="noopener">POST /mcp <span style="color:var(--ink3)">· MCP · 9 tools</span></a>
+  </div>
+  <p class="prov" style="margin:22px 0 0"><span class="k">▲</span> 这些端点是本公司另一条产品线（公开招标情报订阅），<b>不是</b>上面 C0009 赢标叙事的接口化版本。赢标决策链是对已结案合同的书面重构，从未、也不会作为可调用 API 提供 —— 不存在一个你能 curl 出「下一个中标」的端点。</p>
 </div></section>
 
 <footer class="z"><div class="wrap">
