@@ -1,3 +1,88 @@
+// ---------------------------------------------------------------------------
+// 404 handling (added 2026-08-09 — fixes the site-wide soft-404 catch-all)
+//
+// Cloudflare Pages, when a request matches no asset AND the project ships no
+// 404.html, falls back to serving the root index.html with HTTP **200**.
+// asaptic.com had no 404.html, so EVERY unknown path answered 200 + homepage
+// HTML — including missing assets (/demo/style.css?v=1 returned 200 text/html).
+// Consequences: Google recorded soft-404s, uptime/link monitors could never
+// see a broken URL, and unknown deep paths rendered as an unstyled homepage.
+//
+// The fix has two halves and needs BOTH:
+//   1. /404.html now exists, which flips Pages' miss behaviour from
+//      "index.html + 200" to "404.html + 404" — this is what makes a miss
+//      *detectable* here at all.
+//   2. The handler below shapes that miss by request kind: a missing PAGE gets
+//      the branded 404 page, a missing ASSET gets a plain-text 404 and is never
+//      handed text/html.
+// ---------------------------------------------------------------------------
+
+// Extension-bearing paths are asset requests: CSS, JS, JSON, images, fonts,
+// feeds. A browser asking for one must never receive an HTML document.
+const ASSET_PATH_RE =
+  /\.(json|txt|xml|png|svg|ico|jpg|jpeg|gif|webp|avif|pdf|webmanifest|css|js|mjs|map|woff2|woff|ttf|otf|csv|zip|mp4)$/i;
+
+const NOT_FOUND_HEADERS = {
+  'Cache-Control': 'no-store',
+  'X-Robots-Tag': 'noindex, nofollow',
+};
+
+// Last-resort body, used only if Pages returns a 404 that is not our own
+// 404.html (e.g. the asset were ever dropped from a deploy). Deliberately
+// tiny — /404.html remains the single source of truth for the real page.
+const FALLBACK_404_HTML =
+  '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">' +
+  '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+  '<meta name="robots" content="noindex, nofollow"><title>404 — Not Found · Asaptic</title></head>' +
+  '<body style="background:#0A1428;color:#fff;font-family:system-ui,sans-serif;padding:48px">' +
+  '<h1 style="font-size:48px;margin:0 0 12px">404</h1>' +
+  '<p style="color:#B0BEC5;margin:0 0 4px">This page does not exist on asaptic.com.</p>' +
+  '<p style="color:#B0BEC5;margin:0 0 24px">此页面不存在于 asaptic.com。</p>' +
+  '<a href="/" style="color:#29B6F6">Return home · 返回首页</a></body></html>';
+
+// A missing asset: plain text, correct status, never text/html.
+function assetNotFound() {
+  return new Response('404 Not Found\n', {
+    status: 404,
+    headers: { 'Content-Type': 'text/plain; charset=utf-8', ...NOT_FOUND_HEADERS },
+  });
+}
+
+// Serve `request` from Pages' static assets, converting any miss into a real
+// 404 of the right shape. Every legitimate response (200, 206, 301/308
+// trailing-slash + extensionless canonicalisation, 304) passes through
+// untouched — this only intercepts status 404.
+async function serveAsset(request, env, url) {
+  const res = await env.ASSETS.fetch(request);
+
+  // The error document itself must not answer 200 — otherwise /404 is an
+  // indexable page that duplicates the error state. (/404.html 308s here.)
+  if (res.status === 200 && url.pathname === '/404') {
+    const headers = new Headers(res.headers);
+    headers.set('Cache-Control', NOT_FOUND_HEADERS['Cache-Control']);
+    headers.set('X-Robots-Tag', NOT_FOUND_HEADERS['X-Robots-Tag']);
+    return new Response(res.body, { status: 404, headers });
+  }
+
+  if (res.status !== 404) return res;
+
+  if (ASSET_PATH_RE.test(url.pathname)) return assetNotFound();
+
+  // Pages has already rendered /404.html with a 404 status; keep that body and
+  // just harden the headers. If it is somehow not HTML, substitute our own.
+  const isHtml = (res.headers.get('Content-Type') || '').includes('text/html');
+  if (!isHtml) {
+    return new Response(FALLBACK_404_HTML, {
+      status: 404,
+      headers: { 'Content-Type': 'text/html; charset=utf-8', ...NOT_FOUND_HEADERS },
+    });
+  }
+  const headers = new Headers(res.headers);
+  headers.set('Cache-Control', NOT_FOUND_HEADERS['Cache-Control']);
+  headers.set('X-Robots-Tag', NOT_FOUND_HEADERS['X-Robots-Tag']);
+  return new Response(res.body, { status: 404, headers });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -121,22 +206,17 @@ export default {
       } catch (e) {
         // swallow — never surface a storage error to a public consumer
       }
-      return env.ASSETS.fetch(request);
+      // Falls back to the last baked static copy. If even that is missing the
+      // six consumers get a plain 404, never a 200 HTML page they would try to
+      // JSON.parse.
+      return serveAsset(request, env, url);
     }
 
-    // Static assets and well-known files: always pass through to ASSETS
-    // (prevents SPA catch-all from serving text/html for these paths)
-    if (
-      url.pathname.startsWith('/.well-known/') ||
-      url.pathname === '/llms.txt' ||
-      url.pathname === '/robots.txt' ||
-      url.pathname === '/sitemap.xml' ||
-      /\.(json|txt|xml|png|svg|ico|jpg|jpeg|gif|webp|pdf|webmanifest|css|js|woff2|woff|ttf|otf)$/i.test(url.pathname)
-    ) {
-      return env.ASSETS.fetch(request);
-    }
-
-    // Serve static assets from Pages (SPA fallback)
-    return env.ASSETS.fetch(request);
+    // Everything else is a static asset served by Pages: HTML pages, the
+    // trailing-slash and extensionless canonicalisation redirects Pages issues
+    // for them, /.well-known/*, sitemaps, feeds, CSS/JS/images/fonts.
+    // serveAsset() passes all of those through unchanged and only intervenes on
+    // a miss — which is now a real 404 instead of the homepage.
+    return serveAsset(request, env, url);
   },
 };
