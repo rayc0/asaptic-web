@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Asaptic — Proof Lab · 证据实验室</title>
+<meta name="description" content="Attack it in your browser. Feed the public contract any payload and watch it reject anything outside the 11 fields; mutate a company profile and watch the match re-score live. Our sanitization isn't a promise — it's a control you can attack.">
+<style>
+  :root{
+    --frame:#15140f; --paper:#f4f1e9; --paper-2:#ece7d8; --edge:#e8e2d3;
+    --ink:#211f18; --ink-2:#6b6656; --seal:#a8322c; --seal-deep:#8f2823;
+    --line:#d8d1c1; --line-2:#c4bca9; --ok:#2f6f4f; --ok-2:#eaf1ea;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --serif:Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--frame);color:var(--ink);
+    font-family:var(--serif);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .sheet{max-width:880px;margin:64px auto;background:var(--paper);
+    border:1px solid var(--edge);border-radius:3px;
+    box-shadow:0 30px 80px rgba(0,0,0,.55)}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--seal);margin:0}
+  .sec{display:grid;grid-template-columns:56px 1fr;border-top:1px solid var(--line)}
+  .sec:first-child{border-top:0}
+  .docket{font-family:var(--mono);font-size:12px;color:var(--seal);padding:28px 0 0 18px;letter-spacing:.04em}
+  .body{padding:28px 30px 30px 8px}
+  h1{font-family:var(--serif);font-size:clamp(27px,4.3vw,40px);line-height:1.12;letter-spacing:-.015em;margin:.35em 0 .3em;text-wrap:balance}
+  h2{font-family:var(--serif);font-size:19px;margin:.2em 0 .5em;text-wrap:balance}
+  .lede{color:var(--ink-2);font-size:15px;max-width:62ch}
+  .amt{font-family:var(--mono);color:var(--seal);font-weight:700}
+  .note{font-family:var(--mono);font-size:10.5px;color:var(--ink-2);margin-top:10px;line-height:1.55}
+  p{max-width:62ch}
+
+  /* form controls */
+  label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:14px 0 5px}
+  textarea,input,select{width:100%;font-family:var(--mono);font-size:12.5px;color:var(--ink);
+    background:var(--paper-2);border:1px solid var(--line-2);border-radius:2px;padding:10px 11px;line-height:1.5}
+  textarea{min-height:200px;resize:vertical;white-space:pre}
+  input:focus,textarea:focus,select:focus{outline:2px solid var(--seal);outline-offset:1px;border-color:var(--seal)}
+  .btn{font-family:var(--mono);font-size:12px;letter-spacing:.04em;background:var(--seal);color:#fff;border:1px solid var(--seal);
+    border-radius:2px;padding:10px 18px;cursor:pointer;margin-top:12px}
+  .btn:hover{background:var(--seal-deep)}
+  .btn.ghost{background:transparent;color:var(--seal)}
+  .btn.ghost:hover{background:var(--paper-2)}
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+
+  /* gate verdict */
+  .verdict{margin:14px 0 0;border:1px solid var(--line);background:var(--paper-2);border-radius:3px;overflow:hidden}
+  .verdict .head{padding:12px 16px;font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.03em;
+    border-bottom:1px solid var(--line)}
+  .verdict.pass .head{color:var(--ok);background:var(--ok-2)}
+  .verdict.fail .head{color:var(--seal);background:#f7ebe9}
+  .verdict ul{list-style:none;margin:0;padding:6px 0}
+  .verdict li{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:7px 16px;font-size:12.5px;line-height:1.45}
+  .verdict li .k{font-family:var(--mono);font-weight:700}
+  .verdict li.rej .k{color:var(--seal)}
+  .verdict li.acc .k{color:var(--ok)}
+  .verdict li .why{color:var(--ink-2);font-family:var(--serif);font-size:12.5px}
+  .verdict li .cls{font-family:var(--mono);font-size:10px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em}
+
+  /* 404 lookup */
+  .lookup{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-top:6px}
+  .lookup .fld{flex:1;min-width:200px}
+  .resp{font-family:var(--mono);font-size:12px;margin-top:10px;border:1px solid var(--line);background:#111;color:#d9d4c7;padding:10px 12px;border-radius:2px;white-space:pre-wrap;word-break:break-all}
+  .resp .st{color:#e0897f}
+  .resp .st.ok{color:#7fca9b}
+
+  /* match glass-box */
+  .profile{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+  @media(max-width:560px){.profile{grid-template-columns:1fr}}
+  .register{list-style:none;padding:0;margin:16px 0 0;border-top:1px solid var(--seal)}
+  .mrow{border-bottom:1px solid var(--line);padding:14px 0 13px}
+  .mrow .top{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:baseline}
+  .mrow .sc{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink);line-height:1}
+  .mrow .title{font-family:var(--serif);font-size:15px;margin:0;line-height:1.3}
+  .mrow .title-zh{font-family:var(--serif);font-size:12.5px;color:var(--ink-2);margin:2px 0 0}
+  .mrow .rc{font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:3px 8px;border-radius:2px;white-space:nowrap}
+  .rc.direct{background:var(--seal);color:#fff}
+  .rc.partner{background:transparent;color:var(--seal);border:1px solid var(--seal)}
+  .rc.oem{background:var(--paper-2);color:var(--ink-2);border:1px solid var(--line-2)}
+  .rc.noroute{background:var(--paper-2);color:var(--ink-2);border:1px dashed var(--line-2)}
+  .decomp{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 0 68px}
+  @media(max-width:560px){.decomp{margin-left:0}}
+  .seg .lab{font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2);display:flex;justify-content:space-between}
+  .seg .lab b{color:var(--ink)}
+  .seg .bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin-top:3px}
+  .seg .bar span{display:block;height:100%;background:var(--seal);border-radius:2px;transition:width .18s ease}
+  .fired{font-family:var(--mono);font-size:10.5px;color:var(--ink-2);margin:8px 0 0 68px}
+  @media(max-width:560px){.fired{margin-left:0}}
+  .fired b{color:var(--ok)}
+  .rnote{font-family:var(--serif);font-style:italic;font-size:12px;color:var(--ink-2);margin:5px 0 0 68px;line-height:1.45}
+  @media(max-width:560px){.rnote{margin-left:0}}
+
+  .honesty{background:var(--paper-2);border:1px solid var(--line);padding:16px 18px;margin:14px 0 0}
+  .honesty p{font-size:13.5px;color:var(--ink);line-height:1.6;margin:.6em 0}
+  .honesty p:first-child{margin-top:0}
+  .honesty .t{font-family:var(--mono);color:var(--seal);font-weight:700}
+
+  .cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0 0}
+  .cta a{font-family:var(--mono);font-size:12.5px;letter-spacing:.03em;text-decoration:none;padding:11px 20px;border-radius:2px}
+  .cta a.primary{background:var(--seal);color:#fff}
+  .cta a.primary:hover{background:var(--seal-deep)}
+  .cta a.sec2{color:var(--seal);border:1px solid var(--seal)}
+  .cta a.sec2:hover{background:var(--paper-2)}
+
+  @media(max-width:640px){
+    .body{padding:24px 18px 26px 6px}
+    .sec{grid-template-columns:40px 1fr}
+    .docket{padding-left:12px}
+  }
+
+  footer{padding:22px 30px 30px;border-top:1px solid var(--seal)}
+  footer .row2{font-family:var(--mono);font-size:12px;color:var(--ink-2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  footer a{color:var(--seal);text-decoration:none}
+  .wm{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--ink);text-transform:uppercase}
+
+  .asaptic-bridge{position:sticky;top:0;z-index:50;background:#080F1E;border-bottom:1px solid rgba(41,182,246,.18)}
+  .asaptic-bridge-row{display:flex;align-items:center;justify-content:space-between;gap:16px;height:52px;max-width:880px;margin:0 auto;padding:0 24px}
+  .asaptic-bridge-logo{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;font-weight:800;letter-spacing:.18em;color:#fff;text-decoration:none}
+  .asaptic-bridge-back{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;font-weight:600;color:#29B6F6;text-decoration:none}
+  .asaptic-bridge-back:hover{color:#00E5FF;text-decoration:underline}
+  a:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+</style>
+</head>
+<body>
+<nav class="asaptic-bridge" aria-label="Asaptic">
+  <div class="asaptic-bridge-row">
+    <a href="/" class="asaptic-bridge-logo" aria-label="Asaptic home">ASAPTIC</a>
+    <a href="/" class="asaptic-bridge-back">&larr; asaptic.com</a>
+  </div>
+</nav>
+
+<main class="sheet">
+
+  <section class="sec">
+    <div class="docket">§01</div>
+    <div class="body">
+      <p class="eyebrow">Proof Lab · 证据实验室</p>
+      <h1>Don't trust the sanitization. <span class="amt">Attack it.</span></h1>
+      <p class="lede">Two of Asaptic's controls run entirely in your browser, on data that is already public. Below, you drive them yourself: feed the public contract any payload you like and watch it refuse anything it did not publish, then mutate a company profile and watch the match re-score in front of you. Our sanitization isn't a promise — it's a control you can attack right here.</p>
+      <p class="note">Everything on this page runs client-side on synthetic AT-TEST rows. No live tender, issuing body, or exact date is present — that's the point being demonstrated.</p>
+    </div>
+  </section>
+
+  <!-- ============ PANEL 1 · LEAK-GATE PROOF ============ -->
+  <section class="sec">
+    <div class="docket">§02</div>
+    <div class="body">
+      <p class="eyebrow">Panel 1 — Leak-Gate Proof</p>
+      <h2>11 fields, not 12. Try to sneak a 12th.</h2>
+      <p class="lede">The public contract admits exactly eleven fields. Edit the row below — add a field, nest an object, smuggle an exact date or an internal procurement-portal code into a value, change the id shape — then run the gate. It accepts only what the contract publishes and tells you, generically, why it refused the rest. It never names the field it is hiding.</p>
+
+      <label for="gate-in">Payload — mutate freely, then run the gate</label>
+      <textarea id="gate-in" spellcheck="false" aria-label="Gate payload"></textarea>
+      <div class="actions">
+        <button class="btn" id="gate-run">Run the gate</button>
+        <button class="btn ghost" id="gate-reset">Reset to clean row</button>
+        <button class="btn ghost" id="gate-dirty">Load a dirty example</button>
+      </div>
+      <div id="gate-out" aria-live="polite"></div>
+
+      <label for="lk-in" style="margin-top:22px">Unknown-id behaviour — byte-identical 404, no enumeration oracle</label>
+      <p class="note" style="margin-top:4px">A hidden-but-real id and pure garbage return the <b>exact same</b> 404 body — so nobody can probe which ids exist. Known: AT-TEST-0001…0004.</p>
+      <div class="lookup">
+        <div class="fld"><input id="lk-in" spellcheck="false" value="AT-TEST-0007" aria-label="Id to look up"></div>
+        <button class="btn" id="lk-run">GET /public/&lt;id&gt;</button>
+      </div>
+      <div id="lk-out" class="resp" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- ============ PANEL 2 · MATCH GLASS-BOX ============ -->
+  <section class="sec">
+    <div class="docket">§03</div>
+    <div class="body">
+      <p class="eyebrow">Panel 2 — Match Glass-Box</p>
+      <h2>Watch the match re-score as you type.</h2>
+      <p class="lede">Four signals, stated plainly and summing to 100: category fit, keyword overlap, home-market fit, and a bucketed runway. Change your profile and every score below recomputes live, showing which keyword tokens fired and what execution route each opportunity would need. The arithmetic is published because the moat was never the arithmetic.</p>
+
+      <div class="profile">
+        <div>
+          <label for="p-cat">Your category</label>
+          <select id="p-cat">
+            <option>Lab &amp; scientific</option>
+            <option>Medical devices</option>
+            <option>Food &amp; beverage</option>
+            <option>(none)</option>
+          </select>
+        </div>
+        <div>
+          <label for="p-mkt">Your home market</label>
+          <select id="p-mkt">
+            <option>SG</option><option>HK</option><option>GB</option>
+            <option>AU</option><option>CA</option><option>EU</option><option>(none)</option>
+          </select>
+        </div>
+      </div>
+      <label for="p-kw">Your keywords (comma-separated)</label>
+      <input id="p-kw" spellcheck="false" value="microscope, laboratory, optics, calibration" aria-label="Profile keywords">
+
+      <ul class="register" id="match-out"></ul>
+      <p class="note">Runway is a coarse band (le_2w / 2_4w / gt_4w), never a real date — the public scorer is not the ops scorer. Route class is a sourcing-scout readout, not bid advice: it tells you what execution structure the opportunity needs, and each route ends in the same place — Asaptic executes.</p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="docket">§04</div>
+    <div class="body">
+      <p class="eyebrow">Why publish the controls at all</p>
+      <div class="honesty">
+        <p>Because a control you can attack is worth more than a claim you have to believe. The field allowlist and these shape checks are the <span class="t">entire</span> public contract — and they are all you see here. The internal sanitization dictionary, the real source terms, the ops-plane scorer with real dates: none of it is in this page or the public repo, by construction.</p>
+        <p>The gate is an <span class="t">allowlist</span>, not a denylist. That's deliberate: we never enumerate what we hide, so a refused field learns you nothing except "not published." Find a way past it and tell us — that's a disclosure we want.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="docket">§05</div>
+    <div class="body">
+      <p class="eyebrow">Next</p>
+      <h2>Point this at your real supplier profile.</h2>
+      <p class="lede">This lab runs on synthetic rows. In the product, the same matcher runs against a live multi-market tender registry, and the route readout becomes a handoff — you request access, Asaptic assembles compliance, sourcing and submission.</p>
+      <div class="cta">
+        <a class="primary" href="https://portal.asaptic.com/register.html?src=proof_lab">Request tender access &rarr;</a>
+        <a class="sec2" href="/tender/">Browse the live tender index</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="row2">
+      <span class="wm">Asaptic — Proof Lab</span>
+      <span>Client-side proof surface · <a href="https://portal.asaptic.com/register.html?src=proof_lab">request access</a></span>
+    </div>
+    <p class="note">Demonstration surface, not indexed. All ids are synthetic AT-TEST rows; no live tender, issuing body, or exact date is present. The gate and matcher shown are the public contract and public scorer — the internal sanitization term-list and ops scorer are never shipped to the browser.</p>
+  </footer>
+
+</main>
+
+<script type="module">
+  import {
+    runGate, lookupById, scoreAll, CLEAN_SAMPLE, ROUTE_READOUT, SYNTHETIC_ROWS, WEIGHTS,
+  } from './prooflab.mjs';
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+
+  // ---- Panel 1: gate ----
+  const cleanText = JSON.stringify(CLEAN_SAMPLE, null, 2);
+  const dirtyText = JSON.stringify({
+    ...CLEAN_SAMPLE,
+    closing_bucket: '2026-04-17',           // exact date where a band belongs
+    value_band: 29962990,                    // a precise number, not a band
+    summary_en: 'Supply of microscopes — code ABC/2026/0417',
+    issuing_body: 'Some Government Department', // a 12th field
+    category: { name_en: 'Lab', name_zh: '实验室', name_zht: '實驗室', name_secret: 'leak' },
+  }, null, 2);
+
+  $('gate-in').value = cleanText;
+
+  function renderGate() {
+    const r = runGate($('gate-in').value);
+    const out = $('gate-out');
+    const rows = [];
+    for (const a of r.accepted) rows.push(`<li class="acc"><span class="k">✓ ${esc(a)}</span><span class="why">accepted — published field</span></li>`);
+    for (const x of r.rejections) rows.push(`<li class="rej"><span class="k">✗ ${esc(x.field)}</span><span class="why">${esc(x.why || x.reason)}<br><span class="cls">${esc(x.class)}</span></span></li>`);
+    const head = r.ok
+      ? `PASS — clean 11-field row, nothing refused`
+      : `REFUSED — ${r.rejections.length} item(s) outside the contract`;
+    out.innerHTML = `<div class="verdict ${r.ok ? 'pass' : 'fail'}"><div class="head">${head}</div><ul>${rows.join('')}</ul></div>`;
+  }
+  $('gate-run').addEventListener('click', renderGate);
+  $('gate-reset').addEventListener('click', () => { $('gate-in').value = cleanText; renderGate(); });
+  $('gate-dirty').addEventListener('click', () => { $('gate-in').value = dirtyText; renderGate(); });
+  renderGate();
+
+  // ---- Panel 1b: 404 lookup ----
+  function renderLookup() {
+    const res = lookupById($('lk-in').value.trim());
+    const okc = res.status === 200 ? 'ok' : '';
+    $('lk-out').innerHTML = `<span class="st ${okc}">HTTP ${res.status}</span>\n${esc(res.body)}`;
+  }
+  $('lk-run').addEventListener('click', renderLookup);
+  $('lk-in').addEventListener('keydown', (e) => { if (e.key === 'Enter') renderLookup(); });
+  renderLookup();
+
+  // ---- Panel 2: match glass-box ----
+  const rowById = Object.fromEntries(SYNTHETIC_ROWS.map((r) => [r.asaptic_id, r]));
+  function profile() {
+    const cat = $('p-cat').value; const mkt = $('p-mkt').value;
+    return {
+      category: cat === '(none)' ? '' : cat,
+      market: mkt === '(none)' ? '' : mkt,
+      keywords: $('p-kw').value.split(',').map((s) => s.trim()).filter(Boolean),
+    };
+  }
+  function seg(lab, val, max) {
+    const w = Math.round((val / max) * 100);
+    return `<div class="seg"><div class="lab">${lab}<b>${val}</b></div><div class="bar"><span style="width:${w}%"></span></div></div>`;
+  }
+  function renderMatch() {
+    const scored = scoreAll(profile());
+    $('match-out').innerHTML = scored.map((s) => {
+      const row = rowById[s.asaptic_id];
+      const rc = ROUTE_READOUT[s.route_class];
+      const fired = s.fired.length ? s.fired.map((f) => `<b>${esc(f)}</b>`).join(' · ') : '<span style="color:var(--line-2)">none fired</span>';
+      return `<li class="mrow">
+        <div class="top">
+          <div class="sc">${s.total}</div>
+          <div><p class="title">${esc(row.title_en)}</p><p class="title-zh">${esc(row.title_zh)}</p></div>
+          <span class="rc ${s.route_class}">${esc(rc.label)}</span>
+        </div>
+        <div class="decomp">
+          ${seg('category', s.parts.category, WEIGHTS.category)}
+          ${seg('keyword', s.parts.keyword, WEIGHTS.keyword)}
+          ${seg('market', s.parts.market, WEIGHTS.market)}
+          ${seg('runway', s.parts.runway, WEIGHTS.runway)}
+        </div>
+        <p class="fired">fired tokens: ${fired}</p>
+        <p class="rnote">${esc(rc.note)}</p>
+      </li>`;
+    }).join('');
+  }
+  ['p-cat', 'p-mkt'].forEach((id) => $(id).addEventListener('change', renderMatch));
+  $('p-kw').addEventListener('input', renderMatch);
+  renderMatch();
+</script>
+</body>
+</html>
