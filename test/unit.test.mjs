@@ -230,6 +230,32 @@ test('REST: value_band with more than 16 comma-separated values → 400', async 
   assert.equal(json.error.code, 'invalid_parameter');
 });
 
+test('REST: closing_bucket rejects a repeat-heavy string (>16 CSV items or >256 chars) even though only 4 values are valid', async () => {
+  const env = makeEnv();
+  // Every item individually valid — this is exactly the gap flagged in the
+  // review: CLOSING_BUCKETS.includes(b) alone lets "le_2w,le_2w,...x1000"
+  // through unbounded, since repeating a valid value never fails the
+  // per-item enum check. The array-size clamp catches it upstream instead.
+  const repeatHeavy = Array.from({ length: 17 }, () => 'le_2w').join(',');
+  const tooMany = await getJson(env, '/api/v1/tenders?closing_bucket=' + repeatHeavy);
+  assert.equal(tooMany.res.status, 400);
+  assert.equal(tooMany.json.error.code, 'invalid_parameter');
+  assert.match(tooMany.json.error.message, /closing_bucket/);
+
+  const tooLong = await getJson(env, '/api/v1/tenders?closing_bucket=' + 'le_2w,'.repeat(50));
+  assert.equal(tooLong.res.status, 400);
+  assert.equal(tooLong.json.error.code, 'invalid_parameter');
+
+  // the 4 valid enum values (plus "all") still work, singly and combined
+  for (const value of ['le_2w', '2_4w', 'gt_4w', 'deadline_passed', 'all']) {
+    const ok = await getJson(env, '/api/v1/tenders?closing_bucket=' + value);
+    assert.notEqual(ok.res.status, 400, value);
+  }
+  const combined = await getJson(env, '/api/v1/tenders?closing_bucket=le_2w,2_4w,gt_4w,deadline_passed');
+  assert.notEqual(combined.res.status, 400);
+  assert.equal(combined.json.meta.total, ROWS.length, 'all four buckets combined cover the whole corpus');
+});
+
 test('MCP shares the same clamp: list_tenders with an oversized q/market/category via tool arguments (not a URL) still 400s', async () => {
   const worker = (await import('../_worker.js')).default;
   const { rpc } = await import('./helpers/env.mjs');
