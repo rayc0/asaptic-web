@@ -145,17 +145,20 @@ test('get_spec_coded returns a structured access-required RESULT, never an error
   assert.ok(payload.how.includes('request_tender_access'));
 });
 
-test('request_tender_access validates input and acknowledges WITHOUT a fabricated reference number', async () => {
-  const env = makeEnv();
+test('request_tender_access: no capture binding configured → honest ack, WITHOUT a fabricated reference number', async () => {
+  const env = makeEnv(); // no LEADS, no LEAD_WEBHOOK_URL
   const ok = await rpc(worker, env, 'tools/call', {
     name: 'request_tender_access',
     arguments: { company: 'Acme Ltd', contact_email: 'buyer@acme.com', markets: 'HK,SG' },
   });
   const payload = JSON.parse(ok.result.content[0].text);
   assert.equal(payload.acknowledged, true);
+  assert.equal(payload.stored, false);
   assert.ok(!('reference' in payload), 'no fabricated reference number');
   assert.ok(!/RFQ-/.test(ok.result.content[0].text), 'no minted RFQ-style id');
   assert.ok(payload.next.includes('engage@asaptic.com'));
+  assert.equal(payload.contact_fallback, 'mailto:engage@asaptic.com');
+  assert.deepEqual(payload.requested.markets, ['HK', 'SG']);
 
   const missing = await rpc(worker, env, 'tools/call', {
     name: 'request_tender_access',
@@ -164,15 +167,73 @@ test('request_tender_access validates input and acknowledges WITHOUT a fabricate
   assert.equal(missing.error.code, -32602);
 });
 
-test('legacy tools still work (submit_rfq untouched this phase)', async () => {
+test('request_tender_access: LEADS KV configured → lead is actually persisted, honest LEAD- reference returned', async () => {
+  const env = makeEnv({ leads: true });
+  const out = await rpc(worker, env, 'tools/call', {
+    name: 'request_tender_access',
+    arguments: {
+      company: 'Acme Ltd',
+      contact_email: 'buyer@acme.com',
+      markets: 'HK,SG',
+      at_ids: 'AT-HK-2630-001,AT-MO-9-002',
+      note: 'interested in Q1 volumes',
+    },
+  });
+  const payload = JSON.parse(out.result.content[0].text);
+  assert.equal(payload.acknowledged, true);
+  assert.equal(payload.stored, true);
+  assert.match(payload.reference, /^LEAD-[0-9a-f]{8}$/);
+  assert.ok(!('contact_fallback' in payload));
+  assert.deepEqual(payload.requested.at_ids, ['AT-HK-2630-001', 'AT-MO-9-002']);
+
+  // the lead was actually written to KV — this is the fix: nothing vanishes.
+  assert.equal(env.LEADS.calls.length, 1);
+  assert.match(env.LEADS.calls[0].key, /^leads:\d{4}-W\d{2}:[0-9a-f-]{36}$/);
+  const stored = JSON.parse(env.LEADS.calls[0].value.trim());
+  assert.equal(stored.company, 'Acme Ltd');
+  assert.equal(stored.contact_email, 'buyer@acme.com');
+  assert.deepEqual(stored.markets, ['HK', 'SG']);
+  assert.deepEqual(stored.at_ids, ['AT-HK-2630-001', 'AT-MO-9-002']);
+});
+
+test('submit_rfq: silent-lead-drop fix — no fabricated RFQ- reference without a capture binding, IS captured when LEADS is configured', async () => {
   const env = makeEnv();
   const lanes = await rpc(worker, env, 'tools/call', { name: 'list_sourcing_lanes', arguments: {} });
   assert.ok(JSON.parse(lanes.result.content[0].text).length >= 5);
-  const rfq = await rpc(worker, env, 'tools/call', {
+
+  // No LEADS/LEAD_WEBHOOK_URL bound: honest ack, never a minted RFQ-<ts> id
+  // (this was the live bug — submit_rfq used to fabricate a reference and
+  // persist nothing).
+  const dropped = await rpc(worker, env, 'tools/call', {
     name: 'submit_rfq',
     arguments: { product: 'widgets', buyer_contact: 'a@b.co' },
   });
-  assert.ok(JSON.parse(rfq.result.content[0].text).received);
+  const droppedPayload = JSON.parse(dropped.result.content[0].text);
+  assert.equal(droppedPayload.received, true);
+  assert.equal(droppedPayload.stored, false);
+  assert.ok(!('reference' in droppedPayload), 'no fabricated reference number');
+  assert.ok(!/RFQ-/.test(dropped.result.content[0].text), 'no minted RFQ-style id');
+  assert.equal(droppedPayload.contact_fallback, 'mailto:engage@asaptic.com');
+  assert.ok(!('echo' in droppedPayload), 'must not echo raw caller args back');
+
+  // With LEADS configured, the same call is actually persisted.
+  const envWithLeads = makeEnv({ leads: true });
+  const captured = await rpc(worker, envWithLeads, 'tools/call', {
+    name: 'submit_rfq',
+    arguments: { product: 'widgets', quantity: '500', target_market: 'HK', buyer_contact: 'a@b.co' },
+  });
+  const capturedPayload = JSON.parse(captured.result.content[0].text);
+  assert.equal(capturedPayload.stored, true);
+  assert.match(capturedPayload.reference, /^LEAD-[0-9a-f]{8}$/);
+  assert.equal(envWithLeads.LEADS.calls.length, 1);
+  const storedRfq = JSON.parse(envWithLeads.LEADS.calls[0].value.trim());
+  assert.equal(storedRfq.tool, 'submit_rfq');
+  assert.equal(storedRfq.contact_email, 'a@b.co');
+  assert.deepEqual(storedRfq.categories, ['widgets']);
+
+  // required fields still enforced
+  const invalid = await rpc(worker, env, 'tools/call', { name: 'submit_rfq', arguments: {} });
+  assert.ok(JSON.parse(invalid.result.content[0].text).error);
 });
 
 test('R2 failure inside a tender tool → graceful JSON-RPC error with the request id preserved', async () => {

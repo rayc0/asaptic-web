@@ -14,6 +14,10 @@ let etagCounter = 0;
  *   assets   — 'fixture': ASSETS serves the fixture at /tender/rows.json;
  *              'fail': ASSETS throws; default: 404 for everything
  *   etag     — R2 etag (default: fresh unique etag per env)
+ *   leads    — true: attach a working in-memory LEADS KV stub (records
+ *              pushed to `leads.calls`); 'throw': KV binding whose put()
+ *              throws (exercises the KV→webhook/no-op fallthrough)
+ *   leadWebhookUrl — sets env.LEAD_WEBHOOK_URL to this string
  */
 export function makeEnv(opts = {}) {
   const raw = opts.raw ?? FIXTURE_RAW;
@@ -48,7 +52,25 @@ export function makeEnv(opts = {}) {
     },
   };
 
-  return { TENDER_DATA: tenderData, ASSETS: assets };
+  const env = { TENDER_DATA: tenderData, ASSETS: assets };
+
+  if (opts.leads === true) {
+    const calls = [];
+    env.LEADS = {
+      calls,
+      put: async (key, value) => {
+        calls.push({ key, value });
+      },
+    };
+  } else if (opts.leads === 'throw') {
+    env.LEADS = { put: async () => { throw new Error('kv put boom'); } };
+  }
+
+  if (opts.leadWebhookUrl) {
+    env.LEAD_WEBHOOK_URL = opts.leadWebhookUrl;
+  }
+
+  return env;
 }
 
 /** Invoke the real worker fetch handler in-process. */

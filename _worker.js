@@ -5,6 +5,7 @@ import {
   TENDER_TOOLS,
   TENDER_TOOL_NAMES,
   handleTenderTool,
+  handleSubmitRfq,
 } from './lib/agent-api.mjs';
 
 export default {
@@ -109,11 +110,13 @@ export default {
         const id = req.id ?? null;
         const reply = (result) => new Response(JSON.stringify({ jsonrpc: '2.0', id, result }), { headers: { 'Content-Type': 'application/json', ...cors } });
         const err = (code, message) => new Response(JSON.stringify({ jsonrpc: '2.0', id, error: { code, message } }), { headers: { 'Content-Type': 'application/json', ...cors } });
-        const callTool = (name, args = {}) => {
+        const callTool = async (name, args = {}) => {
           if (name === 'list_sourcing_lanes') return LANES.map(l => ({ id: l.id, sources: l.sources, markets: l.markets }));
           if (name === 'get_lane_capability') { const l = LANES.find(x => x.id === (args.lane_id || '').trim()); return l || { error: 'unknown lane_id', valid: LANES.map(x => x.id) }; }
           if (name === 'get_engagement') return ENGAGEMENT;
-          if (name === 'submit_rfq') { if (!args.product || !args.buyer_contact) return { error: 'product and buyer_contact are required' }; const ref = 'RFQ-' + Date.now().toString(36).toUpperCase(); return { received: true, reference: ref, next: 'Asaptic will respond to buyer_contact within 4 hours; or email engage@asaptic.com', echo: args }; }
+          // submit_rfq: honest capture (lib/lead-capture.mjs) — no fabricated
+          // reference, and never echoes raw caller args back (see agent-api.mjs).
+          if (name === 'submit_rfq') return await handleSubmitRfq(env, args, request);
           return null;
         };
         try {
@@ -130,7 +133,7 @@ export default {
                 if (out.rpcError) return err(out.rpcError.code, out.rpcError.message);
                 return reply({ content: [{ type: 'text', text: JSON.stringify(out.result) }] });
               }
-              const r = callTool(name, args);
+              const r = await callTool(name, args);
               if (r === null) return err(-32602, 'Unknown tool');
               return reply({ content: [{ type: 'text', text: JSON.stringify(r) }] });
             }
