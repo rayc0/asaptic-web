@@ -1,0 +1,64 @@
+{
+  "_about": "Asaptic public proof manifest. Every claim below is falsifiable against a live URL with a single command. Artifact-transparent only: it pins the shape and integrity of the public tender feed and the addresses of the public endpoints. It reveals nothing about corpus size, per-market counts, pipeline cadence, or any non-public detail. States are honest: an endpoint is marked live only when a probe returned parseable JSON; endpoints still shipping are marked pending_rollout.",
+  "manifest_version": "1.0.0",
+  "issuer": "asaptic.com",
+  "generated": "2026-08-10",
+  "endpoints": {
+    "tender_feed": {
+      "url": "https://asaptic.com/tender/rows.json",
+      "state": "live",
+      "content_type": "application/json",
+      "probe": "GET returns application/json parseable as asaptic.tender.v1 envelope",
+      "verified": "2026-08-10"
+    },
+    "mcp": {
+      "url": "https://asaptic.com/mcp",
+      "state": "live",
+      "content_type": "application/json",
+      "probe": "POST JSON-RPC 2.0 {method:tools/list} returns application/json result.tools[]",
+      "verified": "2026-08-10"
+    },
+    "tenders_api": {
+      "url": "https://asaptic.com/api/v1/tenders",
+      "state": "pending_rollout",
+      "content_type_observed": "text/html",
+      "probe": "GET currently resolves to the site shell (text/html), not the JSON listing API; not yet deployed",
+      "verified": "2026-08-10"
+    },
+    "health": {
+      "url": "https://asaptic.com/api/v1/health",
+      "state": "pending_rollout",
+      "content_type_observed": "text/html",
+      "probe": "GET currently resolves to the site shell (text/html); health endpoint not yet deployed",
+      "verified": "2026-08-10"
+    }
+  },
+  "schema": {
+    "id": "asaptic.tender.v1",
+    "url": "https://asaptic.com/developers/contract/asaptic.tender.v1.schema.json",
+    "sha256": "1375644189ebcfd88c359642ee3cdd6723ee635babc70f3a50660bf52ae06039",
+    "sha256_basis": "JSON Schema 2020-12 contract document, hashed 2026-08-10 from the developers-surface branch. Once that branch is published this digest will match: curl -s https://asaptic.com/developers/contract/asaptic.tender.v1.schema.json | shasum -a 256"
+  },
+  "snapshot": {
+    "url": "https://asaptic.com/tender/rows.json",
+    "sha256": "7bfdc1947a701cf6a4e9cc81ee05f1e1d6422ce91d4494c71a625d28a41c22f6",
+    "issue_id": "2026-W33",
+    "generated": "2026-08-10T02:24:26+08:00",
+    "sha256_basis": "sha256 of the decoded response body of the live public feed at verification time. Reproduce: curl -s --compressed https://asaptic.com/tender/rows.json | shasum -a 256",
+    "note": "Volatile: the feed republishes and this digest rotates each issue. To falsify against this manifest, compare only while issue_id is 2026-W33; a changed digest under a new issue_id is expected, not a fault."
+  },
+  "conformance": {
+    "result": "pass",
+    "checked": "2026-08-10",
+    "against": "asaptic.tender.v1",
+    "sample_id": "AT-TEST-HK-0000-001",
+    "note": "The live feed snapshot above validates against the pinned schema: all required envelope keys present, and every published row carries the 11 contract fields with a conforming id and a 64-hex sort key. Falsify by validating the snapshot body against the schema url above.",
+    "reproduce": "curl -s --compressed https://asaptic.com/tender/rows.json | validate against asaptic.tender.v1.schema.json"
+  },
+  "compatible_clients": {
+    "asaptic.tender.v1": ">=1.0.0 <2.0.0",
+    "mcp": "streamable-http, JSON-RPC 2.0"
+  },
+  "disclosure": "https://asaptic.com/security",
+  "status": "https://asaptic.com/status"
+}
