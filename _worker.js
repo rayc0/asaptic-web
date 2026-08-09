@@ -1,3 +1,12 @@
+import {
+  handleApiRequest,
+  jsonNotFound,
+  getHealth,
+  TENDER_TOOLS,
+  TENDER_TOOL_NAMES,
+  handleTenderTool,
+} from './lib/agent-api.mjs';
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -29,6 +38,37 @@ export default {
       });
     }
 
+    // /healthz — alias of /api/v1/health (feed freshness is the product claim).
+    if (url.pathname === '/healthz') {
+      const h = await getHealth(env);
+      return new Response(JSON.stringify(h.body), {
+        status: h.status,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'no-store',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
+    // Agent REST API (public read plane) — /api/v1/tenders, /tenders/:at_id,
+    // /tenders/facets, /spec-coded/:at_id (structured 403 funnel), plus a
+    // scoped JSON-404 for every other /api/* path. Rows are verbatim subsets
+    // of the public rows.json artifact — see lib/agent-api.mjs boundary rule.
+    // Must sit BEFORE the static-asset passthrough (its regex would claim
+    // /api/*.json-looking paths and answer HTML 404s to typos).
+    if (url.pathname.startsWith('/api/')) {
+      return handleApiRequest(request, env);
+    }
+
+    // /agent/* — real static files (e.g. /agent/capabilities.json) pass
+    // through; anything unmatched gets a scoped JSON-404 instead of SPA HTML.
+    if (url.pathname.startsWith('/agent/')) {
+      const res = await env.ASSETS.fetch(request);
+      if (res.status !== 404) return res;
+      return jsonNotFound();
+    }
+
     // MCP server (agent-callable sourcing tools) at /mcp
     if (url.pathname === '/mcp') {
       const cors = {
@@ -56,6 +96,8 @@ export default {
         { name: 'get_lane_capability', description: 'Get full detail for one sourcing lane.', inputSchema: { type: 'object', properties: { lane_id: { type: 'string' } }, required: ['lane_id'] } },
         { name: 'get_engagement', description: 'Get Asaptic’s deposit-first model and engagement path.', inputSchema: { type: 'object', properties: {} } },
         { name: 'submit_rfq', description: 'Submit a request for quote to Asaptic.', inputSchema: { type: 'object', properties: { product: { type: 'string' }, quantity: { type: 'string' }, target_market: { type: 'string' }, buyer_contact: { type: 'string' } }, required: ['product','buyer_contact'] } },
+        // Tender listing tools (shared logic with /api/v1/* — lib/agent-api.mjs)
+        ...TENDER_TOOLS,
       ];
 
       if (request.method === 'GET') {
@@ -74,16 +116,29 @@ export default {
           if (name === 'submit_rfq') { if (!args.product || !args.buyer_contact) return { error: 'product and buyer_contact are required' }; const ref = 'RFQ-' + Date.now().toString(36).toUpperCase(); return { received: true, reference: ref, next: 'Asaptic will respond to buyer_contact within 4 hours; or email engage@asaptic.com', echo: args }; }
           return null;
         };
-        switch (req.method) {
-          case 'initialize': return reply({ protocolVersion: '2025-06-18', capabilities: { tools: {} }, serverInfo: { name: 'asaptic-sourcing', version: '1.0.0' } });
-          case 'tools/list': return reply({ tools: TOOLS });
-          case 'tools/call': {
-            const r = callTool(req.params?.name, req.params?.arguments || {});
-            if (r === null) return err(-32602, 'Unknown tool');
-            return reply({ content: [{ type: 'text', text: JSON.stringify(r) }] });
+        try {
+          switch (req.method) {
+            case 'initialize': return reply({ protocolVersion: '2025-06-18', capabilities: { tools: {} }, serverInfo: { name: 'asaptic-sourcing', version: '1.1.0' } });
+            case 'tools/list': return reply({ tools: TOOLS });
+            case 'tools/call': {
+              const name = req.params?.name;
+              const args = req.params?.arguments || {};
+              // Tender tools: async handlers that never throw — a storage
+              // failure comes back as a JSON-RPC error, not a worker exception.
+              if (TENDER_TOOL_NAMES.has(name)) {
+                const out = await handleTenderTool(env, name, args);
+                if (out.rpcError) return err(out.rpcError.code, out.rpcError.message);
+                return reply({ content: [{ type: 'text', text: JSON.stringify(out.result) }] });
+              }
+              const r = callTool(name, args);
+              if (r === null) return err(-32602, 'Unknown tool');
+              return reply({ content: [{ type: 'text', text: JSON.stringify(r) }] });
+            }
+            case 'notifications/initialized': return new Response(null, { status: 204, headers: cors });
+            default: return err(-32601, 'Method not found');
           }
-          case 'notifications/initialized': return new Response(null, { status: 204, headers: cors });
-          default: return err(-32601, 'Method not found');
+        } catch {
+          return err(-32603, 'Internal error');
         }
       }
       return new Response('Method Not Allowed', { status: 405, headers: cors });
