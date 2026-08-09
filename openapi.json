@@ -3,11 +3,73 @@
   "info": {
     "title": "Asaptic Sourcing API",
     "version": "1.0.0",
-    "description": "Agent-facing interface to Asaptic (HK) Ltd — factory-direct, deposit-first sourcing of certified clinical devices and deep-tech components for Western and Global-South B2B buyers. Principal-reseller with a compliance/QA layer. Live endpoints: GET /agent/capabilities.json, POST /mcp (MCP JSON-RPC). A REST /rfq endpoint is planned.",
+    "description": "Agent-facing interface to Asaptic (HK) Ltd — factory-direct, deposit-first sourcing of certified clinical devices and deep-tech components for Western and Global-South B2B buyers, plus a free public cross-market tender listing feed (sanitized trilingual summaries). Live endpoints: GET /api/v1/tenders (+ /{at_id}, /facets), GET /agent/capabilities.json, POST /mcp (MCP JSON-RPC). Listing access is keyless; spec-coded technical packages are account-gated. A REST /rfq endpoint is planned.",
     "contact": { "email": "engage@asaptic.com", "url": "https://asaptic.com" }
   },
   "servers": [ { "url": "https://asaptic.com" } ],
   "paths": {
+    "/api/v1/tenders": {
+      "get": {
+        "operationId": "listTenders",
+        "summary": "Public cross-market tender listing feed (sanitized trilingual summaries). Keyless. Default excludes rows whose closing window has passed.",
+        "parameters": [
+          { "name": "market", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated two-letter market codes, e.g. HK,SG" },
+          { "name": "category", "in": "query", "schema": { "type": "string" }, "description": "Category slug or name (en/zh/zht), comma-separated. Vocabulary: /api/v1/tenders/facets" },
+          { "name": "closing_bucket", "in": "query", "schema": { "type": "string", "enum": ["le_2w", "2_4w", "gt_4w", "deadline_passed", "all"] }, "description": "Comma-separated; default excludes deadline_passed" },
+          { "name": "new", "in": "query", "schema": { "type": "boolean" }, "description": "Only rows new in the current issue" },
+          { "name": "lead_ok", "in": "query", "schema": { "type": "boolean" } },
+          { "name": "value_band", "in": "query", "schema": { "type": "string", "enum": ["lt_500k", "500k_2m", "2m_10m", "gt_10m", "unspecified"] }, "description": "Comma-separated" },
+          { "name": "q", "in": "query", "schema": { "type": "string" }, "description": "Substring search over the sanitized summaries and category names only" },
+          { "name": "lang", "in": "query", "schema": { "type": "string", "enum": ["en", "zh", "zht"] }, "description": "Collapse each row to one language" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 50, "maximum": 200 } },
+          { "name": "cursor", "in": "query", "schema": { "type": "string" }, "description": "Opaque pagination cursor. Cursors are bound to one listing issue: a stale cursor returns 409 snapshot_changed — restart from the first page." }
+        ],
+        "responses": {
+          "200": { "description": "Envelope {data: TenderRow[], meta: {total, returned, next_cursor, issue_id, generated, snapshot_etag, access}}", "content": { "application/json": {} } },
+          "400": { "description": "invalid_parameter or invalid_cursor", "content": { "application/json": {} } },
+          "409": { "description": "snapshot_changed — the listing issue rotated since the cursor was minted", "content": { "application/json": {} } }
+        }
+      }
+    },
+    "/api/v1/tenders/{at_id}": {
+      "get": {
+        "operationId": "getTender",
+        "summary": "One public listing row by Asaptic id (AT-…). Ids not present in the current public snapshot return an identical 404.",
+        "parameters": [
+          { "name": "at_id", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "lang", "in": "query", "schema": { "type": "string", "enum": ["en", "zh", "zht"] } }
+        ],
+        "responses": {
+          "200": { "description": "Envelope {data: TenderRow, meta}", "content": { "application/json": {} } },
+          "404": { "description": "not_found", "content": { "application/json": {} } }
+        }
+      }
+    },
+    "/api/v1/tenders/facets": {
+      "get": {
+        "operationId": "getTenderFacets",
+        "summary": "Listing facet vocabulary and counts: markets, categories (with slugs), closing buckets, value bands.",
+        "responses": { "200": { "description": "Envelope {data, meta}", "content": { "application/json": {} } } }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "operationId": "getFeedHealth",
+        "summary": "Feed health and freshness: {status, rows_total, issue_id, generated, feed_fresh, schema}. Alias: GET /healthz. Never cached.",
+        "responses": {
+          "200": { "description": "status ok or degraded", "content": { "application/json": {} } },
+          "503": { "description": "status unavailable", "content": { "application/json": {} } }
+        }
+      }
+    },
+    "/api/v1/spec-coded/{at_id}": {
+      "get": {
+        "operationId": "specCodedAccessPath",
+        "summary": "Spec-coded technical packages are gated. This public endpoint always returns 403 SPEC_CODED_GATED with the access path (portal account or request_tender_access on /mcp).",
+        "parameters": [ { "name": "at_id", "in": "path", "required": true, "schema": { "type": "string" } } ],
+        "responses": { "403": { "description": "{error: {code: SPEC_CODED_GATED}, access_url}", "content": { "application/json": {} } } }
+      }
+    },
     "/agent/capabilities.json": {
       "get": {
         "operationId": "getCapabilities",
@@ -23,7 +85,7 @@
       },
       "post": {
         "operationId": "mcpJsonRpc",
-        "summary": "MCP server (JSON-RPC 2.0, Streamable HTTP). Tools: list_sourcing_lanes, get_lane_capability, get_engagement, submit_rfq.",
+        "summary": "MCP server (JSON-RPC 2.0, Streamable HTTP). Tools: list_sourcing_lanes, get_lane_capability, get_engagement, submit_rfq, list_tenders, get_tender, tender_facets, get_spec_coded, request_tender_access.",
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "jsonrpc": { "type": "string", "const": "2.0" }, "id": {}, "method": { "type": "string" }, "params": { "type": "object" } }, "required": ["jsonrpc", "method"] } } } },
         "responses": { "200": { "description": "JSON-RPC result", "content": { "application/json": {} } } }
       }
@@ -39,6 +101,24 @@
   },
   "components": {
     "schemas": {
+      "TenderRow": {
+        "type": "object",
+        "x-schema-name": "asaptic.tender.v1",
+        "description": "asaptic.tender.v1 — a verbatim row from the public listing snapshot. Rows carry sanitized summaries and bucketed metadata only — always exactly these fields, never more.",
+        "properties": {
+          "asaptic_id": { "type": "string", "description": "Stable public listing id (AT-…)" },
+          "market": { "type": "string", "description": "Two-letter market code" },
+          "category": { "type": "object", "properties": { "name_en": { "type": "string" }, "name_zh": { "type": "string" }, "name_zht": { "type": "string" } } },
+          "summary_en": { "type": "string" },
+          "summary_zh": { "type": "string" },
+          "summary_zht": { "type": "string" },
+          "value_band": { "type": ["string", "null"], "enum": ["lt_500k", "500k_2m", "2m_10m", "gt_10m", null] },
+          "closing_bucket": { "type": "string", "enum": ["le_2w", "2_4w", "gt_4w", "deadline_passed"] },
+          "lead_ok": { "type": "boolean" },
+          "new_this_issue": { "type": "boolean" },
+          "sort_key": { "type": "string", "description": "Opaque stable ordering key" }
+        }
+      },
       "RFQ": {
         "type": "object",
         "required": ["product", "buyer_contact"],

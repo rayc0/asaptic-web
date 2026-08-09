@@ -1,3 +1,13 @@
+import {
+  handleApiRequest,
+  jsonNotFound,
+  getHealth,
+  TENDER_TOOLS,
+  TENDER_TOOL_NAMES,
+  handleTenderTool,
+  handleSubmitRfq,
+} from './lib/agent-api.mjs';
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -29,12 +39,46 @@ export default {
       });
     }
 
+    // /healthz — alias of /api/v1/health (feed freshness is the product claim).
+    if (url.pathname === '/healthz') {
+      const h = await getHealth(env);
+      return new Response(JSON.stringify(h.body), {
+        status: h.status,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'no-store',
+          'Access-Control-Allow-Origin': '*',
+          'X-Content-Type-Options': 'nosniff',
+        },
+      });
+    }
+
+    // Agent REST API (public read plane) — /api/v1/tenders, /tenders/:at_id,
+    // /tenders/facets, /spec-coded/:at_id (structured 403 funnel), plus a
+    // scoped JSON-404 for every other /api/* path. Rows are verbatim subsets
+    // of the public rows.json artifact — see lib/agent-api.mjs boundary rule.
+    // Must sit BEFORE the static-asset passthrough (its regex would claim
+    // /api/*.json-looking paths and answer HTML 404s to typos).
+    if (url.pathname.startsWith('/api/')) {
+      return handleApiRequest(request, env);
+    }
+
+    // /agent/* — real static files (e.g. /agent/capabilities.json) pass
+    // through; anything unmatched gets a scoped JSON-404 instead of SPA HTML.
+    if (url.pathname.startsWith('/agent/')) {
+      const res = await env.ASSETS.fetch(request);
+      if (res.status !== 404) return res;
+      return jsonNotFound();
+    }
+
     // MCP server (agent-callable sourcing tools) at /mcp
     if (url.pathname === '/mcp') {
       const cors = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
+        // Worker-constructed responses bypass the site-wide _headers file.
+        'X-Content-Type-Options': 'nosniff',
       };
       if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
 
@@ -56,6 +100,8 @@ export default {
         { name: 'get_lane_capability', description: 'Get full detail for one sourcing lane.', inputSchema: { type: 'object', properties: { lane_id: { type: 'string' } }, required: ['lane_id'] } },
         { name: 'get_engagement', description: 'Get Asaptic’s deposit-first model and engagement path.', inputSchema: { type: 'object', properties: {} } },
         { name: 'submit_rfq', description: 'Submit a request for quote to Asaptic.', inputSchema: { type: 'object', properties: { product: { type: 'string' }, quantity: { type: 'string' }, target_market: { type: 'string' }, buyer_contact: { type: 'string' } }, required: ['product','buyer_contact'] } },
+        // Tender listing tools (shared logic with /api/v1/* — lib/agent-api.mjs)
+        ...TENDER_TOOLS,
       ];
 
       if (request.method === 'GET') {
@@ -64,26 +110,68 @@ export default {
 
       if (request.method === 'POST') {
         let req; try { req = await request.json(); } catch { return new Response(JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error' } }), { status: 400, headers: { 'Content-Type': 'application/json', ...cors } }); }
-        const id = req.id ?? null;
+
+        // The 2025-06-18 streamable-HTTP transport dropped JSON-RPC batching —
+        // reject an array body explicitly with one clear error instead of
+        // silently pairing one uncorrelated error/reply with N requests.
+        if (Array.isArray(req)) {
+          return new Response(
+            JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32600, message: 'Invalid Request: batch requests are not supported.' } }),
+            { status: 400, headers: { 'Content-Type': 'application/json', ...cors } }
+          );
+        }
+        if (req === null || typeof req !== 'object') {
+          return new Response(
+            JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32600, message: 'Invalid Request.' } }),
+            { status: 400, headers: { 'Content-Type': 'application/json', ...cors } }
+          );
+        }
+
+        // JSON-RPC 2.0: a request with no "id" member is a Notification — the
+        // server MUST NOT reply, for ANY method (not just the one method name
+        // this used to special-case). Previously only notifications/initialized
+        // got this treatment; notifications/cancelled and any other
+        // notifications/* arrived with id defaulted to null and got a real
+        // -32601 error body back, which can desync a stdio-bridged client that
+        // is not expecting a response to a notification at all.
+        const hasId = Object.prototype.hasOwnProperty.call(req, 'id');
+        if (!hasId) {
+          return new Response(null, { status: 204, headers: cors });
+        }
+        const id = req.id;
         const reply = (result) => new Response(JSON.stringify({ jsonrpc: '2.0', id, result }), { headers: { 'Content-Type': 'application/json', ...cors } });
         const err = (code, message) => new Response(JSON.stringify({ jsonrpc: '2.0', id, error: { code, message } }), { headers: { 'Content-Type': 'application/json', ...cors } });
-        const callTool = (name, args = {}) => {
+        const callTool = async (name, args = {}) => {
           if (name === 'list_sourcing_lanes') return LANES.map(l => ({ id: l.id, sources: l.sources, markets: l.markets }));
           if (name === 'get_lane_capability') { const l = LANES.find(x => x.id === (args.lane_id || '').trim()); return l || { error: 'unknown lane_id', valid: LANES.map(x => x.id) }; }
           if (name === 'get_engagement') return ENGAGEMENT;
-          if (name === 'submit_rfq') { if (!args.product || !args.buyer_contact) return { error: 'product and buyer_contact are required' }; const ref = 'RFQ-' + Date.now().toString(36).toUpperCase(); return { received: true, reference: ref, next: 'Asaptic will respond to buyer_contact within 4 hours; or email engage@asaptic.com', echo: args }; }
+          // submit_rfq: honest capture (lib/lead-capture.mjs) — no fabricated
+          // reference, and never echoes raw caller args back (see agent-api.mjs).
+          if (name === 'submit_rfq') return await handleSubmitRfq(env, args, request);
           return null;
         };
-        switch (req.method) {
-          case 'initialize': return reply({ protocolVersion: '2025-06-18', capabilities: { tools: {} }, serverInfo: { name: 'asaptic-sourcing', version: '1.0.0' } });
-          case 'tools/list': return reply({ tools: TOOLS });
-          case 'tools/call': {
-            const r = callTool(req.params?.name, req.params?.arguments || {});
-            if (r === null) return err(-32602, 'Unknown tool');
-            return reply({ content: [{ type: 'text', text: JSON.stringify(r) }] });
+        try {
+          switch (req.method) {
+            case 'initialize': return reply({ protocolVersion: '2025-06-18', capabilities: { tools: {} }, serverInfo: { name: 'asaptic-sourcing', version: '1.1.0' } });
+            case 'tools/list': return reply({ tools: TOOLS });
+            case 'tools/call': {
+              const name = req.params?.name;
+              const args = req.params?.arguments || {};
+              // Tender tools: async handlers that never throw — a storage
+              // failure comes back as a JSON-RPC error, not a worker exception.
+              if (TENDER_TOOL_NAMES.has(name)) {
+                const out = await handleTenderTool(env, name, args);
+                if (out.rpcError) return err(out.rpcError.code, out.rpcError.message);
+                return reply({ content: [{ type: 'text', text: JSON.stringify(out.result) }] });
+              }
+              const r = await callTool(name, args);
+              if (r === null) return err(-32602, 'Unknown tool');
+              return reply({ content: [{ type: 'text', text: JSON.stringify(r) }] });
+            }
+            default: return err(-32601, 'Method not found');
           }
-          case 'notifications/initialized': return new Response(null, { status: 204, headers: cors });
-          default: return err(-32601, 'Method not found');
+        } catch {
+          return err(-32603, 'Internal error');
         }
       }
       return new Response('Method Not Allowed', { status: 405, headers: cors });
