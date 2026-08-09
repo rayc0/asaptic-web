@@ -48,6 +48,7 @@ export default {
           'Content-Type': 'application/json; charset=utf-8',
           'Cache-Control': 'no-store',
           'Access-Control-Allow-Origin': '*',
+          'X-Content-Type-Options': 'nosniff',
         },
       });
     }
@@ -76,6 +77,8 @@ export default {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
+        // Worker-constructed responses bypass the site-wide _headers file.
+        'X-Content-Type-Options': 'nosniff',
       };
       if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
 
@@ -107,7 +110,35 @@ export default {
 
       if (request.method === 'POST') {
         let req; try { req = await request.json(); } catch { return new Response(JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error' } }), { status: 400, headers: { 'Content-Type': 'application/json', ...cors } }); }
-        const id = req.id ?? null;
+
+        // The 2025-06-18 streamable-HTTP transport dropped JSON-RPC batching —
+        // reject an array body explicitly with one clear error instead of
+        // silently pairing one uncorrelated error/reply with N requests.
+        if (Array.isArray(req)) {
+          return new Response(
+            JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32600, message: 'Invalid Request: batch requests are not supported.' } }),
+            { status: 400, headers: { 'Content-Type': 'application/json', ...cors } }
+          );
+        }
+        if (req === null || typeof req !== 'object') {
+          return new Response(
+            JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32600, message: 'Invalid Request.' } }),
+            { status: 400, headers: { 'Content-Type': 'application/json', ...cors } }
+          );
+        }
+
+        // JSON-RPC 2.0: a request with no "id" member is a Notification — the
+        // server MUST NOT reply, for ANY method (not just the one method name
+        // this used to special-case). Previously only notifications/initialized
+        // got this treatment; notifications/cancelled and any other
+        // notifications/* arrived with id defaulted to null and got a real
+        // -32601 error body back, which can desync a stdio-bridged client that
+        // is not expecting a response to a notification at all.
+        const hasId = Object.prototype.hasOwnProperty.call(req, 'id');
+        if (!hasId) {
+          return new Response(null, { status: 204, headers: cors });
+        }
+        const id = req.id;
         const reply = (result) => new Response(JSON.stringify({ jsonrpc: '2.0', id, result }), { headers: { 'Content-Type': 'application/json', ...cors } });
         const err = (code, message) => new Response(JSON.stringify({ jsonrpc: '2.0', id, error: { code, message } }), { headers: { 'Content-Type': 'application/json', ...cors } });
         const callTool = async (name, args = {}) => {
@@ -137,7 +168,6 @@ export default {
               if (r === null) return err(-32602, 'Unknown tool');
               return reply({ content: [{ type: 'text', text: JSON.stringify(r) }] });
             }
-            case 'notifications/initialized': return new Response(null, { status: 204, headers: cors });
             default: return err(-32601, 'Method not found');
           }
         } catch {

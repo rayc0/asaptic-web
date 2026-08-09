@@ -31,6 +31,90 @@ test('notifications/initialized → 204, no body', async () => {
   assert.equal(res.status, 204);
 });
 
+test('JSON-RPC notifications (no "id" member) get 204/no body for ANY method, not just notifications/initialized', async () => {
+  // Before the fix, only the literal method name "notifications/initialized"
+  // got this treatment — an id-less notifications/cancelled (or any other
+  // future notifications/* method, or simply a client that omits id on a
+  // method this server does not recognize) fell through to the default case
+  // and got back a real JSON-RPC -32601 error body. Per JSON-RPC 2.0, ANY
+  // request lacking an "id" member is a Notification and the server MUST
+  // NOT reply at all — this is a property of the request shape, not the
+  // method name.
+  const env = makeEnv();
+
+  const cancelled = await callWorker(worker, env, '/mcp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', method: 'notifications/cancelled', params: { requestId: 1 } }),
+  });
+  assert.equal(cancelled.status, 204);
+  assert.equal(await cancelled.text(), '', 'no body on a notification');
+
+  const unknownIdLess = await callWorker(worker, env, '/mcp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', method: 'some/future-notification' }),
+  });
+  assert.equal(unknownIdLess.status, 204, 'an id-less request to an unrecognized method is still a silent notification, never a -32601 error body');
+
+  // Contrast: the SAME unknown method WITH an id is a real request and DOES
+  // get an error reply — the id, not the method name, is what makes the
+  // difference.
+  const unknownWithId = await rpc(worker, env, 'some/future-notification', {}, 42);
+  assert.equal(unknownWithId.error.code, -32601);
+  assert.equal(unknownWithId.id, 42);
+});
+
+test('batch (array) JSON-RPC request → 400 -32600, not one uncorrelated reply for N requests', async () => {
+  const env = makeEnv();
+  const res = await callWorker(worker, env, '/mcp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify([
+      { jsonrpc: '2.0', id: 1, method: 'initialize', params: {} },
+      { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} },
+    ]),
+  });
+  assert.equal(res.status, 400);
+  const body = await res.json();
+  assert.equal(body.error.code, -32600);
+  assert.match(body.error.message, /batch/i);
+});
+
+test('non-object JSON body (bare string/number/null) → 400 -32600, not a thrown TypeError', async () => {
+  const env = makeEnv();
+  for (const bare of ['"just a string"', '42', 'null', 'true']) {
+    const res = await callWorker(worker, env, '/mcp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: bare,
+    });
+    assert.equal(res.status, 400, bare);
+    const body = await res.json();
+    assert.equal(body.error.code, -32600, bare);
+  }
+});
+
+test('X-Content-Type-Options: nosniff on every worker-constructed /mcp response (bypasses the site _headers file)', async () => {
+  const env = makeEnv();
+  const discovery = await callWorker(worker, env, '/mcp');
+  assert.equal(discovery.headers.get('x-content-type-options'), 'nosniff');
+
+  const initResult = await callWorker(worker, env, '/mcp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: {} }),
+  });
+  assert.equal(initResult.headers.get('x-content-type-options'), 'nosniff');
+
+  const options = await callWorker(worker, env, '/mcp', { method: 'OPTIONS' });
+  assert.equal(options.headers.get('x-content-type-options'), 'nosniff');
+
+  const unknownMethod = await callWorker(worker, env, '/mcp', { method: 'PUT' });
+  assert.equal(unknownMethod.status, 405);
+  assert.equal(unknownMethod.headers.get('x-content-type-options'), 'nosniff');
+});
+
 test('tools/list exposes legacy sourcing tools AND the five tender tools', async () => {
   const env = makeEnv();
   const out = await rpc(worker, env, 'tools/list', {});

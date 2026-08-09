@@ -38,6 +38,26 @@ test('GET /api/v1/tenders — default excludes deadline_passed, limit 50, exact 
   }
 });
 
+test('X-Content-Type-Options: nosniff on worker-constructed /api/* responses (the site _headers file does not cover these)', async () => {
+  const env = makeEnv();
+  const list = await getJson(env, '/api/v1/tenders');
+  assert.equal(list.res.headers.get('x-content-type-options'), 'nosniff');
+
+  const notFound = await getJson(env, '/api/v1/tenders/AT-DOES-NOT-EXIST');
+  assert.equal(notFound.res.status, 404);
+  assert.equal(notFound.res.headers.get('x-content-type-options'), 'nosniff');
+
+  const health = await getJson(env, '/api/v1/health');
+  assert.equal(health.res.headers.get('x-content-type-options'), 'nosniff');
+
+  const healthzAlias = await callWorker(worker, env, '/healthz');
+  assert.equal(healthzAlias.headers.get('x-content-type-options'), 'nosniff');
+
+  const scopedNotFound = await callWorker(worker, env, '/api/v1/no-such-route');
+  assert.equal(scopedNotFound.status, 404);
+  assert.equal(scopedNotFound.headers.get('x-content-type-options'), 'nosniff');
+});
+
 test('rows are verbatim subsets of the fixture rows', async () => {
   const env = makeEnv();
   const { json } = await getJson(env, '/api/v1/tenders?limit=5');
@@ -155,6 +175,127 @@ test('limit clamps at 200', async () => {
   const env = makeEnv();
   const { json } = await getJson(env, '/api/v1/tenders?limit=999&closing_bucket=all');
   assert.equal(json.meta.returned, 200);
+});
+
+// ---------- param clamps (q / category / value_band / market — shared by REST + MCP) ----------
+// parseFilters is the one function both transports funnel through: REST via
+// URLSearchParams (URL length is bounded by intermediaries/CDNs), MCP via a
+// plain JSON args object (no such bound — a tool-call argument is just a
+// string in a request body). The clamp has to live in parseFilters itself to
+// actually cover both; these tests hit it from both sides.
+
+test('REST: q longer than 256 chars → 400 invalid_parameter (not silently truncated or slow-scanned)', async () => {
+  const env = makeEnv();
+  const { res, json } = await getJson(env, '/api/v1/tenders?q=' + 'a'.repeat(257));
+  assert.equal(res.status, 400);
+  assert.equal(json.error.code, 'invalid_parameter');
+  assert.match(json.error.message, /q/);
+
+  const ok = await getJson(env, '/api/v1/tenders?q=' + 'a'.repeat(256));
+  assert.notEqual(ok.res.status, 400, 'exactly 256 chars is still allowed');
+});
+
+test('REST: market with 17 comma-separated codes → 400; 16 is still allowed', async () => {
+  const env = makeEnv();
+  const seventeen = Array.from({ length: 17 }, () => 'HK').join(',');
+  const { res, json } = await getJson(env, '/api/v1/tenders?market=' + seventeen);
+  assert.equal(res.status, 400);
+  assert.equal(json.error.code, 'invalid_parameter');
+  assert.match(json.error.message, /market/);
+
+  const sixteen = Array.from({ length: 16 }, () => 'HK').join(',');
+  const ok = await getJson(env, '/api/v1/tenders?market=' + sixteen);
+  assert.notEqual(ok.res.status, 400, '16 values is still allowed');
+});
+
+test('REST: category longer than 256 chars, or more than 16 comma-separated values → 400', async () => {
+  const env = makeEnv();
+  const longCategory = await getJson(env, '/api/v1/tenders?category=' + 'x'.repeat(257));
+  assert.equal(longCategory.res.status, 400);
+  assert.equal(longCategory.json.error.code, 'invalid_parameter');
+
+  const manyCategories = await getJson(
+    env,
+    '/api/v1/tenders?category=' + Array.from({ length: 17 }, (_, i) => 'cat' + i).join(',')
+  );
+  assert.equal(manyCategories.res.status, 400);
+  assert.equal(manyCategories.json.error.code, 'invalid_parameter');
+});
+
+test('REST: value_band with more than 16 comma-separated values → 400', async () => {
+  const env = makeEnv();
+  const bands = Array.from({ length: 17 }, () => 'lt_500k').join(',');
+  const { res, json } = await getJson(env, '/api/v1/tenders?value_band=' + bands);
+  assert.equal(res.status, 400);
+  assert.equal(json.error.code, 'invalid_parameter');
+});
+
+test('MCP shares the same clamp: list_tenders with an oversized q/market/category via tool arguments (not a URL) still 400s', async () => {
+  const worker = (await import('../_worker.js')).default;
+  const { rpc } = await import('./helpers/env.mjs');
+  const env = makeEnv();
+
+  const longQ = await rpc(worker, env, 'tools/call', { name: 'list_tenders', arguments: { q: 'a'.repeat(300) } });
+  assert.ok(longQ.error, 'oversized q is rejected even though MCP args have no URL-length bound');
+  assert.equal(longQ.error.code, -32602);
+
+  const manyMarkets = await rpc(worker, env, 'tools/call', {
+    name: 'list_tenders',
+    arguments: { market: Array.from({ length: 20 }, () => 'HK').join(',') },
+  });
+  assert.ok(manyMarkets.error);
+  assert.equal(manyMarkets.error.code, -32602);
+});
+
+test('parseFilters directly: a plain-object args source (no URLSearchParams) enforces the same clamps', () => {
+  const snap = { categories: new Map(), nameToSlug: new Map() };
+  assert.throws(() => parseFilters({ q: 'a'.repeat(257) }, snap), /invalid_parameter|exceeds/);
+  assert.throws(
+    () => parseFilters({ market: Array.from({ length: 17 }, () => 'HK') }, snap),
+    /invalid_parameter|too many/
+  );
+  // boundary: exactly at the limit does not throw
+  assert.doesNotThrow(() => parseFilters({ q: 'a'.repeat(256) }, snap));
+});
+
+// ---------- cursor fingerprint (filter-echo, not a hash) ----------
+
+test('filterFingerprint returns the canonical filter STRING itself, not a hashed digest — an exact-equality check, not a 32-bit-collidable one', () => {
+  const snap = { categories: new Map(), nameToSlug: new Map() };
+  const f1 = parseFilters({ market: 'HK,SG', closing_bucket: 'all' }, snap);
+  const fp1 = filterFingerprint(f1);
+  // it's the readable canonical string (contains the actual filter values),
+  // not an opaque short hash like the old 32-bit DJB2 digest was.
+  assert.match(fp1, /HK/);
+  assert.match(fp1, /SG/);
+  assert.ok(fp1.includes('|'), 'canonical parts are still pipe-joined');
+
+  // two different filters must never fingerprint the same — with a real
+  // string this is exact equality, not hash-collision-probabilistic.
+  const f2 = parseFilters({ market: 'MO', closing_bucket: 'all' }, snap);
+  assert.notEqual(filterFingerprint(f2), fp1);
+
+  // same logical filter, independently parsed twice, still fingerprints
+  // identically (still deterministic / order-independent within a field).
+  const f1b = parseFilters({ market: 'SG,HK', closing_bucket: 'all' }, snap);
+  assert.equal(filterFingerprint(f1b), fp1, 'market order does not change the fingerprint (sorted internally)');
+});
+
+test('cursor decode still 400s on filter mismatch using the new string fingerprint (409/400 semantics unchanged)', async () => {
+  const env = makeEnv();
+  const hk = await getJson(env, '/api/v1/tenders?market=HK&limit=5');
+  const cursor = hk.json.meta.next_cursor;
+  // sanity: the cursor payload embeds the real canonical string, decodable
+  // by anyone (it was never meant to be a secret — only tamper-evident by
+  // exact equality against the filter it's replayed with).
+  const decodedJson = JSON.parse(
+    Buffer.from(cursor.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8')
+  );
+  assert.match(decodedJson.f, /HK/);
+
+  const wrongFilter = await getJson(env, '/api/v1/tenders?market=SG&limit=5&cursor=' + encodeURIComponent(cursor));
+  assert.equal(wrongFilter.res.status, 400);
+  assert.equal(wrongFilter.json.error.code, 'invalid_cursor');
 });
 
 // ---------- cursor pagination ----------
