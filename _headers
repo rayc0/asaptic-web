@@ -5,6 +5,14 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
 
+# Proof Lab — client-side demo surface. Strict CSP scoped to this path only.
+# script-src stays 'self' (no 'unsafe-inline') because the page's module script
+# lives in ./app.mjs, not inline. style-src needs 'unsafe-inline' for the page's
+# <style> block + inline style="width:.." bars. No CSP is set on /* so this adds,
+# never weakens, the global HSTS/X-Frame-Options/nosniff/Referrer/Permissions.
+/demo/proof-lab/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://asaptic.com; base-uri 'none'; form-action https://portal.asaptic.com https://asaptic.com
+
 /geo
   Cache-Control: no-store
 
