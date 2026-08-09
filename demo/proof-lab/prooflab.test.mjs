@@ -22,6 +22,11 @@ import {
   SYNTHETIC_ROWS,
   KNOWN_TEST_IDS,
   NOT_FOUND_RESPONSE,
+  escapeHtml,
+  renderGateHtml,
+  renderLookupHtml,
+  renderMatchHtml,
+  MAX_REJECTION_ROWS,
 } from './prooflab.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -176,6 +181,52 @@ test('scoreAll returns all rows sorted high-to-low', () => {
   const all = scoreAll(FULL_PROFILE);
   assert.equal(all.length, SYNTHETIC_ROWS.length);
   for (let i = 1; i < all.length; i++) assert.ok(all[i - 1].total >= all[i].total);
+});
+
+// ---------------------------------------------------------------------------
+// RENDER PATH — escaping + row cap (defense-in-depth, the DOM sinks)
+// ---------------------------------------------------------------------------
+
+test('render path escapes a hostile field name — no unescaped user < reaches HTML', () => {
+  // A hostile JSON key is refused by the gate, then its NAME is rendered back to
+  // the user. This drives the REAL render helper the page uses. If someone later
+  // interpolates x.field without escapeHtml, this test MUST fail.
+  const hostile = '<img src=x onerror=alert(1)>';
+  const r = runGate({ ...CLEAN_SAMPLE, [hostile]: 'x' });
+  const html = renderGateHtml(r);
+  assert.ok(html.includes('&lt;img src=x onerror=alert(1)&gt;'), 'hostile field name was not escaped');
+  assert.ok(!html.includes('<img src=x onerror=alert(1)>'), 'unescaped hostile markup leaked into gate render');
+  // no user-supplied '<' survives raw: every '<' in output must open a known safe tag
+  const rawUserLt = html.replace(/<\/?(?:div|span|ul|li|br)[^>]*>/g, '');
+  assert.ok(!rawUserLt.includes('<img'), 'raw <img survived render');
+});
+
+test('escapeHtml neutralises &, < and >', () => {
+  assert.equal(escapeHtml('<a>&b'), '&lt;a&gt;&amp;b');
+});
+
+test('lookup + match render helpers escape and stay tag-safe', () => {
+  // lookup body is a fixed string, but it must still route through escapeHtml
+  assert.ok(!renderLookupHtml({ status: 404, body: '<x>' }).includes('<x>'));
+  assert.ok(renderLookupHtml({ status: 404, body: '<x>' }).includes('&lt;x&gt;'));
+  // match render over real scored rows produces one well-formed row per synthetic row
+  const scored = scoreAll({ category: 'Lab & scientific', market: 'SG', keywords: ['microscope'] });
+  const html = renderMatchHtml(scored);
+  assert.equal((html.match(/<li class="mrow">/g) || []).length, SYNTHETIC_ROWS.length);
+});
+
+test('gate render caps rejection rows at MAX_REJECTION_ROWS with a +N more summary', () => {
+  // A pasted 200k-key payload must not render 200k <li> and freeze the tab.
+  const payload = {};
+  const N = 500;
+  for (let i = 0; i < N; i++) payload['extra_field_' + i] = 'x';
+  const r = runGate(payload);
+  assert.ok(r.rejections.length >= N, 'expected one rejection per unknown key');
+  const html = renderGateHtml(r);
+  const liCount = (html.match(/<li\b/g) || []).length;
+  assert.ok(liCount <= MAX_REJECTION_ROWS + 1, `expected <= ${MAX_REJECTION_ROWS + 1} <li>, got ${liCount}`);
+  assert.ok(/\+\d+ more/.test(html), 'expected a "+N more" summary row');
+  assert.equal(MAX_REJECTION_ROWS, 200);
 });
 
 // ---------------------------------------------------------------------------

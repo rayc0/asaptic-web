@@ -305,3 +305,89 @@ export const ROUTE_READOUT = Object.freeze({
 export function scoreAll(profile) {
   return SYNTHETIC_ROWS.map((r) => scoreRow(profile, r)).sort((a, b) => b.total - a.total);
 }
+
+// ---------------------------------------------------------------------------
+// 4. RENDER-TO-STRING — the DOM sinks, extracted so they are unit-testable.
+// ---------------------------------------------------------------------------
+//
+// These build the exact HTML the page assigns to innerHTML. They live here,
+// not in the page's <script>, so a headless test can feed a hostile field name
+// through the REAL render path and prove esc() is applied. Every user-derived
+// value MUST pass through escapeHtml — that is the whole point of these helpers.
+
+/** HTML-escape the three markup-significant characters. The single sink guard. */
+export function escapeHtml(s) {
+  return String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+}
+
+// Cap on rendered rejection <li> rows: a pasted multi-MB / 200k-key payload
+// produces one rejection per key; rendering them all would freeze the tab.
+export const MAX_REJECTION_ROWS = 200;
+
+/**
+ * Render the leak-gate verdict to an HTML string.
+ * @param {ReturnType<typeof runGate>} r
+ * @param {{maxRejections?:number}} [opts]
+ */
+export function renderGateHtml(r, opts = {}) {
+  const max = opts.maxRejections ?? MAX_REJECTION_ROWS;
+  const esc = escapeHtml;
+  const rows = [];
+  for (const a of r.accepted) {
+    rows.push(`<li class="acc"><span class="k">✓ ${esc(a)}</span><span class="why">accepted — published field</span></li>`);
+  }
+  const shown = r.rejections.slice(0, max);
+  for (const x of shown) {
+    rows.push(`<li class="rej"><span class="k">✗ ${esc(x.field)}</span><span class="why">${esc(x.why || x.reason)}<br><span class="cls">${esc(x.class)}</span></span></li>`);
+  }
+  const hidden = r.rejections.length - shown.length;
+  if (hidden > 0) {
+    rows.push(`<li class="rej"><span class="k">… +${hidden} more</span><span class="why">Additional rejected items not shown — only the first ${max} are listed to keep the page responsive.</span></li>`);
+  }
+  const head = r.ok
+    ? 'PASS — clean 11-field row, nothing refused'
+    : `REFUSED — ${r.rejections.length} item(s) outside the contract`;
+  return `<div class="verdict ${r.ok ? 'pass' : 'fail'}"><div class="head">${head}</div><ul>${rows.join('')}</ul></div>`;
+}
+
+/** Render the byte-identical 404 lookup readout to an HTML string. */
+export function renderLookupHtml(res) {
+  const okc = res.status === 200 ? 'ok' : '';
+  return `<span class="st ${okc}">HTTP ${res.status}</span>\n${escapeHtml(res.body)}`;
+}
+
+function segHtml(lab, val, max) {
+  const w = Math.round((val / max) * 100);
+  return `<div class="seg"><div class="lab">${lab}<b>${val}</b></div><div class="bar"><span style="width:${w}%"></span></div></div>`;
+}
+
+/**
+ * Render the match glass-box register to an HTML string.
+ * @param {ReturnType<typeof scoreAll>} scored
+ */
+export function renderMatchHtml(scored) {
+  const esc = escapeHtml;
+  const rowById = Object.fromEntries(SYNTHETIC_ROWS.map((r) => [r.asaptic_id, r]));
+  return scored.map((s) => {
+    const row = rowById[s.asaptic_id];
+    const rc = ROUTE_READOUT[s.route_class];
+    const fired = s.fired.length
+      ? s.fired.map((f) => `<b>${esc(f)}</b>`).join(' · ')
+      : '<span style="color:var(--line-2)">none fired</span>';
+    return `<li class="mrow">
+        <div class="top">
+          <div class="sc">${s.total}</div>
+          <div><p class="title">${esc(row.title_en)}</p><p class="title-zh">${esc(row.title_zh)}</p></div>
+          <span class="rc ${s.route_class}">${esc(rc.label)}</span>
+        </div>
+        <div class="decomp">
+          ${segHtml('category', s.parts.category, WEIGHTS.category)}
+          ${segHtml('keyword', s.parts.keyword, WEIGHTS.keyword)}
+          ${segHtml('market', s.parts.market, WEIGHTS.market)}
+          ${segHtml('runway', s.parts.runway, WEIGHTS.runway)}
+        </div>
+        <p class="fired">fired tokens: ${fired}</p>
+        <p class="rnote">${esc(rc.note)}</p>
+      </li>`;
+  }).join('');
+}
