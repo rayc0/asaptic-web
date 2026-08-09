@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Developers — build on the Asaptic tender feed | Asaptic</title>
+
+  <meta name="description" content="Developer surface for the Asaptic tender feed: 60-second quickstart, the asaptic.tender.v1 public data contract, JSON Schema and fixtures, MCP endpoint, and a live status board where every claim is a clickable link." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://asaptic.com/developers/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Developers — build on the Asaptic tender feed | Asaptic" />
+  <meta property="og:description" content="Quickstart, public data contract (asaptic.tender.v1), MCP endpoint, and an honest live-status board. Every claim is a link you can click." />
+  <meta property="og:url" content="https://asaptic.com/developers/" />
+  <meta property="og:site_name" content="Asaptic" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <script>document.documentElement.classList.add('js-anim');</script>
+  <link rel="stylesheet" href="/style.css?v=20260712a" />
+
+  <style>
+    /* /developers page-specific styles — additive only, does not touch style.css */
+    .dev-section { padding: 64px 0; }
+    .dev-kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: rgba(255,255,255,0.45);
+      margin: 0 0 12px;
+    }
+    .dev-h2 { font-size: 28px; font-weight: 800; color: rgba(255,255,255,0.92); margin: 0 0 12px; }
+    .dev-lead { font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.55); max-width: 720px; margin: 0 0 28px; }
+
+    .snippet {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 12px;
+      margin: 0 0 20px;
+      overflow: hidden;
+    }
+    .snippet-head {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.75);
+    }
+    .snippet pre {
+      margin: 0; padding: 16px 18px; overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px; line-height: 1.6; color: rgba(255,255,255,0.82);
+    }
+    .snippet code { font-family: inherit; }
+    .snippet .out { color: rgba(255,255,255,0.4); }
+
+    .chip {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 3px 9px; border-radius: 999px;
+      border: 1px solid transparent; white-space: nowrap;
+    }
+    .chip-live { color: #63c763; border-color: rgba(99,199,99,0.4); background: rgba(99,199,99,0.08); }
+    .chip-beta { color: #d9b45b; border-color: rgba(217,180,91,0.4); background: rgba(217,180,91,0.08); }
+    .chip-build { color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); border-style: dashed; }
+
+    .field-table-wrap { overflow-x: auto; border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; }
+    table.field-table { width: 100%; border-collapse: collapse; min-width: 720px; font-size: 13px; }
+    .field-table th, .field-table td {
+      text-align: left; padding: 11px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      color: rgba(255,255,255,0.6); vertical-align: top; line-height: 1.55;
+    }
+    .field-table th {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.42);
+      background: rgba(255,255,255,0.03);
+    }
+    .field-table tr:last-child td { border-bottom: none; }
+    .field-table td:first-child, .field-table .mono {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; color: rgba(255,255,255,0.85);
+      white-space: nowrap;
+    }
+
+    .board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 28px; }
+    @media (max-width: 760px) { .board { grid-template-columns: 1fr; } }
+    .board-item {
+      display: flex; flex-direction: column; gap: 6px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; padding: 18px 20px;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .board-item:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); }
+    .board-item-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .board-item h3 { margin: 0; font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.88); }
+    .board-item p { margin: 0; font-size: 13px; line-height: 1.55; color: rgba(255,255,255,0.5); }
+    .board-item .stamp {
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+      color: rgba(255,255,255,0.32); margin-top: 4px;
+    }
+    .board-updated { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: rgba(255,255,255,0.4); margin-top: 18px; }
+
+    .tier-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 28px; }
+    @media (max-width: 760px) { .tier-grid { grid-template-columns: 1fr; } }
+    .tier-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; padding: 26px 24px;
+    }
+    .tier-card.gated { border-color: rgba(217,180,91,0.28); }
+    .tier-card h3 { margin: 0 0 10px; font-size: 18px; font-weight: 700; color: rgba(255,255,255,0.9); }
+    .tier-card p { margin: 0 0 14px; font-size: 14px; line-height: 1.65; color: rgba(255,255,255,0.55); }
+    .tier-card ul { margin: 0 0 14px; padding-left: 18px; font-size: 13.5px; line-height: 1.7; color: rgba(255,255,255,0.55); }
+
+    .kit-links { display: flex; flex-wrap: wrap; gap: 12px; margin: 22px 0 0; }
+    .kit-links a {
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700;
+      color: rgba(255,255,255,0.78); text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.16); border-radius: 8px;
+      padding: 9px 14px; transition: border-color 0.2s, color 0.2s;
+    }
+    .kit-links a:hover { border-color: #fff; color: #fff; }
+
+    .why-note {
+      border-left: 3px solid rgba(255,255,255,0.18);
+      padding: 4px 0 4px 20px; max-width: 760px;
+      font-size: 14.5px; line-height: 1.75; color: rgba(255,255,255,0.6);
+    }
+    .dev-a { color: rgba(255,255,255,0.8); text-decoration: underline; text-underline-offset: 3px; }
+    .dev-a:hover { color: #fff; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container nav-shell">
+      <a class="nav-logo" href="/" aria-label="Asaptic">ASAPTIC</a>
+
+      <button
+        type="button"
+        class="nav-burger"
+        id="navBurger"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="navDrawer"
+      >
+        <span class="nav-burger-bar"></span>
+        <span class="nav-burger-bar"></span>
+        <span class="nav-burger-bar"></span>
+      </button>
+
+      <div class="nav-links" id="navDrawer">
+        <a href="/agents.html">Trade AI</a>
+        <a href="/tender/">Live Tenders</a>
+        <a href="/standard/">Cross-Standards</a>
+        <a href="/sourcing.html">Sourcing &amp; Fulfillment</a>
+        <a href="https://portal.asaptic.com/" target="_blank" rel="noopener">For Suppliers</a>
+        <a href="/engage.html" class="nav-cta">Engage</a>
+      </div>
+
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="en">EN</button>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="top" style="min-height:auto;padding:140px 0 24px;">
+      <div class="hero-bg"></div>
+      <div class="container">
+        <div class="hero-copy fade-in" style="max-width:900px;">
+          <p class="hero-eyebrow">DEVELOPERS — FEED · CONTRACT · MCP · STATUS</p>
+          <h1 class="hero-title" style="font-size:clamp(34px,5vw,60px);">Build on the tender feed.</h1>
+          <p class="hero-sub">A weekly-refreshed feed of sanitized public-procurement opportunities across seven markets, published under a versioned data contract — <span style="font-family:'JetBrains Mono',monospace;">asaptic.tender.v1</span>. Everything on this page is verifiable: every claim below is a link you can click, with an honest status chip.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quickstart -->
+    <section class="dev-section" id="quickstart">
+      <div class="container">
+        <div class="fade-in">
+          <p class="dev-kicker">60-SECOND QUICKSTART</p>
+          <h2 class="dev-h2">Three ways in. Runnable as-is.</h2>
+          <p class="dev-lead">No key, no signup for the public listing tier. Copy, paste, run.</p>
+        </div>
+
+        <div class="snippet fade-in">
+          <div class="snippet-head">1 · curl the weekly feed <span class="chip chip-live">LIVE</span></div>
+          <pre><code>curl -sL https://asaptic.com/tender/rows.json | head -c 600
+
+<span class="out"># { "generated": "…", "issue_id": "2026-W32", "total": 2395, "withheld": 6, "rows": [ … ] }</span></code></pre>
+        </div>
+
+        <div class="snippet fade-in">
+          <div class="snippet-head">1b · REST with filters <span class="chip chip-build">IN BUILD</span></div>
+          <pre><code>curl -sL https://asaptic.com/api/v1/tenders
+<span class="out"># Filterable JSON REST access is being wired up now — until it ships, rows.json above is the full feed.</span></code></pre>
+        </div>
+
+        <div class="snippet fade-in">
+          <div class="snippet-head">2 · command line <span class="chip chip-build">IN BUILD</span></div>
+          <pre><code>npx -y @asaptic/cli tenders list
+<span class="out"># npm publish is release-gated; the same binary also bridges MCP over stdio: `asaptic mcp`.</span></code></pre>
+        </div>
+
+        <div class="snippet fade-in">
+          <div class="snippet-head">3 · MCP endpoint (for agents) <span class="chip chip-live">LIVE</span></div>
+          <pre><code>curl -s -X POST https://asaptic.com/mcp \
+  -H 'content-type: application/json' \
+  -H 'accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+
+<span class="out"># tools: list_sourcing_lanes · get_lane_capability · get_engagement · submit_rfq</span></code></pre>
+        </div>
+
+        <div class="kit-links fade-in">
+          <a href="/tender/rows.json">rows.json — the feed</a>
+          <a href="/mcp">/mcp — MCP endpoint</a>
+          <a href="/llms.txt">llms.txt</a>
+          <a href="/openapi.json">openapi.json</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Row model -->
+    <section class="dev-section" id="contract">
+      <div class="container">
+        <div class="fade-in">
+          <p class="dev-kicker">THE DATA CONTRACT — <span style="color:rgba(255,255,255,0.7);">asaptic.tender.v1</span></p>
+          <h2 class="dev-h2">The 11-field public row.</h2>
+          <p class="dev-lead">Every row in the feed carries exactly these eleven fields — no more, no fewer. The shape is versioned; breaking changes mean a new version name, never a silent mutation.</p>
+        </div>
+
+        <div class="field-table-wrap fade-in">
+          <table class="field-table">
+            <thead>
+              <tr><th>Field</th><th>Type</th><th>Domain</th><th>Example</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>asaptic_id</td><td>string</td><td>Stable listing id. Synthetic fixtures use the <span class="mono">AT-TEST-</span> prefix.</td><td class="mono">AT-TEST-HK-0000-001</td></tr>
+              <tr><td>market</td><td>string</td><td>HK · SG · MO · GB · AU · CA · EU</td><td class="mono">HK</td></tr>
+              <tr><td>category</td><td>object</td><td>Trilingual label: name_en, name_zh, name_zht</td><td class="mono">{"name_en":"IT &amp; software", …}</td></tr>
+              <tr><td>summary_en</td><td>string</td><td>Sanitized English summary — generic procurement language only</td><td>"Supply and support of …"</td></tr>
+              <tr><td>summary_zh</td><td>string</td><td>Sanitized Simplified Chinese summary</td><td>「采购…」</td></tr>
+              <tr><td>summary_zht</td><td>string</td><td>Sanitized Traditional Chinese summary</td><td>「採購…」</td></tr>
+              <tr><td>value_band</td><td>string | null</td><td>lt_500k · 500k_2m · 2m_10m · gt_10m · null</td><td class="mono">2m_10m</td></tr>
+              <tr><td>closing_bucket</td><td>string</td><td>le_2w · 2_4w · gt_4w · deadline_passed</td><td class="mono">2_4w</td></tr>
+              <tr><td>lead_ok</td><td>boolean</td><td>Whether supplier interest is accepted for this listing</td><td class="mono">true</td></tr>
+              <tr><td>new_this_issue</td><td>boolean</td><td>First appeared in the current weekly issue</td><td class="mono">false</td></tr>
+              <tr><td>sort_key</td><td>string</td><td>Opaque 64-hex stable sort key; carries no recoverable information</td><td class="mono">01727e…dc4ccf</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="kit-links fade-in">
+          <a href="/developers/contract/asaptic.tender.v1.schema.json">JSON Schema (2020-12)</a>
+          <a href="/developers/contract/fixtures/positive-minimal.json">Synthetic fixtures</a>
+          <a href="/developers/contract/validate.mjs">validate.mjs (zero-dep)</a>
+          <a href="/developers/conformance.md">Conformance check</a>
+        </div>
+
+        <div class="snippet fade-in" style="margin-top:22px;">
+          <div class="snippet-head">Verify the live feed against the contract yourself <span class="chip chip-live">LIVE</span></div>
+          <pre><code>curl -sLO https://asaptic.com/developers/contract/asaptic.tender.v1.schema.json \
+  &amp;&amp; curl -sLO https://asaptic.com/developers/contract/validate.mjs \
+  &amp;&amp; curl -sL https://asaptic.com/tender/rows.json | node validate.mjs --stdin --sample 20
+<span class="out"># PASS  stdin (sampled 20 rows)</span></code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Auth tiers -->
+    <section class="dev-section" id="access">
+      <div class="container">
+        <div class="fade-in">
+          <p class="dev-kicker">ACCESS TIERS</p>
+          <h2 class="dev-h2">Public listing is keyless. Detail is gated.</h2>
+        </div>
+        <div class="tier-grid">
+          <div class="tier-card fade-in">
+            <h3>Public listing <span class="chip chip-live" style="vertical-align:2px;">LIVE · KEYLESS</span></h3>
+            <p>The full weekly feed, every market, no key and no signup:</p>
+            <ul>
+              <li>All 11 fields of <span style="font-family:'JetBrains Mono',monospace;">asaptic.tender.v1</span></li>
+              <li>Weekly issue cycle with <span style="font-family:'JetBrains Mono',monospace;">new_this_issue</span> flags</li>
+              <li>Schema, fixtures and validator to build against</li>
+            </ul>
+            <a class="dev-a" href="/tender/rows.json">Fetch the feed →</a>
+          </div>
+          <div class="tier-card gated fade-in">
+            <h3>Spec-coded detail <span class="chip chip-beta" style="vertical-align:2px;">PRIVATE BETA — REQUEST ACCESS</span></h3>
+            <p>Field-level requirement detail beyond the public 11 fields, per approved counterparty. Unauthenticated calls receive a structured 403 — the exact shape is published as a <a class="dev-a" href="/developers/contract/fixtures/negative-403-spec-denied.json">negative fixture</a> so your error handling is testable before you ever apply.</p>
+            <a class="dev-a" href="mailto:engage@asaptic.com?subject=Spec-coded%20access%20request">Request access → engage@asaptic.com</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live board -->
+    <section class="dev-section" id="board">
+      <div class="container">
+        <div class="fade-in">
+          <p class="dev-kicker">WHAT'S LIVE RIGHT NOW</p>
+          <h2 class="dev-h2">Click any claim to verify it.</h2>
+          <p class="dev-lead">This board is generated from <a class="dev-a" href="/developers/status.json">status.json</a>. Nothing here is a static badge: if a thing isn't live, its chip says so.</p>
+        </div>
+        <div class="board" id="statusBoard">
+          <noscript><p style="color:rgba(255,255,255,0.55);">JavaScript is off — read <a class="dev-a" href="/developers/status.json">status.json</a> directly; it is the same data.</p></noscript>
+        </div>
+        <p class="board-updated" id="boardUpdated"></p>
+      </div>
+    </section>
+
+    <!-- Why no OCDS -->
+    <section class="dev-section" id="why-not-ocds" style="padding-bottom:96px;">
+      <div class="container">
+        <div class="fade-in">
+          <p class="dev-kicker">A DELIBERATE NON-GOAL</p>
+          <h2 class="dev-h2">Why we don't publish OCDS fields.</h2>
+          <div class="why-note">
+            <p style="margin:0;">Asaptic is artifact-transparent and process-opaque: the published rows, their schema, and their conformance are fully verifiable, but the sourcing pipeline behind them is not disclosed. OCDS-style fields — issuing bodies, notice identifiers, exact dates and procedure metadata — would let anyone reconstruct where and how each listing was collected, and that pipeline is the product. So the public contract is deliberately the sanitized 11-field shape, versioned and schema-checked, rather than a crosswalk to open-contracting identifiers. If your use case needs deeper structure, <a class="dev-a" href="mailto:engage@asaptic.com">talk to us</a> about the gated tier instead.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-logo">Asaptic</div>
+        <div class="footer-links">
+          <a href="/agents.html">Agents</a>
+          <a href="/tender/">Live Tenders</a>
+          <a href="/sourcing.html">Sourcing</a>
+          <a href="/engage.html">Engage</a>
+          <a href="/privacy.html">Privacy</a>
+          <a href="/blog/">Blog</a>
+        </div>
+        <p class="footer-tagline">China deep-tech, traded with Western-grade trust.</p>
+      </div>
+      <div class="footer-also">
+        <span class="footer-also-label">Also from Asaptic:</span>
+        <a href="/robot/">Robot 101</a>
+        <span class="footer-also-sep">&middot;</span>
+        <a href="/university/">Trade University</a>
+        <span class="footer-also-sep">&middot;</span>
+        <a href="/press.html">Press</a>
+        <span class="footer-also-sep">&middot;</span>
+        <a href="/privacy.html">Privacy</a>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Asaptic</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (async function renderBoard() {
+      const CHIP = {
+        live:         { cls: 'chip-live',  label: 'LIVE' },
+        private_beta: { cls: 'chip-beta',  label: 'Private beta — request access' },
+        in_build:     { cls: 'chip-build', label: 'In build' }
+      };
+      const board = document.getElementById('statusBoard');
+      const updatedEl = document.getElementById('boardUpdated');
+      try {
+        const res = await fetch('/developers/status.json', { cache: 'no-store' });
+        const data = await res.json();
+        for (const item of data.items) {
+          const chip = CHIP[item.status] || CHIP.in_build;
+          const a = document.createElement('a');
+          a.className = 'board-item';
+          a.href = item.url;
+          const top = document.createElement('div');
+          top.className = 'board-item-top';
+          const h = document.createElement('h3');
+          h.textContent = item.name;
+          const c = document.createElement('span');
+          c.className = 'chip ' + chip.cls;
+          c.textContent = chip.label;
+          top.appendChild(h); top.appendChild(c);
+          const p = document.createElement('p');
+          p.textContent = item.detail;
+          const stamp = document.createElement('span');
+          stamp.className = 'stamp';
+          stamp.textContent = 'last verified ' + item.last_verified;
+          a.appendChild(top); a.appendChild(p); a.appendChild(stamp);
+          board.appendChild(a);
+        }
+        updatedEl.textContent = 'board updated ' + data.updated + ' — ' + data.note;
+      } catch (e) {
+        const p = document.createElement('p');
+        p.style.color = 'rgba(255,255,255,0.55)';
+        p.innerHTML = 'Could not load the status board — read <a class="dev-a" href="/developers/status.json">status.json</a> directly.';
+        board.appendChild(p);
+      }
+    })();
+
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); fadeObserver.unobserve(entry.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+    addEventListener('load', () => setTimeout(() => document.querySelectorAll('.fade-in:not(.visible)').forEach(el => el.classList.add('visible')), 2500));
+  </script>
+  <script src="/assets/js/nav-mobile.js" defer></script>
+</body>
+</html>
