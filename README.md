@@ -16,6 +16,7 @@ Every claim below is a real, clickable URL — no static badges.
 | MCP server (JSON-RPC 2.0) | https://asaptic.com/mcp |
 | OpenAPI description | https://asaptic.com/openapi.json |
 | llms.txt | https://asaptic.com/llms.txt |
+| Developer surface + conformance | https://asaptic.com/developers/ ([conformance](https://asaptic.com/developers/conformance.md)) |
 | Matching demo | https://asaptic.com/demo/match |
 
 ## Files
