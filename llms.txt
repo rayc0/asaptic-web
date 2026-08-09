@@ -2,16 +2,16 @@
 # https://llmstxt.org
 # Updated: 2026-07-19
 
-> Asaptic is the AI that wins and fulfills cross-border trade deals: it reads a tender or RFQ, clears cross-market compliance, sources and vets suppliers, prices to win, and drives the deal to a signed, fulfilled contract. AI-built bids have won a cumulative US$10M+ in government tenders for our clients. 1,282 live tenders tracked across five markets. Hong Kong–based, global scope. A separate Physical AI & robotics lane lives at asaptic.com/physicalai. Contact: engage@asaptic.com (RFQs answered in under 4 hours).
+> Asaptic is the AI that wins and fulfills cross-border trade deals: it reads a tender or RFQ, clears cross-market compliance, sources and vets suppliers, prices to win, and drives the deal to a signed, fulfilled contract. AI-built bids have won a cumulative US$10M+ in government tenders for our clients. The live tender ledger spans seven markets (live row count: https://asaptic.com/api/v1/health). Hong Kong–based, global scope. A separate Physical AI & robotics lane lives at asaptic.com/physicalai. Contact: engage@asaptic.com (RFQs answered in under 4 hours).
 
 ## About
 
-Asaptic is the AI that wins and fulfills cross-border trade deals: it reads a tender or RFQ, clears cross-market compliance, sources and vets real suppliers, prices to win, and drives the deal to a signed, fulfilled contract — the operator, not a copilot. AI-built bids have won a cumulative US$10M+ in government tenders for Asaptic's clients (contract identifiers withheld by client confidentiality). Right now the engine tracks 1,282 live tenders across five markets, and 20-30 Chinese suppliers reach Asaptic inbound every week, unprompted. The compliance backbone behind the engine, Cross-Standards, covers 100+ markets.
+Asaptic is the AI that wins and fulfills cross-border trade deals: it reads a tender or RFQ, clears cross-market compliance, sources and vets real suppliers, prices to win, and drives the deal to a signed, fulfilled contract — the operator, not a copilot. AI-built bids have won a cumulative US$10M+ in government tenders for Asaptic's clients (contract identifiers withheld by client confidentiality). The engine tracks a continuously refreshed tender ledger across seven markets (current row count and feed freshness: https://asaptic.com/api/v1/health), and 20-30 Chinese suppliers reach Asaptic inbound every week, unprompted. The compliance backbone behind the engine, Cross-Standards, covers 100+ markets.
 
 ## Key pages
 
 - Homepage — https://asaptic.com/
-- Live tender ledger (five markets, updated continuously) — https://asaptic.com/tender
+- Live tender ledger (seven markets, updated continuously) — https://asaptic.com/tender
 - Cross-Standards compliance backbone (100+ markets) — https://asaptic.com/standard
 - The agent lineup (tender, sourcing, compliance) — https://asaptic.com/agents
 - Sourcing lanes for suppliers — https://asaptic.com/sourcing.html
@@ -50,8 +50,17 @@ Asaptic sources factory-direct across these lanes (machine-readable: https://asa
 - Tactile e-skin / force sensors -> /blog/source-tactile-eskin-force-sensors-china.html
 - EV-charger power modules (SiC) -> /blog/source-ev-charger-power-modules-china.html
 Engagement: email a specification brief to engage@asaptic.com (RFQs answered within 4 hours). Machine-readable capabilities: /agent/capabilities.json . Full agent context: /llms-full.txt
-MCP server (agent-callable): https://asaptic.com/mcp — tools: list_sourcing_lanes, get_lane_capability, get_engagement, submit_rfq
+MCP server (agent-callable): https://asaptic.com/mcp — tools: list_sourcing_lanes, get_lane_capability, get_engagement, submit_rfq, list_tenders, get_tender, tender_facets, get_spec_coded, request_tender_access
 OpenAPI: https://asaptic.com/openapi.json . Legacy plugin discovery: https://asaptic.com/.well-known/ai-plugin.json
+
+## Agent tender API (2026)
+Free, keyless REST access to the public cross-market tender listing feed (the same sanitized rows shown at https://asaptic.com/tender — trilingual en/zh-Hans/zh-Hant summaries, bucketed metadata):
+- GET /api/v1/tenders — filters: market, category, closing_bucket (default excludes passed deadlines), new, lead_ok, value_band, q, lang, limit (max 200), cursor
+- GET /api/v1/tenders/{at_id} — one listing row by Asaptic id (AT-…)
+- GET /api/v1/tenders/facets — facet vocabulary and counts
+- GET /api/v1/spec-coded/{at_id} — always 403: spec-coded technical packages require an approved account; the response carries the access path
+MCP equivalents on https://asaptic.com/mcp : list_tenders, get_tender, tender_facets, get_spec_coded, request_tender_access. CLI: `npx -y @asaptic/cli mcp` bridges the server into Claude Code/Desktop/Cursor over stdio.
+Usage terms: agent-assisted discovery and citation are welcome (attribute "Asaptic (HK) Ltd — asaptic.com"); do not redistribute the feed as a competing dataset and do not attempt to map listing ids back to the underlying notices; access is revocable on abuse. To pursue a listed opportunity or reach the gated technical tier, email engage@asaptic.com or use request_tender_access.
 
 ## Robot parts & Robot 101 (2026)
 Asaptic sources validated robot components from the Shenzhen ecosystem with test data, landed-cost math, and English documentation. Core category: robot joint modules (harmonic reducer + frameless torque motor + dual encoders + servo driver per axis); also sensors (depth cameras, LiDAR, IMU, force-torque), robot/AMR battery packs & BMS (UN 38.3 documentation), end-effectors, controllers, and high-flex cables/consumables. Hub: https://asaptic.com/robot/ (中文: https://asaptic.com/zh/robot/). Enquiries: engage@asaptic.com .
