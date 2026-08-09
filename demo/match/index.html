@@ -8,55 +8,82 @@
 <meta name="description" content="A working demonstration of Asaptic's tender relevance scorer: one real supplier profile, every open government notice, the full arithmetic disclosed, and the execution-route review shown separately from the engine's own output.">
 <style>
   :root{
-    --frame:#15140f; --paper:#f4f1e9; --paper-2:#ece7d8; --edge:#e8e2d3;
-    --ink:#211f18; --ink-2:#6b6656; --seal:#a8322c; --seal-deep:#8f2823;
-    /* --line / --line-2 are BORDER-ONLY tokens. They are never a text colour:
-       #c4bca9 on paper is 1.67:1, far below WCAG AA. De-emphasis is carried by
-       size, weight and letter-spacing instead, so the quietest text on the page
-       still reads at --ink-2 (5.08:1 on paper, 4.64:1 on paper-2). */
-    --line:#d8d1c1; --line-2:#c4bca9;
-    --bar-c:#3c3728; --bar-k:#a8322c; --bar-r:#8a7440;
-    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
-    --serif:Georgia,"Times New Roman",serif;
+    --bg:#0a0a0f; --card:#0f0f1a; --card2:#12121f;
+    --edge:rgba(255,255,255,.07); --edge2:rgba(255,255,255,.14);
+    /* Text tokens — AA ratios computed against the DARK ground:
+       ink 18.4:1 · ink2 8.8:1 (8.3:1 on card2) · quiet 6.4:1 (6.0:1 on card2).
+       The house page's #6b7284 is 4.1:1 on this ground — an AA FAIL — so the
+       quietest text on this page is lifted to --quiet and never dimmer. */
+    --ink:#f4f6fb; --ink2:#a6adbf; --quiet:#8b93a7;
+    /* Accents — emerald = positive/direct (7.8:1), cyan = informational
+       (cyan-l 10.5:1), amber = warn (11.8:1). All pass AA as text on the ground. */
+    --emerald:#10b981; --emerald-l:#34d399; --cyan:#06b6d4; --cyan-l:#22d3ee;
+    --amber:#fbbf24; --peri:#818cf8;
+    --bar-c:#34d399; --bar-k:#22d3ee; --bar-r:#fbbf24;
+    --mono:'Fira Code','JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--frame);color:var(--ink);
-    font-family:var(--serif);line-height:1.6;-webkit-font-smoothing:antialiased}
-  .sheet{max-width:880px;margin:64px auto;background:var(--paper);
-    border:1px solid var(--edge);border-radius:3px;
-    box-shadow:0 30px 80px rgba(0,0,0,.55);padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px}
+  a{color:var(--cyan-l);text-decoration:none}
+  a:focus-visible{outline:2px solid var(--emerald-l);outline-offset:2px}
   .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
-  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--seal);margin:0}
-  .sec{display:grid;grid-template-columns:56px 1fr;gap:0;border-top:1px solid var(--line)}
-  .sec:first-child{border-top:0}
-  .docket{font-family:var(--mono);font-size:12px;color:var(--seal);padding:28px 0 0 18px;letter-spacing:.04em}
-  .body{padding:28px 30px 30px 8px;min-width:0}
-  h1{font-family:var(--serif);font-size:clamp(26px,4.1vw,38px);line-height:1.14;letter-spacing:-.015em;margin:.35em 0 .3em;text-wrap:balance}
-  h2{font-family:var(--serif);font-size:19px;margin:.2em 0 .5em;text-wrap:balance}
-  .lede{color:var(--ink-2);font-size:15px;max-width:62ch}
-  .amt{font-family:var(--mono);color:var(--seal);font-weight:700}
+  .grad{background:linear-gradient(135deg,#34d399 0%,#22d3ee 55%,#818cf8 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--emerald);margin:0 0 14px}
 
-  .subject{background:var(--paper-2);border:1px solid var(--line);padding:16px 18px;margin:10px 0 0}
-  .subject .nm{font-family:var(--serif);font-size:20px;font-weight:700}
-  .subject .rl{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin-top:2px}
-  .chips{margin:12px 0 0;display:flex;flex-wrap:wrap;gap:6px}
-  .chip{font-family:var(--mono);font-size:11.5px;color:var(--ink);border:1px solid var(--line-2);padding:3px 9px;border-radius:2px;background:var(--paper)}
+  .bridge{position:sticky;top:0;z-index:50;background:rgba(10,10,15,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--edge)}
+  .bridge .row-n{display:flex;align-items:center;justify-content:space-between;height:54px;max-width:960px;margin:0 auto;padding:0 24px}
+  .bridge .logo{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800;letter-spacing:.14em;color:#fff}
+  .bridge .logo .mk{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;color:#04121a}
+  .bridge .back{font-size:13px;font-weight:600;color:var(--cyan-l)}
 
-  /* ── funnel ── */
-  .funnel{display:flex;gap:20px;align-items:stretch;background:var(--paper-2);
-    border:1px solid var(--line);padding:18px 18px 16px;margin:12px 0 0}
+  /* hero — gradient headline over glow, funnel follows as the opening visual */
+  .hero{position:relative;text-align:center;padding:64px 0 46px;border-bottom:1px solid var(--edge);overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(1100px 420px at 50% -10%,rgba(16,185,129,.16),transparent 62%),
+               radial-gradient(820px 360px at 84% 0%,rgba(6,182,212,.10),transparent 55%)}
+  .hero .wrap{position:relative}
+  .pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--emerald-l);
+    border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.08);border-radius:20px;padding:7px 15px;margin:0 0 24px}
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px var(--amber);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  h1{font-size:clamp(28px,5.2vw,52px);line-height:1.08;letter-spacing:-.025em;margin:0 auto 18px;font-weight:900;max-width:22ch;text-wrap:balance}
+  .lede{font-size:clamp(14px,1.8vw,16px);color:var(--ink2);max-width:62ch;margin:0 auto}
+  .hero .lede{margin:0 auto}
+  .creds{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin:26px auto 0;max-width:760px}
+  .cred{font-family:var(--mono);font-size:11.5px;color:var(--ink2);border:1px solid var(--edge2);background:var(--card);border-radius:8px;padding:8px 13px}
+  .cred b{color:var(--emerald-l)} .cred .ok{color:var(--emerald)}
+
+  section{padding:46px 0;border-bottom:1px solid var(--edge)}
+  h2{font-size:clamp(21px,3vw,30px);line-height:1.14;letter-spacing:-.015em;margin:.1em 0 .5em;font-weight:800;text-wrap:balance}
+  section .lede{margin:0 0 22px;max-width:66ch}
+  .amt{font-family:var(--mono);color:var(--emerald-l);font-weight:700}
+
+  .subject{background:var(--card);border:1px solid var(--edge2);border-radius:12px;padding:18px 20px;margin:10px 0 0}
+  .subject .nm{font-size:19px;font-weight:700;color:var(--ink)}
+  .subject .rl{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);margin-top:3px}
+  .chips{margin:12px 0 0;display:flex;flex-wrap:wrap;gap:7px}
+  .chip{font-family:var(--mono);font-size:11.5px;color:var(--ink);border:1px solid var(--edge2);padding:5px 12px;border-radius:20px;background:var(--card2)}
+
+  /* ── funnel — the opening visual ── */
+  .funnel{display:flex;gap:22px;align-items:stretch;background:var(--card);
+    border:1px solid var(--edge2);border-radius:12px;padding:20px 20px 18px;margin:12px 0 0}
   .funnel-svg{flex:1 1 auto;min-width:0;width:100%;height:auto;align-self:center}
-  .funnel-svg .b1{fill:#ded5c0;stroke:var(--line-2);stroke-width:1}
-  .funnel-svg .b2{fill:#c9bda2;stroke:var(--line-2);stroke-width:1}
-  .funnel-svg .b3{fill:var(--seal);stroke:var(--seal-deep);stroke-width:1}
-  .funnel-svg .lk{fill:var(--line-2);opacity:.32}
+  .funnel-svg .b1{fill:rgba(255,255,255,.10);stroke:rgba(255,255,255,.24);stroke-width:1}
+  .funnel-svg .b2{fill:rgba(34,211,238,.22);stroke:rgba(34,211,238,.55);stroke-width:1}
+  .funnel-svg .b3{fill:var(--emerald);stroke:var(--emerald-l);stroke-width:1}
+  .funnel-svg .lk{fill:rgba(255,255,255,.06)}
   /* space-between puts the 1st block's centre at ~8.6% and the 3rd at ~91.4%
      of the column height — the exact vertical centres of SVG bands 1 and 3. */
-  .funnel-key{flex:0 0 194px;display:flex;flex-direction:column;justify-content:space-between}
+  .funnel-key{flex:0 0 200px;display:flex;flex-direction:column;justify-content:space-between}
   .fk{display:flex;flex-direction:column;justify-content:center}
-  .fk .n{font-family:var(--mono);font-size:19px;font-weight:700;line-height:1.1;color:var(--ink)}
-  .fk .n.hl{color:var(--seal)}
-  .fk .k{font-size:11.5px;color:var(--ink-2);line-height:1.35;margin-top:2px}
+  .fk .n{font-family:var(--mono);font-size:20px;font-weight:700;line-height:1.1;color:var(--ink)}
+  .fk .n.hl{color:var(--emerald-l)}
+  .fk .k{font-size:11.5px;color:var(--ink2);line-height:1.35;margin-top:2px}
   @media(max-width:640px){
     .funnel{flex-direction:column;gap:14px}
       .funnel-key{flex:none;gap:10px}
@@ -64,133 +91,112 @@
     .fk .k{margin-top:0}
   }
 
-  .disclaim{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--seal);
-    padding:12px 14px;margin:12px 0 0}
+  .disclaim{background:rgba(251,191,36,.05);border:1px solid var(--edge);border-left:3px solid var(--amber);
+    border-radius:0 10px 10px 0;padding:12px 14px;margin:12px 0 0}
   .disclaim p{margin:0;font-size:13px;color:var(--ink);line-height:1.55}
-  .disclaim p + p{margin-top:6px;color:var(--ink-2)}
+  .disclaim p + p{margin-top:6px;color:var(--ink2)}
 
   /* ── register ── */
-  .register{list-style:none;padding:0;margin:10px 0 0;border-top:1px solid var(--seal)}
-  .row{display:grid;grid-template-columns:34px 66px 1fr;gap:0;border-bottom:1px solid var(--line);padding:14px 0 13px;align-items:start}
-  .rank{font-size:11px;color:var(--ink-2);padding-top:3px}
+  .register{list-style:none;padding:0;margin:10px 0 0;border-top:1px solid var(--emerald)}
+  .row{display:grid;grid-template-columns:34px 66px 1fr;gap:0;border-bottom:1px solid var(--edge);padding:15px 0 14px;align-items:start}
+  .rank{font-size:11px;color:var(--quiet);padding-top:3px}
   .score{padding-right:14px}
   .sc{font-size:19px;font-weight:700;color:var(--ink);line-height:1}
   .ckr{display:block;margin-top:6px;width:48px}
-  .ckr .bar{display:block;height:5px;background:var(--line);border-radius:2px;overflow:hidden;margin-bottom:2px}
+  .ckr .bar{display:block;height:5px;background:rgba(255,255,255,.10);border-radius:2px;overflow:hidden;margin-bottom:2px}
   .ckr .bar i{display:block;height:100%;border-radius:2px}
   .ckr .c i{background:var(--bar-c)}
   .ckr .k i{background:var(--bar-k)}
   .ckr .r i{background:var(--bar-r)}
-  .ckr-cap{font-size:11px;letter-spacing:.06em;color:var(--ink-2);margin-top:4px}
+  .ckr-cap{font-size:11px;letter-spacing:.06em;color:var(--quiet);margin-top:4px}
   .entry{min-width:0}
-  .title{font-family:var(--serif);font-size:15px;color:var(--ink);margin:0;line-height:1.35;
+  .title{font-size:15px;color:var(--ink);margin:0;line-height:1.35;font-weight:600;
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .title-zh{font-family:var(--serif);font-size:13px;color:var(--ink-2);margin:3px 0 0;line-height:1.4;
+  .title-zh{font-size:13px;color:var(--ink2);margin:3px 0 0;line-height:1.4;
     display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
-  .tags{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
-  .tag{font-size:11px;letter-spacing:.01em;color:var(--ink-2);border:1px solid var(--line-2);padding:2px 7px;border-radius:2px}
-  .tag.hk{color:var(--seal);border-color:var(--seal)}
-  .tag.soon{color:var(--seal);border-color:var(--seal)}
-  .tag.ref{color:var(--ink-2);border-color:var(--line)}
-  .tag.prov{color:var(--ink-2);border-style:dashed}
+  .tags{margin:9px 0 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .tag{font-size:11px;letter-spacing:.01em;color:var(--ink2);border:1px solid var(--edge2);padding:3px 9px;border-radius:20px;background:var(--card)}
+  .tag.hk{color:var(--cyan-l);border-color:rgba(34,211,238,.45)}
+  .tag.soon{color:var(--amber);border-color:rgba(251,191,36,.5)}
+  .tag.ref{color:var(--quiet);border-color:var(--edge)}
+  .tag.prov{color:var(--ink2);border-style:dashed}
 
-  .route-chip{font-family:var(--mono);font-size:11px;letter-spacing:.01em;padding:3px 7px;border-radius:2px;display:inline-block;line-height:1.4;white-space:nowrap;max-width:100%}
-  .route-chip.direct{background:var(--seal);color:#fff;border:1px solid var(--seal)}
-  .route-chip.partner{background:transparent;color:var(--seal);border:1px solid var(--seal)}
-  .route-chip.oem{background:var(--paper-2);color:var(--ink-2);border:1px solid var(--line-2)}
-  .route-chip.noroute{background:var(--paper-2);color:var(--ink-2);border:1px solid var(--line-2)}
-  .route-chip.unverified{background:transparent;color:var(--ink-2);border:1px dashed var(--line-2)}
+  /* route chips — dense mono pills. emerald = positive/direct · cyan =
+     informational · muted = locked/none · dashed = unverified. */
+  .route-chip{font-family:var(--mono);font-size:11px;letter-spacing:.01em;padding:4px 10px;border-radius:20px;display:inline-block;line-height:1.4;white-space:nowrap;max-width:100%}
+  .route-chip.direct{background:var(--emerald);color:#03130c;border:1px solid var(--emerald-l);font-weight:600}
+  .route-chip.partner{background:rgba(34,211,238,.08);color:var(--cyan-l);border:1px solid rgba(34,211,238,.5)}
+  .route-chip.oem{background:var(--card2);color:var(--ink2);border:1px solid var(--edge2)}
+  .route-chip.noroute{background:var(--card2);color:var(--ink2);border:1px solid var(--edge2)}
+  .route-chip.unverified{background:transparent;color:var(--ink2);border:1px dashed var(--edge2)}
 
-  .route-note{font-family:var(--serif);font-size:12px;font-style:italic;color:var(--ink-2);margin:5px 0 0;line-height:1.45}
+  .route-note{font-size:12px;font-style:italic;color:var(--ink2);margin:6px 0 0;line-height:1.45}
   .prov-mark{font-family:var(--mono);font-style:normal;font-size:11px;letter-spacing:.02em;
-    text-transform:uppercase;color:var(--ink-2);border:1px solid var(--line);padding:1px 6px;border-radius:2px;white-space:nowrap}
-  .decomp{font-size:11px;color:var(--ink-2);margin:6px 0 0;letter-spacing:.005em;overflow-wrap:anywhere}
-  .why{font-size:11px;color:var(--ink-2);margin:6px 0 0;letter-spacing:.005em}
+    text-transform:uppercase;color:var(--quiet);border:1px solid var(--edge2);padding:1px 7px;border-radius:20px;white-space:nowrap}
+  .decomp{font-size:11px;color:var(--quiet);margin:7px 0 0;letter-spacing:.005em;overflow-wrap:anywhere}
+  .why{font-size:11px;color:var(--quiet);margin:5px 0 0;letter-spacing:.005em}
 
-  .tally{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);margin:12px 2px 0;line-height:1.7}
-  .tally b{color:var(--ink)}
+  .tally{font-family:var(--mono);font-size:11.5px;color:var(--ink2);margin:14px 2px 0;line-height:1.7}
+  .tally b{color:var(--emerald-l)}
+
+  .note{font-family:var(--mono);font-size:11px;color:var(--quiet);margin:12px 0 0;line-height:1.65}
 
   /* ── formula ── */
-  .formula{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);background:var(--paper-2);margin:10px 0 0}
-  .fx{padding:13px 14px;border-right:1px solid var(--line)}
+  .formula{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--edge2);border-radius:12px;overflow:hidden;background:var(--card2);margin:10px 0 0}
+  .fx{padding:15px 16px;border-right:1px solid var(--edge)}
   .fx:last-child{border-right:0}
-  .fx .w{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--seal)}
-  .fx .w.filt{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
-  .fx .t{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);margin-top:5px}
-  .fx .l{font-size:11.5px;color:var(--ink-2);margin-top:3px;line-height:1.45}
-  @media(max-width:640px){.formula{grid-template-columns:1fr 1fr}.fx{border-bottom:1px solid var(--line)}}
+  .fx .w{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--emerald-l)}
+  .fx .w.filt{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--cyan-l)}
+  .fx .t{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin-top:5px}
+  .fx .l{font-size:11.5px;color:var(--ink2);margin-top:4px;line-height:1.5}
+  @media(max-width:640px){.formula{grid-template-columns:1fr 1fr}.fx{border-bottom:1px solid var(--edge)}}
 
-  .honesty{background:var(--paper-2);border:1px solid var(--line);padding:16px 18px;margin:12px 0 0}
+  .honesty{background:var(--card);border:1px solid var(--edge2);border-radius:12px;padding:17px 19px;margin:14px 0 0}
   .honesty p{font-size:13.5px;color:var(--ink);line-height:1.62;margin:.65em 0}
   .honesty p:first-child{margin-top:0}
   .honesty p:last-child{margin-bottom:0}
-  .honesty .threshold{font-family:var(--mono);color:var(--seal);font-weight:700}
-  .honesty .audit{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);line-height:1.65}
+  .honesty .threshold{font-family:var(--mono);color:var(--emerald-l);font-weight:700}
+  .honesty .audit{font-family:var(--mono);font-size:11.5px;color:var(--ink2);line-height:1.65}
 
   @media(max-width:640px){
     .route-chip{white-space:normal}
     .row{grid-template-columns:24px 58px 1fr}
-    .body{padding:24px 16px 26px 4px}
-    .sec{grid-template-columns:38px 1fr}
-    .docket{padding-left:11px}
-    .sheet{margin:0 auto}
+    section{padding:36px 0}
+    .hero{padding:48px 0 38px}
   }
 
-  footer{padding:22px 30px 30px;border-top:1px solid var(--seal)}
-  footer .row2{font-family:var(--mono);font-size:12px;color:var(--ink-2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-  footer a{color:var(--seal);text-decoration:none}
-  .note{font-family:var(--mono);font-size:11px;color:var(--ink-2);margin-top:10px;line-height:1.62}
+  footer{padding:24px 0 60px}
+  footer .row2{font-family:var(--mono);font-size:12px;color:var(--ink2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
   .wm{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--ink);text-transform:uppercase}
-
-  .asaptic-bridge{position:sticky;top:0;z-index:50;background:#080F1E;border-bottom:1px solid rgba(41,182,246,.18)}
-  .asaptic-bridge-row{display:flex;align-items:center;justify-content:space-between;gap:16px;height:52px;max-width:880px;margin:0 auto;padding:0 24px}
-  .asaptic-bridge-logo{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;font-weight:800;letter-spacing:.18em;color:#fff;text-decoration:none}
-  .asaptic-bridge-back{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;font-weight:600;color:#29B6F6;text-decoration:none}
-  .asaptic-bridge-back:hover{color:#00E5FF;text-decoration:underline}
-  a:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
 </style>
 </head>
 <body>
-<nav class="asaptic-bridge" aria-label="Asaptic">
-  <div class="asaptic-bridge-row">
-    <a href="/" class="asaptic-bridge-logo" aria-label="Asaptic home">ASAPTIC</a>
-    <a href="/" class="asaptic-bridge-back">&larr; asaptic.com</a>
+<nav class="bridge" aria-label="Asaptic">
+  <div class="row-n">
+    <a href="/" class="logo" aria-label="Asaptic home"><span class="mk">A</span>ASAPTIC</a>
+    <a href="/" class="back">&larr; asaptic.com</a>
   </div>
 </nav>
 
-<main class="sheet">
-
-  <section class="sec">
-    <div class="docket">§01</div>
-    <div class="body">
-      <p class="eyebrow">Demonstration — tender relevance scoring</p>
-      <h1>One supplier profile, every open notice, and the <span class="amt">arithmetic in full view</span>.</h1>
-      <p class="lede">The engine scored 891 open government notices against a single real supplier profile. 181 sit in the company's home market; 35 reach the relevance threshold. Nothing was shortlisted by hand — one pass, as of 2026-08-09.</p>
+<header class="hero">
+  <div class="wrap">
+    <span class="pill"><span class="dot"></span>Demonstration — tender relevance scoring</span>
+    <h1>One supplier profile, every open notice, and the <span class="grad">arithmetic in full view</span>.</h1>
+    <p class="lede">The engine scored 891 open government notices against a single real supplier profile. 181 sit in the company's home market; 35 reach the relevance threshold. Nothing was shortlisted by hand — one pass, as of 2026-08-10.</p>
+    <div class="creds">
+      <span class="cred"><span class="ok">✓</span> <b>891</b> open notices scanned</span>
+      <span class="cred"><span class="ok">✓</span> Hong Kong view <b>181</b></span>
+      <span class="cred"><span class="ok">✓</span> <b>35</b> at or above threshold <b>55</b></span>
+      <span class="cred"><span class="ok">✓</span> registry snapshot <b>2026-08-10</b></span>
     </div>
-  </section>
+  </div>
+</header>
 
-  <section class="sec">
-    <div class="docket">§02</div>
-    <div class="body">
-      <p class="eyebrow">Subject profile · a real Asaptic account</p>
-      <div class="subject">
-        <div class="nm">A Hong Kong–based trading company</div>
-        <div class="rl">Supplier profile · home market HK</div>
-        <div class="chips">
-          <span class="chip">Medical equipment</span>
-          <span class="chip">Medical services &amp; pharma</span>
-          <span class="chip">Food &amp; catering</span>
-        </div>
-      </div>
-      <p class="note">That profile is the entire input — three category selections from the shared taxonomy and one home market, the same fields any supplier fills in at sign-up. No hand-tuning, no per-tender configuration.</p>
-      <p class="note">Issuing bodies and exact closing dates are withheld on this public page by policy; closing windows appear only as coarse buckets. Full detail lives in the product.</p>
-    </div>
-  </section>
+<main>
 
-  <section class="sec">
-    <div class="docket">§03</div>
-    <div class="body">
-      <p class="eyebrow">The funnel</p>
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">01 · The funnel</p>
       <div class="funnel">
         <svg class="funnel-svg" viewBox="0 0 500 186" role="img" aria-labelledby="fnl-t fnl-d" preserveAspectRatio="xMidYMid meet">
           <title id="fnl-t">Matching funnel</title>
@@ -215,10 +221,26 @@
     </div>
   </section>
 
-  <section class="sec">
-    <div class="docket">§04</div>
-    <div class="body">
-      <p class="eyebrow">Register of matches · Hong Kong view · 35 rows</p>
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">02 · Subject profile · a real Asaptic account</p>
+      <div class="subject">
+        <div class="nm">A Hong Kong–based trading company</div>
+        <div class="rl">Supplier profile · home market HK</div>
+        <div class="chips">
+          <span class="chip">Medical equipment</span>
+          <span class="chip">Medical services &amp; pharma</span>
+          <span class="chip">Food &amp; catering</span>
+        </div>
+      </div>
+      <p class="note">That profile is the entire input — three category selections from the shared taxonomy and one home market, the same fields any supplier fills in at sign-up. No hand-tuning, no per-tender configuration.</p>
+      <p class="note">Issuing bodies and exact closing dates are withheld on this public page by policy; closing windows appear only as coarse buckets. Full detail lives in the product.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">03 · Register of matches · Hong Kong view · 35 rows</p>
       <p class="lede">Sorted by score, then by closing bucket, then by reference. Each row carries its own decomposition: <span class="mono">C</span> category, <span class="mono">K</span> keywords, <span class="mono">R</span> runway — the three bars under every score, each drawn against its own maximum.</p>
       <ol class="register">
       <li class="row" data-score="90" data-c="50" data-k="30" data-r="10">
@@ -1138,10 +1160,9 @@
     </div>
   </section>
 
-  <section class="sec">
-    <div class="docket">§05</div>
-    <div class="body">
-      <p class="eyebrow">How the score works</p>
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">04 · How the score works</p>
       <h2>Three scored signals, one hard filter, no black box.</h2>
       <div class="formula">
         <div class="fx">
@@ -1172,11 +1193,13 @@
   </section>
 
   <footer>
-    <div class="row2">
-      <span class="wm">Asaptic — tender relevance scoring</span>
-      <span>Registry snapshot 2026-08-09 · <a href="/tender/">live tender index</a></span>
+    <div class="wrap">
+      <div class="row2">
+        <span class="wm">Asaptic — tender relevance scoring</span>
+        <span>Registry snapshot 2026-08-10 · <a href="/tender/">live tender index</a></span>
+      </div>
+      <p class="note">Demonstration page, as of 2026-08-10. A later run returns a different set as notices open and close. Closing windows are shown as coarse buckets, never exact dates; issuing bodies are not named. Scores are engine output; execution routes are human review; candidates are not contracted partners and nothing here is an eligibility determination.</p>
     </div>
-    <p class="note">Demonstration page, as of 2026-08-09. A later run returns a different set as notices open and close. Closing windows are shown as coarse buckets, never exact dates; issuing bodies are not named. Scores are engine output; execution routes are human review; candidates are not contracted partners and nothing here is an eligibility determination.</p>
   </footer>
 
 </main>
