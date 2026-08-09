@@ -43,6 +43,31 @@ curl -sL https://asaptic.com/tender/rows.json \
   | node developers/contract/validate.mjs --stdin --sample 20
 ```
 
+## Two envelopes, one row contract
+
+`asaptic.tender.v1` rows are served through two different envelopes. The schema file
+describes the **feed** envelope; the REST plane wraps the same rows differently:
+
+| Surface | Envelope | Check with |
+|---|---|---|
+| `/tender/rows.json` (feed) | `{generated, issue_id, market, total, withheld, rows[]}` | `--stdin [--sample N]` |
+| `/api/v1/tenders` (REST) | `{data[], meta{}}` | `--stdin --rows` |
+| `/api/v1/tenders/{at_id}` | `{data{}, meta{}}` | `--stdin --rows` |
+
+Piping a REST response into the plain envelope check will fail on the envelope keys —
+that is expected, not a contract violation. `--rows` unwraps `data` / `rows` / a bare
+array and validates each element against the row definition, which is byte-identical
+across both surfaces:
+
+```sh
+curl -sL https://asaptic.com/api/v1/tenders?limit=50 | node validate.mjs --stdin --rows
+```
+
+Two scope notes: the REST `meta` block carries no `withheld` count (that figure is
+published on the feed envelope only), and rows requested with `?lang=` are a deliberate
+single-language **subset** of the row shape — out of contract scope, so run the check
+without `lang`.
+
 ## Scheduled run
 
 A weekly GitHub Actions workflow (`.github/workflows/contract-check.yml`) runs exactly the

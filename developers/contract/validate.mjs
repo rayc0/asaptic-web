@@ -11,6 +11,16 @@
  *   node validate.mjs <file.json>          # validate one envelope file
  *   node validate.mjs --stdin [--sample N] # validate JSON piped on stdin;
  *                                          #   --sample N validates envelope + N randomly sampled rows
+ *   node validate.mjs --stdin --rows       # validate ROWS ONLY, no envelope
+ *
+ * Two envelopes carry asaptic.tender.v1 rows and they are NOT interchangeable:
+ *   - the feed  /tender/rows.json   -> {generated, issue_id, market, total, withheld, rows[]}
+ *   - the API   /api/v1/tenders     -> {data[], meta{}}
+ * The schema describes the FEED envelope. Use --rows to conformance-check the API
+ * plane (or any bare row array): it unwraps `data` / `rows` / a top-level array and
+ * validates each element against #/$defs/row. Rows are identical across both.
+ * Note: rows fetched with `?lang=` are a deliberate single-language SUBSET and are
+ * out of contract scope — check the API without `lang`.
  *
  * Exit codes: 0 = pass · 1 = validation failed / expectations unmet · 2 = usage or I/O error
  *
@@ -123,6 +133,25 @@ function report(label, errors) {
   return false;
 }
 
+/**
+ * Pull the row array out of whichever envelope was handed to us: the REST list
+ * plane ({data:[…]}), the REST single-row plane ({data:{…}}, normalized to one
+ * element), the feed ({rows:[…]}), or a bare array / bare row object.
+ * Returns null when no row can be found.
+ */
+export function extractRows(doc) {
+  if (Array.isArray(doc)) return doc;
+  if (doc && typeof doc === "object") {
+    if (Array.isArray(doc.data)) return doc.data;
+    if (Array.isArray(doc.rows)) return doc.rows;
+    // /api/v1/tenders/{at_id} returns a single row object under `data`.
+    if (doc.data && typeof doc.data === "object") return [doc.data];
+    // A bare row object, recognized by the one field every row must carry.
+    if (typeof doc.asaptic_id === "string") return [doc];
+  }
+  return null;
+}
+
 function sampleRows(doc, n) {
   if (!doc || !Array.isArray(doc.rows)) return doc;
   const rows = [...doc.rows];
@@ -208,6 +237,21 @@ async function main() {
   } catch (err) {
     console.error(`invalid JSON: ${err.message}`);
     process.exit(2);
+  }
+
+  // --rows: validate row objects only, against #/$defs/row, ignoring the
+  // surrounding envelope. This is how the REST plane (/api/v1/tenders, whose
+  // envelope is {data, meta}) gets conformance-checked against the same contract.
+  if (args.includes("--rows")) {
+    let rows = extractRows(doc);
+    if (rows === null) {
+      console.error("--rows: no row array found (expected a top-level array, or a `data` or `rows` property)");
+      process.exit(2);
+    }
+    if (sampleN > 0) rows = sampleRows({ rows }, sampleN).rows;
+    const errors = [];
+    rows.forEach((row, i) => validate(row, schema.$defs.row, schema, `/${i}`, errors));
+    process.exit(report(`${label} (${rows.length} rows, envelope not checked)`, errors) ? 0 : 1);
   }
 
   if (sampleN > 0) {

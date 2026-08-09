@@ -15,7 +15,7 @@ const REPO_ROOT = resolve(DEV_DIR, "..");
 const VALIDATE = join(CONTRACT_DIR, "validate.mjs");
 const FIXTURES = join(CONTRACT_DIR, "fixtures");
 
-const { validate, loadSchema } = await import(join(CONTRACT_DIR, "validate.mjs"));
+const { validate, loadSchema, extractRows } = await import(join(CONTRACT_DIR, "validate.mjs"));
 const schema = loadSchema();
 
 // ---------------------------------------------------------------- schema × fixtures
@@ -76,6 +76,63 @@ test("validate.mjs exit codes: 0 pass, 1 fail, 2 usage error", () => {
   const dir = mkdtempSync(join(tmpdir(), "at-contract-"));
   writeFileSync(join(dir, "x.json"), "{}");
   assert.equal(run([join(dir, "x.json")]).status, 1, "empty object -> 1");
+});
+
+// ---------------------------------------------------------------- --rows (REST plane)
+
+// The REST plane (/api/v1/tenders) serves the SAME rows under a {data, meta}
+// envelope. --rows is what makes that surface conformance-checkable against the
+// one contract; without it the envelope keys alone produce a spurious failure.
+test("--rows unwraps every envelope the rows are served in", () => {
+  const feed = JSON.parse(readFileSync(join(FIXTURES, "positive-multirow.json"), "utf8"));
+  const row = feed.rows[0];
+
+  assert.equal(extractRows(feed).length, feed.rows.length, "feed envelope");
+  assert.equal(extractRows({ data: feed.rows, meta: {} }).length, feed.rows.length, "REST list envelope");
+  assert.equal(extractRows({ data: row, meta: {} }).length, 1, "REST single-row envelope");
+  assert.equal(extractRows(feed.rows).length, feed.rows.length, "bare array");
+  assert.equal(extractRows(row).length, 1, "bare row object");
+  assert.equal(extractRows({ error: { code: "SPEC_CODED_GATED" } }), null, "denied body has no rows");
+  assert.equal(extractRows(null), null, "null");
+});
+
+test("--rows validates rows and ignores the envelope", () => {
+  const run = (args, input) =>
+    spawnSync(process.execPath, [VALIDATE, ...args], { input, encoding: "utf8" });
+  const feed = JSON.parse(readFileSync(join(FIXTURES, "positive-multirow.json"), "utf8"));
+
+  // Same rows, REST envelope: fails envelope mode, passes --rows.
+  const rest = JSON.stringify({ data: feed.rows, meta: { issue_id: feed.issue_id } });
+  assert.equal(run(["--stdin"], rest).status, 1, "REST envelope fails the feed-envelope check");
+  assert.equal(run(["--stdin", "--rows"], rest).status, 0, "REST rows pass --rows");
+
+  // A bad row is still caught in --rows mode.
+  const bad = structuredClone(feed);
+  bad.rows[0].closing_bucket = "tomorrow";
+  assert.equal(run(["--stdin", "--rows"], JSON.stringify({ data: bad.rows })).status, 1, "bad row rejected");
+
+  // lang-collapsed rows are a documented subset, out of contract scope.
+  const collapsed = feed.rows.map(({ summary_zh, summary_zht, category, ...rest_ }) => ({
+    ...rest_,
+    category: { name_en: category.name_en },
+  }));
+  assert.equal(run(["--stdin", "--rows"], JSON.stringify({ data: collapsed })).status, 1, "lang subset is out of scope");
+
+  // No row array anywhere -> usage error, not a false pass.
+  assert.equal(run(["--stdin", "--rows"], JSON.stringify({ error: {} })).status, 2, "no rows -> exit 2");
+  assert.equal(run(["--stdin", "--rows", "--sample", "1"], rest).status, 0, "--rows honours --sample");
+});
+
+// The published denied-access fixture must keep matching what the server really
+// emits: clients branch on these exact keys.
+test("negative 403 fixture matches the server's real denied-access key shape", () => {
+  const doc = JSON.parse(readFileSync(join(FIXTURES, "negative-403-spec-denied.json"), "utf8"));
+  assert.equal(doc.error.code, "SPEC_CODED_GATED", "error.code is the code clients branch on");
+  assert.ok(typeof doc.error.message === "string" && doc.error.message.length > 0);
+  assert.ok("at_id" in doc, "at_id is top-level, not nested under error");
+  assert.ok("access_url" in doc, "access_url is top-level");
+  assert.ok(!("asaptic_id" in doc.error), "denied body must not invent an error.asaptic_id");
+  assert.ok(/SYNTHETIC/i.test(JSON.stringify(doc)), "fixture must be marked synthetic");
 });
 
 // ---------------------------------------------------------------- sentinel scan
