@@ -234,6 +234,65 @@ test('explain_fit: asaptic_id explains exactly that one row', async () => {
   assertCleanItem(r.body.data[0]);
 });
 
+// ---------------------------------------------------------------------------
+// FIX 2: at_id alias + unknown-arg rejection
+// ---------------------------------------------------------------------------
+
+test('FIX2: explain_fit accepts at_id as the single-row key (unified with get_tender/get_spec_coded)', async () => {
+  const env = makeEnv();
+  const r = await explainFit(env, {
+    company_profile: { categories: ['Other'], markets: ['HK'], keywords: ['medical', 'insurance'] },
+    at_id: HK_ROW,
+  });
+  assert.equal(r.status, 200);
+  assert.equal(r.body.meta.mode, 'single', 'at_id enters single-row mode, not ranking');
+  assert.equal(r.body.data.length, 1);
+  assert.equal(r.body.data[0].asaptic_id, HK_ROW);
+  assertCleanItem(r.body.data[0]);
+});
+
+test('FIX2: at_id and asaptic_id are equivalent; at_id wins if both present', async () => {
+  const env = makeEnv();
+  const profile = { company_profile: { markets: ['HK'], keywords: ['medical'] } };
+  const viaAlias = await explainFit(env, { ...profile, asaptic_id: HK_ROW });
+  const viaNew = await explainFit(env, { ...profile, at_id: HK_ROW });
+  assert.deepEqual(viaNew.body.data, viaAlias.body.data, 'both keys resolve the same row');
+  // at_id takes precedence when both are given
+  const both = await explainFit(env, { ...profile, at_id: HK_ROW, asaptic_id: AU_ROW });
+  assert.equal(both.body.data[0].asaptic_id, HK_ROW);
+});
+
+test('FIX2: explain_fit rejects a genuinely-unknown argument with 400 (→ -32602), instead of silently ranking', async () => {
+  const env = makeEnv();
+  // The confirmed footgun: passing get_tender-style `at_id`... no — passing a
+  // typo like `atid`/`company` used to be ignored and fall into ranking mode.
+  const bad = await explainFit(env, {
+    company_profile: { markets: ['HK'], keywords: ['medical'] },
+    atid: HK_ROW, // typo of at_id
+  });
+  assert.equal(bad.status, 400);
+  assert.equal(bad.body.error.code, 'invalid_parameter');
+  assert.match(bad.body.error.message, /atid/);
+});
+
+test('FIX2: MCP round-trip — explain_fit with at_id returns single-row mode; unknown arg → -32602', async () => {
+  const env = makeEnv();
+  const single = await rpc(worker, env, 'tools/call', {
+    name: 'explain_fit',
+    arguments: { company_profile: { markets: ['HK'], keywords: ['medical'] }, at_id: HK_ROW },
+  });
+  const payload = JSON.parse(single.result.content[0].text);
+  assert.equal(payload.meta.mode, 'single');
+  assert.equal(payload.data[0].asaptic_id, HK_ROW);
+
+  const bad = await rpc(worker, env, 'tools/call', {
+    name: 'explain_fit',
+    arguments: { company_profile: { markets: ['HK'] }, bogus_key: 1 },
+  });
+  assert.ok(bad.error);
+  assert.equal(bad.error.code, -32602);
+});
+
 test('explain_fit: unknown asaptic_id → byte-identical 404 body', async () => {
   const env = makeEnv();
   const r = await explainFit(env, { company_profile: { keywords: ['x'] }, asaptic_id: 'AT-NOPE-000' });

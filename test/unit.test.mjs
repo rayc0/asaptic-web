@@ -177,6 +177,131 @@ test('limit clamps at 200', async () => {
   assert.equal(json.meta.returned, 200);
 });
 
+// ---------- FIX 1: strict unknown-query-param allowlist (fail-closed) ----------
+// The live bug: GET /api/v1/tenders?closing=le_2w silently ignored `closing`
+// (the real param is closing_bucket) and returned UNFILTERED mixed-bucket data
+// under a 200, so the client believed it had filtered. Unknown keys now 400.
+
+test('FIX1: an unknown query param (e.g. the typo `closing`) → 400 naming the key + valid params, never a silent 200', async () => {
+  const env = makeEnv();
+  const { res, json } = await getJson(env, '/api/v1/tenders?closing=le_2w');
+  assert.equal(res.status, 400);
+  assert.equal(json.error.code, 'invalid_parameter');
+  assert.match(json.error.message, /closing/); // names the offending key
+  assert.match(json.error.message, /closing_bucket/); // points at the real param
+  assert.equal(res.headers.get('cache-control'), 'no-store'); // 400s are never cached
+});
+
+test('FIX1: every currently-valid param name is still accepted (allowlist is complete)', async () => {
+  const env = makeEnv();
+  // One request exercising all 10 valid names together (incl. category + lead_ok,
+  // which the original ticket text omitted but the code actually reads).
+  const qs =
+    '/api/v1/tenders?market=HK&category=other&closing_bucket=all&new=false' +
+    '&lead_ok=true&value_band=unspecified&q=x&lang=en&limit=5';
+  const { res } = await getJson(env, qs);
+  assert.notEqual(res.status, 400, 'no valid param name is rejected');
+  // cursor is valid too (a stale one is a cursor error, NOT an unknown-param error)
+  const withCursor = await getJson(env, '/api/v1/tenders?cursor=not-a-real-cursor');
+  assert.equal(withCursor.res.status, 400);
+  assert.equal(withCursor.json.error.code, 'invalid_cursor'); // reached the cursor path, not the name check
+});
+
+test('FIX1: assorted unknown keys all 400 (closing, sort, limits, offset, page, foo)', async () => {
+  const env = makeEnv();
+  for (const key of ['closing', 'sort', 'limits', 'offset', 'page', 'foo', 'Market']) {
+    const { res, json } = await getJson(env, '/api/v1/tenders?' + key + '=1');
+    assert.equal(res.status, 400, key);
+    assert.equal(json.error.code, 'invalid_parameter', key);
+  }
+});
+
+test('FIX1 scope: single-id + facets do NOT route through the listing parser, so an unknown query param is (harmlessly) ignored there', async () => {
+  const env = makeEnv();
+  const sample = ROWS[10];
+  // single-get: unknown ?closing=... is ignored, row still returns 200
+  const single = await getJson(env, '/api/v1/tenders/' + sample.asaptic_id + '?closing=le_2w');
+  assert.equal(single.res.status, 200);
+  assert.equal(single.json.data.asaptic_id, sample.asaptic_id);
+  // facets: unknown query param ignored, still 200
+  const facets = await getJson(env, '/api/v1/tenders/facets?closing=le_2w');
+  assert.equal(facets.res.status, 200);
+});
+
+// ---------- FIX 3: ETag + If-None-Match → 304 conditional caching ----------
+// The listing exposed meta.snapshot_etag in the body but sent NO ETag header,
+// so If-None-Match never yielded 304 and agents re-downloaded ~30KB per poll.
+
+test('FIX3: listing response carries a quoted strong ETag header alongside cache-control', async () => {
+  const env = makeEnv();
+  const { res } = await getJson(env, '/api/v1/tenders?limit=5');
+  const etag = res.headers.get('etag');
+  assert.ok(etag, 'ETag header present');
+  assert.match(etag, /^"[^"]+"$/, 'ETag is a quoted token');
+  assert.equal(res.headers.get('cache-control'), 'public, max-age=300', 'composes with existing cache-control');
+});
+
+test('FIX3: If-None-Match with the current ETag → 304, ETag echoed, NO body', async () => {
+  const env = makeEnv();
+  const first = await callWorker(worker, env, '/api/v1/tenders?limit=5');
+  const etag = first.headers.get('etag');
+  assert.ok(etag);
+
+  const second = await callWorker(worker, env, '/api/v1/tenders?limit=5', {
+    headers: { 'If-None-Match': etag },
+  });
+  assert.equal(second.status, 304);
+  assert.equal(second.headers.get('etag'), etag);
+  assert.equal(second.headers.get('cache-control'), 'public, max-age=300');
+  assert.equal(await second.text(), '', '304 carries no body');
+
+  // If-None-Match: * also yields 304
+  const star = await callWorker(worker, env, '/api/v1/tenders?limit=5', {
+    headers: { 'If-None-Match': '*' },
+  });
+  assert.equal(star.status, 304);
+});
+
+test('FIX3: a stale/non-matching If-None-Match → full 200 with body (no false 304)', async () => {
+  const env = makeEnv();
+  const res = await callWorker(worker, env, '/api/v1/tenders?limit=5', {
+    headers: { 'If-None-Match': '"some-old-etag"' },
+  });
+  assert.equal(res.status, 200);
+  const json = JSON.parse(await res.text());
+  assert.ok(json.data.length > 0);
+});
+
+test('FIX3: ETag is filter/page-sensitive — a different query yields a different ETag (no cross-query 304)', async () => {
+  const env = makeEnv();
+  const a = await callWorker(worker, env, '/api/v1/tenders?market=HK&limit=5');
+  const b = await callWorker(worker, env, '/api/v1/tenders?market=SG&limit=5');
+  const c = await callWorker(worker, env, '/api/v1/tenders?market=HK&limit=10');
+  const [ea, eb, ec] = [a, b, c].map((r) => r.headers.get('etag'));
+  assert.ok(ea && eb && ec);
+  assert.notEqual(ea, eb, 'different filter → different ETag');
+  assert.notEqual(ea, ec, 'different page size → different ETag');
+
+  // Cross-query If-None-Match must NOT 304 (would serve stale/wrong page)
+  const cross = await callWorker(worker, env, '/api/v1/tenders?market=SG&limit=5', {
+    headers: { 'If-None-Match': ea },
+  });
+  assert.equal(cross.status, 200, 'HK ETag must not satisfy an SG request');
+});
+
+test('FIX3: single-get also emits an ETag and honors If-None-Match → 304', async () => {
+  const env = makeEnv();
+  const sample = ROWS[7];
+  const first = await callWorker(worker, env, '/api/v1/tenders/' + sample.asaptic_id);
+  const etag = first.headers.get('etag');
+  assert.ok(etag, 'single-get carries an ETag');
+  const second = await callWorker(worker, env, '/api/v1/tenders/' + sample.asaptic_id, {
+    headers: { 'If-None-Match': etag },
+  });
+  assert.equal(second.status, 304);
+  assert.equal(await second.text(), '');
+});
+
 // ---------- param clamps (q / category / value_band / market — shared by REST + MCP) ----------
 // parseFilters is the one function both transports funnel through: REST via
 // URLSearchParams (URL length is bounded by intermediaries/CDNs), MCP via a

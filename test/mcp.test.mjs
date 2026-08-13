@@ -21,6 +21,66 @@ test('initialize round-trip', async () => {
   assert.ok(out.result.capabilities.tools);
 });
 
+test('FIX4: initialize reports serverInfo.version 1.2.0 (manifest is now 10 tools incl explain_fit)', async () => {
+  const env = makeEnv();
+  const out = await rpc(worker, env, 'initialize', { protocolVersion: '2025-06-18', capabilities: {} });
+  assert.equal(out.result.serverInfo.name, 'asaptic-sourcing');
+  assert.equal(out.result.serverInfo.version, '1.2.0');
+});
+
+// ---------- FIX 2: MCP tools reject genuinely-unknown arguments ----------
+
+test('FIX2: get_tender rejects an unknown argument with -32602 (no silent swallow)', async () => {
+  const env = makeEnv();
+  const sample = ROWS[5];
+  // known args still work
+  const ok = await rpc(worker, env, 'tools/call', {
+    name: 'get_tender',
+    arguments: { at_id: sample.asaptic_id, lang: 'en' },
+  });
+  assert.ok(!ok.error);
+  // an unknown arg is a hard error, even when at_id is valid
+  const bad = await rpc(worker, env, 'tools/call', {
+    name: 'get_tender',
+    arguments: { at_id: sample.asaptic_id, langs: 'en' },
+  });
+  assert.ok(bad.error);
+  assert.equal(bad.error.code, -32602);
+  assert.match(bad.error.message, /langs/);
+});
+
+test('FIX2: get_spec_coded and tender_facets also reject unknown arguments', async () => {
+  const env = makeEnv();
+  const spec = await rpc(worker, env, 'tools/call', {
+    name: 'get_spec_coded',
+    arguments: { at_id: 'AT-HK-2630-001', extra: 1 },
+  });
+  assert.equal(spec.error.code, -32602);
+
+  const facets = await rpc(worker, env, 'tools/call', {
+    name: 'tender_facets',
+    arguments: { market: 'HK' }, // tender_facets takes no args
+  });
+  assert.equal(facets.error.code, -32602);
+
+  // tender_facets with no args still works
+  const facetsOk = await rpc(worker, env, 'tools/call', { name: 'tender_facets', arguments: {} });
+  assert.ok(!facetsOk.error);
+});
+
+test('FIX2: list_tenders rejects an unknown argument via the shared parseFilters allowlist (-32602)', async () => {
+  const env = makeEnv();
+  // `closing` (should be closing_bucket) is the exact typo from the REST bug,
+  // reaching the same allowlist through the MCP arguments object.
+  const bad = await rpc(worker, env, 'tools/call', {
+    name: 'list_tenders',
+    arguments: { closing: 'le_2w' },
+  });
+  assert.ok(bad.error);
+  assert.equal(bad.error.code, -32602);
+  assert.match(bad.error.message, /closing_bucket/);
+});
+
 test('notifications/initialized → 204, no body', async () => {
   const env = makeEnv();
   const res = await callWorker(worker, env, '/mcp', {

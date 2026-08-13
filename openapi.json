@@ -24,9 +24,11 @@
           { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 50, "maximum": 200 } },
           { "name": "cursor", "in": "query", "schema": { "type": "string" }, "description": "Opaque pagination cursor. Cursors are bound to one listing issue: a stale cursor returns 409 snapshot_changed — restart from the first page." }
         ],
+        "description": "Query parameters are a strict allowlist (the names above). Any unknown key — e.g. `closing` instead of `closing_bucket` — is rejected with 400 invalid_parameter rather than silently ignored, so a mistyped filter never returns unfiltered data under a 200. Responses carry a strong ETag reflecting the snapshot + filter + page; send it back as If-None-Match to get a 304 Not Modified with no body.",
         "responses": {
-          "200": { "description": "Envelope {data: TenderRow[], meta: {total, returned, next_cursor, issue_id, generated, snapshot_etag, access}}", "content": { "application/json": {} } },
-          "400": { "description": "invalid_parameter or invalid_cursor", "content": { "application/json": {} } },
+          "200": { "description": "Envelope {data: TenderRow[], meta: {total, returned, next_cursor, issue_id, generated, snapshot_etag, access}}. Carries an ETag response header.", "headers": { "ETag": { "description": "Strong validator over snapshot + filter fingerprint + page window.", "schema": { "type": "string" } } }, "content": { "application/json": {} } },
+          "304": { "description": "Not Modified — returned when If-None-Match matches the current ETag. No body." },
+          "400": { "description": "invalid_parameter (bad value OR unknown query-parameter name) or invalid_cursor", "content": { "application/json": {} } },
           "409": { "description": "snapshot_changed — the listing issue rotated since the cursor was minted", "content": { "application/json": {} } }
         }
       }
@@ -40,7 +42,8 @@
           { "name": "lang", "in": "query", "schema": { "type": "string", "enum": ["en", "zh", "zht"] } }
         ],
         "responses": {
-          "200": { "description": "Envelope {data: TenderRow, meta}", "content": { "application/json": {} } },
+          "200": { "description": "Envelope {data: TenderRow, meta}. Carries an ETag response header; send it back as If-None-Match for a 304.", "headers": { "ETag": { "description": "Strong validator over snapshot + id + lang.", "schema": { "type": "string" } } }, "content": { "application/json": {} } },
+          "304": { "description": "Not Modified — If-None-Match matched the current ETag. No body." },
           "404": { "description": "not_found", "content": { "application/json": {} } }
         }
       }

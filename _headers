@@ -61,5 +61,20 @@
   Cache-Control: public, max-age=300, must-revalidate
   Access-Control-Allow-Origin: *
 
+# Syndication feeds (Atom/RSS) — pure function of tender/rows.json, rebuilt into
+# the deploy root on every publish by asaptic_tender_refresh.sh (feeds/build_feeds.mjs).
+# Without the correct Content-Type the .xml files fall through to the SPA and feed
+# readers reject them. 300s mirrors rows.json (far fresher than the ~2x/day cadence).
+# CORS open: agents + feed aggregators fetch cross-origin.
+/feeds/*.atom.xml
+  Content-Type: application/atom+xml; charset=utf-8
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
+
+/feeds/*.rss.xml
+  Content-Type: application/rss+xml; charset=utf-8
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
+
 /university/_TEMPLATE.html
   X-Robots-Tag: noindex, nofollow

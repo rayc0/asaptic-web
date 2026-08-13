@@ -152,7 +152,7 @@ export default {
         };
         try {
           switch (req.method) {
-            case 'initialize': return reply({ protocolVersion: '2025-06-18', capabilities: { tools: {} }, serverInfo: { name: 'asaptic-sourcing', version: '1.1.0' } });
+            case 'initialize': return reply({ protocolVersion: '2025-06-18', capabilities: { tools: {} }, serverInfo: { name: 'asaptic-sourcing', version: '1.2.0' } });
             case 'tools/list': return reply({ tools: TOOLS });
             case 'tools/call': {
               const name = req.params?.name;
