@@ -1,0 +1,246 @@
+<!doctype html><html lang="zh-CN" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>证据入口 — Asaptic 尽调核验 Proof Hub</title>
+<style>:root{
+  --bg:#08090d; --bg2:#060709; --card:#0d1219; --card2:#0f151f;
+  --edge:rgba(255,255,255,.07); --edge2:rgba(255,255,255,.14); --edge3:rgba(255,255,255,.22);
+  --ink:#eef1f8; --ink2:#a7b0c2; --ink3:#727c8f;
+  --emerald:#0fae7c; --emerald-l:#2dd4a8; --cyan:#22d3ee; --cyan2:#06b6d4;
+  --mono:'JetBrains Mono','Berkeley Mono','Fira Code',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:'Inter','Neue Haas Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1); --dur:200ms;
+  --sp-xs:8px; --sp-sm:14px; --sp-md:24px; --sp-lg:44px; --sp-xl:72px; --sp-2xl:104px;
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:20px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4), 0 1px 1px rgba(0,0,0,.3);
+  --shadow-md:0 12px 28px -8px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.35);
+  --shadow-lg:0 40px 90px -20px rgba(0,0,0,.65), 0 12px 32px -8px rgba(0,0,0,.45);
+  --glow:0 0 0 1px rgba(45,212,168,.06), 0 20px 60px -18px rgba(15,174,124,.22);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(1100px 560px at 82% -8%, rgba(15,174,124,.10), transparent 60%),
+    radial-gradient(900px 520px at -6% 8%, rgba(34,211,238,.06), transparent 55%),
+    var(--bg);
+  color:var(--ink);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  font-feature-settings:'ss01' 1,'cv11' 1;
+  line-height:1.5;-webkit-tap-highlight-color:transparent;
+}
+a{color:inherit}
+::selection{background:rgba(45,212,168,.28);color:#fff}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:#1c2532;border-radius:8px;border:3px solid var(--bg2)}
+::-webkit-scrollbar-thumb:hover{background:#28374a}
+.wrap{max-width:1240px;margin:0 auto;padding:0 34px}
+@media(max-width:640px){.wrap{padding:0 20px}}
+
+/* ===== shared house shell (header) ===== */
+.shell{position:sticky;top:0;z-index:20;background:rgba(7,9,14,.82);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);border-bottom:1px solid var(--edge)}
+.shell .row{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:15px 34px}
+.brand{font-weight:800;letter-spacing:.15em;font-size:15px;color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.brand:before{content:"";width:7px;height:7px;border-radius:2px;background:linear-gradient(135deg,var(--emerald-l),var(--cyan));display:inline-block;box-shadow:0 0 12px rgba(45,212,168,.55)}
+.back{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--ink2);text-decoration:none;transition:color var(--dur) var(--ease)}
+.back:hover{color:#fff}
+
+/* ===== status dot / micro badge ===== */
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--emerald-l);box-shadow:0 0 0 3px rgba(45,212,168,.14);position:relative;top:-1px;margin-right:7px}
+.dot:after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(45,212,168,.4);animation:pulse 2.4s var(--ease) infinite}
+@keyframes pulse{0%{transform:scale(.7);opacity:.9}100%{transform:scale(1.9);opacity:0}}
+
+/* ===== hero ===== */
+.hero{position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:64px 64px;-webkit-mask-image:radial-gradient(760px 420px at 78% 8%,#000 0%,transparent 72%);mask-image:radial-gradient(760px 420px at 78% 8%,#000 0%,transparent 72%);
+}
+.hero .grid{position:relative;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding:80px 0 30px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--emerald-l);display:inline-flex;align-items:center}
+h1{font-size:clamp(34px,4.3vw,50px);line-height:1.14;letter-spacing:-.03em;margin:20px 0 0;font-weight:800;max-width:17ch}
+h1 .grad{background:linear-gradient(97deg,var(--emerald-l) 4%,var(--cyan) 96%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:16.5px;color:var(--ink2);line-height:1.75;max-width:52ch;margin:24px 0 0}
+.lede b{color:var(--ink);font-weight:600}
+.verify{margin-top:22px;font-family:var(--mono);font-size:12px;color:var(--ink3);letter-spacing:.01em}
+.verify a{color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(34,211,238,.28);transition:border-color var(--dur) var(--ease)}
+.verify a:hover{border-color:var(--cyan)}
+
+/* ===== proof / feature panel ===== */
+.proof{position:relative;background:linear-gradient(178deg,var(--card2),#0a0f16 92%);border:1px solid var(--edge2);border-radius:var(--r-xl);padding:30px;box-shadow:var(--shadow-lg),var(--glow)}
+.proof:before{content:"";position:absolute;top:0;left:22px;right:22px;height:1px;background:linear-gradient(90deg,transparent,rgba(45,212,168,.55),transparent)}
+.proof .tag{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--emerald-l);text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.proof .big{font-family:var(--mono);font-weight:800;font-size:clamp(28px,3.2vw,38px);line-height:1;margin:16px 0 4px;letter-spacing:-.01em;font-variant-numeric:tabular-nums;background:linear-gradient(120deg,var(--emerald-l),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.proof .sub{font-size:14px;color:var(--ink2);line-height:1.65;margin-top:12px}
+.proof .sub b{color:var(--ink);font-weight:600}
+.proof .meta{display:flex;gap:0;margin-top:22px;border-top:1px solid var(--edge);padding-top:18px}
+.proof .m{flex:1} .proof .m + .m{border-left:1px solid var(--edge);padding-left:16px}
+.proof .m .k{font-family:var(--mono);font-size:10px;color:var(--ink3);letter-spacing:.07em}
+.proof .m .v{font-weight:700;font-size:13.5px;margin-top:6px;color:var(--ink);font-variant-numeric:tabular-nums}
+.proof .see{display:inline-flex;align-items:center;gap:5px;margin-top:20px;font-family:var(--mono);font-size:12.5px;color:var(--cyan);text-decoration:none;transition:gap var(--dur) var(--ease),color var(--dur) var(--ease)}
+.proof .see:hover{gap:9px;color:var(--emerald-l)}
+
+/* ===== trust strip ===== */
+.trust{border-top:1px solid var(--edge);border-bottom:1px solid var(--edge);background:rgba(7,9,15,.6);backdrop-filter:blur(6px)}
+.trust .row{max-width:1240px;margin:0 auto;display:flex;flex-wrap:wrap;gap:36px;align-items:center;padding:21px 34px}
+.trust .item{font-size:13.5px;color:var(--ink2)} .trust .item b{color:var(--emerald-l);font-family:var(--mono);font-variant-numeric:tabular-nums}
+.trust .push{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--ink3)}
+.trust .push a{color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(34,211,238,.28);transition:border-color var(--dur) var(--ease)}
+.trust .push a:hover{border-color:var(--cyan)}
+
+/* ===== content band + section heads ===== */
+.band{padding:var(--sp-2xl) 0 8px}
+.lbl{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--emerald-l)}
+.band h2{font-size:29px;font-weight:800;margin:10px 0 8px;letter-spacing:-.025em;max-width:26ch}
+.band .say{color:var(--ink2);font-size:15px;max-width:64ch;margin:0 0 30px;line-height:1.7}
+
+/* ===== proof hub cards ===== */
+.hgrid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.hcard{background:var(--card);border:1px solid var(--edge);border-radius:var(--r-lg);padding:26px 24px;transition:transform var(--dur) var(--ease),border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease);display:flex;flex-direction:column}
+.hcard:hover{transform:translateY(-3px);border-color:var(--edge3);box-shadow:var(--shadow-md)}
+.hcard .no{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.06em}
+.hcard .t{font-weight:700;font-size:18px;margin:12px 0 9px;letter-spacing:-.01em;color:var(--ink)}
+.hcard .d{font-size:13.5px;color:var(--ink2);line-height:1.65;flex:1}
+.hcard .go{display:inline-flex;align-items:center;gap:5px;margin-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--cyan);text-decoration:none;transition:gap var(--dur) var(--ease),color var(--dur) var(--ease)}
+.hcard .go:hover{gap:9px;color:var(--emerald-l)}
+
+/* featured card (dev.asaptic.com) */
+.hfeature{position:relative;margin:16px 0;background:linear-gradient(178deg,var(--card2),#0a0f16 92%);border:1px solid rgba(45,212,168,.32);border-radius:var(--r-xl);padding:32px 34px;box-shadow:var(--shadow-lg),var(--glow);display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+.hfeature:before{content:"";position:absolute;top:0;left:22px;right:22px;height:1px;background:linear-gradient(90deg,transparent,rgba(45,212,168,.6),transparent)}
+.hfeature .badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#04120f;background:var(--emerald-l);border-radius:20px;padding:4px 11px;font-weight:700}
+.hfeature .no{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.06em;margin-top:16px;display:block}
+.hfeature .t{font-weight:800;font-size:23px;margin:10px 0 10px;letter-spacing:-.015em}
+.hfeature .t span{font-family:var(--mono);background:linear-gradient(120deg,var(--emerald-l),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hfeature .d{font-size:14.5px;color:var(--ink2);line-height:1.7;max-width:56ch}
+.hfeature .btn{white-space:nowrap;font-size:14.5px;border-radius:9px;padding:14px 26px;text-decoration:none;font-weight:650;background:var(--emerald-l);color:#04120f;box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 14px 30px -10px rgba(45,212,168,.5);transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+.hfeature .btn:hover{transform:translateY(-1.5px);box-shadow:0 1px 0 rgba(255,255,255,.3) inset,0 18px 40px -10px rgba(45,212,168,.62)}
+
+/* ===== curl strip (dev accent) ===== */
+.dt-band{padding:52px 0 8px}
+.dt-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+.dt-h{font-size:23px;font-weight:800;margin:10px 0 8px;letter-spacing:-.02em;max-width:32ch;color:var(--ink)}
+.dt-say{color:var(--ink2);font-size:14px;max-width:62ch;margin:0 0 24px;line-height:1.7}
+.dt-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.dt-card{background:var(--card);border:1px solid var(--edge);border-radius:var(--r-md);padding:19px 18px;transition:transform var(--dur) var(--ease),border-color var(--dur) var(--ease)}
+.dt-card:hover{transform:translateY(-3px);border-color:var(--edge2)}
+.dt-cmd{font-family:var(--mono);font-size:12px;color:var(--ink2);padding:10px 11px;background:#05070b;border:1px solid var(--edge);border-radius:8px;overflow-x:auto;white-space:nowrap}
+.dt-cmd b{color:var(--cyan);font-weight:600}
+.dt-desc{color:var(--ink2);font-size:12.5px;line-height:1.6;margin-top:11px}
+.dt-note{margin-top:22px;font-family:var(--mono);font-size:12.5px;color:var(--ink3)}
+
+/* ===== footer ===== */
+.foot{position:relative;border-top:1px solid var(--edge);background:var(--bg2);margin-top:88px}
+.foot:before{content:"";position:absolute;top:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(45,212,168,.35),transparent)}
+.foot .row{max-width:1240px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding:32px 34px}
+.foot .b{font-weight:800;letter-spacing:.16em;color:#fff;font-size:13px}
+.foot .legal{max-width:1240px;margin:0 auto;padding:0 34px 30px;font-family:var(--mono);font-size:11.5px;color:var(--ink3);line-height:1.7}
+
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+@media(max-width:900px){.hero .grid{grid-template-columns:1fr}.hgrid2,.dt-cards{grid-template-columns:1fr}.hfeature{grid-template-columns:1fr}.hfeature .btn{width:100%;text-align:center}.band{padding-top:64px}}
+@media(max-width:640px){.shell .row{padding:12px 16px}.brand{font-size:14px}.back{font-size:12px}}
+</style></head><body>
+<header class="shell"><div class="row">
+  <a class="brand" href="https://asaptic.com">ASAPTIC</a>
+  <a class="back" href="https://asaptic.com">← asaptic.com</a>
+</div></header>
+
+<section class="hero"><div class="wrap"><div class="grid">
+  <div>
+    <p class="eyebrow"><span class="dot"></span>证据入口 · PROOF HUB</p>
+    <h1>一个链接，看完<span class="grad">Asaptic的全部证据</span>。</h1>
+    <p class="lede">AI 帮客户赢下唯一一单真实政府合同（<b>HK$29,962,990</b>，客户是签约主体，按结果收费）。下面是这一单的证据，以及所有<b>可以自己动手验证</b>的实时系统 — 不是演示画面，是可以自己 curl、自己点开的真实数据。</p>
+    <p class="verify">尽调核验请从这里开始 — <a href="#cards">跳到五份证据 ↓</a></p>
+  </div>
+  <div class="proof">
+    <div class="tag"><span>两个锚点事实</span></div>
+    <div class="big">HK$29,962,990</div>
+    <div class="sub" style="margin-top:2px;color:var(--ink3);font-family:var(--mono);font-size:11.5px">C0009 · 唯一真实中标合同金额</div>
+    <div class="sub"><b>客户是签约主体，按结果收费</b> — Asaptic 不作为合同一方，也不预收费用。</div>
+    <div class="meta">
+      <div class="m"><div class="k">中标编号</div><div class="v">C0009</div></div>
+      <div class="m"><div class="k">调度团队</div><div class="v">一人调度舰队</div></div>
+      <div class="m"><div class="k">舰队日均成本</div><div class="v">约 US$10</div></div>
+    </div>
+    <a class="see" href="https://asaptic.com/demos">查看中标证据与案例 →</a>
+  </div>
+</div></div></section>
+
+<div class="trust"><div class="row">
+  <div class="item">唯一真实中标 <b>C0009</b> · HK$29,962,990</div>
+  <div class="item">一人调度舰队 · 日均约 <b>US$10</b></div>
+  <div class="item">实时账本追踪 <b>2,653</b> 个招标项目</div>
+  <div class="push">致工程师：一切均可用curl验证 — <a href="https://dev.asaptic.com">dev.asaptic.com →</a></div>
+</div></div>
+
+<section class="band" id="cards"><div class="wrap">
+  <p class="lbl">五份证据</p>
+  <h2>不是宣传页，是可以自己核验的证据合集。</h2>
+  <p class="say">每一份都直接链接到真实系统或真实文件 — 你可以点进去看，也可以自己跑一遍。没有第三方审计背书，商业数字全部为 Asaptic 自有口径。</p>
+
+  <div class="hgrid2">
+    <div class="hcard">
+      <div class="no">① 中标证据与案例</div>
+      <div class="t">中标证据与案例</div>
+      <div class="d">C0009 案例的中标合同、签约文件与执行链拆解 — 唯一一单真实政府合同，客户是签约主体，按结果收费。</div>
+      <a class="go" href="https://asaptic.com/demos">查看 →</a>
+    </div>
+    <div class="hcard">
+      <div class="no">② 匹配引擎实测</div>
+      <div class="t">匹配引擎实测</div>
+      <div class="d">对一家真实公司跑出的可解释排名：653 → 167 → 45。评分公式与路由逻辑全部公开，不是黑箱。</div>
+      <a class="go" href="https://asaptic.com/demo/match">查看 →</a>
+    </div>
+  </div>
+
+  <div class="hfeature">
+    <div>
+      <span class="badge">开发者 · 最强技术证据</span>
+      <span class="no">④ 实时可验证 API</span>
+      <div class="t"><span>dev.asaptic.com</span> — 开发者面</div>
+      <div class="d">面向 AI agent 的实时接口：REST + MCP + llms.txt，全部可以自己 curl 核验，不需要账号，不需要相信我们说的话。</div>
+    </div>
+    <a class="btn" href="https://dev.asaptic.com">查看 →</a>
+  </div>
+
+  <div class="hgrid2">
+    <div class="hcard">
+      <div class="no">③ 评分实验室</div>
+      <div class="t">评分实验室</div>
+      <div class="d">评分逻辑拆解与人工复核过程 — 三项权重 20 / 30 / 50，约 7.2% 的边界案例会转入人工复核。</div>
+      <a class="go" href="https://asaptic.com/demo/proof-lab">查看 →</a>
+    </div>
+    <div class="hcard">
+      <div class="no">⑤ 跨境标准公益库</div>
+      <div class="t">跨境标准公益库</div>
+      <div class="d">100+ 项跨市场标准对照，公益性质、公开维护，供出口商与审核方交叉核实合规要求。</div>
+      <a class="go" href="https://asaptic.com/standard/">查看 →</a>
+    </div>
+  </div>
+</div></section>
+
+<section class="dt-band"><div class="wrap">
+  <p class="dt-eyebrow">不是宣传语 · 现在就能 curl</p>
+  <h2 class="dt-h">这三行命令，任何人都能立刻自己跑一遍。</h2>
+  <p class="dt-say">不需要先信任我们说的话 — 直接在终端里跑，看真实返回。</p>
+  <div class="dt-cards">
+    <div class="dt-card">
+      <div class="dt-cmd">$ curl <b>asaptic.com/api/v1/health</b></div>
+      <div class="dt-desc">实时招标账本健康检查 — 服务是否在线，数据是否新鲜。</div>
+    </div>
+    <div class="dt-card">
+      <div class="dt-cmd">$ curl <b>asaptic.com/mcp</b> -d '{"method":"tools/list"}'</div>
+      <div class="dt-desc">符合标准的 MCP 服务器 — 列出可供 AI agent 直接调用的全部工具。</div>
+    </div>
+    <div class="dt-card">
+      <div class="dt-cmd">$ curl <b>asaptic.com/llms.txt</b></div>
+      <div class="dt-desc">为语言模型准备的纯文本索引 — 无需抓取网页，无需密钥。</div>
+    </div>
+  </div>
+  <p class="dt-note">每一条都可自己核验，不是演示画面。</p>
+</div></section>
+
+<footer class="foot">
+  <div class="row"><div class="b">ASAPTIC</div><a class="back" style="margin:0" href="https://asaptic.com">asaptic.com →</a></div>
+  <div class="legal">唯一真实中标 C0009；商业数字为 Asaptic 自有口径，非第三方审计；客户身份因保密隐去。</div>
+</footer>
+</body></html>
