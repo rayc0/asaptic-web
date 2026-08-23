@@ -3,13 +3,16 @@
 // fetch clean structured compliance data). Additive — does not touch page generation.
 // Writes standard/exports/<slug>.json + standard/exports/index.json.
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
+// See generate-standard.mjs's STANDARD_OUT_ROOT comment: redirects WRITES only.
+// Reads (DATA_DIR, FRAG_DIR) always come from the real ROOT.
+const WRITE_ROOT = process.env.STANDARD_OUT_ROOT ? resolve(ROOT, process.env.STANDARD_OUT_ROOT) : ROOT;
 const DATA_DIR = join(ROOT, "standard/data");
 const FRAG_DIR = join(ROOT, "standard/data/_fragments");
-const OUT_DIR = join(ROOT, "standard/exports");
+const OUT_DIR = join(WRITE_ROOT, "standard/exports");
 const SITE = "https://asaptic.com";
 
 const readJson = (f) => JSON.parse(readFileSync(f, "utf8"));

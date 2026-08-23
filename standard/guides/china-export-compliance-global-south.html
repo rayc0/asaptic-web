@@ -19,7 +19,6 @@
   <meta name="twitter:description" content="A comparative overview of conformity assessment requirements in Nigeria, Saudi Arabia, India, Indonesia, South Africa, and other high-growth energy markets for China-origin PV, BESS, and electrical products." />
 
   <script>document.documentElement.classList.add('js-anim');</script>
-  
 <!-- ASAPTIC:HEAD:START -->
 <link rel="canonical" href="https://asaptic.com/standard/guides/china-export-compliance-global-south">
 <link rel="alternate" hreflang="en" href="https://asaptic.com/standard/guides/china-export-compliance-global-south">
@@ -210,5 +209,67 @@
 <!-- ASAPTIC:FOOTER:END -->
 
   <script src="/content.js?v=20260609c"></script>
+  <script>
+    async function detectLang() {
+      const stored = localStorage.getItem('asaptic-lang');
+      if (stored && ['en','zh','zht'].includes(stored)) return stored;
+      try {
+        const res = await fetch('https://workers.asaptic.com/geo', { signal: AbortSignal.timeout(2000) });
+        if (res.ok) {
+          const { country } = await res.json();
+          if (['HK','MO','TW'].includes(country)) return 'zht';
+          if (country === 'CN') return 'zh';
+          return 'en';
+        }
+      } catch {}
+      const lang = (navigator.language || '').toLowerCase();
+      if (lang.startsWith('zh-tw') || lang.startsWith('zh-hk') || lang.startsWith('zh-mo')) return 'zht';
+      if (lang.startsWith('zh')) return 'zh';
+      return 'en';
+    }
+
+    function applyLang(lang) {
+      if (typeof CONTENT === 'undefined' || !CONTENT[lang]) lang = 'en';
+      if (typeof CONTENT === 'undefined') return;
+      const dict = CONTENT[lang];
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (dict[key] !== undefined) el.textContent = dict[key];
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+      });
+      document.documentElement.lang = lang === 'zht' ? 'zh-TW' : lang === 'zh' ? 'zh-CN' : 'en';
+      localStorage.setItem('asaptic-lang', lang);
+    }
+
+    document.querySelectorAll('.lang-btn[data-lang]').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.getAttribute('data-lang')));
+    });
+
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          fadeObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+    addEventListener('load', () => setTimeout(() =>
+      document.querySelectorAll('.fade-in:not(.visible)').forEach(el => el.classList.add('visible')), 2500));
+
+    (async () => {
+      const lang = await detectLang();
+      // Redirect to localised URL if zh/zht
+      if (lang === 'zh' && !location.pathname.startsWith('/zh/')) {
+        location.replace('/zh/standard/guides/china-export-compliance-global-south.html');
+      } else if (lang === 'zht' && !location.pathname.startsWith('/zht/')) {
+        location.replace('/zht/standard/guides/china-export-compliance-global-south.html');
+      } else {
+        applyLang(lang);
+      }
+    })();
+  </script>
 </body>
 </html>

@@ -19,7 +19,6 @@
   <meta name="twitter:description" content="An overview of the principal regulatory pathways for China-manufactured medical devices entering the US, EU, UK, Australia, Canada, and Japan markets, covering quality management system requirements, device classification, clinical evidence standards, and key differences between jurisdictions." />
 
   <script>document.documentElement.classList.add('js-anim');</script>
-  
 <!-- ASAPTIC:HEAD:START -->
 <link rel="canonical" href="https://asaptic.com/standard/guides/medical-device-china-to-west-pathways">
 <link rel="alternate" hreflang="en" href="https://asaptic.com/standard/guides/medical-device-china-to-west-pathways">
@@ -173,12 +172,12 @@
         <aside class="standard-compact-disclaimer">
           <strong>Related</strong>
           <ul class="standard-source-list">
-            <li><a href="/standard/browse.html">Medical Devices: China to US</a></li>
-<li><a href="/standard/browse.html">Medical Devices: China to EU</a></li>
-<li><a href="/standard/browse.html">Medical Devices: China to UK</a></li>
-<li><a href="/standard/browse.html">Medical Devices: China to Canada</a></li>
-<li><a href="/standard/browse.html">Medical Devices: China to Australia</a></li>
-<li><a href="/standard/browse.html">Medical Devices: China to Japan</a></li>
+            <li><a href="/standard/medical-device-china-to-us.html">Medical Devices: China to US</a></li>
+<li><a href="/standard/medical-device-china-to-eu.html">Medical Devices: China to EU</a></li>
+<li><a href="/standard/medical-device-china-to-uk.html">Medical Devices: China to UK</a></li>
+<li><a href="/standard/medical-device-china-to-canada.html">Medical Devices: China to Canada</a></li>
+<li><a href="/standard/medical-device-china-to-australia.html">Medical Devices: China to Australia</a></li>
+<li><a href="/standard/medical-device-china-to-japan.html">Medical Devices: China to Japan</a></li>
 <li><a href="/standard/browse.html">Medical Device Products</a></li>
           </ul>
         </aside>
@@ -202,5 +201,67 @@
 <!-- ASAPTIC:FOOTER:END -->
 
   <script src="/content.js?v=20260609c"></script>
+  <script>
+    async function detectLang() {
+      const stored = localStorage.getItem('asaptic-lang');
+      if (stored && ['en','zh','zht'].includes(stored)) return stored;
+      try {
+        const res = await fetch('https://workers.asaptic.com/geo', { signal: AbortSignal.timeout(2000) });
+        if (res.ok) {
+          const { country } = await res.json();
+          if (['HK','MO','TW'].includes(country)) return 'zht';
+          if (country === 'CN') return 'zh';
+          return 'en';
+        }
+      } catch {}
+      const lang = (navigator.language || '').toLowerCase();
+      if (lang.startsWith('zh-tw') || lang.startsWith('zh-hk') || lang.startsWith('zh-mo')) return 'zht';
+      if (lang.startsWith('zh')) return 'zh';
+      return 'en';
+    }
+
+    function applyLang(lang) {
+      if (typeof CONTENT === 'undefined' || !CONTENT[lang]) lang = 'en';
+      if (typeof CONTENT === 'undefined') return;
+      const dict = CONTENT[lang];
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (dict[key] !== undefined) el.textContent = dict[key];
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+      });
+      document.documentElement.lang = lang === 'zht' ? 'zh-TW' : lang === 'zh' ? 'zh-CN' : 'en';
+      localStorage.setItem('asaptic-lang', lang);
+    }
+
+    document.querySelectorAll('.lang-btn[data-lang]').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.getAttribute('data-lang')));
+    });
+
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          fadeObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+    addEventListener('load', () => setTimeout(() =>
+      document.querySelectorAll('.fade-in:not(.visible)').forEach(el => el.classList.add('visible')), 2500));
+
+    (async () => {
+      const lang = await detectLang();
+      // Redirect to localised URL if zh/zht
+      if (lang === 'zh' && !location.pathname.startsWith('/zh/')) {
+        location.replace('/zh/standard/guides/medical-device-china-to-west-pathways.html');
+      } else if (lang === 'zht' && !location.pathname.startsWith('/zht/')) {
+        location.replace('/zht/standard/guides/medical-device-china-to-west-pathways.html');
+      } else {
+        applyLang(lang);
+      }
+    })();
+  </script>
 </body>
 </html>

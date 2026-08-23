@@ -19,7 +19,6 @@
   <meta name="twitter:description" content="A structured checklist of the principal safety, electrical, and regulatory standards applicable to battery energy storage systems exported from China to the US, EU, UK, and Australia, covering UL 9540, UL 9540A, IEC 62619, IEC 62933, UN 38.3, relevant grid codes, and fire codes." />
 
   <script>document.documentElement.classList.add('js-anim');</script>
-  
 <!-- ASAPTIC:HEAD:START -->
 <link rel="canonical" href="https://asaptic.com/standard/guides/bess-export-compliance-checklist">
 <link rel="alternate" hreflang="en" href="https://asaptic.com/standard/guides/bess-export-compliance-checklist">
@@ -173,11 +172,11 @@
         <aside class="standard-compact-disclaimer">
           <strong>Related</strong>
           <ul class="standard-source-list">
-            <li><a href="/standard/browse.html">BESS: China to US</a></li>
-<li><a href="/standard/browse.html">BESS: China to EU</a></li>
-<li><a href="/standard/browse.html">BESS: China to UK</a></li>
-<li><a href="/standard/browse.html">BESS: China to Australia</a></li>
-<li><a href="/standard/browse.html">BESS Products</a></li>
+            <li><a href="/standard/bess-china-to-us.html">BESS: China to US</a></li>
+<li><a href="/standard/bess-china-to-eu.html">BESS: China to EU</a></li>
+<li><a href="/standard/bess-china-to-uk.html">BESS: China to UK</a></li>
+<li><a href="/standard/bess-china-to-australia.html">BESS: China to Australia</a></li>
+<li><a href="/standard/product/bess.html">BESS Products</a></li>
           </ul>
         </aside>
       </div>
@@ -200,5 +199,67 @@
 <!-- ASAPTIC:FOOTER:END -->
 
   <script src="/content.js?v=20260609c"></script>
+  <script>
+    async function detectLang() {
+      const stored = localStorage.getItem('asaptic-lang');
+      if (stored && ['en','zh','zht'].includes(stored)) return stored;
+      try {
+        const res = await fetch('https://workers.asaptic.com/geo', { signal: AbortSignal.timeout(2000) });
+        if (res.ok) {
+          const { country } = await res.json();
+          if (['HK','MO','TW'].includes(country)) return 'zht';
+          if (country === 'CN') return 'zh';
+          return 'en';
+        }
+      } catch {}
+      const lang = (navigator.language || '').toLowerCase();
+      if (lang.startsWith('zh-tw') || lang.startsWith('zh-hk') || lang.startsWith('zh-mo')) return 'zht';
+      if (lang.startsWith('zh')) return 'zh';
+      return 'en';
+    }
+
+    function applyLang(lang) {
+      if (typeof CONTENT === 'undefined' || !CONTENT[lang]) lang = 'en';
+      if (typeof CONTENT === 'undefined') return;
+      const dict = CONTENT[lang];
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (dict[key] !== undefined) el.textContent = dict[key];
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+      });
+      document.documentElement.lang = lang === 'zht' ? 'zh-TW' : lang === 'zh' ? 'zh-CN' : 'en';
+      localStorage.setItem('asaptic-lang', lang);
+    }
+
+    document.querySelectorAll('.lang-btn[data-lang]').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.getAttribute('data-lang')));
+    });
+
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          fadeObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+    addEventListener('load', () => setTimeout(() =>
+      document.querySelectorAll('.fade-in:not(.visible)').forEach(el => el.classList.add('visible')), 2500));
+
+    (async () => {
+      const lang = await detectLang();
+      // Redirect to localised URL if zh/zht
+      if (lang === 'zh' && !location.pathname.startsWith('/zh/')) {
+        location.replace('/zh/standard/guides/bess-export-compliance-checklist.html');
+      } else if (lang === 'zht' && !location.pathname.startsWith('/zht/')) {
+        location.replace('/zht/standard/guides/bess-export-compliance-checklist.html');
+      } else {
+        applyLang(lang);
+      }
+    })();
+  </script>
 </body>
 </html>

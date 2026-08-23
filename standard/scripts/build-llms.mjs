@@ -3,10 +3,16 @@
 // from standard/data/_index.json + each live dataset. Run after registration,
 // before deploy. Keeps both AI-crawler maps complete & current (no stale counts,
 // no /browse dead-ends, every live comparison present).
-import { readFileSync, writeFileSync, readdirSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync, mkdirSync } from "node:fs";
+import { resolve } from "node:path";
 
 const SITE = "https://asaptic.com";
 const ROOT = "standard/data";
+// See generate-standard.mjs's STANDARD_OUT_ROOT comment: redirects WRITES only.
+// Reads (ROOT/_index.json + dataset files) always come from the real cwd-relative
+// standard/data, never WRITE_ROOT.
+const WRITE_ROOT = process.env.STANDARD_OUT_ROOT ? resolve(process.env.STANDARD_OUT_ROOT) : ".";
+mkdirSync(`${WRITE_ROOT}/standard`, { recursive: true });
 const idx = JSON.parse(readFileSync(`${ROOT}/_index.json`, "utf8"));
 const prods = idx.products;
 const live = idx.comparisons.filter((c) => c.status === "live");
@@ -47,7 +53,7 @@ for (const p of prods) {
   for (const c of list) lite += `- China → ${tc(c.market.replace(/-/g, " "))}: ${SITE}${c.url.en}\n`;
   lite += "\n";
 }
-writeFileSync("standard/llms.txt", lite);
+writeFileSync(`${WRITE_ROOT}/standard/llms.txt`, lite);
 
 // ---- llms-full.txt (full corpus map) ----
 let full = "# Asaptic Cross-Standard — full corpus map (llms-full.txt)\n";
@@ -73,6 +79,6 @@ for (const p of prods) {
   }
   full += "\n";
 }
-writeFileSync("standard/llms-full.txt", full);
+writeFileSync(`${WRITE_ROOT}/standard/llms-full.txt`, full);
 
 console.log(`build-llms: llms.txt + llms-full.txt regenerated — ${nComp} comparisons · ${nMark} markets · ${nProd} categories`);
