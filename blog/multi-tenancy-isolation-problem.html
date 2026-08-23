@@ -26,10 +26,9 @@
 <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/multi-tenancy-isolation-problem">
 <link rel="alternate" hreflang="pt-PT" href="https://asaptic.com/pt/blog/multi-tenancy-isolation-problem">
 <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/multi-tenancy-isolation-problem">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/v2/shell.css?v=20260823a">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <!-- ASAPTIC:HEAD:END -->
 
 
@@ -160,8 +159,6 @@
   <main class="essay-wrap">
     <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
 
-    <!-- ─── English ──────────────────────────────────────────────────── -->
-    <div class="essay-lang" data-lang-content="en">
       <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
       <h1 class="essay-title">The multi-tenancy isolation problem: when one agent serves many principals</h1>
       <div class="essay-meta">
@@ -207,93 +204,23 @@
         <a href="/blog/">&larr; All essays</a>
         <a href="/blog/alignment-drift-problem">Latest: Alignment drift →</a>
       </div>
-    </div>
 
-    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
-    <div class="essay-lang" data-lang-content="zh">
-      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界护理</span>
-      <h1 class="essay-title">多租户隔离问题：一个智能体服务多位委托人时</h1>
-      <div class="essay-meta">
-        <span class="essay-byline">作者：Asaptic Labs</span>
-        <span class="essay-date">2026-05-24</span>
-        <span class="essay-date">6 分钟阅读</span>
-      </div>
-      <div class="essay-body">
-        <p>大多数AI智能体的问责框架，都是以单一委托人为前提设计的。一个用户，一个运营方，一个层级清晰的委托链。但这并非智能体实际部署的方式。</p>
-        <p>一个服务于二十位住客的护理智能体，同时嵌入了二十段知情同意关系、二十份护理计划、二十个家庭的期望与二十份临床病史。在规模化部署中，智能体的默认运行模式就是多租户：一个推理引擎、一个模型、一次部署，服务于多位委托人。</p>
-        <p>隔离问题的核心在于：当同一个智能体实例跨越多位委托人处理请求时，单一委托人部署所需的问责属性，并不会自动成立。其失效模式隐蔽、难以发现，且后果严重。</p>
-        <p><strong>三个必须成立的隔离层面</strong></p>
-        <p>多租户智能体部署的隔离必须在三个层面同时成立，而当前大多数架构仅强制执行其中一个。</p>
-        <p>第一是上下文隔离。智能体的上下文窗口、工具调用历史及检索记忆，必须严格限定于当前委托人。一个在上一轮检索了某位住客吞咽评估结果的护理智能体，在切换到下一位住客的请求时，绝不能携带前一位住客的任何信息。即便不存在恶意，针对一位住客校准的护理指令，也可能无形中影响智能体对下一位住客的判断——而两人的护理需求截然不同。</p>
-        <p>第二是权限隔离。一位委托人所授予的权限，不得延续至其他委托人的边界。正确的架构是将权限绑定于会话范围的凭证，而非绑定于智能体角色。智能体本身不持有权限；会话才持有权限。</p>
-        <p>第三是认证隔离。在硬件认证部署中，认证报告覆盖的是智能体二进制文件与执行环境，并不自动涵盖被处理的是哪位委托人的数据。有意义的签名回执，必须将操作绑定至具体委托人的会话标识符、智能体身份与所执行的动作，三者缺一不可。</p>
-        <p>在护理场景中，上下文泄漏不只是软件缺陷，而是直接的护理失误。护理差错在高危场景中会直接影响人的生命健康。护理AI的隔离要求，是知情同意保持有效、护理计划保持个体化、智能体为每一项具体决策承担责任的基础条件——而非工程上的细枝末节。</p>
-        <p>合格的多租户隔离架构，为每位委托人在每次交互开始时颁发密码学范围的会话凭证，会话结束即销毁。智能体的检索与记忆系统以该凭证为访问门控，而非以智能体实例为门控。每份认证动作回执均绑定委托人会话标识符。后量子密钥材料按会话生成，绝不跨租户共享。</p>
-        <p>这是应达到的标准。它高于当前大多数多租户部署所能满足的水平。在物理世界的护理场景中，这一标准没有商量余地。</p>
-      </div>
-      <div class="essay-nav">
-        <a href="/blog/">&larr; 全部文章</a>
-        <a href="/blog/alignment-drift-problem">最新：对齐漂移问题 →</a>
-      </div>
-    </div>
 
-    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
-    <div class="essay-lang" data-lang-content="zht">
-      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界護理</span>
-      <h1 class="essay-title">多租戶隔離問題：一個智能體服務多位委託人時</h1>
-      <div class="essay-meta">
-        <span class="essay-byline">作者：Asaptic Labs</span>
-        <span class="essay-date">2026-05-24</span>
-        <span class="essay-date">6 分鐘閱讀</span>
-      </div>
-      <div class="essay-body">
-        <p>大多數AI智能體的問責框架，都是以單一委託人為前提設計的。一個用戶，一個營運方，一個層級清晰的委託鏈。但這並非智能體實際部署的方式。</p>
-        <p>一個服務於二十位住客的護理智能體，同時嵌入了二十段知情同意關係、二十份護理計劃、二十個家庭的期望與二十份臨床病歷。在規模化部署中，智能體的預設運行模式就是多租戶：一個推理引擎、一個模型、一次部署，服務於多位委託人。</p>
-        <p>隔離問題的核心在於：當同一個智能體實例跨越多位委託人處理請求時，單一委託人部署所需的問責屬性，並不會自動成立。其失效模式隱蔽、難以發現，且後果嚴重。</p>
-        <p><strong>三個必須成立的隔離層面</strong></p>
-        <p>多租戶智能體部署的隔離必須在三個層面同時成立，而當前大多數架構僅強制執行其中一個。</p>
-        <p>第一是上下文隔離。智能體的上下文視窗、工具調用歷史及檢索記憶，必須嚴格限定於當前委託人。一個在上一輪檢索了某位住客吞嚥評估結果的護理智能體，在切換至下一位住客的請求時，絕不能攜帶前一位住客的任何資訊。即便不存在惡意，針對一位住客校準的護理指令，也可能無形中影響智能體對下一位住客的判斷——而兩人的護理需求截然不同。</p>
-        <p>第二是權限隔離。一位委託人所授予的權限，不得延續至其他委託人的邊界。正確的架構是將權限綁定於會話範圍的憑證，而非綁定於智能體角色。智能體本身不持有權限；會話才持有權限。</p>
-        <p>第三是認證隔離。在硬件認證部署中，認證報告覆蓋的是智能體二進制文件與執行環境，並不自動涵蓋被處理的是哪位委託人的數據。有意義的簽名回執，必須將操作綁定至具體委託人的會話識別符、智能體身份與所執行的動作，三者缺一不可。</p>
-        <p>在護理場景中，上下文洩漏不只是軟件缺陷，而是直接的護理失誤。護理差錯在高危場景中會直接影響人的生命健康。護理AI的隔離要求，是知情同意保持有效、護理計劃保持個體化、智能體為每一項具體決策承擔責任的基礎條件——而非工程上的細枝末節。</p>
-        <p>合格的多租戶隔離架構，為每位委託人在每次交互開始時頒發密碼學範圍的會話憑證，會話結束即銷毀。智能體的檢索與記憶系統以該憑證為訪問閘控，而非以智能體實例為閘控。每份認證動作回執均綁定委託人會話識別符。後量子密鑰材料按會話生成，絕不跨租戶共享。</p>
-        <p>這是應達到的標準。它高於當前大多數多租戶部署所能滿足的水平。在物理世界的護理場景中，這一標準沒有商量餘地。</p>
-      </div>
-      <div class="essay-nav">
-        <a href="/blog/">&larr; 全部文章</a>
-        <a href="/blog/alignment-drift-problem">最新：對齊漂移問題 →</a>
-      </div>
-    </div>
+
   </main>
 
   <!-- ASAPTIC:FOOTER:START -->
 <footer class="foot">
   <div class="row">
     <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI trade execution — we win and fulfill cross-border government tenders, paid on results.</div></div>
-    <div class="col"><h4>Product</h4><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
-    <div class="col"><h4>For you</h4><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
-    <div class="col"><h4>Resources</h4><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
-    <div class="col"><h4>Company</h4><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
+    <div class="col"><p class="col-h">Product</p><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
+    <div class="col"><p class="col-h">For you</p><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
+    <div class="col"><p class="col-h">Resources</p><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
+    <div class="col"><p class="col-h">Company</p><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
   </div>
   <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/legal/privacy">Privacy</a> · <a href="/legal/terms">Terms</a> · Cross-Standard data CC BY 4.0</div>
 </footer>
 <!-- ASAPTIC:FOOTER:END -->
 
-  <script>
-    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
-    function applyLang(lang) {
-      document.querySelectorAll('.essay-lang').forEach(el => {
-        el.classList.toggle('active', el.dataset.langContent === lang);
-      });
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.lang === lang);
-      });
-      localStorage.setItem('asaptic-lang', lang);
-    }
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
-    });
-    applyLang(savedLang);
-  </script>
 </body>
 </html>

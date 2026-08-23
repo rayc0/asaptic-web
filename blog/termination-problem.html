@@ -26,10 +26,9 @@
 <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/termination-problem">
 <link rel="alternate" hreflang="pt-PT" href="https://asaptic.com/pt/blog/termination-problem">
 <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/termination-problem">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/v2/shell.css?v=20260823a">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <!-- ASAPTIC:HEAD:END -->
 
 
@@ -159,8 +158,6 @@
   <main class="essay-wrap">
     <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
 
-    <!-- ─── English ──────────────────────────────────────────────────── -->
-    <div class="essay-lang" data-lang-content="en">
       <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
       <h1 class="essay-title">The termination problem: when and how to stop an AI agent, and what it means when you can't</h1>
       <div class="essay-meta">
@@ -215,107 +212,9 @@
         <a href="/blog/">&larr; All essays</a>
         <a href="/blog/supply-chain-problem">Previous: The supply chain problem →</a>
       </div>
-    </div>
 
-    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
-    <div class="essay-lang" data-lang-content="zh">
-      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照护</span>
-      <h1 class="essay-title">终止问题：何时以及如何停止AI智能体，以及无法停止意味着什么</h1>
-      <div class="essay-meta">
-        <span class="essay-byline">作者：Asaptic Labs</span>
-        <span class="essay-date">2026-05-27</span>
-        <span class="essay-date">5 分钟阅读</span>
-      </div>
-      <div class="essay-body">
-        <p>当AI智能体出现意外行为时，人们首先想到的安全措施是终止开关。听起来很简单：发送停止信号，智能体停止，情况得以控制。然而在实践中，终止问题是智能体架构中最难解决的问题之一——不是因为停止在技术上复杂，而是因为停止安全、经过认证且有意义的条件，远比表面看起来更为有限。</p>
 
-        <h2>终止开关的幻觉</h2>
-        <p>终止开关不是架构，它是架构之上的一个按钮，而该架构在任何给定时刻可能支持也可能不支持安全停止。一个正处于事务中间、文件写入中间、消息发送中间或物理执行中间的智能体，并不总能干净地停止。问题不在于是否能切断进程的电源——通常可以——而在于这样做是否让世界处于比让进程完成更好的状态。对许多智能体工作流，尤其是那些已经开始与外部系统交互的工作流，答案是模糊的。</p>
 
-        <p>这种模糊性是结构性的。智能体系统被设计为执行一系列动作，每个步骤都依赖于先前的状态。在中途打断该序列不会恢复先前状态——它会创造出一个既不在原始委托人计划之内、也不在智能体计划之内的新状态。一个不考虑智能体在工作流中何处可以安全停止的终止架构，实际上不是一个安全控制措施。它是将责任从智能体转移到按下按钮的操作员的一种方式。</p>
-
-        <h2>嵌入式智能体与物理停止问题</h2>
-        <p>对于嵌入在物理世界运行的硬件中的智能体，终止问题最为棘手。在云环境中运行的软件智能体可以通过进程信号停止，并从已知检查点重启。而在嵌入式设备中运行的智能体——照护设施中的康复单元、临床环境中的监测系统——在你需要停止它时可能物理上不可达。</p>
-
-        <p>网络分区、电源事件和设备故障都可能切断远程停止信号到达的连接。无法接收停止命令的设备会继续执行。如果其指令授权它在连接中断期间自主行动——这是保证照护连续性的必要设计选择——它将在不知晓委托人已尝试撤销该授权的情况下这样做。</p>
-
-        <p>硬件根认证告诉你设备上运行的智能体是你授权的那个。它无法解决可达性问题。一个凭证有效但网络连接已断开的设备，从委托人的角度来看，是一个在没有监督的情况下运行的智能体——可能正在执行已经被撤销的决策。设备上的问责记录可能完整，但智能体在世界中的行动已经在展开。</p>
-
-        <h2>长期运行的工作流：停止作为危险行为</h2>
-        <p>在照护环境中，当停止信号到达时，正处于任务中间的智能体呈现出一个特殊困境。智能体可能正处于监测序列、警报升级或有记录的干预中间。立即停止满足了终止命令的字面意义，同时可能造成委托人试图预防的实际伤害——一个没有主动监测的患者，一个已经启动但未完成的升级，一个在中断点之前准确、之后沉默的照护记录。</p>
-
-        <p>这是照护领域终止的深层张力：无法停止的智能体是危险的，但随时可以停止的智能体——在监测中间、在升级中间——也是危险的。一个设计良好的终止架构必须不仅包括停止机制，还要包括每个工作流中一组定义好的安全停止点，以及在收到停止信号时将智能体带到最近安全点再停止的关闭程序。没有安全点协议的任务中途终止，相当于切断手术室的电源——技术上可行，永远不应这样做。</p>
-
-        <h2>终止信号的认证问题</h2>
-        <p>终止信号是一条指令。与发送给在对抗性环境中运行的智能体的任何指令一样，它必须经过认证。能够伪造可信停止命令的攻击者，可以在智能体执行合法安全功能时将其静默——撤销凭证、记录检测到的异常、升级警报。从攻击者的角度来看，终止智能体的能力也是在入侵时刻使检测系统失明的能力。</p>
-
-        <p>这造成了一种令人不安的对称性。停止信号需要足够容易发出，以便合法委托人能在紧急情况下迅速行动。它们需要足够难以伪造，以便攻击者无法压制智能体的问责功能。这两个要求相互对立，满足其中一个的机制往往会削弱另一个。签署停止命令的硬件根密钥将终止权限与特定设备和密钥绑定——但密钥管理随后成为每次部署的运营开销的一部分。</p>
-
-        <h2>后量子停止信号</h2>
-        <p>后量子过渡为终止认证问题增加了一个常被忽视的层面。今天的认证停止信号通常依赖经典非对称密码学。能力足够强大的量子对手可以伪造这些签名——不是实时，而是可能在未来使用之前捕获的流量。对于运营生命周期较长的智能体，今天发出的经认证的停止信号可能在未来数年内可验证，然后在量子能力阈值被突破时变得可伪造。</p>
-
-        <p>对于照护环境中的嵌入式设备——可能在没有固件替换的情况下运行五到十年的设备——这不是一个假设的远景。今天制造的带有经典认证停止信号的设备，可能在支撑这些信号的密码学假设被打破后仍在运行。在制造时将终止权限与抗后量子密钥材料绑定，是在设备整个运营生命周期内保持停止信号可信的唯一机制。</p>
-
-        <h2>终止架构需要什么</h2>
-        <p>一个严肃的终止架构在任何智能体部署之前必须具备四个组件。第一，工作流级的安全停止点映射：每个工作流中的明确标记，在这些点智能体可以停止而不使下游系统处于不一致状态。第二，每个工作流的关闭协议：在收到停止信号时，将智能体带到最近的安全停止点，而不是立即停止。第三，使用适合设备部署生命周期的密钥材料的认证停止信号机制——并且对具有未来能力的对手的伪造具有抵抗性。第四，离线继续策略，精确规定智能体在委托人不可达时可以和不可以做什么，以便网络分区不会造成不受约束运行的窗口。</p>
-
-        <p>这些组件都不是终止开关。终止开关作为最后手段仍然存在——物理断电、进程强制终止、硬件重置。但既是最后手段又是第一手段的手段不是安全控制。它们是承认架构从未被设计为优雅停止。在智能体决策实时影响真实人的领域，优雅停止不是边缘情况。它是必须在第一次部署之前内置的设计要求，而不是在第一次事故之后附加的。</p>
-      </div>
-      <div class="essay-nav">
-        <a href="/blog/">&larr; 全部文章</a>
-        <a href="/blog/supply-chain-problem">上一篇：供应链问题 →</a>
-      </div>
-    </div>
-
-    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
-    <div class="essay-lang" data-lang-content="zht">
-      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界照護</span>
-      <h1 class="essay-title">終止問題：何時以及如何停止AI智能體，以及無法停止意味著什麼</h1>
-      <div class="essay-meta">
-        <span class="essay-byline">作者：Asaptic Labs</span>
-        <span class="essay-date">2026-05-27</span>
-        <span class="essay-date">5 分鐘閱讀</span>
-      </div>
-      <div class="essay-body">
-        <p>當AI智能體出現意外行為時，人們首先想到的安全措施是終止開關。聽起來很簡單：發送停止信號，智能體停止，情況得以控制。然而在實踐中，終止問題是智能體架構中最難解決的問題之一——不是因為停止在技術上複雜，而是因為停止安全、經過認證且有意義的條件，遠比表面看起來更為有限。</p>
-
-        <h2>終止開關的幻覺</h2>
-        <p>終止開關不是架構，它是架構之上的一個按鈕，而該架構在任何給定時刻可能支持也可能不支持安全停止。一個正處於事務中間、文件寫入中間、消息發送中間或物理執行中間的智能體，並不總能乾淨地停止。問題不在於是否能切斷進程的電源——通常可以——而在於這樣做是否讓世界處於比讓進程完成更好的狀態。對許多智能體工作流，尤其是那些已經開始與外部系統交互的工作流，答案是模糊的。</p>
-
-        <p>這種模糊性是結構性的。智能體系統被設計為執行一系列動作，每個步驟都依賴於先前的狀態。在中途打斷該序列不會恢復先前狀態——它會創造出一個既不在原始委托人計劃之內、也不在智能體計劃之內的新狀態。一個不考慮智能體在工作流中何處可以安全停止的終止架構，實際上不是一個安全控制措施。它是將責任從智能體轉移到按下按鈕的操作員的一種方式。</p>
-
-        <h2>嵌入式智能體與物理停止問題</h2>
-        <p>對於嵌入在物理世界運行的硬件中的智能體，終止問題最為棘手。在雲環境中運行的軟件智能體可以通過進程信號停止，並從已知檢查點重啟。而在嵌入式設備中運行的智能體——照護設施中的康復單元、臨床環境中的監測系統——在你需要停止它時可能物理上不可達。</p>
-
-        <p>網絡分區、電源事件和設備故障都可能切斷遠程停止信號到達的連接。無法接收停止命令的設備會繼續執行。如果其指令授權它在連接中斷期間自主行動——這是保證照護連續性的必要設計選擇——它將在不知曉委托人已嘗試撤銷該授權的情況下這樣做。</p>
-
-        <p>硬件根認證告訴你設備上運行的智能體是你授權的那個。它無法解決可達性問題。一個憑證有效但網絡連接已斷開的設備，從委托人的角度來看，是一個在沒有監督的情況下運行的智能體——可能正在執行已經被撤銷的決策。設備上的問責記錄可能完整，但智能體在世界中的行動已經在展開。</p>
-
-        <h2>長期運行的工作流：停止作為危險行為</h2>
-        <p>在照護環境中，當停止信號到達時，正處於任務中間的智能體呈現出一個特殊困境。智能體可能正處於監測序列、警報升級或有記錄的干預中間。立即停止滿足了終止命令的字面意義，同時可能造成委托人試圖預防的實際傷害——一個沒有主動監測的患者，一個已經啟動但未完成的升級，一個在中斷點之前準確、之後沉默的照護記錄。</p>
-
-        <p>這是照護領域終止的深層張力：無法停止的智能體是危險的，但隨時可以停止的智能體——在監測中間、在升級中間——也是危險的。一個設計良好的終止架構必須不僅包括停止機制，還要包括每個工作流中一組定義好的安全停止點，以及在收到停止信號時將智能體帶到最近安全點再停止的關閉程序。沒有安全點協議的任務中途終止，相當於切斷手術室的電源——技術上可行，永遠不應這樣做。</p>
-
-        <h2>終止信號的認證問題</h2>
-        <p>終止信號是一條指令。與發送給在對抗性環境中運行的智能體的任何指令一樣，它必須經過認證。能夠偽造可信停止命令的攻擊者，可以在智能體執行合法安全功能時將其靜默——撤銷憑證、記錄檢測到的異常、升級警報。從攻擊者的角度來看，終止智能體的能力也是在入侵時刻使檢測系統失明的能力。</p>
-
-        <p>這造成了一種令人不安的對稱性。停止信號需要足夠容易發出，以便合法委托人能在緊急情況下迅速行動。它們需要足夠難以偽造，以便攻擊者無法壓制智能體的問責功能。這兩個要求相互對立，滿足其中一個的機制往往會削弱另一個。簽署停止命令的硬件根密鑰將終止權限與特定設備和密鑰綁定——但密鑰管理隨後成為每次部署的運營開銷的一部分。</p>
-
-        <h2>後量子停止信號</h2>
-        <p>後量子過渡為終止認證問題增加了一個常被忽視的層面。今天的認證停止信號通常依賴經典非對稱密碼學。能力足夠強大的量子對手可以偽造這些簽名——不是實時，而是可能在未來使用之前捕獲的流量。對於運營生命週期較長的智能體，今天發出的經認證的停止信號可能在未來數年內可驗證，然後在量子能力閾值被突破時變得可偽造。</p>
-
-        <p>對於照護環境中的嵌入式設備——可能在沒有固件替換的情況下運行五到十年的設備——這不是一個假設的遠景。今天製造的帶有經典認證停止信號的設備，可能在支撐這些信號的密碼學假設被打破後仍在運行。在製造時將終止權限與抗後量子密鑰材料綁定，是在設備整個運營生命週期內保持停止信號可信的唯一機制。</p>
-
-        <h2>終止架構需要什麼</h2>
-        <p>一個嚴肅的終止架構在任何智能體部署之前必須具備四個組件。第一，工作流級的安全停止點映射：每個工作流中的明確標記，在這些點智能體可以停止而不使下游系統處於不一致狀態。第二，每個工作流的關閉協議：在收到停止信號時，將智能體帶到最近的安全停止點，而不是立即停止。第三，使用適合設備部署生命週期的密鑰材料的認證停止信號機制——並且對具有未來能力的對手的偽造具有抵抗性。第四，離線繼續策略，精確規定智能體在委托人不可達時可以和不可以做什麼，以便網絡分區不會造成不受約束運行的窗口。</p>
-
-        <p>這些組件都不是終止開關。終止開關作為最後手段仍然存在——物理斷電、進程強制終止、硬件重置。但既是最後手段又是第一手段的手段不是安全控制。它們是承認架構從未被設計為優雅停止。在智能體決策實時影響真實人的領域，優雅停止不是邊緣情況。它是必須在第一次部署之前內置的設計要求，而不是在第一次事故之後附加的。</p>
-      </div>
-      <div class="essay-nav">
-        <a href="/blog/">&larr; 全部文章</a>
-        <a href="/blog/supply-chain-problem">上一篇：供應鏈問題 →</a>
-      </div>
-    </div>
 
   </main>
 
@@ -323,36 +222,15 @@
 <footer class="foot">
   <div class="row">
     <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI trade execution — we win and fulfill cross-border government tenders, paid on results.</div></div>
-    <div class="col"><h4>Product</h4><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
-    <div class="col"><h4>For you</h4><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
-    <div class="col"><h4>Resources</h4><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
-    <div class="col"><h4>Company</h4><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
+    <div class="col"><p class="col-h">Product</p><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
+    <div class="col"><p class="col-h">For you</p><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
+    <div class="col"><p class="col-h">Resources</p><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
+    <div class="col"><p class="col-h">Company</p><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
   </div>
   <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/legal/privacy">Privacy</a> · <a href="/legal/terms">Terms</a> · Cross-Standard data CC BY 4.0</div>
 </footer>
 <!-- ASAPTIC:FOOTER:END -->
 
-  <script>
-    (function() {
-      const saved = localStorage.getItem('asaptic-lang') || 'en';
-      document.querySelectorAll('.essay-lang').forEach(el => {
-        el.classList.toggle('active', el.dataset.langContent === saved);
-      });
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.lang === saved);
-        btn.addEventListener('click', function() {
-          const lang = this.dataset.lang;
-          localStorage.setItem('asaptic-lang', lang);
-          document.querySelectorAll('.essay-lang').forEach(el => {
-            el.classList.toggle('active', el.dataset.langContent === lang);
-          });
-          document.querySelectorAll('.lang-btn').forEach(b => {
-            b.classList.toggle('active', b.dataset.lang === lang);
-          });
-        });
-      });
-    })();
-  </script>
 
 </body>
 </html>

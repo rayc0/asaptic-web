@@ -26,10 +26,9 @@
 <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/physical-signal-problem">
 <link rel="alternate" hreflang="pt-PT" href="https://asaptic.com/pt/blog/physical-signal-problem">
 <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/physical-signal-problem">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/v2/shell.css?v=20260823a">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <!-- ASAPTIC:HEAD:END -->
 
 
@@ -193,15 +192,7 @@
       </div>
     </header>
 
-    <div class="lang-switcher">
-      <button class="lang-btn active" data-lang="en">EN</button>
-      <button class="lang-btn" data-lang="zh">中文</button>
-      <button class="lang-btn" data-lang="zht">繁體</button>
-        <a class="lang-btn" href="/pt/blog/physical-signal-problem">PT</a>
-      </div>
 
-    <!-- EN -->
-    <div class="essay-lang active" data-lang-content="en">
       <div class="essay-body">
         <p>When we design accountability for AI agents, we typically begin at the software layer. We audit API calls. We sign tokens. We track which model version was running when a decision was made. We apply post-quantum cryptography to protect the integrity of digital communications between agents and the systems they depend on. These measures are necessary. But in physical-world deployments, the chain of trust does not begin at the software layer. It begins with a physical signal: a heart rate reading, a motion detection event, an environmental sensor measurement, a biometric scan. And the physical world cannot sign its own outputs.</p>
 
@@ -238,87 +229,9 @@
         <span class="essay-summary-label">Summary</span>
         <p>Physical-world agent deployments begin their chain of trust with a physical signal — a sensor reading, a biometric, an environmental measurement — that neither hardware attestation nor post-quantum cryptography can verify against the physical world. Three failure modes follow: sensor degradation that produces plausible-looking wrong data, environmental manipulation that leaves no digital trace, and context collapse where accurate readings are interpreted against a stale calibration. Accountability-compliant deployment requires redundant sensing, periodic physical calibration with attestable records, and governance frameworks that treat sensor validity as a deployment prerequisite rather than a background assumption.</p>
       </div>
-    </div>
 
-    <!-- ZH -->
-    <div class="essay-lang" data-lang-content="zh">
-      <div class="essay-body">
-        <p>当我们为AI智能体设计问责机制时，通常从软件层开始。我们审计API调用，签署令牌，追踪决策产生时运行的是哪个模型版本，并应用后量子密码学来保护智能体与其依赖系统之间数字通信的完整性。这些措施是必要的。但在物理世界部署中，信任链并非始于软件层，而是始于物理信号：心率读数、运动检测事件、环境传感器测量值、生物特征扫描。而物理世界无法对其自身的输出进行签名。</p>
 
-        <p>这就是物理信号问题。</p>
 
-        <h2>证明无法弥合的差距</h2>
-        <p>安全硬件飞地、TPM芯片和硬件证明根可以验证传感器的数字输出在离开设备后未被篡改。它们可以证明从传感器到推理引擎的数据路径是完整的。后量子密码方案可以确保即使面对未来的密码分析进展，这些证明仍然有效。</p>
-
-        <p>但这些都无法回答一个更基本的问题：物理世界是否确实产生了那个读数？一个来自心率监测仪、经过完美证明、密码学完整的40bpm读数，可能反映的是患者摘掉了设备、电极脱落，或传感器发生了漂移。硬件证明证明了链路在传输过程中未被破坏，却无法证明链路在源头连接到了现实。证明边界止于传感器外壳，不延伸至传感器所处的物理环境。</p>
-
-        <h2>三种失效模式</h2>
-        <p>物理信号问题以三种不同方式显现，各具不同的问责含义。</p>
-
-        <p>第一种是传感器故障——硬件退化、校准漂移或物理损坏，导致传感器在数字链路无任何异常的情况下错误报告物理世界。在软件系统中，失效的API返回错误代码；失效的传感器往往返回一个数字。被训练为依据该数字行动的智能体，将基于对物理世界的错误认知正确地行动。</p>
-
-        <p>第二种是环境操纵——在信号到达传感器之前对物理信号的蓄意干扰。放置在霍尔效应传感器旁的磁铁，对准接近探测器的红外光，对麦克风的声学操纵。与软件输入的对抗性攻击不同，物理操纵不留下任何软件痕迹。审计日志记录了智能体收到的内容，却无法记录在测量前的那些瞬间环境中发生了什么。</p>
-
-        <p>第三种是语境坍塌——物理信号是准确的，但赋予其意义的语境已经改变。95%的血氧饱和度读数对一个活跃的30岁健康人和一个患有慢性呼吸系统疾病、行动不便的80岁老人意义截然不同。传感器如实报告，智能体在其训练分布内正确推断，但部署语境已偏离了智能体决策阈值被校准时所基于的分布。错误不在于测量或推断，而在于智能体被设计用于的世界与其实际运行的世界之间的偏差。</p>
-
-        <h2>为何在各交叉点上都至关重要</h2>
-        <p>在后量子安全交叉点，物理信号问题定义了密码学所能保护的外部边界。量子抗性签名可以保护从传感器到推理引擎再到执行器的每一个字节。但它们无法追溯性地证明传感器在读取时确实正确连接到了物理环境。物理世界智能体部署的问责义务必须包括对物理连接性的验证——而不仅仅是数字链路的密码学完整性。</p>
-
-        <p>在硬件交叉点，物理信号问题阐明了硬件证明实际上在证明什么。硬件信任根确立计算在可信环境中运行，却不证明触发该计算的环境输入。为物理世界智能体部署设计硬件栈，需要为物理信号验证建立独立机制：冗余传感路径、跨模态一致性检查、传感器外壳本身的物理防篡改检测。这些不是对证明的增强，而是在证明无法触及的物理层中运行的互补系统。</p>
-
-        <p>在物理世界护理交叉点，风险最高。支持护理决策的AI智能体依赖患者当前状态的模型行事，而该模型建立在物理信号之上。如果信号系统性地错误，模型就是错误的，护理行动可能造成伤害。与软件领域中的错误建议不同，错误的护理行动可能是不可逆的。问责义务沿着信号链向后延伸至物理测量时刻，向前延伸至伤害发生点——横跨两者。</p>
-
-        <h2>问责的物理世界部署需要什么</h2>
-        <p>应对物理信号问题需要综合硬件、运营和治理措施。硬件层应包括冗余传感路径，传感器间的差异应触发明确的不确定性标志，而非静默仲裁。运营层应包括定期物理校准周期，产生各自可证明的记录——在密码学链路与其旨在代表的物理环境之间形成闭环。治理层应将传感器验证和环境完整性视为部署审查的一等组件，而非事后关切。</p>
-
-        <p>物理信号无法由任何有限的测量链完全验证。物理世界不对其输出进行签名。健全的问责架构所做的，是使这一差距可见、可审计、有界——并确保在物理环境中部署智能体的各方将这一差距视为已知约束，而非残余假设。</p>
-      </div>
-
-      <div class="essay-summary">
-        <span class="essay-summary-label">摘要</span>
-        <p>物理世界智能体部署的信任链始于物理信号——传感器读数、生物特征、环境测量——而硬件证明和后量子密码学都无法将其与物理世界进行核实。三种失效模式随之而来：产生看似合理的错误数据的传感器退化、不留数字痕迹的环境操纵，以及准确读数在过时校准下被错误解释的语境坍塌。符合问责要求的部署需要冗余传感、配有可证明记录的定期物理校准，以及将传感器有效性视为部署前提而非背景假设的治理框架。</p>
-      </div>
-    </div>
-
-    <!-- ZH-HK -->
-    <div class="essay-lang" data-lang-content="zht">
-      <div class="essay-body">
-        <p>當我們為AI智能體設計問責機制時，通常從軟件層開始。我們審計API調用，簽署憑證，追蹤決策產生時運行的是哪個模型版本，並應用後量子密碼學來保護智能體與其依賴系統之間數字通訊的完整性。這些措施是必要的。但在物理世界部署中，信任鏈並非始於軟件層，而是始於物理訊號：心率讀數、動作偵測事件、環境感測器測量值、生物特徵掃描。而物理世界無法對其自身的輸出進行簽名。</p>
-
-        <p>這就是物理訊號問題。</p>
-
-        <h2>證明無法彌合的差距</h2>
-        <p>安全硬件飛地、TPM晶片和硬件證明根可以驗證感測器的數字輸出在離開裝置後未被竄改。它們可以證明從感測器到推理引擎的資料路徑是完整的。後量子密碼方案可以確保即使面對未來的密碼分析進展，這些證明仍然有效。</p>
-
-        <p>但這些都無法回答一個更根本的問題：物理世界是否確實產生了那個讀數？一個來自心率監測儀、經過完美證明、密碼學完整的40bpm讀數，可能反映的是患者摘掉了裝置、電極脫落，或感測器發生了漂移。硬件證明證明了鏈路在傳輸過程中未被破壞，卻無法證明鏈路在源頭連接到了現實。證明邊界止於感測器外殼，不延伸至感測器所處的物理環境。</p>
-
-        <h2>三種失效模式</h2>
-        <p>物理訊號問題以三種不同方式顯現，各具不同的問責含義。</p>
-
-        <p>第一種是感測器故障——硬件退化、校準漂移或物理損壞，導致感測器在數字鏈路無任何異常的情況下錯誤報告物理世界。在軟件系統中，失效的API返回錯誤碼；失效的感測器往往返回一個數字。被訓練為依據該數字行動的智能體，將基於對物理世界的錯誤認知正確地行動。</p>
-
-        <p>第二種是環境操縱——在訊號到達感測器之前對物理訊號的蓄意干擾。放置在霍爾效應感測器旁的磁鐵，對準接近偵測器的紅外線光，對麥克風的聲學操縱。與軟件輸入的對抗性攻擊不同，物理操縱不留下任何軟件痕跡。稽核日誌記錄了智能體收到的內容，卻無法記錄在測量前那些瞬間環境中發生了什麼。</p>
-
-        <p>第三種是語境崩潰——物理訊號是準確的，但賦予其意義的語境已經改變。95%的血氧飽和度讀數對一個活躍的30歲健康人和一個患有慢性呼吸系統疾病、行動不便的80歲老人意義截然不同。感測器如實報告，智能體在其訓練分佈內正確推斷，但部署語境已偏離了智能體決策閾值被校準時所基於的分佈。錯誤不在於測量或推斷，而在於智能體被設計用於的世界與其實際運行的世界之間的偏差。</p>
-
-        <h2>為何在各交叉點上都至關重要</h2>
-        <p>在後量子安全交叉點，物理訊號問題定義了密碼學所能保護的外部邊界。量子抗性簽名可以保護從感測器到推理引擎再到執行器的每一個位元組。但它們無法追溯性地證明感測器在讀取時確實正確連接到了物理環境。物理世界智能體部署的問責義務必須包括對物理連接性的驗證——而不僅僅是數字鏈路的密碼學完整性。</p>
-
-        <p>在硬件交叉點，物理訊號問題闡明了硬件證明實際上在證明什麼。硬件信任根確立計算在可信環境中運行，卻不證明觸發該計算的環境輸入。為物理世界智能體部署設計硬件棧，需要為物理訊號驗證建立獨立機制：冗餘感測路徑、跨模態一致性檢查、感測器外殼本身的物理防篡改偵測。這些不是對證明的增強，而是在證明無法觸及的物理層中運行的互補系統。</p>
-
-        <p>在物理世界護理交叉點，風險最高。支持護理決策的AI智能體依賴患者當前狀態的模型行事，而該模型建立在物理訊號之上。如果訊號系統性地錯誤，模型就是錯誤的，護理行動可能造成傷害。與軟件領域中的錯誤建議不同，錯誤的護理行動可能是不可逆的。問責義務沿著訊號鏈向後延伸至物理測量時刻，向前延伸至傷害發生點——橫跨兩者。</p>
-
-        <h2>問責的物理世界部署需要什麼</h2>
-        <p>應對物理訊號問題需要綜合硬件、運營和治理措施。硬件層應包括冗餘感測路徑，感測器間的差異應觸發明確的不確定性標誌，而非靜默仲裁。運營層應包括定期物理校準週期，產生各自可證明的記錄——在密碼學鏈路與其旨在代表的物理環境之間形成閉環。治理層應將感測器驗證和環境完整性視為部署審查的一等組件，而非事後關切。</p>
-
-        <p>物理訊號無法由任何有限的測量鏈完全驗證。物理世界不對其輸出進行簽名。健全的問責架構所做的，是使這一差距可見、可稽核、有界——並確保在物理環境中部署智能體的各方將這一差距視為已知約束，而非殘餘假設。</p>
-      </div>
-
-      <div class="essay-summary">
-        <span class="essay-summary-label">摘要</span>
-        <p>物理世界智能體部署的信任鏈始於物理訊號——感測器讀數、生物特徵、環境測量——而硬件證明和後量子密碼學都無法將其與物理世界進行核實。三種失效模式隨之而來：產生看似合理的錯誤資料的感測器退化、不留數字痕跡的環境操縱，以及準確讀數在過時校準下被錯誤解釋的語境崩潰。符合問責要求的部署需要冗餘感測、配有可證明記錄的定期物理校準，以及將感測器有效性視為部署前提而非背景假設的治理框架。</p>
-      </div>
-    </div>
     <div class="essay-footer essay-byline">
       <span class="essay-footer-byline">Asaptic Labs · 2026-06-02</span>
       <a href="/blog/" class="essay-footer-back">&larr; Notes from the Crossings</a>
@@ -328,25 +241,14 @@
 <footer class="foot">
   <div class="row">
     <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI trade execution — we win and fulfill cross-border government tenders, paid on results.</div></div>
-    <div class="col"><h4>Product</h4><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
-    <div class="col"><h4>For you</h4><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
-    <div class="col"><h4>Resources</h4><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
-    <div class="col"><h4>Company</h4><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
+    <div class="col"><p class="col-h">Product</p><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
+    <div class="col"><p class="col-h">For you</p><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
+    <div class="col"><p class="col-h">Resources</p><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
+    <div class="col"><p class="col-h">Company</p><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
   </div>
   <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/legal/privacy">Privacy</a> · <a href="/legal/terms">Terms</a> · Cross-Standard data CC BY 4.0</div>
 </footer>
 <!-- ASAPTIC:FOOTER:END -->
 
-  <script>
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const lang = btn.dataset.lang;
-        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelector(`[data-lang-content="${lang}"]`).classList.add('active');
-      });
-    });
-  </script>
 </body>
 </html>

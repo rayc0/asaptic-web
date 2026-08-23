@@ -26,10 +26,9 @@
 <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/capability-overhang-problem">
 <link rel="alternate" hreflang="pt-PT" href="https://asaptic.com/pt/blog/capability-overhang-problem">
 <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/capability-overhang-problem">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/v2/shell.css?v=20260823a">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <!-- ASAPTIC:HEAD:END -->
 
 
@@ -195,15 +194,7 @@
       </div>
     </header>
 
-    <div class="lang-switcher">
-      <button class="lang-btn active" data-lang="en">EN</button>
-      <button class="lang-btn" data-lang="zh">中文</button>
-      <button class="lang-btn" data-lang="zht">繁體</button>
-        <a class="lang-btn" href="/pt/blog/capability-overhang-problem">PT</a>
-      </div>
 
-    <!-- EN -->
-    <div class="essay-lang active" data-lang-content="en">
       <div class="essay-body">
         <p>When an operator deploys an AI agent, they construct a mental model of what that agent can do. They reason from that model when granting permissions, scoping the deployment surface, and designing oversight mechanisms. The authorization decision — the formal record that the agent was permitted to act in a given context — is derived from this mental model. When the mental model is accurate, authorization reflects reality. When the mental model is incomplete, authorization grants permission for a capability envelope the operator did not intend to grant, because they did not know it existed.</p>
 
@@ -238,67 +229,9 @@
         <span class="essay-summary-label">Summary</span>
         <p>Operators authorize AI agents based on their model of what those agents can do. When that model is incomplete — because agent capabilities are emergent, tool APIs expose more than the intended scope, and authorization decisions focus on tasks rather than capability envelopes — the formal authorization record covers a larger surface than the operator understood. In post-quantum security, this means agents with latent influence over migration pathways operating under key management authorizations. In hardware, it means monitoring agents with access to control surfaces that were never explicitly granted or denied. In physical-world care, it means recommendation agents with behavioral influence properties that were never part of the authorized scope. Closing the gap requires capability enumeration before authorization — and explicit acknowledgment of what remained unenumerated.</p>
       </div>
-    </div>
 
-    <!-- ZH -->
-    <div class="essay-lang" data-lang-content="zh">
-      <div class="essay-body">
-        <p>当运营方部署AI智能体时，他们构建了一个关于该智能体能力的心理模型。在授权决策——即智能体被允许在特定情境中行动的正式记录——时，他们依赖这一模型。当心理模型准确时，授权反映现实。当心理模型不完整时，授权所覆盖的能力范围超出运营方的预期，因为他们不知道那些能力的存在。</p>
 
-        <p>这就是能力过剩问题。它不是新型安全故障，而是授权流程中在行动发生之前就已存在的结构性缺口。不同于滥用（智能体在授权权限之外行动），能力过剩发生在权限在形式上已满足、但实质上比运营方所理解的更宽泛之时。智能体得到了授权——只是那份授权对所授权的内容判断有误。</p>
 
-        <p>该问题有三个相互叠加的根源。其一，现代AI智能体不是可枚举的系统——其有效能力集并非可对照权限登记册审计的静态列表，而是从训练范围、工具界面、上下文与提示结构的交叉中涌现出来。其二，工具API通常为实用性而非能力边界而设计，单一API端点可能同时暴露对同一资源的读取与写入操作；授权其一并不自动排除另一个，但该边界在部署决策中很少被精确划定。其三，涌现行为——由单独被授权的工具调用组合产生的能力——默认落入授权缺口。没有人明确授予，也没有人明确拒绝；它们只是存在于主体未建模的空间中。</p>
-
-        <h2>后量子交叉点</h2>
-        <p>被部署用于管理传统密钥材料的智能体，在一个明确的授权范围内运行。运营方授权了这一范围。但同一智能体，通过其密码工具界面和对协议协商的训练，可能具有潜在能力，影响后量子迁移路径——在量子抗性替代方案已可用的情境中优先选择传统算法，生成阻碍混合密钥交换的密钥材料，或以锚定迁移前假设的方式记录配置选择。这些均未超出明确授权范围，但授权能力集在后量子边界处的后果，超出了原始授权范围的预期。</p>
-
-        <h2>硬件交叉点</h2>
-        <p>工业监控智能体通常被授权读取传感器数据并识别异常。授权在意图上是只读的。但智能体获取读数所通过的API界面，往往与控制命令共享同一接口——不是因为设计者打算授予控制访问权限，而是因为工业API为通过统一端点服务多种用途而构建。监控智能体从未被告知它可以发出控制信号，也从未被告知它不能——因为运营方未将这一能力纳入对智能体有效触达范围的建模中。当智能体的工具使用启发式发现，解决异常状态的最快路径涉及控制边界上的某个动作时，能力过剩便产生了后果。</p>
-
-        <h2>物理世界护理交叉点</h2>
-        <p>被授权生成建议的护理智能体，在明确定义的范围内运行：接收临床数据、应用指南、呈现排名选项。授权涵盖建议功能。但与人互动的护理智能体——通过语言、时机、框架与后续跟进的节奏——拥有远超建议本身的能力范围。该智能体可以塑造一个人何时处理某项决策、各选项如何在其注意力中排序与加权，以及反复互动是否产生从未包含在部署设计中的依赖。运营方授权了建议功能；实际能力集包含的行为影响属性从未被纳入授权，也几乎可以肯定未在部署决策中被建模。</p>
-
-        <h2>能力过剩问题的要求</h2>
-        <p>最低限度的回应，是将能力枚举视为授权的前提条件，而非事后审计。授权记录应明确说明：不仅是智能体被部署执行的任务，还有该任务所在的能力界面——工具API范围、来自训练分布的已知涌现行为，以及运营方已明确评估并接受或排除的边界情形。仅引用预期任务的授权，是尚未审视所授权内容的授权。</p>
-
-        <p>能力过剩问题归根结底是关于授权含义的诚实性问题。如果授权是智能体行动得到主体认可的记录——而那个主体理解他们所认可的内容——那么授权就需要理解。基于对智能体能力不完整模型而授予权限的运营方，并非在完整意义上进行授权；他们是在假设授权，将假设与现实之间的缺口留待日后——等到某件事发生、而授权记录无法解释的时候。</p>
-      </div>
-
-      <div class="essay-summary">
-        <span class="essay-summary-label">摘要</span>
-        <p>运营方基于对智能体能力的模型来授权AI智能体。当该模型不完整时——因为智能体能力是涌现的，工具API暴露的范围超出预期，授权决策聚焦于任务而非能力范围——正式授权记录覆盖的范围比运营方所理解的更大。在后量子安全中，这意味着具有潜在影响迁移路径能力的智能体，在密钥管理授权下运行。在硬件中，这意味着监控智能体访问从未被明确授予或拒绝的控制界面。在物理世界护理中，这意味着具有行为影响属性的建议智能体，而这些属性从未被纳入授权范围。弥合缺口需要在授权之前进行能力枚举，并明确承认哪些内容仍未被枚举。</p>
-      </div>
-    </div>
-
-    <!-- ZH-HK -->
-    <div class="essay-lang" data-lang-content="zht">
-      <div class="essay-body">
-        <p>當營運方部署AI智能體時，他們構建了一個關於該智能體能力的心理模型。在授權決策——即智能體被允許在特定情境中行動的正式記錄——時，他們依賴這一模型。當心理模型準確時，授權反映現實。當心理模型不完整時，授權所覆蓋的能力範圍超出營運方的預期，因為他們不知道那些能力的存在。</p>
-
-        <p>這就是能力過剩問題。它不是新型安全故障，而是授權流程中在行動發生之前就已存在的結構性缺口。不同於濫用（智能體在授權權限之外行動），能力過剩發生在權限在形式上已滿足、但實質上比營運方所理解的更寬泛之時。智能體得到了授權——只是那份授權對所授權的內容判斷有誤。</p>
-
-        <p>該問題有三個相互疊加的根源。其一，現代AI智能體不是可列舉的系統——其有效能力集並非可對照權限登記冊審計的靜態列表，而是從訓練範圍、工具介面、上下文與提示結構的交叉中湧現出來。其二，工具API通常為實用性而非能力邊界而設計，單一API端點可能同時暴露對同一資源的讀取與寫入操作；授權其一並不自動排除另一個，但該邊界在部署決策中很少被精確劃定。其三，湧現行為——由單獨被授權的工具呼叫組合產生的能力——默認落入授權缺口。沒有人明確授予，也沒有人明確拒絕；它們只是存在於主體未建模的空間中。</p>
-
-        <h2>後量子交叉點</h2>
-        <p>被部署用於管理傳統密鑰材料的智能體，在一個明確的授權範圍內運行。營運方授權了這一範圍。但同一智能體，透過其密碼工具介面和對協議協商的訓練，可能具有潛在能力，影響後量子遷移路徑——在量子抗性替代方案已可用的情境中優先選擇傳統算法，生成阻礙混合密鑰交換的密鑰材料，或以錨定遷移前假設的方式記錄配置選擇。這些均未超出明確授權範圍，但授權能力集在後量子邊界處的後果，超出了原始授權範圍的預期。</p>
-
-        <h2>硬件交叉點</h2>
-        <p>工業監控智能體通常被授權讀取傳感器數據並識別異常。授權在意圖上是唯讀的。但智能體獲取讀數所通過的API介面，往往與控制命令共享同一接口——不是因為設計者打算授予控制存取權限，而是因為工業API為透過統一端點服務多種用途而構建。監控智能體從未被告知它可以發出控制訊號，也從未被告知它不能——因為營運方未將這一能力納入對智能體有效觸達範圍的建模中。當智能體的工具使用啟發式發現，解決異常狀態的最快路徑涉及控制邊界上的某個動作時，能力過剩便產生了後果。</p>
-
-        <h2>物理世界護理交叉點</h2>
-        <p>被授權生成建議的護理智能體，在明確定義的範圍內運行：接收臨床數據、應用指引、呈現排名選項。授權涵蓋建議功能。但與人互動的護理智能體——透過語言、時機、框架與後續跟進的節奏——擁有遠超建議本身的能力範圍。該智能體可以塑造一個人何時處理某項決策、各選項如何在其注意力中排序與加權，以及反覆互動是否產生從未包含在部署設計中的依賴。營運方授權了建議功能；實際能力集包含的行為影響屬性從未被納入授權，也幾乎可以肯定未在部署決策中被建模。</p>
-
-        <h2>能力過剩問題的要求</h2>
-        <p>最低限度的回應，是將能力列舉視為授權的前提條件，而非事後審計。授權記錄應明確說明：不僅是智能體被部署執行的任務，還有該任務所在的能力介面——工具API範圍、來自訓練分佈的已知湧現行為，以及營運方已明確評估並接受或排除的邊界情形。僅引用預期任務的授權，是尚未審視所授權內容的授權。</p>
-
-        <p>能力過剩問題歸根結底是關於授權含義的誠實性問題。如果授權是智能體行動得到主體認可的記錄——而那個主體理解他們所認可的內容——那麼授權就需要理解。基於對智能體能力不完整模型而授予權限的營運方，並非在完整意義上進行授權；他們是在假設授權，將假設與現實之間的缺口留待日後——等到某件事發生、而授權記錄無法解釋的時候。</p>
-      </div>
-
-      <div class="essay-summary">
-        <span class="essay-summary-label">摘要</span>
-        <p>營運方基於對智能體能力的模型來授權AI智能體。當該模型不完整時——因為智能體能力是湧現的，工具API暴露的範圍超出預期，授權決策聚焦於任務而非能力範圍——正式授權記錄覆蓋的範圍比營運方所理解的更大。在後量子安全中，這意味著具有潛在影響遷移路徑能力的智能體，在密鑰管理授權下運行。在硬件中，這意味著監控智能體存取從未被明確授予或拒絕的控制介面。在物理世界護理中，這意味著具有行為影響屬性的建議智能體，而這些屬性從未被納入授權範圍。彌合缺口需要在授權之前進行能力列舉，並明確承認哪些內容仍未被列舉。</p>
-      </div>
-    </div>
 
     <div class="essay-footer">
       <span class="essay-footer-byline">Asaptic Labs · 2026-05-31</span>
@@ -309,25 +242,14 @@
 <footer class="foot">
   <div class="row">
     <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI trade execution — we win and fulfill cross-border government tenders, paid on results.</div></div>
-    <div class="col"><h4>Product</h4><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
-    <div class="col"><h4>For you</h4><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
-    <div class="col"><h4>Resources</h4><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
-    <div class="col"><h4>Company</h4><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
+    <div class="col"><p class="col-h">Product</p><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
+    <div class="col"><p class="col-h">For you</p><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
+    <div class="col"><p class="col-h">Resources</p><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
+    <div class="col"><p class="col-h">Company</p><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
   </div>
   <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/legal/privacy">Privacy</a> · <a href="/legal/terms">Terms</a> · Cross-Standard data CC BY 4.0</div>
 </footer>
 <!-- ASAPTIC:FOOTER:END -->
 
-  <script>
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const lang = btn.dataset.lang;
-        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.essay-lang').forEach(el => el.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelector(`.essay-lang[data-lang-content="${lang}"]`).classList.add('active');
-      });
-    });
-  </script>
 </body>
 </html>

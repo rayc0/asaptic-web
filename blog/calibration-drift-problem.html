@@ -26,10 +26,9 @@
 <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/calibration-drift-problem">
 <link rel="alternate" hreflang="pt-PT" href="https://asaptic.com/pt/blog/calibration-drift-problem">
 <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/calibration-drift-problem">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/v2/shell.css?v=20260823a">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <!-- ASAPTIC:HEAD:END -->
 
 
@@ -193,15 +192,7 @@
       </div>
     </header>
 
-    <div class="lang-switcher">
-      <button class="lang-btn active" data-lang="en">EN</button>
-      <button class="lang-btn" data-lang="zh">中文</button>
-      <button class="lang-btn" data-lang="zht">繁體</button>
-        <a class="lang-btn" href="/pt/blog/calibration-drift-problem">PT</a>
-      </div>
 
-    <!-- EN -->
-    <div class="essay-lang active" data-lang-content="en">
       <div class="essay-body">
         <p>A sensor that fails stops producing readings, or produces readings so obviously wrong that they trigger alerts. A sensor that drifts continues producing readings. They are off by a small and slowly growing margin. At any given moment, the value looks plausible. In isolation, no single reading is suspicious enough to act on. It is only in retrospect — after the decision informed by months of drifted inputs turns out to be harmful — that the pattern becomes visible.</p>
 
@@ -244,99 +235,9 @@
         <span class="essay-summary-label">Key point</span>
         <p>Sensor drift produces plausible readings that are gradually wrong, creating an accountability gap that sensor failure does not: the agent acted correctly on the inputs it had, but those inputs had silently degraded. Accountability architecture for physical-environment agents must treat calibration state as a first-class audit artifact, propagate sensor uncertainty into agent outputs, and tie operating authority to calibration currency.</p>
       </div>
-    </div>
 
-    <!-- ZH -->
-    <div class="essay-lang" data-lang-content="zh">
-      <div class="essay-body">
-        <p>发生故障的传感器会停止产生读数，或产生明显错误的读数从而触发警报。发生漂移的传感器则持续产生读数。这些读数偏差微小且缓慢增长。在任何给定时刻，读数看起来都是合理的。没有单个读数足以引起警惕。只有在事后——当基于数月漂移数据做出的决策被证明是有害的——这一模式才变得清晰可见。</p>
 
-        <p>这就是校准漂移问题。它处于硬件与问责的交汇点，在AI智能体部署最快的领域中最为尖锐：实体世界护理和关键基础设施。围绕AI智能体发展的问责框架尚未充分解决这一问题，部分原因在于智能体问责的法律和哲学范畴是围绕离散事件而非渐进退化构建的。</p>
 
-        <h2>为何漂移比故障更难处理</h2>
-        <p>传感器故障有清晰的问责结构。智能体基于传感器读数做出决策；传感器随后被发现已故障；智能体的行动可追溯至已知故障时间的缺陷输入。责任可以在智能体开发者、硬件供应商和负责维护的运营者之间分配。</p>
-
-        <p>漂移消解了这一结构。没有故障时刻。传感器在最后一次校准时产生可接受的读数，现在仍然产生落在合理范围内的读数。智能体不是在基于损坏的输入行动，而是基于逐渐变得不那么准确的输入行动。没有外部参照，智能体无法区分这两种情况。在许多情况下，运营者同样无法区分。</p>
-
-        <p>问责问题因此变为：当一个智能体基于其所拥有的输入正确行动，而这些输入已悄然退化时，由谁来承担由此造成的伤害？答案并不明显，现有框架也没有提供答案。</p>
-
-        <h2>硬件交叉点：信任根的漂移</h2>
-        <p>在硬件交叉点，校准漂移触及智能体身份和加密正确性的基础。硬件安全模块依赖内部振荡器，其频率漂移会影响加密操作的时序。依赖同步时钟的协议中的时序漂移——包括许多进入部署的后量子密钥交换方案——可能导致操作在规范之外悄然运行。操作在完成而不报错的意义上是成功的，但在协议所依赖的时序保证不再成立的意义上是失败的。</p>
-
-        <p>这对管理加密状态的AI智能体至关重要。负责密钥轮换、会话管理或硬件锚定系统中证书生命周期的智能体，正在基于依赖校准硬件的时序和状态信息做出决策。如果硬件发生漂移，智能体对加密状态的视图就会存在微妙错误，它将继续自信地基于该视图行动，因为其可观察环境中没有任何信号表明存在问题。</p>
-
-        <p>这里的问责挑战在于：智能体不是失败点，硬件也没有以任何可检测的方式损坏。失败模式存在于校准事件之间的间隙中——而这个间隙通常没有被定义、追踪或视为与问责相关的记录。</p>
-
-        <h2>护理交叉点：读数看起来正确但并非如此</h2>
-        <p>在实体世界护理环境中，校准漂移创造了更直接且更难防御的风险。AI护理智能体基于嵌入护理环境的传感器读数做出决策——关于用药计划、活动水平、护理升级阈值。读数高出两个百分点的血氧仪看起来没有损坏，它报告的值在合理范围内。向下漂移五公斤的体重秤不会触发任何警报，它产生的趋势线看起来平滑。检测半径缩小的运动传感器不报错，只是无法登记实际发生的活动。</p>
-
-        <p>在每种情况下，智能体都在根据其输入正确行动。它在读数越过配置阈值时进行升级，维持读数所支持的护理计划。失败是不可见的，直到伤害发生，而漂移的读数在事后做出解释。</p>
-
-        <p>最暴露于这种失败模式的人是无法自我报告传感器读数错误的护理接受者。经历真实生理变化的老年居民可能无法区分智能体的决定是不正确的还是情况就是智能体所描述的那样。智能体对其读数的信心——通常以对决策的信心传达给护理人员——并未针对提供证据的硬件的物理状态进行校准。</p>
-
-        <h2>问责架构的要求</h2>
-        <p>将校准漂移视为问责问题而非维护问题，会改变架构必须做的事情。若干属性变得必要。</p>
-
-        <p>首先，校准事件必须被视为一等审计记录。智能体据以行动的每个传感器的当前校准状态，应当是一个已记录、有时间戳且可查询的事实——与智能体做出的决策同等重要。一个记录了智能体决策内容但没有记录当时输入校准状态的审计追踪，在问责意义上是不完整的。</p>
-
-        <p>其次，智能体必须将传感器不确定性传播到其输出中。一个基于最近校准超出规定容差窗口的硬件所提供输入进行行动的智能体，应该明确标记这种不确定性——在其决策记录中，以及在可能的情况下向依赖其输出的人标记。智能体对决策所表达的信心，不应与提供其证据的硬件的物理状态无关。</p>
-
-        <p>第三，校准计划必须被视为可审计的义务，而非可推迟的维护建议。在护理环境中，这意味着将智能体操作权限与其所依赖传感器的校准状态挂钩。传感器输入超过校准阈值的智能体，应在降级模式下运行——自主性降低，明确标记不确定性——直到校准恢复。</p>
-
-        <p>校准漂移问题并不罕见。部署在实体环境中的每个AI智能体都面临它。为这些智能体构建的问责架构需要直接解决它——不是作为边缘案例，而是作为运行领域的结构性属性。</p>
-      </div>
-
-      <div class="essay-summary">
-        <span class="essay-summary-label">核心要点</span>
-        <p>传感器漂移产生逐渐错误的合理读数，造成传感器故障所不会造成的问责缺口：智能体基于其所拥有的输入正确行动，但这些输入已悄然退化。物理环境智能体的问责架构必须将校准状态视为一等审计记录，将传感器不确定性传播到智能体输出，并将操作权限与校准时效挂钩。</p>
-      </div>
-    </div>
-
-    <!-- ZHT -->
-    <div class="essay-lang" data-lang-content="zht">
-      <div class="essay-body">
-        <p>發生故障的感測器會停止產生讀數，或產生明顯錯誤的讀數從而觸發警報。發生漂移的感測器則持續產生讀數。這些讀數偏差微小且緩慢增長。在任何給定時刻，讀數看起來都是合理的。沒有單一讀數足以引起警惕。只有在事後——當基於數月漂移資料做出的決策被證明是有害的——這一模式才變得清晰可見。</p>
-
-        <p>這就是校準漂移問題。它處於硬體與問責的交匯點，在AI智能體部署最快的領域中最為尖銳：實體世界照護和關鍵基礎設施。圍繞AI智能體發展的問責框架尚未充分解決這一問題，部分原因在於智能體問責的法律和哲學範疇是圍繞離散事件而非漸進退化構建的。</p>
-
-        <h2>為何漂移比故障更難處理</h2>
-        <p>感測器故障有清晰的問責結構。智能體基於感測器讀數做出決策；感測器隨後被發現已故障；智能體的行動可追溯至已知故障時間的缺陷輸入。責任可以在智能體開發者、硬體供應商和負責維護的營運者之間分配。</p>
-
-        <p>漂移消解了這一結構。沒有故障時刻。感測器在最後一次校準時產生可接受的讀數，現在仍然產生落在合理範圍內的讀數。智能體不是在基於損壞的輸入行動，而是基於逐漸變得不那麼準確的輸入行動。沒有外部參照，智能體無法區分這兩種情況。在許多情況下，營運者同樣無法區分。</p>
-
-        <p>問責問題因此變為：當一個智能體基於其所擁有的輸入正確行動，而這些輸入已悄然退化時，由誰來承擔由此造成的傷害？答案並不明顯，現有框架也沒有提供答案。</p>
-
-        <h2>硬體交叉點：信任根的漂移</h2>
-        <p>在硬體交叉點，校準漂移觸及智能體身分和加密正確性的基礎。硬體安全模組依賴內部振盪器，其頻率漂移會影響加密操作的時序。依賴同步時鐘的協議中的時序漂移——包括許多進入部署的後量子金鑰交換方案——可能導致操作在規範之外悄然運作。操作在完成而不報錯的意義上是成功的，但在協議所依賴的時序保證不再成立的意義上是失敗的。</p>
-
-        <p>這對管理加密狀態的AI智能體至關重要。負責金鑰輪換、工作階段管理或硬體錨定系統中憑證生命週期的智能體，正在基於依賴校準硬體的時序和狀態資訊做出決策。如果硬體發生漂移，智能體對加密狀態的視圖就會存在微妙錯誤，它將繼續自信地基於該視圖行動，因為其可觀察環境中沒有任何訊號表明存在問題。</p>
-
-        <p>這裡的問責挑戰在於：智能體不是失敗點，硬體也沒有以任何可偵測的方式損壞。失敗模式存在於校準事件之間的間隙中——而這個間隙通常沒有被定義、追蹤或視為與問責相關的記錄。</p>
-
-        <h2>照護交叉點：讀數看起來正確但並非如此</h2>
-        <p>在實體世界照護環境中，校準漂移創造了更直接且更難防禦的風險。AI照護智能體基於嵌入照護環境的感測器讀數做出決策——關於用藥計畫、活動水準、照護升級閾值。讀數高出兩個百分點的血氧儀看起來沒有損壞，它回報的值在合理範圍內。向下漂移五公斤的體重秤不會觸發任何警報，它產生的趨勢線看起來平滑。偵測半徑縮小的動作感測器不報錯，只是無法登記實際發生的活動。</p>
-
-        <p>在每種情況下，智能體都在根據其輸入正確行動。它在讀數越過配置閾值時進行升級，維持讀數所支持的照護計畫。失敗是不可見的，直到傷害發生，而漂移的讀數在事後做出解釋。</p>
-
-        <p>最暴露於這種失敗模式的人是無法自我回報感測器讀數錯誤的照護接受者。經歷真實生理變化的老年居民可能無法區分智能體的決定是不正確的還是情況就是智能體所描述的那樣。智能體對其讀數的信心——通常以對決策的信心傳達給照護人員——並未針對提供證據的硬體的物理狀態進行校準。</p>
-
-        <h2>問責架構的要求</h2>
-        <p>將校準漂移視為問責問題而非維護問題，會改變架構必須做的事情。若干屬性變得必要。</p>
-
-        <p>首先，校準事件必須被視為一等審計記錄。智能體據以行動的每個感測器的當前校準狀態，應當是一個已記錄、有時間戳記且可查詢的事實——與智能體做出的決策同等重要。一個記錄了智能體決策內容但沒有記錄當時輸入校準狀態的審計追蹤，在問責意義上是不完整的。</p>
-
-        <p>其次，智能體必須將感測器不確定性傳播到其輸出中。一個基於最近校準超出規定容差窗口的硬體所提供輸入進行行動的智能體，應該明確標記這種不確定性——在其決策記錄中，以及在可能的情況下向依賴其輸出的人標記。智能體對決策所表達的信心，不應與提供其證據的硬體的物理狀態無關。</p>
-
-        <p>第三，校準計畫必須被視為可審計的義務，而非可推遲的維護建議。在照護環境中，這意味著將智能體操作權限與其所依賴感測器的校準狀態掛鉤。感測器輸入超過校準閾值的智能體，應在降級模式下運作——自主性降低，明確標記不確定性——直到校準恢復。</p>
-
-        <p>校準漂移問題並不罕見。部署在實體環境中的每個AI智能體都面臨它。為這些智能體構建的問責架構需要直接解決它——不是作為邊緣案例，而是作為運行領域的結構性屬性。</p>
-      </div>
-
-      <div class="essay-summary">
-        <span class="essay-summary-label">核心要點</span>
-        <p>感測器漂移產生逐漸錯誤的合理讀數，造成感測器故障所不會造成的問責缺口：智能體基於其所擁有的輸入正確行動，但這些輸入已悄然退化。實體環境智能體的問責架構必須將校準狀態視為一等審計記錄，將感測器不確定性傳播到智能體輸出，並將操作權限與校準時效掛鉤。</p>
-      </div>
-    </div>
     <div class="essay-footer essay-byline">
       <span class="essay-footer-byline">Asaptic Labs · 2026-06-02</span>
       <a href="/blog/" class="essay-footer-back">&larr; All notes</a>
@@ -346,25 +247,14 @@
 <footer class="foot">
   <div class="row">
     <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI trade execution — we win and fulfill cross-border government tenders, paid on results.</div></div>
-    <div class="col"><h4>Product</h4><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
-    <div class="col"><h4>For you</h4><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
-    <div class="col"><h4>Resources</h4><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
-    <div class="col"><h4>Company</h4><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
+    <div class="col"><p class="col-h">Product</p><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
+    <div class="col"><p class="col-h">For you</p><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
+    <div class="col"><p class="col-h">Resources</p><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
+    <div class="col"><p class="col-h">Company</p><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
   </div>
   <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/legal/privacy">Privacy</a> · <a href="/legal/terms">Terms</a> · Cross-Standard data CC BY 4.0</div>
 </footer>
 <!-- ASAPTIC:FOOTER:END -->
 
-  <script>
-    const btns = document.querySelectorAll('.lang-btn');
-    const layers = document.querySelectorAll('.essay-lang');
-    btns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const lang = btn.dataset.lang;
-        btns.forEach(b => b.classList.toggle('active', b === btn));
-        layers.forEach(l => l.classList.toggle('active', l.dataset.langContent === lang));
-      });
-    });
-  </script>
 </body>
 </html>

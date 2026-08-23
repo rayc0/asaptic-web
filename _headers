@@ -10,8 +10,11 @@
 # lives in ./app.mjs, not inline. style-src needs 'unsafe-inline' for the page's
 # <style> block + inline style="width:.." bars. No CSP is set on /* so this adds,
 # never weakens, the global HSTS/X-Frame-Options/nosniff/Referrer/Permissions.
+# 2026-08-24: dropped the fonts.googleapis.com/fonts.gstatic.com style-src/font-src
+# allowances — this page now loads self-hosted Inter/JetBrains Mono via shell.css
+# (assets/fonts/), so the third-party font CDN is no longer reachable at all.
 /demo/proof-lab/*
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://asaptic.com; base-uri 'none'; form-action https://portal.asaptic.com https://asaptic.com
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://asaptic.com; base-uri 'none'; form-action https://portal.asaptic.com https://asaptic.com
 
 /geo
   Cache-Control: no-store

@@ -26,10 +26,9 @@
 <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/trust-bootstrap-problem">
 <link rel="alternate" hreflang="pt-PT" href="https://asaptic.com/pt/blog/trust-bootstrap-problem">
 <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/trust-bootstrap-problem">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/v2/shell.css?v=20260823a">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <!-- ASAPTIC:HEAD:END -->
 
 
@@ -161,8 +160,6 @@
   <main class="essay-wrap">
     <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
 
-    <!-- ─── English ──────────────────────────────────────────────────── -->
-    <div class="essay-lang" data-lang-content="en">
       <span class="essay-topic">× QUANTUM SECURITY × HARDWARE × HUMAN CARE</span>
       <h1 class="essay-title">The trust bootstrap problem: before an agent can be trusted, someone must trust the first link</h1>
       <div class="essay-meta">
@@ -206,87 +203,9 @@
         <a href="/blog/">&larr; All essays</a>
         <a href="/blog/sandboxing-imperative">Also: The sandboxing imperative →</a>
       </div>
-    </div>
 
-    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
-    <div class="essay-lang" data-lang-content="zh">
-      <span class="essay-topic">× 量子安全 × 硬件 × 人类照护</span>
-      <h1 class="essay-title">信任引导问题：在智能体被信任之前，必须有人先信任链条的第一环</h1>
-      <div class="essay-meta">
-        <span class="essay-byline">作者：Asaptic Labs</span>
-        <span class="essay-date">2026-05-23</span>
-        <span class="essay-date">5 分钟阅读</span>
-      </div>
-      <div class="essay-body">
-        <p>每个安全模型都假设存在一个信任根。证书链终止于一个根CA，浏览器信任它，是因为某个人的决定将它安置在那里。密钥交换能够成立，是因为双方共享了预先建立的秘密，或共同信任某个第三方。这些引导过程如此惯常，以至于从业者鲜少审视它们。但对于部署在高后果领域的AI智能体，引导问题以新的紧迫性重新浮现：在智能体被信任之前，必须有人先信任链条的第一环。而那第一环的架构，决定了关于该智能体的所有后续主张究竟是可验证的，还是仅凭断言。</p>
 
-        <h2>注册时刻</h2>
-        <p>智能体获得首个凭证的那一刻，是注册时刻。这是智能体生命周期中风险最高的节点：没有既往记录，没有行为证明，没有可供审查的决策历史。在常规系统中，注册被视为一项行政步骤——一个有人在系统上线前处理的配置任务。</p>
-        <p>对于AI智能体，这种框架是不够的。智能体在注册时获得的凭证，定义了它初始的权限范围。如果该凭证因配置者偏向便利而颁发过宽，智能体便带着尚未被证明合理的常驻访问权限进入世界。如果注册渠道本身被攻陷，智能体整个凭证历史从第一刻起就已被污染。</p>
-        <p>在后量子安全节点，注册时刻是算法选择固化之处。一个以经典密码学凭证注册、进入正在进行抗量子迁移的系统的智能体，从第一天起就携带着脆弱的身份。注册凭证是密码学谱系的起点节点：若起点使用了已废弃的算法，补救措施不是打补丁，而是重新注册。从一开始就以抗量子原语正确完成注册，是避免脆弱根源的唯一方式。之后的每一次密钥轮换、每一次凭证更新、每一条审计日志条目，其强度都不超过第一环所允许的上限。</p>
 
-        <h2>硬件作为首个信任锚点</h2>
-        <p>当第一个信任关系根植于硬件时，注册问题得到了最为清晰的解决。可信平台模块或硬件安全模块，可以在注册时证明智能体正在特定的、可测量的软件配置上运行。这一证明由硬件本身签署——而非由可能在注册凭证颁发之前就已被攻陷的软件进程签署。</p>
-        <p>注册时的硬件证明，回答了流程控制无法回答的问题：这是运营方意图部署的那个智能体吗？软件证明是智能体关于自身的主张。硬件证明是平台关于其正在运行什么的主张。对于没有既往历史的智能体，硬件证明是唯一不依赖于对智能体本身的既有信任的身份主张形式。</p>
-        <p>其含义是实际的。对于部署在高后果领域的智能体——安全基础设施、健康数据系统、金融授权流水线——注册时的硬件证明不是高级选项，而是整个后续信任关系获得可验证根源的机制。没有它，运营方对已部署智能体的信心完全依赖于事后无法审计的流程控制。"我怎么知道这就是我批准的那个智能体？"这个问题，在注册完全由软件中介时，没有令人满意的答案。</p>
-        <p>还有一个可组合性论点。智能体越来越多地在多智能体流水线中运作，一个智能体调用另一个智能体并传递派生权限。在这样的流水线中，无法在注册时验证的信任根，在任何下游节点也无法验证。引导问题不局限于链条中的第一个智能体——它在每一次后续委托中传播。在首个节点进行硬件根源注册，是使下游信任主张连贯而非循环的前提。</p>
-
-        <h2>照护场景中的信任引导</h2>
-        <p>在照护场景中，信任引导问题有一个硬件单独无法解决的人的维度。当一个智能体被部署以协助照护——排班、病历访问、环境管理、用药提醒——受其决策影响的人，必须有某种有根据的理由相信该智能体就是部署方所声称的那样。</p>
-        <p>这不是纯粹的技术凭证问题，而是知情同意架构问题。护理对象或其法定代表人，必须被告知智能体的初始权限范围、其授权链，以及该范围被约束的机制。引导不仅是颁发正确密码学凭证的问题，还是使凭证含义对护理关系中的非技术参与者可理解的问题。</p>
-        <p>一个初始权限对受影响者不透明的智能体，无论密码学实现多么正确，都无法满足照护领域的知情同意要求。照护场景中的信任引导，只有在技术注册与人的知情同意对齐时才算完成：注册时智能体的实际权限范围，与被解释并被接受的范围一致。将注册视为纯技术步骤的照护领域部署方，留下了空白的同意层。这个缺口不会自行弥合——在受监管的照护环境中，这恰恰是审计程序首先寻找的缺口。</p>
-
-        <h2>这需要什么</h2>
-        <p>信任必须先被锚定，才能被延伸。注册时刻——智能体在新环境中获得首个凭证的节点——是链条要么可验证地开始，要么凭假设开始的地方。假设会复利累积：无法验证的信任根无法被审计，无法被审计的信任根在出错时无法被否认。</p>
-        <p>由此引出三项要求。第一，注册凭证必须从一开始就使用抗量子原语——对根源的改造是重新注册，不是补丁。第二，对于高后果领域的智能体，注册必须包含对运行配置的硬件证明，使身份主张不再是自我断言。第三，在照护场景中，技术注册与人的知情同意流程必须共同设计，而非依次进行——智能体的权限范围必须对受其影响的人可读，而不只是对部署它的运营方透明。</p>
-        <p>对于在高后果环境中运作的智能体，信任引导不是部署细节，而是所有后续问责主张赖以成立的架构决策。</p>
-      </div>
-
-      <div class="essay-nav">
-        <a href="/blog/">&larr; 所有文章</a>
-        <a href="/blog/sandboxing-imperative">另见：沙箱强制令 →</a>
-      </div>
-    </div>
-
-    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
-    <div class="essay-lang" data-lang-content="zht">
-      <span class="essay-topic">× 量子安全 × 硬件 × 人類照護</span>
-      <h1 class="essay-title">信任引導問題：在智能體被信任之前，必須有人先信任鏈條的第一環</h1>
-      <div class="essay-meta">
-        <span class="essay-byline">作者：Asaptic Labs</span>
-        <span class="essay-date">2026-05-23</span>
-        <span class="essay-date">5 分鐘閱讀</span>
-      </div>
-      <div class="essay-body">
-        <p>每個安全模型都假設存在一個信任根。憑證鏈終止於一個根CA，瀏覽器信任它，是因為某個人的決定將它安置在那裡。金鑰交換能夠成立，是因為雙方共享了預先建立的秘密，或共同信任某個第三方。這些引導過程如此慣常，以至於從業者鮮少審視它們。但對於部署在高後果領域的AI智能體，引導問題以新的緊迫性重新浮現：在智能體被信任之前，必須有人先信任鏈條的第一環。而那第一環的架構，決定了關於該智能體的所有後續主張究竟是可驗證的，還是僅憑斷言。</p>
-
-        <h2>注冊時刻</h2>
-        <p>智能體獲得首個憑證的那一刻，是注冊時刻。這是智能體生命週期中風險最高的節點：沒有既往記錄，沒有行為證明，沒有可供審查的決策歷史。在常規系統中，注冊被視為一項行政步驟——一個有人在系統上線前處理的配置任務。</p>
-        <p>對於AI智能體，這種框架是不夠的。智能體在注冊時獲得的憑證，定義了它初始的權限範圍。如果該憑證因配置者偏向便利而頒發過寬，智能體便帶著尚未被證明合理的常駐訪問權限進入世界。如果注冊渠道本身被攻陷，智能體整個憑證歷史從第一刻起就已被污染。</p>
-        <p>在後量子安全節點，注冊時刻是演算法選擇固化之處。一個以經典密碼學憑證注冊、進入正在進行抗量子遷移的系統的智能體，從第一天起就攜帶著脆弱的身份。注冊憑證是密碼學譜系的起點節點：若起點使用了已廢棄的演算法，補救措施不是打補丁，而是重新注冊。從一開始就以抗量子原語正確完成注冊，是避免脆弱根源的唯一方式。之後的每一次金鑰輪換、每一次憑證更新、每一條審計日誌條目，其強度都不超過第一環所允許的上限。</p>
-
-        <h2>硬件作為首個信任錨點</h2>
-        <p>當第一個信任關係根植於硬件時，注冊問題得到了最為清晰的解決。可信平台模組或硬件安全模組，可以在注冊時證明智能體正在特定的、可測量的軟件配置上運行。這一證明由硬件本身簽署——而非由可能在注冊憑證頒發之前就已被攻陷的軟件進程簽署。</p>
-        <p>注冊時的硬件證明，回答了流程控制無法回答的問題：這是營運方意圖部署的那個智能體嗎？軟件證明是智能體關於自身的主張。硬件證明是平台關於其正在運行什麼的主張。對於沒有既往歷史的智能體，硬件證明是唯一不依賴於對智能體本身的既有信任的身份主張形式。</p>
-        <p>其含義是實際的。對於部署在高後果領域的智能體——安全基礎設施、健康數據系統、金融授權流水線——注冊時的硬件證明不是高級選項，而是整個後續信任關係獲得可驗證根源的機制。沒有它，營運方對已部署智能體的信心完全依賴於事後無法審計的流程控制。「我怎麼知道這就是我批准的那個智能體？」這個問題，在注冊完全由軟件中介時，沒有令人滿意的答案。</p>
-        <p>還有一個可組合性論點。智能體越來越多地在多智能體流水線中運作，一個智能體調用另一個智能體並傳遞派生權限。在這樣的流水線中，無法在注冊時驗證的信任根，在任何下游節點也無法驗證。引導問題不局限於鏈條中的第一個智能體——它在每一次後續委托中傳播。在首個節點進行硬件根源注冊，是使下游信任主張連貫而非循環的前提。</p>
-
-        <h2>照護場景中的信任引導</h2>
-        <p>在照護場景中，信任引導問題有一個硬件單獨無法解決的人的維度。當一個智能體被部署以協助照護——排班、病歷訪問、環境管理、用藥提醒——受其決策影響的人，必須有某種有根據的理由相信該智能體就是部署方所聲稱的那樣。</p>
-        <p>這不是純粹的技術憑證問題，而是知情同意架構問題。護理對象或其法定代理人，必須被告知智能體的初始權限範圍、其授權鏈，以及該範圍被約束的機制。引導不僅是頒發正確密碼學憑證的問題，還是使憑證含義對護理關係中的非技術參與者可理解的問題。</p>
-        <p>一個初始權限對受影響者不透明的智能體，無論密碼學實現多麼正確，都無法滿足照護領域的知情同意要求。照護場景中的信任引導，只有在技術注冊與人的知情同意對齊時才算完成：注冊時智能體的實際權限範圍，與被解釋並被接受的範圍一致。將注冊視為純技術步驟的照護領域部署方，留下了空白的同意層。這個缺口不會自行彌合——在受監管的照護環境中，這恰恰是審計程序首先尋找的缺口。</p>
-
-        <h2>這需要什麼</h2>
-        <p>信任必須先被錨定，才能被延伸。注冊時刻——智能體在新環境中獲得首個憑證的節點——是鏈條要麼可驗證地開始，要麼憑假設開始的地方。假設會複利累積：無法驗證的信任根無法被審計，無法被審計的信任根在出錯時無法被否認。</p>
-        <p>由此引出三項要求。第一，注冊憑證必須從一開始就使用抗量子原語——對根源的改造是重新注冊，不是補丁。第二，對於高後果領域的智能體，注冊必須包含對運行配置的硬件證明，使身份主張不再是自我斷言。第三，在照護場景中，技術注冊與人的知情同意流程必須共同設計，而非依次進行——智能體的權限範圍必須對受其影響的人可讀，而不只是對部署它的營運方透明。</p>
-        <p>對於在高後果環境中運作的智能體，信任引導不是部署細節，而是所有後續問責主張賴以成立的架構決策。</p>
-      </div>
-
-      <div class="essay-nav">
-        <a href="/blog/">&larr; 所有文章</a>
-        <a href="/blog/sandboxing-imperative">另見：沙箱強制令 →</a>
-      </div>
-    </div>
 
   </main>
 
@@ -294,28 +213,14 @@
 <footer class="foot">
   <div class="row">
     <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI trade execution — we win and fulfill cross-border government tenders, paid on results.</div></div>
-    <div class="col"><h4>Product</h4><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
-    <div class="col"><h4>For you</h4><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
-    <div class="col"><h4>Resources</h4><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
-    <div class="col"><h4>Company</h4><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
+    <div class="col"><p class="col-h">Product</p><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
+    <div class="col"><p class="col-h">For you</p><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
+    <div class="col"><p class="col-h">Resources</p><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
+    <div class="col"><p class="col-h">Company</p><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
   </div>
   <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/legal/privacy">Privacy</a> · <a href="/legal/terms">Terms</a> · Cross-Standard data CC BY 4.0</div>
 </footer>
 <!-- ASAPTIC:FOOTER:END -->
 
-  <script>
-    const btns = document.querySelectorAll('.lang-btn');
-    const sections = document.querySelectorAll('[data-lang-content]');
-    function setLang(lang) {
-      sections.forEach(s => {
-        s.classList.toggle('active', s.dataset.langContent === lang);
-      });
-      btns.forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
-      localStorage.setItem('al-lang', lang);
-    }
-    const saved = localStorage.getItem('al-lang') || 'en';
-    setLang(saved);
-    btns.forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
-  </script>
 </body>
 </html>

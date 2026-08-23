@@ -26,10 +26,9 @@
 <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/graceful-degradation-problem">
 <link rel="alternate" hreflang="pt-PT" href="https://asaptic.com/pt/blog/graceful-degradation-problem">
 <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/graceful-degradation-problem">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/v2/shell.css?v=20260823a">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <!-- ASAPTIC:HEAD:END -->
 
 
@@ -159,8 +158,6 @@
   <main class="essay-wrap">
     <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
 
-    <!-- ─── English ──────────────────────────────────────────────────── -->
-    <div class="essay-lang" data-lang-content="en">
       <span class="essay-topic">× QUANTUM SECURITY · × HARDWARE · × PHYSICAL-WORLD CARE</span>
       <h1 class="essay-title">The graceful degradation problem: what an AI agent owes you when it cannot deliver</h1>
       <div class="essay-meta">
@@ -203,113 +200,23 @@
         <a href="/blog/">&larr; All essays</a>
         <a href="/blog/multi-tenancy-isolation-problem">Previous: Multi-tenancy isolation →</a>
       </div>
-    </div>
 
-    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
-    <div class="essay-lang" data-lang-content="zh">
-      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界护理</span>
-      <h1 class="essay-title">渐进式降级问题：当AI智能体无法完成任务时，它对你的义务</h1>
-      <div class="essay-meta">
-        <span class="essay-byline">作者：Asaptic Labs</span>
-        <span class="essay-date">2026-05-25</span>
-        <span class="essay-date">6 分钟阅读</span>
-      </div>
-      <div class="essay-body">
-        <p>关于AI智能体问责的讨论，通常聚焦于其所采取的行动：它是否在授权范围内行事？是否签发了行动回执？行动是否可归因于正确的委托人？这些都是正确的问题——但前提是智能体处于正常运行状态。</p>
-        <p>这并非全部的问题。系统会出故障，硬件会老化，网络会断连，模型置信度会下降到不宜继续推理的区间。在每一种情形下，智能体都面临着几乎从未被明确指示过如何处理的抉择。它在这些时刻的行为，与正常运行下的行为同样关键。</p>
-        <p>渐进式降级并非附加在问责框架上的可靠性指标，而是问责框架本身的组成部分。一个在正常情况下行为正确、却在异常情况下随意行事的智能体，其问责覆盖存在巨大漏洞——而这一漏洞往往在风险最高的时刻才会显现。</p>
 
-        <h2>三种故障模式</h2>
-        <p>第一是服务降级。当智能体运行在多组件流水线中时，任何一个环节都可能随时失去访问。当授权端点不可达时，大多数现有部署的默认做法是继续运行，因为运营连续性被视为首要目标。正确答案取决于授权端点所把控的内容。对于低风险读取操作，继续运行或许可以接受；但如果是护理环境中的物理操作——实施治疗、调整设备参数、发送临床警报——在未获授权确认的情况下继续执行，并非"有所降级但可接受"的模式，而是一种问责失败。</p>
-        <p>第二是硬件降级。当执行平台出现故障时——传感器失效、安全飞地不可用、TPM停止响应——认证链断裂。一个在认证基础设施失效后仍继续运行的智能体，所产生的行动已无从问责。在物理世界护理部署中，未经认证的行动不只是日志空缺，而是无法验证、无法回溯、无法追溯到具体硬件上下文的行动。</p>
-        <p>第三是模型不确定性。对于分布外输入或对抗性构造的提示，模型输出分布会变得不可靠，而模型本身缺乏可靠的内省能力——主观置信度有时在客观准确性最低时反而最高。安全降级行为的规范，不能依赖智能体的自我检测，而必须依赖外部监控、置信区间和强制停止阈值。</p>
 
-        <h2>为何这是问责要求</h2>
-        <p>只能对正常情况下行动负责的智能体，仅构建了半个问责体系。另一半在于：明确规定智能体在出错时应如何应对，并留下证明其确实如此行事的审计记录。</p>
-        <p>审查AI部署的调查人员和运营方不只会问正常运行时发生了什么，还会问：当智能体遭遇非预期条件时，它是否安全停止？是否上报？是否终止行动？还是假装故障未曾发生地继续运行？这些问题的答案与正常运行时的问题同等重要——如果降级行为从未被明确规定，则更难以给出。</p>
-
-        <h2>在三个交叉点的表现</h2>
-        <p>在后量子安全交叉点，渐进式降级涉及密码学基础设施。无法验证后量子绑定的智能体不应继续执行。正确的降级模式是停止并上报，而非退回到较弱的密码方案——退回经典密码学不是优雅降级，而是伪装成可靠性特性的安全回退。</p>
-        <p>在硬件交叉点，降级是传感器与认证问题。执行环境失去硬件完整性保证的智能体，必须将自身视为已越出问责边界，并停止一切后果性操作，而非假设认证链很快就会恢复。在认证间隙期间采取行动的智能体，对这段时间内的行为没有任何有意义的问责。</p>
-        <p>在物理世界护理交叉点，风险最为直接。在传感器输入或授权链断裂后仍悄然继续运行的护理智能体，不是在艰难条件下尽力而为——它是在完全脱离问责框架的情况下运作。依赖其输出的住客和临床人员，所信赖的系统已不再满足其建议被验证时所依赖的前提条件。护理场景中的静默降级不是软件故障，而是护理失误，对人的福祉有直接影响。</p>
-
-        <h2>规定安全停止点</h2>
-        <p>正确的架构会提前、明确地规定每类后果性操作必须停止的条件。这要求在故障发生前预判故障模式，为每类操作指定降级类别，并建立能够检测阈值越界并触发受控停止的监控基础设施。这一规范是智能体部署问责面的一部分，应与权限模型、委托人层级和认证架构并列记录。</p>
-        <p>无法说明自身在无法完成任务时会如何应对的智能体，其问责设计尚未完成。问题不只是：能完成时，智能体是否正确行事？还在于：无法完成时，智能体是否正确停止？</p>
-      </div>
-      <div class="essay-nav">
-        <a href="/blog/">&larr; 全部文章</a>
-        <a href="/blog/multi-tenancy-isolation-problem">上篇：多租户隔离问题 →</a>
-      </div>
-    </div>
-
-    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
-    <div class="essay-lang" data-lang-content="zht">
-      <span class="essay-topic">× 量子安全 · × 硬件 · × 物理世界護理</span>
-      <h1 class="essay-title">漸進式降級問題：當AI智能體無法完成任務時，它對你的義務</h1>
-      <div class="essay-meta">
-        <span class="essay-byline">作者：Asaptic Labs</span>
-        <span class="essay-date">2026-05-25</span>
-        <span class="essay-date">6 分鐘閱讀</span>
-      </div>
-      <div class="essay-body">
-        <p>關於AI智能體問責的討論，通常聚焦於其所採取的行動：它是否在授權範圍內行事？是否簽發了行動回執？行動是否可歸因於正確的委託人？這些都是正確的問題——但前提是智能體處於正常運行狀態。</p>
-        <p>這並非全部的問題。系統會出故障，硬件會老化，網絡會斷連，模型置信度會下降到不宜繼續推理的區間。在每一種情形下，智能體都面臨著幾乎從未被明確指示過如何處理的抉擇。它在這些時刻的行為，與正常運行下的行為同樣關鍵。</p>
-        <p>漸進式降級並非附加在問責框架上的可靠性指標，而是問責框架本身的組成部分。一個在正常情況下行為正確、卻在異常情況下隨意行事的智能體，其問責覆蓋存在巨大漏洞——而這一漏洞往往在風險最高的時刻才會顯現。</p>
-
-        <h2>三種故障模式</h2>
-        <p>第一是服務降級。當智能體運行在多組件流水線中時，任何一個環節都可能隨時失去訪問。當授權端點不可達時，大多數現有部署的預設做法是繼續運行，因為運營連續性被視為首要目標。正確答案取決於授權端點所把控的內容。對於低風險讀取操作，繼續運行或許可以接受；但如果是護理環境中的物理操作——實施治療、調整設備參數、發送臨床警報——在未獲授權確認的情況下繼續執行，並非「有所降級但可接受」的模式，而是一種問責失敗。</p>
-        <p>第二是硬件降級。當執行平台出現故障時——感測器失效、安全飛地不可用、TPM停止響應——認證鏈斷裂。一個在認證基礎設施失效後仍繼續運行的智能體，所產生的行動已無從問責。在物理世界護理部署中，未經認證的行動不只是日誌空缺，而是無法驗證、無法回溯、無法追溯到具體硬件上下文的行動。</p>
-        <p>第三是模型不確定性。對於分佈外輸入或對抗性構造的提示，模型輸出分佈會變得不可靠，而模型本身缺乏可靠的內省能力——主觀置信度有時在客觀準確性最低時反而最高。安全降級行為的規範，不能依賴智能體的自我檢測，而必須依賴外部監控、置信區間和強制停止閾值。</p>
-
-        <h2>為何這是問責要求</h2>
-        <p>只能對正常情況下行動負責的智能體，僅構建了半個問責體系。另一半在於：明確規定智能體在出錯時應如何應對，並留下證明其確實如此行事的審計記錄。</p>
-        <p>審查AI部署的調查人員和運營方不只會問正常運行時發生了什麼，還會問：當智能體遭遇非預期條件時，它是否安全停止？是否上報？是否終止行動？還是假裝故障未曾發生地繼續運行？這些問題的答案與正常運行時的問題同等重要——如果降級行為從未被明確規定，則更難以給出。</p>
-
-        <h2>在三個交叉點的表現</h2>
-        <p>在後量子安全交叉點，漸進式降級涉及密碼學基礎設施。無法驗證後量子綁定的智能體不應繼續執行。正確的降級模式是停止並上報，而非退回到較弱的密碼方案——退回經典密碼學不是優雅降級，而是偽裝成可靠性特性的安全回退。</p>
-        <p>在硬件交叉點，降級是感測器與認證問題。執行環境失去硬件完整性保證的智能體，必須將自身視為已越出問責邊界，並停止一切後果性操作，而非假設認證鏈很快就會恢復。在認證間隙期間採取行動的智能體，對這段時間內的行為沒有任何有意義的問責。</p>
-        <p>在物理世界護理交叉點，風險最為直接。在感測器輸入或授權鏈斷裂後仍悄然繼續運行的護理智能體，不是在艱難條件下盡力而為——它是在完全脫離問責框架的情況下運作。依賴其輸出的住客和臨床人員，所信賴的系統已不再滿足其建議被驗證時所依賴的前提條件。護理場景中的靜默降級不是軟件故障，而是護理失誤，對人的福祉有直接影響。</p>
-
-        <h2>規定安全停止點</h2>
-        <p>正確的架構會提前、明確地規定每類後果性操作必須停止的條件。這要求在故障發生前預判故障模式，為每類操作指定降級類別，並建立能夠檢測閾值越界並觸發受控停止的監控基礎設施。這一規範是智能體部署問責面的一部分，應與權限模型、委託人層級和認證架構並列記錄。</p>
-        <p>無法說明自身在無法完成任務時會如何應對的智能體，其問責設計尚未完成。問題不只是：能完成時，智能體是否正確行事？還在於：無法完成時，智能體是否正確停止？</p>
-      </div>
-      <div class="essay-nav">
-        <a href="/blog/">&larr; 全部文章</a>
-        <a href="/blog/multi-tenancy-isolation-problem">上篇：多租戶隔離問題 →</a>
-      </div>
-    </div>
   </main>
 
   <!-- ASAPTIC:FOOTER:START -->
 <footer class="foot">
   <div class="row">
     <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI trade execution — we win and fulfill cross-border government tenders, paid on results.</div></div>
-    <div class="col"><h4>Product</h4><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
-    <div class="col"><h4>For you</h4><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
-    <div class="col"><h4>Resources</h4><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
-    <div class="col"><h4>Company</h4><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
+    <div class="col"><p class="col-h">Product</p><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
+    <div class="col"><p class="col-h">For you</p><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
+    <div class="col"><p class="col-h">Resources</p><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
+    <div class="col"><p class="col-h">Company</p><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
   </div>
   <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/legal/privacy">Privacy</a> · <a href="/legal/terms">Terms</a> · Cross-Standard data CC BY 4.0</div>
 </footer>
 <!-- ASAPTIC:FOOTER:END -->
 
-  <script>
-    const savedLang = localStorage.getItem('asaptic-lang') || 'en';
-    function applyLang(lang) {
-      document.querySelectorAll('.essay-lang').forEach(el => {
-        el.classList.toggle('active', el.dataset.langContent === lang);
-      });
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.lang === lang);
-      });
-      localStorage.setItem('asaptic-lang', lang);
-    }
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
-    });
-    applyLang(savedLang);
-  </script>
 </body>
 </html>

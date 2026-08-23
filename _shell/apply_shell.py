@@ -393,7 +393,7 @@ def render_footer(cfg, loc, disclaimer):
                 href = "@" + href
             links.append('<a href="%s">%s</a>' % (cfg.resolve_href(href, loc),
                                                   esc(strip_suffix(cfg, lab))))
-        cols.append('    <div class="col"><h4>%s</h4>%s</div>\n' % (esc(col["h"]), "".join(links)))
+        cols.append('    <div class="col"><p class="col-h">%s</p>%s</div>\n' % (esc(col["h"]), "".join(links)))
         if col["h"] == cfg.raw["footer_extra_col"].get("after"):
             cols.append(render_extra_col(cfg, loc))
     extra = render_extra_col(cfg, loc)
@@ -418,7 +418,7 @@ def render_extra_col(cfg, loc):
     c = cfg.raw["footer_extra_col"]
     links = ['<a href="%s">%s</a>' % (cfg.resolve_href(l["href"], loc), esc(label(l["label"], loc)))
              for l in c["links"]]
-    return '    <div class="col"><h4>%s</h4>%s</div>\n' % (esc(label(c["h"], loc)), "".join(links))
+    return '    <div class="col"><p class="col-h">%s</p>%s</div>\n' % (esc(label(c["h"], loc)), "".join(links))
 
 
 def render_legal(cfg, loc):

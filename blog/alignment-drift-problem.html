@@ -26,10 +26,9 @@
 <link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/alignment-drift-problem">
 <link rel="alternate" hreflang="pt-PT" href="https://asaptic.com/pt/blog/alignment-drift-problem">
 <link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/alignment-drift-problem">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/v2/shell.css?v=20260823a">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <!-- ASAPTIC:HEAD:END -->
 
 
@@ -142,8 +141,6 @@
   <main class="essay-wrap">
     <a href="/blog/" class="essay-back">&larr; Notes from the Crossings</a>
 
-    <!-- ─── English ──────────────────────────────────────────────────── -->
-    <div class="essay-lang" data-lang-content="en">
       <span class="essay-topic">× QUANTUM SECURITY × HARDWARE × PHYSICAL-WORLD CARE</span>
       <h1 class="essay-title">The alignment drift problem: when AI agent alignment erodes in the field</h1>
       <div class="essay-meta">
@@ -183,125 +180,24 @@
         <a href="/blog/">&larr; All essays</a>
         <a href="/blog/data-provenance-problem">Also: The data provenance problem →</a>
       </div>
-    </div>
 
-    <!-- ─── 简体中文 ──────────────────────────────────────────────────── -->
-    <div class="essay-lang" data-lang-content="zh">
-      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照护</span>
-      <h1 class="essay-title">对齐漂移问题：AI智能体在部署后如何悄然失准</h1>
-      <div class="essay-meta">
-        <span class="essay-byline">作者：Asaptic Labs</span>
-        <span class="essay-date">2026-05-24</span>
-        <span class="essay-date">5 分钟阅读</span>
-      </div>
-      <div class="essay-body">
-        <p>AI智能体在部署时处于对齐状态。其行为经过校准，符合委托方在部署时希望实现的目标、约束条件与评估标准。但这种对齐并非永久有效。世界在变化，运行上下文在变化，威胁态势在变化。智能体的校准参数不会自动随之更新。由此产生的便是对齐漂移：智能体实际行为与委托方当前期望之间的逐渐背离，且整个过程不会触发任何明确的审查事件。</p>
 
-        <p>对齐漂移不同于程序错误、规范失当与身份变更。程序错误产生可被复现和修复的错误行为；规范失当产生的是持续满足书面要求但实质不符的行为；身份变更则发生在模型或配置被明确更新时，会触发重新注册的检查点。对齐漂移不属于上述任何一种。它是在一个悄然变得不同于智能体初始校准时上下文中部署的累积效应。</p>
 
-        <h2>沉默使其成为危险</h2>
-        <p>大多数智能体监控框架旨在检测行为偏差，通过将智能体当前行为与历史行为相比较来实现。对齐漂移对这种方法而言是透明的。一个上周失准、本周同样失准的智能体，不会产生任何异常信号。监控器看到的是一致的行为；而这种一致性本身就是问题所在。</p>
-
-        <p>设想一个针对特定患者群体——具有特定病症分布、用药情况和活动能力水平——进行校准的照护智能体。十二个月后，该群体发生了变化：新入住者带来不同的健康档案。但智能体的校准参数仍然锚定在原始分布上。其建议开始出现细微偏差——不是灾难性的失误，无法通过单次事件监控检测到，但对当前患者群体而言持续不够适当。智能体在做它被训练去做的事；而它正在服务的群体，已不再是它被训练时所针对的群体。</p>
-
-        <h2>后量子维度</h2>
-        <p>后量子安全为对齐漂移增加了特定轴向。一个针对经典对抗威胁模型进行校准的智能体，在面对量子能力的攻击者时，定义上已处于失准状态。从经典威胁到后量子威胁的过渡不是一个边界清晰的离散事件，而是一个逐渐变化的概率分布：随着量子能力的成熟，经典签名被伪造的可能性不断上升。一个被正确校准为信任基于格的签名方案而非经典密钥材料的智能体，在特定威胁模型下做出了正确判断。但随着威胁模型的演进，信任阈值可能需要重新校准——而智能体没有任何机制察觉其校准正在老化。</p>
-
-        <p>同样的动态适用于智能体自身的签名行为。一个被校准为使用在部署时强度充分的算法族进行决策签名的智能体，可能逐渐使用一个正在变弱的算法。校准本身没有错；是世界发生了移动。</p>
-
-        <h2>硬件退化即对齐漂移</h2>
-        <p>物理硬件引入了更深一层的维度。传感器会随时间退化。一个使用新鲜近距传感器校准的照护机器人，随着传感器老化，可能产生系统性偏差的感知。智能体的世界模型建立在不再精准的传感器读数之上。其校准——在部署时对当时的传感器读数而言是正确的——与实际物理环境之间的背离日益加剧。</p>
-
-        <p>这是硬件层面的对齐漂移：智能体的行为对于其接收到的传感器读数而言是正确的；传感器读数对于真实世界而言不再正确。修复不是软件层面的工作，而需要物理世界的干预。智能体无法自行诊断这一问题；监控也无法通过将当前行为与历史行为比较来发现它。这需要一套定期对照物理环境真实观察结果来检验智能体输出的测试机制。</p>
-
-        <h2>设计应对</h2>
-        <p>将对齐漂移作为一级运营关切来对待，需要三件事。第一，对齐陈旧度计时器：部署记录应包括最后一次校准的日期以及校准时的环境条件，该计时器在重新校准前持续运行。第二，重新校准触发条件：运行上下文的特定变化——群体转变、威胁态势变化、硬件维护周期——应触发强制性的重新校准审查，而不仅是性能审查。第三，覆盖信号：人工干预是对齐漂移最可靠的证据。记录不仅是干预内容、还有干预原因的覆盖日志，是对齐漂移探测器。当一批覆盖事件共享同一类失效模式时，这批事件就是智能体校准不再匹配其运行上下文的证据。</p>
-
-        <p>因此，覆盖日志不仅仅是审计轨迹，它是对齐漂移的传感器。仅将其视为合规记录的组织，会错过其中蕴含的信号。</p>
-
-        <p>对齐漂移不是灾难性的失效模式，而是一种缓慢的退化，不产生任何值得单独记录的事件。这正是它成为最难治理的智能体失效类型的原因——也是从一开始就必须为其设计防护的原因。</p>
-      </div>
-      <div class="essay-nav">
-        <a href="/blog/">&larr; 全部文章</a>
-        <a href="/blog/data-provenance-problem">延伸阅读：数据溯源问题 →</a>
-      </div>
-    </div>
-
-    <!-- ─── 繁體中文 ──────────────────────────────────────────────────── -->
-    <div class="essay-lang" data-lang-content="zht">
-      <span class="essay-topic">× 量子安全 × 硬件 × 物理世界照護</span>
-      <h1 class="essay-title">對齊漂移問題：AI智能體在部署後如何悄然失準</h1>
-      <div class="essay-meta">
-        <span class="essay-byline">作者：Asaptic Labs</span>
-        <span class="essay-date">2026-05-24</span>
-        <span class="essay-date">5 分鐘閱讀</span>
-      </div>
-      <div class="essay-body">
-        <p>AI智能體在部署時處於對齊狀態。其行為經過校準，符合委託方在部署時希望實現的目標、約束條件與評估標準。但這種對齊並非永久有效。世界在變化，運行上下文在變化，威脅態勢在變化。智能體的校準參數不會自動隨之更新。由此產生的便是對齊漂移：智能體實際行為與委託方當前期望之間的逐漸背離，且整個過程不會觸發任何明確的審查事件。</p>
-
-        <p>對齊漂移不同於程式錯誤、規範失當與身份變更。程式錯誤產生可被複現和修復的錯誤行為；規範失當產生的是持續滿足書面要求但實質不符的行為；身份變更則發生在模型或配置被明確更新時，會觸發重新註冊的檢查點。對齊漂移不屬於上述任何一種。它是在一個悄然變得不同於智能體初始校準時上下文中部署的累積效應。</p>
-
-        <h2>沉默使其成為危險</h2>
-        <p>大多數智能體監控框架旨在檢測行為偏差，通過將智能體當前行為與歷史行為相比較來實現。對齊漂移對這種方法而言是透明的。一個上週失準、本週同樣失準的智能體，不會產生任何異常訊號。監控器看到的是一致的行為；而這種一致性本身就是問題所在。</p>
-
-        <p>設想一個針對特定患者群體——具有特定病症分佈、用藥情況和活動能力水平——進行校準的照護智能體。十二個月後，該群體發生了變化：新入住者帶來不同的健康檔案。但智能體的校準參數仍然錨定在原始分佈上。其建議開始出現細微偏差——不是災難性的失誤，無法通過單次事件監控檢測到，但對當前患者群體而言持續不夠適當。智能體在做它被訓練去做的事；而它正在服務的群體，已不再是它被訓練時所針對的群體。</p>
-
-        <h2>後量子維度</h2>
-        <p>後量子安全為對齊漂移增加了特定軸向。一個針對經典對抗威脅模型進行校準的智能體，在面對量子能力的攻擊者時，定義上已處於失準狀態。從經典威脅到後量子威脅的過渡不是一個邊界清晰的離散事件，而是一個逐漸變化的概率分佈：隨著量子能力的成熟，經典簽名被偽造的可能性不斷上升。一個被正確校準為信任基於格的簽名方案而非經典密鑰材料的智能體，在特定威脅模型下做出了正確判斷。但隨著威脅模型的演進，信任閾值可能需要重新校準——而智能體沒有任何機制察覺其校準正在老化。</p>
-
-        <p>同樣的動態適用於智能體自身的簽名行為。一個被校準為使用在部署時強度充分的演算法族進行決策簽名的智能體，可能逐漸使用一個正在變弱的演算法。校準本身沒有錯；是世界發生了移動。</p>
-
-        <h2>硬件退化即對齊漂移</h2>
-        <p>物理硬件引入了更深一層的維度。傳感器會隨時間退化。一個使用全新近距傳感器校準的照護機器人，隨著傳感器老化，可能產生系統性偏差的感知。智能體的世界模型建立在不再精準的傳感器讀數之上。其校準——在部署時對當時的傳感器讀數而言是正確的——與實際物理環境之間的背離日益加劇。</p>
-
-        <p>這是硬件層面的對齊漂移：智能體的行為對於其接收到的傳感器讀數而言是正確的；傳感器讀數對於真實世界而言不再正確。修復不是軟件層面的工作，而需要物理世界的干預。智能體無法自行診斷這一問題；監控也無法通過將當前行為與歷史行為比較來發現它。這需要一套定期對照物理環境真實觀察結果來檢驗智能體輸出的測試機制。</p>
-
-        <h2>設計應對</h2>
-        <p>將對齊漂移作為一級運營關切來對待，需要三件事。第一，對齊陳舊度計時器：部署記錄應包括最後一次校準的日期以及校準時的環境條件，該計時器在重新校準前持續運行。第二，重新校準觸發條件：運行上下文的特定變化——群體轉變、威脅態勢變化、硬件維護週期——應觸發強制性的重新校準審查，而不僅是性能審查。第三，覆蓋訊號：人工干預是對齊漂移最可靠的證據。記錄不僅是干預內容、還有干預原因的覆蓋日誌，是對齊漂移探測器。當一批覆蓋事件共享同一類失效模式時，這批事件就是智能體校準不再匹配其運行上下文的證據。</p>
-
-        <p>因此，覆蓋日誌不僅僅是審計軌跡，它是對齊漂移的傳感器。僅將其視為合規記錄的組織，會錯過其中蘊含的訊號。</p>
-
-        <p>對齊漂移不是災難性的失效模式，而是一種緩慢的退化，不產生任何值得單獨記錄的事件。這正是它成為最難治理的智能體失效類型的原因——也是從一開始就必須為其設計防護的原因。</p>
-      </div>
-      <div class="essay-nav">
-        <a href="/blog/">&larr; 全部文章</a>
-        <a href="/blog/data-provenance-problem">延伸閱讀：數據溯源問題 →</a>
-      </div>
-    </div>
   </main>
 
   <!-- ASAPTIC:FOOTER:START -->
 <footer class="foot">
   <div class="row">
     <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI trade execution — we win and fulfill cross-border government tenders, paid on results.</div></div>
-    <div class="col"><h4>Product</h4><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
-    <div class="col"><h4>For you</h4><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
-    <div class="col"><h4>Resources</h4><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
-    <div class="col"><h4>Company</h4><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
+    <div class="col"><p class="col-h">Product</p><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/standards">Cross-Standard</a><a href="/platform">Developers</a></div>
+    <div class="col"><p class="col-h">For you</p><a href="/contact">Buyers &amp; institutions</a><a href="/suppliers">Chinese suppliers</a><a href="/contact">Channel partners</a></div>
+    <div class="col"><p class="col-h">Resources</p><a href="/blog/">Notes</a><a href="/robot/">Robot 101</a><a href="/university/">Trade University</a><a href="/changelog/">Changelog</a></div>
+    <div class="col"><p class="col-h">Company</p><a href="/contact">Talk to us</a><a href="/tenders">Live tenders</a></div>
   </div>
   <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/legal/privacy">Privacy</a> · <a href="/legal/terms">Terms</a> · Cross-Standard data CC BY 4.0</div>
 </footer>
 <!-- ASAPTIC:FOOTER:END -->
 
   <script src="../content.js"></script>
-  <script>
-    // Language switcher
-    (function () {
-      const btns = document.querySelectorAll('.lang-btn');
-      const sections = document.querySelectorAll('[data-lang-content]');
-      function activate(lang) {
-        sections.forEach(s => {
-          s.classList.toggle('active', s.dataset.langContent === lang);
-        });
-        btns.forEach(b => {
-          b.classList.toggle('active', b.dataset.lang === lang);
-        });
-        localStorage.setItem('al_lang', lang);
-      }
-      btns.forEach(b => b.addEventListener('click', () => activate(b.dataset.lang)));
-      const saved = localStorage.getItem('al_lang') || 'en';
-      activate(saved);
-    })();
-  </script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 /* ============================================================================
    asaptic.com — assets/v2/shell.css
    ONE stylesheet for the whole site. Sections:
+     0  fonts     — self-hosted @font-face (Inter, JetBrains Mono; OFL)
      1  v2 theme  — tokens, reset, body, scrollbar, header shell, footer shell
      2  compat    — old style.css token names + structural primitives, on v2
      3  subnav    — .subrow / .crumbs / .sublinks + footer-note additions
@@ -11,13 +12,44 @@
    and semantically identical on tender/index.html (whitespace only). Do not
    hand-edit section 1 — re-lift it if the inline block ever changes.
 
-   FONTS: v2 pages ship NO webfont <link> and NO @import; 'Inter' / 'JetBrains
-   Mono' resolve from the local machine and otherwise fall through the system
-   stack in --sans / --mono. This file deliberately keeps that behaviour (no
-   @import) so it adds ZERO network requests and byte-matches v2 rendering.
-   Legacy pages (blog/*, standard/*) already carry their own Google Fonts
-   <link> in <head>; leave those links in place when you swap the stylesheet.
+   FONTS (2026-08-24 self-host migration): every page that loads this file —
+   v2 flat pages included — now gets 'Inter' / 'JetBrains Mono' from section 0
+   below, served from /assets/fonts/ on the same origin (no more
+   fonts.googleapis.com / fonts.gstatic.com round-trip). Legacy pages
+   (blog/*, standard/*) had their <head> Google Fonts <link> + preconnects
+   replaced with 2 <link rel=preload> tags (one per subset-0/variable-font
+   file below — inter-latin.woff2 covers 400 AND 600, so a 3rd "inter-600"
+   preload would just duplicate-fetch the same URL) by _shell/apply_shell.py
+   — do not re-add the googleapis/gstatic links. See assets/fonts/LICENSE.md.
    ============================================================================ */
+
+/* ==========================================================================
+   0 — SELF-HOSTED FONTS (OFL) — Inter + JetBrains Mono, latin + latin-ext
+   Variable-font files (one per subset covers the whole weight range Google
+   Fonts would otherwise have split across 6/2 duplicate static-weight
+   files — verified byte-identical across weights for this UA). See
+   assets/fonts/LICENSE.md for the license + why-variable-font rationale.
+   ========================================================================== */
+@font-face{
+  font-family:'Inter';font-style:normal;font-weight:300 800;font-display:swap;
+  src:url('/assets/fonts/inter-latin-ext.woff2') format('woff2');
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face{
+  font-family:'Inter';font-style:normal;font-weight:300 800;font-display:swap;
+  src:url('/assets/fonts/inter-latin.woff2') format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:'JetBrains Mono';font-style:normal;font-weight:400 700;font-display:swap;
+  src:url('/assets/fonts/jetbrains-mono-latin-ext.woff2') format('woff2');
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face{
+  font-family:'JetBrains Mono';font-style:normal;font-weight:400 700;font-display:swap;
+  src:url('/assets/fonts/jetbrains-mono-latin.woff2') format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
 
 
 /* ==========================================================================
@@ -93,7 +125,7 @@ a{color:inherit}
 .foot:before{content:"";position:absolute;top:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(45,212,168,.35),transparent)}
 .foot .row{max-width:1240px;margin:0 auto;display:flex;flex-wrap:wrap;gap:40px;padding:46px 34px 46px}
 .foot .col{min-width:150px}
-.foot .col h4{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin:0 0 15px}
+.foot .col h4,.foot .col .col-h{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin:0 0 15px}
 .foot .col a{display:block;font-size:13.5px;color:var(--ink2);text-decoration:none;margin-bottom:10px;transition:color var(--dur) var(--ease)}.foot .col a:hover{color:#fff}
 .foot .brandcol{flex:1;min-width:220px}
 .foot .brandcol .b{font-weight:800;letter-spacing:.16em;color:#fff}
@@ -419,7 +451,7 @@ html.js-anim .fade-in{animation:shell-fade-in-safety .6s var(--ease) .1s both}
   footer.foot .legal{font-size:12px;line-height:1.7;padding:0 20px 32px}
   footer.foot .legal a{display:inline-block;padding:4px 0}
 }
-@media(max-width:640px){footer.foot .col h4{font-size:12px} header.shell .subrow .crumbs{display:none} header.shell .subrow{padding-top:6px} header.shell .subrow .sublinks{margin-left:0;flex-basis:100%}}
+@media(max-width:640px){footer.foot .col h4,footer.foot .col .col-h{font-size:12px} header.shell .subrow .crumbs{display:none} header.shell .subrow{padding-top:6px} header.shell .subrow .sublinks{margin-left:0;flex-basis:100%}}
 @media(max-width:640px){html,body{overflow-x:clip}}
 
 /* dir index lists (standard/market|product|guides, tender/c) */
