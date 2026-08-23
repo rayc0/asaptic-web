@@ -39,8 +39,9 @@ function mainHtml(loc) {
     (byProd[c.product] = byProd[c.product] || []).push(c);
     (byMkt[c.market] = byMkt[c.market] || []).push(c);
   }
-  const link = (c) => `<a href="${L.pref}${c.url[loc] || c.url.en}">${esc((mktLabel[c.market]?.[loc]) || c.market)}</a>`;
-  const linkP = (c) => `<a href="${L.pref}${c.url[loc] || c.url.en}">${esc((prodLabel[c.product]?.[loc]) || c.product)}</a>`;
+  const hrefOf = (c) => c.url[loc] || (L.pref + c.url.en); // url.<loc> is already locale-prefixed
+  const link = (c) => `<a href="${hrefOf(c)}">${esc((mktLabel[c.market]?.[loc]) || c.market)}</a>`;
+  const linkP = (c) => `<a href="${hrefOf(c)}">${esc((prodLabel[c.product]?.[loc]) || c.product)}</a>`;
   let prodSec = "";
   for (const pid of Object.keys(byProd).sort()) {
     const items = byProd[pid].sort((a, b) => a.market.localeCompare(b.market)).map(link).join(" · ");
