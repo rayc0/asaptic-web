@@ -165,6 +165,10 @@ class Config(object):
             p = "/"
         elif relpath.endswith("/index.html"):
             p = "/" + relpath[: -len("index.html")]
+        elif relpath.endswith(".html"):
+            # Cloudflare Pages clean URLs: /x.html 308→ /x. All pre-existing
+            # canonicals/hreflang on the site are extensionless — match them.
+            p = "/" + relpath[: -len(".html")]
         else:
             p = "/" + relpath
         if self.absolute or force_absolute:

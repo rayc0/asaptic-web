@@ -277,7 +277,7 @@ def qualifying_navs(navs: list[dict]) -> tuple[list[dict], list[dict]]:
     counted, info = [], []
     for n in navs:
         cls = (n["attrs"].get("class") or "")
-        is_decorative = any(tok in cls for tok in ("crumbs", "tw-langs", "rb-langs"))
+        is_decorative = any(tok in cls for tok in ("crumbs", "sublinks", "tw-langs", "rb-langs"))
         if n["nested_in_nav"]:
             continue  # nested navs never counted, not reported separately (rare/malformed)
         if is_decorative:
