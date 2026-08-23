@@ -6,131 +6,254 @@
 <meta name="robots" content="noindex">
 <title>Asaptic — Proof Lab · 证据实验室</title>
 <meta name="description" content="Attack it in your browser. Feed the public contract any payload and watch it reject anything outside the 11 fields; mutate a company profile and watch the match re-score live. Our sanitization isn't a promise — it's a control you can attack.">
+<!-- ASAPTIC:HEAD:START -->
+<link rel="canonical" href="https://asaptic.com/demo/proof-lab/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260823a">
+<!-- ASAPTIC:HEAD:END -->
+
 <style>
-  :root{
-    --frame:#15140f; --paper:#f4f1e9; --paper-2:#ece7d8; --edge:#e8e2d3;
-    --ink:#211f18; --ink-2:#6b6656; --seal:#a8322c; --seal-deep:#8f2823;
+/* ASAPTIC:SCOPED pg-prooflab */
+body.pg-prooflab{
+    --frame:#15140f; --paper:#f4f1e9; --paper-2:#ece7d8; --pg-edge:#e8e2d3;
+    --pg-ink:#211f18; --ink-2:#6b6656; --seal:#a8322c; --seal-deep:#8f2823;
     --line:#d8d1c1; --line-2:#c4bca9; --ok:#2f6f4f; --ok-2:#eaf1ea;
-    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --pg-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
     --serif:Georgia,"Times New Roman",serif;
   }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--frame);color:var(--ink);
+body.pg-prooflab > :not(.shell):not(.foot) *,
+body.pg-prooflab > *:not(.shell):not(.foot){box-sizing:border-box}
+body.pg-prooflab{margin:0;background:var(--frame);color:var(--pg-ink);
     font-family:var(--serif);line-height:1.6;-webkit-font-smoothing:antialiased}
-  .sheet{max-width:880px;margin:64px auto;background:var(--paper);
-    border:1px solid var(--edge);border-radius:3px;
+body.pg-prooflab > :not(.shell):not(.foot) .sheet,
+body.pg-prooflab > .sheet{max-width:880px;margin:64px auto;background:var(--paper);
+    border:1px solid var(--pg-edge);border-radius:3px;
     box-shadow:0 30px 80px rgba(0,0,0,.55)}
-  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
-  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--seal);margin:0}
-  .sec{display:grid;grid-template-columns:56px 1fr;border-top:1px solid var(--line)}
-  .sec:first-child{border-top:0}
-  .docket{font-family:var(--mono);font-size:12px;color:var(--seal);padding:28px 0 0 18px;letter-spacing:.04em}
-  .body{padding:28px 30px 30px 8px}
-  h1{font-family:var(--serif);font-size:clamp(27px,4.3vw,40px);line-height:1.12;letter-spacing:-.015em;margin:.35em 0 .3em;text-wrap:balance}
-  h2{font-family:var(--serif);font-size:19px;margin:.2em 0 .5em;text-wrap:balance}
-  .lede{color:var(--ink-2);font-size:15px;max-width:62ch}
-  .amt{font-family:var(--mono);color:var(--seal);font-weight:700}
-  .note{font-family:var(--mono);font-size:10.5px;color:var(--ink-2);margin-top:10px;line-height:1.55}
-  p{max-width:62ch}
-
-  /* form controls */
-  label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:14px 0 5px}
-  textarea,input,select{width:100%;font-family:var(--mono);font-size:12.5px;color:var(--ink);
+body.pg-prooflab > :not(.shell):not(.foot) .mono,
+body.pg-prooflab > .mono{font-family:var(--pg-mono);font-variant-numeric:tabular-nums}
+body.pg-prooflab > :not(.shell):not(.foot) .eyebrow,
+body.pg-prooflab > .eyebrow{font-family:var(--pg-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--seal);margin:0}
+body.pg-prooflab > :not(.shell):not(.foot) .sec,
+body.pg-prooflab > .sec{display:grid;grid-template-columns:56px 1fr;border-top:1px solid var(--line)}
+body.pg-prooflab > :not(.shell):not(.foot) .sec:first-child,
+body.pg-prooflab > .sec:first-child{border-top:0}
+body.pg-prooflab > :not(.shell):not(.foot) .docket,
+body.pg-prooflab > .docket{font-family:var(--pg-mono);font-size:12px;color:var(--seal);padding:28px 0 0 18px;letter-spacing:.04em}
+body.pg-prooflab > :not(.shell):not(.foot) .body,
+body.pg-prooflab > .body{padding:28px 30px 30px 8px}
+body.pg-prooflab > :not(.shell):not(.foot) h1,
+body.pg-prooflab > h1{font-family:var(--serif);font-size:clamp(27px,4.3vw,40px);line-height:1.12;letter-spacing:-.015em;margin:.35em 0 .3em;text-wrap:balance}
+body.pg-prooflab > :not(.shell):not(.foot) h2,
+body.pg-prooflab > h2{font-family:var(--serif);font-size:19px;margin:.2em 0 .5em;text-wrap:balance}
+body.pg-prooflab > :not(.shell):not(.foot) .lede,
+body.pg-prooflab > .lede{color:var(--ink-2);font-size:15px;max-width:62ch}
+body.pg-prooflab > :not(.shell):not(.foot) .amt,
+body.pg-prooflab > .amt{font-family:var(--pg-mono);color:var(--seal);font-weight:700}
+body.pg-prooflab > :not(.shell):not(.foot) .note,
+body.pg-prooflab > .note{font-family:var(--pg-mono);font-size:10.5px;color:var(--ink-2);margin-top:10px;line-height:1.55}
+body.pg-prooflab > :not(.shell):not(.foot) p,
+body.pg-prooflab > p{max-width:62ch}
+body.pg-prooflab > :not(.shell):not(.foot) /* form controls */
+  label,
+body.pg-prooflab > /* form controls */
+  label{display:block;font-family:var(--pg-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:14px 0 5px}
+body.pg-prooflab > :not(.shell):not(.foot) textarea,
+body.pg-prooflab > textarea,
+body.pg-prooflab > :not(.shell):not(.foot) input,
+body.pg-prooflab > input,
+body.pg-prooflab > :not(.shell):not(.foot) select,
+body.pg-prooflab > select{width:100%;font-family:var(--pg-mono);font-size:12.5px;color:var(--pg-ink);
     background:var(--paper-2);border:1px solid var(--line-2);border-radius:2px;padding:10px 11px;line-height:1.5}
-  textarea{min-height:200px;resize:vertical;white-space:pre}
-  input:focus,textarea:focus,select:focus{outline:2px solid var(--seal);outline-offset:1px;border-color:var(--seal)}
-  .btn{font-family:var(--mono);font-size:12px;letter-spacing:.04em;background:var(--seal);color:#fff;border:1px solid var(--seal);
+body.pg-prooflab > :not(.shell):not(.foot) textarea,
+body.pg-prooflab > textarea{min-height:200px;resize:vertical;white-space:pre}
+body.pg-prooflab > :not(.shell):not(.foot) input:focus,
+body.pg-prooflab > input:focus,
+body.pg-prooflab > :not(.shell):not(.foot) textarea:focus,
+body.pg-prooflab > textarea:focus,
+body.pg-prooflab > :not(.shell):not(.foot) select:focus,
+body.pg-prooflab > select:focus{outline:2px solid var(--seal);outline-offset:1px;border-color:var(--seal)}
+body.pg-prooflab > :not(.shell):not(.foot) .btn,
+body.pg-prooflab > .btn{font-family:var(--pg-mono);font-size:12px;letter-spacing:.04em;background:var(--seal);color:#fff;border:1px solid var(--seal);
     border-radius:2px;padding:10px 18px;cursor:pointer;margin-top:12px}
-  .btn:hover{background:var(--seal-deep)}
-  .btn.ghost{background:transparent;color:var(--seal)}
-  .btn.ghost:hover{background:var(--paper-2)}
-  .actions{display:flex;gap:8px;flex-wrap:wrap}
-
-  /* gate verdict */
+body.pg-prooflab > :not(.shell):not(.foot) .btn:hover,
+body.pg-prooflab > .btn:hover{background:var(--seal-deep)}
+body.pg-prooflab > :not(.shell):not(.foot) .btn.ghost,
+body.pg-prooflab > .btn.ghost{background:transparent;color:var(--seal)}
+body.pg-prooflab > :not(.shell):not(.foot) .btn.ghost:hover,
+body.pg-prooflab > .btn.ghost:hover{background:var(--paper-2)}
+body.pg-prooflab > :not(.shell):not(.foot) .actions,
+body.pg-prooflab > .actions{display:flex;gap:8px;flex-wrap:wrap}
+body.pg-prooflab > :not(.shell):not(.foot) /* gate verdict */
+  .verdict,
+body.pg-prooflab > /* gate verdict */
   .verdict{margin:14px 0 0;border:1px solid var(--line);background:var(--paper-2);border-radius:3px;overflow:hidden}
-  .verdict .head{padding:12px 16px;font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.03em;
+body.pg-prooflab > :not(.shell):not(.foot) .verdict .head,
+body.pg-prooflab > .verdict .head{padding:12px 16px;font-family:var(--pg-mono);font-size:13px;font-weight:700;letter-spacing:.03em;
     border-bottom:1px solid var(--line)}
-  .verdict.pass .head{color:var(--ok);background:var(--ok-2)}
-  .verdict.fail .head{color:var(--seal);background:#f7ebe9}
-  .verdict ul{list-style:none;margin:0;padding:6px 0}
-  .verdict li{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:7px 16px;font-size:12.5px;line-height:1.45}
-  .verdict li .k{font-family:var(--mono);font-weight:700}
-  .verdict li.rej .k{color:var(--seal)}
-  .verdict li.acc .k{color:var(--ok)}
-  .verdict li .why{color:var(--ink-2);font-family:var(--serif);font-size:12.5px}
-  .verdict li .cls{font-family:var(--mono);font-size:10px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em}
-
-  /* 404 lookup */
+body.pg-prooflab > :not(.shell):not(.foot) .verdict.pass .head,
+body.pg-prooflab > .verdict.pass .head{color:var(--ok);background:var(--ok-2)}
+body.pg-prooflab > :not(.shell):not(.foot) .verdict.fail .head,
+body.pg-prooflab > .verdict.fail .head{color:var(--seal);background:#f7ebe9}
+body.pg-prooflab > :not(.shell):not(.foot) .verdict ul,
+body.pg-prooflab > .verdict ul{list-style:none;margin:0;padding:6px 0}
+body.pg-prooflab > :not(.shell):not(.foot) .verdict li,
+body.pg-prooflab > .verdict li{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:7px 16px;font-size:12.5px;line-height:1.45}
+body.pg-prooflab > :not(.shell):not(.foot) .verdict li .k,
+body.pg-prooflab > .verdict li .k{font-family:var(--pg-mono);font-weight:700}
+body.pg-prooflab > :not(.shell):not(.foot) .verdict li.rej .k,
+body.pg-prooflab > .verdict li.rej .k{color:var(--seal)}
+body.pg-prooflab > :not(.shell):not(.foot) .verdict li.acc .k,
+body.pg-prooflab > .verdict li.acc .k{color:var(--ok)}
+body.pg-prooflab > :not(.shell):not(.foot) .verdict li .why,
+body.pg-prooflab > .verdict li .why{color:var(--ink-2);font-family:var(--serif);font-size:12.5px}
+body.pg-prooflab > :not(.shell):not(.foot) .verdict li .cls,
+body.pg-prooflab > .verdict li .cls{font-family:var(--pg-mono);font-size:10px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em}
+body.pg-prooflab > :not(.shell):not(.foot) /* 404 lookup */
+  .lookup,
+body.pg-prooflab > /* 404 lookup */
   .lookup{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-top:6px}
-  .lookup .fld{flex:1;min-width:200px}
-  .resp{font-family:var(--mono);font-size:12px;margin-top:10px;border:1px solid var(--line);background:#111;color:#d9d4c7;padding:10px 12px;border-radius:2px;white-space:pre-wrap;word-break:break-all}
-  .resp .st{color:#e0897f}
-  .resp .st.ok{color:#7fca9b}
-
-  /* match glass-box */
+body.pg-prooflab > :not(.shell):not(.foot) .lookup .fld,
+body.pg-prooflab > .lookup .fld{flex:1;min-width:200px}
+body.pg-prooflab > :not(.shell):not(.foot) .resp,
+body.pg-prooflab > .resp{font-family:var(--pg-mono);font-size:12px;margin-top:10px;border:1px solid var(--line);background:#111;color:#d9d4c7;padding:10px 12px;border-radius:2px;white-space:pre-wrap;word-break:break-all}
+body.pg-prooflab > :not(.shell):not(.foot) .resp .st,
+body.pg-prooflab > .resp .st{color:#e0897f}
+body.pg-prooflab > :not(.shell):not(.foot) .resp .st.ok,
+body.pg-prooflab > .resp .st.ok{color:#7fca9b}
+body.pg-prooflab > :not(.shell):not(.foot) /* match glass-box */
+  .profile,
+body.pg-prooflab > /* match glass-box */
   .profile{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
-  @media(max-width:560px){.profile{grid-template-columns:1fr}}
-  .register{list-style:none;padding:0;margin:16px 0 0;border-top:1px solid var(--seal)}
-  .mrow{border-bottom:1px solid var(--line);padding:14px 0 13px}
-  .mrow .top{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:baseline}
-  .mrow .sc{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink);line-height:1}
-  .mrow .title{font-family:var(--serif);font-size:15px;margin:0;line-height:1.3}
-  .mrow .title-zh{font-family:var(--serif);font-size:12.5px;color:var(--ink-2);margin:2px 0 0}
-  .mrow .rc{font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:3px 8px;border-radius:2px;white-space:nowrap}
-  .rc.direct{background:var(--seal);color:#fff}
-  .rc.partner{background:transparent;color:var(--seal);border:1px solid var(--seal)}
-  .rc.oem{background:var(--paper-2);color:var(--ink-2);border:1px solid var(--line-2)}
-  .rc.noroute{background:var(--paper-2);color:var(--ink-2);border:1px dashed var(--line-2)}
-  .decomp{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 0 68px}
-  @media(max-width:560px){.decomp{margin-left:0}}
-  .seg .lab{font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2);display:flex;justify-content:space-between}
-  .seg .lab b{color:var(--ink)}
-  .seg .bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin-top:3px}
-  .seg .bar span{display:block;height:100%;background:var(--seal);border-radius:2px;transition:width .18s ease}
-  .fired{font-family:var(--mono);font-size:10.5px;color:var(--ink-2);margin:8px 0 0 68px}
-  @media(max-width:560px){.fired{margin-left:0}}
-  .fired b{color:var(--ok)}
-  .rnote{font-family:var(--serif);font-style:italic;font-size:12px;color:var(--ink-2);margin:5px 0 0 68px;line-height:1.45}
-  @media(max-width:560px){.rnote{margin-left:0}}
+@media(max-width:560px){
+body.pg-prooflab > :not(.shell):not(.foot) .profile,
+body.pg-prooflab > .profile{grid-template-columns:1fr}
 
-  .honesty{background:var(--paper-2);border:1px solid var(--line);padding:16px 18px;margin:14px 0 0}
-  .honesty p{font-size:13.5px;color:var(--ink);line-height:1.6;margin:.6em 0}
-  .honesty p:first-child{margin-top:0}
-  .honesty .t{font-family:var(--mono);color:var(--seal);font-weight:700}
+}
+body.pg-prooflab > :not(.shell):not(.foot) .register,
+body.pg-prooflab > .register{list-style:none;padding:0;margin:16px 0 0;border-top:1px solid var(--seal)}
+body.pg-prooflab > :not(.shell):not(.foot) .mrow,
+body.pg-prooflab > .mrow{border-bottom:1px solid var(--line);padding:14px 0 13px}
+body.pg-prooflab > :not(.shell):not(.foot) .mrow .top,
+body.pg-prooflab > .mrow .top{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:baseline}
+body.pg-prooflab > :not(.shell):not(.foot) .mrow .sc,
+body.pg-prooflab > .mrow .sc{font-family:var(--pg-mono);font-size:22px;font-weight:700;color:var(--pg-ink);line-height:1}
+body.pg-prooflab > :not(.shell):not(.foot) .mrow .title,
+body.pg-prooflab > .mrow .title{font-family:var(--serif);font-size:15px;margin:0;line-height:1.3}
+body.pg-prooflab > :not(.shell):not(.foot) .mrow .title-zh,
+body.pg-prooflab > .mrow .title-zh{font-family:var(--serif);font-size:12.5px;color:var(--ink-2);margin:2px 0 0}
+body.pg-prooflab > :not(.shell):not(.foot) .mrow .rc,
+body.pg-prooflab > .mrow .rc{font-family:var(--pg-mono);font-size:10px;letter-spacing:.04em;padding:3px 8px;border-radius:2px;white-space:nowrap}
+body.pg-prooflab > :not(.shell):not(.foot) .rc.direct,
+body.pg-prooflab > .rc.direct{background:var(--seal);color:#fff}
+body.pg-prooflab > :not(.shell):not(.foot) .rc.partner,
+body.pg-prooflab > .rc.partner{background:transparent;color:var(--seal);border:1px solid var(--seal)}
+body.pg-prooflab > :not(.shell):not(.foot) .rc.oem,
+body.pg-prooflab > .rc.oem{background:var(--paper-2);color:var(--ink-2);border:1px solid var(--line-2)}
+body.pg-prooflab > :not(.shell):not(.foot) .rc.noroute,
+body.pg-prooflab > .rc.noroute{background:var(--paper-2);color:var(--ink-2);border:1px dashed var(--line-2)}
+body.pg-prooflab > :not(.shell):not(.foot) .decomp,
+body.pg-prooflab > .decomp{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 0 68px}
+@media(max-width:560px){
+body.pg-prooflab > :not(.shell):not(.foot) .decomp,
+body.pg-prooflab > .decomp{margin-left:0}
 
-  .cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0 0}
-  .cta a{font-family:var(--mono);font-size:12.5px;letter-spacing:.03em;text-decoration:none;padding:11px 20px;border-radius:2px}
-  .cta a.primary{background:var(--seal);color:#fff}
-  .cta a.primary:hover{background:var(--seal-deep)}
-  .cta a.sec2{color:var(--seal);border:1px solid var(--seal)}
-  .cta a.sec2:hover{background:var(--paper-2)}
+}
+body.pg-prooflab > :not(.shell):not(.foot) .seg .lab,
+body.pg-prooflab > .seg .lab{font-family:var(--pg-mono);font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2);display:flex;justify-content:space-between}
+body.pg-prooflab > :not(.shell):not(.foot) .seg .lab b,
+body.pg-prooflab > .seg .lab b{color:var(--pg-ink)}
+body.pg-prooflab > :not(.shell):not(.foot) .seg .bar,
+body.pg-prooflab > .seg .bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin-top:3px}
+body.pg-prooflab > :not(.shell):not(.foot) .seg .bar span,
+body.pg-prooflab > .seg .bar span{display:block;height:100%;background:var(--seal);border-radius:2px;transition:width .18s ease}
+body.pg-prooflab > :not(.shell):not(.foot) .fired,
+body.pg-prooflab > .fired{font-family:var(--pg-mono);font-size:10.5px;color:var(--ink-2);margin:8px 0 0 68px}
+@media(max-width:560px){
+body.pg-prooflab > :not(.shell):not(.foot) .fired,
+body.pg-prooflab > .fired{margin-left:0}
 
-  @media(max-width:640px){
-    .body{padding:24px 18px 26px 6px}
-    .sec{grid-template-columns:40px 1fr}
-    .docket{padding-left:12px}
-  }
+}
+body.pg-prooflab > :not(.shell):not(.foot) .fired b,
+body.pg-prooflab > .fired b{color:var(--ok)}
+body.pg-prooflab > :not(.shell):not(.foot) .rnote,
+body.pg-prooflab > .rnote{font-family:var(--serif);font-style:italic;font-size:12px;color:var(--ink-2);margin:5px 0 0 68px;line-height:1.45}
+@media(max-width:560px){
+body.pg-prooflab > :not(.shell):not(.foot) .rnote,
+body.pg-prooflab > .rnote{margin-left:0}
 
-  footer{padding:22px 30px 30px;border-top:1px solid var(--seal)}
-  footer .row2{font-family:var(--mono);font-size:12px;color:var(--ink-2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-  footer a{color:var(--seal);text-decoration:none}
-  .wm{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--ink);text-transform:uppercase}
+}
+body.pg-prooflab > :not(.shell):not(.foot) .honesty,
+body.pg-prooflab > .honesty{background:var(--paper-2);border:1px solid var(--line);padding:16px 18px;margin:14px 0 0}
+body.pg-prooflab > :not(.shell):not(.foot) .honesty p,
+body.pg-prooflab > .honesty p{font-size:13.5px;color:var(--pg-ink);line-height:1.6;margin:.6em 0}
+body.pg-prooflab > :not(.shell):not(.foot) .honesty p:first-child,
+body.pg-prooflab > .honesty p:first-child{margin-top:0}
+body.pg-prooflab > :not(.shell):not(.foot) .honesty .t,
+body.pg-prooflab > .honesty .t{font-family:var(--pg-mono);color:var(--seal);font-weight:700}
+body.pg-prooflab > :not(.shell):not(.foot) .cta,
+body.pg-prooflab > .cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0 0}
+body.pg-prooflab > :not(.shell):not(.foot) .cta a,
+body.pg-prooflab > .cta a{font-family:var(--pg-mono);font-size:12.5px;letter-spacing:.03em;text-decoration:none;padding:11px 20px;border-radius:2px}
+body.pg-prooflab > :not(.shell):not(.foot) .cta a.primary,
+body.pg-prooflab > .cta a.primary{background:var(--seal);color:#fff}
+body.pg-prooflab > :not(.shell):not(.foot) .cta a.primary:hover,
+body.pg-prooflab > .cta a.primary:hover{background:var(--seal-deep)}
+body.pg-prooflab > :not(.shell):not(.foot) .cta a.sec2,
+body.pg-prooflab > .cta a.sec2{color:var(--seal);border:1px solid var(--seal)}
+body.pg-prooflab > :not(.shell):not(.foot) .cta a.sec2:hover,
+body.pg-prooflab > .cta a.sec2:hover{background:var(--paper-2)}
+@media(max-width:640px){
+body.pg-prooflab > :not(.shell):not(.foot) .body,
+body.pg-prooflab > .body{padding:24px 18px 26px 6px}
+body.pg-prooflab > :not(.shell):not(.foot) .sec,
+body.pg-prooflab > .sec{grid-template-columns:40px 1fr}
+body.pg-prooflab > :not(.shell):not(.foot) .docket,
+body.pg-prooflab > .docket{padding-left:12px}
 
-  .asaptic-bridge{position:sticky;top:0;z-index:50;background:#080F1E;border-bottom:1px solid rgba(41,182,246,.18)}
-  .asaptic-bridge-row{display:flex;align-items:center;justify-content:space-between;gap:16px;height:52px;max-width:880px;margin:0 auto;padding:0 24px}
-  .asaptic-bridge-logo{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;font-weight:800;letter-spacing:.18em;color:#fff;text-decoration:none}
-  .asaptic-bridge-back{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;font-weight:600;color:#29B6F6;text-decoration:none}
-  .asaptic-bridge-back:hover{color:#00E5FF;text-decoration:underline}
-  a:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+}
+body.pg-prooflab > :not(.shell):not(.foot) footer,
+body.pg-prooflab > footer:not(.foot){padding:22px 30px 30px;border-top:1px solid var(--seal)}
+body.pg-prooflab > :not(.shell):not(.foot) footer .row2,
+body.pg-prooflab > footer:not(.foot) .row2{font-family:var(--pg-mono);font-size:12px;color:var(--ink-2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+body.pg-prooflab > :not(.shell):not(.foot) footer a,
+body.pg-prooflab > footer:not(.foot) a{color:var(--seal);text-decoration:none}
+body.pg-prooflab > :not(.shell):not(.foot) .wm,
+body.pg-prooflab > .wm{font-family:var(--pg-mono);font-size:11px;letter-spacing:.14em;color:var(--pg-ink);text-transform:uppercase}
+body.pg-prooflab > :not(.shell):not(.foot) .asaptic-bridge,
+body.pg-prooflab > .asaptic-bridge{position:sticky;top:0;z-index:50;background:#080F1E;border-bottom:1px solid rgba(41,182,246,.18)}
+body.pg-prooflab > :not(.shell):not(.foot) .asaptic-bridge-row,
+body.pg-prooflab > .asaptic-bridge-row{display:flex;align-items:center;justify-content:space-between;gap:16px;height:52px;max-width:880px;margin:0 auto;padding:0 24px}
+body.pg-prooflab > :not(.shell):not(.foot) .asaptic-bridge-logo,
+body.pg-prooflab > .asaptic-bridge-logo{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;font-weight:800;letter-spacing:.18em;color:#fff;text-decoration:none}
+body.pg-prooflab > :not(.shell):not(.foot) .asaptic-bridge-back,
+body.pg-prooflab > .asaptic-bridge-back{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;font-weight:600;color:#29B6F6;text-decoration:none}
+body.pg-prooflab > :not(.shell):not(.foot) .asaptic-bridge-back:hover,
+body.pg-prooflab > .asaptic-bridge-back:hover{color:#00E5FF;text-decoration:underline}
+body.pg-prooflab > :not(.shell):not(.foot) a:focus-visible,
+body.pg-prooflab > a:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+
+/* --- v2 shell guard: the injected header.shell / footer.foot must keep the
+       v2 typography, which `body` above would otherwise hand them ---------- */
+body.pg-prooflab > header.shell, body.pg-prooflab > footer.foot{
+  font-family:var(--sans);font-size:16px;font-weight:400;font-style:normal;
+  line-height:1.5;letter-spacing:normal;text-transform:none;text-align:left;
+  color:var(--ink);-webkit-font-smoothing:antialiased;
+}
 </style>
 </head>
-<body>
-<nav class="asaptic-bridge" aria-label="Asaptic">
-  <div class="asaptic-bridge-row">
-    <a href="/" class="asaptic-bridge-logo" aria-label="Asaptic home">ASAPTIC</a>
-    <a href="/" class="asaptic-bridge-back">&larr; asaptic.com</a>
+<body class="pg-prooflab">
+<!-- ASAPTIC:HEADER:START -->
+<header class="shell">
+  <div class="row">
+    <a class="brand" href="https://asaptic.com/">ASAPTIC</a>
+    <nav class="nav"><a href="https://asaptic.com/trade-ai" class="on">Trade AI</a><a href="https://asaptic.com/tenders">Live Tenders</a><a href="https://asaptic.com/suppliers">For Suppliers</a><a href="https://asaptic.com/standards">Cross-Standard</a><a href="https://asaptic.com/platform">Developers</a></nav>
+    <div class="lang"></div><a class="engage" href="https://asaptic.com/contact">Talk to us</a>
   </div>
-</nav>
+  <div class="row subrow"><nav class="crumbs" aria-label="Breadcrumb"><a href="https://asaptic.com/">Asaptic</a><span class="sep">/</span><a href="https://asaptic.com/demos/">Proof</a></nav></div>
+</header>
+<!-- ASAPTIC:HEADER:END -->
 
 <main class="sheet">
 
@@ -229,15 +352,22 @@
     </div>
   </section>
 
-  <footer>
-    <div class="row2">
-      <span class="wm">Asaptic — Proof Lab</span>
-      <span>Client-side proof surface · <a href="https://portal.asaptic.com/register.html?src=proof_lab">request access</a></span>
-    </div>
-    <p class="note">Demonstration surface, not indexed. All ids are synthetic AT-TEST rows; no live tender, issuing body, or exact date is present. The gate and matcher shown are the public contract and public scorer — the internal sanitization term-list and ops scorer are never shipped to the browser.</p>
-  </footer>
+  
 
 </main>
+<!-- ASAPTIC:FOOTER:START -->
+<footer class="foot">
+  <div class="row">
+    <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI trade execution — we win and fulfill cross-border government tenders, paid on results.</div></div>
+    <div class="col"><h4>Product</h4><a href="https://asaptic.com/trade-ai">Trade AI</a><a href="https://asaptic.com/tenders">Live Tenders</a><a href="https://asaptic.com/standards">Cross-Standard</a><a href="https://asaptic.com/platform">Developers</a></div>
+    <div class="col"><h4>For you</h4><a href="https://asaptic.com/contact">Buyers &amp; institutions</a><a href="https://asaptic.com/suppliers">Chinese suppliers</a><a href="https://asaptic.com/contact">Channel partners</a></div>
+    <div class="col"><h4>Resources</h4><a href="https://asaptic.com/blog/">Notes</a><a href="https://asaptic.com/robot/">Robot 101</a><a href="https://asaptic.com/university/">Trade University</a><a href="https://asaptic.com/changelog/">Changelog</a></div>
+    <div class="col"><h4>Company</h4><a href="https://asaptic.com/contact">Talk to us</a><a href="https://asaptic.com/tenders">Live tenders</a></div>
+  </div>
+  <div class="legal note">Demonstration surface, not indexed. All ids are synthetic AT-TEST rows; no live tender, issuing body, or exact date is present. The gate and matcher shown are the public contract and public scorer — the internal sanitization term-list and ops scorer are never shipped to the browser.</div>
+  <div class="legal">© 2026 Asaptic (HK) Limited · <a href="https://asaptic.com/legal/privacy">Privacy</a> · <a href="https://asaptic.com/legal/terms">Terms</a> · Cross-Standard data CC BY 4.0</div>
+</footer>
+<!-- ASAPTIC:FOOTER:END -->
 
 <script type="module" src="./app.mjs"></script>
 </body>

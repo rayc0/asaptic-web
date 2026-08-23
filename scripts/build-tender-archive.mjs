@@ -26,11 +26,74 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const SITE = 'https://asaptic.com';
 const DATA_DIR = path.join(ROOT, 'tender', 'archive', 'data');
+
+// ---------------------------------------------------------------------------
+// v2 shell — header/footer are rendered by _shell/apply_shell.py (single
+// renderer shared with the sitewide sentinel-injector pass; tender/archive
+// is deliberately excluded from that sitewide pass because it's baker-owned
+// and regenerated every cron run, so we call the SAME renderer here instead
+// of re-implementing markup). Falls back to the old minimal markup — loudly
+// logged — only if the renderer is missing or errors, so failure is never
+// silent.
+// ---------------------------------------------------------------------------
+
+const APPLY_SHELL = path.join(ROOT, '_shell', 'apply_shell.py');
+
+const FAMILIES_JSON_PATH = path.join(ROOT, '_shell', 'families.json');
+let SHELL_CSS_VER = '20260823a';
+try {
+  const fam = JSON.parse(fs.readFileSync(FAMILIES_JSON_PATH, 'utf8'));
+  if (fam.css_ver) SHELL_CSS_VER = fam.css_ver;
+} catch (err) {
+  console.error(`[build-tender-archive] could not read css_ver from ${FAMILIES_JSON_PATH}: ${err.message} — using fallback ${SHELL_CSS_VER}`);
+}
+
+const SHELL_FALLBACK_HEADER = `  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">ASAPTIC</a>
+    </div>
+  </nav>`;
+
+const SHELL_FALLBACK_FOOTER = `  <footer class="cx-footer" style="border-top:1px solid var(--border); padding:32px 0; text-align:center; font-size:12px; color:var(--gray-dim);">
+    <div class="container">
+      <p>&copy; 2026 Asaptic Labs</p>
+    </div>
+  </footer>`;
+
+const shellPartsCache = new Map();
+
+// outRelPath: repo-relative, NO leading slash (apply_shell.py os.path.joins
+// it onto its root — a leading slash would escape the repo root entirely).
+function shellParts(outRelPath) {
+  if (shellPartsCache.has(outRelPath)) return shellPartsCache.get(outRelPath);
+  let result;
+  try {
+    const out = execFileSync('python3', [APPLY_SHELL, '--render', outRelPath], {
+      cwd: ROOT,
+      encoding: 'utf8',
+    });
+    const headerMatch = out.match(/<!-- ASAPTIC:HEADER:START -->[\s\S]*?<!-- ASAPTIC:HEADER:END -->/);
+    const footerMatch = out.match(/<!-- ASAPTIC:FOOTER:START -->[\s\S]*?<!-- ASAPTIC:FOOTER:END -->/);
+    if (!headerMatch || !footerMatch) {
+      throw new Error('output missing ASAPTIC:HEADER/FOOTER sentinels');
+    }
+    result = { header: headerMatch[0], footer: footerMatch[0] };
+  } catch (err) {
+    console.error(
+      `[build-tender-archive] SHELL RENDER FAILED for "${outRelPath}": ${err.message} — ` +
+      `falling back to legacy nav/footer markup. Fix _shell/apply_shell.py / _shell/families.json before shipping.`
+    );
+    result = { header: SHELL_FALLBACK_HEADER, footer: SHELL_FALLBACK_FOOTER };
+  }
+  shellPartsCache.set(outRelPath, result);
+  return result;
+}
 
 // ---------------------------------------------------------------------------
 // Snapshot discovery
@@ -582,35 +645,16 @@ const BULLETIN_CSS = `
     }
 `;
 
-function navHtml() {
-  return `  <nav>
-    <div class="container">
-      <a href="/" class="nav-logo">ASAPTIC</a>
-    </div>
-  </nav>`;
+// header/footer are now rendered by _shell/apply_shell.py (see shellParts()
+// above) — outRelPath is the repo-relative output path of the page being
+// built (no leading slash), e.g. 'tender/archive/2026-w32/index.html' or
+// 'zh/tender/archive/2026-w32/index.html'.
+function navHtml(outRelPath) {
+  return shellParts(outRelPath).header;
 }
 
-// Quiet small-caps "EN · 简 · 繁" masthead switcher — matches /tender/index.html.
-// relPath is the language-neutral path (no lang prefix), e.g. '/tender/archive/'
-// or '/tender/archive/2026-w28/'.
-function langSwitcherHtml(langKey, relPath) {
-  const labels = { en: 'EN', zh: '简', zht: '繁' };
-  const links = LANG_KEYS.map((k) => {
-    const prefix = LANGS[k].prefix ? `/${LANGS[k].prefix}` : '';
-    const current = k === langKey ? ' aria-current="page"' : '';
-    return `<a href="${prefix}${relPath}"${current}>${labels[k]}</a>`;
-  });
-  return `        <nav class="tw-langs" aria-label="Language">
-          ${links.join('\n          <span class="tw-lang-sep">&middot;</span>\n          ')}
-        </nav>`;
-}
-
-function footerHtml() {
-  return `  <footer class="cx-footer" style="border-top:1px solid var(--border); padding:32px 0; text-align:center; font-size:12px; color:var(--gray-dim);">
-    <div class="container">
-      <p>&copy; 2026 Asaptic Labs</p>
-    </div>
-  </footer>`;
+function footerHtml(outRelPath) {
+  return shellParts(outRelPath).footer;
 }
 
 // ---------------------------------------------------------------------------
@@ -663,7 +707,8 @@ function buildArchiveIndexHtml(langKey, snapshots) {
   }
   </script>`;
 
-  const currentIssuePath = langKey === 'en' ? '/tender/' : `/${L.prefix}/tender/`;
+  const indexDir = langKey === 'en' ? 'tender/archive' : `${langKey}/tender/archive`;
+  const outRelPath = `${indexDir}/index.html`;
 
   return `<!DOCTYPE html>
 <html lang="${L.htmlLang}">
@@ -686,23 +731,19 @@ ${hreflangLinks('/tender/archive/')}
 ${breadcrumbJsonLd}
 ${webPageJsonLd}
 
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/assets/v2/shell.css?v=${SHELL_CSS_VER}" />
   <style>
 ${BULLETIN_CSS}
   </style>
 </head>
 <body>
 
-${navHtml()}
+${navHtml(outRelPath)}
 
   <main class="tw-frame">
-    <a href="/" class="tw-back">${L.backToSite}</a>
-    <a href="${currentIssuePath}" class="tw-back">${L.viewCurrent}</a>
-
     <div class="tw-sheet">
       <div class="tw-masthead-row">
         <span class="tw-eyebrow">${L.archiveEyebrow}</span>
-${langSwitcherHtml(langKey, '/tender/archive/')}
       </div>
       <div class="tw-rule">
         <div class="tw-rule-thin"></div>
@@ -723,7 +764,7 @@ ${issueRows}
     </div>
   </main>
 
-${footerHtml()}
+${footerHtml(outRelPath)}
 
 </body>
 </html>
@@ -741,10 +782,11 @@ function buildIssuePageHtml(langKey, snapshot, allSnapshots) {
   const rel = `/tender/archive/${snapshot.key}/`;
   const canonical = urlFor(langKey, rel);
   const data = snapshot.data;
+  const issueDir = langKey === 'en' ? `tender/archive/${snapshot.key}` : `${langKey}/tender/archive/${snapshot.key}`;
+  const outRelPath = `${issueDir}/index.html`;
 
   const isLatest = allSnapshots[0].key === snapshot.key;
   const currentIssuePath = langKey === 'en' ? '/tender/' : `/${L.prefix}/tender/`;
-  const archiveIndexPath = langKey === 'en' ? '/tender/archive/' : `/${L.prefix}/tender/archive/`;
 
   const issueNoLabel = langKey === 'en' ? `Issue No. ${issueNo}` : `${L.issueLinkPrefix} ${issueNo} ${L.issueSuffix}`;
   const pageTitle = L.issueTitleFor(issueNo);
@@ -824,23 +866,19 @@ ${hreflangLinks(rel)}
 ${breadcrumbJsonLd}
 ${webPageJsonLd}
 
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/assets/v2/shell.css?v=${SHELL_CSS_VER}" />
   <style>
 ${BULLETIN_CSS}
   </style>
 </head>
 <body>
 
-${navHtml()}
+${navHtml(outRelPath)}
 
   <main class="tw-frame">
-    <a href="/" class="tw-back">${L.backToSite}</a>
-    <a href="${archiveIndexPath}" class="tw-back">${L.backToArchive}</a>
-
     <div class="tw-sheet">
       <div class="tw-masthead-row">
         <span class="tw-eyebrow">${L.eyebrow}</span>
-${langSwitcherHtml(langKey, `/tender/archive/${snapshot.key}/`)}
       </div>
       <div class="tw-rule">
         <div class="tw-rule-thin"></div>
@@ -885,7 +923,7 @@ ${indexRows}
     </div>
   </main>
 
-${footerHtml()}
+${footerHtml(outRelPath)}
 
 </body>
 </html>
@@ -904,6 +942,21 @@ function writeFile(relDir, filename, content) {
   return path.relative(ROOT, full);
 }
 
+// apply_shell.py's lang-chip rendering checks disk existence of sibling
+// locale files (os.path.isfile) at the moment it's invoked. Since we shell
+// out to it once per (page, langKey) below, and write en/zh/zht sequentially,
+// an EARLIER-written lang wouldn't see a not-yet-written LATER sibling and
+// would render a smaller chip set than its siblings get. Pre-touching every
+// sibling file for a page group before rendering ANY of them makes the chip
+// set (and everything else keyed off existence) consistent across all 3
+// langs, regardless of render order. A no-op for files that already exist.
+function touchFile(relDir, filename) {
+  const dir = path.join(ROOT, relDir);
+  fs.mkdirSync(dir, { recursive: true });
+  const full = path.join(dir, filename);
+  if (!fs.existsSync(full)) fs.writeFileSync(full, '', 'utf8');
+}
+
 function main() {
   const filterKey = process.argv[2]; // optional single-issue key, e.g. "2026-w28"
   const allSnapshots = loadSnapshots(); // always full set (index reflects everything)
@@ -919,14 +972,26 @@ function main() {
 
   const written = [];
 
-  // Archive index — always rebuilt for all 3 langs (reflects full snapshot set)
+  // Archive index — pre-touch all 3 lang files first (existence-safety for
+  // the shell's lang-chip check), then build+overwrite with real content.
+  const indexDirs = LANG_KEYS.map((k) => (k === 'en' ? 'tender/archive' : `${k}/tender/archive`));
+  for (const dir of indexDirs) touchFile(dir, 'index.html');
   for (const langKey of LANG_KEYS) {
     const html = buildArchiveIndexHtml(langKey, allSnapshots);
     const dir = langKey === 'en' ? 'tender/archive' : `${langKey}/tender/archive`;
     written.push(writeFile(dir, 'index.html', html));
   }
 
-  // Per-issue frozen pages — either all snapshots or just the filtered one
+  // Per-issue frozen pages — either all snapshots or just the filtered one.
+  // Same two-phase: touch all langs for a snapshot before rendering any of
+  // them (see touchFile() note above).
+  for (const snapshot of targetSnapshots) {
+    for (const langKey of LANG_KEYS) {
+      const dir =
+        langKey === 'en' ? `tender/archive/${snapshot.key}` : `${langKey}/tender/archive/${snapshot.key}`;
+      touchFile(dir, 'index.html');
+    }
+  }
   for (const snapshot of targetSnapshots) {
     for (const langKey of LANG_KEYS) {
       const html = buildIssuePageHtml(langKey, snapshot, allSnapshots);

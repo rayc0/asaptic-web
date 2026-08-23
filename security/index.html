@@ -5,76 +5,139 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Security &amp; Responsible Disclosure — Asaptic</title>
 <meta name="description" content="How to report a security issue to Asaptic (HK) Ltd. Security contact, RFC 9116 security.txt, scope, and our safe-harbour commitment for good-faith researchers.">
-<link rel="canonical" href="https://asaptic.com/security">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- ASAPTIC:HEAD:START -->
+<link rel="canonical" href="https://asaptic.com/security/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260823a">
+<!-- ASAPTIC:HEAD:END -->
+
 <style>
-  :root{
-    --bg:#0a0a0f; --card:#0f0f1a; --card2:#12121f; --edge:rgba(255,255,255,.08); --edge2:rgba(255,255,255,.14);
-    --ink:#f4f6fb; --ink2:#b2bacb; --ink3:#8b93a6;
-    --emerald:#10b981; --emerald-l:#34d399; --cyan:#06b6d4; --cyan-l:#22d3ee; --peri:#818cf8; --amber:#fbbf24;
-    --mono:'Fira Code','JetBrains Mono','Courier New',monospace;
-    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+/* ASAPTIC:SCOPED pg-security */
+body.pg-security{
+    --pg-bg:#0a0a0f; --pg-card:#0f0f1a; --card2:#12121f; --pg-edge:rgba(255,255,255,.08); --pg-edge2:rgba(255,255,255,.14);
+    --pg-ink:#f4f6fb; --pg-ink2:#b2bacb; --pg-ink3:#8b93a6;
+    --pg-emerald:#10b981; --pg-emerald-l:#34d399; --pg-cyan:#06b6d4; --cyan-l:#22d3ee; --peri:#818cf8; --amber:#fbbf24;
+    --pg-mono:'Fira Code','JetBrains Mono','Courier New',monospace;
+    --pg-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
   }
-  *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased}
-  .z{position:relative;z-index:1}
-  .wrap{max-width:920px;margin:0 auto;padding:0 26px}
-  a{color:var(--cyan-l);text-decoration:none}
-  a:hover{text-decoration:underline}
-  a:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:4px}
-  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
-  .grad{background:linear-gradient(135deg,#34d399 0%,#22d3ee 50%,#818cf8 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .em{color:var(--emerald-l)} .cy{color:var(--cyan-l)}
-  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--emerald);margin:0 0 14px}
+body.pg-security > :not(.shell):not(.foot) *,
+body.pg-security > *:not(.shell):not(.foot){box-sizing:border-box}
+body.pg-security{-webkit-text-size-adjust:100%}
+body.pg-security{margin:0;background:var(--pg-bg);color:var(--pg-ink);font-family:var(--pg-sans);line-height:1.62;-webkit-font-smoothing:antialiased}
+body.pg-security > :not(.shell):not(.foot) .z,
+body.pg-security > .z{position:relative;z-index:1}
+body.pg-security > :not(.shell):not(.foot) .pg-wrap,
+body.pg-security > .pg-wrap{max-width:920px;margin:0 auto;padding:0 26px}
+body.pg-security > :not(.shell):not(.foot) a,
+body.pg-security > a{color:var(--cyan-l);text-decoration:none}
+body.pg-security > :not(.shell):not(.foot) a:hover,
+body.pg-security > a:hover{text-decoration:underline}
+body.pg-security > :not(.shell):not(.foot) a:focus-visible,
+body.pg-security > a:focus-visible{outline:2px solid var(--pg-cyan);outline-offset:3px;border-radius:4px}
+body.pg-security > :not(.shell):not(.foot) .mono,
+body.pg-security > .mono{font-family:var(--pg-mono);font-variant-numeric:tabular-nums}
+body.pg-security > :not(.shell):not(.foot) .grad,
+body.pg-security > .grad{background:linear-gradient(135deg,#34d399 0%,#22d3ee 50%,#818cf8 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+body.pg-security > :not(.shell):not(.foot) .em,
+body.pg-security > .em{color:var(--pg-emerald-l)}
+body.pg-security > :not(.shell):not(.foot) .cy,
+body.pg-security > .cy{color:var(--cyan-l)}
+body.pg-security > :not(.shell):not(.foot) .eyebrow,
+body.pg-security > .eyebrow{font-family:var(--pg-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--pg-emerald);margin:0 0 14px}
+body.pg-security > :not(.shell):not(.foot) .bridge,
+body.pg-security > .bridge{position:sticky;top:0;z-index:50;background:rgba(10,10,15,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--pg-edge)}
+body.pg-security > :not(.shell):not(.foot) .bridge .row,
+body.pg-security > .bridge .row{display:flex;align-items:center;justify-content:space-between;height:54px;max-width:920px;margin:0 auto;padding:0 26px}
+body.pg-security > :not(.shell):not(.foot) .bridge .logo,
+body.pg-security > .bridge .logo{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:800;letter-spacing:.02em;color:#fff}
+body.pg-security > :not(.shell):not(.foot) .bridge .logo .mk,
+body.pg-security > .bridge .logo .mk{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center;font-family:var(--pg-mono);font-size:10px;font-weight:700;color:#04121a}
+body.pg-security > :not(.shell):not(.foot) .bridge .pg-rt,
+body.pg-security > .bridge .pg-rt{display:flex;align-items:center;gap:18px}
+body.pg-security > :not(.shell):not(.foot) .bridge .lnk,
+body.pg-security > .bridge .lnk{font-size:12.5px;font-weight:500;color:var(--pg-ink2)}
+body.pg-security > :not(.shell):not(.foot) .bridge .lnk:hover,
+body.pg-security > .bridge .lnk:hover{color:var(--pg-ink);text-decoration:none}
+body.pg-security > :not(.shell):not(.foot) .bridge .back,
+body.pg-security > .bridge .back{font-size:12.5px;font-weight:600;color:var(--cyan-l)}
+body.pg-security > :not(.shell):not(.foot) .pg-hero,
+body.pg-security > .pg-hero{padding:60px 0 40px;border-bottom:1px solid var(--pg-edge)}
+body.pg-security > :not(.shell):not(.foot) h1,
+body.pg-security > h1{font-size:clamp(30px,5vw,50px);line-height:1.16;letter-spacing:-.02em;margin:0 0 18px;font-weight:900}
+body.pg-security > :not(.shell):not(.foot) .lede,
+body.pg-security > .lede{font-size:clamp(15px,1.9vw,18px);color:var(--pg-ink2);max-width:64ch}
+body.pg-security > :not(.shell):not(.foot) section,
+body.pg-security > section{padding:44px 0;border-bottom:1px solid var(--pg-edge)}
+body.pg-security > :not(.shell):not(.foot) h2,
+body.pg-security > h2{font-size:clamp(20px,3vw,28px);line-height:1.2;letter-spacing:-.015em;margin:0 0 16px;font-weight:800}
+body.pg-security > :not(.shell):not(.foot) p,
+body.pg-security > p{color:var(--pg-ink2);font-size:15px;margin:0 0 14px}
+body.pg-security > :not(.shell):not(.foot) ul,
+body.pg-security > ul{color:var(--pg-ink2);font-size:15px;padding-left:20px;margin:0 0 14px}
+body.pg-security > :not(.shell):not(.foot) li,
+body.pg-security > li{margin:6px 0}
+body.pg-security > :not(.shell):not(.foot) .card,
+body.pg-security > .card{background:var(--pg-card);border:1px solid var(--pg-edge);border-radius:12px;padding:22px;margin:0 0 16px}
+body.pg-security > :not(.shell):not(.foot) .card.accent,
+body.pg-security > .card.accent{border-color:rgba(6,182,212,.28);box-shadow:0 0 0 1px rgba(6,182,212,.06),0 12px 40px rgba(0,0,0,.35)}
+body.pg-security > :not(.shell):not(.foot) .kv,
+body.pg-security > .kv{display:flex;flex-wrap:wrap;gap:8px 0;font-family:var(--pg-mono);font-size:13.5px}
+body.pg-security > :not(.shell):not(.foot) .kv .r,
+body.pg-security > .kv .r{display:flex;justify-content:space-between;gap:12px;width:100%;padding:9px 0;border-bottom:1px dashed var(--pg-edge2)}
+body.pg-security > :not(.shell):not(.foot) .kv .r:last-child,
+body.pg-security > .kv .r:last-child{border-bottom:0}
+body.pg-security > :not(.shell):not(.foot) .kv .k,
+body.pg-security > .kv .k{color:var(--pg-ink3)}
+body.pg-security > :not(.shell):not(.foot) .kv .v,
+body.pg-security > .kv .v{color:var(--pg-ink);text-align:right;word-break:break-all}
+body.pg-security > :not(.shell):not(.foot) .kv .v a,
+body.pg-security > .kv .v a{color:var(--cyan-l)}
+body.pg-security > :not(.shell):not(.foot) .chips,
+body.pg-security > .chips{display:flex;flex-wrap:wrap;gap:9px;margin:6px 0 0}
+body.pg-security > :not(.shell):not(.foot) .chip,
+body.pg-security > .chip{font-family:var(--pg-mono);font-size:12.5px;color:var(--pg-ink);border:1px solid var(--pg-edge2);background:var(--pg-card);padding:8px 14px;border-radius:20px}
+body.pg-security > :not(.shell):not(.foot) .chip b,
+body.pg-security > .chip b{color:var(--pg-emerald-l)}
+body.pg-security > :not(.shell):not(.foot) .chip.no b,
+body.pg-security > .chip.no b{color:var(--amber)}
+body.pg-security > :not(.shell):not(.foot) footer,
+body.pg-security > footer:not(.foot){padding:34px 0 60px}
+body.pg-security > :not(.shell):not(.foot) .pg-foot,
+body.pg-security > .pg-foot{font-family:var(--pg-mono);font-size:12px;color:var(--pg-ink3);line-height:1.8}
+body.pg-security > :not(.shell):not(.foot) .pg-foot a,
+body.pg-security > .pg-foot a{color:var(--pg-ink2)}
 
-  .bridge{position:sticky;top:0;z-index:50;background:rgba(10,10,15,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--edge)}
-  .bridge .row{display:flex;align-items:center;justify-content:space-between;height:54px;max-width:920px;margin:0 auto;padding:0 26px}
-  .bridge .logo{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:800;letter-spacing:.02em;color:#fff}
-  .bridge .logo .mk{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:#04121a}
-  .bridge .rt{display:flex;align-items:center;gap:18px}
-  .bridge .lnk{font-size:12.5px;font-weight:500;color:var(--ink2)} .bridge .lnk:hover{color:var(--ink);text-decoration:none}
-  .bridge .back{font-size:12.5px;font-weight:600;color:var(--cyan-l)}
-
-  .hero{padding:60px 0 40px;border-bottom:1px solid var(--edge)}
-  h1{font-size:clamp(30px,5vw,50px);line-height:1.16;letter-spacing:-.02em;margin:0 0 18px;font-weight:900}
-  .lede{font-size:clamp(15px,1.9vw,18px);color:var(--ink2);max-width:64ch}
-
-  section{padding:44px 0;border-bottom:1px solid var(--edge)}
-  h2{font-size:clamp(20px,3vw,28px);line-height:1.2;letter-spacing:-.015em;margin:0 0 16px;font-weight:800}
-  p{color:var(--ink2);font-size:15px;margin:0 0 14px}
-  ul{color:var(--ink2);font-size:15px;padding-left:20px;margin:0 0 14px}
-  li{margin:6px 0}
-
-  .card{background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:22px;margin:0 0 16px}
-  .card.accent{border-color:rgba(6,182,212,.28);box-shadow:0 0 0 1px rgba(6,182,212,.06),0 12px 40px rgba(0,0,0,.35)}
-  .kv{display:flex;flex-wrap:wrap;gap:8px 0;font-family:var(--mono);font-size:13.5px}
-  .kv .r{display:flex;justify-content:space-between;gap:12px;width:100%;padding:9px 0;border-bottom:1px dashed var(--edge2)}
-  .kv .r:last-child{border-bottom:0}
-  .kv .k{color:var(--ink3)} .kv .v{color:var(--ink);text-align:right;word-break:break-all}
-  .kv .v a{color:var(--cyan-l)}
-
-  .chips{display:flex;flex-wrap:wrap;gap:9px;margin:6px 0 0}
-  .chip{font-family:var(--mono);font-size:12.5px;color:var(--ink);border:1px solid var(--edge2);background:var(--card);padding:8px 14px;border-radius:20px}
-  .chip b{color:var(--emerald-l)}
-  .chip.no b{color:var(--amber)}
-
-  footer{padding:34px 0 60px}
-  .foot{font-family:var(--mono);font-size:12px;color:var(--ink3);line-height:1.8}
-  .foot a{color:var(--ink2)}
+/* --- v2 shell guard: the injected header.shell / footer.foot must keep the
+       v2 typography, which `body` above would otherwise hand them ---------- */
+body.pg-security > header.shell, body.pg-security > footer.foot{
+  font-family:var(--sans);font-size:16px;font-weight:400;font-style:normal;
+  line-height:1.5;letter-spacing:normal;text-transform:none;text-align:left;
+  color:var(--ink);-webkit-font-smoothing:antialiased;
+}
 </style>
 </head>
-<body>
-<nav class="bridge z"><div class="row"><a class="logo" href="/"><span class="mk">A</span>ASAPTIC</a><div class="rt"><a class="lnk" href="/status">Status</a><a class="lnk" href="/.well-known/security.txt">security.txt</a><a class="back" href="/">asaptic.com</a></div></div></nav>
+<body class="pg-security">
+<!-- ASAPTIC:HEADER:START -->
+<header class="shell">
+  <div class="row">
+    <a class="brand" href="https://asaptic.com/">ASAPTIC</a>
+    <nav class="nav"><a href="https://asaptic.com/trade-ai">Trade AI</a><a href="https://asaptic.com/tenders">Live Tenders</a><a href="https://asaptic.com/suppliers">For Suppliers</a><a href="https://asaptic.com/standards">Cross-Standard</a><a href="https://asaptic.com/platform" class="on">Developers</a></nav>
+    <div class="lang"></div><a class="engage" href="https://asaptic.com/contact">Talk to us</a>
+  </div>
+  <div class="row subrow"><nav class="crumbs" aria-label="Breadcrumb"><a href="https://asaptic.com/">Asaptic</a><span class="sep">/</span><a href="https://asaptic.com/platform">Developers</a></nav><nav class="sublinks"><a href="https://asaptic.com/developers/#quickstart">Quickstart</a><a href="https://asaptic.com/developers/#contract">API</a><a href="https://asaptic.com/mcp">MCP</a><a href="https://asaptic.com/status/">Status</a><a href="https://asaptic.com/security/">Security</a><a href="https://asaptic.com/changelog/">Changelog</a></nav></div>
+</header>
+<!-- ASAPTIC:HEADER:END -->
 
-<header class="hero z"><div class="wrap">
+<header class="pg-hero z" data-page-content="hero"><div class="pg-wrap">
   <p class="eyebrow">Security</p>
   <h1><span class="grad">Responsible disclosure</span></h1>
   <p class="lede">Asaptic (HK) Ltd welcomes reports of security issues in our public surfaces. If you have found a vulnerability, tell us — we commit to reading every good-faith report, acting on it, and never pursuing researchers who follow this policy.</p>
 </div></header>
+<main>
 
-<section class="z"><div class="wrap">
+<section class="z"><div class="pg-wrap">
   <h2>How to report</h2>
   <div class="card accent">
     <div class="kv">
@@ -87,7 +150,7 @@
   <p>Email <a href="mailto:engage@asaptic.com">engage@asaptic.com</a> with a subject line beginning <span class="mono">[SECURITY]</span>. Include the affected URL, a description of the issue, and the steps to reproduce it. If a proof of concept is useful, keep it minimal and non-destructive.</p>
 </div></section>
 
-<section class="z"><div class="wrap">
+<section class="z"><div class="pg-wrap">
   <h2>In scope</h2>
   <div class="chips">
     <span class="chip"><b>asaptic.com</b> — the public site</span>
@@ -104,7 +167,7 @@
   </div>
 </div></section>
 
-<section class="z"><div class="wrap">
+<section class="z"><div class="pg-wrap">
   <h2>Our commitment</h2>
   <ul>
     <li>We will acknowledge a good-faith report and keep you updated as we investigate.</li>
@@ -114,7 +177,7 @@
   <p>Please give us a reasonable window to fix an issue before disclosing it publicly. Access only data that is your own or plainly test data, and stop at the first sign that a test could affect other users.</p>
 </div></section>
 
-<section class="z"><div class="wrap">
+<section class="z"><div class="pg-wrap">
   <h2>Verify our surfaces</h2>
   <p>Asaptic publishes a falsifiable proof manifest and a live status page. Anyone can check what we claim against what the endpoints actually serve:</p>
   <div class="chips">
@@ -123,8 +186,19 @@
   </div>
 </div></section>
 
-<footer class="z"><div class="wrap">
-  <p class="foot">Asaptic (HK) Ltd · <a href="/">asaptic.com</a> · <a href="/.well-known/security.txt">security.txt</a> · <a href="/status">status</a><br>This policy governs the public surfaces listed above and is provided in good faith. It does not create a paid bug-bounty obligation.</p>
-</div></footer>
+</main>
+<!-- ASAPTIC:FOOTER:START -->
+<footer class="foot">
+  <div class="row">
+    <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI trade execution — we win and fulfill cross-border government tenders, paid on results.</div></div>
+    <div class="col"><h4>Product</h4><a href="https://asaptic.com/trade-ai">Trade AI</a><a href="https://asaptic.com/tenders">Live Tenders</a><a href="https://asaptic.com/standards">Cross-Standard</a><a href="https://asaptic.com/platform">Developers</a></div>
+    <div class="col"><h4>For you</h4><a href="https://asaptic.com/contact">Buyers &amp; institutions</a><a href="https://asaptic.com/suppliers">Chinese suppliers</a><a href="https://asaptic.com/contact">Channel partners</a></div>
+    <div class="col"><h4>Resources</h4><a href="https://asaptic.com/blog/">Notes</a><a href="https://asaptic.com/robot/">Robot 101</a><a href="https://asaptic.com/university/">Trade University</a><a href="https://asaptic.com/changelog/">Changelog</a></div>
+    <div class="col"><h4>Company</h4><a href="https://asaptic.com/contact">Talk to us</a><a href="https://asaptic.com/tenders">Live tenders</a></div>
+  </div>
+  <div class="legal note">This is a good-faith vulnerability disclosure policy. It does not create a paid bug-bounty obligation.</div>
+  <div class="legal">© 2026 Asaptic (HK) Limited · <a href="https://asaptic.com/legal/privacy">Privacy</a> · <a href="https://asaptic.com/legal/terms">Terms</a> · Cross-Standard data CC BY 4.0</div>
+</footer>
+<!-- ASAPTIC:FOOTER:END -->
 </body>
 </html>
