@@ -303,6 +303,17 @@ def render_lang_links(cfg, base, loc, present):
 
 def render_alternates(cfg, base, present):
     if len(present) < 2:
+        # A page with no translations still wants a self-referencing pair. The
+        # EN-only pages (physicalai, tender/au|gb|sg, a couple of blog notes)
+        # shipped hreflang="en" + x-default pointing at themselves before the
+        # shell injector took over their heads; returning "" here silently
+        # dropped both. Restrict it to en: a lone non-en page has no sensible
+        # x-default target, and render_lang_links still emits no chips either way.
+        if present == ["en"]:
+            url = cfg.path_to_url(cfg.mirror(base, "en"), True)
+            return ('<link rel="alternate" hreflang="en" href="%s">\n'
+                    '<link rel="alternate" hreflang="x-default" href="%s">\n'
+                    % (url, url))
         return ""
     lines = []
     for L in present:

@@ -841,7 +841,7 @@ function buildIssuePageHtml(langKey, snapshot, allSnapshots) {
     "url": "${canonical}",
     "description": "${metaDesc}",
     "inLanguage": "${langKey === 'en' ? 'en' : langKey === 'zh' ? 'zh-Hans' : 'zh-Hant'}",
-    "isPartOf": { "@type": "WebPage", "url": "${urlFor(langKey, '/tender/archive/')}" }
+    "isPartOf": { "@type": "WebPage", "url": "${canonical}", "name": "${L.archiveTitle}" }
   }
   </script>`;
 

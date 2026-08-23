@@ -26,9 +26,9 @@ const mktLabel = Object.fromEntries(idx.markets.map((m) => [m.id, m.label]));
 const live = idx.comparisons.filter((c) => c.status === "live");
 
 const T = {
-  en: { lang: "en", htmlLang: "en", pref: "", title: "Browse all comparisons", intro: "Every China-export compliance comparison, grouped by product and by destination market.", byProduct: "By product category", byMarket: "By destination market", count: "live comparisons" },
-  zh: { lang: "zh", htmlLang: "zh-CN", pref: "/zh", title: "浏览全部对照", intro: "全部中国出口合规对照，按产品与目标市场分组。", byProduct: "按产品类别", byMarket: "按目标市场", count: "个在线对照" },
-  zht: { lang: "zht", htmlLang: "zh-Hant", pref: "/zht", title: "瀏覽全部對照", intro: "全部中國出口合規對照，按產品與目標市場分組。", byProduct: "按產品類別", byMarket: "按目標市場", count: "個在線對照" }
+  en: { lang: "en", htmlLang: "en", pref: "", title: "Browse all comparisons", desc: "Directory of all live cross-border standards comparisons by product and market.", intro: "Every China-export compliance comparison, grouped by product and by destination market.", byProduct: "By product category", byMarket: "By destination market", count: "live comparisons" },
+  zh: { lang: "zh", htmlLang: "zh-Hans", pref: "/zh", title: "浏览全部对照", desc: "全部在线跨境标准对照的目录，按产品与市场分组。", intro: "全部中国出口合规对照，按产品与目标市场分组。", byProduct: "按产品类别", byMarket: "按目标市场", count: "个在线对照" },
+  zht: { lang: "zht", htmlLang: "zh-Hant", pref: "/zht", title: "瀏覽全部對照", desc: "全部在線跨境標準對照的目錄，按產品與市場分組。", intro: "全部中國出口合規對照，按產品與目標市場分組。", byProduct: "按產品類別", byMarket: "按目標市場", count: "個在線對照" }
 };
 
 function mainHtml(loc) {
@@ -75,7 +75,33 @@ for (const m of map) {
   if (!existsSync(m.src)) continue;
   let html = readFileSync(m.src, "utf8");
   html = html.replace(/<main>[\s\S]*?<\/main>/, mainHtml(m.loc));
-  html = html.replace(/<title>[^<]*<\/title>/, `<title>${esc(T[m.loc].title)} — Cross-Standard | Asaptic</title>`);
+  const pageTitle = `${esc(T[m.loc].title)} — Cross-Standard | Asaptic`;
+  const pageDesc = esc(T[m.loc].desc);
+  html = html.replace(/<title>[^<]*<\/title>/, `<title>${pageTitle}</title>`);
+  // The head is spliced wholesale from methodology.html, so every title/description
+  // meta still describes METHODOLOGY until retargeted here. Only og:url used to be
+  // fixed below, which left browse.html shipping methodology's title + description
+  // to search engines and social cards.
+  html = html.replace(
+    /(<meta name="description" content=")[^"]*(")/,
+    `$1${pageDesc}$2`
+  );
+  html = html.replace(
+    /(<meta property="og:title" content=")[^"]*(")/,
+    `$1${pageTitle}$2`
+  );
+  html = html.replace(
+    /(<meta property="og:description" content=")[^"]*(")/,
+    `$1${pageDesc}$2`
+  );
+  html = html.replace(
+    /(<meta name="twitter:title" content=")[^"]*(")/,
+    `$1${pageTitle}$2`
+  );
+  html = html.replace(
+    /(<meta name="twitter:description" content=")[^"]*(")/,
+    `$1${pageDesc}$2`
+  );
   // Re-render the head/header/footer sentinel blocks for browse's OWN slug — the
   // spliced-in copies (from methodology.html) still point at methodology (wrong
   // canonical, wrong lang-switcher URLs) until replaced here.

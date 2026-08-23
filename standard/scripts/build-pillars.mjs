@@ -21,8 +21,8 @@ const WRITE_ROOT = process.env.STANDARD_OUT_ROOT ? resolve(ROOT, process.env.STA
 
 const locales = [
   { locale: "en", lang: "en", htmlLang: "en", prefix: "", outRoot: join(WRITE_ROOT, "standard"), src: join(STD, "methodology.html") },
-  { locale: "zh", lang: "zh", htmlLang: "zh-CN", prefix: "/zh", outRoot: join(WRITE_ROOT, "zh/standard"), src: join(ROOT, "zh/standard/methodology.html") },
-  { locale: "zht", lang: "zht", htmlLang: "zh-TW", prefix: "/zht", outRoot: join(WRITE_ROOT, "zht/standard"), src: join(ROOT, "zht/standard/methodology.html") }
+  { locale: "zh", lang: "zh", htmlLang: "zh-Hans", prefix: "/zh", outRoot: join(WRITE_ROOT, "zh/standard"), src: join(ROOT, "zh/standard/methodology.html") },
+  { locale: "zht", lang: "zht", htmlLang: "zh-Hant", prefix: "/zht", outRoot: join(WRITE_ROOT, "zht/standard"), src: join(ROOT, "zht/standard/methodology.html") }
 ];
 
 const ui = {
@@ -179,8 +179,33 @@ function collectionJsonLd({ kind, id, pillar, title, description, lang, locale, 
   );
 }
 
+// Mirrors guideDatasetJsonLd() in build-guides.mjs: a standalone Dataset node so
+// the pillar's comparison corpus is machine-discoverable independently of the
+// CollectionPage graph. Regenerating the pillars used to drop this block (it had
+// only ever been injected out-of-band into the EN pages); emitting it here keeps
+// all three locales consistent with the guides.
+function pillarDatasetJsonLd({ title, locale, url }) {
+  const inLanguage = locale === "zht" ? "zh-Hant" : locale === "zh" ? "zh-Hans" : "en";
+  const licenseRoot = `${SITE}${locale === "en" ? "" : `/${locale}`}/standard/`;
+  return JSON.stringify(
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": `${title} - Export Compliance Dataset`,
+      "description": `Detailed export compliance and regulatory capability mapping for ${title}, compiled by Asaptic.`,
+      "creator": { "@type": "Organization", "name": "Asaptic" },
+      "inLanguage": inLanguage,
+      "license": licenseRoot,
+      "url": url
+    },
+    null,
+    2
+  );
+}
+
 function head({ kind, id, pillar, title, description, lang, locale }) {
   const canonical = pillarUrl({ locale, kind, id, site: SITE });
+  const datasetJson = pillarDatasetJsonLd({ title, locale, url: canonical });
   const json = collectionJsonLd({
     kind,
     id,
@@ -225,6 +250,9 @@ ${renderHeadLinks({ locale, slug: `${kind}/${id}` })}
 
   <script type="application/ld+json">
   ${json}
+  </script>
+  <script type="application/ld+json">
+${datasetJson}
   </script>
 </head>`;
 }

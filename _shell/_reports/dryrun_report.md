@@ -1,47 +1,60 @@
 # apply_shell.py — dry-run report
 
-generated: 2026-08-23T13:44:15+00:00  ·  css ver `20260823a`  ·  hrefs: root-relative
+generated: 2026-08-23T15:14:48+00:00  ·  css ver `20260823a`  ·  hrefs: root-relative
 
 ## Counts per status per family
 
-| family | OK | total |
-|---|---|---|
-| blog | 688 | 688 |
-| **all** | **688** | 688 |
+| family | OK | SKIP | total |
+|---|---|---|---|
+| tender | 14 | 30 | 44 |
+| **all** | **14** | **30** | 44 |
 
 ## Refusal / skip reasons
 
-* none
+* **9** — glob tender/archive/*
+    * `tender/archive/2026-w27/index.html`
+    * `tender/archive/2026-w28/index.html`
+    * `tender/archive/2026-w29/index.html`
+* **9** — glob zh/tender/archive/*
+    * `zh/tender/archive/2026-w27/index.html`
+    * `zh/tender/archive/2026-w28/index.html`
+    * `zh/tender/archive/2026-w29/index.html`
+* **9** — glob zht/tender/archive/*
+    * `zht/tender/archive/2026-w27/index.html`
+    * `zht/tender/archive/2026-w28/index.html`
+    * `zht/tender/archive/2026-w29/index.html`
+* **3** — already-v2 / flat page
+    * `tender/index.html`
+    * `zh/tender/index.html`
+    * `zht/tender/index.html`
 
 ## Idempotency
 
-* re-applying the transform to its own output is byte-identical for **688 / 688** OK pages.
+* re-applying the transform to its own output is byte-identical for **14 / 14** OK pages.
 
 ## 10 largest pages touched
 
-* `blog/index.html` — 437,435 → 437,435 bytes · anchor=sentinel · footer=sentinel · chips=enzhzhtpt
-* `zh/blog/where-to-buy-6-inch-lnoi-wafers.html` — 41,800 → 41,800 bytes · anchor=sentinel · footer=sentinel · chips=enzhzhtpt
-* `blog/organizational-forgetting-problem.html` — 40,805 → 40,805 bytes · anchor=sentinel · footer=sentinel · chips=enzhzhtpt
-* `blog/hardware-lifecycle-problem.html` — 39,542 → 39,542 bytes · anchor=sentinel · footer=sentinel · chips=enzhzhtpt
-* `blog/model-weight-integrity.html` — 39,246 → 39,246 bytes · anchor=sentinel · footer=sentinel · chips=(none)
-* `blog/consent-withdrawal-problem.html` — 38,396 → 38,396 bytes · anchor=sentinel · footer=sentinel · chips=enzhzhtpt
-* `blog/surrogate-principal-problem.html` — 38,380 → 38,380 bytes · anchor=sentinel · footer=sentinel · chips=enzhzhtpt
-* `blog/tfln-wafer-export-compliance-labs.html` — 38,294 → 38,294 bytes · anchor=sentinel · footer=sentinel · chips=enzhzhtpt
-* `blog/sycophancy-problem.html` — 37,737 → 37,737 bytes · anchor=sentinel · footer=sentinel · chips=enzhzhtpt
-* `blog/update-authority-problem.html` — 37,534 → 37,534 bytes · anchor=sentinel · footer=sentinel · chips=enzhzhtpt
+* `pt/tender/mo/index.html` — 28,217 → 28,217 bytes · anchor=sentinel · footer=sentinel · chips=enzhtpt
+* `tender/mo/index.html` — 27,978 → 27,978 bytes · anchor=sentinel · footer=sentinel · chips=enzhtpt
+* `tender/sg/index.html` — 27,461 → 27,618 bytes · anchor=sentinel · footer=sentinel · chips=(none)
+* `tender/gb/index.html` — 27,436 → 27,593 bytes · anchor=sentinel · footer=sentinel · chips=(none)
+* `tender/au/index.html` — 27,377 → 27,534 bytes · anchor=sentinel · footer=sentinel · chips=(none)
+* `zht/tender/mo/index.html` — 26,540 → 26,540 bytes · anchor=sentinel · footer=sentinel · chips=enzhtpt
+* `tender/c/medical-equipment/index.html` — 22,819 → 22,819 bytes · anchor=sentinel · footer=sentinel · chips=enzh
+* `tender/c/medical-services-pharma/index.html` — 22,758 → 22,758 bytes · anchor=sentinel · footer=sentinel · chips=enzh
+* `tender/c/construction-works/index.html` — 22,514 → 22,514 bytes · anchor=sentinel · footer=sentinel · chips=enzh
+* `tender/c/it-software/index.html` — 22,502 → 22,502 bytes · anchor=sentinel · footer=sentinel · chips=enzh
 
 ## Handling matrix (anchor x footer mode)
 
 | header anchor | footer mode | pages | examples |
 |---|---|---|---|
-| sentinel | sentinel | 688 | `blog/absence-inference-problem.html` · `blog/accountability-floor.html` · `blog/accountability-horizon-problem.html` |
+| sentinel | sentinel | 14 | `pt/tender/mo/index.html` · `tender/au/index.html` · `tender/c/construction-works/index.html` |
 
 ## Note kinds
 
-* **688** — `head:sentinel-refresh` — e.g. `blog/absence-inference-problem.html` · `blog/accountability-floor.html`
-* **210** — `body:lang-script-KEPT` — e.g. `blog/absence-inference-problem.html` · `blog/accountability-floor.html`
+* **14** — `head:sentinel-refresh` — e.g. `pt/tender/mo/index.html` · `tender/au/index.html`
 
 ## Oddest pages
 
-* `blog/absence-inference-problem.html` — family=blog · anchor=sentinel · footer=sentinel · chips=enzhzhtpt · head:sentinel-refresh; body:lang-script-KEPT(data-lang-content)
-* `blog/deposit-first-factory-sourcing-explained.html` — family=blog · anchor=sentinel · footer=sentinel · chips=enzhzhtpt · head:sentinel-refresh
+* `pt/tender/mo/index.html` — family=tender · anchor=sentinel · footer=sentinel · chips=enzhtpt · head:sentinel-refresh

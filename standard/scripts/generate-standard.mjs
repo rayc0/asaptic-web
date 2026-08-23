@@ -26,8 +26,8 @@ const INDEX_FILE = join(DATA_DIR, "_index.json");
 
 const locales = [
   { locale: "en", lang: "en", htmlLang: "en", outDir: "standard" },
-  { locale: "zh", lang: "zh", htmlLang: "zh-CN", outDir: "zh/standard" },
-  { locale: "zht", lang: "zht", htmlLang: "zh-TW", outDir: "zht/standard" }
+  { locale: "zh", lang: "zh", htmlLang: "zh-Hans", outDir: "zh/standard" },
+  { locale: "zht", lang: "zht", htmlLang: "zh-Hant", outDir: "zht/standard" }
 ];
 
 function readJson(file) {

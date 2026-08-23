@@ -21,8 +21,8 @@ const WRITE_ROOT = process.env.STANDARD_OUT_ROOT ? resolve(ROOT, process.env.STA
 
 const locales = [
   { locale: "en", lang: "en", htmlLang: "en", prefix: "", outRoot: join(WRITE_ROOT, "standard"), src: join(STD, "methodology.html") },
-  { locale: "zh", lang: "zh", htmlLang: "zh-CN", prefix: "/zh", outRoot: join(WRITE_ROOT, "zh/standard"), src: join(ROOT, "zh/standard/methodology.html") },
-  { locale: "zht", lang: "zht", htmlLang: "zh-TW", prefix: "/zht", outRoot: join(WRITE_ROOT, "zht/standard"), src: join(ROOT, "zht/standard/methodology.html") }
+  { locale: "zh", lang: "zh", htmlLang: "zh-Hans", prefix: "/zh", outRoot: join(WRITE_ROOT, "zh/standard"), src: join(ROOT, "zh/standard/methodology.html") },
+  { locale: "zht", lang: "zht", htmlLang: "zh-Hant", prefix: "/zht", outRoot: join(WRITE_ROOT, "zht/standard"), src: join(ROOT, "zht/standard/methodology.html") }
 ];
 
 const ui = {
@@ -134,11 +134,13 @@ function guideDatasetJsonLd({ title, description, locale }) {
 }
 
 function head({ id, guide, title, description, lang, locale }) {
-  // .html-suffixed on purpose: apply_shell.py never touches og:*/JSON-LD, so
-  // those stay in this pre-migration URL style (matches every committed guide
-  // page). Only the <link rel=canonical>/hreflang set (in the sentinel block
-  // below) uses the injector's extensionless convention.
+  // .html-suffixed on purpose: apply_shell.py never touches JSON-LD, so it
+  // stays in this pre-migration URL style (matches every committed guide
+  // page). og:url and the <link rel=canonical>/hreflang set (in the
+  // sentinel block below) both use the injector's extensionless convention
+  // (fixed 2026-08-23 -- og:url used to disagree with canonical).
   const canonical = guideUrl({ locale, id, site: SITE });
+  const ogUrl = canonical.replace(/\.html$/, "");
   const json = guideJsonLd({ id, guide, title, description, lang, locale });
   const datasetJson = guideDatasetJsonLd({ title, description, locale });
   const slug = `guides/${id}`;
@@ -153,7 +155,7 @@ function head({ id, guide, title, description, lang, locale }) {
   <meta property="og:type" content="article" />
   <meta property="og:title" content="${escAttr(title)} - Cross-Standard | Asaptic" />
   <meta property="og:description" content="${escAttr(description)}" />
-  <meta property="og:url" content="${escAttr(canonical)}" />
+  <meta property="og:url" content="${escAttr(ogUrl)}" />
   <meta property="og:site_name" content="Asaptic" />
 
   <meta name="twitter:card" content="summary" />
