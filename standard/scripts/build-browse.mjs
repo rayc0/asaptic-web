@@ -2,13 +2,22 @@
 // Static, crawlable "browse all comparisons" hub — grouped by product + by market, linking
 // every comparison page. Fixes JS-only discovery (crawlers/LLMs see all links) + distributes
 // internal-link authority across all pages. Additive: builds standard/browse.html (+ zh/zht)
-// by splicing the existing methodology.html chrome (same nav/footer/head).
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+// by splicing the existing methodology.html chrome (same head/header/footer sentinel blocks),
+// then re-rendering just those sentinel blocks for browse's OWN slug — the spliced-in copies
+// point at methodology (wrong canonical + wrong lang-switcher URLs) otherwise.
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { footer } from "../templates/partials/footer.mjs";
+import { nav } from "../templates/partials/nav.mjs";
+import { renderHeadLinks, replaceSentinelBlock } from "../templates/partials/shell.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const STD = join(ROOT, "standard");
+// See generate-standard.mjs's STANDARD_OUT_ROOT comment: redirects WRITES only.
+// The methodology.html splice SOURCE and shell.mjs's own existence checks always
+// read the real ROOT, never WRITE_ROOT.
+const WRITE_ROOT = process.env.STANDARD_OUT_ROOT ? resolve(ROOT, process.env.STANDARD_OUT_ROOT) : ROOT;
 const idx = JSON.parse(readFileSync(join(STD, "data/_index.json"), "utf8"));
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -56,9 +65,9 @@ function mainHtml(loc) {
 }
 
 const map = [
-  { loc: "en", src: join(STD, "methodology.html"), out: join(STD, "browse.html") },
-  { loc: "zh", src: join(ROOT, "zh/standard/methodology.html"), out: join(ROOT, "zh/standard/browse.html") },
-  { loc: "zht", src: join(ROOT, "zht/standard/methodology.html"), out: join(ROOT, "zht/standard/browse.html") }
+  { loc: "en", src: join(STD, "methodology.html"), out: join(WRITE_ROOT, "standard/browse.html") },
+  { loc: "zh", src: join(ROOT, "zh/standard/methodology.html"), out: join(WRITE_ROOT, "zh/standard/browse.html") },
+  { loc: "zht", src: join(ROOT, "zht/standard/methodology.html"), out: join(WRITE_ROOT, "zht/standard/browse.html") }
 ];
 let n = 0;
 for (const m of map) {
@@ -66,7 +75,19 @@ for (const m of map) {
   let html = readFileSync(m.src, "utf8");
   html = html.replace(/<main>[\s\S]*?<\/main>/, mainHtml(m.loc));
   html = html.replace(/<title>[^<]*<\/title>/, `<title>${esc(T[m.loc].title)} — Cross-Standard | Asaptic</title>`);
-  html = html.replace(/methodology\.html/g, "browse.html");
+  // Re-render the head/header/footer sentinel blocks for browse's OWN slug — the
+  // spliced-in copies (from methodology.html) still point at methodology (wrong
+  // canonical, wrong lang-switcher URLs) until replaced here.
+  html = replaceSentinelBlock(html, "head", renderHeadLinks({ locale: m.loc, slug: "browse" }));
+  html = replaceSentinelBlock(html, "header", nav({ locale: m.loc, slug: "browse" }));
+  html = replaceSentinelBlock(html, "footer", footer({ locale: m.loc, slug: "browse" }));
+  // og:url / JSON-LD @id / the trailing locale-redirect script's location.replace(...)
+  // calls are untouched by the sentinel swap above (matches apply_shell.py's own policy
+  // of never touching og:*/JSON-LD) and still literally say "methodology.html" — fix
+  // those residual refs so they point at browse.html instead.
+  html = html.replace(/standard\/methodology\.html/g, "standard/browse.html");
+  html = html.replace(/(["'(])methodology\.html/g, "$1browse.html");
+  mkdirSync(dirname(m.out), { recursive: true });
   writeFileSync(m.out, html);
   n++;
 }

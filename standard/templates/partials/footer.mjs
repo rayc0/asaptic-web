@@ -1,18 +1,11 @@
-import { esc, escAttr, label } from "./i18n.mjs";
+import { renderShell } from "./shell.mjs";
 
-export function footer({ lang = "en", locale = "en", slug = "solar-inverter-china-to-eu" } = {}) {
-  const standardHref = locale === "en" ? `/standard/${slug}.html` : `/${locale}/standard/${slug}.html`;
-  return `<footer class="footer standard-footer">
-    <div class="container">
-      <div class="footer-top">
-        <div class="footer-logo">Cross-Standard</div>
-        <div class="footer-links">
-          <a href="/">Asaptic</a>
-          <a href="${escAttr(standardHref)}">${esc(label("standard", lang))}</a>
-          <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener">CC BY 4.0</a>
-        </div>
-      </div>
-      <p class="standard-license">${esc(label("footerLicense", lang))}</p>
-    </div>
-  </footer>`;
+// v2 shell footer for the /standard section — rendered by the SAME sentinel
+// injector (_shell/apply_shell.py) that baked <footer class="foot"> onto every
+// migrated page. `lang` is accepted (and ignored) purely so existing call sites
+// that pass `{ lang, locale, slug }` keep working unchanged — the injector derives
+// all footer copy from `locale` via its own i18n files. See nav.mjs / shell.mjs
+// for the slug -> output-path contract.
+export function footer({ lang, locale = "en", slug = "solar-inverter-china-to-eu", outputRelPath } = {}) {
+  return renderShell({ locale, slug, outputRelPath }).footer;
 }

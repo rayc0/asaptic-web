@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { comparisonTable } from "../templates/partials/comparison-table.mjs";
 import { disclaimer } from "../templates/partials/disclaimer.mjs";
@@ -11,6 +11,14 @@ import { nav } from "../templates/partials/nav.mjs";
 import { sourceList } from "../templates/partials/source-list.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
+// STANDARD_OUT_ROOT lets QC runs write into a scratch tree instead of the real
+// repo (see the theme-unify build's VERIFY step) without disturbing anything
+// that's actually committed. It only redirects WHERE bytes land — shell.mjs's
+// renderShell()/outputRelPath() always resolve against the real ROOT (via
+// apply_shell.py's own default root), never WRITE_ROOT, so sibling-locale
+// existence (lang chips, hreflang) is always computed from the real, already
+// fully-populated tree. Defaults to ROOT, i.e. unset = today's behavior.
+const WRITE_ROOT = process.env.STANDARD_OUT_ROOT ? resolve(ROOT, process.env.STANDARD_OUT_ROOT) : ROOT;
 const DATA_DIR = join(ROOT, "standard/data");
 const FRAGMENT_DIR = join(ROOT, "standard/data/_fragments");
 const FAQ_FILE = join(FRAGMENT_DIR, "faq-eu-inverter.json");
@@ -361,7 +369,7 @@ for (const file of datasetFiles()) {
   }
 
   for (const locale of locales) {
-    const outDir = join(ROOT, locale.outDir);
+    const outDir = join(WRITE_ROOT, locale.outDir);
     mkdirSync(outDir, { recursive: true });
     writeFileSync(
       join(outDir, `${data.slug}.html`),

@@ -1,27 +1,12 @@
-import { esc, escAttr, label } from "./i18n.mjs";
+import { renderShell } from "./shell.mjs";
 
-// Neutral 公益 nav for the /standard section. Deliberately scoped to the
-// public-interest tool — NO commercial site links (Sourcing / Physical AI),
-// so the surface stays gov-backlinkable and free of business 导流.
-export function nav({ locale, slug = "solar-inverter-china-to-eu" }) {
-  const stdHome = locale === "en" ? "/standard/" : `/${locale}/standard/`;
-  const methodology = `${stdHome}methodology.html`;
-  const reportError = `${stdHome}report-error.html`;
-  const lang = locale;
-  const langAttrs = (target) => (locale === target ? ` aria-current="page"` : "");
-  return `<nav>
-    <div class="container nav-shell">
-      <a class="nav-logo" href="${escAttr(stdHome)}" aria-label="Cross-Standard">CROSS&#8209;STANDARD</a>
-      <div class="nav-links">
-        <a href="${escAttr(stdHome)}">${esc(label("standards", lang))}</a>
-        <a href="${escAttr(methodology)}">${esc(label("methodology", lang))}</a>
-        <a href="${escAttr(reportError)}">${esc(label("reportError", lang))}</a>
-      </div>
-      <div class="lang-switcher">
-        <a class="lang-btn${locale === "en" ? " active" : ""}" href="/standard/${escAttr(slug)}.html"${langAttrs("en")}>EN</a>
-        <a class="lang-btn${locale === "zh" ? " active" : ""}" href="/zh/standard/${escAttr(slug)}.html"${langAttrs("zh")}>简</a>
-        <a class="lang-btn${locale === "zht" ? " active" : ""}" href="/zht/standard/${escAttr(slug)}.html"${langAttrs("zht")}>繁</a>
-      </div>
-    </div>
-  </nav>`;
+// v2 shell header for the /standard section — rendered by the SAME sentinel
+// injector (_shell/apply_shell.py) that baked <header class="shell"> onto every
+// migrated page, so this can never drift from the committed markup. `slug` must
+// be the full standard/-relative slug (e.g. "market/japan", "guides/x", "browse",
+// or a bare comparison slug) — see shell.mjs's outputRelPath() for how it maps
+// to a repo-relative path. Pass an explicit `outputRelPath` to override that
+// mapping (not needed by any current call site).
+export function nav({ locale = "en", slug = "solar-inverter-china-to-eu", outputRelPath } = {}) {
+  return renderShell({ locale, slug, outputRelPath }).header;
 }

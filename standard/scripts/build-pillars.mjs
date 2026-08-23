@@ -3,21 +3,26 @@
 // Splices the methodology.html chrome so the generated pages stay consistent
 // with the public-interest section while exposing crawlable comparison links.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { footer } from "../templates/partials/footer.mjs";
 import { esc, escAttr, label, t } from "../templates/partials/i18n.mjs";
 import { nav } from "../templates/partials/nav.mjs";
+import { renderHeadLinks } from "../templates/partials/shell.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const STD = join(ROOT, "standard");
 const DATA = join(STD, "data");
 const SITE = "https://asaptic.com";
+// See generate-standard.mjs's STANDARD_OUT_ROOT comment: redirects WRITES only.
+// The methodology.html splice SOURCE (`src` below) and shell.mjs's own existence
+// checks always read the real ROOT, never WRITE_ROOT.
+const WRITE_ROOT = process.env.STANDARD_OUT_ROOT ? resolve(ROOT, process.env.STANDARD_OUT_ROOT) : ROOT;
 
 const locales = [
-  { locale: "en", lang: "en", htmlLang: "en", prefix: "", outRoot: STD, src: join(STD, "methodology.html") },
-  { locale: "zh", lang: "zh", htmlLang: "zh-CN", prefix: "/zh", outRoot: join(ROOT, "zh/standard"), src: join(ROOT, "zh/standard/methodology.html") },
-  { locale: "zht", lang: "zht", htmlLang: "zh-TW", prefix: "/zht", outRoot: join(ROOT, "zht/standard"), src: join(ROOT, "zht/standard/methodology.html") }
+  { locale: "en", lang: "en", htmlLang: "en", prefix: "", outRoot: join(WRITE_ROOT, "standard"), src: join(STD, "methodology.html") },
+  { locale: "zh", lang: "zh", htmlLang: "zh-CN", prefix: "/zh", outRoot: join(WRITE_ROOT, "zh/standard"), src: join(ROOT, "zh/standard/methodology.html") },
+  { locale: "zht", lang: "zht", htmlLang: "zh-TW", prefix: "/zht", outRoot: join(WRITE_ROOT, "zht/standard"), src: join(ROOT, "zht/standard/methodology.html") }
 ];
 
 const ui = {
@@ -202,11 +207,6 @@ function head({ kind, id, pillar, title, description, lang, locale }) {
 
   <meta name="description" content="${escAttr(description)}" />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="${escAttr(canonical)}" />
-  <link rel="alternate" hreflang="en" href="${escAttr(pillarUrl({ locale: "en", kind, id, site: SITE }))}" />
-  <link rel="alternate" hreflang="zh-Hans" href="${escAttr(pillarUrl({ locale: "zh", kind, id, site: SITE }))}" />
-  <link rel="alternate" hreflang="zh-Hant" href="${escAttr(pillarUrl({ locale: "zht", kind, id, site: SITE }))}" />
-  <link rel="alternate" hreflang="x-default" href="${escAttr(pillarUrl({ locale: "en", kind, id, site: SITE }))}" />
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="${escAttr(title)} - Cross-Standard | Asaptic" />
@@ -218,11 +218,9 @@ function head({ kind, id, pillar, title, description, lang, locale }) {
   <meta name="twitter:title" content="${escAttr(title)} - Cross-Standard | Asaptic" />
   <meta name="twitter:description" content="${escAttr(description)}" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <script>document.documentElement.classList.add('js-anim');</script>
-  <link rel="stylesheet" href="/style.css?v=20260609c" />
+${renderHeadLinks({ locale, slug: `${kind}/${id}` })}
+
   <link rel="stylesheet" href="/standard/standard.css?v=20260611b" />
 
   <script type="application/ld+json">
@@ -325,9 +323,13 @@ function page({ template, kind, id, pillar, lang, locale, htmlLang }) {
   return template
     .replace(/<html lang="[^"]*">/, `<html lang="${escAttr(htmlLang)}">`)
     .replace(/<head>[\s\S]*?<\/head>/, head({ kind, id, pillar, title, description, lang, locale }))
-    .replace(/<nav>[\s\S]*?<\/nav>/, nav({ locale, slug }))
+    // v2 shell chrome lives between the ASAPTIC:HEADER/FOOTER sentinel comments
+    // (methodology.html's splice source already carries them, one line ahead of
+    // <header>/<footer> themselves — matching only the tag would strand the old
+    // leading sentinel comment and duplicate it against nav()'s/footer()'s own).
+    .replace(/<!-- ASAPTIC:HEADER:START -->[\s\S]*?<!-- ASAPTIC:HEADER:END -->/, nav({ locale, slug }))
     .replace(/<main>[\s\S]*?<\/main>/, mainHtml({ kind, id, pillar, lang, locale, comparisons }))
-    .replace(/<footer[\s\S]*?<\/footer>/, footer({ lang, locale, slug }))
+    .replace(/<!-- ASAPTIC:FOOTER:START -->[\s\S]*?<!-- ASAPTIC:FOOTER:END -->/, footer({ lang, locale, slug }))
     // Rewrite any residual methodology.html refs (locale-switcher redirects, canonical helpers)
     // spliced from the chrome so they point at THIS pillar page, not methodology.
     .replace(/standard\/methodology\.html/g, `standard/${slug}.html`)
