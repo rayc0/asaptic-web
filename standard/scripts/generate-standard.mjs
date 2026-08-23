@@ -62,6 +62,17 @@ const REGION_MAP = {
 };
 
 /**
+ * Extracts the bare comparison slug from a comparisons[].url.en value, tolerant of a
+ * trailing slash and/or a .html extension so a malformed data entry (e.g. the
+ * extensionless-with-trailing-slash form some entries briefly carried) can never
+ * collapse to an empty string and produce a "/standard/.html" link. Always returns a
+ * non-empty slug for any well-formed entry.
+ */
+function slugFromEnUrl(enUrl) {
+  return enUrl.replace(/\/+$/, "").replace(/\.html$/, "").split("/").pop();
+}
+
+/**
  * Computes up to 6 related comparisons using a GEO-aware tiered selection process.
  *
  * @param {Object} idx - Parsed contents of standard/data/_index.json
@@ -70,7 +81,7 @@ const REGION_MAP = {
  * @returns {Array<{slug: string, url: string, title: string}>} Array of related items
  */
 function getRelatedComparisons(idx, currentSlug, lang = "en") {
-  const current = idx.comparisons.find((c) => c.url.en.split("/").pop() === currentSlug);
+  const current = idx.comparisons.find((c) => slugFromEnUrl(c.url.en) === currentSlug);
   if (!current) return [];
 
   const currentProduct = current.product;
@@ -90,11 +101,11 @@ function getRelatedComparisons(idx, currentSlug, lang = "en") {
 
   const makeUrl = (c) => {
     const pref = lang === "en" ? "/standard" : `/${lang}/standard`;
-    return `${pref}/${c.url.en.split("/").pop()}.html`;
+    return `${pref}/${slugFromEnUrl(c.url.en)}.html`;
   };
 
   const pool = idx.comparisons.filter(
-    (c) => c.status === "live" && c.url.en.split("/").pop() !== currentSlug
+    (c) => c.status === "live" && slugFromEnUrl(c.url.en) !== currentSlug
   );
 
   // Prioritization tiers
@@ -108,7 +119,7 @@ function getRelatedComparisons(idx, currentSlug, lang = "en") {
   const addItems = (items) => {
     for (const item of items) {
       if (results.length >= 6) break;
-      const slug = item.url.en.split("/").pop();
+      const slug = slugFromEnUrl(item.url.en);
       if (!addedSlugs.has(slug)) {
         addedSlugs.add(slug);
         results.push({ slug, url: makeUrl(item), title: makeTitle(item) });

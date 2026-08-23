@@ -83,10 +83,21 @@ for (const m of map) {
   html = replaceSentinelBlock(html, "footer", footer({ locale: m.loc, slug: "browse" }));
   // og:url / JSON-LD @id / the trailing locale-redirect script's location.replace(...)
   // calls are untouched by the sentinel swap above (matches apply_shell.py's own policy
-  // of never touching og:*/JSON-LD) and still literally say "methodology.html" — fix
-  // those residual refs so they point at browse.html instead.
+  // of never touching og:*/JSON-LD) and still literally say "methodology" — fix those
+  // residual refs so they point at browse instead. methodology.html's own JSON-LD still
+  // carries the .html suffix (site-wide legacy inconsistency, out of scope here), so that
+  // form is normalized to browse.html; its og:url/canonical are already extensionless
+  // (matching the site's clean-URL convention), so that bare form must be caught too —
+  // otherwise og:url on the built browse.html silently keeps pointing at methodology
+  // (wrong page, not just a wrong extension). The og:url replacement is scoped to the
+  // og:url meta tag specifically so it can never touch the genuine "Methodology" nav
+  // link that the re-rendered footer/header sentinel blocks already emit correctly.
   html = html.replace(/standard\/methodology\.html/g, "standard/browse.html");
   html = html.replace(/(["'(])methodology\.html/g, "$1browse.html");
+  html = html.replace(
+    /(<meta property="og:url" content="[^"]*)\/standard\/methodology(")/,
+    "$1/standard/browse$2"
+  );
   mkdirSync(dirname(m.out), { recursive: true });
   writeFileSync(m.out, html);
   n++;

@@ -106,6 +106,33 @@ function guideJsonLd({ id, guide, title, description, lang, locale }) {
   );
 }
 
+// Every committed EN guide page (standard/guides/*.html) carries a SECOND, standalone
+// application/ld+json script tag with a bare "@type": "Dataset" block (not merged into
+// the @graph above) — see e.g. standard/guides/bess-export-compliance-checklist.html.
+// The generator never emitted this (guideJsonLd() above only ever produced TechArticle +
+// BreadcrumbList), so a regen would silently drop it. All fields are derivable from data
+// already available here (title/description/locale) — no new guides.json fields needed.
+// zh/zht committed guide pages happen to be missing this block too (never hand-patched),
+// but there's no reason a real guide's dataset markup should differ by locale, so it's
+// emitted for all three here — see build-guides report notes for this call.
+function guideDatasetJsonLd({ title, description, locale }) {
+  const inLanguage = locale === "zht" ? "zh-Hant" : locale === "zh" ? "zh-Hans" : "en";
+  const licenseRoot = `${SITE}${locale === "en" ? "" : `/${locale}`}/standard/`;
+  return JSON.stringify(
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": `${title} - Export Compliance Dataset`,
+      "description": `Detailed export compliance and regulatory capability mapping for ${title}, compiled by Asaptic.`,
+      "creator": { "@type": "Organization", "name": "Asaptic" },
+      "inLanguage": inLanguage,
+      "license": licenseRoot
+    },
+    null,
+    2
+  );
+}
+
 function head({ id, guide, title, description, lang, locale }) {
   // .html-suffixed on purpose: apply_shell.py never touches og:*/JSON-LD, so
   // those stay in this pre-migration URL style (matches every committed guide
@@ -113,6 +140,7 @@ function head({ id, guide, title, description, lang, locale }) {
   // below) uses the injector's extensionless convention.
   const canonical = guideUrl({ locale, id, site: SITE });
   const json = guideJsonLd({ id, guide, title, description, lang, locale });
+  const datasetJson = guideDatasetJsonLd({ title, description, locale });
   const slug = `guides/${id}`;
   return `<head>
   <meta charset="UTF-8" />
@@ -139,6 +167,9 @@ ${renderHeadLinks({ locale, slug })}
 
   <script type="application/ld+json">
   ${json}
+  </script>
+  <script type="application/ld+json">
+${datasetJson}
   </script>
 </head>`;
 }
