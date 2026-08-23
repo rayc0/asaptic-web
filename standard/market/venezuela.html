@@ -120,7 +120,7 @@
     <nav class="nav"><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/suppliers">For Suppliers</a><a href="/standards" class="on">Cross-Standard</a><a href="/platform">Developers</a></nav>
     <div class="lang"><a href="/standard/market/venezuela"><span class="on">EN</span></a><a href="/zh/standard/market/venezuela"><span>简</span></a><a href="/zht/standard/market/venezuela"><span>繁</span></a></div><a class="engage" href="/contact">Talk to us</a>
   </div>
-  <div class="row subrow"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Asaptic</a><span class="sep">/</span><a href="/standard/">Cross-Standard</a></nav><nav class="sublinks"><a href="/standard/">Standards</a><a href="/standard/methodology">Methodology</a><a href="/standard/report-error">Report an error</a></nav></div>
+  <div class="row subrow"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Asaptic</a><span class="sep">/</span><a href="/standard/">Cross-Standard</a></nav><nav class="sublinks"><a href="/standard/">Finder</a><a href="/standard/browse">Browse all</a><a href="/standard/market/">By market</a><a href="/standard/product/">By product</a><a href="/standard/guides/">Guides</a><a href="/standard/methodology">Methodology</a><a href="/standard/report-error">Report an error</a></nav></div>
 </header>
 <!-- ASAPTIC:HEADER:END -->
 
@@ -135,7 +135,7 @@
           <div class="standard-status">
             <span>1 Comparison collection</span>
             <span>Index updated: 2026-06-17T02:38:16Z</span>
-            <span><a href="/standard/browse.html">Browse all comparisons</a></span>
+            <span><a href="/standard/browse">Browse all comparisons</a></span>
           </div>
         </div>
       </div>
@@ -158,7 +158,7 @@
       <div class="container">
         <aside class="answer-first">
           <span class="answer-first__label">Browse all comparisons</span>
-          <p class="answer-first__verdict"><a href="/standard/browse.html">Browse all comparisons</a></p>
+          <p class="answer-first__verdict"><a href="/standard/browse">Browse all comparisons</a></p>
         </aside>
         <aside class="standard-compact-disclaimer">
           <strong>Related market pillars</strong>
@@ -184,67 +184,5 @@
 <!-- ASAPTIC:FOOTER:END -->
 
   <script src="/content.js?v=20260609c"></script>
-  <script>
-    async function detectLang() {
-      const stored = localStorage.getItem('asaptic-lang');
-      if (stored && ['en','zh','zht'].includes(stored)) return stored;
-      try {
-        const res = await fetch('https://workers.asaptic.com/geo', { signal: AbortSignal.timeout(2000) });
-        if (res.ok) {
-          const { country } = await res.json();
-          if (['HK','MO','TW'].includes(country)) return 'zht';
-          if (country === 'CN') return 'zh';
-          return 'en';
-        }
-      } catch {}
-      const lang = (navigator.language || '').toLowerCase();
-      if (lang.startsWith('zh-tw') || lang.startsWith('zh-hk') || lang.startsWith('zh-mo')) return 'zht';
-      if (lang.startsWith('zh')) return 'zh';
-      return 'en';
-    }
-
-    function applyLang(lang) {
-      if (typeof CONTENT === 'undefined' || !CONTENT[lang]) lang = 'en';
-      if (typeof CONTENT === 'undefined') return;
-      const dict = CONTENT[lang];
-      document.querySelectorAll('[data-key]').forEach(el => {
-        const key = el.getAttribute('data-key');
-        if (dict[key] !== undefined) el.textContent = dict[key];
-      });
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
-      });
-      document.documentElement.lang = lang === 'zht' ? 'zh-TW' : lang === 'zh' ? 'zh-CN' : 'en';
-      localStorage.setItem('asaptic-lang', lang);
-    }
-
-    document.querySelectorAll('.lang-btn[data-lang]').forEach(btn => {
-      btn.addEventListener('click', () => applyLang(btn.getAttribute('data-lang')));
-    });
-
-    const fadeObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          fadeObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
-    addEventListener('load', () => setTimeout(() =>
-      document.querySelectorAll('.fade-in:not(.visible)').forEach(el => el.classList.add('visible')), 2500));
-
-    (async () => {
-      const lang = await detectLang();
-      // Redirect to localised URL if zh/zht
-      if (lang === 'zh' && !location.pathname.startsWith('/zh/')) {
-        location.replace('/zh/standard/market/venezuela.html');
-      } else if (lang === 'zht' && !location.pathname.startsWith('/zht/')) {
-        location.replace('/zht/standard/market/venezuela.html');
-      } else {
-        applyLang(lang);
-      }
-    })();
-  </script>
 </body>
 </html>

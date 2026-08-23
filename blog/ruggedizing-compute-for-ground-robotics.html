@@ -162,7 +162,7 @@
       <div class="essay-body">
         <p>The first generation of ground robots equipped with on-board AI compute shared a common assumption: that inference hardware designed for controlled indoor environments would simply work outside. It did not. What failed was not the model or the software stack. What failed was the hardware underneath — boards, connectors, and cooling systems built to survive an air-conditioned server room, not a construction site in July or a border patrol route in January.</p>
 
-        <p>The problem is architectural. The AI accelerator market matured inside data centres, where the thermal envelope is managed, vibration is absent, humidity is controlled, and power rails are clean. A UGV operating on uneven terrain violates every one of those assumptions simultaneously. Before a team can deploy a <a href="/physical-ai-robotics.html">physical AI system</a> that reasons about its environment in real time, it has to solve a set of hardware problems that have nothing to do with machine learning and everything to do with mechanical and electrical engineering.</p>
+        <p>The problem is architectural. The AI accelerator market matured inside data centres, where the thermal envelope is managed, vibration is absent, humidity is controlled, and power rails are clean. A UGV operating on uneven terrain violates every one of those assumptions simultaneously. Before a team can deploy a <a href="/physical-ai-robotics">physical AI system</a> that reasons about its environment in real time, it has to solve a set of hardware problems that have nothing to do with machine learning and everything to do with mechanical and electrical engineering.</p>
 
         <p>Shock and vibration are the first killers. Off-road platforms routinely generate sustained vibration profiles across a wide frequency band, with occasional sharp transients from obstacles, drops, or track engagement. Consumer and commercial compute modules are not designed for these loads. The failure modes are predictable: solder joint fatigue on BGA packages, connector intermittency, and delamination of PCB layers at vias. Military and aerospace standards — MIL-STD-810, DO-160 — define test profiles for exactly these environments. The engineering response involves underfill on critical ball-grid packages, vibration-damped mounting systems that decouple the compute enclosure from the chassis, and locking connector formats rather than friction-fit headers. None of this is exotic; all of it adds mass, volume, and cost that system architects have to account for before the first prototype.</p>
 
@@ -174,9 +174,9 @@
 
         <p>Conformal coating is the last line of hardware defence. A thin layer of acrylic, polyurethane, or silicone coating over the assembled PCB resists moisture ingress, salt fog, and conductive contamination. It is also incompatible with rework and repair without stripping, which creates a production discipline: conformal coating happens after final test and before sealing. The choice of coating chemistry matters — silicone coatings offer the widest thermal range but are difficult to inspect; acrylic coatings are more accessible but less flexible and prone to cracking under sustained vibration. These are not decisions that can be made at the last stage of a product design cycle.</p>
 
-        <p>All of these constraints converge on the compute and power budget in a way that is qualitatively different from cloud or embedded IoT design. The on-board inference platform for a UGV has to deliver enough throughput for the perception and planning workloads the mission requires — and it has to do it within a power envelope set by the battery, at a weight that the chassis can carry, inside a thermal envelope the fanless enclosure can manage, across the full operational temperature and vibration range the vehicle will see. Every dimension of that budget is tighter than its datacenter equivalent. The path forward is not to transplant datacenter compute into a ruggedized enclosure; it is to <a href="/deep-tech-sourcing.html">source hardware</a> designed from the outset for the physical environment it will inhabit.</p>
+        <p>All of these constraints converge on the compute and power budget in a way that is qualitatively different from cloud or embedded IoT design. The on-board inference platform for a UGV has to deliver enough throughput for the perception and planning workloads the mission requires — and it has to do it within a power envelope set by the battery, at a weight that the chassis can carry, inside a thermal envelope the fanless enclosure can manage, across the full operational temperature and vibration range the vehicle will see. Every dimension of that budget is tighter than its datacenter equivalent. The path forward is not to transplant datacenter compute into a ruggedized enclosure; it is to <a href="/deep-tech-sourcing">source hardware</a> designed from the outset for the physical environment it will inhabit.</p>
 
-        <p>The teams making progress on this are not necessarily the ones with the most sophisticated models. They are the ones who treated the hardware integration problem with the same rigour they applied to the software stack — and who resolved the mechanical, thermal, and electrical constraints before they wrote a line of inference code. In <a href="/physical-ai-robotics.html">physical AI</a>, the substrate is never neutral. What the hardware can survive defines what the system can do.</p>
+        <p>The teams making progress on this are not necessarily the ones with the most sophisticated models. They are the ones who treated the hardware integration problem with the same rigour they applied to the software stack — and who resolved the mechanical, thermal, and electrical constraints before they wrote a line of inference code. In <a href="/physical-ai-robotics">physical AI</a>, the substrate is never neutral. What the hardware can survive defines what the system can do.</p>
       </div>
 
       <div class="essay-summary">
@@ -188,7 +188,7 @@
 
       <div class="essay-nav">
         <a href="/blog/">&larr; All essays</a>
-        <a href="/blog/override-log-as-moat.html">Previous: The override log →</a>
+        <a href="/blog/override-log-as-moat">Previous: The override log →</a>
       </div>
     </div>
 
@@ -208,11 +208,11 @@
         <p>防护等级方面，IP65 可完全防尘并抵御任意方向低压水柱，IP67 则可承受短暂浸水。实现这些等级需要密封机箱配合 O 形圈与压盖连接器，但这也使散热更加困难——每个连接器穿孔都是潜在的侵入点，迫使设计者转向密封圆形连接器，而非原型开发中常用的矩形 PCIe 与 USB 接口。</p>
         <p>电源瞬变同样不可忽视。机器人总线由电机、伺服、传感器与计算单元共享，电机启停产生的电压尖峰可能超过计算芯片的绝对最大额定值，或在推理过程中造成内存数据损坏。正确的隔离方案包括：计算电源轨上的大容量储能电容、具备足够瞬态响应能力的稳压模块，以及必要时为 AI 加速器配置独立的 DC-DC 变换器。</p>
         <p>共形涂层是硬件防护的最后一道防线。覆盖在组装 PCB 上的薄层涂料可抵御潮湿、盐雾与导电污染。涂层化学品的选择至关重要——有机硅涂层温域最宽，但难以检测；丙烯酸涂层更易检视，但在持续振动下容易开裂。这些决策必须在产品设计周期的早期确定，而非在最后阶段补救。</p>
-        <p>所有这些约束共同压缩了 UGV 板载推理平台的计算与功耗预算，其程度远超云端或嵌入式 IoT 设计。真正能在野外部署的团队，是那些在编写任何推理代码之前，就将硬件集成问题视为一等工程挑战，并在布局之前解决机械、热学与电气约束的团队。在<a href="/physical-ai-robotics.html">实体 AI</a> 领域，硬件底层从不中立——硬件能承受什么，决定了系统能做什么。</p>
+        <p>所有这些约束共同压缩了 UGV 板载推理平台的计算与功耗预算，其程度远超云端或嵌入式 IoT 设计。真正能在野外部署的团队，是那些在编写任何推理代码之前，就将硬件集成问题视为一等工程挑战，并在布局之前解决机械、热学与电气约束的团队。在<a href="/physical-ai-robotics">实体 AI</a> 领域，硬件底层从不中立——硬件能承受什么，决定了系统能做什么。</p>
       </div>
       <div class="essay-nav">
         <a href="/blog/">&larr; 全部文章</a>
-        <a href="/blog/override-log-as-moat.html">上一篇：覆写日志 →</a>
+        <a href="/blog/override-log-as-moat">上一篇：覆写日志 →</a>
       </div>
     </div>
 
@@ -232,11 +232,11 @@
         <p>防護等級方面，IP65 可完全防塵並抵禦任意方向低壓水柱，IP67 則可承受短暫浸水。實現這些等級需要密封機箱配合 O 形圈與壓蓋連接器，但這也使散熱更加困難——每個連接器穿孔都是潛在的侵入點，迫使設計者轉向密封圓形連接器，而非原型開發中常用的矩形 PCIe 與 USB 接口。</p>
         <p>電源暫態同樣不可忽視。機器人總線由電機、伺服、感測器與運算單元共享，電機啟停產生的電壓尖峰可能超過運算晶片的絕對最大額定值，或在推理過程中造成記憶體資料損壞。正確的隔離方案包括：運算電源軌上的大容量儲能電容、具備足夠暫態響應能力的穩壓模組，以及必要時為 AI 加速器配置獨立的 DC-DC 變換器。</p>
         <p>共形塗層是硬體防護的最後一道防線。覆蓋在組裝 PCB 上的薄層塗料可抵禦潮濕、鹽霧與導電污染。塗層化學品的選擇至關重要——矽酮塗層溫域最寬，但難以檢測；丙烯酸塗層更易檢視，但在持續振動下容易開裂。這些決策必須在產品設計週期的早期確定，而非在最後階段補救。</p>
-        <p>所有這些約束共同壓縮了 UGV 板載推理平台的運算與功耗預算，其程度遠超雲端或嵌入式 IoT 設計。真正能在野外部署的團隊，是那些在撰寫任何推理程式碼之前，就將硬體整合問題視為一等工程挑戰，並在佈局之前解決機械、熱學與電氣約束的團隊。在<a href="/physical-ai-robotics.html">實體 AI</a> 領域，硬體底層從不中立——硬體能承受什麼，決定了系統能做什麼。</p>
+        <p>所有這些約束共同壓縮了 UGV 板載推理平台的運算與功耗預算，其程度遠超雲端或嵌入式 IoT 設計。真正能在野外部署的團隊，是那些在撰寫任何推理程式碼之前，就將硬體整合問題視為一等工程挑戰，並在佈局之前解決機械、熱學與電氣約束的團隊。在<a href="/physical-ai-robotics">實體 AI</a> 領域，硬體底層從不中立——硬體能承受什麼，決定了系統能做什麼。</p>
       </div>
       <div class="essay-nav">
         <a href="/blog/">&larr; 全部文章</a>
-        <a href="/blog/override-log-as-moat.html">上一篇：覆寫日誌 →</a>
+        <a href="/blog/override-log-as-moat">上一篇：覆寫日誌 →</a>
       </div>
     </div>
   </main>

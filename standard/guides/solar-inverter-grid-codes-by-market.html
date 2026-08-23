@@ -130,7 +130,7 @@
     <nav class="nav"><a href="/trade-ai">Trade AI</a><a href="/tenders">Live Tenders</a><a href="/suppliers">For Suppliers</a><a href="/standards" class="on">Cross-Standard</a><a href="/platform">Developers</a></nav>
     <div class="lang"><a href="/standard/guides/solar-inverter-grid-codes-by-market"><span class="on">EN</span></a><a href="/zh/standard/guides/solar-inverter-grid-codes-by-market"><span>简</span></a><a href="/zht/standard/guides/solar-inverter-grid-codes-by-market"><span>繁</span></a></div><a class="engage" href="/contact">Talk to us</a>
   </div>
-  <div class="row subrow"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Asaptic</a><span class="sep">/</span><a href="/standard/">Cross-Standard</a></nav><nav class="sublinks"><a href="/standard/">Standards</a><a href="/standard/methodology">Methodology</a><a href="/standard/report-error">Report an error</a></nav></div>
+  <div class="row subrow"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Asaptic</a><span class="sep">/</span><a href="/standard/">Cross-Standard</a></nav><nav class="sublinks"><a href="/standard/">Finder</a><a href="/standard/browse">Browse all</a><a href="/standard/market/">By market</a><a href="/standard/product/">By product</a><a href="/standard/guides/">Guides</a><a href="/standard/methodology">Methodology</a><a href="/standard/report-error">Report an error</a></nav></div>
 </header>
 <!-- ASAPTIC:HEADER:END -->
 
@@ -172,13 +172,13 @@
         <aside class="standard-compact-disclaimer">
           <strong>Related</strong>
           <ul class="standard-source-list">
-            <li><a href="/standard/solar-inverter-china-to-eu.html">PV Inverter — China to EU</a></li>
-<li><a href="/standard/solar-inverter-china-to-us.html">PV Inverter — China to US</a></li>
-<li><a href="/standard/solar-inverter-china-to-uk.html">PV Inverter — China to UK</a></li>
-<li><a href="/standard/solar-inverter-china-to-australia.html">PV Inverter — China to Australia</a></li>
-<li><a href="/standard/solar-inverter-china-to-south-africa.html">PV Inverter — China to South Africa</a></li>
-<li><a href="/standard/solar-inverter-china-to-india.html">PV Inverter — China to India</a></li>
-<li><a href="/standard/browse.html">PV Inverter Products Hub</a></li>
+            <li><a href="/standard/solar-inverter-china-to-eu">PV Inverter — China to EU</a></li>
+<li><a href="/standard/solar-inverter-china-to-us">PV Inverter — China to US</a></li>
+<li><a href="/standard/solar-inverter-china-to-uk">PV Inverter — China to UK</a></li>
+<li><a href="/standard/solar-inverter-china-to-australia">PV Inverter — China to Australia</a></li>
+<li><a href="/standard/solar-inverter-china-to-south-africa">PV Inverter — China to South Africa</a></li>
+<li><a href="/standard/solar-inverter-china-to-india">PV Inverter — China to India</a></li>
+<li><a href="/standard/browse">PV Inverter Products Hub</a></li>
 <li><a href="/standard/?market=eu">EU Market Standards Hub</a></li>
 <li><a href="/standard/?market=us">US Market Standards Hub</a></li>
 <li><a href="/standard/?market=australia">Australia Market Standards Hub</a></li>
@@ -204,67 +204,5 @@
 <!-- ASAPTIC:FOOTER:END -->
 
   <script src="/content.js?v=20260609c"></script>
-  <script>
-    async function detectLang() {
-      const stored = localStorage.getItem('asaptic-lang');
-      if (stored && ['en','zh','zht'].includes(stored)) return stored;
-      try {
-        const res = await fetch('https://workers.asaptic.com/geo', { signal: AbortSignal.timeout(2000) });
-        if (res.ok) {
-          const { country } = await res.json();
-          if (['HK','MO','TW'].includes(country)) return 'zht';
-          if (country === 'CN') return 'zh';
-          return 'en';
-        }
-      } catch {}
-      const lang = (navigator.language || '').toLowerCase();
-      if (lang.startsWith('zh-tw') || lang.startsWith('zh-hk') || lang.startsWith('zh-mo')) return 'zht';
-      if (lang.startsWith('zh')) return 'zh';
-      return 'en';
-    }
-
-    function applyLang(lang) {
-      if (typeof CONTENT === 'undefined' || !CONTENT[lang]) lang = 'en';
-      if (typeof CONTENT === 'undefined') return;
-      const dict = CONTENT[lang];
-      document.querySelectorAll('[data-key]').forEach(el => {
-        const key = el.getAttribute('data-key');
-        if (dict[key] !== undefined) el.textContent = dict[key];
-      });
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
-      });
-      document.documentElement.lang = lang === 'zht' ? 'zh-TW' : lang === 'zh' ? 'zh-CN' : 'en';
-      localStorage.setItem('asaptic-lang', lang);
-    }
-
-    document.querySelectorAll('.lang-btn[data-lang]').forEach(btn => {
-      btn.addEventListener('click', () => applyLang(btn.getAttribute('data-lang')));
-    });
-
-    const fadeObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          fadeObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
-    addEventListener('load', () => setTimeout(() =>
-      document.querySelectorAll('.fade-in:not(.visible)').forEach(el => el.classList.add('visible')), 2500));
-
-    (async () => {
-      const lang = await detectLang();
-      // Redirect to localised URL if zh/zht
-      if (lang === 'zh' && !location.pathname.startsWith('/zh/')) {
-        location.replace('/zh/standard/guides/solar-inverter-grid-codes-by-market.html');
-      } else if (lang === 'zht' && !location.pathname.startsWith('/zht/')) {
-        location.replace('/zht/standard/guides/solar-inverter-grid-codes-by-market.html');
-      } else {
-        applyLang(lang);
-      }
-    })();
-  </script>
 </body>
 </html>

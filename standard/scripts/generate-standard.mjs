@@ -101,7 +101,7 @@ function getRelatedComparisons(idx, currentSlug, lang = "en") {
 
   const makeUrl = (c) => {
     const pref = lang === "en" ? "/standard" : `/${lang}/standard`;
-    return `${pref}/${slugFromEnUrl(c.url.en)}.html`;
+    return `${pref}/${slugFromEnUrl(c.url.en)}`; // extensionless (Pages clean URLs)
   };
 
   const pool = idx.comparisons.filter(
