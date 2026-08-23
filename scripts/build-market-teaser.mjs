@@ -225,7 +225,10 @@ const categories = CATEGORIES
       name_zht: cat.name_zht,
       count: c.count,
     };
-    if (hasClosingDates && c.soonest) entry.soonest_closing = c.soonest;
+    // MOAT: public surface is coarse-bucket-only — NEVER an exact closing date.
+    // Emitting soonest_closing (raw closing_iso) leaked the real deadline of a
+    // specific tender for low-count categories; removed 2026-08-10. Per-tender
+    // closing_bucket in the main feed already conveys "closing soon" safely.
     return entry;
   })
   .filter(Boolean)

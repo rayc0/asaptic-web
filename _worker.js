@@ -212,6 +212,12 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
+    // Build tooling is deployed alongside the site (Pages uploads everything);
+    // never serve it. (_shell/ = shell injector, QC harness, deploy scripts.)
+    if (url.pathname.startsWith('/_shell/') || url.pathname.startsWith('/_qc/')) {
+      return new Response('Not Found', { status: 404, headers: { 'content-type': 'text/plain' } });
+    }
+
     // Static assets and well-known files: always pass through to ASSETS
     // (prevents SPA catch-all from serving text/html for these paths)
     if (
