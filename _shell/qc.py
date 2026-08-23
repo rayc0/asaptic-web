@@ -39,7 +39,7 @@ VOID_TAGS = {
 }
 
 EXCLUDE_DIR_NAMES = {
-    "node_modules", "_qc", ".qc-tmp", "test", "tests", ".git", ".wrangler",
+    "node_modules", "_qc", ".qc-tmp", "test", "tests", ".git", ".wrangler", "_shell", "assets",
 }
 EXCLUDE_DIR_PREFIXES = ("_design_previews",)
 
@@ -174,7 +174,7 @@ def collect_html_files(root: Path, family: str | None) -> list[Path]:
             if d not in EXCLUDE_DIR_NAMES and not any(d.startswith(p) for p in EXCLUDE_DIR_PREFIXES)
         ]
         for fn in filenames:
-            if fn.endswith(".html"):
+            if fn.endswith(".html") and not fn.startswith("_TEMPLATE"):
                 p = Path(dirpath) / fn
                 out.append(p)
     out.sort()
@@ -277,7 +277,7 @@ def qualifying_navs(navs: list[dict]) -> tuple[list[dict], list[dict]]:
     counted, info = [], []
     for n in navs:
         cls = (n["attrs"].get("class") or "")
-        is_decorative = any(tok in cls for tok in ("crumbs", "sublinks", "tw-langs", "rb-langs"))
+        is_decorative = any(tok in cls for tok in ("crumbs", "sublinks", "tw-langs", "rb-langs", "related-lanes", "cf-stepper"))
         if n["nested_in_nav"]:
             continue  # nested navs never counted, not reported separately (rare/malformed)
         if is_decorative:

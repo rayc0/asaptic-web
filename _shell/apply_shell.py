@@ -134,6 +134,8 @@ class Config(object):
         self.hreflang = self.raw["hreflang"]
         self.i18n = {}
         idir = self.raw["i18n_dir"]
+        if not os.path.isabs(idir):
+            idir = os.path.join(HERE, idir)
         for loc, fn in self.raw["i18n_files"].items():
             with open(os.path.join(idir, fn), encoding="utf-8") as f:
                 self.i18n[loc] = json.load(f)
@@ -306,9 +308,9 @@ def render_alternates(cfg, base, present):
     for L in present:
         lines.append('<link rel="alternate" hreflang="%s" href="%s">'
                      % (cfg.hreflang[L], cfg.path_to_url(cfg.mirror(base, L), True)))
-    if "en" in present:
-        lines.append('<link rel="alternate" hreflang="x-default" href="%s">'
-                     % cfg.path_to_url(cfg.mirror(base, "en"), True))
+    xdef = "en" if "en" in present else present[0]  # orphan translations: first existing locale
+    lines.append('<link rel="alternate" hreflang="x-default" href="%s">'
+                 % cfg.path_to_url(cfg.mirror(base, xdef), True))
     return "\n".join(lines) + "\n"
 
 

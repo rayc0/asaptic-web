@@ -47,10 +47,9 @@ body.pg-scout > :not(.shell):not(.foot) .cy,
 body.pg-scout > .cy{color:var(--cyan-l)}
 body.pg-scout > :not(.shell):not(.foot) .em,
 body.pg-scout > .em{color:var(--pg-emerald-l)}
-body.pg-scout > :not(.shell):not(.foot) /* bridge nav (navy/cyan) */
-  .bridge,
-body.pg-scout > /* bridge nav (navy/cyan) */
-  .bridge{position:sticky;top:0;z-index:50;background:rgba(10,10,15,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--pg-edge)}
+/* bridge nav (navy/cyan) */
+body.pg-scout > :not(.shell):not(.foot) .bridge,
+body.pg-scout > .bridge{position:sticky;top:0;z-index:50;background:rgba(10,10,15,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--pg-edge)}
 body.pg-scout > :not(.shell):not(.foot) .bridge .row,
 body.pg-scout > .bridge .row{display:flex;align-items:center;justify-content:space-between;height:54px;max-width:1060px;margin:0 auto;padding:0 26px}
 body.pg-scout > :not(.shell):not(.foot) .bridge .logo,
@@ -75,10 +74,9 @@ body.pg-scout > :not(.shell):not(.foot) .lede,
 body.pg-scout > .lede{font-size:clamp(15px,1.8vw,18px);color:var(--pg-ink2);max-width:62ch;margin:0}
 body.pg-scout > :not(.shell):not(.foot) .lede b,
 body.pg-scout > .lede b{color:var(--pg-emerald-l)}
-body.pg-scout > :not(.shell):not(.foot) /* filters */
-  .filters,
-body.pg-scout > /* filters */
-  .filters{display:flex;flex-wrap:wrap;gap:12px;padding:22px 0;border-bottom:1px solid var(--pg-edge);position:sticky;top:54px;background:rgba(10,10,15,.9);backdrop-filter:blur(8px);z-index:40}
+/* filters */
+body.pg-scout > :not(.shell):not(.foot) .filters,
+body.pg-scout > .filters{display:flex;flex-wrap:wrap;gap:12px;padding:22px 0;border-bottom:1px solid var(--pg-edge);position:sticky;top:var(--pg-shell-h,102px);background:rgba(10,10,15,.9);backdrop-filter:blur(8px);z-index:40}
 body.pg-scout > :not(.shell):not(.foot) .fgrp,
 body.pg-scout > .fgrp{display:flex;flex-direction:column;gap:5px}
 body.pg-scout > :not(.shell):not(.foot) .fgrp label,
@@ -127,10 +125,9 @@ body.pg-scout > :not(.shell):not(.foot) .state,
 body.pg-scout > .state{font-family:var(--pg-mono);font-size:13px;color:var(--pg-ink3);padding:48px 0;text-align:center}
 body.pg-scout > :not(.shell):not(.foot) .state.err,
 body.pg-scout > .state.err{color:var(--amber)}
-body.pg-scout > :not(.shell):not(.foot) /* pack tray */
-  .tray,
-body.pg-scout > /* pack tray */
-  .tray{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(12,12,20,.95);backdrop-filter:blur(12px);border-top:1px solid var(--pg-edge2);transform:translateY(110%);transition:transform .22s ease}
+/* pack tray */
+body.pg-scout > :not(.shell):not(.foot) .tray,
+body.pg-scout > .tray{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(12,12,20,.95);backdrop-filter:blur(12px);border-top:1px solid var(--pg-edge2);transform:translateY(110%);transition:transform .22s ease}
 body.pg-scout > :not(.shell):not(.foot) .tray.up,
 body.pg-scout > .tray.up{transform:translateY(0)}
 body.pg-scout > :not(.shell):not(.foot) .tray .inner,
@@ -376,6 +373,20 @@ $('btn-share').addEventListener('click', async () => {
 $('btn-cta').addEventListener('click', () => { window.location.href = S.buildCtaUrl(state.pack); });
 
 boot();
+</script>
+<script>
+/* The page's sticky filter bar used to dock under its own 54px bridge bar.
+   The v2 shell is taller AND its height changes when the nav wraps (102px
+   >=900w, 122px 641-899w, 137px <=640w), so publish the live height as
+   --pg-shell-h and let the filter bar's `top` follow it. */
+(function(){
+  var s=document.querySelector('header.shell');
+  if(!s)return;
+  var sync=function(){document.body.style.setProperty('--pg-shell-h',Math.round(s.getBoundingClientRect().height)+'px');};
+  sync();
+  if(window.ResizeObserver){new ResizeObserver(sync).observe(s);}
+  addEventListener('resize',sync,{passive:true});
+})();
 </script>
 </body>
 </html>

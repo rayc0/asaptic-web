@@ -240,7 +240,18 @@ def scope_css(css, scope, kf_rename):
             continue
         if not pre:
             continue
-        out.append("%s{%s}\n" % (rewrite_selector_list(pre, scope), body))
+        # A leading /* comment */ (masked to a placeholder) must be hoisted ABOVE
+        # the rule — left in place it lands between the scope prefix and the
+        # selector, which is legal CSS but unreadable.
+        lead = ""
+        m = re.match(r"^((?:\s*\x00\d+\x00)+)\s*", prelude)
+        if m:
+            lead = " ".join(m.group(1).split()) + "\n"
+            pre = prelude[m.end():].strip()
+            if not pre:
+                out.append(lead)
+                continue
+        out.append("%s%s{%s}\n" % (lead, rewrite_selector_list(pre, scope), body))
     return "".join(out)
 
 
