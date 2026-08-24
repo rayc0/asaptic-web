@@ -337,6 +337,31 @@ def locale_prefix_and_key(relpath: str) -> tuple[str, str]:
     return "", relpath
 
 
+# <html lang> as written on the page -> the hreflang vocabulary above.
+HTML_LANG_TO_HREFLANG = {
+    "en": "en", "en-us": "en", "en-gb": "en", "en-hk": "en",
+    "zh": "zh-Hans", "zh-cn": "zh-Hans", "zh-hans": "zh-Hans", "zh-sg": "zh-Hans",
+    "zh-hant": "zh-Hant", "zh-hk": "zh-Hant", "zh-tw": "zh-Hant", "zh-mo": "zh-Hant",
+    "pt": "pt-PT", "pt-pt": "pt-PT", "pt-br": "pt-PT",
+}
+
+
+def self_hreflang(parser) -> str:
+    """The hreflang a page is entitled to declare about ITSELF.
+
+    A page's language is what <html lang> says, not which folder it sits in.
+    changelog/, demos/ and proof/ live at the site root -- so the folder says
+    "en" -- but their bodies are Chinese, and declaring hreflang="en" over
+    Chinese text is a false signal.  Used only to exempt a self-reference on a
+    page that has no locale mirrors; it never makes a page fail.
+    """
+    attrs = getattr(parser, "html_attrs", None) or {}
+    tag = (attrs.get("lang") or "").strip().lower()
+    if not tag:
+        return ""
+    return HTML_LANG_TO_HREFLANG.get(tag, HTML_LANG_TO_HREFLANG.get(tag.split("-")[0], ""))
+
+
 def existing_locale_mirrors(root: Path, relpath: str) -> dict:
     """Return {hreflang_code: mirror_relpath} for every locale mirror of this
     page that actually exists on disk (including the page itself)."""
@@ -520,6 +545,15 @@ def main():
             # only flag codes that don't correspond to any real mirror (extras),
             # broken-target already covers the rest.
             extra_codes = declared_codes - set(mirrors.keys()) - {"x-default"}
+            # ...except the page's own language.  A single-locale page's
+            # self-referencing alternate must carry the language the page is
+            # actually written in (see self_hreflang), which for changelog/,
+            # demos/ and proof/ is Chinese even though they sit at the root.
+            own = self_hreflang(parser)
+            if own and own in extra_codes:
+                self_url = "https://asaptic.com" + canonical_path_for(relpath)
+                if any(h.rstrip("/") == self_url.rstrip("/") for h in declared.get(own, [])):
+                    extra_codes = extra_codes - {own}
             if extra_codes:
                 reasons.append("hreflang declared with no matching locale mirror: " + ",".join(sorted(extra_codes)))
 

@@ -60,6 +60,28 @@ and apply the ordinary coverage gate to listing pages too.
 
 Idempotent: a page with < 2 data-lang-content blocks is skipped untouched.
 Dry-run is the default; pass --apply to write.
+
+--demote-inactive-h1 (second mode)
+----------------------------------
+Some EN posts have no zh/zht mirror at all, so the mirror gate can never pass
+and their inline foreign-language bodies must stay (deleting them would lose
+content that exists nowhere else).  Those pages still ship three <h1>s -- one
+per language block -- which is an on-page SEO defect independent of the
+duplicate-content one.
+
+In this mode nothing is deleted.  The page's own language is read from
+<html lang="...">, and inside every data-lang-content block that is NOT that
+language the <h1> is demoted to
+
+    <p class="..." role="heading" aria-level="1">
+
+so the text, its styling class and its assistive-tech heading semantics all
+survive while the document is left with exactly one real <h1> (the active
+locale's).  The site resets `* { margin: 0 }`, and every title rule is a plain
+class selector, so h1 -> p is a zero-pixel change.
+
+Pages that already have <= 1 <h1> outside <script>/<style> are skipped.
+
 """
 
 from __future__ import annotations
@@ -75,10 +97,24 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SHINGLE = 40          # probe length in characters, whitespace stripped
 SHINGLE_STEP = 40     # non-overlapping probes
 MIN_COVERAGE = 0.80   # >= 80% of probes must be found in the mirror
+                      # (overridable per run with --min-coverage; the gate is a
+                      #  judgement call about how different a mirror may be
+                      #  before the inline copy is still worth keeping)
 MIN_PROBES = 3        # blocks shorter than this many probes: compare whole text
 STUB_CHARS = 200      # mirror <main> text below this = an empty shell, never trust it
 
 ALL_LANGS = ("en", "zh", "zht")
+# <html lang> -> data-lang-content token.  Only the prefix matters.
+HTML_LANG_TO_BLOCK = {
+    "en": "en",
+    "zh-hans": "zh", "zh-cn": "zh", "zh-sg": "zh", "zh": "zh",
+    "zh-hant": "zht", "zh-hk": "zht", "zh-tw": "zht", "zh-mo": "zht",
+    "pt": "pt", "pt-br": "pt", "pt-pt": "pt",
+}
+HTML_LANG_RE = re.compile(r'<html\b[^>]*\blang="([^"]+)"', re.I)
+H1_TAG_RE = re.compile(r"<h1\b([^>]*)>(.*?)</h1\s*>", re.S | re.I)
+H1_OPEN_RE = re.compile(r"<h1\b", re.I)
+ROLE_RE = re.compile(r"\brole\s*=", re.I)
 BLOG_DIR = {"en": "blog", "zh": "zh/blog", "zht": "zht/blog"}
 
 TAG_RE = re.compile(r"<[^>]+>")
@@ -355,13 +391,105 @@ def process(path: str, strict_index: bool, keep: str = "en") -> Result:
     return r
 
 
+# --------------------------------------------------------------------------
+# mode 2: demote the non-active languages' <h1>
+# --------------------------------------------------------------------------
+def page_lang(src: str) -> str:
+    """The data-lang-content token matching the page's own <html lang>."""
+    m = HTML_LANG_RE.search(src)
+    if not m:
+        return ""
+    tag = m.group(1).strip().lower()
+    return HTML_LANG_TO_BLOCK.get(tag) or HTML_LANG_TO_BLOCK.get(tag.split("-")[0], "")
+
+
+def visible_h1_count(src: str) -> int:
+    """<h1> openers outside <script>/<style>/comments."""
+    masked = SCRIPT_RE.sub(lambda m: " " * len(m.group(0)), src)
+    masked = STYLE_RE.sub(lambda m: " " * len(m.group(0)), masked)
+    masked = re.sub(r"<!--.*?-->", lambda m: " " * len(m.group(0)), masked, flags=re.S)
+    return len(H1_OPEN_RE.findall(masked))
+
+
+def demote_h1(block: str) -> tuple:
+    """Rewrite every <h1> in `block` as an aria-labelled <p>. -> (html, n)."""
+    n = 0
+
+    def sub(m):
+        nonlocal n
+        attrs, inner = m.group(1), m.group(2)
+        if ROLE_RE.search(attrs):        # already carries a role; leave it alone
+            return m.group(0)
+        n += 1
+        return '<p%s role="heading" aria-level="1">%s</p>' % (attrs.rstrip(), inner)
+
+    return H1_TAG_RE.sub(sub, block), n
+
+
+def process_demote(path: str) -> Result:
+    """Keep every language block, but leave only the active locale with an <h1>."""
+    r = Result(path)
+    src = open(path, encoding="utf-8").read()
+    r.before = r.after = len(src.encode("utf-8"))
+
+    if visible_h1_count(src) < 2:
+        return r                                    # already single-h1
+
+    active = page_lang(src)
+    if not active:
+        r.kept.append(("-", "no <html lang>; cannot tell which h1 to keep"))
+        return r
+
+    blocks = [(LANG_ALIAS.get(l, l), s0, e0) for l, s0, e0 in find_blocks(src)]
+    if not blocks:
+        r.kept.append(("-", "%d h1 but no data-lang-content blocks" % visible_h1_count(src)))
+        return r
+    if not any(l == active for l, _, _ in blocks):
+        r.kept.append(("-", "no data-lang-content=\"%s\" block to keep" % active))
+        return r
+
+    out, total = src, 0
+    for lang, s0, e0 in sorted(blocks, key=lambda t: t[1], reverse=True):
+        if lang == active:
+            continue
+        new_block, n = demote_h1(out[s0:e0])
+        if n:
+            out = out[:s0] + new_block + out[e0:]
+            total += n
+            r.removed.append(lang)
+
+    if not total:
+        return r
+
+    left = visible_h1_count(out)
+    if left != 1:
+        r.kept.append(("-", "REFUSED: %d h1 would remain (expected 1)" % left))
+        return r
+
+    r.changed = True
+    r.after = len(out.encode("utf-8"))
+    r.notes.append("kept %s h1; demoted %d (%s)" % (active, total, ",".join(r.removed)))
+    r.new_src = out
+    return r
+
+
 def main() -> int:
+    global MIN_COVERAGE
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--apply", action="store_true", help="write changes (default: dry run)")
     ap.add_argument("--strict-index", action="store_true",
                     help="apply the text-coverage gate to listing pages too")
-    ap.add_argument("--only", help="process just this path (relative to repo root)")
+    ap.add_argument("--only", action="append", default=[], metavar="PATH",
+                    help="process just this path (relative to repo root); repeatable")
+    ap.add_argument("--min-coverage", type=float, default=None, metavar="F",
+                    help="override MIN_COVERAGE (default %.2f): how much of an "
+                         "inline block's text the locale mirror must carry "
+                         "before the block may be dropped" % MIN_COVERAGE)
+    ap.add_argument("--demote-inactive-h1", action="store_true",
+                    help="second mode: delete nothing, but demote every "
+                         "non-active-language <h1> to <p role=heading "
+                         "aria-level=1> so the page has exactly one <h1>")
     ap.add_argument("--keep", default="en", choices=ALL_LANGS,
                     help="language block to keep (default: en). Use with --dir "
                          "to clean a locale mirror that carries the same defect.")
@@ -369,8 +497,11 @@ def main() -> int:
                     help="directory of pages to process (default: blog)")
     args = ap.parse_args()
 
+    if args.min_coverage is not None:
+        MIN_COVERAGE = args.min_coverage
+
     if args.only:
-        paths = [os.path.join(ROOT, args.only)]
+        paths = [os.path.join(ROOT, o) for o in args.only]
     else:
         paths = sorted(
             os.path.join(ROOT, args.dir, f)
@@ -383,7 +514,8 @@ def main() -> int:
     exceptions = []
 
     for p in paths:
-        r = process(p, args.strict_index, args.keep)
+        r = (process_demote(p) if args.demote_inactive_h1
+             else process(p, args.strict_index, args.keep))
         rel = os.path.relpath(p, ROOT)
         if r.kept:
             exceptions.append((rel, r.kept))
@@ -394,10 +526,11 @@ def main() -> int:
             after_total += r.after
             if args.apply:
                 open(p, "w", encoding="utf-8").write(r.new_src)
-            print("%-8s %-58s %7d -> %7d  removed=%s%s" % (
+            print("%-8s %-58s %7d -> %7d  removed=%s%s%s" % (
                 "WRITE" if args.apply else "DRY", rel, r.before, r.after,
                 ",".join(r.removed) or "-",
-                ("  [" + "; ".join("%s: %s" % k for k in r.kept) + "]") if r.kept else ""))
+                ("  [" + "; ".join("%s: %s" % k for k in r.kept) + "]") if r.kept else "",
+                ("  " + "; ".join(r.notes)) if r.notes else ""))
 
     print("\n%d page(s) %s; %d byte(s) -> %d (-%d, -%.1f%%)" % (
         changed, "written" if args.apply else "would change",

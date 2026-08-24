@@ -134,7 +134,7 @@ const STRINGS = {
     filterAll: 'All categories',
     fmtUpdated: (d) => 'Updated ' + d.toLocaleDateString('en-HK', { year: 'numeric', month: 'short', day: 'numeric' }),
     lang: 'en',
-    listName: "This Week's Public-Sector Tenders (HK · SG · MO · UK · AU)",
+    listName: "This Week's Public-Sector Tenders (HK · SG · MO · UK · AU · CA · EU)",
     pastHeading: 'Past requirements (deadline passed)',
     statusAll: 'All statuses',
     statusOpen: 'Still open',

@@ -301,20 +301,51 @@ def render_lang_links(cfg, base, loc, present):
     return "".join(out)
 
 
-def render_alternates(cfg, base, present):
+HTML_LANG_ATTR_RE = re.compile(r'<html\b[^' + GT + r']*\blang\s*=\s*"([^"]+)"',
+                               re.IGNORECASE)
+
+# BCP-47 tags that appear as <html lang> on this site, mapped onto the four
+# hreflang values families.json actually uses.  Anything unrecognised falls
+# back to its primary subtag, and finally to "en".
+LANG_TO_HREFLANG = {
+    "en": "en", "en-us": "en", "en-gb": "en", "en-hk": "en",
+    "zh": "zh-Hans", "zh-cn": "zh-Hans", "zh-hans": "zh-Hans", "zh-sg": "zh-Hans",
+    "zh-hant": "zh-Hant", "zh-hk": "zh-Hant", "zh-tw": "zh-Hant", "zh-mo": "zh-Hant",
+    "pt": "pt-PT", "pt-pt": "pt-PT", "pt-br": "pt-PT",
+}
+
+
+def page_hreflang(page_lang):
+    """Normalize a page's own <html lang> to an hreflang value."""
+    if not page_lang:
+        return "en"
+    tag = page_lang.strip().lower()
+    if tag in LANG_TO_HREFLANG:
+        return LANG_TO_HREFLANG[tag]
+    return LANG_TO_HREFLANG.get(tag.split("-")[0], "en")
+
+
+def render_alternates(cfg, base, present, page_lang=None):
     if len(present) < 2:
         # A page with no translations still wants a self-referencing pair. The
-        # EN-only pages (physicalai, tender/au|gb|sg, a couple of blog notes)
-        # shipped hreflang="en" + x-default pointing at themselves before the
-        # shell injector took over their heads; returning "" here silently
-        # dropped both. Restrict it to en: a lone non-en page has no sensible
-        # x-default target, and render_lang_links still emits no chips either way.
-        if present == ["en"]:
-            url = cfg.path_to_url(cfg.mirror(base, "en"), True)
-            return ('<link rel="alternate" hreflang="en" href="%s">\n'
-                    '<link rel="alternate" hreflang="x-default" href="%s">\n'
-                    % (url, url))
-        return ""
+        # single-locale pages (physicalai, tender/au|gb|sg, changelog, demos,
+        # proof, a few blog notes) shipped hreflang + x-default pointing at
+        # themselves before the shell injector took over their heads; returning
+        # "" here silently dropped both.
+        #
+        # The hreflang must be the page's OWN language, not the locale folder
+        # it happens to live in.  changelog/, demos/ and proof/ sit at the site
+        # root -- so `present == ["en"]` -- but their bodies are Chinese
+        # (<html lang="zh-Hans" / "zh-CN">).  Declaring hreflang="en" over
+        # Chinese text is a false signal to every search engine, so read the
+        # page's own <html lang> and normalize it.  x-default still points at
+        # the same URL: it is the only version that exists.
+        loc = present[0] if present else "en"
+        url = cfg.path_to_url(cfg.mirror(base, loc), True)
+        hl = page_hreflang(page_lang) if page_lang else cfg.hreflang.get(loc, "en")
+        return ('<link rel="alternate" hreflang="%s" href="%s">\n'
+                '<link rel="alternate" hreflang="x-default" href="%s">\n'
+                % (hl, url, url))
     lines = []
     for L in present:
         lines.append('<link rel="alternate" hreflang="%s" href="%s">'
@@ -432,10 +463,10 @@ def render_legal(cfg, loc):
         l["suffix"])
 
 
-def render_head_for(cfg, relpath, base, loc, present):
+def render_head_for(cfg, relpath, base, loc, present, page_lang=None):
     h = cfg.tpl["head"]
     h = h.replace("{{CANONICAL}}", cfg.path_to_url(relpath, True))
-    h = h.replace("{{ALTERNATES}}", render_alternates(cfg, base, present))
+    h = h.replace("{{ALTERNATES}}", render_alternates(cfg, base, present, page_lang))
     h = h.replace("{{VER}}", cfg.ver)
     return h
 
@@ -500,7 +531,9 @@ def process_head(cfg, html, relpath, base, loc, present, notes):
     span = find_tag(m, "head", 0)
     if not span:
         raise Refuse("no balanced <head> element")
-    block = render_head_for(cfg, relpath, base, loc, present)
+    lm = HTML_LANG_ATTR_RE.search(html)
+    block = render_head_for(cfg, relpath, base, loc, present,
+                            lm.group(1) if lm else None)
 
     swapped = replace_between_sentinels(html[span["open_end"]:span["close_start"]], "head", block)
     if swapped is not None:

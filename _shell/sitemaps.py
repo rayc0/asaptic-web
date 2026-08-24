@@ -72,6 +72,10 @@ STANDARD_CORE_FILES = {
     "standard/methodology.html",
     "standard/report-error.html",
     "standard/macau-public-interest.html",
+    # directory hub indexes added 2026-08-24 (crawl-orphan fix)
+    "standard/market/index.html",
+    "standard/product/index.html",
+    "standard/guides/index.html",
 }
 
 CANON_RE = re.compile(r'<link[^>]+rel\s*=\s*["\']canonical["\'][^>]*>', re.I)
