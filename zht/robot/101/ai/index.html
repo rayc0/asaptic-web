@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>機器人如何學習 — 模仿、數據與閉環 | 機器人 101 | Asaptic</title>
+
+  <meta name="description" content="機器人如何學習：行為克隆、ACT 與擴散策略、遙操作數據採集、數據質量規則與安全強化學習，以及持續重訓練閉環。" />
+  <meta name="robots" content="index, follow" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="機器人如何學習 — 模仿、數據與閉環" />
+  <meta property="og:description" content="行為克隆、ACT 與擴散策略、遙操作數據採集、數據質量規則、安全強化學習，以及讓策略持續變好的部署閉環。" />
+  <meta property="og:url" content="https://asaptic.com/zht/robot/101/ai/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="機器人如何學習 — 模仿、數據與閉環" />
+  <meta name="twitter:description" content="機器人如何從演示中學習，為什麼數據質量比數量更重要，以及策略部署後如何持續改進。" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "機器人零部件", "item": "https://asaptic.com/zht/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "機器人 101：機器人如何學習", "item": "https://asaptic.com/zht/robot/101/ai/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "機器人如何學習：模仿、數據與閉環",
+    "description": "行為克隆與泛化、ACT 與擴散策略、遙操作數據採集、數據質量規則、帶安全約束的強化學習，以及影子模式部署閉環。",
+    "inLanguage": "zh-Hant",
+    "url": "https://asaptic.com/zht/robot/101/ai/",
+    "isPartOf": { "@type": "WebPage", "name": "機器人 101", "url": "https://asaptic.com/zht/robot/101/ai/" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "什麼是行為克隆？它為什麼難以泛化？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "行為克隆訓練一個策略，從觀測中模仿人類演示者的動作。它在訓練分佈之外會失效：如果演示中物體從未偏離常規位置 15 釐米，策略就沒見過這種狀態，微小誤差會不斷累積導致失敗。DAgger 通過讓專家糾正機器人自身的錯誤、再把這些糾正數據加入訓練來解決這個問題。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "ACT 與擴散策略有什麼區別？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ACT（帶 Transformer 的動作分塊）一次預測一小段未來動作序列，減少誤差累積，並用 CVAE 在有多種合理做法的任務中選定一種一致執行。擴散策略把動作建模為去噪過程，與圖像生成模型背後的數學原理相同，能更好地表示多模態選擇，但推理更慢——通常需要蒸餾成更快的單步採樣器才能用於實時控制。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "為什麼數據質量比數量更重要？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "自 2022 年以來的研究，包括 ALOHA 項目和 Open X-Embodiment 數據集背後的工作，一致發現幾千個高質量演示勝過幾萬個平庸演示。原始遙操作錄像中約 20%–40% 會因抓取失敗、超時、力矩違規或畫面損壞而被拒絕，因為把失敗案例混入訓練數據也會教會策略如何失敗。"
+        }
+      }
+    ]
+  }
+  </script>
+
+  
+<!-- ASAPTIC:HEAD:START -->
+<link rel="canonical" href="https://asaptic.com/zht/robot/101/ai/">
+<link rel="alternate" hreflang="en" href="https://asaptic.com/robot/101/ai/">
+<link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/101/ai/">
+<link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/robot/101/ai/">
+<link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/101/ai/">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<!-- ASAPTIC:HEAD:END -->
+
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <!-- ASAPTIC:HEADER:START -->
+<header class="shell">
+  <div class="row">
+    <a class="brand" href="/zht/">ASAPTIC</a>
+    <nav class="nav"><a href="/zht/trade-ai">貿易 AI</a><a href="/zht/tenders">實時招標</a><a href="/zht/suppliers">供應商專區</a><a href="/zht/standards">跨境標準</a><a href="/zht/platform">開發者</a></nav>
+    <div class="lang"><a href="/robot/101/ai/"><span>EN</span></a><a href="/zh/robot/101/ai/"><span>简</span></a><a href="/zht/robot/101/ai/"><span class="on">繁</span></a></div><a class="engage" href="/zht/contact">聯絡我們</a>
+  </div>
+  <div class="row subrow"><nav class="crumbs" aria-label="Breadcrumb"><a href="/zht/">Asaptic</a><span class="sep">/</span><a href="/zht/robot/">機器人</a></nav><nav class="sublinks"><a href="/zht/robot/">概覽</a><a href="/zht/robot/101/anatomy/">機器人 101</a><a href="/zht/robot/build/">配置器</a></nav></div>
+</header>
+<!-- ASAPTIC:HEADER:END -->
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/zht/robot/" style="color:inherit;text-decoration:none;">Asaptic 機器人手冊</a></span>
+        
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">機器人 101 · 第 06 章</p>
+      <h1 class="rb-title">機器人如何學習：模仿、數據與閉環</h1>
+
+      <section class="rb-answer" aria-label="摘要">
+        <p><strong>一段話說清：</strong>如今大多數操作機器人靠模仿學習，而非手寫規則。人類通過
+        遙操作演示任務，一個策略被訓練來模仿演示動作，機器人隨後部署這個策略。行為克隆簡單但
+        在訓練分佈之外很脆弱；DAgger 與強化學習能突破這個天花板。ACT 與擴散策略這類架構把原始
+        演示變成平滑、多步驟的動作。若沒有嚴格的數據採集與拒絕機制，這一切都無從談起——在許多已報告的基準測試與數據採集研究中，更乾淨的演示往往優於規模更大但更嘈雜
+        的數據集。而策略也從來不是“完工”的：它通過影子測試、版本管理與重訓練
+        構成的持續閉環不斷改進。</p>
+      </section>
+
+      <h2 class="rb-h2">模仿學習：靠演示教會機器人</h2>
+      <p>行為克隆（BC）是最簡單的模仿學習形式：記錄人類完成任務的過程，訓練一個策略從相同觀測
+      預測演示者的動作，然後在機器人上運行這個策略。它不需要獎勵函數，不需要物理仿真，也沒有
+      從零訓練強化學習那種不穩定性。問題在於，BC 的表現完全取決於訓練演示的分佈。如果每次演示
+      都是物體居中放在枱面上，而部署時物體偏移了 15&nbsp;釐米，策略就從未見過這種狀態。一個小的
+      動作誤差會把機器人推向更陌生的狀態，下一步動作更差，誤差不斷累積最終導致失敗。</p>
+      <p><strong>DAgger</strong>（數據集聚合）是標準的解決辦法：當訓練好的策略在機器人上運行時，
+      人類專家定期觀察機器人當前的狀態，給出正確的糾正動作——而不是機器人本來打算採取的動作。
+      這些糾正數據被併入訓練集，策略被重新訓練。經過幾輪之後，訓練分佈覆蓋了機器人在實際部署
+      中真正會遇到的錯誤狀態，而不只是演示者選擇展示的乾淨狀態。實踐中，每個新的部署場景或任務
+      變體都是一種新分佈：幾輪糾正——往往只需專家幾個小時的時間——就能把在別處訓練的策略適配到
+      新的佈局、光照或物體變化上。每個貢獻了糾正數據的場景，都會讓底層策略對下一個場景更好用。</p>
+
+      <h2 class="rb-h2">ACT 與擴散策略：兩種規劃下一步的方式</h2>
+      <p><strong>ACT</strong>（帶 Transformer 的動作分塊）是一種有影響力的早期策略架構，僅憑攝像頭
+      圖像（無需點雲輸入）就能一致地操作柔性物體——摺疊布料、雙手插入小零件。它的核心
+      思想是"動作分塊"：不是每個時間步預測一個動作，而是預測一小段未來動作序列（一個"塊"），
+      並在計算下一個塊的同時執行當前塊。以塊而非單步來推理，避免了純 BC 那樣的複合誤差。ACT 還
+      使用條件變分自編碼器來處理有多種合理解法的任務——比如摺疊襯衫有好幾種方式，模型會選定
+      一種並一致地執行，而不是把它們平均成一個物理上沒有意義的動作。</p>
+      <p><strong>擴散策略</strong>走了另一條路：把動作建模為去噪過程——與圖像生成模型背後相同的
+      數學原理。它從動作空間中的隨機噪聲出發，以當前攝像頭圖像與機器人自身關節狀態為條件迭代
+      去噪，產生一條平滑軌跡。這種方式能更好地表示真正的多模態選擇（先用哪隻手、從物體哪一側
+      抓取），因為擴散過程不會把多個有效模式平均掉。代價是速度：它可能需要多步去噪，除非經過加速或
+      蒸餾，否則對於時延要求嚴格的控制迴路可能太慢（在部分已報告的場景中，累計推理耗時可達約
+      200&nbsp;毫秒，而控制迴路運行在 30&nbsp;Hz）。因此常見做法是把擴散模型蒸餾成單步採樣器，
+      犧牲一點表示能力，換來更快的推理速度。</p>
+
+      <h2 class="rb-h2">數據採集：遙操作裝置與 ALOHA 的教訓</h2>
+      <p>模型架構的重要性不及它所訓練的數據。自 2022 年前後起，一次又一次的基準測試都發現，幾
+      千個高質量演示勝過幾萬個平庸演示。這一教訓可以追溯到<strong>ALOHA</strong>（斯坦福大學
+      開發的低成本開源雙臂遙操作裝置）以及隨後的 Open X-Embodiment 數據集——由 Google DeepMind
+      主導、涵蓋 22 種不同機器人形體、超過一百萬條演示記錄的協作項目。結論是：採集方法決定了
+      數據分佈，數據分佈決定了策略能做什麼、不能做什麼。</p>
+      <p>ALOHA 式的方法是<strong>主從（leader-follower）遙操作</strong>：兩條相同的小型機械臂，人類直接移動"領導者"
+      臂，而實際會部署的"跟隨者"臂通過低延遲鏈路實時鏡像其關節角度。因為操作員是像移動自己的
+      手臂一樣操作，而不是與操縱桿或手柄搏鬥，在已報告的 ALOHA 式設置中，訓練有素的操作員在定義
+      明確的任務上曾達到 85%–95% 的完成率。在這類設置中，用現成的機械臂加一台小型記錄用計算機，
+      整套裝置大約花費 8,000–15,000&nbsp;美元即可搭建。<strong>VR 遙操作</strong>（頭顯加手部控制器）通常是移動
+      底座導航與粗粒度全任務演示的替代方案——駕駛起來更快，但手部顫抖與延遲使它不適合亞釐米級
+      精細操作，這方面主從遙操作裝置仍然佔優。</p>
+
+      <h2 class="rb-h2">為什麼許多演示會被丟棄</h2>
+      <p>原始遙操作錄像並不是訓練數據——它必須先通過質量管線。在大規模數據採集實踐中，一個反覆
+      被報告的現象是：<strong>相當一部分原始演示會被拒絕</strong>——常見引用的比例大致落在
+      20%–40% 區間——原因包括操作員失去控制、物體
+      在任務中滑落，或任務沒有在合理時間內完成。把這些失敗案例納入訓練數據，不只是浪費存儲；
+      它可能會把失敗模式和成功模式一起教給策略，導致相對於乾淨數據集最終性能下降。典型
+      的拒絕檢查包括：任務是否真正完成（與目標圖像比對驗證）；是否在專家中位時間的大約兩倍以內
+      完成；關節力矩是否出現異常高峯，暗示操作員在與機器人的動力學‘較勁’；夾爪是否離開了預定
+      工作空間；以及攝像頭畫面是否清晰可用。未通過完成度或時間檢查的演示會被直接丟棄；邊界情況
+      則交給人工審核，可以修剪掉錄像開頭猶豫不決的部分，或者乾脆整段丟棄。</p>
+      <p>通過篩選的演示會被自動標註——物體標籤、接觸開始與結束的幀、接近/抓取/運輸/釋放的階段
+      劃分，以及描述任務的語言指令——並存儲為一種跨機器人的標準數據格式，可以直接送入常見的
+      訓練框架。這是整個管線中最不起眼、也最耗人力的一環，但它恰恰決定了最終策略的好壞。</p>
+
+      <h2 class="rb-h2">帶安全約束的強化學習</h2>
+      <p>模仿學習能讓策略達到一個不錯的起點，但真正把性能推到超越任何單個演示者水平的是強化學習
+      （RL）。對於移動底座導航，<strong>PPO</strong>（近端策略優化）是標準選擇——訓練穩定，廣泛用於足式機器人
+      運動控制的研究中，也被用於部分量產控制器。典型獎勵很簡單：到達目標給予獎勵，發生碰撞
+      給予懲罰，每個時間步施加一個小的時間懲罰，速度曲線平滑則給予額外獎勵。對於接觸豐富的操作
+      任務——比如開門，或任何機器人與環境會物理相互推擠的任務——<strong>軟演員-評論家（SAC）</strong>通常更受青睞，因為它比 PPO 這類同策略方法樣本效率更高、探索範圍更廣。</p>
+      <p>更難的問題是安全性。如果不加約束，RL 策略很容易發現更快的動作能獲得更高的平均獎勵，即使
+      偶爾的急促動作在人身邊並不受歡迎。<strong>安全強化學習</strong>的做法是在獎勵之上疊加硬性
+      約束——例如在人員附近限制末端執行器速度上限、在接觸期間限制關節力矩上限，以及接近過程中
+      設定最小安全距離。標準實現是帶拉格朗日鬆弛的約束馬爾可夫決策過程：任何約束違反都會給獎勵
+      加上一個懲罰項，另一個優化器負責調整這個懲罰的權重。這一框架，或其近似變體，支撐着業界許多
+      帶安全約束的運動與操作控制器。</p>
+
+      <h2 class="rb-h2">部署閉環：影子模式、版本管理與持續重訓練</h2>
+      <p>一個已部署的策略從來不是最終成品——它需要隨着現場數據的積累持續改進，而支撐這一過程的
+      基礎設施，比起一次性訓練，更像是帶了額外安全閥的軟件 MLOps。每個檢查點都存儲在帶版本號的
+      模型註冊表中；主版本升級需要在所有已訓練任務上通過完整驗證套件並達到較高的成功率門檻，次
+      版本需要針對特定任務的驗證，補丁版本只需要對代表性演示做迴歸測試。</p>
+      <p>任何新版本在推送到全部機羣之前，通常會先運行在<strong>影子模式</strong>：部署到一小部分
+      機器人上，它從實時傳感器輸入計算動作，但從不真正執行——生產策略仍然驅動機器人。一個比較
+      進程記錄影子策略與生產策略的分歧之處，人工審核較顯著的分歧。如果影子策略的動作本來會更好，
+      這就是加快上線的理由；如果它本來會更差或不安全，問題會在新版本觸及生產行為之前退回模型
+      團隊處理。一個典型的每週節奏是：一週伊始，把上週的執行日誌跑一遍質量管線，把新通過的演示
+      加入訓練集；週中，對更新後的數據集微調策略；隨後運行自動化驗證；只有驗證通過，才推送到
+      影子部署。每個通過這一閉環貢獻乾淨數據的場景，都會讓所有使用同一策略的其他場景受益一點。</p>
+
+      <div class="rb-note">
+        <p><strong>採購提示。</strong>基於學習的機器人依然由實體部件構成：遙操作裝置、攝像頭、
+        力傳感器，以及本系列前文講到的可靠執行系統。Asaptic 可協助採購這些部件，並視具體供應商/部件
+        提供測試數據與英文文檔（以實際交付為準）。<a href="mailto:engage@asaptic.com?subject=%E6%A9%9F%E5%99%A8%E4%BA%BAAI%E7%A1%AC%E4%BB%B6%E6%8E%A1%E8%B3%BC%E8%AB%AE%E8%A9%A2">發送採購諮詢</a>，或查看<a href="/zht/robot/">我們採購什麼</a>。</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">快速問答</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">什麼是行為克隆？它為什麼難以泛化？</div>
+          <div class="rb-faq-a">行為克隆訓練一個策略，從觀測中模仿人類演示者的動作。它在訓練分佈之外會失效：如果演示中物體從未偏離常規位置 15 釐米，策略就沒見過這種狀態，微小誤差會不斷累積導致失敗。DAgger 通過讓專家糾正機器人自身的錯誤、再把這些糾正數據加入訓練來解決這個問題。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">ACT 與擴散策略有什麼區別？</div>
+          <div class="rb-faq-a">ACT（帶 Transformer 的動作分塊）一次預測一小段未來動作序列，減少誤差累積，並用 CVAE 在有多種合理做法的任務中選定一種一致執行。擴散策略把動作建模為去噪過程，與圖像生成模型背後的數學原理相同，能更好地表示多模態選擇，但推理更慢——通常需要蒸餾成更快的單步採樣器才能用於實時控制。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">為什麼數據質量比數量更重要？</div>
+          <div class="rb-faq-a">自 2022 年以來的研究，包括 ALOHA 項目和 Open X-Embodiment 數據集背後的工作，一致發現幾千個高質量演示勝過幾萬個平庸演示。原始遙操作錄像中約 20%–40% 會因抓取失敗、超時、力矩違規或畫面損壞而被拒絕，因為把失敗案例混入訓練數據也會教會策略如何失敗。</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/zht/robot/101/software/">← 05 · 機器人軟件棧</a>
+        <a href="/zht/robot/101/compliance/">07 · 合規與認證 →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        《機器人 101》是 <a href="/zht/robot/">Asaptic</a> 的科普內容，不構成認證、法律或進口建議。
+        文中引用的數據為研究與行業指示性發現，會隨領域發展而變化——設計前請以最新論文與規格書為準。
+      </div>
+
+    </div>
+  </main>
+<!-- ASAPTIC:FOOTER:START -->
+<footer class="foot">
+  <div class="row">
+    <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI 貿易執行 - 我們贏取並履行跨境政府招標，按結果收費。</div></div>
+    <div class="col"><p class="col-h">產品</p><a href="/zht/trade-ai">貿易 AI</a><a href="/zht/tenders">實時招標</a><a href="/zht/standards">跨境標準</a><a href="/zht/platform">開發者</a></div>
+    <div class="col"><p class="col-h">為您而設</p><a href="/zht/contact">買家與機構</a><a href="/zht/suppliers">中國供應商</a><a href="/zht/contact">渠道合作夥伴</a></div>
+    <div class="col"><p class="col-h">資源</p><a href="/zht/blog/">筆記</a><a href="/zht/robot/">機器人 101</a><a href="/zht/university/">外貿學院</a><a href="/changelog/">更新日誌</a></div>
+    <div class="col"><p class="col-h">公司</p><a href="/zht/contact">聯絡我們</a><a href="/zht/tenders">實時招標</a></div>
+  </div>
+  <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/zht/legal/privacy">私隱政策</a> · <a href="/zht/legal/terms">服務條款</a> · Cross-Standard data CC BY 4.0</div>
+</footer>
+<!-- ASAPTIC:FOOTER:END -->
+
+</body>
+</html>

@@ -47,7 +47,10 @@ export const ui = {
     standard: "Standard",
     home: "Home",
     footerLicense:
-      "Cross-Standard public-interest dataset and article text are published for informational use under CC BY 4.0. Attribute: Cross-Standard / Asaptic."
+      "Cross-Standard public-interest dataset and article text are published for informational use under CC BY 4.0. Attribute: Cross-Standard / Asaptic.",
+    citeThisDataset: "Cite this dataset",
+    citeCanonical: "Canonical page",
+    citeJsonExport: "Machine-readable JSON export"
   },
   zh: {
     publicInterest: "公益",
@@ -94,7 +97,10 @@ export const ui = {
     standard: "标准",
     home: "首页",
     footerLicense:
-      "Cross-Standard 公益数据集及文章文本以 CC BY 4.0 许可发布，仅供信息参考。署名：Cross-Standard / Asaptic。"
+      "Cross-Standard 公益数据集及文章文本以 CC BY 4.0 许可发布，仅供信息参考。署名：Cross-Standard / Asaptic。",
+    citeThisDataset: "引用本数据集",
+    citeCanonical: "规范页面",
+    citeJsonExport: "机器可读 JSON 导出"
   },
   zht: {
     publicInterest: "公益",
@@ -141,7 +147,10 @@ export const ui = {
     standard: "標準",
     home: "首頁",
     footerLicense:
-      "Cross-Standard 公益資料集及文章文本以 CC BY 4.0 授權發布，僅供資訊參考。署名：Cross-Standard / Asaptic。"
+      "Cross-Standard 公益資料集及文章文本以 CC BY 4.0 授權發布，僅供資訊參考。署名：Cross-Standard / Asaptic。",
+    citeThisDataset: "引用本資料集",
+    citeCanonical: "規範頁面",
+    citeJsonExport: "機器可讀 JSON 匯出"
   }
 };
 

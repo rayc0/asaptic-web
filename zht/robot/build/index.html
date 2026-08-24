@@ -1,0 +1,2200 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>構建機器人手臂 — 交互式配置工具 | Asaptic</title>
+<meta name="description" content="配置機器人手臂：選擇模板，用確定性扭矩校核選定關節模組，模擬取放測試循環，然後結算——我們負責組裝、測試併發貨，並生成初步用戶手冊。" />
+<meta name="robots" content="index, follow" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="構建機器人手臂 — 交互式配置工具 | Asaptic" />
+<meta property="og:description" content="配置機器人手臂：選擇模板，用確定性扭矩校核選定關節模組，模擬取放測試循環，然後結算——我們負責組裝、測試併發貨，並生成初步用戶手冊。" />
+<meta property="og:url" content="https://asaptic.com/zht/robot/build/" />
+<meta property="og:site_name" content="Asaptic" />
+<meta property="og:locale" content="zh_HK" />
+<meta property="og:locale:alternate" content="en_US" />
+<meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="配置機器人手臂 — 交互式配置器 | Asaptic" />
+<meta name="twitter:description" content="選擇模板、裝配關節模組、運行模擬測試循環，然後結算——我們負責組裝、測試併發貨。確定性公式，無 AI 猜測。" />
+
+
+<!-- ASAPTIC:HEAD:START -->
+<link rel="canonical" href="https://asaptic.com/zht/robot/build/">
+<link rel="alternate" hreflang="en" href="https://asaptic.com/robot/build/">
+<link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/build/">
+<link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/robot/build/">
+<link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/build/">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<!-- ASAPTIC:HEAD:END -->
+
+<link rel="stylesheet" href="/robot/robot.css" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://asaptic.com/zht/robot/build/#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/" },
+        { "@type": "ListItem", "position": 2, "name": "機器人零部件", "item": "https://asaptic.com/zht/robot/" },
+        { "@type": "ListItem", "position": 3, "name": "構建工具", "item": "https://asaptic.com/zht/robot/build/" }
+      ]
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://asaptic.com/zht/robot/build/#webapp",
+      "name": "Asaptic 機器人手臂配置工具",
+      "applicationCategory": "EngineeringApplication",
+      "operatingSystem": "Web",
+      "url": "https://asaptic.com/zht/robot/build/",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "inLanguage": "zh-Hant",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "這是報價嗎？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "不是——這是指示性預算工具；發起構建請求可獲得包含測試數據和已核實到岸成本的正式報價。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "扭矩校核有多準確？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "這是帶動態係數的一次性靜態選型；實際選型還取決於速度、佔空比和慣量——工程複核會涵蓋這些。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "可以單獨訂購零部件嗎？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "可以——模組、傳感器、電池和耗材均可單獨報價；配置工具只是讓整臂選型更容易。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "你們負責發貨嗎？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "是的——在您提交構建請求後，我們將確認正式報價，然後組裝、QA 測試併發貨。交付時間和保修將在報價時確認。"
+      }
+    }
+  ]
+}
+</script>
+
+<style>
+/* Page-scoped additions for the configurator only, cf- prefix.
+   Skeleton (rb-frame / rb-sheet / rb-eyebrow / rb-title / rb-answer / rb-h2 / rb-cta /
+   rb-note / rb-faq / rb-pager / rb-footer-note) comes from /robot/robot.css — do not
+   redefine it here. Colors below read the --rb-* custom properties robot.css defines
+   on .rb-frame; every cf- element in this page is a descendant of .rb-frame so they
+   inherit those tokens directly. */
+
+.cf-wide{ max-width: 1180px;--cf-stone-dark:#565B60; }
+
+.cf-step-label{
+  display:block;font-family:var(--rb-mono);font-size:11px;font-weight:700;
+  letter-spacing:0.14em;text-transform:uppercase;color:var(--rb-seal);margin:0 0 4px;
+}
+.cf-caption{ font-size:13px;color:var(--cf-stone-dark);margin:6px 0 14px;max-width:66ch; }
+
+/* Two-column live-build layout: article sheet + sticky rail on desktop,
+   fixed bottom bar on mobile. */
+.cf-layout{ display:grid;grid-template-columns:1fr;gap:20px; }
+@media (min-width:980px){
+  .cf-layout{ grid-template-columns:1fr 300px;align-items:start; }
+  .cf-rail{ position:sticky;top:88px; }
+  .cf-bar{ display:none; }
+}
+@media (max-width:979px){ .cf-rail{ display:none; } }
+.cf-rail .rb-sheet{ padding:24px; }
+.cf-rail-title{
+  font-family:var(--rb-mono);font-size:11px;text-transform:uppercase;
+  letter-spacing:0.1em;color:var(--rb-stone);font-weight:700;margin:0 0 10px;
+}
+.cf-rail-total{ font-family:var(--rb-serif);font-size:24px;font-weight:700;margin:4px 0 10px;color:var(--rb-ink); }
+.cf-rail-row{
+  display:flex;justify-content:space-between;font-size:13px;padding:5px 0;
+  border-top:1px solid var(--rb-line);color:var(--rb-ink);
+}
+.cf-rail-row:first-of-type{ border-top:none; }
+.cf-rail-status{ display:flex;align-items:center;gap:6px;font-size:12.5px;margin:3px 0;color:var(--rb-ink); }
+
+/* Status colors (green/amber/red) are not part of the rb token set — configurator-specific. */
+.cf-status-dot{ width:11px;height:11px;border-radius:50%;flex:0 0 auto;display:inline-block;background:var(--rb-stone); }
+.cf-status-dot.green{ background:#2E7D42; }
+.cf-status-dot.amber{ background:#8A5B00; }
+.cf-status-dot.red{ background:var(--rb-seal); }
+.cf-status-line{ font-size:13px;margin-top:6px;font-weight:600; }
+.cf-status-line.green{ color:#2E7D42; }
+.cf-status-line.amber{ color:#8A5B00; }
+.cf-status-line.red{ color:var(--rb-seal); }
+.cf-req{ font-size:12.5px;color:var(--cf-stone-dark); }
+
+/* Stepper */
+.cf-stepper{ display:flex;gap:4px;margin:14px 0 18px;flex-wrap:wrap; }
+.cf-step-btn{
+  font-family:var(--rb-mono);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+  border:1px solid var(--rb-line);background:transparent;color:var(--cf-stone-dark);padding:9px 10px;
+  border-radius:2px;cursor:pointer;min-height:44px;flex:1 1 auto;text-align:center;
+}
+.cf-step-btn[aria-current="step"]{ border-color:var(--rb-ink);background:var(--rb-wash);color:var(--rb-ink); }
+.cf-step-btn:disabled{ opacity:0.4;cursor:not-allowed; }
+.cf-step-btn:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+
+/* Stage nav (back / next) */
+.cf-stage-nav{ display:flex;justify-content:space-between;gap:12px;margin-top:22px;flex-wrap:wrap; }
+.cf-btn{ font:inherit;font-weight:650;font-size:14px;padding:10px 18px;border-radius:2px;cursor:pointer;min-height:44px; }
+.cf-btn-primary{ border:1px solid var(--rb-ink);background:var(--rb-ink);color:var(--rb-paper); }
+.cf-btn-primary:disabled{ opacity:0.45;cursor:not-allowed; }
+.cf-btn-secondary{ border:1px solid var(--rb-line);background:transparent;color:var(--rb-ink); }
+.cf-btn:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+
+/* Build meter */
+.cf-meter{ margin:14px 0 18px;max-width:66ch; }
+.cf-meter-label{ font-size:13px;font-weight:650;color:var(--rb-ink);margin-bottom:6px; }
+.cf-meter-bar{ height:8px;background:var(--rb-line);border-radius:4px;overflow:hidden; }
+.cf-meter-fill{ height:100%;width:0%;background:var(--rb-stone);transition:width 0.25s ease,background-color 0.25s ease; }
+.cf-meter-fill.complete{ background:#2E7D42; }
+@media (prefers-reduced-motion:reduce){ .cf-meter-fill{ transition:none; } }
+
+/* Mission — template cards */
+.cf-card-grid{ display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:6px 0 8px; }
+@media (max-width:720px){ .cf-card-grid{ grid-template-columns:1fr; } }
+.cf-card{
+  text-align:left;border:1px solid var(--rb-line);border-radius:2px;
+  background:rgba(255,255,255,0.4);padding:16px;cursor:pointer;font:inherit;color:inherit;
+}
+.cf-card[aria-pressed="true"]{ border-color:var(--rb-ink);background:var(--rb-wash); }
+.cf-card:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+.cf-card h3{ font-family:var(--rb-serif);margin:0 0 6px;font-size:16px;color:var(--rb-ink); }
+.cf-card p{ margin:0;font-size:13px;color:var(--cf-stone-dark); }
+.cf-card .cf-joints{ font-size:12px;color:var(--cf-stone-dark);margin-top:8px; }
+
+/* Mission — sliders */
+.cf-slider-row{ margin-bottom:18px;max-width:66ch; }
+.cf-slider-row label{ display:flex;justify-content:space-between;font-weight:650;font-size:14px;margin-bottom:6px;color:var(--rb-ink); }
+.cf-slider-row output{ font-weight:700;color:var(--rb-seal); }
+.cf-slider-row input[type="range"]{ width:100%; }
+
+/* Assemble — slot cards */
+.cf-slot{ border-top:1px solid var(--rb-line);padding:14px 0; }
+.cf-slot:first-of-type{ border-top:none;padding-top:0; }
+.cf-slot-head{ display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px; }
+.cf-slot-name{ font-family:var(--rb-serif);font-size:15px;font-weight:700;color:var(--rb-ink); }
+.cf-slot-req{ font-size:12px;color:var(--cf-stone-dark); }
+.cf-slot-empty-btn{
+  border:1px dashed var(--rb-stone);background:transparent;color:var(--rb-ink);font:inherit;font-weight:650;
+  padding:10px 14px;border-radius:2px;cursor:pointer;min-height:44px;width:100%;text-align:left;
+}
+.cf-slot-empty-btn:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+.cf-slot-filled{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  border:1px solid var(--rb-line);border-radius:2px;padding:10px 12px;background:rgba(255,255,255,0.5);
+}
+.cf-slot-filled-name{ display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--rb-ink); }
+.cf-slot-remove{ font-size:12.5px;color:var(--rb-seal);background:none;border:none;cursor:pointer;font-weight:650;padding:6px;min-height:44px; }
+.cf-slot-remove:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+
+/* Assemble — part picker (single shared popover under the tray) */
+.cf-picker{ border:1px solid var(--rb-ink);border-radius:2px;background:var(--rb-paper);padding:14px;margin:10px 0 18px; }
+.cf-picker-close{
+  float:right;background:none;border:none;font-size:16px;cursor:pointer;color:var(--cf-stone-dark);
+  min-height:44px;min-width:44px;
+}
+.cf-picker-close:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+.cf-picker h4{ margin:0 0 10px;font-family:var(--rb-serif);font-size:15px;color:var(--rb-ink); }
+.cf-chip-row{ display:flex;gap:10px;flex-wrap:wrap; }
+.cf-chip{
+  border:1px solid var(--rb-line);border-radius:2px;background:rgba(255,255,255,0.5);
+  padding:10px 12px;text-align:left;cursor:pointer;font:inherit;color:inherit;min-width:150px;flex:1 1 150px;
+  min-height:44px;
+}
+.cf-chip[aria-pressed="true"]{ border-color:var(--rb-ink);background:var(--rb-wash); }
+.cf-chip:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+.cf-chip .cf-chip-name{ font-weight:700;font-size:14px;color:var(--rb-ink); }
+.cf-chip .cf-chip-meta{ font-size:12px;color:var(--cf-stone-dark);margin-top:3px; }
+.cf-chip-preview{ display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle; }
+.cf-chip-badge{
+  display:inline-block;font-family:var(--rb-mono);font-size:9.5px;font-weight:700;letter-spacing:0.06em;
+  text-transform:uppercase;color:#2E7D42;border:1px solid #2E7D42;border-radius:2px;padding:1px 6px;
+  margin-left:6px;vertical-align:middle;
+}
+
+/* Assemble — tool bay (reuses option-row styling) */
+.cf-opt-row{ display:flex;align-items:flex-start;gap:12px;border-top:1px solid var(--rb-line);padding:12px 0;min-height:44px; }
+.cf-opt-row:first-of-type{ border-top:none;padding-top:0; }
+.cf-opt-row input[type="checkbox"]{ width:19px;height:19px;margin-top:2px;flex:0 0 auto; }
+.cf-opt-copy{ flex:1; }
+.cf-opt-copy .cf-opt-name{ font-weight:650;font-size:14.5px;color:var(--rb-ink); }
+.cf-opt-copy .cf-opt-meta{ font-size:13px;color:var(--cf-stone-dark); }
+
+/* Checkout — market chips */
+.cf-market-row{ display:flex;gap:10px;flex-wrap:wrap; }
+.cf-market-chip{
+  border:1px solid var(--rb-line);border-radius:2px;background:rgba(255,255,255,0.5);
+  padding:9px 16px;cursor:pointer;font:inherit;color:inherit;font-weight:650;font-size:14px;
+  min-height:44px;
+}
+.cf-market-chip[aria-pressed="true"]{ border-color:var(--rb-seal);background:var(--rb-wash);color:var(--rb-seal); }
+.cf-market-chip:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+
+/* Checkout — notice, BOM table, landed cost, summary + copy, manual */
+.cf-notice{
+  border:1px solid var(--rb-seal);background:rgba(190,58,43,0.06);border-radius:2px;
+  padding:12px 14px;margin:10px 0 18px;font-size:13.5px;color:var(--rb-ink);font-weight:600;
+}
+.cf-bom-table{ width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0; }
+.cf-bom-table th,.cf-bom-table td{ text-align:left;padding:7px 8px;border-bottom:1px solid var(--rb-line);color:var(--rb-ink); }
+.cf-bom-table th{
+  font-family:var(--rb-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;
+  color:var(--rb-stone);border-bottom:2px solid var(--rb-ink);
+}
+.cf-bom-table td.num,.cf-bom-table th.num{ text-align:right; }
+.cf-landed-box{ background:var(--rb-wash);border:1px solid var(--rb-line);border-radius:2px;padding:14px;margin:12px 0; }
+.cf-landed-box .cf-landed-amt{ font-family:var(--rb-serif);font-size:20px;font-weight:700;color:var(--rb-ink); }
+#cf-summary-text{
+  width:100%;min-height:160px;font-family:var(--rb-mono);font-size:12.5px;
+  border:1px solid var(--rb-line);border-radius:2px;padding:10px;background:#fff;color:var(--rb-ink);
+}
+.cf-copy-btn{
+  border:1px solid var(--rb-ink);background:transparent;color:var(--rb-ink);font-weight:650;
+  padding:9px 16px;border-radius:2px;cursor:pointer;font-size:13.5px;min-height:44px;
+}
+.cf-copy-btn:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+.cf-manual-btn{
+  border:1px solid var(--rb-ink);background:transparent;color:var(--rb-ink);font-weight:650;
+  padding:10px 16px;border-radius:2px;cursor:pointer;font-size:13.5px;min-height:44px;
+}
+.cf-manual-btn:disabled{ opacity:0.45;cursor:not-allowed; }
+.cf-manual-btn:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+.cf-disabled-link{ opacity:0.45;pointer-events:none; }
+.cf-visually-hidden{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+/* Workshop — live arm preview + test-cycle simulation. The drawing and the
+   animation verdict are read from the same computed model as the assemble
+   stage — no physics engine, no AI. */
+.cf-shop{ border:1px solid var(--rb-line);border-radius:2px;background:var(--rb-wash);padding:16px;margin:20px 0 4px; }
+.cf-shop-head{ display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px; }
+.cf-shop-title{ font-family:var(--rb-mono);font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--rb-stone);margin:0;flex:1 1 auto; }
+.cf-verdict{
+  font-family:var(--rb-mono);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+  padding:4px 9px;border-radius:2px;border:1px solid currentColor;
+}
+.cf-verdict.green{ color:#2E7D42; }
+.cf-verdict.amber{ color:#8A5B00; }
+.cf-verdict.red{ color:var(--rb-seal); }
+#cf-optimal-badge{ display:inline-block;margin-bottom:10px; }
+#cf-optimal-badge[hidden]{ display:none; }
+.cf-sim-btn{
+  border:1px solid var(--rb-ink);background:var(--rb-ink);color:var(--rb-paper);
+  font:inherit;font-weight:650;font-size:13.5px;padding:9px 16px;border-radius:2px;cursor:pointer;min-height:44px;
+}
+.cf-sim-btn:disabled{ opacity:0.55;cursor:default; }
+.cf-sim-btn:focus-visible{ outline:2px solid var(--rb-ink);outline-offset:2px; }
+.cf-arm-stage{ background:var(--rb-paper);border:1px solid var(--rb-line);border-radius:2px; }
+.cf-sim-msg{ font-size:13.5px;font-weight:600;margin:10px 0 0;min-height:19px;color:var(--rb-ink); }
+.cf-sim-msg.green{ color:#2E7D42; }
+.cf-sim-msg.amber{ color:#8A5B00; }
+.cf-sim-msg.red{ color:var(--rb-seal); }
+.cf-rail-arm{ margin:0 0 12px; }
+.cf-svg-ground{ stroke:var(--rb-ink);stroke-width:2; }
+.cf-svg-dim{ stroke:var(--rb-stone);stroke-width:1; }
+.cf-svg-text{ font-family:var(--rb-mono);font-size:11px;fill:var(--rb-stone); }
+.cf-svg-boxtext{ font-family:var(--rb-mono);font-size:10px;fill:#fff;font-weight:700; }
+.cf-svg-plinth{ fill:#3E4348; }
+.cf-svg-limb{ stroke:#565B60;stroke-linecap:round; }
+.cf-svg-limb2{ stroke:#6E7378;stroke-linecap:round; }
+.cf-svg-limb.ghost,.cf-svg-limb2.ghost{ opacity:0.45; }
+.cf-svg-grip{ stroke:var(--rb-ink);stroke-width:3;stroke-linecap:round;fill:none; }
+.cf-svg-box{ fill:#7A7E83;stroke:#565B60; }
+.cf-svg-joint{ stroke:var(--rb-paper);stroke-width:2; }
+.cf-svg-joint.green{ fill:#2E7D42; }
+.cf-svg-joint.amber{ fill:#8A5B00; }
+.cf-svg-joint.red{ fill:var(--rb-seal); }
+.cf-svg-joint.empty{ fill:var(--rb-paper);stroke:var(--rb-stone);stroke-width:2;stroke-dasharray:3,3; }
+.cf-svg-joint.cf-clickable{ cursor:pointer; }
+@keyframes cf-strain{ 50%{ opacity:0.3; } }
+.cf-svg-joint.cf-strain{ animation:cf-strain 0.55s linear infinite; }
+@keyframes cf-ghost-pulse{ 50%{ opacity:0.5; } }
+.cf-svg-joint.empty{ animation:cf-ghost-pulse 1.8s ease-in-out infinite; }
+@media (prefers-reduced-motion:reduce){
+  .cf-svg-joint.cf-strain{ animation:none; }
+  .cf-svg-joint.empty{ animation:none; }
+}
+
+/* Mobile bottom bar (kept inside .rb-frame in the DOM so it can read --rb-* tokens,
+   even though it is visually fixed to the viewport). */
+.cf-bar{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;
+  background:var(--rb-paper);border-top:1px solid var(--rb-line);
+  box-shadow:0 -4px 16px rgba(0,0,0,0.18);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.cf-bar-summary{
+  display:flex;align-items:center;justify-content:space-between;width:100%;
+  padding:12px 16px;background:none;border:none;font:inherit;color:inherit;cursor:pointer;
+  min-height:44px;
+}
+.cf-bar-summary .cf-bar-total{ font-weight:700;font-size:16px;color:var(--rb-ink); }
+.cf-bar-detail{ max-height:0;overflow:hidden;padding:0 16px; }
+@media (prefers-reduced-motion:no-preference){
+  .cf-bar-detail{ transition:max-height 0.2s ease; }
+}
+.cf-bar-detail.open{ max-height:260px;overflow-y:auto;padding:0 16px 14px; }
+@media (max-width:979px){
+  body{ padding-bottom:calc(64px + env(safe-area-inset-bottom)); }
+  body.cf-bar-open{ padding-bottom:calc(64px + 280px + env(safe-area-inset-bottom)); }
+}
+</style>
+</head>
+<body>
+
+<!-- ASAPTIC:HEADER:START -->
+<header class="shell">
+  <div class="row">
+    <a class="brand" href="/zht/">ASAPTIC</a>
+    <nav class="nav"><a href="/zht/trade-ai">貿易 AI</a><a href="/zht/tenders">實時招標</a><a href="/zht/suppliers">供應商專區</a><a href="/zht/standards">跨境標準</a><a href="/zht/platform">開發者</a></nav>
+    <div class="lang"><a href="/robot/build/"><span>EN</span></a><a href="/zh/robot/build/"><span>简</span></a><a href="/zht/robot/build/"><span class="on">繁</span></a></div><a class="engage" href="/zht/contact">聯絡我們</a>
+  </div>
+  <div class="row subrow"><nav class="crumbs" aria-label="Breadcrumb"><a href="/zht/">Asaptic</a><span class="sep">/</span><a href="/zht/robot/">機器人</a></nav><nav class="sublinks"><a href="/zht/robot/">概覽</a><a href="/zht/robot/101/anatomy/">機器人 101</a><a href="/zht/robot/build/">配置器</a></nav></div>
+</header>
+<!-- ASAPTIC:HEADER:END -->
+
+<main class="rb-frame cf-wide">
+  <div class="cf-layout">
+    <div class="rb-sheet">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/zht/robot/" style="color:inherit;text-decoration:none;">Asaptic 機器人手冊</a></span>
+        
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">機器人手冊 · 構建工具</p>
+      <h1 class="rb-title">構建機器人手臂</h1>
+
+      <section class="rb-answer" aria-label="摘要">
+        <p>像玩遊戲一樣構建：選擇任務、裝配關節模組、運行模擬測試循環，然後結算——
+        我們負責組裝、QA 測試併發貨。AJM 關節模組每軸指示性起價 US$699。
+        這裡的一切都不是 AI 生成的：每個數字都來自公開公式和固定的部件表。</p>
+      </section>
+
+      <nav class="cf-stepper" aria-label="構建階段">
+        <button type="button" class="cf-step-btn" data-stage="mission">1 任務</button>
+        <button type="button" class="cf-step-btn" data-stage="assemble">2 裝配</button>
+        <button type="button" class="cf-step-btn" data-stage="test">3 測試</button>
+        <button type="button" class="cf-step-btn" data-stage="checkout">4 結算</button>
+      </nav>
+
+      <!-- WORKSHOP — live preview + test cycle (shared across Assemble / Test / Checkout) -->
+      <div id="cf-workshop-wrap">
+        <section class="cf-shop" aria-labelledby="cf-shop-h">
+          <div class="cf-shop-head">
+            <p class="cf-shop-title" id="cf-shop-h">裝配台 — 實時預覽</p>
+            <span class="cf-verdict" id="cf-verdict"></span>
+            <button type="button" class="cf-sim-btn" id="cf-sim-btn">▶ 運行測試循環</button>
+            <button type="button" class="cf-btn cf-btn-secondary" id="cf-share-btn">複製分享鏈接</button>
+            <span id="cf-share-status" role="status" aria-live="polite" style="font-size:12.5px;color:#2E7D42;"></span>
+          </div>
+          <div class="cf-arm-stage" id="cf-arm-main"></div>
+          <p class="cf-sim-msg" id="cf-sim-msg" role="status" aria-live="polite"></p>
+          <p class="cf-caption" style="margin:8px 0 0;">根據您的選擇實時繪製的側視示意圖——關節顏色與測試循環結果均來自與裝配階段相同的確定性扭矩校核，而非物理引擎。點擊關節可跳轉到對應模組。</p>
+        </section>
+      </div>
+
+      <p id="cf-joint-live" class="cf-visually-hidden" role="status" aria-live="polite"></p>
+
+      <div class="cf-notice" id="cf-hydrate-notice" role="status" hidden>
+        <span id="cf-hydrate-text">已載入分享的構建 — 可複核、運行測試或繼續修改。</span>
+        <button type="button" class="cf-btn cf-btn-secondary" id="cf-hydrate-dismiss-btn" style="margin-left:10px;">關閉</button>
+      </div>
+
+      <div class="cf-notice" id="cf-resume-banner" role="status" hidden>
+        <span id="cf-resume-text"></span>
+        <button type="button" class="cf-btn cf-btn-secondary" id="cf-resume-btn" style="margin-left:10px;">繼續</button>
+        <button type="button" class="cf-btn cf-btn-secondary" id="cf-resume-fresh-btn" style="margin-left:6px;">重新開始</button>
+      </div>
+
+      <!-- STAGE 1 — MISSION -->
+      <section aria-labelledby="cf-stage-mission-h" id="cf-stage-mission">
+        <p class="cf-step-label">階段 1 / 4</p>
+        <h2 class="rb-h2" id="cf-stage-mission-h">這台手臂需要完成什麼任務？</h2>
+        <p class="cf-caption">選擇初始模板，然後設定負載與工作半徑——這決定了每組關節需要承載的重量。</p>
+        <div class="cf-card-grid" id="cf-template-grid" role="group" aria-label="手臂模板"></div>
+
+        <div class="cf-slider-row">
+          <label for="cf-payload">負載 <output id="cf-payload-out" for="cf-payload"></output></label>
+          <input type="range" id="cf-payload" min="0.5" max="20" step="0.5" />
+        </div>
+        <div class="cf-slider-row">
+          <label for="cf-reach">工作半徑 <output id="cf-reach-out" for="cf-reach"></output></label>
+          <input type="range" id="cf-reach" min="0.3" max="1.5" step="0.05" />
+        </div>
+
+        <div class="cf-stage-nav">
+          <span></span>
+          <button type="button" class="cf-btn cf-btn-primary" id="cf-mission-next">下一步：裝配 →</button>
+        </div>
+      </section>
+
+      <!-- STAGE 2 — ASSEMBLE -->
+      <section aria-labelledby="cf-stage-assemble-h" id="cf-stage-assemble" hidden>
+        <p class="cf-step-label">階段 2 / 4</p>
+        <h2 class="rb-h2" id="cf-stage-assemble-h">裝配機械臂</h2>
+        <p class="cf-caption">點擊下方的空槽位——或上方手臂上對應的虛位關節——即可選擇模組。每組均會根據選型公式自動給出建議檔位；選擇比建議更低的檔位也是允許的，但會顯示黃色或紅色狀態。</p>
+
+        <div class="cf-meter">
+          <p class="cf-meter-label" id="cf-meter-label"></p>
+          <div class="cf-meter-bar"><div class="cf-meter-fill" id="cf-meter-fill"></div></div>
+        </div>
+        <p style="margin:0 0 16px;">
+          <button type="button" class="cf-btn cf-btn-secondary" id="cf-autofit-btn">一鍵選配（建議檔）</button>
+        </p>
+
+        <div id="cf-groups"></div>
+        <div class="cf-picker" id="cf-picker" hidden></div>
+
+        <h3 class="rb-h2" style="font-size:16px;margin-top:20px;">零件架</h3>
+        <p class="cf-caption">所有價格均為指示性市場區間；最終價格以報價為準。</p>
+        <div id="cf-options"></div>
+
+        <div class="cf-stage-nav">
+          <button type="button" class="cf-btn cf-btn-secondary" id="cf-assemble-back">← 返回</button>
+          <button type="button" class="cf-btn cf-btn-primary" id="cf-assemble-next" disabled>▶ 準備測試</button>
+        </div>
+      </section>
+
+      <!-- STAGE 3 — TEST -->
+      <section aria-labelledby="cf-stage-test-h" id="cf-stage-test" hidden>
+        <p class="cf-step-label">階段 3 / 4</p>
+        <h2 class="rb-h2" id="cf-stage-test-h">運行測試循環</h2>
+        <p class="cf-caption">上方裝配台模擬一次確定性的取放循環——採用與裝配階段相同扭矩校核的雙連桿逆運動學動作。綠色表示通過首輪校核；黃色表示以降速運行、餘量偏緊；紅色表示因模組選型不足而中止提升。無論結果如何，您都可以繼續進入結算。</p>
+
+        <div class="cf-stage-nav">
+          <button type="button" class="cf-btn cf-btn-secondary" id="cf-test-back">← 返回裝配</button>
+          <button type="button" class="cf-btn cf-btn-primary" id="cf-test-next" disabled>下一步：結算 →</button>
+        </div>
+      </section>
+
+      <!-- STAGE 4 — CHECKOUT -->
+      <section aria-labelledby="cf-stage-checkout-h" id="cf-stage-checkout" hidden>
+        <p class="cf-step-label">階段 4 / 4</p>
+        <h2 class="rb-h2" id="cf-stage-checkout-h">結算 — 我們負責組裝、測試併發貨。</h2>
+
+        <div class="cf-notice" id="cf-checkout-notice" role="status" hidden></div>
+
+        <h3 class="rb-h2" style="font-size:16px;">目的地市場</h3>
+        <div class="cf-market-row" id="cf-market-group" role="group" aria-label="目的地市場"></div>
+
+        <p id="cf-mass-line" class="cf-caption" style="margin-top:16px;"></p>
+        <span class="cf-verdict green" id="cf-optimal-badge" hidden>最優選配 — 每個關節均以最精簡的合適模組通過初步校核。</span>
+        <table class="cf-bom-table" id="cf-bom-table" aria-label="指示性物料清單">
+          <thead>
+            <tr><th>項目</th><th class="num">數量</th><th class="num">單價</th><th class="num">小計</th></tr>
+          </thead>
+          <tbody id="cf-bom-body"></tbody>
+        </table>
+        <p class="cf-caption">所有價格均為指示性：模組按起價顯示，選配按市場區間中值計——最終價格以正式報價為準。</p>
+        <p class="cf-caption" id="cf-subtotal-line"></p>
+
+        <div class="cf-landed-box">
+          <p class="cf-rail-title" style="margin-bottom:4px;">到岸成本估算</p>
+          <p class="cf-landed-amt" id="cf-landed-amt"></p>
+          <p class="cf-caption" id="cf-landed-assumption"></p>
+          <p class="cf-caption"><strong>此為僅供預算參考的一次性估算——關稅稅率取決於 HS 編碼分類且會變動；您的報價將包含經核實的到岸成本明細。</strong></p>
+        </div>
+
+        <label for="cf-summary-text" style="font-weight:650;font-size:13px;display:block;margin-bottom:6px;color:var(--rb-ink);">構建摘要（純文本）</label>
+        <textarea id="cf-summary-text" readonly></textarea>
+        <p style="margin:10px 0;">
+          <button type="button" class="cf-copy-btn" id="cf-copy-btn">複製構建摘要</button>
+          <span id="cf-copy-status" role="status" aria-live="polite" style="margin-left:10px;font-size:13px;color:#2E7D42;"></span>
+        </p>
+
+        <p style="margin:10px 0;">
+          <a href="#" id="cf-share-link-checkout" class="cf-copy-btn" style="text-decoration:none;display:inline-block;">複製分享鏈接</a>
+          <span id="cf-share-status-checkout" role="status" aria-live="polite" style="margin-left:10px;font-size:13px;color:#2E7D42;"></span>
+        </p>
+
+        <p style="margin:16px 0;">
+          <button type="button" class="cf-manual-btn" id="cf-manual-btn">生成用戶手冊（預覽版）</button>
+          <span id="cf-manual-status" role="status" aria-live="polite" style="margin-left:10px;font-size:13px;color:var(--cf-stone-dark);"></span>
+        </p>
+        <p class="cf-caption" style="margin-top:-8px;">初步生成的手冊基於您的配置——最終手冊將隨硬件一起發貨。</p>
+
+        <p style="margin-top:16px;">
+          <a class="rb-cta" id="cf-cta-link" href="#">發起構建請求 →</a>
+        </p>
+        <p class="cf-caption">這會將您的構建方案發送給我們的工程師。我們將確認包含測試數據的正式報價，然後組裝、QA 測試併發貨。交付時間與保修將在報價時確認。</p>
+        <div class="rb-note">
+          <p>我們通常會在一個工作日內回覆經核實的候選清單、測試數據與到岸成本明細。</p>
+        </div>
+
+        <div class="cf-stage-nav">
+          <button type="button" class="cf-btn cf-btn-secondary" id="cf-checkout-back">← 返回測試</button>
+          <span></span>
+        </div>
+      </section>
+
+      <details>
+        <summary style="cursor:pointer;font-weight:650;font-size:15px;color:var(--rb-ink);">該計算器的工作原理</summary>
+        <div style="margin-top:12px;font-size:14px;color:var(--rb-stone);max-width:68ch;">
+          <p>本工具是確定性的：使用公開公式和精選部件表，沒有 AI 猜測。</p>
+          <p><strong style="color:var(--rb-ink);">首輪結構質量估算：</strong>手臂結構質量 = 4 × 工作半徑（kg）——僅為管件與支架的粗略估算，不含基座、外殼、線束佈線與剛度餘量，最終質量以 CAD/BOM 為準。</p>
+          <p><strong style="color:var(--rb-ink);">腕部所需扭矩：</strong>（負載 + 已裝配夾爪、腕部傳感器與深度相機質量）× 9.81 × 0.15 m 工具偏距 × 1.5 動態係數——夾爪質量按所選類型計。</p>
+          <p><strong style="color:var(--rb-ink);">肘部所需扭矩：</strong>（負載 + 0.25 × 結構質量 + 若裝配夾爪則加其質量）× 9.81 × （0.55 × 工作半徑）× 1.5——夾爪質量按所選類型計。</p>
+          <p><strong style="color:var(--rb-ink);">肩部所需扭矩：</strong>（負載 + 0.5 × 結構質量 + 若裝配夾爪則加其質量）× 9.81 × 工作半徑 × 1.5——夾爪質量按所選類型計。</p>
+          <p><strong style="color:var(--rb-ink);">狀態：</strong>綠色 = 額定扭矩 ≥ 1.2 × 所需扭矩（通過首輪重力校核）。黃色 = 額定扭矩 ≥ 所需扭矩但低於 1.2 倍（偏緊——請與我們複核）。紅色 = 額定扭矩低於所需扭矩（選型不足）。這是靜態首輪校核，不是動態驗證——高速或高慣量動作可能需要 2–3 倍餘量或完整慣量選型，工程複核階段會覆蓋。</p>
+          <p><strong style="color:var(--rb-ink);">扭矩額定值：</strong>20 / 50 / 120 Nm 為指示性輸出額定值；正式報價會按型號確認持續/峯值扭矩、熱工況與減速器壽命。</p>
+          <p><strong style="color:var(--rb-ink);">小計區間：</strong>指示性小計至指示性小計的 1.15 倍，四捨五入至最接近的 US$50。</p>
+          <p><strong style="color:var(--rb-ink);">到岸成本：</strong>小計區間 ×（1 + 關稅區間）+ 預估運費（每個關節模組 US$40 + 基礎運費 US$60），四捨五入至最接近的 US$50。此為一次性估算，非海關裁定。</p>
+        </div>
+      </details>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">快速問答</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">這是報價嗎？</div>
+          <div class="rb-faq-a">不是——這是指示性預算工具；發起構建請求可獲得包含測試數據和已核實到岸成本的正式報價。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">扭矩校核有多準確？</div>
+          <div class="rb-faq-a">這是帶動態係數的一次性靜態選型；實際選型還取決於速度、佔空比和慣量——工程複核會涵蓋這些。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">可以單獨訂購零部件嗎？</div>
+          <div class="rb-faq-a">可以——模組、傳感器、電池和耗材均可單獨報價；配置工具只是讓整臂選型更容易。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">你們負責發貨嗎？</div>
+          <div class="rb-faq-a">是的——在您提交構建請求後，我們將確認正式報價，然後組裝、QA 測試併發貨。交付時間和保修將在報價時確認。</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/zht/robot/">← 機器人零部件中心</a>
+        <a href="/zht/robot/101/actuators/">機器人 101 · 執行器 →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        一次性估算，非工程驗證。最終規格與價格以報價為準。本工具僅供教育參考。
+      </div>
+
+    </div>
+
+    <aside class="cf-rail" aria-label="實時構建摘要">
+      <div class="rb-sheet">
+        <p class="cf-rail-title">實時構建</p>
+        <div class="cf-rail-arm" id="cf-arm-rail"></div>
+        <div role="status" aria-live="polite">
+          <p class="cf-rail-total" id="cf-rail-total"></p>
+          <div id="cf-rail-status"></div>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--rb-line);margin:10px 0;" />
+        <div class="cf-rail-row"><span>預估運動質量</span><span id="cf-rail-mass"></span></div>
+        <div class="cf-rail-row"><span>模組數量</span><span id="cf-rail-modules"></span></div>
+        <div class="cf-rail-row"><span>可選項數量</span><span id="cf-rail-options"></span></div>
+      </div>
+    </aside>
+
+    <div class="cf-bar" id="cf-bar">
+      <button type="button" class="cf-bar-summary" id="cf-bar-toggle" aria-expanded="false" aria-controls="cf-bar-detail" aria-label="實時構建摘要——展開/收起">
+        <span role="status" aria-live="polite" style="display:contents;">
+          <span class="cf-bar-total" id="cf-bar-total"></span>
+          <span id="cf-bar-dot-wrap"></span>
+        </span>
+        <span aria-hidden="true">▲</span>
+      </button>
+      <div class="cf-bar-detail" id="cf-bar-detail">
+        <div id="cf-bar-status"></div>
+        <p class="cf-caption" id="cf-bar-mass"></p>
+      </div>
+    </div>
+
+  </div>
+<noscript>
+  <div style="padding:24px;max-width:640px;margin:0 auto;font-family:sans-serif;">
+    <p>本構建工具需要 JavaScript 才能運行選型計算。您仍可直接聯繫我們：</p>
+    <p><a href="mailto:engage@asaptic.com?subject=%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%A7%8B%E5%BB%BA%E8%AB%8B%E6%B1%82">engage@asaptic.com</a></p>
+  </div>
+</noscript>
+</main>
+<!-- ASAPTIC:FOOTER:START -->
+<footer class="foot">
+  <div class="row">
+    <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI 貿易執行 - 我們贏取並履行跨境政府招標，按結果收費。</div></div>
+    <div class="col"><p class="col-h">產品</p><a href="/zht/trade-ai">貿易 AI</a><a href="/zht/tenders">實時招標</a><a href="/zht/standards">跨境標準</a><a href="/zht/platform">開發者</a></div>
+    <div class="col"><p class="col-h">為您而設</p><a href="/zht/contact">買家與機構</a><a href="/zht/suppliers">中國供應商</a><a href="/zht/contact">渠道合作夥伴</a></div>
+    <div class="col"><p class="col-h">資源</p><a href="/zht/blog/">筆記</a><a href="/zht/robot/">機器人 101</a><a href="/zht/university/">外貿學院</a><a href="/changelog/">更新日誌</a></div>
+    <div class="col"><p class="col-h">公司</p><a href="/zht/contact">聯絡我們</a><a href="/zht/tenders">實時招標</a></div>
+  </div>
+  <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/zht/legal/privacy">私隱政策</a> · <a href="/zht/legal/terms">服務條款</a> · Cross-Standard data CC BY 4.0</div>
+</footer>
+<!-- ASAPTIC:FOOTER:END -->
+
+
+<script>
+'use strict';
+(function(){
+
+  // ---- DB: indicative figures, final pricing by quotation ----
+  var DB = {
+    templates: {
+      'compact-4': { label: '緊湊型 4 軸', desc: '輕型取放 / 小件裝配。', payload: 3, reach: 0.5,
+        joints: ['shoulder','shoulder','elbow','wrist'] },
+      'general-6': { label: '通用型 6 軸', desc: '通用工業機械臂——常見的六軸構型。', payload: 5, reach: 0.9,
+        joints: ['shoulder','shoulder','elbow','wrist','wrist','wrist'] },
+      'research-7': { label: '冗餘型 7 軸', desc: '額外的肩部自由度，用於避障 / 研究。', payload: 5, reach: 0.9,
+        joints: ['shoulder','shoulder','shoulder','elbow','wrist','wrist','wrist'] }
+    },
+    tierOrder: ['lite','mid','pro'],
+    tiers: {
+      lite: { name: 'AJM-Lite', frame: 14, torque: 20,  mass: 0.9, priceFrom: 699,
+        meta2: '框架尺寸 14 · 緊湊型諧波減速器＋無框力矩電機＋雙編碼器＋伺服驅動器' },
+      mid:  { name: 'AJM-Mid',  frame: 17, torque: 50,  mass: 1.4, priceFrom: 1099,
+        meta2: '框架尺寸 17 · 中減速比諧波減速器、更高扭矩電機繞組＋雙編碼器＋伺服驅動器' },
+      pro:  { name: 'AJM-Pro',  frame: 20, torque: 120, mass: 2.1, priceFrom: 1599,
+        meta2: '框架尺寸 20 · 大容量諧波減速器、峯值扭矩繞組＋雙編碼器＋伺服驅動器' }
+    },
+    groups: ['shoulder','elbow','wrist'],
+    groupLabel: { shoulder: '肩部組', elbow: '肘部組', wrist: '腕部組' },
+    options: [
+      { id: 'gripper',    label: '夾爪（末端執行器）' },
+      { id: 'ftSensor',   label: '腕部力矩傳感器',               priceMin: 800, priceMax: 1500, mass: 0.3 },
+      { id: 'controller', label: '手臂控制器＋軟件許可',      priceMin: 600, priceMax: 1200, mass: 1.5 },
+      { id: 'cableSet',   label: '高柔性機器人線纜套裝（每臂）',          priceMin: 120, priceMax: 200,  mass: 0.8 },
+      { id: 'depthCam',   label: '深度相機（腕部安裝）',             priceMin: 300, priceMax: 700,  mass: 0.2 }
+    ],
+    gripperTypeOrder: ['parallel','vacuum','soft'],
+    gripperTypes: {
+      parallel: { name: '平行電動夾爪',   priceMin: 250, priceMax: 450, mass: 0.9 },
+      vacuum:   { name: '真空吸盤夾持 + 真空發生器',     priceMin: 300, priceMax: 600, mass: 0.8 },
+      soft:     { name: '柔性自適應夾爪',      priceMin: 400, priceMax: 800, mass: 0.6 }
+    },
+    markets: {
+      eu:   { label: '歐盟 / 英國',       dutyLow: 0,    dutyHigh: 0.045, note: '關稅 ≈ 0–4.5%（指示性）+ 預估空運費，不含增值稅（企業通常可抵扣）。' },
+      us:   { label: '美國', dutyLow: 0.30, dutyHigh: 0.50,  note: '貿易措施 ≈ 30–50%，具體取決於 HS 編碼分類（2026 年指示性數據；由買方承擔）+ 預估空運費。' },
+      apac: { label: '亞太地區',  dutyLow: 0,    dutyHigh: 0.05,  note: '關稅 ≈ 0–5%（指示性）+ 預估空運費。' },
+      other:{ label: '其他 / 諮詢我們', dutyLow: null, dutyHigh: null, note: '請諮詢我們——到岸成本按目的地單獨報價。' }
+    },
+    freightPerModule: 40,
+    freightBase: 60,
+    g: 9.81
+  };
+
+  // ---- state ----
+  var state = {
+    stage: 'mission',
+    template: 'general-6',
+    payload: 5,
+    reach: 0.9,
+    overrides: { shoulder: null, elbow: null, wrist: null },
+    filled: { shoulder: false, elbow: false, wrist: false },
+    options: { gripper: false, ftSensor: false, controller: false, cableSet: false, depthCam: false },
+    gripperType: 'parallel',
+    market: 'eu',
+    pickerGroup: null,
+    testCompleted: false,
+    testResult: null // { verdict, boxPos } once a test cycle has finished
+  };
+
+  var STAGES = ['mission','assemble','test','checkout'];
+  var hasInteracted = false;
+  var DRAFT_KEY = 'asaptic-build-v1';
+  var DRAFT_MAX_DAYS = 30;
+  var saveDraftTimer = null;
+
+  // ---- helpers ----
+  function clamp(v, lo, hi){ return Math.min(hi, Math.max(lo, v)); }
+  function round1(n){ return Math.round(n * 10) / 10; }
+  function roundTo50(n){ return Math.round(n / 50) * 50; }
+  function fmtUSD(n){
+    if (!isFinite(n)) return 'US$0';
+    return 'US$' + Math.round(n).toLocaleString('en-US');
+  }
+  function fmtBand(lo, hi){ return fmtUSD(lo) + '–' + fmtUSD(hi).replace('US$',''); }
+  function groupCount(templateKey, group){
+    var t = DB.templates[templateKey];
+    var n = 0;
+    for (var i = 0; i < t.joints.length; i++){ if (t.joints[i] === group) n++; }
+    return n;
+  }
+  function structureMass(reach){ return 4 * reach; }
+
+  function optionSpecById(id){
+    var found = null;
+    DB.options.forEach(function(o){ if (o.id === id) found = o; });
+    return found;
+  }
+
+  function optionDisplay(opt){
+    if (opt.id === 'gripper'){
+      var gv = DB.gripperTypes[state.gripperType];
+      return { label: gv.name, priceMin: gv.priceMin, priceMax: gv.priceMax, mass: gv.mass };
+    }
+    return { label: opt.label, priceMin: opt.priceMin, priceMax: opt.priceMax, mass: opt.mass };
+  }
+
+  function requiredTorque(group, s){
+    var payload = s.payload, reach = s.reach;
+    var sMass = structureMass(reach);
+    var grip = s.options.gripper ? DB.gripperTypes[s.gripperType].mass : 0;
+    var ftSpec = optionSpecById('ftSensor');
+    var ft = s.options.ftSensor ? ftSpec.mass : 0;
+    var dcSpec = optionSpecById('depthCam');
+    var dc = s.options.depthCam ? dcSpec.mass : 0;
+    var g = DB.g;
+    if (group === 'wrist'){
+      return (payload + grip + ft + dc) * g * 0.15 * 1.5;
+    }
+    if (group === 'elbow'){
+      return (payload + 0.25 * sMass + grip) * g * (0.55 * reach) * 1.5;
+    }
+    // shoulder
+    return (payload + 0.5 * sMass + grip) * g * reach * 1.5;
+  }
+
+  function suggestTier(required){
+    for (var i = 0; i < DB.tierOrder.length; i++){
+      var key = DB.tierOrder[i];
+      if (DB.tiers[key].torque >= required) return key;
+    }
+    return DB.tierOrder[DB.tierOrder.length - 1]; // Pro, even if inadequate -> red
+  }
+
+  function statusFor(tierKey, required){
+    var torque = DB.tiers[tierKey].torque;
+    if (!isFinite(required) || required <= 0){
+      return { level: 'green', label: '通過首輪校核' };
+    }
+    if (torque >= 1.2 * required) return { level: 'green', label: '通過首輪校核' };
+    if (torque >= required) return { level: 'amber', label: '偏緊——請與我們複核' };
+    return { level: 'red', label: '選型不足' };
+  }
+
+  function allGroupsFilled(){
+    var ok = true;
+    DB.groups.forEach(function(group){
+      if (groupCount(state.template, group) > 0 && !state.filled[group]) ok = false;
+    });
+    return ok;
+  }
+
+  // ---- one computed model, used by every render target ----
+  function computeModel(){
+    var m = {};
+    m.template = DB.templates[state.template];
+    m.groups = {};
+    var totalModuleCount = 0;
+    var moduleMass = 0;
+    var moduleLines = [];
+    var totalGroups = 0;
+    var filledGroups = 0;
+
+    var allSuggestedTier = true;
+    DB.groups.forEach(function(group){
+      var count = groupCount(state.template, group);
+      if (count === 0) return;
+      totalGroups++;
+      if (!state.filled[group]) return;
+      filledGroups++;
+      var required = requiredTorque(group, state);
+      var suggested = suggestTier(required);
+      var tierKey = state.overrides[group] || suggested;
+      if (tierKey !== suggested) allSuggestedTier = false;
+      var tier = DB.tiers[tierKey];
+      var status = statusFor(tierKey, required);
+      m.groups[group] = { count: count, required: required, tierKey: tierKey, tier: tier, status: status };
+      totalModuleCount += count;
+      moduleMass += tier.mass * count;
+      moduleLines.push({
+        label: DB.groupLabel[group] + ' — ' + tier.name + ' ×' + count,
+        qty: count,
+        unit: tier.priceFrom,
+        total: tier.priceFrom * count
+      });
+    });
+
+    m.totalModuleCount = totalModuleCount;
+    m.totalGroups = totalGroups;
+    m.filledGroups = filledGroups;
+    m.assemblyComplete = (totalGroups > 0) && (filledGroups === totalGroups);
+
+    var optionLines = [];
+    var optionsMass = 0;
+    var optionsSubtotalMid = 0;
+    DB.options.forEach(function(opt){
+      if (!state.options[opt.id]) return;
+      var disp = optionDisplay(opt);
+      var mid = (disp.priceMin + disp.priceMax) / 2;
+      if (opt.id !== 'controller') optionsMass += disp.mass;
+      optionsSubtotalMid += mid;
+      optionLines.push({
+        label: disp.label + ' (indicative US$' + disp.priceMin + '–' + disp.priceMax + ')',
+        qty: 1,
+        unit: mid,
+        total: mid,
+        isBand: true,
+        priceMin: disp.priceMin,
+        priceMax: disp.priceMax
+      });
+    });
+
+    m.armStructureMass = structureMass(state.reach);
+    m.movingMass = round1(moduleMass + m.armStructureMass + optionsMass);
+    m.bomLines = moduleLines.concat(optionLines);
+
+    var moduleSubtotal = moduleLines.reduce(function(a, l){ return a + l.total; }, 0);
+    var subtotalMid = moduleSubtotal + optionsSubtotalMid;
+    m.subtotalLow = roundTo50(subtotalMid * 1.0);
+    m.subtotalHigh = roundTo50(subtotalMid * 1.15);
+    if (m.subtotalHigh < m.subtotalLow) m.subtotalHigh = m.subtotalLow;
+
+    var market = DB.markets[state.market];
+    m.market = market;
+    if (state.market === 'other' || market.dutyLow === null){
+      m.landedLow = null;
+      m.landedHigh = null;
+    } else {
+      var freight = DB.freightPerModule * totalModuleCount + DB.freightBase;
+      m.freight = freight;
+      m.landedLow = roundTo50(m.subtotalLow * (1 + market.dutyLow) + freight);
+      m.landedHigh = roundTo50(m.subtotalHigh * (1 + market.dutyHigh) + freight);
+      if (m.landedHigh < m.landedLow) m.landedHigh = m.landedLow;
+    }
+
+    // overall status = worst of the filled group statuses
+    var rank = { green: 0, amber: 1, red: 2 };
+    var worst = 'green';
+    Object.keys(m.groups).forEach(function(g){
+      var lvl = m.groups[g].status.level;
+      if (rank[lvl] > rank[worst]) worst = lvl;
+    });
+    m.overallStatus = worst;
+    m.optimalFit = m.assemblyComplete && allSuggestedTier && m.overallStatus === 'green';
+
+    return m;
+  }
+
+  // ---- arm geometry + IK (exact formulas from spec — do not alter) ----
+  function geometry(){
+    var PXM = 150;
+    var R = state.reach * PXM;
+    var L1 = 0.55 * R;
+    var L2 = 0.45 * R;
+    var pivotH = 0.5 * R + 26;
+    var groundY = 252;
+    var pivotX = 96;
+    var pivotY = groundY - pivotH;
+    var boxS = clamp(10 + state.payload * 1.4, 12, 40);
+    return { PXM: PXM, R: R, L1: L1, L2: L2, pivotH: pivotH, groundY: groundY, pivotX: pivotX, pivotY: pivotY, boxS: boxS };
+  }
+
+  function ikSolve(tx, ty, L1, L2){
+    var d = Math.sqrt(tx * tx + ty * ty);
+    var dmin = Math.abs(L1 - L2) + 1;
+    var dmax = 0.995 * (L1 + L2);
+    var dc = clamp(d, dmin, dmax);
+    if (d > 0.0001 && Math.abs(dc - d) > 1e-9){
+      var k = dc / d;
+      tx = tx * k; ty = ty * k;
+    } else if (d <= 0.0001){
+      tx = dc; ty = 0;
+    }
+    d = dc;
+    var c2 = clamp((d * d - L1 * L1 - L2 * L2) / (2 * L1 * L2), -1, 1);
+    var B = -Math.acos(c2);
+    var A = Math.atan2(ty, tx) - Math.atan2(L2 * Math.sin(B), L1 + L2 * Math.cos(B));
+    return { A: A * 180 / Math.PI, B: B * 180 / Math.PI };
+  }
+
+  function fkTip(A, B, L1, L2){
+    var Ar = A * Math.PI / 180, Br = B * Math.PI / 180;
+    return {
+      x: L1 * Math.cos(Ar) + L2 * Math.cos(Ar + Br),
+      y: L1 * Math.sin(Ar) + L2 * Math.sin(Ar + Br)
+    };
+  }
+
+  function targets(g){
+    var R = g.R, pivotH = g.pivotH, boxS = g.boxS;
+    var placeX = Math.max(0.34 * R, 34);
+    return {
+      idle:       { x: 0.60 * R, y: 0.18 * R },
+      hoverPick:  { x: 0.72 * R, y: -pivotH + boxS + 26 },
+      pick:       { x: 0.72 * R, y: -pivotH + boxS },
+      lift:       { x: 0.60 * R, y: -pivotH + boxS + 0.45 * R },
+      liftShort:  { x: 0.60 * R, y: -pivotH + boxS + 0.16 * R },
+      hoverPlace: { x: placeX,   y: -pivotH + boxS + 26 },
+      place:      { x: placeX,   y: -pivotH + boxS }
+    };
+  }
+
+  // ---- SVG rendering ----
+  function jointClass(filled, level, extra){
+    var cls = 'cf-svg-joint';
+    if (!filled) cls += ' empty';
+    else cls += ' ' + level;
+    if (extra) cls += ' ' + extra;
+    return cls;
+  }
+
+  function armSvg(g, pose, model, opts){
+    opts = opts || {};
+    var A = pose.A, B = pose.B;
+    var shoulder = model.groups.shoulder, elbow = model.groups.elbow, wrist = model.groups.wrist;
+    var shoulderFilled = !!state.filled.shoulder, elbowFilled = !!state.filled.elbow, wristFilled = !!state.filled.wrist;
+    var shoulderLevel = shoulder ? shoulder.status.level : 'green';
+    var elbowLevel = elbow ? elbow.status.level : 'green';
+    var wristLevel = wrist ? wrist.status.level : 'green';
+    var strain = opts.strainLevels || {};
+    var interactive = !!opts.interactive;
+
+    var upperGhost = shoulderFilled ? '' : ' ghost';
+    var foreGhost = elbowFilled ? '' : ' ghost';
+
+    var svg = '';
+    svg += '<svg viewBox="0 0 440 300" role="img" aria-label="' + (opts.ariaLabel || '機器人手臂預覽') + '" style="width:100%;height:auto;display:block;" focusable="false">';
+    svg += '<line class="cf-svg-ground" x1="20" y1="' + g.groundY + '" x2="420" y2="' + g.groundY + '" />';
+    svg += '<rect class="cf-svg-plinth" x="' + (g.pivotX - 16) + '" y="' + g.pivotY + '" width="32" height="' + (g.groundY - g.pivotY) + '" />';
+
+    svg += '<g transform="translate(' + g.pivotX + ',' + g.pivotY + ') rotate(' + (-A) + ')">';
+    svg += '<line class="cf-svg-limb' + upperGhost + '" x1="0" y1="0" x2="' + g.L1 + '" y2="0" stroke-width="10" />';
+    svg += '<g transform="translate(' + g.L1 + ',0) rotate(' + (-B) + ')">';
+    svg += '<line class="cf-svg-limb2' + foreGhost + '" x1="0" y1="0" x2="' + g.L2 + '" y2="0" stroke-width="8" />';
+    if (opts.gripperOn){
+      svg += '<path class="cf-svg-grip" d="M ' + (g.L2 - 6) + ' -7 L ' + g.L2 + ' -7 M ' + (g.L2 - 6) + ' 7 L ' + g.L2 + ' 7" />';
+    }
+    svg += '<circle' + (interactive ? ' id="cf-joint-elbow"' : '') +
+      ' class="' + jointClass(elbowFilled, elbowLevel, strain.elbow ? 'cf-strain' : '') + (interactive ? ' cf-clickable' : '') + '"' +
+      ' cx="0" cy="0" r="9"' +
+      (interactive ? ' tabindex="0" role="button" aria-label="肘部組 — ' + (elbowFilled ? '選擇其他模組' : '空槽位，選擇模組') + '"' : '') +
+      ' />';
+    svg += '<circle' + (interactive ? ' id="cf-joint-wrist"' : '') +
+      ' class="' + jointClass(wristFilled, wristLevel, strain.wrist ? 'cf-strain' : '') + (interactive ? ' cf-clickable' : '') + '"' +
+      ' cx="' + g.L2 + '" cy="0" r="8"' +
+      (interactive ? ' tabindex="0" role="button" aria-label="腕部組 — ' + (wristFilled ? '選擇其他模組' : '空槽位，選擇模組') + '"' : '') +
+      ' />';
+    svg += '</g>'; // gFore
+    svg += '<circle' + (interactive ? ' id="cf-joint-shoulder"' : '') +
+      ' class="' + jointClass(shoulderFilled, shoulderLevel, strain.shoulder ? 'cf-strain' : '') + (interactive ? ' cf-clickable' : '') + '"' +
+      ' cx="0" cy="0" r="10"' +
+      (interactive ? ' tabindex="0" role="button" aria-label="肩部組 — ' + (shoulderFilled ? '選擇其他模組' : '空槽位，選擇模組') + '"' : '') +
+      ' />';
+    svg += '</g>'; // gUpper
+
+    if (opts.boxPos){
+      var tipSx = g.pivotX + opts.boxPos.x;
+      var tipSy = g.pivotY - opts.boxPos.y;
+      var bx = tipSx - g.boxS / 2;
+      var by = tipSy;
+      svg += '<rect class="cf-svg-box" x="' + bx + '" y="' + by + '" width="' + g.boxS + '" height="' + g.boxS + '" />';
+      svg += '<text class="cf-svg-boxtext" x="' + (bx + g.boxS / 2) + '" y="' + (by + g.boxS / 2 + 3) + '" text-anchor="middle">' + round1(state.payload) + '</text>';
+    }
+    svg += '</svg>';
+    return svg;
+  }
+
+  var LEVEL_ZH = { green: '綠色', amber: '黃色', red: '紅色' };
+
+  function armAriaLabel(model){
+    var parts = [];
+    DB.groups.forEach(function(group){
+      if (groupCount(state.template, group) === 0) return;
+      if (state.filled[group]){
+        var g = model.groups[group];
+        parts.push(DB.groupLabel[group] + ' ' + g.tier.name + '（' + LEVEL_ZH[g.status.level] + '）');
+      } else {
+        parts.push(DB.groupLabel[group] + ' 空槽位');
+      }
+    });
+    return '機器人手臂預覽 — ' + parts.join('、');
+  }
+
+  function attachJointHandlers(container){
+    ['shoulder','elbow','wrist'].forEach(function(group){
+      var el = container.querySelector('#cf-joint-' + group);
+      if (!el) return;
+      el.addEventListener('click', function(){ jointActivate(group); });
+      el.addEventListener('keydown', function(e){
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){
+          e.preventDefault();
+          jointActivate(group);
+        }
+      });
+    });
+  }
+
+  function jointActivate(group){
+    if (state.stage !== 'assemble'){ state.stage = 'assemble'; }
+    openPicker(group, null);
+  }
+
+  function idleDraw(model){
+    var g = geometry();
+    var t = targets(g);
+    var pose = ikSolve(t.idle.x, t.idle.y, g.L1, g.L2);
+    var boxPos = state.testResult ? state.testResult.boxPos : null;
+
+    var mainOpts = {
+      interactive: true,
+      gripperOn: state.options.gripper,
+      ariaLabel: armAriaLabel(model),
+      boxPos: boxPos
+    };
+    var mainEl = document.getElementById('cf-arm-main');
+    mainEl.innerHTML = armSvg(g, pose, model, mainOpts);
+    attachJointHandlers(mainEl);
+
+    var railEl = document.getElementById('cf-arm-rail');
+    if (railEl){
+      var railOpts = { interactive: false, gripperOn: state.options.gripper, ariaLabel: '迷你預覽', boxPos: boxPos };
+      railEl.innerHTML = armSvg(g, pose, model, railOpts);
+    }
+  }
+
+  // ---- test cycle simulation ----
+  var sim = { raf: null, running: false };
+
+  function easeInOutQuad(x){ return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
+
+  function cancelSim(){
+    if (sim.raf){ cancelAnimationFrame(sim.raf); sim.raf = null; }
+    if (sim.running){
+      sim.running = false;
+      var btn = document.getElementById('cf-sim-btn');
+      if (btn) btn.textContent = '▶ 運行測試循環';
+    }
+  }
+
+  function resetTest(){
+    cancelSim();
+    state.testCompleted = false;
+    state.testResult = null;
+    var verdictEl = document.getElementById('cf-verdict');
+    var msgEl = document.getElementById('cf-sim-msg');
+    if (verdictEl){ verdictEl.textContent = ''; verdictEl.className = 'cf-verdict'; }
+    if (msgEl){ msgEl.textContent = ''; msgEl.className = 'cf-sim-msg'; }
+  }
+
+  function verdictMessage(verdict, amberGroups, redGroups){
+    if (verdict === 'green'){
+      return { chip: '通過初步校核', text: '測試循環完成——所有關節組均在首輪校核範圍內。' };
+    }
+    if (verdict === 'amber'){
+      return { chip: '偏緊 · 建議複核', text: '循環以降速完成——' + amberGroups.join('、') + ' 餘量偏緊。請在下單前與我們複核。' };
+    }
+    return { chip: '規格不足', text: '提升已中止——' + redGroups.join('、') + ' 在負載 ' + state.payload + ' kg、工作半徑 ' + state.reach + ' m 條件下選型不足。請提高模組檔位或降低負載 / 工作半徑。' };
+  }
+
+  function reportVerdict(verdict, msgObj, restPosAfter){
+    var verdictEl = document.getElementById('cf-verdict');
+    var msgEl = document.getElementById('cf-sim-msg');
+    verdictEl.textContent = msgObj.chip;
+    verdictEl.className = 'cf-verdict ' + verdict;
+    msgEl.textContent = msgObj.text;
+    msgEl.className = 'cf-sim-msg ' + verdict;
+    state.testResult = { verdict: verdict, boxPos: restPosAfter };
+    state.testCompleted = true;
+    var testNext = document.getElementById('cf-test-next');
+    if (testNext) testNext.disabled = false;
+    announce('測試循環結束：' + msgObj.text);
+  }
+
+  function runTest(){
+    if (sim.running) return;
+    var model = computeModel();
+    if (!model.assemblyComplete) return;
+    var verdict = model.overallStatus;
+    var g = geometry();
+    var T = targets(g);
+
+    var amberGroups = [], redGroups = [];
+    DB.groups.forEach(function(group){
+      var gm = model.groups[group];
+      if (!gm) return;
+      if (gm.status.level === 'amber') amberGroups.push(DB.groupLabel[group]);
+      if (gm.status.level === 'red') redGroups.push(DB.groupLabel[group]);
+    });
+
+    var strainLevels = {};
+    DB.groups.forEach(function(group){
+      var gm = model.groups[group];
+      if (gm && (gm.status.level === 'amber' || gm.status.level === 'red')) strainLevels[group] = true;
+    });
+
+    var restPosAfter = verdict === 'red' ? T.pick : T.place;
+    var msgObj = verdictMessage(verdict, amberGroups, redGroups);
+
+    var reduced = (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    if (reduced){
+      reportVerdict(verdict, msgObj, restPosAfter);
+      idleDraw(model);
+      return;
+    }
+
+    var mult = verdict === 'amber' ? 1.55 : 1;
+    var segs = [];
+    function seg(fromT, toT, dur){ segs.push({ from: fromT, to: toT, dur: dur * mult, hold: false }); }
+    function hold(atT, dur){ segs.push({ from: atT, to: atT, dur: dur * mult, hold: true }); }
+
+    if (verdict === 'red'){
+      // shortened abort path — undersized, not a slow path, so base durations (mult=1 forced above via verdict check)
+      seg(T.idle, T.hoverPick, 480);
+      seg(T.hoverPick, T.pick, 320);
+      hold(T.pick, 170);            // grab
+      seg(T.pick, T.liftShort, 430);
+      hold(T.liftShort, 260);       // strained hold
+      seg(T.liftShort, T.pick, 430); // lower back
+      hold(T.pick, 170);            // release at pick
+      seg(T.pick, T.hoverPick, 320);
+      seg(T.hoverPick, T.idle, 480);
+    } else {
+      seg(T.idle, T.hoverPick, 480);
+      seg(T.hoverPick, T.pick, 320);
+      hold(T.pick, 170);             // grab
+      seg(T.pick, T.lift, 430);
+      seg(T.lift, T.hoverPlace, 540);
+      seg(T.hoverPlace, T.place, 330);
+      hold(T.place, 170);            // release
+      seg(T.place, T.hoverPlace, 260);
+      seg(T.hoverPlace, T.idle, 500);
+    }
+
+    var heldMap = [false, false, true, true, true, true, false, false, false];
+
+    sim.running = true;
+    var simBtn = document.getElementById('cf-sim-btn');
+    simBtn.disabled = true;
+    simBtn.textContent = '運行中…';
+    var verdictEl = document.getElementById('cf-verdict');
+    var msgEl = document.getElementById('cf-sim-msg');
+    verdictEl.textContent = ''; verdictEl.className = 'cf-verdict';
+    msgEl.textContent = ''; msgEl.className = 'cf-sim-msg';
+
+    var segIdx = 0;
+    var segStart = null;
+
+    function poseFor(t){ return ikSolve(t.x, t.y, g.L1, g.L2); }
+
+    function frame(ts){
+      if (!sim.running) return;
+      if (segStart === null) segStart = ts;
+      var currentSeg = segs[segIdx];
+      var elapsed = ts - segStart;
+      var t = currentSeg.dur > 0 ? Math.min(1, elapsed / currentSeg.dur) : 1;
+      var e = easeInOutQuad(t);
+      var poseA = poseFor(currentSeg.from), poseB = poseFor(currentSeg.to);
+      var curA = poseA.A + (poseB.A - poseA.A) * e;
+      var curB = poseA.B + (poseB.B - poseA.B) * e;
+
+      var held = heldMap[segIdx];
+      var boxPos;
+      if (held){
+        boxPos = fkTip(curA, curB, g.L1, g.L2);
+      } else if (segIdx < 2){
+        boxPos = T.pick;
+      } else {
+        boxPos = restPosAfter;
+      }
+
+      var frameStrain = {};
+      var applyStrain = (verdict === 'amber') || (verdict === 'red' && currentSeg.hold && segIdx === 4);
+      if (applyStrain){
+        DB.groups.forEach(function(group){ if (strainLevels[group]) frameStrain[group] = true; });
+      }
+
+      var mainEl = document.getElementById('cf-arm-main');
+      mainEl.innerHTML = armSvg(g, { A: curA, B: curB }, model, {
+        interactive: false,
+        gripperOn: state.options.gripper,
+        ariaLabel: armAriaLabel(model),
+        boxPos: boxPos,
+        strainLevels: frameStrain
+      });
+
+      if (t >= 1){
+        segIdx++;
+        segStart = null;
+        if (segIdx >= segs.length){
+          sim.running = false;
+          simBtn.disabled = false;
+          simBtn.textContent = '▶ 運行測試循環';
+          reportVerdict(verdict, msgObj, restPosAfter);
+          idleDraw(model);
+          return;
+        }
+      }
+      sim.raf = requestAnimationFrame(frame);
+    }
+    sim.raf = requestAnimationFrame(frame);
+  }
+
+  // ---- announcements ----
+  function announce(text){
+    var el = document.getElementById('cf-joint-live');
+    if (el) el.textContent = text;
+  }
+
+  // ---- share-a-build URL (feature 1) ----
+  function buildShareParams(){
+    var parts = [];
+    parts.push('t=' + encodeURIComponent(state.template));
+    parts.push('p=' + encodeURIComponent(state.payload));
+    parts.push('r=' + encodeURIComponent(state.reach));
+    var jSlots = ['shoulder', 'elbow', 'wrist'].map(function(g){
+      return (state.filled[g] && state.overrides[g]) ? state.overrides[g] : 'x';
+    });
+    parts.push('j=' + jSlots.join('-'));
+    var oParts = [];
+    DB.options.forEach(function(opt){
+      if (!state.options[opt.id]) return;
+      if (opt.id === 'gripper'){ oParts.push('gripper:' + state.gripperType); }
+      else { oParts.push(opt.id); }
+    });
+    if (oParts.length) parts.push('o=' + oParts.join(','));
+    parts.push('m=' + encodeURIComponent(state.market));
+    return parts.join('&');
+  }
+
+  function buildShareUrl(){
+    return window.location.origin + window.location.pathname + '?' + buildShareParams();
+  }
+
+  function hydrateFromURL(){
+    var qs = window.location.search;
+    if (!qs) return false;
+    var params;
+    try { params = new URLSearchParams(qs); } catch (e){ return false; }
+    var applied = false;
+
+    var t = params.get('t');
+    if (t && DB.templates[t]){
+      state.template = t;
+      state.payload = DB.templates[t].payload;
+      state.reach = DB.templates[t].reach;
+      applied = true;
+    }
+
+    var p = params.get('p');
+    if (p !== null){
+      var pv = parseFloat(p);
+      if (isFinite(pv)){ state.payload = clamp(pv, 0.5, 20); applied = true; }
+    }
+    var r = params.get('r');
+    if (r !== null){
+      var rv = parseFloat(r);
+      if (isFinite(rv)){ state.reach = clamp(rv, 0.3, 1.5); applied = true; }
+    }
+
+    var j = params.get('j');
+    if (j){
+      var slots = j.split('-');
+      var groups = ['shoulder', 'elbow', 'wrist'];
+      if (slots.length === 3){
+        groups.forEach(function(g, i){
+          var key = slots[i];
+          if (key && key !== 'x' && DB.tiers[key] && groupCount(state.template, g) > 0){
+            state.overrides[g] = key;
+            state.filled[g] = true;
+            applied = true;
+          }
+        });
+      }
+    }
+
+    var o = params.get('o');
+    if (o){
+      o.split(',').forEach(function(token){
+        if (!token) return;
+        var idKey = token, variant = null;
+        if (token.indexOf(':') > -1){
+          var pieces = token.split(':');
+          idKey = pieces[0]; variant = pieces[1];
+        }
+        var known = optionSpecById(idKey);
+        if (!known) return;
+        state.options[idKey] = true;
+        applied = true;
+        if (idKey === 'gripper' && variant && DB.gripperTypes[variant]){
+          state.gripperType = variant;
+        }
+      });
+    }
+
+    var m = params.get('m');
+    if (m && DB.markets[m]){ state.market = m; applied = true; }
+
+    return applied;
+  }
+
+  function showHydrateNotice(){
+    var el = document.getElementById('cf-hydrate-notice');
+    if (!el) return;
+    el.hidden = false;
+    var btn = document.getElementById('cf-hydrate-dismiss-btn');
+    if (btn) btn.addEventListener('click', function(){ el.hidden = true; });
+  }
+
+  function initShareControls(){
+    wireShareButton('cf-share-btn', 'cf-share-status');
+    wireShareButton('cf-share-link-checkout', 'cf-share-status-checkout');
+  }
+
+  function wireShareButton(btnId, statusId){
+    var btn = document.getElementById(btnId);
+    if (!btn) return;
+    var status = document.getElementById(statusId);
+    btn.addEventListener('click', function(e){
+      if (e && e.preventDefault) e.preventDefault();
+      var url = buildShareUrl();
+      function ok(){
+        if (status){ status.textContent = '已複製。'; setTimeout(function(){ status.textContent = ''; }, 2500); }
+        try { window.history.replaceState(null, '', url); } catch (e2){ /* ignore */ }
+      }
+      function fail(){
+        var ta = document.createElement('textarea');
+        ta.value = url;
+        ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        try {
+          if (document.execCommand('copy') === true){ ok(); }
+          else if (status){ status.textContent = '無法複製 — 請手動複製：' + url; }
+        } catch (e3){
+          if (status) status.textContent = '無法複製 — 請手動複製：' + url;
+        }
+        document.body.removeChild(ta);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(url).then(ok, fail);
+      } else {
+        fail();
+      }
+    });
+  }
+
+  // ---- resume-your-last-build draft (feature 2) ----
+  function stateSnapshotForSave(){
+    return {
+      template: state.template,
+      payload: state.payload,
+      reach: state.reach,
+      overrides: { shoulder: state.overrides.shoulder, elbow: state.overrides.elbow, wrist: state.overrides.wrist },
+      filled: { shoulder: state.filled.shoulder, elbow: state.filled.elbow, wrist: state.filled.wrist },
+      options: {
+        gripper: state.options.gripper, ftSensor: state.options.ftSensor,
+        controller: state.options.controller, cableSet: state.options.cableSet, depthCam: state.options.depthCam
+      },
+      gripperType: state.gripperType,
+      market: state.market
+    };
+  }
+
+  function isDefaultSnapshot(s){
+    if (!s) return true;
+    var noFilled = !s.filled.shoulder && !s.filled.elbow && !s.filled.wrist;
+    var opts = s.options || {};
+    var noOptions = !opts.gripper && !opts.ftSensor && !opts.controller && !opts.cableSet && !opts.depthCam;
+    return s.template === 'general-6' && s.payload === 5 && s.reach === 0.9 && noFilled && noOptions && s.market === 'eu';
+  }
+
+  function saveDraftNow(){
+    try {
+      var snap = stateSnapshotForSave();
+      if (isDefaultSnapshot(snap)) return;
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ s: snap, ts: Date.now() }));
+    } catch (e){ /* Safari private mode or unavailable — ignore */ }
+  }
+
+  function scheduleSaveDraft(){
+    if (saveDraftTimer) clearTimeout(saveDraftTimer);
+    saveDraftTimer = setTimeout(saveDraftNow, 500);
+  }
+
+  function loadDraft(){
+    try {
+      var raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return null;
+      var obj = JSON.parse(raw);
+      if (!obj || !obj.s || !obj.ts) return null;
+      return obj;
+    } catch (e){ return null; }
+  }
+
+  function clearDraft(){
+    try { localStorage.removeItem(DRAFT_KEY); } catch (e){ /* ignore */ }
+  }
+
+  function applyDraftToState(s){
+    state.template = s.template || state.template;
+    state.payload = (typeof s.payload === 'number') ? s.payload : state.payload;
+    state.reach = (typeof s.reach === 'number') ? s.reach : state.reach;
+    state.overrides = s.overrides || { shoulder: null, elbow: null, wrist: null };
+    state.filled = s.filled || { shoulder: false, elbow: false, wrist: false };
+    state.options = s.options || { gripper: false, ftSensor: false, controller: false, cableSet: false, depthCam: false };
+    state.gripperType = s.gripperType || 'parallel';
+    state.market = s.market || 'eu';
+  }
+
+  function maybeShowResumeBanner(){
+    var draft = loadDraft();
+    if (!draft) return;
+    var ageDays = (Date.now() - draft.ts) / 86400000;
+    if (ageDays < 0 || ageDays > DRAFT_MAX_DAYS) return;
+    if (isDefaultSnapshot(draft.s)) return;
+    var banner = document.getElementById('cf-resume-banner');
+    var textEl = document.getElementById('cf-resume-text');
+    if (!banner || !textEl) return;
+    var n = Math.max(0, Math.round(ageDays));
+    textEl.textContent = '繼續上次的構建？（' + n + ' 天前保存）';
+    banner.hidden = false;
+    var resumeBtn = document.getElementById('cf-resume-btn');
+    var freshBtn = document.getElementById('cf-resume-fresh-btn');
+    if (resumeBtn){
+      resumeBtn.addEventListener('click', function(){
+        applyDraftToState(draft.s);
+        hasInteracted = true;
+        banner.hidden = true;
+        resetTest();
+        syncSliders();
+        render();
+      });
+    }
+    if (freshBtn){
+      freshBtn.addEventListener('click', function(){
+        clearDraft();
+        banner.hidden = true;
+      });
+    }
+  }
+
+  // ---- DOM builders (static parts, built once) ----
+  var els = {};
+
+  function buildTemplateCards(){
+    var grid = document.getElementById('cf-template-grid');
+    grid.innerHTML = '';
+    Object.keys(DB.templates).forEach(function(key){
+      var t = DB.templates[key];
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cf-card';
+      btn.setAttribute('aria-pressed', String(state.template === key));
+      btn.dataset.template = key;
+      var h3 = document.createElement('h3'); h3.textContent = t.label;
+      var p = document.createElement('p'); p.textContent = t.desc;
+      var joints = document.createElement('p'); joints.className = 'cf-joints';
+      joints.textContent = t.joints.length + ' 個關節 · 默認 ' + t.payload + ' kg / ' + t.reach + ' m';
+      btn.appendChild(h3); btn.appendChild(p); btn.appendChild(joints);
+      btn.addEventListener('click', function(){ selectTemplate(key); });
+      grid.appendChild(btn);
+    });
+  }
+
+  function selectTemplate(key){
+    if (state.template === key) return;
+    hasInteracted = true;
+    state.template = key;
+    state.payload = DB.templates[key].payload;
+    state.reach = DB.templates[key].reach;
+    state.overrides = { shoulder: null, elbow: null, wrist: null };
+    state.filled = { shoulder: false, elbow: false, wrist: false };
+    state.pickerGroup = null;
+    els.overrideNote = true;
+    resetTest();
+    syncSliders();
+    render();
+  }
+
+  function syncSliders(){
+    document.getElementById('cf-payload').value = state.payload;
+    document.getElementById('cf-reach').value = state.reach;
+  }
+
+  function buildMarketChips(){
+    var wrap = document.getElementById('cf-market-group');
+    wrap.innerHTML = '';
+    Object.keys(DB.markets).forEach(function(key){
+      var mkt = DB.markets[key];
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cf-market-chip';
+      btn.setAttribute('aria-pressed', String(state.market === key));
+      btn.textContent = mkt.label;
+      btn.addEventListener('click', function(){
+        state.market = key;
+        hasInteracted = true;
+        render();
+      });
+      wrap.appendChild(btn);
+    });
+  }
+
+  function optionMetaText(opt){
+    if (opt.id === 'gripper'){
+      var gv = DB.gripperTypes[state.gripperType];
+      return '已選：' + gv.name + ' — 指示性 US$' + gv.priceMin + '–' + gv.priceMax + ' · ' + gv.mass + ' kg';
+    }
+    return '指示性價格區間 US$' + opt.priceMin + '–' + opt.priceMax + ' · ' + opt.mass + ' kg';
+  }
+
+  function buildOptionRows(){
+    var wrap = document.getElementById('cf-options');
+    wrap.innerHTML = '';
+    DB.options.forEach(function(opt){
+      var row = document.createElement('div');
+      row.className = 'cf-opt-row';
+      row.dataset.optId = opt.id;
+      var id = 'cf-opt-' + opt.id;
+      var metaId = id + '-meta';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.id = id; cb.checked = state.options[opt.id];
+      cb.setAttribute('aria-describedby', metaId);
+      cb.addEventListener('change', function(){
+        state.options[opt.id] = cb.checked;
+        hasInteracted = true;
+        resetTest();
+        render();
+      });
+      var copy = document.createElement('div');
+      copy.className = 'cf-opt-copy';
+      var label = document.createElement('label');
+      label.setAttribute('for', id);
+      label.className = 'cf-opt-name';
+      label.textContent = opt.label;
+      var meta = document.createElement('div');
+      meta.className = 'cf-opt-meta';
+      meta.id = metaId;
+      meta.textContent = optionMetaText(opt);
+      copy.appendChild(label); copy.appendChild(meta);
+
+      if (opt.id === 'gripper'){
+        var variantWrap = document.createElement('div');
+        variantWrap.className = 'cf-chip-row';
+        variantWrap.id = 'cf-gripper-variant-row';
+        variantWrap.setAttribute('role', 'group');
+        variantWrap.setAttribute('aria-label', '夾爪類型');
+        variantWrap.style.marginTop = '10px';
+        variantWrap.hidden = !state.options.gripper;
+        DB.gripperTypeOrder.forEach(function(vk){
+          var gv = DB.gripperTypes[vk];
+          var chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'cf-chip';
+          chip.dataset.variant = vk;
+          chip.setAttribute('aria-pressed', String(state.gripperType === vk));
+          chip.setAttribute('aria-label', gv.name + '，US$' + gv.priceMin + '–' + gv.priceMax + '，' + gv.mass + ' kg');
+          chip.innerHTML = '<span class="cf-chip-name">' + gv.name + '</span>' +
+            '<div class="cf-chip-meta">US$' + gv.priceMin + '–' + gv.priceMax + ' · ' + gv.mass + ' kg</div>';
+          chip.addEventListener('click', function(){
+            state.gripperType = vk;
+            hasInteracted = true;
+            resetTest();
+            render();
+          });
+          variantWrap.appendChild(chip);
+        });
+        copy.appendChild(variantWrap);
+      }
+
+      row.appendChild(cb); row.appendChild(copy);
+      wrap.appendChild(row);
+    });
+  }
+
+  // ---- assemble stage: slot cards + picker ----
+  function renderSlots(model){
+    var wrap = document.getElementById('cf-groups');
+    wrap.innerHTML = '';
+    DB.groups.forEach(function(group){
+      var count = groupCount(state.template, group);
+      if (count === 0) return;
+      var required = requiredTorque(group, state);
+
+      var slot = document.createElement('div');
+      slot.className = 'cf-slot';
+      slot.dataset.group = group;
+
+      var head = document.createElement('div');
+      head.className = 'cf-slot-head';
+      var name = document.createElement('span'); name.className = 'cf-slot-name'; name.textContent = DB.groupLabel[group];
+      var req = document.createElement('span'); req.className = 'cf-slot-req'; req.textContent = '所需 ≈ ' + round1(required) + ' Nm × ' + count;
+      head.appendChild(name); head.appendChild(req);
+      slot.appendChild(head);
+
+      if (state.filled[group]){
+        var g = model.groups[group];
+        var row = document.createElement('div');
+        row.className = 'cf-slot-filled';
+        var left = document.createElement('span');
+        left.className = 'cf-slot-filled-name';
+        var dot = document.createElement('span'); dot.className = 'cf-status-dot ' + g.status.level; dot.setAttribute('aria-hidden', 'true');
+        left.appendChild(dot);
+        left.appendChild(document.createTextNode(g.tier.name + ' — ' + g.status.label));
+        var removeBtn = document.createElement('button');
+        removeBtn.type = 'button'; removeBtn.className = 'cf-slot-remove'; removeBtn.textContent = '✕ 移除';
+        removeBtn.setAttribute('aria-label', '移除' + DB.groupLabel[group] + '模組');
+        removeBtn.addEventListener('click', function(){ removeSlot(group); });
+        row.appendChild(left); row.appendChild(removeBtn);
+        slot.appendChild(row);
+      } else {
+        var emptyBtn = document.createElement('button');
+        emptyBtn.type = 'button'; emptyBtn.className = 'cf-slot-empty-btn';
+        emptyBtn.textContent = '空槽位 — 選擇模組 ›';
+        emptyBtn.setAttribute('aria-label', DB.groupLabel[group] + ' — 空槽位，選擇模組');
+        emptyBtn.addEventListener('click', function(){ openPicker(group, emptyBtn); });
+        slot.appendChild(emptyBtn);
+      }
+      wrap.appendChild(slot);
+    });
+  }
+
+  var lastInvoker = null;
+
+  function openPicker(group, invoker){
+    lastInvoker = invoker || null;
+    state.pickerGroup = group;
+    render();
+  }
+
+  function closePicker(){
+    state.pickerGroup = null;
+    render();
+    if (lastInvoker && lastInvoker.focus) lastInvoker.focus();
+  }
+
+  function pickTier(group, tierKey){
+    hasInteracted = true;
+    var wasComplete = allGroupsFilled();
+    state.overrides[group] = tierKey;
+    state.filled[group] = true;
+    resetTest();
+    state.pickerGroup = null;
+    render();
+    var msg = DB.groupLabel[group] + ' 已裝配 ' + DB.tiers[tierKey].name + '。';
+    if (!wasComplete && allGroupsFilled()) msg += ' 裝配已完成——測試已解鎖。';
+    announce(msg);
+    var slotBtn = document.querySelector('.cf-slot[data-group="' + group + '"] .cf-slot-remove');
+    if (slotBtn && slotBtn.focus) slotBtn.focus();
+  }
+
+  function removeSlot(group){
+    hasInteracted = true;
+    state.filled[group] = false;
+    state.overrides[group] = null;
+    resetTest();
+    render();
+    announce(DB.groupLabel[group] + ' 模組已移除。');
+  }
+
+  function autoFitAll(){
+    hasInteracted = true;
+    var wasComplete = allGroupsFilled();
+    DB.groups.forEach(function(group){
+      if (groupCount(state.template, group) > 0 && !state.filled[group]){
+        state.overrides[group] = suggestTier(requiredTorque(group, state));
+        state.filled[group] = true;
+      }
+    });
+    resetTest();
+    state.pickerGroup = null;
+    render();
+    var msg = '所有槽位已自動選配為建議模組。';
+    if (!wasComplete && allGroupsFilled()) msg += ' 裝配已完成——測試已解鎖。';
+    announce(msg);
+  }
+
+  function renderPicker(){
+    var wrap = document.getElementById('cf-picker');
+    if (!state.pickerGroup){
+      wrap.hidden = true;
+      wrap.innerHTML = '';
+      return;
+    }
+    wrap.hidden = false;
+    var group = state.pickerGroup;
+    var required = requiredTorque(group, state);
+    var suggested = suggestTier(required);
+    var count = groupCount(state.template, group);
+
+    var html = '';
+    html += '<button type="button" class="cf-picker-close" id="cf-picker-close" aria-label="關閉選擇器">✕</button>';
+    html += '<h4 id="cf-picker-h" tabindex="-1">選擇模組 — ' + DB.groupLabel[group] + '（需求 ≈ ' + round1(required) + ' Nm × ' + count + '）</h4>';
+    html += '<div class="cf-chip-row" role="group" aria-label="' + DB.groupLabel[group] + ' 檔位選項">';
+    DB.tierOrder.forEach(function(tierKey){
+      var tier = DB.tiers[tierKey];
+      var status = statusFor(tierKey, required);
+      var pressed = state.filled[group] && state.overrides[group] === tierKey;
+      var dotColor = status.level === 'green' ? '#2E7D42' : (status.level === 'amber' ? '#8A5B00' : '#BE3A2B');
+      html += '<button type="button" class="cf-chip" data-tier="' + tierKey + '" aria-pressed="' + pressed + '" aria-label="' + tier.name + '，額定 ' + tier.torque + ' Nm，' + status.label + '">';
+      html += '<span class="cf-chip-preview" style="background:' + dotColor + ';" aria-hidden="true"></span>';
+      html += '<span class="cf-chip-name">' + tier.name + (tierKey === suggested ? '<span class="cf-chip-badge">建議檔</span>' : '') + '</span>';
+      html += '<div class="cf-chip-meta">額定 ' + tier.torque + ' Nm · 指示性起價 ' + fmtUSD(tier.priceFrom) + '</div>';
+      html += '<div class="cf-chip-meta">' + tier.meta2 + '</div>';
+      html += '</button>';
+    });
+    html += '</div>';
+    wrap.innerHTML = html;
+
+    wrap.querySelectorAll('.cf-chip').forEach(function(btn){
+      btn.addEventListener('click', function(){ pickTier(group, btn.dataset.tier); });
+    });
+    document.getElementById('cf-picker-close').addEventListener('click', function(){ closePicker(); });
+    var heading = document.getElementById('cf-picker-h');
+    if (heading) heading.focus();
+  }
+
+  function updateMeter(model){
+    var label = document.getElementById('cf-meter-label');
+    var fill = document.getElementById('cf-meter-fill');
+    var total = model.totalGroups, filled = model.filledGroups;
+    if (label) label.textContent = '裝配進度：' + filled + ' / ' + total + ' 個關節組已完成';
+    if (fill){
+      fill.style.width = (total ? (filled / total * 100) : 0) + '%';
+      fill.className = 'cf-meter-fill' + (total > 0 && filled === total ? ' complete' : '');
+    }
+  }
+
+  function buildStatusList(container, model){
+    container.innerHTML = '';
+    DB.groups.forEach(function(group){
+      if (groupCount(state.template, group) === 0) return;
+      var row = document.createElement('div');
+      row.className = 'cf-rail-status';
+      var dot = document.createElement('span');
+      var text = document.createElement('span');
+      if (model.groups[group]){
+        var g = model.groups[group];
+        dot.className = 'cf-status-dot ' + g.status.level;
+        text.textContent = DB.groupLabel[group] + '：' + g.tier.name + '（' + g.status.label + '）';
+      } else {
+        dot.className = 'cf-status-dot';
+        text.textContent = DB.groupLabel[group] + '：未裝配';
+      }
+      dot.setAttribute('aria-hidden', 'true');
+      row.appendChild(dot); row.appendChild(text);
+      container.appendChild(row);
+    });
+  }
+
+  // ---- mailto + summary text ----
+  var verdictSentence = {
+    green: '測試循環完成——所有關節組均在首輪校核範圍內。',
+    amber: '循環以降速完成——一個或多個關節組餘量偏緊；請在下單前複核。',
+    red: '提升已中止——一個或多個模組在當前配置的負載 / 工作半徑下選型不足。'
+  };
+
+  function buildSummaryText(model){
+    var lines = [];
+    lines.push('Asaptic 機器人手臂構建請求');
+    lines.push('模板：' + model.template.label);
+    lines.push('負載：' + state.payload + ' kg · 工作半徑：' + state.reach + ' m');
+    lines.push('');
+    lines.push('關節模組：');
+    DB.groups.forEach(function(group){
+      var g = model.groups[group];
+      if (!g) return;
+      lines.push('- ' + DB.groupLabel[group] + ' x' + g.count + '：' + g.tier.name + '（' + g.tier.torque + ' Nm，所需 ' + round1(g.required) + ' Nm，' + g.status.label + '）');
+    });
+    if (!model.assemblyComplete){
+      lines.push('- 注意：裝配未完成 — ' + (model.totalGroups - model.filledGroups) + ' / ' + model.totalGroups + ' 個關節組尚未裝配。');
+    }
+    var selectedOptions = DB.options.filter(function(o){ return state.options[o.id]; });
+    if (selectedOptions.length){
+      lines.push('');
+      lines.push('可選項：');
+      selectedOptions.forEach(function(o){
+        var disp = optionDisplay(o);
+        lines.push('- ' + disp.label + '（指示性 US$' + disp.priceMin + '-' + disp.priceMax + '）');
+      });
+    }
+    lines.push('');
+    lines.push('預估運動質量：約 ' + model.movingMass + ' kg');
+    lines.push('指示性小計：' + fmtBand(model.subtotalLow, model.subtotalHigh) + '（深圳工廠交貨價 EXW）');
+    lines.push('目的地市場：' + model.market.label);
+    if (model.landedLow !== null){
+      lines.push('指示性到岸成本：' + fmtBand(model.landedLow, model.landedHigh));
+    } else {
+      lines.push('到岸成本：請諮詢我們——按目的地單獨報價');
+    }
+    lines.push('');
+    lines.push('測試循環：' + (state.testResult ? verdictSentence[state.testResult.verdict] : '尚未運行。'));
+    lines.push('請求渠道：asaptic.com/zht/robot/build');
+    lines.push('');
+    lines.push('由 Asaptic 構建工具生成——指示性配置，請提供報價。');
+    var text = lines.join('\n');
+    while (encodeURIComponent(text).length > 1800 && text.length > 3) {
+      text = text.slice(0, text.length - 60) + '...';
+    }
+    return text;
+  }
+
+  function buildMailto(model, summaryText){
+    var subject = '機器人構建請求 — ' + model.template.label + ' · ' + state.payload + ' kg · ' + state.reach + ' m';
+    var href = 'mailto:engage@asaptic.com'
+      + '?subject=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent(summaryText);
+    return href;
+  }
+
+  // ---- manual payload ----
+  function buildManualPayload(model){
+    return {
+      lang: 'zh',
+      generated: new Date().toISOString().slice(0, 10),
+      template: { label: model.template.label, jointCount: model.template.joints.length },
+      payload: state.payload,
+      reach: state.reach,
+      groups: DB.groups.filter(function(g){ return !!model.groups[g]; }).map(function(g){
+        var gm = model.groups[g];
+        return {
+          label: DB.groupLabel[g],
+          count: gm.count,
+          tierName: gm.tier.name,
+          torqueRated: gm.tier.torque,
+          torqueRequired: round1(gm.required),
+          statusLevel: gm.status.level,
+          statusLabel: gm.status.label
+        };
+      }),
+      options: DB.options.filter(function(o){ return state.options[o.id]; }).map(function(o){ return { label: optionDisplay(o).label }; }),
+      market: { label: model.market.label, note: model.market.note },
+      subtotalLow: model.subtotalLow,
+      subtotalHigh: model.subtotalHigh,
+      landedLow: model.landedLow,
+      landedHigh: model.landedHigh,
+      movingMass: model.movingMass,
+      armStructureMass: round1(model.armStructureMass)
+    };
+  }
+
+  // ---- stage navigation ----
+  function goStage(key){
+    if (key === 'test'){
+      var model = computeModel();
+      if (!model.assemblyComplete) return;
+    }
+    state.stage = key;
+    render();
+  }
+
+  function updateStageNav(model){
+    STAGES.forEach(function(key){
+      var sec = document.getElementById('cf-stage-' + key);
+      if (sec) sec.hidden = (state.stage !== key);
+    });
+    var workshop = document.getElementById('cf-workshop-wrap');
+    if (workshop) workshop.hidden = (state.stage === 'mission');
+
+    document.querySelectorAll('.cf-step-btn').forEach(function(btn){
+      var key = btn.dataset.stage;
+      var locked = (key === 'test' && !model.assemblyComplete);
+      btn.disabled = locked;
+      btn.setAttribute('aria-disabled', String(locked));
+      if (key === state.stage) btn.setAttribute('aria-current', 'step'); else btn.removeAttribute('aria-current');
+    });
+
+    var assembleNext = document.getElementById('cf-assemble-next');
+    if (assembleNext) assembleNext.disabled = !model.assemblyComplete;
+
+    var testNext = document.getElementById('cf-test-next');
+    if (testNext) testNext.disabled = !state.testCompleted;
+
+    var simBtn = document.getElementById('cf-sim-btn');
+    if (simBtn){
+      if (!sim.running){
+        simBtn.disabled = !(state.stage === 'test' && model.assemblyComplete);
+        simBtn.textContent = '▶ 運行測試循環';
+      }
+    }
+
+    var notice = document.getElementById('cf-checkout-notice');
+    var manualBtn = document.getElementById('cf-manual-btn');
+    var ctaLink = document.getElementById('cf-cta-link');
+    var emptyCount = model.totalGroups - model.filledGroups;
+    if (notice){
+      if (!model.assemblyComplete){
+        notice.hidden = false;
+        notice.textContent = '裝配未完成 — 還有 ' + emptyCount + ' 個槽位為空。請完成裝配後再提交構建請求或生成用戶手冊。';
+      } else {
+        notice.hidden = true;
+        notice.textContent = '';
+      }
+    }
+    if (manualBtn) manualBtn.disabled = !model.assemblyComplete;
+    if (ctaLink){
+      if (!model.assemblyComplete){
+        ctaLink.setAttribute('aria-disabled', 'true');
+        ctaLink.classList.add('cf-disabled-link');
+        ctaLink.removeAttribute('href');
+      } else {
+        ctaLink.setAttribute('aria-disabled', 'false');
+        ctaLink.classList.remove('cf-disabled-link');
+      }
+    }
+  }
+
+  // ---- single render pass ----
+  function render(){
+    var model = computeModel();
+
+    // template cards
+    document.querySelectorAll('#cf-template-grid .cf-card').forEach(function(btn){
+      btn.setAttribute('aria-pressed', String(btn.dataset.template === state.template));
+    });
+
+    // sliders
+    document.getElementById('cf-payload-out').textContent = state.payload + ' kg';
+    document.getElementById('cf-reach-out').textContent = state.reach + ' m';
+
+    // market chips
+    document.querySelectorAll('#cf-market-group .cf-market-chip').forEach(function(btn, idx){
+      var keys = Object.keys(DB.markets);
+      btn.setAttribute('aria-pressed', String(keys[idx] === state.market));
+    });
+
+    // option rows: gripper variant chips + meta refresh
+    document.querySelectorAll('#cf-options .cf-opt-row').forEach(function(row){
+      var opt = optionSpecById(row.dataset.optId);
+      if (!opt) return;
+      var metaEl = row.querySelector('.cf-opt-meta');
+      if (metaEl) metaEl.textContent = optionMetaText(opt);
+    });
+    var variantRow = document.getElementById('cf-gripper-variant-row');
+    if (variantRow){
+      variantRow.hidden = !state.options.gripper;
+      variantRow.querySelectorAll('.cf-chip').forEach(function(chip){
+        chip.setAttribute('aria-pressed', String(chip.dataset.variant === state.gripperType));
+      });
+    }
+
+    // assemble stage: slots, picker, meter
+    renderSlots(model);
+    renderPicker();
+    updateMeter(model);
+
+    // mass line
+    document.getElementById('cf-mass-line').textContent =
+      '預估運動質量 ≈ ' + model.movingMass + ' kg，含模組、臂上選配及約 ' + round1(model.armStructureMass) + ' kg 首輪結構估算（控制器為臂外安裝，不計入）。';
+
+    // optimal-fit badge (feature 5)
+    var optimalBadge = document.getElementById('cf-optimal-badge');
+    if (optimalBadge) optimalBadge.hidden = !model.optimalFit;
+
+    // BOM table
+    var tbody = document.getElementById('cf-bom-body');
+    tbody.innerHTML = '';
+    model.bomLines.forEach(function(line){
+      var tr = document.createElement('tr');
+      var tdLabel = document.createElement('td'); tdLabel.textContent = line.label;
+      var tdQty = document.createElement('td'); tdQty.className = 'num'; tdQty.textContent = String(line.qty);
+      var tdUnit = document.createElement('td'); tdUnit.className = 'num'; tdUnit.textContent = fmtUSD(line.unit);
+      var tdTotal = document.createElement('td'); tdTotal.className = 'num'; tdTotal.textContent = fmtUSD(line.total);
+      tr.appendChild(tdLabel); tr.appendChild(tdQty); tr.appendChild(tdUnit); tr.appendChild(tdTotal);
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('cf-subtotal-line').textContent =
+      '指示性小計：' + fmtBand(model.subtotalLow, model.subtotalHigh) + '（深圳工廠交貨價 EXW，指示性）。';
+
+    // landed cost
+    var landedAmt = document.getElementById('cf-landed-amt');
+    var landedAssumption = document.getElementById('cf-landed-assumption');
+    if (model.landedLow !== null){
+      landedAmt.textContent = fmtBand(model.landedLow, model.landedHigh) + ' 到岸，' + model.market.label;
+    } else {
+      landedAmt.textContent = '請諮詢我們 — ' + model.market.label;
+    }
+    landedAssumption.textContent = model.market.note;
+
+    // summary text + mailto
+    var summaryText = buildSummaryText(model);
+    document.getElementById('cf-summary-text').value = summaryText;
+    if (model.assemblyComplete){
+      document.getElementById('cf-cta-link').setAttribute('href', buildMailto(model, summaryText));
+    }
+
+    // rail (desktop)
+    document.getElementById('cf-rail-total').textContent = fmtBand(model.subtotalLow, model.subtotalHigh);
+    buildStatusList(document.getElementById('cf-rail-status'), model);
+    document.getElementById('cf-rail-mass').textContent = '≈ ' + model.movingMass + ' kg';
+    document.getElementById('cf-rail-modules').textContent = String(model.totalModuleCount);
+    var optCount = DB.options.filter(function(o){ return state.options[o.id]; }).length;
+    document.getElementById('cf-rail-options').textContent = String(optCount);
+
+    // bottom bar (mobile)
+    document.getElementById('cf-bar-total').textContent = fmtBand(model.subtotalLow, model.subtotalHigh);
+    var dotWrap = document.getElementById('cf-bar-dot-wrap');
+    dotWrap.innerHTML = '';
+    var barDot = document.createElement('span');
+    barDot.className = 'cf-status-dot ' + model.overallStatus;
+    barDot.style.display = 'inline-block';
+    barDot.setAttribute('aria-hidden', 'true');
+    dotWrap.appendChild(barDot);
+    buildStatusList(document.getElementById('cf-bar-status'), model);
+    document.getElementById('cf-bar-mass').textContent = '預估運動質量 ≈ ' + model.movingMass + ' kg';
+
+    // arm SVG (idle pose) — skip while a sim animation owns the viewport
+    if (!sim.running) idleDraw(model);
+
+    // stage visibility + gating
+    updateStageNav(model);
+
+    if (hasInteracted) scheduleSaveDraft();
+  }
+
+  // ---- copy button ----
+  function initCopyButton(){
+    var btn = document.getElementById('cf-copy-btn');
+    var status = document.getElementById('cf-copy-status');
+    var textarea = document.getElementById('cf-summary-text');
+    btn.addEventListener('click', function(){
+      var text = textarea.value;
+      function ok(){ status.textContent = '已複製。'; setTimeout(function(){ status.textContent = ''; }, 2500); }
+      function fail(){
+        try {
+          textarea.focus();
+          textarea.select();
+          if (document.execCommand('copy') === true) { ok(); }
+          else { status.textContent = '無法複製 — 文本已選中，請使用 Cmd/Ctrl+C 複製。'; }
+        } catch (e){
+          status.textContent = '無法複製 — 文本已選中，請使用 Cmd/Ctrl+C 複製。';
+        }
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(ok, fail);
+      } else {
+        fail();
+      }
+    });
+  }
+
+  // ---- manual button ----
+  function initManualButton(){
+    var btn = document.getElementById('cf-manual-btn');
+    var status = document.getElementById('cf-manual-status');
+    btn.addEventListener('click', function(){
+      var model = computeModel();
+      if (!model.assemblyComplete) return;
+      var payload = buildManualPayload(model);
+      if (window.asapticManual && window.asapticManual.open){
+        status.textContent = '';
+        window.asapticManual.open(payload);
+      } else {
+        status.textContent = '用戶手冊生成器正在加載 — 請稍後重試。';
+      }
+    });
+  }
+
+  // ---- bottom bar toggle ----
+  function initBarToggle(){
+    var toggle = document.getElementById('cf-bar-toggle');
+    var detail = document.getElementById('cf-bar-detail');
+    toggle.addEventListener('click', function(){
+      var open = detail.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(open));
+      document.body.classList.toggle('cf-bar-open', open);
+    });
+  }
+
+  // ---- sliders ----
+  function initSliders(){
+    var payloadEl = document.getElementById('cf-payload');
+    var reachEl = document.getElementById('cf-reach');
+    payloadEl.value = state.payload;
+    reachEl.value = state.reach;
+    payloadEl.addEventListener('input', function(){
+      var v = clamp(parseFloat(payloadEl.value), 0.5, 20);
+      if (!isFinite(v)) v = state.payload;
+      state.payload = v;
+      hasInteracted = true;
+      resetTest();
+      render();
+    });
+    reachEl.addEventListener('input', function(){
+      var v = clamp(parseFloat(reachEl.value), 0.3, 1.5);
+      if (!isFinite(v)) v = state.reach;
+      state.reach = v;
+      hasInteracted = true;
+      resetTest();
+      render();
+    });
+  }
+
+  // ---- stage nav wiring ----
+  function initStageNav(){
+    document.querySelectorAll('.cf-step-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){ goStage(btn.dataset.stage); });
+    });
+    document.getElementById('cf-mission-next').addEventListener('click', function(){ goStage('assemble'); });
+    document.getElementById('cf-assemble-back').addEventListener('click', function(){ goStage('mission'); });
+    document.getElementById('cf-assemble-next').addEventListener('click', function(){ goStage('test'); });
+    document.getElementById('cf-test-back').addEventListener('click', function(){ goStage('assemble'); });
+    document.getElementById('cf-test-next').addEventListener('click', function(){ goStage('checkout'); });
+    document.getElementById('cf-checkout-back').addEventListener('click', function(){ goStage('test'); });
+    document.getElementById('cf-autofit-btn').addEventListener('click', autoFitAll);
+  }
+
+  function initSimButton(){
+    document.getElementById('cf-sim-btn').addEventListener('click', runTest);
+  }
+
+  function init(){
+    var hydrated = false;
+    try { hydrated = hydrateFromURL(); } catch (e){ hydrated = false; }
+    if (hydrated){
+      state.stage = 'assemble';
+      hasInteracted = true;
+    }
+    buildTemplateCards();
+    buildMarketChips();
+    buildOptionRows();
+    initSliders();
+    initCopyButton();
+    initBarToggle();
+    initStageNav();
+    initSimButton();
+    initManualButton();
+    initShareControls();
+    render();
+    if (hydrated){
+      showHydrateNotice();
+    } else {
+      maybeShowResumeBanner();
+    }
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
+<script src="/robot/build/manual.js" defer></script>
+</body>
+</html>

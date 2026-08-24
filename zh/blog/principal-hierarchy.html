@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>委托人层级：当权威冲突时，谁来指挥AI智能体？ — Asaptic Labs</title>
+  <meta name="description" content="AI智能体在安全关键领域同时面对开发者、运营方、用户与监管规范等多重委托人。本文分析隐式优先序为何在高风险冲突场景中失效，并提出应在冲突时刻使权威层级显式、可审计的设计要求。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="委托人层级：当权威冲突时，谁来指挥AI智能体？" />
+  <meta property="og:description" content="AI智能体在安全关键领域同时面对开发者、运营方、用户与监管规范等多重委托人。本文分析隐式优先序为何在高风险冲突场景中失效，并提出应在冲突时刻使权威层级显式、可审计的设计要求。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/principal-hierarchy" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-05-20" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+<!-- ASAPTIC:HEAD:START -->
+<link rel="canonical" href="https://asaptic.com/zh/blog/principal-hierarchy">
+<link rel="alternate" hreflang="en" href="https://asaptic.com/blog/principal-hierarchy">
+<link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/principal-hierarchy">
+<link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/principal-hierarchy">
+<link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/principal-hierarchy">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<!-- ASAPTIC:HEAD:END -->
+
+  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Article", "headline": "委托人层级：当权威冲突时，谁来指挥AI智能体？", "description": "AI智能体在安全关键领域同时面对开发者、运营方、用户与监管规范等多重委托人。本文分析隐式优先序为何在高风险冲突场景中失效，并提出应在冲突时刻使权威层级显式、可审计的设计要求。", "url": "https://asaptic.com/zh/blog/principal-hierarchy.html", "author": {"@type": "Organization", "name": "Asaptic Labs"}, "publisher": {"@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com"}, "datePublished": "2026-05-20", "dateModified": "2026-06-14", "mainEntityOfPage": "https://asaptic.com/zh/blog/principal-hierarchy.html", "inLanguage": "zh-Hans", "potentialAction": {"@type": "Action", "name": "联系 Asaptic", "target": [{"@type": "EntryPoint", "urlTemplate": "https://asaptic.com/zh/engage.html", "contentType": "application/json", "description": "MCP server, tool: submit_rfq"}, {"@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "通过电子邮件联系 Asaptic"}]}}, {"@type": "BreadcrumbList", "inLanguage": "zh-Hans", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/"}, {"@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/"}, {"@type": "ListItem", "position": 3, "name": "委托人层级：当权威冲突时，谁来指挥AI智能体？", "item": "https://asaptic.com/zh/blog/principal-hierarchy.html"}]}]}</script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.25;margin-bottom:16px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--gray);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--fg);margin:40px 0 16px}.essay-body h3{font-size:1.05rem;font-weight:600;color:var(--fg);margin:32px 0 12px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--gray);margin:0}.essay-footer-area{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}.compare-table{width:100%;border-collapse:collapse;margin:0 0 32px 0;font-size:15px;color:var(--gray)}.compare-table th{text-align:left;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--cyan);padding:10px 12px;border-bottom:1px solid var(--border)}.compare-table td{padding:12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6}.compare-table tr:last-child td{border-bottom:none}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.compare-table{font-size:13px}}
+  </style>
+</head>
+<body>
+  <!-- ASAPTIC:HEADER:START -->
+<header class="shell">
+  <div class="row">
+    <a class="brand" href="/zh/">ASAPTIC</a>
+    <nav class="nav"><a href="/zh/trade-ai">贸易AI</a><a href="/zh/tenders">实时招标</a><a href="/zh/suppliers">面向供应商</a><a href="/zh/standards">跨境标准</a><a href="/zh/platform">开发者</a></nav>
+    <div class="lang"><a href="/blog/principal-hierarchy"><span>EN</span></a><a href="/zh/blog/principal-hierarchy"><span class="on">简</span></a><a href="/zht/blog/principal-hierarchy"><span>繁</span></a></div><a class="engage" href="/zh/contact">联系我们</a>
+  </div>
+  <div class="row subrow"><nav class="crumbs" aria-label="Breadcrumb"><a href="/zh/">Asaptic</a><span class="sep">/</span><a href="/zh/blog/">笔记</a></nav><nav class="sublinks"><a href="/zh/blog/">全部文章</a><a href="/crossings">跨界观察</a><a href="/thesis">论文</a></nav></div>
+</header>
+<!-- ASAPTIC:HEADER:END -->
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <header>
+        <div class="essay-tag">× 量子计算 × 物理 AI × 照护 AI</div>
+        <h1 class="essay-title">委托人层级：当权威冲突时，谁来指挥AI智能体？</h1>
+        <p class="essay-subtitle">当开发者约束、运营方配置与用户指令发生冲突时，AI智能体应如何显式、可审计地判定听谁的？</p>
+        <div class="essay-meta">
+          <span>Asaptic Labs</span>
+          <span>2026-05-20</span>
+          <span>5 分钟阅读</span>
+        </div>
+      </header>
+      <div class="essay-body">
+        <p>在安全关键领域运行的AI智能体并不只有一个委托人，而是同时面对多方。训练它的开发者设定了不可逾越的行为边界；部署它的运营方配置了权限范围；与之交互的用户有即时的偏好和迫切的需求；在受监管的领域——照护环境、关键基础设施、受金融监管的场景——还存在着协议、法规和机构政策，无论个别用户提出何种请求，这些规范都对智能体的行为拥有权威。</p>
+        <p>大多数情况下，这些权威是一致的。但"大多数情况下"并非全部。而那些落在"大多数情况下"之外的案例，恰恰是高风险场景——在这些场景中，对委托人冲突的错误处置可能造成不可逆的伤害。</p>
+        <h2>为何隐式层级会失效</h2>
+        <p>对这一问题的常见工程应对是建立隐式优先序：开发者约束 > 运营方配置 > 用户指令。这一排序作为起点是合理的，但对于智能体决策涉及真实世界的部署场景而言，远远不够。</p>
+        <p>第一个问题是：隐式排序对受其约束的各方是不可见的。如果照护场景中的智能体因护士的指令与运营方级别的政策冲突而悄然降低其优先级，护士和患者都不知道冲突的发生、解决方案的应用，也不知道解决方案的内容。智能体行动了，行动被记录了，但驱动这一行动的权威冲突未被浮现——无法被审查、质疑或纠正。</p>
+        <p>第二个问题是：隐式排序无法处理低级别委托人拥有高级别委托人的配置未曾预见的时效性关键信息的情况。运营方配置是提前写好的，基于的假设在智能体实际行动时可能已不成立。床边临床医生观察到患者病情恶化时，拥有任何配置面板都未曾捕获的信息。一个静态层级将临床医生的判断压制于此前配置之下，这不是安全特性，而是脆弱性。</p>
+        <h2>使层级显式且可审计</h2>
+        <p>由此产生的设计要求，不是扁平化层级——某种形式的权威排序是必要的——而是在冲突时刻使其显式、有文档、可审计。当权威冲突发生且智能体应用了某种解决方案时，该解决方案应当：在智能体的输出中被浮现而非隐藏；连同冲突结构和所应用的解决规则一并记录；并可供相关委托人事后审查。</p>
+        <p>这与仅仅拥有一个优先序列是不同的设计目标。它要求智能体识别冲突的发生、表示冲突结构、应用解决方案，并以支持问责的方式记录这三个步骤。悄然解决权威冲突的智能体，其行为无法被完整审计——而该审计缺口随冲突频率的增加而成比例地扩大。</p>
+        <h2>密码学维度</h2>
+        <p>在后量子安全语境中，委托人层级问题呈现出更硬的边缘。当智能体跨机构边界运行时——物理世界部署通常如此——委托人的身份必须经过密码学证明，而非假定。照护机构的政策权威只有在智能体能够验证其收到的指令确实来自经授权的来源时，才具有实际意义。</p>
+        <p>后量子密钥基础设施改变了这些证明如何被构建和验证的基本规则。智能体的信任链——其权威委托的有序序列——需要建立在能够经受密码学转型的密钥材料之上，并存储在与智能体运行硬件环境绑定的可审计、防篡改的基础设施中。</p>
+        <h2>显式层级带来什么</h2>
+        <p>构建良好的委托人层级不仅能防止冲突错误，还使一类隐式系统无法支持的问责成为可能：对任何具有实质影响的智能体行动，能够重建行动发生时刻的完整权威状态。哪些委托人处于活跃状态？是否存在冲突？应用了哪条解决规则？解决方案在该情境下是否恰当？</p>
+        <p>这种重建能力是有意义的事后审查的前提，也是受监管环境在向AI智能体扩展实质性操作权限之前所要求的信任基础。能够展示工作过程的智能体——不仅是做了什么，而且是基于谁的权威行事、以及在权威分歧时如何解决——才是赢得在高风险领域更深入运营资格的智能体。</p>
+        <p>委托人层级不是一个配置细节，而是一项一等架构承诺。在AI智能体正在跨入具有实质影响领域的当下，做好这一点不是可选项。</p>
+      </div>
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>AI智能体在安全关键领域运行时同时面对开发者、运营方、用户及监管规范等多重委托人，多数情况下这些权威一致，但冲突场景恰恰是高风险场景。常见的隐式优先序（开发者约束>运营方配置>用户指令）对受影响方不可见，也无法处理低级别委托人掌握的时效性关键信息。设计要求是在冲突时刻使层级显式、有文档、可审计：智能体应浮现冲突结构与所应用的解决规则，并保留供事后审查的记录。在后量子安全语境中，委托人身份还须经密码学证明而非假定。委托人层级是一项一等架构承诺，而非配置细节。</p>
+      </div>
+      <div class="essay-footer-area">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-05-20</span>
+        <a href="/zh/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+  <!-- ASAPTIC:FOOTER:START -->
+<footer class="foot">
+  <div class="row">
+    <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI贸易执行 - 我们赢取并完成跨境政府采购，按结果付费。</div></div>
+    <div class="col"><p class="col-h">产品</p><a href="/zh/trade-ai">贸易AI</a><a href="/zh/tenders">实时招标</a><a href="/zh/standards">跨境标准</a><a href="/zh/platform">开发者</a></div>
+    <div class="col"><p class="col-h">面向您</p><a href="/zh/contact">采购方与机构</a><a href="/zh/suppliers">中国供应商</a><a href="/zh/contact">渠道合作伙伴</a></div>
+    <div class="col"><p class="col-h">资源</p><a href="/zh/blog/">笔记</a><a href="/zh/robot/">机器人 101</a><a href="/zh/university/">外贸学院</a><a href="/changelog/">更新日志</a></div>
+    <div class="col"><p class="col-h">公司</p><a href="/zh/contact">联系我们</a><a href="/zh/tenders">实时招标</a></div>
+  </div>
+  <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/zh/legal/privacy">隐私政策</a> · <a href="/zh/legal/terms">服务条款</a> · Cross-Standard data CC BY 4.0</div>
+</footer>
+<!-- ASAPTIC:FOOTER:END -->
+</body>
+</html>

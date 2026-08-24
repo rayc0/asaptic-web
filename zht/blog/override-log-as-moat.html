@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 的真正護城河，是覆寫日誌 — Asaptic Labs</title>
+  <meta name="description" content="當 AI 智能體開始在現實世界中行動，真正持久的護城河並非模型規模或數據體量，而是覆寫日誌——每一次人類說「不」時留下的、經過校準與結構化的記錄及其理由。這份記錄無法被爬取、購買或合成，只能在受監管的部署中逐步積累，是可執行安全邊界的根本資產。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="AI 的真正護城河，是覆寫日誌" />
+  <meta property="og:description" content="當 AI 智能體開始在現實世界中行動，真正持久的護城河並非模型規模或數據體量，而是覆寫日誌——每一次人類說「不」時留下的、經過校準與結構化的記錄及其理由。這份記錄無法被爬取、購買或合成，只能在受監管的部署中逐步積累，是可執行安全邊界的根本資產。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/override-log-as-moat" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-05-19" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+<!-- ASAPTIC:HEAD:START -->
+<link rel="canonical" href="https://asaptic.com/zht/blog/override-log-as-moat">
+<link rel="alternate" hreflang="en" href="https://asaptic.com/blog/override-log-as-moat">
+<link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/override-log-as-moat">
+<link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/override-log-as-moat">
+<link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/override-log-as-moat">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<!-- ASAPTIC:HEAD:END -->
+
+  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Article", "headline": "AI 的真正護城河，是覆寫日誌", "description": "當 AI 智能體開始在現實世界中行動，真正持久的護城河並非模型規模或數據體量，而是覆寫日誌——每一次人類說「不」時留下的、經過校準與結構化的記錄及其理由。這份記錄無法被爬取、購買或合成，只能在受監管的部署中逐步積累，是可執行安全邊界的根本資產。", "url": "https://asaptic.com/zht/blog/override-log-as-moat.html", "author": {"@type": "Organization", "name": "Asaptic Labs"}, "publisher": {"@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com"}, "datePublished": "2026-05-19", "dateModified": "2026-06-14", "mainEntityOfPage": "https://asaptic.com/zht/blog/override-log-as-moat.html", "inLanguage": "zh-Hant", "potentialAction": {"@type": "Action", "name": "聯絡 Asaptic", "target": [{"@type": "EntryPoint", "urlTemplate": "https://asaptic.com/zht/engage.html", "contentType": "application/json", "description": "MCP server, tool: submit_rfq"}, {"@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "透過電子郵件聯絡 Asaptic"}]}}, {"@type": "BreadcrumbList", "inLanguage": "zh-Hant", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/"}, {"@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/"}, {"@type": "ListItem", "position": 3, "name": "AI 的真正護城河，是覆寫日誌", "item": "https://asaptic.com/zht/blog/override-log-as-moat.html"}]}]}</script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.25;margin-bottom:16px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--gray);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--fg);margin:40px 0 16px}.essay-body h3{font-size:1.05rem;font-weight:600;color:var(--fg);margin:32px 0 12px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--gray);margin:0}.essay-footer-area{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}.compare-table{width:100%;border-collapse:collapse;margin:0 0 32px 0;font-size:15px;color:var(--gray)}.compare-table th{text-align:left;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--cyan);padding:10px 12px;border-bottom:1px solid var(--border)}.compare-table td{padding:12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6}.compare-table tr:last-child td{border-bottom:none}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.compare-table{font-size:13px}}
+  </style>
+</head>
+<body>
+  <!-- ASAPTIC:HEADER:START -->
+<header class="shell">
+  <div class="row">
+    <a class="brand" href="/zht/">ASAPTIC</a>
+    <nav class="nav"><a href="/zht/trade-ai">貿易 AI</a><a href="/zht/tenders">實時招標</a><a href="/zht/suppliers">供應商專區</a><a href="/zht/standards">跨境標準</a><a href="/zht/platform">開發者</a></nav>
+    <div class="lang"><a href="/blog/override-log-as-moat"><span>EN</span></a><a href="/zh/blog/override-log-as-moat"><span>简</span></a><a href="/zht/blog/override-log-as-moat"><span class="on">繁</span></a></div><a class="engage" href="/zht/contact">聯絡我們</a>
+  </div>
+  <div class="row subrow"><nav class="crumbs" aria-label="Breadcrumb"><a href="/zht/">Asaptic</a><span class="sep">/</span><a href="/zht/blog/">筆記</a></nav><nav class="sublinks"><a href="/zht/blog/">全部文章</a><a href="/crossings">跨界觀察</a><a href="/thesis">論文</a></nav></div>
+</header>
+<!-- ASAPTIC:HEADER:END -->
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <header>
+        <div class="essay-tag">× 基礎層</div>
+        <h1 class="essay-title">AI 的真正護城河，是覆寫日誌</h1>
+        <p class="essay-subtitle">當模型趨同、語料耗盡、算力可租用，唯一無法被複制的護城河，是那份記錄着剋制的覆寫日誌。</p>
+        <div class="essay-meta">
+          <span>Asaptic Labs</span>
+          <span>2026-05-19</span>
+          <span>5 分鐘閱讀</span>
+        </div>
+      </header>
+      <div class="essay-body">
+        <p>在這一輪週期的很長一段時間裏，人們默認的 AI 護城河都是顯而易見的那幾種：更多參數、更多 token、更多算力、更多專有數據。這個故事被講述得太多，以至於容易忘記它講的其實是一條所有人都身處其上的曲線。參數規模正在收斂，公開語料正在耗盡，算力可以租用，模型架構在數月之內便擴散至整個行業。今天稀缺的東西，往往已經排上了明年淪為大宗商品的日程表。</p>
+        <p>真正不會淪為大宗商品的，是那些「險些出錯」的決策記錄。當一個 AI 智能體不再只是回答問題，而是開始行動——下單、調度照護、代人簽署——它所採取的每一個行動，要麼落地，要麼被糾正。這些糾正正是下一代更好智能體的原材料。它們也是幾乎沒有人在妥善收集的資產。</p>
+        <p>我們把這項資產稱為覆寫日誌。它是一份經過校準、結構化的記錄：每一次處於迴路中的人類對某項被提議的行動說「不」——以及，至關重要的，為什麼說不。不是一個含糊的點踩，也不是標籤集上的 softmax 分數，而是一條帶時間戳、附有上下文的條目：智能體在某種狀態下、依據某些支持證據，提出了行動 X；一位合格的人類否決了它；這次否決在一套精簡且嚴謹的分類體系中給出了理由；實際發生的行動是 Y；下游產生的後果是 Z。在受監管的環境中，把這一過程在數十萬次決策上重複。由此累積起來的東西，是任何公開數據集都無法模仿的。</p>
+        <p>覆寫日誌有三項特性，使它成為一條持久的護城河——而模型權重和語料庫做不到這一點。</p>
+        <p>其一，它內生於部署本身。你無法爬取它，無法購買它，也無法令人信服地合成它——因為其先驗，即一位合格的人類在特定運營情境下實際會標記出什麼，並不存在於公開分佈之中。生成這份日誌的唯一方式，是成為決策發生、覆寫錄入的那個界面的運營方。這是一種要靠多年訪問權限才能贏得的位置，而不是幾周微調就能獲得的。</p>
+        <p>其二，覆寫日誌是成本最低的高質量監督形式。大多數標註體系是花錢僱人脱離上下文地閱讀樣本，並貼上他們在實際工作中永遠不會用到的標籤。覆寫日誌則反其道而行：標籤來自人們在拒絕智能體建議的那一刻，正在做他們真正的本職工作。信號密度高，成本被攤薄進本來就要發生的工作之中，而其分佈恰恰就是真正重要的分佈——運營時的真實分佈，而非某個基準測試的替代品。</p>
+        <p>其三，覆寫日誌與安全邊界之間的複利是不對稱的。基於更豐富的覆寫語料訓練出的模型，不僅會變得更準確，還會更準確地校準出何時不應行動。而正是這第二項特性，才是監管者、審計方與交易對手真正在意的。沒有經過校準的棄權能力的能力本身，是一種負債；經過校準的棄權能力，才是可以運營的執照。誰擁有最深的覆寫語料，誰就擁有可付諸執行的安全邊界——即被允許運行的自動化與不被允許運行的自動化之間的那條界線。</p>
+        <p>有人會傾向於把這一切貶低為一個包裝過的標註故事。事實並非如此。有三件事將真正的覆寫日誌與普通的標註流水線區分開來。覆寫理由的分類體系必須足夠精簡，使人們能在高負荷下使用它，但又必須足夠具有表達力，使智能體能夠學會區分「此行為在此地屬違法」、「此行為合法但不適合此人」與「此行為本身沒問題，只是時機不對」——這三者各自會導向不同的後續行為。捕捉界面必須足夠符合人體工程學，使覆寫發生在決策的那一刻，而非事後重建。而回饋進模型的循環，必須尊重這樣一個事實：有些覆寫反映的是持久性的政策，另一些則只反映一次性的具體情境，模型不應從後者中做不當泛化。</p>
+        <p>把這三個細節做對，你就建立起了競爭者無法抄近路複製的東西。他們可以追平你的模型，但無法追平這樣一份記錄：一個嚴肅領域裏的嚴肅人類，每一次說「不」的記錄，其結構化程度足以教會下一代智能體。把這三個細節做錯，你得到的只是一串嘈雜的點踩數據流，什麼價值也沒有。</p>
+        <p>對任何在具有實質後果的領域中構建行動型智能體的團隊而言，其戰略含義十分直接：把覆寫日誌——而非模型——當作首要的產品資產。設計部署界面，使覆寫變得容易、有分類、被忠實記錄。像審計財務報表一樣審慎地審計這份日誌。並且要認識到，這份日誌的價值不在於任何單條記錄，而在於其斜率——運營方曾見過的行動類型上，覆寫率下降的速度有多快；與此同時，智能體對新行動類型的覆蓋又擴展得有多快。這條斜率，是這個行業中唯一一條競爭者無法單純靠砸錢就能追上的增長曲線。</p>
+        <p>AI 的護城河從來不是模型，從來都不是。它是剋制的記錄。</p>
+      </div>
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>AI 的持久護城河不是模型權重，而是覆寫日誌——每一次人類否決智能體行動時留下的、結構化的理由記錄。這份日誌無法被爬取、購買或合成，只能由部署運營方在受監管環境中逐步積累，是成本最低的高質量監督來源。它的價值不在單條記錄，而在覆寫率下降的斜率與行動覆蓋的擴張速度。誰擁有最深的覆寫語料，誰就擁有可執行的安全邊界。智能體團隊應將覆寫日誌、而非模型，視為首要產品資產。</p>
+      </div>
+      <div class="essay-footer-area">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-05-19</span>
+        <a href="/zht/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+  <!-- ASAPTIC:FOOTER:START -->
+<footer class="foot">
+  <div class="row">
+    <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI 貿易執行 - 我們贏取並履行跨境政府招標，按結果收費。</div></div>
+    <div class="col"><p class="col-h">產品</p><a href="/zht/trade-ai">貿易 AI</a><a href="/zht/tenders">實時招標</a><a href="/zht/standards">跨境標準</a><a href="/zht/platform">開發者</a></div>
+    <div class="col"><p class="col-h">為您而設</p><a href="/zht/contact">買家與機構</a><a href="/zht/suppliers">中國供應商</a><a href="/zht/contact">渠道合作夥伴</a></div>
+    <div class="col"><p class="col-h">資源</p><a href="/zht/blog/">筆記</a><a href="/zht/robot/">機器人 101</a><a href="/zht/university/">外貿學院</a><a href="/changelog/">更新日誌</a></div>
+    <div class="col"><p class="col-h">公司</p><a href="/zht/contact">聯絡我們</a><a href="/zht/tenders">實時招標</a></div>
+  </div>
+  <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/zht/legal/privacy">私隱政策</a> · <a href="/zht/legal/terms">服務條款</a> · Cross-Standard data CC BY 4.0</div>
+</footer>
+<!-- ASAPTIC:FOOTER:END -->
+</body>
+</html>

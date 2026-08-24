@@ -117,6 +117,12 @@ H1_OPEN_RE = re.compile(r"<h1\b", re.I)
 ROLE_RE = re.compile(r"\brole\s*=", re.I)
 BLOG_DIR = {"en": "blog", "zh": "zh/blog", "zht": "zht/blog"}
 
+# Body of an inline <script> whose only job is the language toggle.  Kept
+# narrow by default (the blog corpus); page_dedupe.py passes a wider one
+# because the non-blog pages name their blocks .pr-lang / .cx-lang / .th-lang
+# and some carry no .lang-btn at all.
+TOGGLE_BODY_RE = re.compile(r"essay-lang|bl-lang|lang-btn|langContent")
+
 TAG_RE = re.compile(r"<[^>]+>")
 SCRIPT_RE = re.compile(r"<script\b([^>]*)>(.*?)</script>", re.S)
 STYLE_RE = re.compile(r"<style\b[^>]*>.*?</style>", re.S)
@@ -263,7 +269,22 @@ def find_blocks(src: str):
         pos = end
 
 
-def process(path: str, strict_index: bool, keep: str = "en") -> Result:
+def blog_mirror_path(path: str, lang: str) -> str:
+    """Default (blog corpus) mirror resolver: blog/<slug> -> <locale>/blog/<slug>."""
+    return os.path.join(ROOT, BLOG_DIR[lang], os.path.basename(path))
+
+
+def process(path: str, strict_index: bool, keep: str = "en",
+            mirror_path=blog_mirror_path, langs=ALL_LANGS,
+            toggle_re=None) -> Result:
+    """Dedupe one page.
+
+    `mirror_path(path, lang) -> abs path` locates the locale mirror; overriding
+    it is what lets a non-blog page (privacy.html <-> zh/privacy.html) reuse
+    every gate below unchanged.  `langs` is the set of language blocks that may
+    appear, and `toggle_re` matches the body of an inline lang-toggle <script>.
+    """
+    toggle_re = toggle_re or TOGGLE_BODY_RE
     r = Result(path)
     src = open(path, encoding="utf-8").read()
     r.before = len(src.encode("utf-8"))
@@ -271,12 +292,11 @@ def process(path: str, strict_index: bool, keep: str = "en") -> Result:
 
     blocks = [(LANG_ALIAS.get(l, l), s, e) for l, s, e in find_blocks(src)]
 
-    slug = os.path.basename(path)
     by_lang = {}
     for lang, s, e in blocks:
         by_lang.setdefault(lang, []).append((s, e))
 
-    others = tuple(l for l in ALL_LANGS if l != keep)
+    others = tuple(l for l in langs if l != keep)
     if not blocks:
         return r                                   # already clean / not the pattern
     if not any(l in by_lang for l in others):
@@ -302,9 +322,10 @@ def process(path: str, strict_index: bool, keep: str = "en") -> Result:
     for lang in others:
         if lang not in by_lang:
             continue
-        mirror = os.path.join(ROOT, BLOG_DIR[lang], slug)
-        if not os.path.exists(mirror):
-            r.kept.append((lang, "mirror missing: %s/%s" % (BLOG_DIR[lang], slug)))
+        mirror = mirror_path(path, lang)
+        if not mirror or not os.path.exists(mirror):
+            r.kept.append((lang, "mirror missing: %s" % (
+                os.path.relpath(mirror, ROOT) if mirror else "(no mirror path)")))
             continue
         mirror_html = open(mirror, encoding="utf-8").read()
         block_html = src[by_lang[lang][0][0]:by_lang[lang][0][1]]
@@ -363,7 +384,7 @@ def process(path: str, strict_index: bool, keep: str = "en") -> Result:
             attrs, body = m.group(1), m.group(2)
             if "ld+json" in attrs or "src=" in attrs:
                 continue
-            if not re.search(r"essay-lang|bl-lang|lang-btn|langContent", body):
+            if not toggle_re.search(body):
                 r.notes.append("kept a non-toggle inline <script>")
                 continue
             edits.append(whole_lines(src, strip_lead_comment(src, m.start()), m.end(), ""))

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>機器人傳感器與感知詳解 — 激光雷達、深度相機、IMU、傳感器融合 | 機器人 101 | Asaptic</title>
+
+  <meta name="description" content="機器人如何感知世界：激光雷達、深度相機、IMU、六維力傳感器、感知管線，以及卡爾曼濾波傳感器融合，通俗講清。" />
+  <meta name="robots" content="index, follow" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="機器人傳感器與感知詳解 — 激光雷達、相機、IMU、融合" />
+  <meta property="og:description" content="機器人感知背後的傳感器類型、把原始數據變成世界模型的感知管線，以及傳感器融合如何把它們組合起來。" />
+  <meta property="og:url" content="https://asaptic.com/zht/robot/101/sensors/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="機器人傳感器與感知詳解 — 激光雷達、相機、IMU、融合" />
+  <meta name="twitter:description" content="機器人如何感知世界，以及如何把原始傳感器數據變成可用的環境模型。" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "機器人零部件", "item": "https://asaptic.com/zht/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "機器人 101：傳感器", "item": "https://asaptic.com/zht/robot/101/sensors/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "傳感器與感知：機器人如何看世界",
+    "description": "機器人感知背後的傳感器類型（相機、激光雷達、IMU、六維力、觸覺），從原始數據到世界模型的感知管線，以及卡爾曼濾波傳感器融合。",
+    "inLanguage": "zh-Hant",
+    "url": "https://asaptic.com/zht/robot/101/sensors/",
+    "isPartOf": { "@type": "WebPage", "name": "機器人 101", "url": "https://asaptic.com/zht/robot/101/sensors/" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "激光雷達和深度相機有什麼區別？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "激光雷達發射激光脈衝並計時反射回來的時間，在較大視場範圍內建立精確的3D 點雲，且在黑暗中也能工作。深度相機在較短距離內生成更密集的逐像素深度圖——這正是機器人在抓取物體前判斷其精確3D 位姿所需要的。很多機器人兩者都會配備。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "機器人已經有相機和激光雷達了，為什麼還需要IMU？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "IMU每秒能報告數百到數千次旋轉與加速度數據，遠快於一幀相機圖像或一次激光雷達掃描的完成速度。這種速度讓機器人能在下一幀圖像到來之前對突然的傾斜或碰撞做出反應，也能在相機或激光雷達短暫失效時填補運動估計的空白。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "什麼是卡爾曼濾波器？傳感器融合中通常如何使用它？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "卡爾曼濾波器（機器人領域常用擴展卡爾曼濾波器EKF）持續預測機器人的位置與運動狀態，再用每個新的傳感器讀數按可信程度加權修正預測。結果是一個比任何單一傳感器都更準確、更穩定的綜合估計。"
+      }
+    }
+  ]
+}
+  </script>
+
+  
+<!-- ASAPTIC:HEAD:START -->
+<link rel="canonical" href="https://asaptic.com/zht/robot/101/sensors/">
+<link rel="alternate" hreflang="en" href="https://asaptic.com/robot/101/sensors/">
+<link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/101/sensors/">
+<link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/robot/101/sensors/">
+<link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/101/sensors/">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<!-- ASAPTIC:HEAD:END -->
+
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <!-- ASAPTIC:HEADER:START -->
+<header class="shell">
+  <div class="row">
+    <a class="brand" href="/zht/">ASAPTIC</a>
+    <nav class="nav"><a href="/zht/trade-ai">貿易 AI</a><a href="/zht/tenders">實時招標</a><a href="/zht/suppliers">供應商專區</a><a href="/zht/standards">跨境標準</a><a href="/zht/platform">開發者</a></nav>
+    <div class="lang"><a href="/robot/101/sensors/"><span>EN</span></a><a href="/zh/robot/101/sensors/"><span>简</span></a><a href="/zht/robot/101/sensors/"><span class="on">繁</span></a></div><a class="engage" href="/zht/contact">聯絡我們</a>
+  </div>
+  <div class="row subrow"><nav class="crumbs" aria-label="Breadcrumb"><a href="/zht/">Asaptic</a><span class="sep">/</span><a href="/zht/robot/">機器人</a></nav><nav class="sublinks"><a href="/zht/robot/">概覽</a><a href="/zht/robot/101/anatomy/">機器人 101</a><a href="/zht/robot/build/">配置器</a></nav></div>
+</header>
+<!-- ASAPTIC:HEADER:END -->
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/zht/robot/" style="color:inherit;text-decoration:none;">Asaptic 機器人手冊</a></span>
+        
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">機器人 101 · 第 03 章</p>
+      <h1 class="rb-title">傳感器與感知：機器人如何看世界</h1>
+
+      <section class="rb-answer" aria-label="摘要">
+        <p><strong>一段話說清：</strong>機器人同時用多種傳感器來構建對世界的理解——相機和激光雷達
+        感知形狀與距離，IMU 提供快速的運動感知，六維力與觸覺傳感器感知接觸時的力與壓力。感知管線
+        把這些原始數據變成檢測到的物體和一張可供導航的地圖。因為每種傳感器都有各自的盲區和噪聲，
+        傳感器融合——許多系統中常用擴展卡爾曼濾波器——把它們組合成一個比任何單一傳感器都更可靠的綜合估計。</p>
+      </section>
+
+      <h2 class="rb-h2">感知形狀與距離：相機與激光雷達</h2>
+      <p>激光雷達（LiDAR）發射激光脈衝並計時其反射回來所需的時間，從而建立機器人周圍環境的精確
+      3D 點雲。機械旋轉激光雷達——旋轉一組激光發射器完成360度掃描，通道數從16到128不等——長期以來
+      一直是自動駕駛和室外移動機器人的標準配置，價格從數千美元到數萬美元不等（為行業指示性數據，
+      請以最新報價為準）。固態激光雷達使用MEMS反射鏡或相控陣實現無旋轉部件掃描，價格常低於千美元，
+      耐振動性也更強——這正是室內服務機器人的明確趨勢。例如 Livox Mid-360（一個廣為人知的例子，
+      指示性售價低於800美元）覆蓋40米量程，具有360°/59° 視場角，足以為室內導航完成整個房間的建圖。</p>
+      <p>深度相機不生成稀疏點雲，而是通過結構光（投射已知紅外圖案並測量其畸變）或立體視覺（兩個
+      相機通過視差計算深度，與人類雙目視覺的原理相同）生成逐像素的深度圖。一款廣受歡迎的立體視覺
+      模塊——Intel RealSense D435i，是機器人開發者的常見首選，指示性價格約200-400美元，在0.5-3米
+      範圍內可達到亞釐米級精度。部分立體視覺模塊還內置片上神經推理芯片，無需外部GPU即可直接在
+      相機上運行物體檢測。深度相機對操作任務尤其重要：抓取一個物體需要知道它完整的3D 位姿——位置
+      加朝向——而不僅僅是它在平面圖像中出現的位置。</p>
+
+      <h2 class="rb-h2">慣性測量：在兩次更新之間感知運動</h2>
+      <p>慣性測量單元（IMU）把三軸加速度計和三軸陀螺儀集成在一塊小芯片上，每秒能報告數百到數千次
+      線性加速度和旋轉角速度——遠快於任何一幀相機圖像或一次激光雷達掃描。從數學上說，對加速度積分
+      可得速度，再積分一次可得位置，但微小的恆定誤差會迅速累積，因此單獨使用IMU時，其可靠性通常
+      只能維持在遠短於一秒的時間窗口內。實踐中IMU從不單獨使用：在地面機器人上與輪式里程計融合，
+      與激光雷達融合形成激光雷達慣性里程計，或與相機融合形成視覺慣性里程計。對於必須保持動態平衡
+      的機器人——例如行走的人形機器人——IMU的高速與低延遲正是讓平衡控制器能在擾動傳播到全身之前
+      就做出反應的關鍵。</p>
+
+      <h2 class="rb-h2">力、力矩與觸覺：感知接觸</h2>
+      <p>安裝在機器人腕部的六維力矩傳感器（F/T傳感器）測量施加在該處的全部三個力和三個力矩——完整
+      的六軸接觸信息。這一讀數正是柔順操作的關鍵：檢測是否已發生接觸、調節推力大小（在接觸精密
+      物體或人體時至關重要）、察覺抓取的物體正在打滑，以及在被推動時平順地順從退讓而不是僵硬對抗。
+      工業級六維力傳感器指示性價格約在兩千到數千美元之間，性能相當的更低成本替代方案也越來越多。</p>
+      <p>觸覺傳感器把這個思路更進一步：不是在腕部給出一個綜合讀數，而是在整個接觸表面——指尖、
+      手掌、一塊合成皮膚——分佈許多壓敏元件。這種更細的空間分辨率能夠在物體真正掉落之前檢測到
+      打滑、識別基本的材質紋理，並在僅靠腕部傳感器無法判斷手上具體哪個位置發生接觸時提供更安全
+      的接觸感知——這在機器人需要與人近距離身體接觸的任何場景（包括護理場景）都很有用。</p>
+
+      <h2 class="rb-h2">從像素到物體：感知管線</h2>
+      <p>感知管線是把原始傳感器字節流轉化為機器人規劃軟件可以推理的結構化模型的一連串算法——通常
+      每秒運行10到30次，並需要應對變化的光照和移動的人員。YOLOv8 等目標檢測模型是常見基準：在合適的嵌入式GPU上可達到實時推理速度，足夠用於避障，但只能識別訓練時見過的類別。像 Grounding
+      DINO 這樣的開放詞彙檢測模型能識別由文本提示描述的物體，包括不在固定檢測器標籤集中的類別——
+      但速度較慢，因此更適合有目的的搜索任務而非分秒必爭的實時反應。像 Segment Anything 這樣的
+      分割模型能在操作任務需要精確輪廓而非包圍框時勾勒出物體的準確邊界，而位姿估計模型能從單幀
+      深度圖像中恢復物體完整的3D 朝向——這是可靠抓取的關鍵輸入。</p>
+      <p>在這條快速的、純幾何的感知迴路之上，還有一層更新的能力：視覺語言模型能把一幀相機畫面
+      轉化為自然語言的場景描述（例如"杯子在託盤的左邊緣"），有助於更高層的任務理解和人機交互。
+      這類模型通常太慢，無法以核心檢測迴路同樣的速度運行，因此多數系統會並行運行兩種感知速率——
+      一種快速回路（每秒數十次）用於即時避障和抓取，一種較慢的迴路（每秒數次）用於場景的語義
+      理解。</p>
+
+      <h2 class="rb-h2">建圖：點雲處理與SLAM</h2>
+      <p>原始點雲數據量大且帶噪聲，使用前通常要先做清理：下采樣把十萬級別的點雲掃描降到更易處理的
+      代表性點數，平面擬合把地面從障礙物中分離出來，聚類則把點歸併為獨立的物體。SLAM（同步定位
+      與建圖）算法利用處理過的數據，在探索陌生空間的同時建圖，並同步追蹤機器人自身在圖中的位置——
+      激光雷達慣性方案常用於傳感器配置豐富的移動機器人，更簡單的2D激光雷達SLAM則適合成本較低的
+      機器人底座。許多室內服務機器人遵循一種實用模式：首次進入新空間時先完整運行一次 SLAM，以徹底
+      建圖，日常運行時則切換到更輕量的"僅定位"模式，在已建好的地圖上工作——一旦傢俱擺放穩定，地圖很少
+      再變化，重複使用地圖能大幅降低重複性路線的計算負擔。</p>
+
+      <h2 class="rb-h2">傳感器融合：把多路噪聲信號合成一個估計</h2>
+      <p>沒有任何單一傳感器能講清全部故事：相機在暗處表現不佳，激光雷達單獨無法判斷兩次掃描之間
+      機器人轉動的速度，而IMU如果被信任的時間稍長就會產生漂移。傳感器融合把多路帶噪聲、各有側重
+      的信號合併成一個比任何單一輸入都更準確的估計。許多系統常用的工具是擴展卡爾曼濾波器（EKF）：它根據已
+      知信息預測機器人下一時刻的位置和運動，再用每一個新的傳感器讀數——按其通常的可信程度加權——
+      修正這個預測。實踐中，IMU比激光雷達掃描匹配器更快捕捉到快速的旋轉變化；激光雷達在較長距離
+      上修正IMU的緩慢漂移；輪式里程計則在激光雷達短暫丟失清晰讀數的瞬間填補空白。</p>
+      <p>實踐中還有兩個支撐性細節很關鍵。第一，每一對傳感器都需要仔細標定——例如相機與激光雷達
+      之間固定的幾何偏移量，必須精確到幾毫米和零點幾度以內，否則兩路數據將無法對齊。第二，各傳感器
+      的輸出速率和延遲各不相同——一幀相機圖像、一次激光雷達掃描和一次IMU讀數幾乎從不在同一時刻
+      到達——因此對所有傳感器進行精確的時間同步，才能避免融合結果出現明顯的"時間扭曲"偽影，機器人
+      移動越快，這一點就越重要。</p>
+
+      <div class="rb-note">
+        <p><strong>採購提示。</strong>Asaptic 從經篩選的深圳生態製造商採購上述感知部件——深度
+        相機、激光雷達、IMU、六維力傳感器與編碼器——並提供規格核驗、目的國到岸成本測算與英文
+        文檔。<a href="mailto:engage@asaptic.com?subject=%E5%82%B3%E6%84%9F%E5%99%A8%E6%8E%A1%E8%B3%BC%E8%AB%AE%E8%A9%A2">發送傳感器採購諮詢</a>，或查看<a href="/zht/robot/">我們採購什麼</a>。</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">快速問答</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">激光雷達和深度相機有什麼區別？</div>
+          <div class="rb-faq-a">激光雷達發射激光脈衝並計時反射回來的時間，在較大視場範圍內建立精確的3D 點雲，且在黑暗中也能工作。深度相機在較短距離內生成更密集的逐像素深度圖——這正是機器人在抓取物體前判斷其精確3D 位姿所需要的。很多機器人兩者都會配備。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">機器人已經有相機和激光雷達了，為什麼還需要IMU？</div>
+          <div class="rb-faq-a">IMU每秒能報告數百到數千次旋轉與加速度數據，遠快於一幀相機圖像或一次激光雷達掃描的完成速度。這種速度讓機器人能在下一幀圖像到來之前對突然的傾斜或碰撞做出反應，也能在相機或激光雷達短暫失效時填補運動估計的空白。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">什麼是卡爾曼濾波器？傳感器融合中通常如何使用它？</div>
+          <div class="rb-faq-a">卡爾曼濾波器（機器人領域常用擴展卡爾曼濾波器EKF）持續預測機器人的位置與運動狀態，再用每個新的傳感器讀數按可信程度加權修正預測。結果是一個比任何單一傳感器都更準確、更穩定的綜合估計。</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/zht/robot/101/actuators/">← 02 · 執行器與關節模組</a>
+        <a href="/zht/robot/101/batteries/">04 · 電池與電源系統 →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        《機器人 101》是 <a href="/zht/robot/">Asaptic</a> 的科普內容，不構成認證、法律或進口建議。
+        文中引用的部件價格與規格為行業指示性數據，變化頻繁——設計前請以最新規格書為準。
+      </div>
+
+    </div>
+  </main>
+<!-- ASAPTIC:FOOTER:START -->
+<footer class="foot">
+  <div class="row">
+    <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI 貿易執行 - 我們贏取並履行跨境政府招標，按結果收費。</div></div>
+    <div class="col"><p class="col-h">產品</p><a href="/zht/trade-ai">貿易 AI</a><a href="/zht/tenders">實時招標</a><a href="/zht/standards">跨境標準</a><a href="/zht/platform">開發者</a></div>
+    <div class="col"><p class="col-h">為您而設</p><a href="/zht/contact">買家與機構</a><a href="/zht/suppliers">中國供應商</a><a href="/zht/contact">渠道合作夥伴</a></div>
+    <div class="col"><p class="col-h">資源</p><a href="/zht/blog/">筆記</a><a href="/zht/robot/">機器人 101</a><a href="/zht/university/">外貿學院</a><a href="/changelog/">更新日誌</a></div>
+    <div class="col"><p class="col-h">公司</p><a href="/zht/contact">聯絡我們</a><a href="/zht/tenders">實時招標</a></div>
+  </div>
+  <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/zht/legal/privacy">私隱政策</a> · <a href="/zht/legal/terms">服務條款</a> · Cross-Standard data CC BY 4.0</div>
+</footer>
+<!-- ASAPTIC:FOOTER:END -->
+
+</body>
+</html>

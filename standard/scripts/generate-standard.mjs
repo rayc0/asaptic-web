@@ -6,7 +6,7 @@ import { comparisonTable } from "../templates/partials/comparison-table.mjs";
 import { disclaimer } from "../templates/partials/disclaimer.mjs";
 import { footer } from "../templates/partials/footer.mjs";
 import { head } from "../templates/partials/head.mjs";
-import { esc, escAttr, label, t } from "../templates/partials/i18n.mjs";
+import { cleanStandardUrl, esc, escAttr, label, t } from "../templates/partials/i18n.mjs";
 import { nav } from "../templates/partials/nav.mjs";
 import { sourceList } from "../templates/partials/source-list.mjs";
 
@@ -19,6 +19,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 // existence (lang chips, hreflang) is always computed from the real, already
 // fully-populated tree. Defaults to ROOT, i.e. unset = today's behavior.
 const WRITE_ROOT = process.env.STANDARD_OUT_ROOT ? resolve(ROOT, process.env.STANDARD_OUT_ROOT) : ROOT;
+const SITE = "https://asaptic.com";
 const DATA_DIR = join(ROOT, "standard/data");
 const FRAGMENT_DIR = join(ROOT, "standard/data/_fragments");
 const FAQ_FILE = join(FRAGMENT_DIR, "faq-eu-inverter.json");
@@ -265,6 +266,22 @@ function answerFirst({ data, lang }) {
   </section>`;
 }
 
+// GEO/AIO: a self-citation packet next to the disclaimer so an AI engine (or a
+// human) quoting this comparison has the stable canonical URL, the machine-readable
+// JSON export, and the license/version/last-verified provenance in one place —
+// mirrors the same facts already carried in the Dataset JSON-LD's `citation`/
+// `version`/`dateModified` fields, just made human-visible on the page itself.
+function citationPacket({ data, lang, locale, slug }) {
+  const canonical = cleanStandardUrl({ site: SITE, locale, slug });
+  const jsonUrl = `${SITE}/standard/exports/${slug}.json`;
+  return `<aside class="provenance-panel">
+    <strong>${esc(label("citeThisDataset", lang))}</strong>
+    <p>${esc(label("citeCanonical", lang))}: <a href="${escAttr(canonical)}" rel="noopener">${esc(canonical)}</a></p>
+    <p>${esc(label("citeJsonExport", lang))}: <a href="${escAttr(jsonUrl)}" rel="noopener">${esc(jsonUrl)}</a></p>
+    <p>${esc(label("footerLicense", lang))} · ${esc(label("dataset", lang))} ${esc(data.version)} · ${esc(label("lastVerified", lang))} ${esc(data.last_verified)}</p>
+  </aside>`;
+}
+
 function eeat({ data, lang }) {
   return `<section class="standard-section">
     <div class="container standard-eeat">
@@ -331,6 +348,7 @@ ${head({ data, lang, locale, slug, rows, faq })}
     <section class="standard-section">
       <div class="container">
         ${disclaimer({ data, lang })}
+        ${citationPacket({ data, lang, locale, slug })}
       </div>
     </section>
     ${eeat({ data, lang })}

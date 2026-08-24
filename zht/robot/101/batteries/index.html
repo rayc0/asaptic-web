@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>機器人電池與電源系統詳解 — LFP與NMC、BMS、UN38.3 | 機器人 101 | Asaptic</title>
+
+  <meta name="description" content="機器人電源系統如何工作：LFP與NMC電芯化學、C率、BMS、48V總線與PDU設計、熱管理、續航配置，以及UN38.3運輸合規規則。" />
+  <meta name="robots" content="index, follow" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="機器人電池與電源系統詳解 — LFP與NMC、BMS、UN38.3" />
+  <meta property="og:description" content="電芯化學權衡、C率、BMS、總線電壓與熱設計、續航配置，以及鋰電池運輸合規的現實。" />
+  <meta property="og:url" content="https://asaptic.com/zht/robot/101/batteries/" />
+  <meta property="og:image" content="https://asaptic.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Asaptic" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="機器人電池與電源系統詳解 — LFP與NMC、BMS、UN38.3" />
+  <meta name="twitter:description" content="機器人電源系統如何設計、配置與運輸。" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/" },
+      { "@type": "ListItem", "position": 2, "name": "機器人零部件", "item": "https://asaptic.com/zht/robot/" },
+      { "@type": "ListItem", "position": 3, "name": "機器人 101：電池", "item": "https://asaptic.com/zht/robot/101/batteries/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "電池與電源系統：機器人的能源基礎",
+    "description": "LFP與NMC電芯化學、C率、BMS、48V總線與PDU設計、熱管理、續航配置，以及UN38.3運輸合規。",
+    "inLanguage": "zh-Hant",
+    "url": "https://asaptic.com/zht/robot/101/batteries/",
+    "isPartOf": { "@type": "WebPage", "name": "機器人 101", "url": "https://asaptic.com/zht/robot/101/batteries/" },
+    "author": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" },
+    "publisher": { "@type": "Organization", "name": "Asaptic", "url": "https://asaptic.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "機器人應該用LFP還是NMC電池？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "LFP的熱失控閾值遠高於NMC（約270°C對約150°C），循環壽命是NMC的2-4倍，在人羣周圍運行時更安全。NMC每公斤儲能更高，因此重量敏感的人形與四足機器人常接受較低的安全裕量以換取更輕的電池組。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "什麼是C率？為什麼它對機器人電池很重要？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "C率是電芯相對於自身容量的充放電速度。機器人在加速時會產生3C到10C的電流尖峯，再生制動也可能推回類似強度的脈衝，因此電芯與BMS的額定值都必須高於實際峯值電流，而非僅平均功率。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "什麼是UN38.3？為什麼每塊鋰電池都需要它？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "一項強制性八項測試協議（高度、熱循環、振動、衝擊、短路、擠壓、過充、強制放電），每個鋰電池組在航空運輸前都必須通過。測試合格後的摘要報告是航空公司、貨運代理與海關都要求的文件——沒有它貨物會被拒收。"
+      }
+    }
+  ]
+}
+  </script>
+
+  
+<!-- ASAPTIC:HEAD:START -->
+<link rel="canonical" href="https://asaptic.com/zht/robot/101/batteries/">
+<link rel="alternate" hreflang="en" href="https://asaptic.com/robot/101/batteries/">
+<link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/robot/101/batteries/">
+<link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/robot/101/batteries/">
+<link rel="alternate" hreflang="x-default" href="https://asaptic.com/robot/101/batteries/">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<!-- ASAPTIC:HEAD:END -->
+
+  <link rel="stylesheet" href="/robot/robot.css" />
+</head>
+<body>
+
+  <!-- ASAPTIC:HEADER:START -->
+<header class="shell">
+  <div class="row">
+    <a class="brand" href="/zht/">ASAPTIC</a>
+    <nav class="nav"><a href="/zht/trade-ai">貿易 AI</a><a href="/zht/tenders">實時招標</a><a href="/zht/suppliers">供應商專區</a><a href="/zht/standards">跨境標準</a><a href="/zht/platform">開發者</a></nav>
+    <div class="lang"><a href="/robot/101/batteries/"><span>EN</span></a><a href="/zh/robot/101/batteries/"><span>简</span></a><a href="/zht/robot/101/batteries/"><span class="on">繁</span></a></div><a class="engage" href="/zht/contact">聯絡我們</a>
+  </div>
+  <div class="row subrow"><nav class="crumbs" aria-label="Breadcrumb"><a href="/zht/">Asaptic</a><span class="sep">/</span><a href="/zht/robot/">機器人</a></nav><nav class="sublinks"><a href="/zht/robot/">概覽</a><a href="/zht/robot/101/anatomy/">機器人 101</a><a href="/zht/robot/build/">配置器</a></nav></div>
+</header>
+<!-- ASAPTIC:HEADER:END -->
+
+  <main class="rb-frame">
+    <div class="rb-sheet rb-prose">
+
+      <div class="rb-masthead-row">
+        <span class="rb-eyebrow"><a href="/zht/robot/" style="color:inherit;text-decoration:none;">Asaptic 機器人手冊</a></span>
+        
+      </div>
+      <div class="rb-rule"><div class="rb-rule-thin"></div><div class="rb-rule-thick"></div></div>
+
+      <p class="rb-kicker">機器人 101 · 第 04 章</p>
+      <h1 class="rb-title">電池與電源系統：機器人的能源基礎</h1>
+
+      <section class="rb-answer" aria-label="摘要">
+        <p><strong>一段話說清：</strong>機器人的電池組是一套系統，而不是一個零件。電芯化學（LFP或
+        NMC）決定了安全性、循環壽命與重量之間的基本權衡。電池管理系統（BMS）監控每一串聯電芯組並決定
+        何時切斷電源。電池組連接到電源分配架構——通常是48V總線——它必須承受電流尖峯、散去熱量，
+        並在故障時安全斷電。續航要按機器人真實的工作循環來配置，而不是按平均功耗估算。而且因為
+        電池組是鋰電池，若要經航空運輸或國際危險品運輸渠道出貨，必須具備符合UN38.3要求的測試文件——這是每家航空公司和海關都會核查的測試協議。</p>
+      </section>
+
+      <h2 class="rb-h2">電芯化學：LFP與NMC</h2>
+      <p>磷酸鐵鋰（LFP，LiFePO&#8324;）與鎳錳鈷酸鋰（NMC，LiNixMnyCozO2（x+y+z=1））是主導機器人電源系統的
+      兩種電芯化學體系，兩者之間的選擇是機器人硬件設計中較為關鍵的決策之一。LFP最突出的特性是熱
+      穩定性：其熱失控起始温度約為270°C，而NMC約為150°C，這樣大的安全裕量在電池組位於需要在人羣
+      周圍運行的機器人內部時尤為重要。LFP還提供2,000至4,000次循環至80%容量的循環壽命，而NMC為
+      500至1,500次——每天充放電的服務機器人使用LFP電池組的壽命可達NMC的三到五倍。</p>
+      <p>代價在於能量密度：LFP為150-200 Wh/kg，NMC為200-300 Wh/kg，因此儲存相同能量時LFP電池組
+      更重更大。NMC在重量上佔優，這也是為什麼對重量極為敏感的敏捷平台——四足和人形機器人，結構
+      每增加一公斤都會顯著增加關節慣量並削弱靈活性——更常接受NMC較窄的安全裕量。這裡沒有普遍正確的
+      答案，這是安全性/壽命與重量/能量密度之間真實的設計權衡，需要針對每個平台和使用場景分別決定。</p>
+
+      <h2 class="rb-h2">C率：電芯究竟能輸出多少功率</h2>
+      <p>C率描述電芯相對於額定容量的充放電速度。1C放電在一小時內耗盡電芯（10Ah電芯以1C放電時輸出
+      10A）；2C則在30分鐘內以20A完成同樣的放電。這對移動機器人極為重要：電機加速時會產生持續數
+      毫秒到數秒、約3C到10C的電流尖峯；再生制動在電機減速時也可能向電池組推回類似強度的2C到4C
+      充電脈衝。無法承受這些瞬態的電池組會在加速時出現電壓下垂——可能導致電機控制不穩定——並因
+      額外應力而更快衰減。</p>
+      <p>工業級LFP電芯通常額定持續放電3C到5C；高放電率的圓柱形NMC電芯可達10C到15C。BMS的選型必須
+      與電芯和應用場景匹配：如果機器人峯值需求達到5C，而BMS僅額定持續2C，就會提前觸發保護電路，
+      在任務中途關閉機器人——遠早於真正出現安全問題之前。</p>
+
+      <h2 class="rb-h2">BMS：可靠電源與火災隱患之間的分界線</h2>
+      <p>電池管理系統是每個電池組內部的電子板，負責保證單體電芯安全並上報電池組的真實狀態。其核心
+      職責包括：獨立監控每顆電芯的電壓（而非僅測量電池組總電壓——長串聯結構中的單個弱電芯若沒有
+      電芯級監控可能災難性失效）；估算荷電狀態（庫侖計數加電壓校正，通常再用卡爾曼濾波器細化精度）
+      與健康狀態（電池組使用壽命中的容量衰減）；對電芯進行均衡以保持相同荷電水平；以及在過壓、
+      欠壓、過流、短路或過温事件發生時切斷主接觸器。</p>
+      <p>在機器人上，BMS還需要通過CAN總線或SMBus等方式與機器人主計算機通信，實時輸出荷電狀態、
+      健康狀態、温度與故障信息，使機器人能夠規劃自身續航、決定何時對接充電，並記錄異常供維護參考。
+      電池組的可靠性取決於其BMS：把認證電芯與規格明確、文檔完整的BMS配對，才能把一堆電芯變成一套
+      經過驗證、值得信賴的電源。</p>
+
+      <h2 class="rb-h2">電池組與電源系統架構：總線電壓、PDU、熱設計</h2>
+      <p>許多消費級玩具及以上的中型移動機器人採用48V電源總線，而非更老的24V標準——當設計者希望在同樣
+      功率下降低電流時，48V是常見選擇：功率等於電壓乘以電流，同樣的功率下總線電壓越高，電流越小，
+      導線越細，電阻性（I&sup2;R）損耗
+      產生的熱量也越少。在48V總線上，電機驅動器通常直接在總線電壓下工作，再由獨立的DC-DC轉換器
+      降壓至24V供傳感器使用，5V/3.3V供計算與控制邏輯使用。</p>
+      <p>電池組與每個用電器之間是電源分配單元（PDU）——負責安全路由電力的電路板。一個設計良好的
+      PDU包括：在緊急停止後數十毫秒內斷開的主接觸器；每路獨立限流的電子保險絲；每個主要支路上的
+      電流監控；預充電電路，避免電機驅動器中的電容組在剛接入總線時產生足以觸發保險絲的浪湧電流；
+      以及監測總線與機箱之間漏電情況的絕緣監控。熱管理則必須讓電機驅動器、計算模塊與電池本身都
+      保持在安全的連續工作温度以下，通常靠導熱金屬散熱、經過過濾的正壓強制風冷機箱，以及發熱部件
+      與機箱之間的導熱界面材料共同實現。在實踐中，PDU與熱設計的驗證——負載測試、保險絲跳閘測試、
+      接觸器壽命循環測試——往往佔用不成比例的大量硬件工程時間，正是因為現場故障最常出在這裡。</p>
+
+      <h2 class="rb-h2">按真實工作循環配置電池</h2>
+      <p>續航時間不能簡單地用“容量除以平均功率”來估算。機器人的工作循環混合了待機、穩定巡航和
+      短時高電流爆發（加速、舉升、爬坡），每一種狀態對應不同的電流。正確配置電池組，需要按工作
+      循環實際要求的最高持續C率留出餘量，而不只是按時間平均功耗計算，還要為電芯老化再留出餘量——
+      內阻會隨電池組壽命增長而升高，既降低可用容量，又提高每安培輸出所產生的熱量。買家在評估電池
+      組時，應該向廠商索取持續與峯值放電額定值，以及在機器人實際會用到的放電深度下的循環壽命數據，
+      而不是只看在理想測試條件下得出的單一Wh/kg或循環次數標稱數字。</p>
+
+      <h2 class="rb-h2">UN38.3與鋰電池運輸合規的現實</h2>
+      <p>UN38.3是一項強制性的八項測試協議——涵蓋高度模擬、熱循環、振動、衝擊、外部短路、擠壓/
+      撞擊、過充電和強制放電——每顆鋰電芯或電池組在通過航空運輸前都必須通過。全部八項測試合格的
+      電池組會獲得一份UN38.3測試摘要報告，航空公司、貨運代理和海關當局都要求提供這份文件；沒有它，
+      電池貨物會在託運時被拒收。部分國家和地區在UN38.3之外，還對進入某些市場的電池材料附加了供應
+      鏈可追溯性要求，因此跨境採購的買家也應確認電芯本身的溯源文件，而不只是運輸測試結果。</p>
+
+      <div class="rb-note">
+        <p><strong>採購提示。</strong>Asaptic從經過驗證的製造商處採購機器人與AMR電池組及BMS電子
+        設備，並附帶這一品類所需的合規文件——UN38.3測試摘要報告、危險品運輸文件與電芯溯源信息。
+        <a href="mailto:engage@asaptic.com?subject=%E9%9B%BB%E6%B1%A0%E6%8E%A1%E8%B3%BC%E8%AB%AE%E8%A9%A2">發送電池採購諮詢</a>，或查看<a href="/zht/robot/">我們採購什麼</a>。</p>
+      </div>
+
+      <div class="rb-faq">
+        <div class="rb-faq-heading">快速問答</div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">機器人應該用LFP還是NMC電池？</div>
+          <div class="rb-faq-a">LFP的熱失控閾值遠高於NMC（約270°C對約150°C），循環壽命是NMC的2-4倍，在人羣周圍運行時更安全。NMC每公斤儲能更高，因此重量敏感的人形與四足機器人常接受較低的安全裕量以換取更輕的電池組。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">什麼是C率？為什麼它對機器人電池很重要？</div>
+          <div class="rb-faq-a">C率是電芯相對於自身容量的充放電速度。機器人在加速時會產生3C到10C的電流尖峯，再生制動也可能推回類似強度的脈衝，因此電芯與BMS的額定值都必須高於實際峯值電流，而非僅平均功率。</div>
+        </div>
+        <div class="rb-faq-item">
+          <div class="rb-faq-q">什麼是UN38.3？為什麼每塊鋰電池都需要它？</div>
+          <div class="rb-faq-a">一項強制性八項測試協議（高度、熱循環、振動、衝擊、短路、擠壓、過充、強制放電），每個鋰電池組在航空運輸前都必須通過。測試合格後的摘要報告是航空公司、貨運代理與海關都要求的文件——沒有它貨物會被拒收。</div>
+        </div>
+      </div>
+
+      <div class="rb-pager">
+        <a href="/zht/robot/101/sensors/">← 03 · 傳感器與感知</a>
+        <a href="/zht/robot/101/software/">05 · 機器人軟件棧 →</a>
+      </div>
+
+      <div class="rb-footer-note">
+        《機器人 101》是 <a href="/zht/robot/">Asaptic</a> 的科普內容，不構成認證、法律或進口建議。
+        文中引用的部件價格與規格為行業指示性數據，變化頻繁——設計或運輸前請以最新規格書與測試報告
+        為準。
+      </div>
+
+    </div>
+  </main>
+<!-- ASAPTIC:FOOTER:START -->
+<footer class="foot">
+  <div class="row">
+    <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI 貿易執行 - 我們贏取並履行跨境政府招標，按結果收費。</div></div>
+    <div class="col"><p class="col-h">產品</p><a href="/zht/trade-ai">貿易 AI</a><a href="/zht/tenders">實時招標</a><a href="/zht/standards">跨境標準</a><a href="/zht/platform">開發者</a></div>
+    <div class="col"><p class="col-h">為您而設</p><a href="/zht/contact">買家與機構</a><a href="/zht/suppliers">中國供應商</a><a href="/zht/contact">渠道合作夥伴</a></div>
+    <div class="col"><p class="col-h">資源</p><a href="/zht/blog/">筆記</a><a href="/zht/robot/">機器人 101</a><a href="/zht/university/">外貿學院</a><a href="/changelog/">更新日誌</a></div>
+    <div class="col"><p class="col-h">公司</p><a href="/zht/contact">聯絡我們</a><a href="/zht/tenders">實時招標</a></div>
+  </div>
+  <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/zht/legal/privacy">私隱政策</a> · <a href="/zht/legal/terms">服務條款</a> · Cross-Standard data CC BY 4.0</div>
+</footer>
+<!-- ASAPTIC:FOOTER:END -->
+
+</body>
+</html>

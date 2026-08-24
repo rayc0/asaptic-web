@@ -80,6 +80,7 @@ export function jsonld({ data, lang, locale, slug, faq = [], rows = [] }) {
       "creator": { "@type": "Organization", "name": "Cross-Standard" },
       "publisher": { "@type": "Organization", "name": "Asaptic", "url": site },
       "license": "https://creativecommons.org/licenses/by/4.0/",
+      "citation": url,
       "dateModified": data.last_verified,
       "keywords": [product, market, "China export compliance", "GB standard comparison"].filter(Boolean),
       "variableMeasured": [

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LNOI與TFLN-on-SiN：技術權衡與4–6英寸代工廠交貨週期對比 — Asaptic Labs</title>
+  <meta name="description" content="本文從採購視角比較單片LNOI與TFLN-on-SiN兩種薄膜鈮酸鋰光子平台，涵蓋波導物理、電光效率（Vπ·L）、非線性效率、4英寸與6英寸代工廠供貨情況及典型交貨週期，幫助團隊根據系統主要約束——傳播損耗還是調製效率——做出正確的平台選型決策。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="LNOI與TFLN-on-SiN：技術權衡與4–6英寸代工廠交貨週期對比" />
+  <meta property="og:description" content="本文從採購視角比較單片LNOI與TFLN-on-SiN兩種薄膜鈮酸鋰光子平台，涵蓋波導物理、電光效率（Vπ·L）、非線性效率、4英寸與6英寸代工廠供貨情況及典型交貨週期，幫助團隊根據系統主要約束——傳播損耗還是調製效率——做出正確的平台選型決策。" />
+  <meta property="og:url" content="https://asaptic.com/zht/blog/lnoi-vs-tfln-on-sin-tradeoffs" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_HK" />
+  <meta property="article:published_time" content="2026-06-13" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+<!-- ASAPTIC:HEAD:START -->
+<link rel="canonical" href="https://asaptic.com/zht/blog/lnoi-vs-tfln-on-sin-tradeoffs">
+<link rel="alternate" hreflang="en" href="https://asaptic.com/blog/lnoi-vs-tfln-on-sin-tradeoffs">
+<link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/lnoi-vs-tfln-on-sin-tradeoffs">
+<link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/lnoi-vs-tfln-on-sin-tradeoffs">
+<link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/lnoi-vs-tfln-on-sin-tradeoffs">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<!-- ASAPTIC:HEAD:END -->
+
+  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Article", "headline": "LNOI與TFLN-on-SiN：技術權衡與4–6英寸代工廠交貨週期對比", "description": "本文從採購視角比較單片LNOI與TFLN-on-SiN兩種薄膜鈮酸鋰光子平台，涵蓋波導物理、電光效率（Vπ·L）、非線性效率、4英寸與6英寸代工廠供貨情況及典型交貨週期，幫助團隊根據系統主要約束——傳播損耗還是調製效率——做出正確的平台選型決策。", "url": "https://asaptic.com/zht/blog/lnoi-vs-tfln-on-sin-tradeoffs.html", "author": {"@type": "Organization", "name": "Asaptic Labs"}, "publisher": {"@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com"}, "datePublished": "2026-06-13", "dateModified": "2026-06-14", "mainEntityOfPage": "https://asaptic.com/zht/blog/lnoi-vs-tfln-on-sin-tradeoffs.html", "inLanguage": "zh-Hant", "potentialAction": {"@type": "Action", "name": "聯絡 Asaptic", "target": [{"@type": "EntryPoint", "urlTemplate": "https://asaptic.com/zht/engage.html", "contentType": "application/json", "description": "MCP server, tool: submit_rfq"}, {"@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "透過電子郵件聯絡 Asaptic"}]}}, {"@type": "BreadcrumbList", "inLanguage": "zh-Hant", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "首頁", "item": "https://asaptic.com/zht/"}, {"@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zht/blog/"}, {"@type": "ListItem", "position": 3, "name": "LNOI與TFLN-on-SiN：技術權衡與4–6英寸代工廠交貨週期對比", "item": "https://asaptic.com/zht/blog/lnoi-vs-tfln-on-sin-tradeoffs.html"}]}]}</script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.25;margin-bottom:16px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--gray);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--fg);margin:40px 0 16px}.essay-body h3{font-size:1.05rem;font-weight:600;color:var(--fg);margin:32px 0 12px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--gray);margin:0}.essay-footer-area{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}.compare-table{width:100%;border-collapse:collapse;margin:0 0 32px 0;font-size:15px;color:var(--gray)}.compare-table th{text-align:left;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--cyan);padding:10px 12px;border-bottom:1px solid var(--border)}.compare-table td{padding:12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6}.compare-table tr:last-child td{border-bottom:none}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.compare-table{font-size:13px}}
+  </style>
+</head>
+<body>
+  <!-- ASAPTIC:HEADER:START -->
+<header class="shell">
+  <div class="row">
+    <a class="brand" href="/zht/">ASAPTIC</a>
+    <nav class="nav"><a href="/zht/trade-ai">貿易 AI</a><a href="/zht/tenders">實時招標</a><a href="/zht/suppliers">供應商專區</a><a href="/zht/standards">跨境標準</a><a href="/zht/platform">開發者</a></nav>
+    <div class="lang"><a href="/blog/lnoi-vs-tfln-on-sin-tradeoffs"><span>EN</span></a><a href="/zh/blog/lnoi-vs-tfln-on-sin-tradeoffs"><span>简</span></a><a href="/zht/blog/lnoi-vs-tfln-on-sin-tradeoffs"><span class="on">繁</span></a></div><a class="engage" href="/zht/contact">聯絡我們</a>
+  </div>
+  <div class="row subrow"><nav class="crumbs" aria-label="Breadcrumb"><a href="/zht/">Asaptic</a><span class="sep">/</span><a href="/zht/blog/">筆記</a></nav><nav class="sublinks"><a href="/zht/blog/">全部文章</a><a href="/crossings">跨界觀察</a><a href="/thesis">論文</a></nav></div>
+</header>
+<!-- ASAPTIC:HEADER:END -->
+  <main class="essay-wrap">
+    <a href="/zht/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <header>
+        <div class="essay-tag">× 光子平台選型</div>
+        <h1 class="essay-title">LNOI與TFLN-on-SiN：技術權衡與4–6英寸代工廠交貨週期對比</h1>
+        <p class="essay-subtitle">選型的關鍵不是TFLN本身，而是你的系統究竟被傳播損耗還是電光效率所約束。</p>
+        <div class="essay-meta">
+          <span>Asaptic Labs</span>
+          <span>2026-06-13</span>
+          <span>8 分鐘閱讀</span>
+        </div>
+      </header>
+      <div class="essay-body">
+        <p>當光子學團隊為新設計評估薄膜鈮酸鋰時，平台選型決策常被簡化為單一選擇：TFLN。但實際上存在兩種架構不同的方案——單片LNOI（lithium niobate on insulator，鈮酸鋰絕緣體上薄膜，LN薄膜是唯一的波導材料）與TFLN-on-SiN（氮化硅層提供主要的光學限制，LN薄膜則疊加電光或非線性光學功能）——正確的選擇取決於你的系統中哪項器件性能指標是主要約束。本文將從採購角度，就波導物理、電光性能、非線性效率、4英寸與6英寸代工廠供貨情況及典型交貨週期，對兩種平台進行比較。</p>
+        <h2>術語先行：LNOI與TFLN是同一種材料</h2>
+        <p>LNOI與TFLN在文獻中常被互換使用，指代同一種襯底：鍵合在硅襯底上二氧化硅包層之上的亞微米級鈮酸鋰薄膜。真正影響平台選型的並非襯底本身，而是構建於其上的波導架構。本文中，"LNOI"指波導脊直接刻蝕在LN薄膜內的單片平台；"TFLN-on-SiN"指LN薄膜與其下方或旁側預先圖案化的SiN波導相互作用的混合平台。</p>
+        <h2>單片LNOI：當電光性能是優先考量</h2>
+        <p>在單片LNOI波導中，光學模式主要被約束在LN薄膜內。這最大化了光場與RF電極施加的電光擾動之間的重疊積分——直接決定了以Vπ·L乘積表示的調製效率。對於電極幾何經過優化的X切LNOI波導，Vπ·L值常規可低於2 V·cm，使封裝模塊中的馬赫-曾德爾調製器實現Vπ低於2 V、3dB電光帶寬超過70 GHz，研究器件中甚至可超過100 GHz。</p>
+        <p>單片LNOI的主要限制在於傳播損耗。鈮酸鋰的幹法刻蝕——必須通過物理離子銑削而非選擇性化學刻蝕實現——會在波導側壁產生一定粗糙度，將光散射出導模。頂尖代工廠在脊型波導上可實現低於0.1 dB/cm的傳播損耗；工藝成熟度較低者則為0.3–1 dB/cm。對於3釐米長的調製器，即使0.1 dB/cm的損耗也是可接受的（片上損耗0.3 dB）。但對於光需傳播數釐米以上的高Q諧振腔或延遲線而言，0.1 dB/cm遠遠不夠低。</p>
+        <h2>TFLN-on-SiN：當傳播損耗是主要約束</h2>
+        <p>採用低壓化學氣相沉積（LPCVD）並經過精細退火工藝製成的氮化硅波導，可實現低於0.001 dB/cm的傳播損耗——比當前最佳LNOI刻蝕工藝低兩個數量級。這正是TFLN-on-SiN平台的決定性優勢：通過讓光學模式主要在SiN中導引，並通過倏逝場耦合進入或穿過上方沉積的薄LN膜，你既能獲得LN的電光與非線性係數，又能受益於低損耗的SiN波導主體。</p>
+        <p>其代價是電光效率下降。由於光學模式主要延伸至SiN而非LN中，與電光擾動的重疊因此減小。TFLN-on-SiN混合調製器的Vπ·L乘積通常比同等單片LNOI器件高2–5倍，意味着相同電極長度下需要更高的驅動電壓。對於傳播損耗並非主要約束的應用——例如相干收發器的寬帶調製器——這使TFLN-on-SiN成為比單片LNOI效率更低的選擇。</p>
+        <p>TFLN-on-SiN真正擅長的領域，是同時需要低損耗與電光或非線性光學功能的應用：集成光頻梳發生器（微梳）、片上光參量振盪器、電光頻率合成器，以及窄線寬激光穩頻迴路。這些器件所需的諧振腔Q因子，只有SiN才能在所需光功率水平下提供，而LN層則提供了SiN單獨無法實現的快速電光控制或相位匹配非線性相互作用。</p>
+        <h2>非線性效率比較</h2>
+        <p>對於二階非線性光學應用——二次諧波產生（SHG）、光參量放大（OPA）與差頻產生（DFG）——採用週期極化（PPLN）的單片LNOI比TFLN-on-SiN提供更高的非線性效率，因為模式更緊密地約束在χ(2)活性材料內。LNOI上的PPLN波導已有報道實現超過1000% W⁻¹cm⁻²的相位匹配SHG轉換效率。TFLN-on-SiN非線性器件的相互作用有所減弱，但在諧振增強結構中，更低的諧振腔損耗帶來的優勢可部分彌補這一差距。</p>
+        <p>對於三階（χ(3)）非線性應用——孤子頻梳、四波混頻、受激拉曼——單獨使用SiN往往是更好的平台，TFLN-on-SiN在χ(3)工藝上增加了複雜度，卻未帶來明顯的效率提升。</p>
+        <h2>4–6英寸代工廠供貨與交貨週期</h2>
+        <p>截至2026年年中，兩種平台在實際代工廠供給格局上存在顯著差異。單片LNOI在4英寸尺寸上已是商業成熟產品，全球擁有多家活躍供應商，既包括老牌西方廠商，也包括正在擴張的中國供應基地。6英寸單片LNOI則來自更少數經過大面積均勻性驗證的代工廠。成熟代工廠的4英寸單片LNOI標準工藝流片交貨週期約為8–16周；6英寸因良率約束更嚴，交貨週期波動性更大。</p>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>屬性</th>
+              <th>單片LNOI</th>
+              <th>TFLN-on-SiN</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>傳播損耗</td>
+              <td>0.05–1 dB/cm（因工藝而異）</td>
+              <td>&lt;0.01 dB/cm（取決於SiN品質）</td>
+            </tr>
+            <tr>
+              <td>電光效率（Vπ·L）</td>
+              <td>&lt;2 V·cm（頂尖水平）</td>
+              <td>比LNOI高2–5倍</td>
+            </tr>
+            <tr>
+              <td>χ(2)非線性效率</td>
+              <td>較高（模式在LN中）</td>
+              <td>較低（模式在SiN中）</td>
+            </tr>
+            <tr>
+              <td>最適用場景</td>
+              <td>寬帶調製器、PPLN轉換器</td>
+              <td>微梳、光參振盪器、電光合成器</td>
+            </tr>
+            <tr>
+              <td>4英寸代工廠供貨情況</td>
+              <td>廣泛（多家供應商）</td>
+              <td>中等（專業代工廠）</td>
+            </tr>
+            <tr>
+              <td>6英寸代工廠供貨情況</td>
+              <td>較窄，交貨週期更長</td>
+              <td>有限，處於早期採用階段</td>
+            </tr>
+            <tr>
+              <td>典型4英寸交貨週期</td>
+              <td>8–16周</td>
+              <td>16–28周</td>
+            </tr>
+            <tr>
+              <td>CMOS設備兼容性</td>
+              <td>需要專用LN設備</td>
+              <td>SiN與CMOS兼容；LN工序需專用設備</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>TFLN-on-SiN混合晶圓——即先對SiN進行圖案化，再在其上沉積或鍵合LN薄膜——需要額外的工藝步驟和專門的異質集成能力。能將其作為標準產品提供的代工廠數量更少，成熟異質集成代工廠的4英寸流片交貨週期通常為16–28周。非標準疊層幾何結構或定製SiN層厚度規格會進一步延長交貨週期。</p>
+        <p>從採購角度看，TFLN-on-SiN開發週期更長，並非因為物理機制更復雜，而是因為供應商基礎尚不成熟、驗證鏈條更長。<a href="/deep-tech-sourcing">深度技術採購</a>服務通過提前梳理適用於你特定膜層疊構的已驗證代工廠集合、確認可用晶圓直徑，並在LN集成之前核驗SiN層的傳播損耗數據，可通過消除代工廠資質迭代來壓縮項目週期。混合平台的<a href="/process">採購流程</a>需要在每一層而非僅最終組裝晶圓上進行核驗。</p>
+        <h3>LNOI與TFLN有什麼區別？</h3>
+        <p>LNOI與TFLN描述的是同一種襯底材料——一層位於SiO2/Si襯底上的亞微米級鈮酸鋰薄膜。實際區別在於架構：單片LNOI以LN薄膜作為主要波導（模式約束在LN內）；TFLN-on-SiN以預先圖案化的SiN波導作為主要導光層，LN通過倏逝場耦合提供電光或非線性功能。</p>
+        <h3>為什麼要選用TFLN-on-SiN而非單片LNOI？</h3>
+        <p>TFLN-on-SiN可實現低於0.01 dB/cm的傳播損耗——比最佳單片LNOI刻蝕工藝低兩個數量級——同時仍能獲得LN的電光與非線性係數。當你的應用需要高Q諧振腔（微梳、光參振盪器、延遲線）或窄線寬激光穩頻時，應選擇TFLN-on-SiN。當寬帶調製且Vπ最小是優先考量時，應選擇單片LNOI。</p>
+        <h3>LNOI與TFLN-on-SiN分別有哪些可用的代工廠尺寸？</h3>
+        <p>單片LNOI在4英寸上已商業成熟，6英寸則來自更少數的代工廠。TFLN-on-SiN混合晶圓主要是來自專門異質集成代工廠的4英寸產品；截至2026年，6英寸TFLN-on-SiN已可從部分代工廠獲得，但交貨週期更長。</p>
+        <h3>LNOI與TFLN-on-SiN代工廠流片的典型交貨週期是多少？</h3>
+        <p>單片LNOI 4英寸：標準工藝流片8–16周。TFLN-on-SiN混合平台4英寸：在成熟異質集成代工廠約16–28周。定製膜層疊構幾何結構或非標準SiN厚度會延長兩者的交貨週期。帶表徵數據的驗證批次會增加2–4周。</p>
+        <h3>TFLN-on-SiN是否與標準CMOS代工廠設備兼容？</h3>
+        <p>部分兼容。SiN沉積（LPCVD或PECVD）與CMOS兼容，但鈮酸鋰含鈮——這是硅晶圓廠中的金屬污染物。LN的沉積、鍵合與刻蝕需要與CMOS產線分開的專用設備。與純硅基光子平台相比，這是一項關鍵的供應鏈考量因素。</p>
+      </div>
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心觀點</span>
+        <p>單片LNOI與TFLN-on-SiN是兩種架構不同的薄膜鈮酸鋰平台：前者將光學模式約束於LN薄膜內，實現最低Vπ·L與最寬電光帶寬，但傳播損耗受幹法刻蝕限制；後者以低損耗SiN波導為主體、LN薄膜通過倏逝場耦合提供電光或非線性功能，適合高Q諧振腔應用，但電光效率較低。4英寸單片LNOI供應商最多、交貨最快（8–16周），TFLN-on-SiN需專門的異質集成代工廠，交貨週期更長（16–28周）。選型應由系統的主要約束——損耗還是調製效率——決定，而非默認選擇"TFLN"這一籠統標籤。</p>
+      </div>
+      <div class="essay-footer-area">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-06-13</span>
+        <a href="/zht/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+  <!-- ASAPTIC:FOOTER:START -->
+<footer class="foot">
+  <div class="row">
+    <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI 貿易執行 - 我們贏取並履行跨境政府招標，按結果收費。</div></div>
+    <div class="col"><p class="col-h">產品</p><a href="/zht/trade-ai">貿易 AI</a><a href="/zht/tenders">實時招標</a><a href="/zht/standards">跨境標準</a><a href="/zht/platform">開發者</a></div>
+    <div class="col"><p class="col-h">為您而設</p><a href="/zht/contact">買家與機構</a><a href="/zht/suppliers">中國供應商</a><a href="/zht/contact">渠道合作夥伴</a></div>
+    <div class="col"><p class="col-h">資源</p><a href="/zht/blog/">筆記</a><a href="/zht/robot/">機器人 101</a><a href="/zht/university/">外貿學院</a><a href="/changelog/">更新日誌</a></div>
+    <div class="col"><p class="col-h">公司</p><a href="/zht/contact">聯絡我們</a><a href="/zht/tenders">實時招標</a></div>
+  </div>
+  <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/zht/legal/privacy">私隱政策</a> · <a href="/zht/legal/terms">服務條款</a> · Cross-Standard data CC BY 4.0</div>
+</footer>
+<!-- ASAPTIC:FOOTER:END -->
+</body>
+</html>

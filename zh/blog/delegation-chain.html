@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>委托链：权限如何在多智能体流水线中流转 — Asaptic Labs</title>
+  <meta name="description" content="多智能体流水线中，子智能体默认继承编排智能体的完整凭证，这在安全关键场景中造成权限扩张、问责稀释与撤销滞后三重问题。本文提出以签名的显式委托令牌取代隐式继承，使委托路径可重建、可审计。" />
+  <meta name="author" content="Asaptic Labs" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="委托链：权限如何在多智能体流水线中流转" />
+  <meta property="og:description" content="多智能体流水线中，子智能体默认继承编排智能体的完整凭证，这在安全关键场景中造成权限扩张、问责稀释与撤销滞后三重问题。本文提出以签名的显式委托令牌取代隐式继承，使委托路径可重建、可审计。" />
+  <meta property="og:url" content="https://asaptic.com/zh/blog/delegation-chain" />
+  <meta property="og:site_name" content="Asaptic Labs" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="article:published_time" content="2026-05-20" />
+  <meta property="article:author" content="Asaptic Labs" />
+
+<!-- ASAPTIC:HEAD:START -->
+<link rel="canonical" href="https://asaptic.com/zh/blog/delegation-chain">
+<link rel="alternate" hreflang="en" href="https://asaptic.com/blog/delegation-chain">
+<link rel="alternate" hreflang="zh-Hans" href="https://asaptic.com/zh/blog/delegation-chain">
+<link rel="alternate" hreflang="zh-Hant" href="https://asaptic.com/zht/blog/delegation-chain">
+<link rel="alternate" hreflang="x-default" href="https://asaptic.com/blog/delegation-chain">
+<link rel="stylesheet" href="/assets/v2/shell.css?v=20260824a">
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<!-- ASAPTIC:HEAD:END -->
+
+  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Article", "headline": "委托链：权限如何在多智能体流水线中流转", "description": "多智能体流水线中，子智能体默认继承编排智能体的完整凭证，这在安全关键场景中造成权限扩张、问责稀释与撤销滞后三重问题。本文提出以签名的显式委托令牌取代隐式继承，使委托路径可重建、可审计。", "url": "https://asaptic.com/zh/blog/delegation-chain.html", "author": {"@type": "Organization", "name": "Asaptic Labs"}, "publisher": {"@type": "Organization", "name": "Asaptic Labs", "url": "https://asaptic.com"}, "datePublished": "2026-05-20", "dateModified": "2026-06-14", "mainEntityOfPage": "https://asaptic.com/zh/blog/delegation-chain.html", "inLanguage": "zh-Hans", "potentialAction": {"@type": "Action", "name": "联系 Asaptic", "target": [{"@type": "EntryPoint", "urlTemplate": "https://asaptic.com/zh/engage.html", "contentType": "application/json", "description": "MCP server, tool: submit_rfq"}, {"@type": "EntryPoint", "urlTemplate": "mailto:engage@asaptic.com", "description": "通过电子邮件联系 Asaptic"}]}}, {"@type": "BreadcrumbList", "inLanguage": "zh-Hans", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "首页", "item": "https://asaptic.com/zh/"}, {"@type": "ListItem", "position": 2, "name": "博客", "item": "https://asaptic.com/zh/blog/"}, {"@type": "ListItem", "position": 3, "name": "委托链：权限如何在多智能体流水线中流转", "item": "https://asaptic.com/zh/blog/delegation-chain.html"}]}]}</script>
+  <style>
+    .essay-wrap{max-width:680px;margin:0 auto;padding:120px 32px 96px}.essay-back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gray);margin-bottom:48px;transition:color .2s}.essay-back:hover{color:var(--accent)}.essay-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}.essay-title{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.25;margin-bottom:16px}.essay-subtitle{font-size:1.1rem;font-weight:300;color:var(--gray);line-height:1.6;margin-bottom:24px}.essay-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim);display:flex;gap:24px;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}.essay-body p{font-size:1.05rem;line-height:1.75;color:var(--gray);margin-bottom:24px}.essay-body h2{font-size:1.2rem;font-weight:600;color:var(--fg);margin:40px 0 16px}.essay-body h3{font-size:1.05rem;font-weight:600;color:var(--fg);margin:32px 0 12px}.essay-summary{margin-top:48px;padding:24px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px}.essay-summary-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:12px}.essay-summary p{font-size:.95rem;line-height:1.65;color:var(--gray);margin:0}.essay-footer-area{margin-top:64px;padding-top:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}.essay-footer-byline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim)}.essay-footer-back{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none}.essay-footer-back:hover{text-decoration:underline}.essay-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--gray-dim);margin-top:48px}.compare-table{width:100%;border-collapse:collapse;margin:0 0 32px 0;font-size:15px;color:var(--gray)}.compare-table th{text-align:left;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--cyan);padding:10px 12px;border-bottom:1px solid var(--border)}.compare-table td{padding:12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6}.compare-table tr:last-child td{border-bottom:none}@media(max-width:768px){.essay-wrap{padding:100px 20px 72px}.compare-table{font-size:13px}}
+  </style>
+</head>
+<body>
+  <!-- ASAPTIC:HEADER:START -->
+<header class="shell">
+  <div class="row">
+    <a class="brand" href="/zh/">ASAPTIC</a>
+    <nav class="nav"><a href="/zh/trade-ai">贸易AI</a><a href="/zh/tenders">实时招标</a><a href="/zh/suppliers">面向供应商</a><a href="/zh/standards">跨境标准</a><a href="/zh/platform">开发者</a></nav>
+    <div class="lang"><a href="/blog/delegation-chain"><span>EN</span></a><a href="/zh/blog/delegation-chain"><span class="on">简</span></a><a href="/zht/blog/delegation-chain"><span>繁</span></a></div><a class="engage" href="/zh/contact">联系我们</a>
+  </div>
+  <div class="row subrow"><nav class="crumbs" aria-label="Breadcrumb"><a href="/zh/">Asaptic</a><span class="sep">/</span><a href="/zh/blog/">笔记</a></nav><nav class="sublinks"><a href="/zh/blog/">全部文章</a><a href="/crossings">跨界观察</a><a href="/thesis">论文</a></nav></div>
+</header>
+<!-- ASAPTIC:HEADER:END -->
+  <main class="essay-wrap">
+    <a href="/zh/blog/" class="essay-back">&larr; 返回博客</a>
+    <article>
+      <header>
+        <div class="essay-tag">× 量子计算 × 物理 AI × 照护 AI</div>
+        <h1 class="essay-title">委托链：权限如何在多智能体流水线中流转</h1>
+        <p class="essay-subtitle">当编排智能体派生子智能体时，权限该如何传递？隐式继承令牌，还是签发范围受限的显式委托？</p>
+        <div class="essay-meta">
+          <span>Asaptic Labs</span>
+          <span>2026-05-20</span>
+          <span>5 分钟阅读</span>
+        </div>
+      </header>
+      <div class="essay-body">
+        <p>单个AI智能体执行单个操作，是一幅简单的问责图景：智能体行动了，日志记录了它的所作所为，授权委托人可被识别。多智能体流水线则大不相同。当一个编排智能体派生出子智能体——用于信息收集、中间操作，或代表其与外部系统交互——每个子智能体究竟在谁的权限下行事，这个问题变得真正复杂。</p>
+        <p>在今天大多数已部署的多智能体系统中，默认答案是：子智能体继承编排智能体的会话凭证。编排智能体拿到的令牌，子智能体也使用。这是阻力最小的工程路径。然而在安全关键场景中，这是一个随每一次"跳"而成比例扩大的问责缺口。</p>
+        <h2>为何隐式继承会失效</h2>
+        <p>第一个问题是权限扩张。当子智能体继承编排智能体的完整凭证时，它可以做任何编排智能体能做的事。但子智能体是为特定目的而创建的——信息检索、格式转换、特定域的查询——而这些目的并不需要编排智能体的完整权限范围。隐式继承授予了从未有人打算授予、也从未被审计的权限。</p>
+        <p>第二个问题是问责稀释。如果编排智能体的令牌被五个并行运行的子智能体复用，而其中一个采取了造成伤害的行动，审计日志将显示五个智能体使用了相同的凭证。要重建哪个子智能体在哪个特定委托范围内、响应哪条编排指令执行了有害操作，需要推断而非检查。问责链正是在最需要它的地方断裂了。</p>
+        <p>第三个问题是撤销滞后。如果编排智能体的权限被撤销——因为用户撤回了同意、会话过期，或检测到安全事件——使用继承令牌的子智能体可能仍在继续运行。隐式继承创造了一种超越其授权边界而持续存在的影子权限。</p>
+        <h2>显式委托要求什么</h2>
+        <p>替代方案是显式委托：当编排智能体创建子智能体时，它签发一个委托令牌，指定子智能体的授权范围、允许执行的操作，以及执行操作的时间窗口。该令牌由编排智能体的凭证签名，在委托权限与被委托范围之间建立起可通过密码学验证的链接。当子智能体行动时，它在自己的令牌下行事，而非编排智能体的令牌——该操作可被归因于这一特定委托。</p>
+        <p>这不是什么新颖的安全概念。能力系统和令牌链式授权方案在这一领域探索了数十年。真正新的，是在多智能体层应用这一概念的需求——这里的实体是具有概率性行为的AI智能体，在后果可能直接且物理的领域中运行。</p>
+        <h2>委托链的三个关键领域</h2>
+        <p>在后量子安全语境中，委托链的每一个环节都是一个签名。当子智能体代表编排智能体对某一操作签名时，该签名是对委托权限的证明。这些证明上的经典密码学签名，在量子转型推进的过程中存在潜在漏洞。委托链需要在每一跳都使用抗量子密钥材料来构建——这不是一项未来加固任务，而是任何执行具有长期影响操作的多智能体系统的当下设计要求。</p>
+        <p>在硬件语境中，委托链有一个额外的完整性要求：每个子智能体运行所在的硬件。向子智能体签发的委托令牌，只有在接收智能体运行在经证明的环境中时才有意义。运行在未经验证硬件上的子智能体可能被欺骗、重放或替换。在每个委托跳处进行硬件证明，关闭了那类通过损害接收环境而非令牌本身来攻击委托令牌的漏洞类别。</p>
+        <p>在物理世界照护语境中，委托链与同意相交。患者同意特定智能体执行特定功能——而非同意一个可能传递性援引该同意的任意子智能体链。如果照护编排者委托给数据检索子智能体，后者进一步委托给分析子智能体，而该分析子智能体的输出影响了护理决策，患者的同意需要显式地附着于每一步。委托链是同意在流水线中传递的机制——如果链是隐式且未被追踪的，同意架构便会崩溃为一种法律虚构。</p>
+        <h2>良好委托架构能带来什么</h2>
+        <p>当委托是显式的、被签名的且有范围限制时，一类不同的问责成为可能：对于多智能体流水线中的任何具有实质影响的操作，从原始授权委托人到执行子智能体的完整委托路径是可重建的。委托了什么权限？由谁委托？在什么约束下？这些约束是否被遵守？</p>
+        <p>这种重建能力是对多智能体系统进行有意义的事后审查的前提，也是信任的前提——信任使多智能体流水线能够在高风险、权限至关重要的领域中运行。一个无法展示其任何操作委托链的编排系统，是不可审计的——而不可审计的系统不应在具有实质影响的领域中运行。</p>
+        <p>委托不是管道细节。在安全、硬件与人文关怀的关键领域中执行操作的多智能体系统里，它是一项一等问责原语——将其设计为任何低于此的东西，是一个成本随规模成比例增加的选择。</p>
+      </div>
+      <div class="essay-summary">
+        <span class="essay-summary-label">核心观点</span>
+        <p>多数已部署的多智能体系统让子智能体默认继承编排智能体的完整会话凭证，这带来权限扩张、问责稀释与撤销滞后三个随委托层级成比例扩大的问题。替代方案是显式委托：编排智能体为每个子智能体签发范围受限、有时间窗口、可密码学验证的委托令牌。委托链在后量子安全、硬件证明与物理世界照护同意三个领域都构成额外的完整性要求。当委托显式、签名且范围受限时，从原始授权委托人到执行子智能体的完整路径可被重建——这是多智能体系统可审计、可信任地在高风险领域运行的前提。</p>
+      </div>
+      <div class="essay-footer-area">
+        <span class="essay-footer-byline">Asaptic Labs · 2026-05-20</span>
+        <a href="/zh/blog/" class="essay-footer-back">&larr; 全部文章</a>
+      </div>
+    </article>
+  </main>
+  <!-- ASAPTIC:FOOTER:START -->
+<footer class="foot">
+  <div class="row">
+    <div class="brandcol"><div class="b">ASAPTIC</div><div class="t">AI贸易执行 - 我们赢取并完成跨境政府采购，按结果付费。</div></div>
+    <div class="col"><p class="col-h">产品</p><a href="/zh/trade-ai">贸易AI</a><a href="/zh/tenders">实时招标</a><a href="/zh/standards">跨境标准</a><a href="/zh/platform">开发者</a></div>
+    <div class="col"><p class="col-h">面向您</p><a href="/zh/contact">采购方与机构</a><a href="/zh/suppliers">中国供应商</a><a href="/zh/contact">渠道合作伙伴</a></div>
+    <div class="col"><p class="col-h">资源</p><a href="/zh/blog/">笔记</a><a href="/zh/robot/">机器人 101</a><a href="/zh/university/">外贸学院</a><a href="/changelog/">更新日志</a></div>
+    <div class="col"><p class="col-h">公司</p><a href="/zh/contact">联系我们</a><a href="/zh/tenders">实时招标</a></div>
+  </div>
+  <div class="legal">© 2026 Asaptic (HK) Limited · <a href="/zh/legal/privacy">隐私政策</a> · <a href="/zh/legal/terms">服务条款</a> · Cross-Standard data CC BY 4.0</div>
+</footer>
+<!-- ASAPTIC:FOOTER:END -->
+</body>
+</html>
