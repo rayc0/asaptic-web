@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Asaptic demos — Reconstructed: how the HK$29,962,990 C0009 bid was won</title>
+<meta name="description" content="A step-by-step reconstruction of the actual awarded GLD Contract C0009/2026 bid — the decisions, the evidence, and why the win compounds.">
+<style>
+  :root{
+    --frame:#15140f; --paper:#f4f1e9; --paper-2:#ece7d8; --edge:#e8e2d3;
+    --ink:#211f18; --ink-2:#6b6656; --seal:#a8322c; --seal-deep:#8f2823;
+    --line:#d8d1c1; --line-2:#c4bca9;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --serif:Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box}
+  html{overflow-x:hidden}
+  body{margin:0;background:var(--frame);color:var(--ink);
+    font-family:var(--serif);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .sheet{max-width:880px;margin:64px auto;background:var(--paper);
+    border:1px solid var(--edge);border-radius:3px;
+    box-shadow:0 30px 80px rgba(0,0,0,.55);padding:0}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--seal);margin:0}
+  .sec{display:grid;grid-template-columns:56px 1fr;gap:0;border-top:1px solid var(--line)}
+  .sec:first-child{border-top:0}
+  .docket{font-family:var(--mono);font-size:12px;color:var(--seal);padding:28px 0 0 18px;letter-spacing:.04em}
+  .body{padding:28px 30px 30px 8px}
+  h1{font-family:var(--serif);font-size:clamp(27px,4.3vw,40px);line-height:1.12;letter-spacing:-.015em;margin:.35em 0 .3em;text-wrap:balance}
+  h2{font-family:var(--serif);font-size:clamp(22px,3.2vw,30px);line-height:1.15;letter-spacing:-.01em;margin:.35em 0 .3em;text-wrap:balance}
+  .amt{font-family:var(--mono);color:var(--seal);font-weight:700}
+  .lede{color:var(--ink-2);font-size:15px;max-width:60ch}
+  p.body-text, .body-text{color:var(--ink);font-size:15px;max-width:68ch;margin:.6em 0 0}
+
+  /* evidence expand */
+  details.evidence{margin:14px 0 0}
+  details.evidence > summary{font-family:var(--mono);font-size:12px;color:var(--seal);cursor:pointer;list-style:none}
+  details.evidence > summary::-webkit-details-marker{display:none}
+  details.evidence > summary::before{content:"▸ ";display:inline-block;transition:transform .15s}
+  details.evidence[open] > summary::before{transform:rotate(90deg)}
+  details.evidence > .evidence-body{font-family:var(--mono);font-size:11.5px;line-height:1.65;color:var(--ink);background:var(--paper-2);border:1px solid var(--line);border-radius:2px;padding:16px 18px;margin:10px 0 0;max-width:68ch}
+  details.evidence > .evidence-body p{margin:0}
+
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);background:var(--paper-2);margin:14px 0 0;border:1px solid var(--line)}
+  .stat{padding:16px 18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .stat:nth-child(2n){border-right:0}
+  .stat:nth-last-child(-n+2){border-bottom:0}
+  .stat .n{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink);line-height:1.15}
+  .stat .k{font-size:12px;color:var(--ink-2);margin-top:4px;line-height:1.4}
+  @media(max-width:640px){
+    .sheet{margin:0 auto;border-radius:0;border-left:0;border-right:0}
+    body{margin:0}
+    .sec{grid-template-columns:40px 1fr}
+    .docket{padding:24px 0 0 12px;font-size:11px}
+    .body{padding:24px 16px 28px 6px}
+    .stats{grid-template-columns:1fr}
+    .stat{border-right:0}
+    .stat:nth-last-child(-n+2){border-bottom:1px solid var(--line)}
+    .stat:last-child{border-bottom:0}
+  }
+
+  /* live cards */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0 0}
+  .card{display:block;text-decoration:none;color:inherit;border:1.5px solid var(--ink);border-radius:2px;padding:16px 16px 14px;position:relative;transition:border-color .15s}
+  .card .addr{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:700}
+  .card .live{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--seal);float:right}
+  .card .live::before{content:"● "}
+  .card p{font-size:13.5px;color:var(--ink-2);margin:8px 0 0}
+  .card .open{font-family:var(--mono);font-size:11px;color:var(--seal);position:absolute;right:14px;bottom:12px;opacity:0}
+  .card:hover{border-color:var(--seal);border-width:2px}
+  .card:hover .open{opacity:1}
+  .card:focus-visible{border-color:var(--seal);border-width:2px;outline:2px solid var(--seal);outline-offset:2px}
+  .card:focus-visible .open{opacity:1}
+  @media(max-width:640px){.cards{grid-template-columns:1fr}}
+
+  footer{padding:22px 30px 30px;border-top:1px solid var(--seal)}
+  footer .row{font-family:var(--mono);font-size:12px;color:var(--ink-2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  footer a{color:var(--seal);text-decoration:none}
+  .note{font-family:var(--mono);font-size:10.5px;color:var(--ink-2);margin-top:10px;line-height:1.5}
+  .wm{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--ink);text-transform:uppercase}
+
+  /* bridge nav */
+  .asaptic-bridge{position:sticky;top:0;z-index:50;background:#080F1E;border-bottom:1px solid rgba(41,182,246,.18)}
+  .asaptic-bridge-row{display:flex;align-items:center;justify-content:space-between;gap:16px;height:52px;max-width:880px;margin:0 auto;padding:0 24px}
+  .asaptic-bridge-logo{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;font-weight:800;letter-spacing:.18em;color:#FFFFFF;text-decoration:none}
+  .asaptic-bridge-back{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;font-weight:600;color:#29B6F6;text-decoration:none}
+  .asaptic-bridge-back:hover{color:#00E5FF;text-decoration:underline}
+</style>
+</head>
+<body>
+<nav class="asaptic-bridge" aria-label="Asaptic">
+  <div class="asaptic-bridge-row">
+    <a href="/" class="asaptic-bridge-logo" aria-label="Asaptic home">ASAPTIC</a>
+    <a href="/" class="asaptic-bridge-back">&larr; asaptic.com</a>
+  </div>
+</nav>
+
+<main class="sheet">
+
+  <!-- §01 header -->
+  <section class="sec">
+    <div class="docket">§01</div>
+    <div class="body">
+      <p class="eyebrow">Reconstructed case · how the bid was won</p>
+      <h1>We didn't just win a HK$<span class="amt">29,962,990</span> government contract. We won the part no catalog search could.</h1>
+      <p class="lede">This is a reconstruction of the actual awarded bid (GLD Contract C0009/2026) — the hard decisions, traced step by step, each expandable to the real evidence. The point isn't that AI produced a document. It's that AI found what a normal bidder could not, and every step deposited into an asset that compounds.</p>
+    </div>
+  </section>
+
+  <!-- §02 the ask -->
+  <section class="sec">
+    <div class="docket">§02</div>
+    <div class="body">
+      <p class="eyebrow">The ask</p>
+      <h2>A government department wanted a "mock plane." That is not a product you can buy.</h2>
+      <p class="body-text">The requirement was a full-scale mock aircraft — for a Hong Kong Government training facility. There is no catalog line, no supplier list, no reference price. A keyword search returns nothing biddable; a matching engine scores it "other." The difficulty is not writing the bid — it is turning a use-case ("a realistic mock plane") into a concrete, procurable, deliverable bill of materials, then finding who on earth can supply it.</p>
+      <details class="evidence">
+        <summary>▸ 展开：为什么普通检索会失败</summary>
+        <div class="evidence-body">
+          <p>目录检索和关键词匹配假设"需求=某个已存在的商品"。"模拟飞机"没有商品条目、没有供应商名录、没有参考价——它是一次性组装件，必须先被拆解成真实航材，才谈得上采购。</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- §03 cracking the spec (READ) -->
+  <section class="sec">
+    <div class="docket">§03</div>
+    <div class="body">
+      <p class="eyebrow">Step 01 · Read</p>
+      <h2>The AI cracked "mock plane" into real, procurable aircraft parts.</h2>
+      <p class="body-text">The engine resolved the requirement into a concrete structure: retired <strong>Airbus A330-200 fuselage sections</strong> plus <strong>Boeing 777-200 doors</strong>, assembled with supporting structure into a full mock airframe — approximately <strong>85 tonnes as modified</strong> per the technical specification, including supporting columns. This is the step that separates a real bid from a plausible one: not "we'll supply a mock plane," but the exact retired-airframe bill of materials that satisfies the spec.</p>
+      <details class="evidence">
+        <summary>▸ 展开原始依据</summary>
+        <div class="evidence-body">
+          <p>· 标的：Supply of Mock Plane（全尺寸模拟机身）<br>· 拆解结果：退役 A330-200 机身段 + 777-200 舱门 + 支撑结构<br>· 改装后总重约 85 吨（含支撑柱，依技术规格）<br>· 来源：C0009 技术规格 + 履约方确认</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- §04 the impossible supply (SOURCE) -->
+  <section class="sec">
+    <div class="docket">§04</div>
+    <div class="body">
+      <p class="eyebrow">Step 02 · Source</p>
+      <h2>Then it found supply where no ordinary bidder would look.</h2>
+      <p class="body-text">Retired wide-body fuselage sections are not a market commodity. The engine located supply inside the <strong>宜昌 aircraft-dismantling industrial chain</strong> — the ecosystem where retired airframes are broken down — a source you reach only if you already understand where decommissioned aircraft physically go. This is the moat in one move: not the cleverness of any single search, but the accumulated map of where non-catalog goods actually live.</p>
+      <details class="evidence">
+        <summary>▸ 展开：为什么这一步是壁垒</summary>
+        <div class="evidence-body">
+          <p>退役宽体机身段不在任何供应商目录里；它们藏在飞机拆解产业链的物理流向中。找到它需要的不是通用搜索能力，而是一张随每单积累、别人无法追回的"非目录货源地图"。</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- §05 the two gates (COMPLY + DELIVER) -->
+  <section class="sec">
+    <div class="docket">§05</div>
+    <div class="body">
+      <p class="eyebrow">Step 03 · Two gates</p>
+      <h2>Two gates killed every "looks-matched-but-can't-deliver" path.</h2>
+      <p class="body-text">A match is not a bid. Every candidate route ran two gates. <strong>投标门 (Bid gate):</strong> qualification, win-probability, and whether the assembled solution is signable. <strong>履约门 (Delivery gate):</strong> real goods, licences, cross-border transport, acceptance, cash-flow and who carries responsibility. Routes that passed the bid gate but failed the delivery gate were discarded — because a bid you win but cannot deliver is worse than no bid.</p>
+      <details class="evidence">
+        <summary>▸ 展开：双闸门排除了什么</summary>
+        <div class="evidence-body">
+          <p>投标门通过、履约门不过的路径被剔除——例如货源不落地、跨境运输不可控、验收或担责结构不清。只有两道门都过，才组装进最终方案。</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- §06 the result (PRICE + AWARD) -->
+  <section class="sec">
+    <div class="docket">§06</div>
+    <div class="body">
+      <p class="eyebrow">Step 04 · Award</p>
+      <h2>One founder. An agent fleet at ~US$10/day. A HK$29,962,990 award.</h2>
+      <div class="stats">
+        <div class="stat"><div class="n">HK$29,962,990</div><div class="k">合同金额（GLD C0009/2026）</div></div>
+        <div class="stat"><div class="n">HK$2,145,983</div><div class="k">Asaptic 服务费（7.2%，结果收费）</div></div>
+        <div class="stat"><div class="n">20 / 30 / 50</div><div class="k">政府里程碑付款</div></div>
+        <div class="stat"><div class="n">~US$10/day</div><div class="k">创始人调度 agent 舰队的工具成本</div></div>
+      </div>
+      <p class="body-text">The bid was priced on a structural cost stack — airframe sections, doors, transport, modification, compliance, delivery coordination — to win without eroding margin. The client signed the government contract; Asaptic organised fulfilment and is paid a success fee only against government milestones. This is the only real award to date — stated plainly.</p>
+      <details class="evidence">
+        <summary>▸ 展开：谁签约、谁履约</summary>
+        <div class="evidence-body">
+          <p>客户（Carewells）作为签约主体；北京伊德诺负责实物履约；Asaptic 从不签政府主合同，只在结果实现、政府里程碑到账时按 7.2% 收费。</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- §07 why it repeats (THE MOAT) -->
+  <section class="sec">
+    <div class="docket">§07</div>
+    <div class="body">
+      <p class="eyebrow">Why it repeats</p>
+      <h2>The win wasn't the point. What each win deposits is.</h2>
+      <p class="body-text">Every step above fed an asset that compounds and that a later entrant cannot back-fill: the tender document corpus (<strong>130 projects · 22,863 pages · 50 structured specs</strong>), the cross-market compliance dataset, the supplier graph (now holding the aircraft-dismantling route), and the win/loss feedback that sharpens which tenders are worth bidding. The scoring layer is simple and public (see the live matcher). The moat is the accumulated, un-recoverable data underneath it — which is why the next non-standard tender is easier for us and no easier for anyone else.</p>
+      <div class="cards">
+        <a class="card" href="https://asaptic.com/demo" target="_blank" rel="noopener">
+          <span class="live">EVIDENCE</span>
+          <span class="addr">asaptic.com/demo</span>
+          <p>The signed award — primary evidence of the actual GLD C0009/2026 contract.</p>
+          <span class="open">→ OPEN</span>
+        </a>
+        <a class="card" href="https://asaptic.com/demo/match" target="_blank" rel="noopener">
+          <span class="live">LIVE</span>
+          <span class="addr">asaptic.com/demo/match</span>
+          <p>The live matching engine — the same scoring layer, query it yourself.</p>
+          <span class="open">→ OPEN</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="row">
+      <span class="wm">Asaptic</span>
+      <span><a href="https://asaptic.com" target="_blank" rel="noopener">asaptic.com</a></span>
+    </div>
+    <p class="note">Reconstruction of the actual awarded contract GLD C0009/2026 (closed, awarded 23 Jun 2026). Steps trace the real bid's decisions; expandable panels cite the real basis. Buyer identity kept at summary level. Not a live run — a documented replay of how the bid was built.</p>
+  </footer>
+
+</main>
+</body>
+</html>
