@@ -4,7 +4,7 @@
    Restore from hidden with Alt+` (Backquote). */
 (function () {
   if (window.__ctLoaded) return; window.__ctLoaded = true;
-  var CF = 'https://app.companyforge.dev', AS = 'https://app.asaptic.dev';
+  var CF = 'https://companyforge.dev', AS = 'https://portal.asaptic.dev', MKT = 'https://asaptic.dev';
   var NAV = {
     companyforge: {
       label: 'CompanyForge', base: CF, tower: CF + '/', manual: CF + '/manual/',
@@ -20,7 +20,7 @@
       links: [
         ['🏭 Portal home', '/'], ['Login', '/login'], ['Dashboard', '/dashboard'],
         ['Deal rooms', '/dealroom'], ['Suppliers', '/supplier'], ['Tenders', '/tenders'],
-        ['Ops console', '/ops'], ['R&D workbench', '/rd-workbench'], ['Compliance', '/compliance-workbench']
+        ['Ops console', '/ops'], ['R&D workbench', '/rd-workbench'], ['Compliance', '/compliance-workbench'], ['🌐 Marketing site ↗', MKT+'/']
       ]
     }
   };
