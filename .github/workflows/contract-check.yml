@@ -1,0 +1,37 @@
+# Weekly public conformance run for the asaptic.tender.v1 data contract.
+# See developers/conformance.md. Enabling this workflow is release-gated;
+# it must produce real runs only — no static badges.
+name: contract-check
+
+on:
+  schedule:
+    # Mondays 02:17 UTC (10:17 HKT), after the weekly issue publish window.
+    - cron: "17 2 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fixture self-test (positives pass, negative rejected)
+        run: node developers/contract/validate.mjs
+
+      - name: Validate live feed sample against the contract
+        run: |
+          curl -sL --fail --max-time 60 https://asaptic.com/tender/rows.json \
+            | node developers/contract/validate.mjs --stdin --sample 20
+
+      - name: Contract test suite
+        run: node --test developers/contract/test/contract.test.mjs

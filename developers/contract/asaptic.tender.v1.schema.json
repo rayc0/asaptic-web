@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://asaptic.com/developers/contract/asaptic.tender.v1.schema.json",
+  "title": "asaptic.tender.v1",
+  "description": "Public data contract for the Asaptic tender feed (https://asaptic.com/tender/rows.json). One envelope per published issue; each row is the 11-field public listing shape. Detail beyond these 11 fields is access-gated and not part of this contract.",
+  "type": "object",
+  "required": ["generated", "issue_id", "market", "total", "withheld", "rows"],
+  "properties": {
+    "generated": {
+      "type": "string",
+      "description": "ISO 8601 timestamp of when this issue of the feed was generated.",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?([+-][0-9]{2}:[0-9]{2}|Z)$"
+    },
+    "issue_id": {
+      "type": "string",
+      "description": "Weekly issue identifier, ISO week form.",
+      "pattern": "^[0-9]{4}-W[0-9]{2}$"
+    },
+    "market": {
+      "type": "string",
+      "description": "Primary market of this feed build.",
+      "minLength": 2,
+      "maxLength": 3
+    },
+    "total": {
+      "type": "integer",
+      "description": "Number of rows published in this issue.",
+      "minimum": 0
+    },
+    "withheld": {
+      "type": "integer",
+      "description": "Number of listings withheld from publication in this issue.",
+      "minimum": 0
+    },
+    "rows": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/row" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "row": {
+      "type": "object",
+      "description": "The 11-field public tender row.",
+      "required": [
+        "asaptic_id",
+        "market",
+        "category",
+        "summary_en",
+        "summary_zh",
+        "summary_zht",
+        "value_band",
+        "closing_bucket",
+        "lead_ok",
+        "new_this_issue",
+        "sort_key"
+      ],
+      "properties": {
+        "asaptic_id": {
+          "type": "string",
+          "description": "Stable Asaptic listing id. Synthetic test fixtures use the AT-TEST- prefix and never collide with live ids.",
+          "pattern": "^AT-(TEST-)?[A-Z]{2}-[0-9]{4}-[0-9]{3}$"
+        },
+        "market": {
+          "type": "string",
+          "description": "Market the opportunity belongs to.",
+          "enum": ["HK", "SG", "MO", "GB", "AU", "CA", "EU"]
+        },
+        "category": {
+          "type": "object",
+          "description": "Trilingual category label.",
+          "required": ["name_en", "name_zh", "name_zht"],
+          "properties": {
+            "name_en": { "type": "string", "minLength": 1 },
+            "name_zh": { "type": "string", "minLength": 1 },
+            "name_zht": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        },
+        "summary_en": {
+          "type": "string",
+          "description": "Sanitized English summary of the requirement. Generic procurement language only.",
+          "minLength": 1
+        },
+        "summary_zh": {
+          "type": "string",
+          "description": "Sanitized Simplified Chinese summary.",
+          "minLength": 1
+        },
+        "summary_zht": {
+          "type": "string",
+          "description": "Sanitized Traditional Chinese summary.",
+          "minLength": 1
+        },
+        "value_band": {
+          "description": "Estimated value band in HKD-equivalent, or null when no estimate is published.",
+          "enum": ["lt_500k", "500k_2m", "2m_10m", "gt_10m", null]
+        },
+        "closing_bucket": {
+          "type": "string",
+          "description": "Coarse time-to-close bucket. Exact closing timestamps are not part of the public contract.",
+          "enum": ["le_2w", "2_4w", "gt_4w", "deadline_passed"]
+        },
+        "lead_ok": {
+          "type": "boolean",
+          "description": "Whether Asaptic accepts supplier interest against this listing."
+        },
+        "new_this_issue": {
+          "type": "boolean",
+          "description": "True if the listing first appeared in the current weekly issue."
+        },
+        "sort_key": {
+          "type": "string",
+          "description": "Opaque 64-hex stable sort key. Carries no recoverable information.",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

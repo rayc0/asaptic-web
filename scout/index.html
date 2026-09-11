@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Asaptic Scout Pack — shortlist public opportunities, hand the pack to us</title>
+<meta name="description" content="Multi-select live public opportunities into a shareable Scout Pack, then ask Asaptic to source the whole pack in one request.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0f; --card:#0f0f1a; --card2:#12121f; --edge:rgba(255,255,255,.08); --edge2:rgba(255,255,255,.14);
+    --ink:#f4f6fb; --ink2:#b2bacb; --ink3:#8b93a6;
+    --emerald:#10b981; --emerald-l:#34d399; --cyan:#06b6d4; --cyan-l:#22d3ee; --peri:#818cf8; --amber:#fbbf24;
+    --mono:'Fira Code','JetBrains Mono','Courier New',monospace;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 26px}
+  a{color:var(--cyan-l);text-decoration:none}
+  a:focus-visible,button:focus-visible,select:focus-visible,.card:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:6px}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .grad{background:linear-gradient(135deg,#34d399 0%,#22d3ee 50%,#818cf8 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .cy{color:var(--cyan-l)} .em{color:var(--emerald-l)}
+
+  /* bridge nav (navy/cyan) */
+  .bridge{position:sticky;top:0;z-index:50;background:rgba(10,10,15,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--edge)}
+  .bridge .row{display:flex;align-items:center;justify-content:space-between;height:54px;max-width:1060px;margin:0 auto;padding:0 26px}
+  .bridge .logo{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:800;letter-spacing:.02em;color:#fff}
+  .bridge .logo .mk{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:#04121a}
+  .bridge .rt{display:flex;align-items:center;gap:18px}
+  .bridge .lnk{font-size:12.5px;font-weight:500;color:var(--ink2)} .bridge .lnk:hover{color:var(--ink)}
+  .bridge .back{font-size:12.5px;font-weight:600;color:var(--cyan-l)}
+
+  header.hero{padding:52px 0 34px;border-bottom:1px solid var(--edge)}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--emerald);margin:0 0 14px}
+  h1{font-size:clamp(28px,4.4vw,44px);line-height:1.16;letter-spacing:-.02em;margin:0 0 16px;font-weight:900;max-width:20ch}
+  .lede{font-size:clamp(15px,1.8vw,18px);color:var(--ink2);max-width:62ch;margin:0}
+  .lede b{color:var(--emerald-l)}
+
+  /* filters */
+  .filters{display:flex;flex-wrap:wrap;gap:12px;padding:22px 0;border-bottom:1px solid var(--edge);position:sticky;top:54px;background:rgba(10,10,15,.9);backdrop-filter:blur(8px);z-index:40}
+  .fgrp{display:flex;flex-direction:column;gap:5px}
+  .fgrp label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+  select{font-family:var(--mono);font-size:13px;color:var(--ink);background:var(--card);border:1px solid var(--edge2);border-radius:8px;padding:9px 12px;min-width:150px;cursor:pointer}
+  select:hover{border-color:var(--cyan)}
+  .count{margin-left:auto;align-self:flex-end;font-family:var(--mono);font-size:12px;color:var(--ink3)}
+  .count b{color:var(--cyan-l)}
+
+  main{padding:26px 0 120px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+  .card{position:relative;background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:18px;cursor:pointer;text-align:left;color:inherit;font:inherit;transition:border-color .15s,transform .12s,box-shadow .15s;min-width:0}
+  .card:hover{border-color:var(--edge2);transform:translateY(-1px)}
+  .card.on{border-color:var(--emerald);box-shadow:0 0 0 1px rgba(16,185,129,.35),0 12px 34px rgba(0,0,0,.35)}
+  .card .top{display:flex;align-items:center;gap:8px;margin-bottom:11px;flex-wrap:wrap}
+  .chip{font-family:var(--mono);font-size:11px;color:var(--ink);border:1px solid var(--edge2);background:var(--card2);padding:5px 10px;border-radius:20px;white-space:nowrap}
+  .chip.mk{color:var(--cyan-l);border-color:rgba(6,182,212,.3)}
+  .chip.lead{color:var(--emerald-l);border-color:rgba(16,185,129,.3)}
+  .chip.new{color:var(--amber);border-color:rgba(251,191,36,.3)}
+  .card .sum{font-size:14.5px;color:var(--ink);line-height:1.55;margin:0 0 12px;overflow-wrap:anywhere}
+  .card .meta{display:flex;flex-wrap:wrap;gap:8px;font-family:var(--mono);font-size:11px;color:var(--ink3)}
+  .card .meta .k{color:var(--ink2)}
+  .card .tick{position:absolute;top:14px;right:14px;width:22px;height:22px;border-radius:6px;border:1.5px solid var(--edge2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:transparent}
+  .card.on .tick{background:linear-gradient(135deg,#10b981,#06b6d4);border-color:transparent;color:#04121a}
+  .card .id{font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:11px;letter-spacing:.03em}
+
+  .state{font-family:var(--mono);font-size:13px;color:var(--ink3);padding:48px 0;text-align:center}
+  .state.err{color:var(--amber)}
+
+  /* pack tray */
+  .tray{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(12,12,20,.95);backdrop-filter:blur(12px);border-top:1px solid var(--edge2);transform:translateY(110%);transition:transform .22s ease}
+  .tray.up{transform:translateY(0)}
+  .tray .inner{max-width:1060px;margin:0 auto;padding:16px 26px;display:flex;flex-direction:column;gap:12px}
+  .tray .hd{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .tray .hd .ttl{font-weight:800;font-size:15px}
+  .tray .hd .ttl b{color:var(--emerald-l);font-family:var(--mono)}
+  .tray .hd .spacer{flex:1}
+  .traylist{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:thin}
+  .pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11.5px;color:var(--ink2);border:1px solid var(--edge2);background:var(--card);border-radius:20px;padding:6px 8px 6px 12px;white-space:nowrap;max-width:340px}
+  .pill .txt{overflow:hidden;text-overflow:ellipsis;max-width:270px}
+  .pill .x{cursor:pointer;color:var(--ink3);border:0;background:none;font-family:var(--mono);font-size:14px;line-height:1;padding:0 2px}
+  .pill .x:hover{color:var(--amber)}
+  .btn{font-family:var(--sans);font-size:13.5px;font-weight:600;padding:11px 18px;border-radius:9px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:1px solid var(--edge2);background:var(--card);color:var(--ink);transition:transform .15s,border-color .15s}
+  .btn:hover{border-color:var(--cyan);transform:translateY(-1px)}
+  .btn.pri{color:#04121a;background:linear-gradient(135deg,#10b981,#06b6d4);border-color:transparent}
+  .btn.ghost{color:var(--ink3);border-color:transparent;background:none}
+  .btn.ghost:hover{color:var(--amber);transform:none}
+  .frame{font-family:var(--mono);font-size:11px;color:var(--ink3);line-height:1.6;margin:0}
+  .frame b{color:var(--ink2)}
+  .toast{position:fixed;left:50%;bottom:calc(100% + 12px);transform:translateX(-50%);font-family:var(--mono);font-size:12px;color:#04121a;background:var(--emerald-l);padding:8px 14px;border-radius:8px;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1}
+  footer{padding:26px 0;border-top:1px solid var(--edge)}
+  .note{font-family:var(--mono);font-size:11px;color:var(--ink3);line-height:1.7;margin:0;max-width:74ch}
+</style>
+</head>
+<body>
+<nav class="bridge"><div class="row">
+  <a class="logo" href="/"><span class="mk">A</span>ASAPTIC</a>
+  <div class="rt"><a class="lnk" href="/demo">Signed evidence</a><a class="lnk" href="/demo/match">Match engine</a><a class="back" href="/">asaptic.com</a></div>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">Scout Pack · sourcing shortlist</p>
+  <h1>Shortlist the public opportunities that fit you. <span class="grad">Hand the pack to Asaptic.</span></h1>
+  <p class="lede">Browse live public opportunities across seven markets, tick the ones worth pursuing into a <b>Scout Pack</b>, share the link, then ask us to source the whole pack in one request. You choose the targets — we do the finding.</p>
+</div></header>
+
+<div class="filters"><div class="wrap" style="display:flex;flex-wrap:wrap;gap:12px;padding:0">
+  <div class="fgrp"><label for="f-market">Market</label><select id="f-market"><option value="all">All markets</option></select></div>
+  <div class="fgrp"><label for="f-category">Category</label><select id="f-category"><option value="all">All categories</option></select></div>
+  <div class="fgrp"><label for="f-closing">Closing in</label><select id="f-closing"><option value="all">Any time</option></select></div>
+  <div class="fgrp"><label for="f-lang">Language</label><select id="f-lang"><option value="en">English</option><option value="zh">简体中文</option><option value="zht">繁體中文</option></select></div>
+  <div class="count" id="count"></div>
+</div></div>
+
+<main><div class="wrap">
+  <div id="state" class="state">Loading live opportunities…</div>
+  <div id="grid" class="grid" hidden></div>
+</div></main>
+
+<div class="tray" id="tray"><div class="inner">
+  <div class="toast" id="toast"></div>
+  <div class="hd">
+    <span class="ttl">Scout Pack · <b id="tray-count">0</b></span>
+    <div class="spacer"></div>
+    <button class="btn" id="btn-share" type="button">Share pack</button>
+    <button class="btn pri" id="btn-cta" type="button">Ask Asaptic to source this pack →</button>
+    <button class="btn ghost" id="btn-clear" type="button">Clear</button>
+  </div>
+  <div class="traylist" id="traylist"></div>
+  <p class="frame"><b>Sourcing scout, not a bid desk.</b> Asaptic finds and secures supply for the items you select — we don't advise on how to bid or price. The whole pack is treated as one high-intent request.</p>
+</div></div>
+
+<footer><div class="wrap">
+  <p class="note">Public opportunity data only — market, category, summary, value band, closing window, lead-readiness. No procuring-body identity, reference numbers, or dates are shown here. Your Scout Pack lives in this browser; the share link encodes only public opportunity IDs.</p>
+</div></footer>
+
+<script type="module">
+import * as S from './scout.mjs';
+
+const BUCKET_LABEL = { le_2w: '≤ 2 weeks', '2_4w': '2–4 weeks', gt_4w: '> 4 weeks' };
+const $ = (id) => document.getElementById(id);
+const state = { rows: [], byId: new Map(), pack: [], lang: 'en' };
+
+// ---- pack helpers ----
+function persist(){ S.savePack(localStorage, state.pack); }
+function setPack(next){ state.pack = S.normalizePack(next); persist(); renderTray(); syncCards(); }
+
+// ---- rendering (all feed data via textContent — never innerHTML) ----
+function el(tag, cls){ const n = document.createElement(tag); if(cls) n.className = cls; return n; }
+function chip(cls, text){ const c = el('span', 'chip ' + cls); c.textContent = text; return c; }
+
+function buildCard(row){
+  const data = S.cardFields(row, state.lang);
+  const btn = el('button', 'card' + (state.pack.includes(data.id) ? ' on' : ''));
+  btn.type = 'button';
+  btn.dataset.id = data.id;
+  btn.setAttribute('aria-pressed', state.pack.includes(data.id) ? 'true' : 'false');
+
+  const tick = el('span', 'tick'); tick.textContent = '✓'; btn.appendChild(tick);
+
+  const top = el('div', 'top');
+  top.appendChild(chip('mk', row.market));                       // market
+  top.appendChild(chip('', S.categoryFor(row, state.lang)));     // category
+  if (row.lead_ok) top.appendChild(chip('lead', 'lead-ready'));  // lead_ok
+  if (row.new_this_issue) top.appendChild(chip('new', 'new'));   // new_this_issue
+  btn.appendChild(top);
+
+  const sum = el('p', 'sum'); sum.textContent = S.summaryFor(row, state.lang); btn.appendChild(sum);
+
+  const meta = el('div', 'meta');
+  const b = el('span'); const bk = el('span','k'); bk.textContent='Closing '; b.appendChild(bk);
+  b.appendChild(document.createTextNode(BUCKET_LABEL[row.closing_bucket] || row.closing_bucket));
+  meta.appendChild(b);
+  if (row.value_band){ const v = el('span'); const vk = el('span','k'); vk.textContent='Value '; v.appendChild(vk); v.appendChild(document.createTextNode(row.value_band)); meta.appendChild(v); }
+  btn.appendChild(meta);
+
+  const idl = el('div', 'id'); idl.textContent = data.id; btn.appendChild(idl);  // asaptic_id (public)
+
+  btn.addEventListener('click', () => setPack(S.togglePack(state.pack, data.id)));
+  return btn;
+}
+
+function renderGrid(){
+  const f = { market: $('f-market').value, category: $('f-category').value, closing_bucket: $('f-closing').value };
+  const rows = S.applyFilters(state.rows, f, state.lang);
+  const grid = $('grid'); grid.textContent = '';
+  for (const r of rows) grid.appendChild(buildCard(r));
+  const cnt = $('count'); cnt.textContent = ''; const cb = el('b'); cb.textContent = String(rows.length); cnt.appendChild(cb); cnt.appendChild(document.createTextNode(' active'));
+  $('state').hidden = rows.length > 0;
+  grid.hidden = rows.length === 0;
+  if (rows.length === 0){ const s = $('state'); s.hidden = false; s.className = 'state'; s.textContent = 'No opportunities match these filters.'; }
+}
+
+function syncCards(){
+  document.querySelectorAll('.card').forEach((c) => {
+    const on = state.pack.includes(c.dataset.id);
+    c.classList.toggle('on', on);
+    c.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+}
+
+function renderTray(){
+  $('tray-count').textContent = String(state.pack.length);
+  $('tray').classList.toggle('up', state.pack.length > 0);
+  const list = $('traylist'); list.textContent = '';
+  for (const id of state.pack){
+    const row = state.byId.get(id);
+    const pill = el('span', 'pill');
+    const txt = el('span', 'txt');
+    txt.textContent = row ? S.summaryFor(row, state.lang) : id;   // textContent
+    pill.appendChild(txt);
+    const x = el('button', 'x'); x.type='button'; x.textContent='×'; x.setAttribute('aria-label','Remove');
+    x.addEventListener('click', () => setPack(S.removeFromPack(state.pack, id)));
+    pill.appendChild(x);
+    list.appendChild(pill);
+  }
+}
+
+function toast(msg){ const t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 1800); }
+
+// ---- filters population ----
+function fillSelect(sel, values, current){
+  for (const v of values){ const o = document.createElement('option'); o.value = v; o.textContent = v; sel.appendChild(o); }
+  if (current) sel.value = current;
+}
+
+function refreshCategoryOptions(){
+  const sel = $('f-category'); const cur = sel.value;
+  sel.length = 1; // keep "All categories"
+  const cats = S.distinct(S.activeRows(state.rows), (r) => S.categoryFor(r, state.lang));
+  fillSelect(sel, cats, cats.includes(cur) ? cur : 'all');
+}
+
+// ---- boot ----
+async function boot(){
+  state.pack = S.loadPack(localStorage);
+  const fromHash = S.decodePack(location.hash);
+  if (fromHash.length){ state.pack = S.normalizePack([...state.pack, ...fromHash]); persist(); }
+
+  try {
+    const res = await fetch(S.FEED_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    state.rows = S.activeRows(data.rows || []);
+    state.byId = new Map(state.rows.map((r) => [r.asaptic_id, r]));
+  } catch (e){
+    const s = $('state'); s.className = 'state err'; s.textContent = 'Could not load live opportunities. Please retry shortly.'; return;
+  }
+
+  fillSelect($('f-market'), S.distinct(state.rows, (r) => r.market));
+  fillSelect($('f-closing'), S.distinct(state.rows, (r) => r.closing_bucket).filter((b) => BUCKET_LABEL[b]).sort((a,b)=>['le_2w','2_4w','gt_4w'].indexOf(a)-['le_2w','2_4w','gt_4w'].indexOf(b)));
+  refreshCategoryOptions();
+
+  ['f-market','f-category','f-closing'].forEach((id) => $(id).addEventListener('change', renderGrid));
+  $('f-lang').addEventListener('change', (e) => { state.lang = e.target.value; refreshCategoryOptions(); renderGrid(); renderTray(); });
+
+  renderGrid(); renderTray();
+}
+
+$('btn-clear').addEventListener('click', () => setPack([]));
+$('btn-share').addEventListener('click', async () => {
+  const url = S.buildShareUrl(location.origin, location.pathname, state.pack);
+  history.replaceState(null, '', url);
+  try { await navigator.clipboard.writeText(url); toast('Share link copied'); }
+  catch (_) { toast('Share link in address bar'); }
+});
+$('btn-cta').addEventListener('click', () => { window.location.href = S.buildCtaUrl(state.pack); });
+
+boot();
+</script>
+</body>
+</html>

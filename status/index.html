@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Status — Asaptic public endpoints</title>
+<meta name="description" content="Live status of Asaptic's public endpoints — the tender feed, the sourcing MCP server, and the listings API — probed from your own browser. Honest states: endpoints not yet deployed show as pending rollout, never green.">
+<link rel="canonical" href="https://asaptic.com/status">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0f; --card:#0f0f1a; --card2:#12121f; --edge:rgba(255,255,255,.08); --edge2:rgba(255,255,255,.14);
+    --ink:#f4f6fb; --ink2:#b2bacb; --ink3:#8b93a6;
+    --emerald:#10b981; --emerald-l:#34d399; --cyan:#06b6d4; --cyan-l:#22d3ee; --peri:#818cf8; --amber:#fbbf24; --slate:#64748b;
+    --mono:'Fira Code','JetBrains Mono','Courier New',monospace;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased}
+  .z{position:relative;z-index:1}
+  .wrap{max-width:920px;margin:0 auto;padding:0 26px}
+  a{color:var(--cyan-l);text-decoration:none}
+  a:hover{text-decoration:underline}
+  a:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:4px}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .grad{background:linear-gradient(135deg,#34d399 0%,#22d3ee 50%,#818cf8 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--emerald);margin:0 0 14px}
+
+  .bridge{position:sticky;top:0;z-index:50;background:rgba(10,10,15,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--edge)}
+  .bridge .row{display:flex;align-items:center;justify-content:space-between;height:54px;max-width:920px;margin:0 auto;padding:0 26px}
+  .bridge .logo{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:800;letter-spacing:.02em;color:#fff}
+  .bridge .logo .mk{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:#04121a}
+  .bridge .rt{display:flex;align-items:center;gap:18px}
+  .bridge .lnk{font-size:12.5px;font-weight:500;color:var(--ink2)} .bridge .lnk:hover{color:var(--ink);text-decoration:none}
+  .bridge .back{font-size:12.5px;font-weight:600;color:var(--cyan-l)}
+
+  .hero{padding:56px 0 34px;border-bottom:1px solid var(--edge)}
+  h1{font-size:clamp(30px,5vw,50px);line-height:1.16;letter-spacing:-.02em;margin:0 0 16px;font-weight:900}
+  .lede{font-size:clamp(15px,1.9vw,18px);color:var(--ink2);max-width:64ch}
+  .note{font-family:var(--mono);font-size:12px;color:var(--ink3);margin:16px 0 0;max-width:70ch;line-height:1.7;
+    padding:11px 15px;border:1px solid var(--edge);border-left:2px solid rgba(251,191,36,.6);background:rgba(251,191,36,.03)}
+  .note b{color:var(--amber)}
+
+  section{padding:40px 0;border-bottom:1px solid var(--edge)}
+  h2{font-size:clamp(19px,2.6vw,25px);line-height:1.2;letter-spacing:-.015em;margin:0 0 18px;font-weight:800}
+
+  .rows{display:flex;flex-direction:column;gap:12px}
+  .srow{display:grid;grid-template-columns:22px 1fr auto;gap:14px;align-items:center;
+    background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:16px 18px}
+  .dot{width:13px;height:13px;border-radius:50%;background:var(--slate);box-shadow:0 0 0 4px rgba(100,116,139,.12);justify-self:center;flex:none}
+  .dot.live{background:var(--emerald-l);box-shadow:0 0 10px var(--emerald),0 0 0 4px rgba(16,185,129,.14);animation:pulse 2s infinite}
+  .dot.pending{background:var(--slate);box-shadow:0 0 0 4px rgba(100,116,139,.12)}
+  .dot.checking{background:var(--cyan-l);box-shadow:0 0 0 4px rgba(6,182,212,.14);animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  .meta .nm{font-size:15px;font-weight:700;color:var(--ink)}
+  .meta .u{font-family:var(--mono);font-size:12px;color:var(--ink3);word-break:break-all}
+  .badge{font-family:var(--mono);font-size:11.5px;padding:5px 11px;border-radius:20px;border:1px solid var(--edge2);white-space:nowrap}
+  .badge.live{color:var(--emerald-l);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)}
+  .badge.pending{color:var(--ink3)}
+  .badge.checking{color:var(--cyan-l);border-color:rgba(6,182,212,.3)}
+
+  .legend{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:12px;color:var(--ink3);margin:20px 0 0}
+  .legend span{display:inline-flex;align-items:center;gap:8px}
+  .lgd{width:11px;height:11px;border-radius:50%}
+  .lgd.g{background:var(--emerald-l)} .lgd.p{background:var(--slate)}
+
+  .hist{display:flex;flex-direction:column;gap:8px}
+  .hrow{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:12.5px;
+    padding:9px 0;border-bottom:1px dashed var(--edge2);color:var(--ink2)}
+  .hrow:last-child{border-bottom:0}
+  .hrow .st.live{color:var(--emerald-l)} .hrow .st.pending{color:var(--ink3)}
+
+  footer{padding:30px 0 60px}
+  .foot{font-family:var(--mono);font-size:12px;color:var(--ink3);line-height:1.8}
+  .foot a{color:var(--ink2)}
+</style>
+</head>
+<body>
+<nav class="bridge z"><div class="row"><a class="logo" href="/"><span class="mk">A</span>ASAPTIC</a><div class="rt"><a class="lnk" href="/security">Security</a><a class="lnk" href="/.well-known/asaptic-proof.json">proof.json</a><a class="back" href="/">asaptic.com</a></div></div></nav>
+
+<header class="hero z"><div class="wrap">
+  <p class="eyebrow">Status</p>
+  <h1><span class="grad">Public endpoint status</span></h1>
+  <p class="lede">These checks run in <em>your</em> browser against Asaptic's live public endpoints. Nothing here is a server-reported claim — the dots below reflect what the endpoints returned to you, just now.</p>
+  <p class="note"><b>Honest by construction:</b> an endpoint turns green only when it actually returns parseable JSON to your browser. Endpoints still shipping resolve to the site shell and show as <b>pending rollout</b> — never green.</p>
+</div></header>
+
+<section class="z"><div class="wrap">
+  <h2>Live probes</h2>
+  <div class="rows" id="rows" aria-live="polite"></div>
+  <div class="legend">
+    <span><i class="lgd g"></i> live — returned parseable JSON</span>
+    <span><i class="lgd p"></i> pending rollout — not yet deployed</span>
+  </div>
+</div></section>
+
+<section class="z"><div class="wrap">
+  <h2>Recorded history</h2>
+  <div class="hist" id="hist"><p class="mono" style="color:var(--ink3);font-size:12.5px">Loading history…</p></div>
+</div></section>
+
+<footer class="z"><div class="wrap">
+  <p class="foot">Asaptic (HK) Ltd · <a href="/">asaptic.com</a> · <a href="/security">security</a> · <a href="/.well-known/asaptic-proof.json">proof manifest</a><br>Client-side probes, no server monitoring. Last recorded snapshot below is advisory.</p>
+</div></footer>
+
+<script>
+(function(){
+  "use strict";
+  // Each probe returns "live" ONLY if the endpoint hands back parseable JSON.
+  // Anything else (site shell / text-html / network error) resolves to "pending".
+  var ENDPOINTS = [
+    { key:"tender_feed", label:"Tender feed", url:"/tender/rows.json", method:"GET",
+      ok: function(ct, body){ if(!/json/i.test(ct)) return false; try{ var j=JSON.parse(body); return !!(j && j.issue_id && Array.isArray(j.rows)); }catch(e){ return false; } } },
+    { key:"mcp", label:"MCP server", url:"/mcp", method:"POST",
+      payload: JSON.stringify({jsonrpc:"2.0",id:1,method:"tools/list"}),
+      ok: function(ct, body){ if(!/json/i.test(ct)) return false; try{ var j=JSON.parse(body); return !!(j && j.result && Array.isArray(j.result.tools)); }catch(e){ return false; } } },
+    { key:"tenders_api", label:"Tenders API", url:"/api/v1/tenders", method:"GET",
+      ok: function(ct, body){ if(!/json/i.test(ct)) return false; try{ JSON.parse(body); return true; }catch(e){ return false; } } },
+    { key:"health", label:"Health", url:"/api/v1/health", method:"GET",
+      ok: function(ct, body){ if(!/json/i.test(ct)) return false; try{ JSON.parse(body); return true; }catch(e){ return false; } } }
+  ];
+
+  var rowsEl = document.getElementById("rows");
+  var nodes = {};
+  ENDPOINTS.forEach(function(ep){
+    var row = document.createElement("div");
+    row.className = "srow";
+    row.innerHTML =
+      '<span class="dot checking" id="dot-'+ep.key+'"></span>' +
+      '<div class="meta"><div class="nm">'+ep.label+'</div><div class="u">'+ep.url+'</div></div>' +
+      '<span class="badge checking" id="badge-'+ep.key+'">checking…</span>';
+    rowsEl.appendChild(row);
+    nodes[ep.key] = { dot: row.querySelector("#dot-"+ep.key), badge: row.querySelector("#badge-"+ep.key) };
+  });
+
+  function render(key, state){
+    var n = nodes[key]; if(!n) return;
+    if(state === "live"){
+      n.dot.className = "dot live";
+      n.badge.className = "badge live"; n.badge.textContent = "live";
+    } else {
+      n.dot.className = "dot pending";
+      n.badge.className = "badge pending"; n.badge.textContent = "pending rollout";
+    }
+  }
+
+  function probe(ep){
+    var opts = { method: ep.method, headers: {}, cache: "no-store" };
+    if(ep.method === "POST"){ opts.headers["content-type"] = "application/json"; opts.body = ep.payload; }
+    return fetch(ep.url, opts).then(function(res){
+      var ct = res.headers.get("content-type") || "";
+      return res.text().then(function(body){ return ep.ok(ct, body) ? "live" : "pending"; });
+    }).catch(function(){ return "pending"; });
+  }
+
+  ENDPOINTS.forEach(function(ep){
+    probe(ep).then(function(state){ render(ep.key, state); });
+  });
+
+  // Optional recorded history — advisory, never overrides the live probe above.
+  fetch("/status/history.json", { cache: "no-store" }).then(function(r){ return r.ok ? r.json() : null; }).then(function(h){
+    var el = document.getElementById("hist");
+    if(!h || !Array.isArray(h.checks)){ el.innerHTML = '<p class="mono" style="color:var(--ink3);font-size:12.5px">No recorded history.</p>'; return; }
+    var labels = {};
+    (h.endpoints||[]).forEach(function(e){ labels[e.key] = e.label; });
+    el.innerHTML = "";
+    h.checks.forEach(function(c){
+      var d = document.createElement("div");
+      d.className = "hrow";
+      var st = c.state === "live" ? "live" : "pending";
+      var stTxt = c.state === "live" ? "live" : "pending rollout";
+      d.innerHTML = '<span>'+(labels[c.key]||c.key)+'</span>' +
+                    '<span><span class="st '+st+'">'+stTxt+'</span> · '+c.date+'</span>';
+      el.appendChild(d);
+    });
+  }).catch(function(){});
+})();
+</script>
+</body>
+</html>
