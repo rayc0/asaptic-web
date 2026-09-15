@@ -523,6 +523,8 @@
           <tbody id="cf-bom-body"></tbody>
         </table>
         <p class="cf-caption">All prices indicative: modules shown at from-prices, options at market-band midpoint. Final pricing by quotation.</p>
+        <!-- A46 checkout comparison line (exec-default 2026-09-16): on-site copy only, no backend. -->
+        <p class="cf-caption">Like-for-like: buying equivalent joint modules separately leaves sizing, assembly, QA-test and documentation to you — this build request bundles all four into one quotation. Send the summary below and we will show the comparison.</p>
         <p class="cf-caption" id="cf-subtotal-line"></p>
 
         <div class="cf-landed-box">
@@ -598,6 +600,9 @@
           <div class="rb-faq-a">Yes — after you place a build request we confirm a firm quotation, then assemble, QA-test, and ship. Lead time and warranty are confirmed at quotation.</div>
         </div>
       </div>
+
+      <!-- A46 tender-bulletin cross-link (exec-default 2026-09-16): on-site link only. -->
+      <p class="cf-caption" style="margin:12px 0;">Procuring under a public tender? Browse the <a href="/tender/">Global Public Tender Weekly Digest</a>.</p>
 
       <div class="rb-pager">
         <a href="/robot/">← Robot parts hub</a>
@@ -1355,6 +1360,25 @@
     wireShareButton('cf-share-link-checkout', 'cf-share-status-checkout');
   }
 
+  // A46 confirmation moment (exec-default 2026-09-16): when the visitor clicks
+  // "Place build request", stamp the client-side order ref into the checkout
+  // notice so the request feels received. On-site copy only, no backend.
+  function initOrderConfirm(){
+    var cta = document.getElementById('cf-cta-link');
+    if (!cta || cta.getAttribute('data-confirm-wired')) return;
+    cta.setAttribute('data-confirm-wired', '1');
+    cta.addEventListener('click', function(){
+      var ref = cta.getAttribute('data-order-ref') || '';
+      var notice = document.getElementById('cf-checkout-notice');
+      if (notice){
+        notice.hidden = false;
+        notice.textContent = 'Build request opened in your email app'
+          + (ref ? ' — your reference is ' + ref + '. Quote it in any follow-up.' : '.')
+          + ' We reply with a verified shortlist, test data and a landed-cost breakdown, normally within one business day.';
+      }
+    });
+  }
+
   function wireShareButton(btnId, statusId){
     var btn = document.getElementById(btnId);
     if (!btn) return;
@@ -1799,9 +1823,25 @@
     red: 'Lift aborted — one or more modules undersized for the configured payload / reach.'
   };
 
+  // A46 order reference (exec-default 2026-09-16): deterministic client-side ref
+  // (date + config hash), no backend. Stable across renders on the same day
+  // for the same configuration so the mailto subject and the on-page
+  // confirmation always agree.
+  function buildOrderRef(model){
+    var d = new Date();
+    var ymd = d.getFullYear()
+      + ('0' + (d.getMonth() + 1)).slice(-2)
+      + ('0' + d.getDate()).slice(-2);
+    var seed = model.template.label + '|' + state.payload + '|' + state.reach + '|' + state.market;
+    var h = 0;
+    for (var i = 0; i < seed.length; i++){ h = ((h * 31) + seed.charCodeAt(i)) >>> 0; }
+    return 'AB-' + ymd + '-' + ('0000' + h.toString(36).toUpperCase()).slice(-4);
+  }
+
   function buildSummaryText(model){
     var lines = [];
     lines.push('Asaptic robot arm build request');
+    lines.push('Order reference: ' + buildOrderRef(model));
     lines.push('Template: ' + model.template.label);
     lines.push('Payload: ' + state.payload + ' kg · Reach: ' + state.reach + ' m');
     lines.push('');
@@ -1845,7 +1885,7 @@
   }
 
   function buildMailto(model, summaryText){
-    var subject = 'Robot build request — ' + model.template.label + ' · ' + state.payload + ' kg · ' + state.reach + ' m';
+    var subject = 'Robot build request ' + buildOrderRef(model) + ' — ' + model.template.label + ' · ' + state.payload + ' kg · ' + state.reach + ' m';
     var href = 'mailto:engage@asaptic.com'
       + '?subject=' + encodeURIComponent(subject)
       + '&body=' + encodeURIComponent(summaryText);
@@ -2026,7 +2066,9 @@
     var summaryText = buildSummaryText(model);
     document.getElementById('cf-summary-text').value = summaryText;
     if (model.assemblyComplete){
-      document.getElementById('cf-cta-link').setAttribute('href', buildMailto(model, summaryText));
+      var ctaEl = document.getElementById('cf-cta-link');
+      ctaEl.setAttribute('href', buildMailto(model, summaryText));
+      ctaEl.setAttribute('data-order-ref', buildOrderRef(model));
     }
 
     // rail (desktop)
@@ -2171,6 +2213,7 @@
     initSimButton();
     initManualButton();
     initShareControls();
+    initOrderConfirm();
     render();
     if (hydrated){
       showHydrateNotice();
